@@ -278,7 +278,7 @@
 #ifdef W3_TIMINGS
       USE W3PARALL, ONLY: PRINT_MY_TIME
 #endif
-#ifdef CESMCOUPLED
+#if defined(W3_UWM) || defined(CESMCOUPLED)
       USE W3ADATMD   , ONLY : LAMULT
       USE WAV_SHR_MOD, ONLY : RUNTYPE
 #endif

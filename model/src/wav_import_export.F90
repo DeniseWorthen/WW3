@@ -87,10 +87,10 @@ contains
     call fldlist_add(fldsToWav_num, fldsToWav, 'So_v'       )
     call fldlist_add(fldsToWav_num, fldsToWav, 'So_t'       )
     call fldlist_add(fldsToWav_num, fldsToWav, 'Sa_tbot'    )
+    call fldlist_add(fldsToWav_num, fldsToWav, 'So_bldepth' )
     if (cesmcoupled) then
        call fldlist_add(fldsToWav_num, fldsToWav, 'Sa_u'       )
        call fldlist_add(fldsToWav_num, fldsToWav, 'Sa_v'       )
-       call fldlist_add(fldsToWav_num, fldsToWav, 'So_bldepth' )
     else
        call fldlist_add(fldsToWav_num, fldsToWav, 'Sa_u10m'    )
        call fldlist_add(fldsToWav_num, fldsToWav, 'Sa_v10m'    )
@@ -120,6 +120,7 @@ contains
        call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_pstokes_x', ungridded_lbound=1, ungridded_ubound=3)
        call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_pstokes_y', ungridded_lbound=1, ungridded_ubound=3)
     else
+       call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_lamult' )
        call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_z0')
        call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_ustokes1')
        call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_ustokes2')
@@ -420,9 +421,9 @@ contains
           call FillGlobalInput(global_data, ICEI)
        end if
     end if
-#ifdef CESMCOUPLED
+
     ! ---------------
-    ! ocean boundary layer depth - always assume that this is being imported for CESM
+    ! ocean boundary layer depth - always assume that this is being imported 
     ! ---------------
     call SetGlobalInput(importState, 'So_bldepth', vm, global_data, rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
@@ -430,7 +431,7 @@ contains
     ! ocn mixing layer depth
     global_data = max(global_data, 5.)
     call FillGlobalInput(global_data, HML)
-#endif
+
     ! ---------------
     ! INFLAGS1(5) - atm momentum fields
     ! ---------------
@@ -518,9 +519,7 @@ contains
 
     use wav_kind_mod,   only : R8 => SHR_KIND_R8
     use w3adatmd      , only : USSX, USSY, EF, TAUICE, USSP
-#ifdef CESMCOUPLED
     use w3adatmd      , only : LAMULT
-#endif
     use w3adatmd      , only : w3seta
     use w3idatmd      , only : w3seti
     use w3wdatmd      , only : va, w3setw
@@ -585,7 +584,6 @@ contains
        call wmsetm ( 1, mdse, mdst )
     end if
 
-#ifdef CESMCOUPLED
     if (state_fldchk(exportState, 'Sw_lamult')) then
        call state_getfldptr(exportState, 'Sw_lamult', fldptr1d=sw_lamult, rc=rc)
        if (ChkErr(rc,__LINE__,u_FILE_u)) return
@@ -601,7 +599,6 @@ contains
           endif
        enddo
     end if
-#endif
 
     ! surface stokes drift
     if (state_fldchk(exportState, 'Sw_ustokes')) then

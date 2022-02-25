@@ -893,7 +893,7 @@
 !
 ! 1.e Ice floe interval
 !
-#if defined(W3_IS2) || defined(CESMCOUPLED)
+#if defined(W3_IS2) || defined(CESMCOUPLED) ||  defined(W3_UWM)
       IF ( FLIC5 ) THEN
           IF ( TIC5(1) .GE. 0 ) THEN
               DTI50   = DSEC21 ( TIC5 , TI5 )
@@ -1545,7 +1545,8 @@
 !
 ! 3.3.3 Update ice floe diameter
 !
-#if defined(W3_IS) || defined(CESMCOUPLED)
+!TODO: Should this be _IS2?
+#if defined(W3_IS) || defined(CESMCOUPLED) ||  defined(W3_UWM)
           IF ( FLIC5 .AND. DTI50.NE.0. ) THEN
 !
               IF ( TIC5(1).GE.0 ) THEN
@@ -3568,7 +3569,7 @@
                '     NEW ATM MOMENTUM BEFORE OLD ATM MOMENTUM '/)
  1008 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                &
                '     NEW AIR DENSITY BEFORE OLD AIR DENSITY '/)
-#if defined(W3_IS2) || defined(CESMCOUPLED)
+#if defined(W3_IS2) || defined(CESMCOUPLED) ||  defined(W3_UWM)
  1006 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                &
                '     NEW IC5 FIELD BEFORE OLD IC5 FIELD '/)
 #endif
