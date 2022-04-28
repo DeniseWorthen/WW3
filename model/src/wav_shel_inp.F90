@@ -10,7 +10,8 @@
 !> @date 01-05-2022
 module wav_shel_inp
 
-  use w3odatmd, only: nogrp, ngrpp
+  use w3odatmd    , only : nogrp, ngrpp
+  use wav_shr_mod , only : wav_coupling_to_cice
 
   implicit none
   private ! except
@@ -108,7 +109,6 @@ contains
     use w3idatmd    , only : inflags1, inflags2
     use w3odatmd    , only : noge, idout, nds, notype, iaproc, napout
     use w3wdatmd    , only : time
-    use wav_shr_mod , only : wav_coupling_to_cice
 
     ! Input parameter
     integer , intent(in)  :: dtime_sync
@@ -466,7 +466,11 @@ contains
     ! If using experimental mud or ice physics, additional lines will
     !  be read in from ww3_shel.inp and applied, so JFIRST is changed from
     !  its initialization setting "JFIRST=1" to some lower value.
-    JFIRST=1
+    if (wav_coupling_to_cice) then
+       JFIRST=-7
+    else
+       JFIRST=1
+    end if
 
     ! process old ww3_shel.inp format
     OPEN (NDSI,FILE=TRIM(FNMPRE)//'ww3_shel.inp',STATUS='OLD',IOSTAT=IERR)
