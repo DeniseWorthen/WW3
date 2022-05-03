@@ -56,7 +56,7 @@ contains
     USE W3ADATMD, ONLY: CFLXYMAX, CFLTHMAX, CFLKMAX, P2SMS, US3D
     USE W3ADATMD, ONLY: TH1M, STH1M, TH2M, STH2M, HSIG, PHICE, TAUICE
     USE W3ADATMD, ONLY: STMAXE, STMAXD, HMAXE, HCMAXE, HMAXD, HCMAXD, USSP, TAUOCX, TAUOCY
-#ifdef CESMCOUPLED
+#ifdef W3_CESMCOUPLED
     USE W3ADATMD, ONLY: LANGMT
 #endif
     use wav_grdout     , only: varatts, outvars
@@ -311,7 +311,7 @@ contains
            if (vname .eq.   'PHICE') call write_var2d(vname, phice(1:nsea))
            if (vname .eq.  'TAUOCX') call write_var2d(vname, tauocx(1:nsea))
            if (vname .eq.  'TAUOCY') call write_var2d(vname, tauocy(1:nsea))
-#ifdef CESMCOUPLED
+#ifdef W3_CESMCOUPLED
            if (vname .eq.  'LANGMT') call write_var2d(vname, langmt(1:nsea))
 #endif
            ! Group 7
