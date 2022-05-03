@@ -448,7 +448,7 @@
 #ifdef W3_TIMINGS
     USE W3PARALL, only : PRINT_MY_TIME
 #endif
-#if defined(W3_UWM) || defined(CESMCOUPLED)
+#if defined(W3_UWMNCOUT) || defined(W3_CESMCOUPLED)
       ! flags for restart and history writes
       USE WAV_SHR_MOD , only : RSTWR, HISTWR
       USE W3IOGONCDMD , ONLY : W3IOGONCD
@@ -893,7 +893,7 @@
 !
 ! 1.e Ice floe interval
 !
-#if defined(W3_IS2) || defined(CESMCOUPLED) ||  defined(W3_UWM)
+#ifdef W3_IS2
       IF ( FLIC5 ) THEN
           IF ( TIC5(1) .GE. 0 ) THEN
               DTI50   = DSEC21 ( TIC5 , TI5 )
@@ -1545,8 +1545,7 @@
 !
 ! 3.3.3 Update ice floe diameter
 !
-!TODO: Should this be _IS2?
-#if defined(W3_IS) || defined(CESMCOUPLED) ||  defined(W3_UWM)
+#ifdef W3_IS2
           IF ( FLIC5 .AND. DTI50.NE.0. ) THEN
 !
               IF ( TIC5(1).GE.0 ) THEN
@@ -2963,17 +2962,14 @@
 #endif
 !
 #ifdef W3_MPI
-#if defined(W3_UWM) || defined(CESMCOUPLED)
+#if defined(W3_UWMNCOUT) || defined(W3_CESMCOUPLED)
           ! CMB: dsec21 computes the difference between time1, time2 in sec
           ! pretty sure tonext always equal to time on the hour
           ! so this is getting called every hour
           ! seems like it only needs to be done when histwr=T though
           ! so am chaning
-     IF (  (histwr .and.  (FLOUT(1) .OR.  FLOUT(7)) ) .OR. &
-           (  .not. histwr .and. &
-             ( ( (DSEC21(TIME,TONEXT(:,1)).EQ.0.) .AND. FLOUT(1) ) .OR. &
-             (    (DSEC21(TIME,TONEXT(:,7)).EQ.0.) .AND. FLOUT(7) .AND. &
-                  SBSED ) ) ) ) THEN
+     IF (  histwr .and.  &
+          (FLOUT(1) .OR.  FLOUT(7)) ) THEN
 #else
      IF ( ( (DSEC21(TIME,TONEXT(:,1)).EQ.0.) .AND. FLOUT(1) ) .OR. &
           (  (DSEC21(TIME,TONEXT(:,7)).EQ.0.) .AND. FLOUT(7) .AND. &
@@ -2989,7 +2985,7 @@
 #endif
 #ifdef W3_MPI
            CALL MPI_STARTALL ( NRQGO, IRQGO , IERR_MPI )
-#if defined(W3_UWM) || defined(CESMCOUPLED)
+#if defined(W3_UWMNCOUT) || defined(W3_CESMCOUPLED)
            write(*,*) 'UWM/CESM histwr mpi_startall', histwr, NRQGO, IERR_MPI
 #endif
 #endif
@@ -3019,7 +3015,7 @@
 #endif
 #ifdef W3_MPI
            CALL MPI_STARTALL ( NRQGO2, IRQGO2, IERR_MPI )
-#if defined(W3_UWM) || defined(CESMCOUPLED)
+#if defined(W3_UWMNCOUT) || defined(W3_CESMCOUPLED)
            write(*,*) 'UWM/CESM: histwr mpi_startall', histwr, NRQGO, IERR_MPI
 #endif
 #endif
@@ -3208,24 +3204,18 @@
                   DTTST   = DSEC21 ( TIME, TOUT )
 !
                   IF ( DTTST .EQ. 0. ) THEN
-#if defined(W3_UWM) || defined(CESMCOUPLED)
+#if defined(W3_UWMNCOUT) || defined(W3_CESMCOUPLED)
                       ! This assumes that W3_SBS is not defined
-                      IF ( ( J .EQ. 1 ) ) THEN
-                          if ( histwr ) then
-                             CALL MPI_WAITALL( NRQGO, IRQGO, STATIO, IERR_MPI )
-                             FLGMPI(0) = .FALSE.
-                          end if
+                      IF ( ( J .EQ. 1 ) .AND. histwr) THEN
+                          CALL MPI_WAITALL( NRQGO, IRQGO, STATIO, IERR_MPI )
+                          FLGMPI(0) = .FALSE.
                           write(*,*) 'CESM w3wavemd: hist flag 1', j, histwr, time, IERR_MPI
                           IF ( IAPROC .EQ. NAPFLD ) THEN
                               IF ( FLGMPI(1) ) CALL MPI_WAITALL  &
                                  ( NRQGO2, IRQGO2, STATIO, IERR_MPI )
                               FLGMPI(1) = .FALSE.
                               write(*,*) 'CESM w3wavemd: hist flag 2', j, histwr, time, IERR_MPI
-                              if ( histwr ) then
-                                 CALL W3IOGONCD ()
-                              else
-                                 CALL W3IOGO( 'WRITE', NDS(7), ITEST, IMOD )
-                              end if
+                              CALL W3IOGONCD ()
                           END IF
 #else
                       IF ( ( J .EQ. 1 )              &
@@ -3261,7 +3251,7 @@
 #endif
                             END IF
 !
-! end of UWM/CESMCOUPLED cppif-block
+! end of UWMNCOUT/W3_CESMCOUPLED cppif-block
 #endif
                         ELSE IF ( J .EQ. 2 ) THEN
 !
@@ -3280,7 +3270,7 @@
 ! Track output
 !
                           CALL W3IOTR ( NDS(11), NDS(12), VA, IMOD )
-#ifdef CESMCOUPLED
+#ifdef W3_CESMCOUPLED
                         ! add restart flag
                         ELSE IF ( J .EQ. 4 .AND. rstwr ) THEN
                           CALL W3IORS ('HOT', NDS(6), XXX, IMOD, FLOUT(8) )
@@ -3423,7 +3413,7 @@
 #ifdef W3_MPI
             IF ( FLGMPI(0) ) CALL MPI_WAITALL                    &
                              ( NRQGO, IRQGO , STATIO, IERR_MPI )
-#if defined(W3_UWM) || defined(CESMCOUPLED)
+#if defined(W3_UWMNCOUT) || defined(W3_CESMCOUPLED)
             IF ( FLGMPI(1) .and. ( IAPROC .EQ. NAPFLD ) ) CALL MPI_WAITALL   &
                              ( NRQGO2, IRQGO2 , STATIO, IERR_MPI )
 #endif
@@ -3569,7 +3559,7 @@
                '     NEW ATM MOMENTUM BEFORE OLD ATM MOMENTUM '/)
  1008 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                &
                '     NEW AIR DENSITY BEFORE OLD AIR DENSITY '/)
-#if defined(W3_IS2) || defined(CESMCOUPLED) ||  defined(W3_UWM)
+#ifdef W3_IS2
  1006 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                &
                '     NEW IC5 FIELD BEFORE OLD IC5 FIELD '/)
 #endif

@@ -113,9 +113,8 @@
 !/
       REAL, PARAMETER                :: CRITOS = 15.
       CHARACTER(LEN=10), PARAMETER   :: WWVER  = '7.14  '
-! MV: the following is not allowed by CMake - claim is that __WW3_SWITCHES is not defined
-!      CHARACTER(LEN=512), PARAMETER  :: SWITCHES  = &
-!                    __WW3_SWITCHES__
+      CHARACTER(LEN=512), PARAMETER  :: SWITCHES  = &
+           __WW3_SWITCHES__
 !/
       CONTAINS
 !/ ------------------------------------------------------------------- /
@@ -1195,12 +1194,6 @@
         TOLAST(1,J) =        ODAT(J0+4)
         TOLAST(2,J) =        ODAT(J0+5)
       END DO
-#if defined(W3_UWM) || defined(CESMCOUPLED)
-      ! CMB, FYI NOTYPE=7 is hardwired in w3odatmd.F90
-      IF ( IAPROC .EQ. NAPLOG ) THEN
-         write(ndso,*) 'CMB distribute odat ', j, TONEXT(:,J), DTOUT (  J)
-      END IF
-#endif
 !
 ! J=8, second stream of restart files
         J=8
@@ -1247,9 +1240,6 @@
 !
       FLOUT(2) = NPT .GT. 0
 !
-#if defined(W3_UWM) || defined(CESMCOUPLED)
-     !CMB FLOUT(3) = .TRUE. ???
-#endif
       FLOUT(3) = .TRUE.
 !
       FLOUT(4) = .TRUE.
@@ -1415,16 +1405,6 @@
 #ifdef W3_DEBUGCOH
           CALL ALL_VA_INTEGRAL_PRINT(IMOD, "W3INIT, step 8.1")
 #endif
-#endif
-#if defined(W3_UWM) || defined(CESMCOUPLED)
-      ! 1 & 4 are T, rest are F
-      ! 1 is supposed to be gridded
-      ! 4 is supposed to be restart
-      IF ( IAPROC .EQ. NAPLOG ) THEN
-         do J=1,NOTYPE
-           write(ndso,*) 'CMB hist out ', J, FLOUT(J), TONEXT(:,J)
-         end do
-      END IF
 #endif
 !
 ! 4.d Preprocessing for point output.
@@ -3668,6 +3648,7 @@
                 END IF
 #endif
 
+!
 #ifdef W3_MPI
               IF ( FLGRDALL( 6, 12) ) THEN
                   DO IK=1,2*NK
@@ -3684,6 +3665,7 @@
                 END IF
 #endif
 
+!
 #ifdef W3_MPI
               IF ( FLGRDALL( 6, 13) ) THEN
                   IH     = IH + 1
