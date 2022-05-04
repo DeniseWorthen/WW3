@@ -274,9 +274,8 @@ contains
     use w3idatmd    , only: tfn, w3seti
     use w3odatmd    , only: w3seto
     use w3wdatmd    , only: time, w3setw
-#ifdef W3_CESMCOUPLED
     use w3idatmd    , only: HML
-#else
+#ifndef W3_CESMCOUPLED
     use wmupdtmd    , only: wmupd2
     use wmmdatmd    , only: wmsetm, mpi_comm_grd
     use wmmdatmd    , only: mdse, mdst, nrgrd, inpmap
@@ -593,9 +592,8 @@ contains
     use w3odatmd      , only : w3seto, naproc, iaproc
     use w3gdatmd      , only : nseal, mapsf, MAPSTA, USSPF, NK, w3setg
     use w3iogomd      , only : CALC_U3STOKES
-#ifdef W3_CESMCOUPLED
     use w3adatmd      , only : LAMULT
-#else
+#ifndef W3_CESMCOUPLED
     use wmmdatmd      , only : mdse, mdst, wmsetm
 #endif
 
