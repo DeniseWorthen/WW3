@@ -81,9 +81,7 @@
 !      FLCUR     Log.  Public   Flag for current input.
 !      FLWIND    Log.  Public   Flag for wind input.
 !      FLICE     Log.  Public   Flag for ice input.
-#if defined(W3_UWM) || defined(W3_CESMCOUPLED)
 !      HML       R.A.  Public   Mixed layer depth
-#endif
 !      FLTAUA    Log.  Public   Flag for atmospheric momentum input
 !      FLRHOA    Log.  Public   Flag for air density input
 !      INFLAGS1  L.A.  Public   Array consolidating the above six
@@ -206,9 +204,7 @@
          REAL, POINTER         :: CYTIDE(:,:,:,:)
          REAL, POINTER         :: WLTIDE(:,:,:,:)
 #endif
-#if defined(W3_UWM) || defined(W3_CESMCOUPLED)
         REAL, POINTER         :: HML(:,:)
-#endif
          LOGICAL               :: IINIT
 #ifdef W3_WRST
          LOGICAL               :: WRSTIINIT=.FALSE.
@@ -259,9 +255,7 @@
       LOGICAL, POINTER        ::  FLLEVTIDE, FLCURTIDE,  &
                                   FLLEVRESI, FLCURRESI
 #endif
-#if defined(W3_UWM) || defined(W3_CESMCOUPLED)
       REAL   , POINTER        :: HML(:,:)
-#endif
 !/
       CONTAINS
 !/ ------------------------------------------------------------------- /
@@ -713,10 +707,8 @@
           CHECK_ALLOC_STATUS ( ISTAT )
         END IF
 !
-#if defined(W3_UWM) || defined(W3_CESMCOUPLED)
         ALLOCATE ( INPUTS(IMOD)%HML(NX,NY), STAT=ISTAT )
         CHECK_ALLOC_STATUS ( ISTAT )
-#endif
 !
       INPUTS(IMOD)%IINIT  = .TRUE.
 !
@@ -1022,9 +1014,7 @@
               ICEI   => INPUTS(IMOD)%ICEI
               BERGI  => INPUTS(IMOD)%BERGI
             END IF
-#if defined(W3_UWM) || defined(W3_CESMCOUPLED)
           HML    => INPUTS(IMOD)%HML
-#endif
 !
           IF ( FLTAUA  ) THEN
               UX0    => INPUTS(IMOD)%UX0

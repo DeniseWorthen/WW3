@@ -1219,7 +1219,6 @@
                           ICPRT, DTPRT, WSCUT, NOSWLL, FLOGRD, FLOGR2,&
                           NOGRP, NGRPP
       USE W3ADATMD, ONLY: NSEALM
-#if defined(W3_UWM) || defined(CESMCOUPLED)
       ! USSX, USSY   : surface Stokes drift (SD)
       ! USSXH, USSYH : surface layer (SL) averaged SD
       ! LANGMT       : La_t
@@ -1235,7 +1234,6 @@
                           ALPHAL, ALPHALS, LASL, UD, LASLPJ
       USE W3IDATMD, ONLY: HML
       USE W3WDATMD, ONLY: ASF
-#endif
 #ifdef W3_S
       USE W3SERVMD, ONLY: STRACE
 #endif
@@ -1295,7 +1293,6 @@
       REAL                       USSCO, FT1
       REAL, SAVE              :: HSMIN = 0.01
       LOGICAL                 :: FLOLOC(NOGRP,NGRPP)
-#if defined(W3_UWM) || defined(CESMCOUPLED)
       ! SWW: angle between wind and waves
       ! HSL: surface layer depth (=0.2*HML)
       REAL                    :: SWW !angle between wind and waves
@@ -1305,7 +1302,6 @@
                                  ETUSSY(NSEAL),        &
                                  ETUSSXH(NSEAL),       &
                                  ETUSSYH(NSEAL)
-#endif
 !/
 !/ ------------------------------------------------------------------- /
 !/
@@ -1426,7 +1422,6 @@
 !
       FP1    = UNDEF
       THP1   = UNDEF
-#if defined(W3_UWM) || defined(CESMCOUPLED)
       ETUSSX  = 0.
       ETUSSY  = 0.
       ETUSCX  = 0.
@@ -1444,7 +1439,6 @@
       USSXH  = 0.
       USSYH  = 0.
       LAMULT  = 1.
-#endif
 !
 ! 2.  Integral over discrete part of spectrum ------------------------ *
 !
@@ -1570,12 +1564,10 @@
             TPMS(JSEA) = TPI/SIG(IK)
             END IF
 
-#if defined(W3_UWM) || defined(CESMCOUPLED)
 ! Get surface layer depth
           IX    = MAPSF(ISEA,1)
           IY    = MAPSF(ISEA,2)
           HSL   = HML(IX,IY)/5.     ! depth over which SD is averaged
-#endif
 
 !
 ! Directional moments in the last freq. band
@@ -1616,7 +1608,6 @@
             USSCO=FKD*SIG(IK)*WN(IK,ISEA)*COSH(2.*KD)
             BHD(JSEA) = BHD(JSEA) +                             &
                 GRAV*WN(IK,ISEA) * EBD(IK,JSEA) / (SINH(2.*KD))
-#if defined(W3_UWM) || defined(CESMCOUPLED)
             ! Surface Stokes Drift
             ETUSSX(JSEA)  = ETUSSX(JSEA) + ABX(JSEA)*FACTOR*SIG(IK) &
                  *WN(IK,ISEA)*COSH(2*WN(IK,ISEA)*DW(ISEA))          &
@@ -1633,10 +1624,8 @@
                  *(1.-EXP(-2.*WN(IK,ISEA)*HSL))/2./HSL                &
                  *COSH(2*WN(IK,ISEA)*DW(ISEA))                        &
                  /(SINH(WN(IK,ISEA)*DW(ISEA)))**2
-#endif
           ELSE
             USSCO=FACTOR*SIG(IK)*2.*WN(IK,ISEA)
-#if defined(W3_UWM) || defined(CESMCOUPLED)
             ! deep water limit
             ! Surface Stokes Drift
             ETUSSX(JSEA)  = ETUSSX(JSEA) + ABX(JSEA)*FACTOR*SIG(IK) &
@@ -1648,7 +1637,6 @@
                      *(1.-EXP(-2.*WN(IK,ISEA)*HSL))/HSL
             ETUSSYH(JSEA)  = ETUSSYH(JSEA) + ABY(JSEA)*FACTOR*SIG(IK) &
                      *(1.-EXP(-2.*WN(IK,ISEA)*HSL))/HSL
-#endif
             END IF
 !
           ABXX(JSEA)   = MAX ( 0. , ABXX(JSEA) ) * FACTOR
@@ -1961,11 +1949,9 @@
 !
       DO JSEA=1, NSEAL
         CALL INIT_GET_ISEA(ISEA, JSEA)
-#if defined(W3_UWM) || defined(CESMCOUPLED)
         IX = MAPSF(ISEA,1)
         IY = MAPSF(ISEA,2)
         HS = HML(IX,IY)/5.     ! depth over which SD is averaged
-#endif
 !
 ! 3.a Directional mss parameters
 !     NB: the slope PDF is proportional to ell1=ETYY*EC2-2*ETXY*ECS+ETXX*ES2 = C*EC2-2*B*ECS+A*ES2
@@ -1995,11 +1981,9 @@
         SXX(JSEA) = SXX(JSEA) + FTE * ABXX(JSEA) / CG(NK,ISEA)
         SYY(JSEA) = SYY(JSEA) + FTE * ABYY(JSEA) / CG(NK,ISEA)
         SXY(JSEA) = SXY(JSEA) + FTE * ABXY(JSEA) / CG(NK,ISEA)
-#if defined(W3_UWM) || defined(CESMCOUPLED)
         ! tail for SD
         ETUSSX(JSEA)  = ETUSSX(JSEA) + 2*GRAV*ETUSCX(JSEA)/SIG(NK)
         ETUSSY(JSEA)  = ETUSSY(JSEA) + 2*GRAV*ETUSCY(JSEA)/SIG(NK)
-#endif
 !
 ! Tail for surface stokes drift is commented out: very sensitive to tail power
 !
@@ -2073,7 +2057,6 @@
               T02(JSEA) = TPI / SIG(NK)
               T01(JSEA)= T02(JSEA)
               ENDIF
-#if defined(W3_UWM) || defined(CESMCOUPLED)
             !TODO is this affected by the NXXX vs. NSEALM?
             ! Should LAMULT, etc. be NSEAML length?
             ! Output Stokes drift and Langmuir numbers
@@ -2153,7 +2136,6 @@
                   END IF
                END IF
             END IF
-#endif
 !
 !  Add here USERO(JSEA,1) ...
 !

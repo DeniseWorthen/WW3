@@ -34,9 +34,7 @@ contains
     USE W3ADATMD, ONLY: CFLXYMAX, CFLTHMAX, CFLKMAX, P2SMS, US3D
     USE W3ADATMD, ONLY: TH1M, STH1M, TH2M, STH2M, HSIG, PHICE, TAUICE
     USE W3ADATMD, ONLY: STMAXE, STMAXD, HMAXE, HCMAXE, HMAXD, HCMAXD, USSP
-#if defined(W3_UWM) || defined(CESMCOUPLED)
     USE W3ADATMD, ONLY: LANGMT
-#endif
     use wav_shr_mod, only: time_origin, calendar_name, elapsed_secs
     USE NETCDF
 
@@ -203,9 +201,7 @@ contains
           IF ( FLOGRD( 6, 10) ) TAUICE(ISEA,:) = UNDEF
           IF ( FLOGRD( 6, 11) ) PHICE(ISEA) = UNDEF
           IF ( FLOGRD( 6, 12) ) USSP(ISEA,:) = UNDEF
-#if defined(W3_UWM) || defined(CESMCOUPLED)
           IF ( FLOGRD( 6, 14) ) LANGMT(ISEA) = UNDEF  !cesm specific
-#endif
           !
           IF ( FLOGRD( 7, 1) ) THEN
              ABA   (ISEA) = UNDEF
@@ -523,7 +519,6 @@ contains
                    UNITSTR2 = 'm/s'
                    LNSTR1 = 'Stokes drift at z=0'
                    LNSTR2 = 'Stokes drift at z=0'
-#if defined(W3_UWM) || defined(CESMCOUPLED)
                 else if ( IFI .eq. 6 .and. IFJ .eq. 14 ) then
                    write(6,*)'DEBUG: nsea = ',nsea
                    write(6,*)'DEBUG: size(langmt) = ',size(langmt)
@@ -532,7 +527,6 @@ contains
                    FLDSTR1 = 'LANGMT'
                    UNITSTR1 = ''
                    LNSTR1 = 'Turbulent Langmuir number (La_t)'
-#endif
                 !
                 !     Section 7)
                 !
