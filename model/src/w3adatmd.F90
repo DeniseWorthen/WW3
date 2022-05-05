@@ -470,7 +470,7 @@
 !
         REAL, POINTER         ::  USERO(:,:)
         REAL, POINTER         :: XUSERO(:,:)
-        ! Output fileds for Langmuir mixing in group 
+        ! Output fields for Langmuir mixing in group
         REAL, POINTER         :: LANGMT(:), LAPROJ(:), LASL(:),       &
                                  LASLPJ(:), LAMULT(:), ALPHAL(:),     &
                                  ALPHALS(:), USSXH(:), USSYH(:)

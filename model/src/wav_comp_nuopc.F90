@@ -380,6 +380,7 @@ contains
     use wmunitmd     , only : wmuget, wmuset
 #endif
     use wav_shel_inp , only : set_shel_io
+    use wav_grdout   , only : wavinit_grdout
 
     ! input/output variables
     type(ESMF_GridComp)  :: gcomp
@@ -642,6 +643,12 @@ contains
     call waveinit_cesm(gcomp, ntrace, mpi_comm, dtime_sync, mds, rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 #endif
+
+    !--------------------------------------------------------------------
+    ! Intialize the list of requested output variables
+    !--------------------------------------------------------------------
+
+    call wavinit_grdout
 
     ! call mpi_barrier ( mpi_comm, ierr )
 
@@ -1196,9 +1203,9 @@ contains
        call ESMF_AlarmSet(stop_alarm, clock=mclock, rc=rc)
        if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
-          !----------------
-          ! History alarm
-          !----------------
+       !----------------
+       ! History alarm
+       !----------------
        call NUOPC_CompAttributeGet(gcomp, name="history_option", isPresent=isPresent, isSet=isSet, rc=rc)
        if (ChkErr(rc,__LINE__,u_FILE_u)) return
        if (isPresent .and. isSet) then
