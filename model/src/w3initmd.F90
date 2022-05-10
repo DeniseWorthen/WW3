@@ -5105,8 +5105,8 @@
               IF ( FLGRDALL( 6, 14) ) THEN
                   IH     = IH + 1
                   IT     = IT + 1
-      CALL MPI_RECV_INIT (LANGMT  (1),NSEALM , MPI_REAL, IROOT,   &
-                                IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+      CALL MPI_RECV_INIT (LANGMT(I0),1,WW3_FIELD_VEC, IROOT, IT,  &
+                               MPI_COMM_WAVE, IRQGO(IH), IERR)
                 END IF
 #endif
 #ifdef W3_MPIT
