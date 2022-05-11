@@ -2592,6 +2592,7 @@
                                           P2MSF(3) - P2MSF(2) + 1
           IF ( FLGRDALL( 6, 8) ) NRQMAX = NRQMAX + 2*NK
           IF ( FLGRDALL( 6,12) ) NRQMAX = NRQMAX + 2*NK
+          IF ( FLGRDALL( 6,14) ) NRQMAX = NRQMAX + 1
 #endif
 !
 #ifdef W3_MPI
@@ -5106,7 +5107,7 @@
                   IH     = IH + 1
                   IT     = IT + 1
       CALL MPI_RECV_INIT (LANGMT(I0),1,WW3_FIELD_VEC, IROOT, IT,  &
-                               MPI_COMM_WAVE, IRQGO(IH), IERR)
+                               MPI_COMM_WAVE, IRQGO2(IH), IERR)
                 END IF
 #endif
 #ifdef W3_MPIT
