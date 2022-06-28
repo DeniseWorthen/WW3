@@ -41,7 +41,7 @@ module wav_comp_nuopc
   use wav_import_export     , only : advertise_fields, realize_fields
   use wav_shr_mod           , only : state_diagnose, state_getfldptr, state_fldchk
   use wav_shr_mod           , only : chkerr, state_setscalar, state_getscalar, alarmInit, ymd2date
-  use wav_shr_mod           , only : runtype, merge_import, dbug_flag
+  use wav_shr_mod           , only : wav_coupling_to_cice, runtype, merge_import, dbug_flag
   use w3odatmd              , only : nds, iaproc, napout
   use wav_shr_mod           , only : casename, multigrid, inst_suffix, inst_index
   use wav_shr_mod           , only : time_origin, calendar_name, elapsed_secs
@@ -330,11 +330,20 @@ contains
        inst_index=1
     endif
 
+    ! Get Multigrid setting
     multigrid = .false.
     call NUOPC_CompAttributeGet(gcomp, name='multigrid', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
     if (isPresent .and. isSet) multigrid=(trim(cvalue)=="true")
     write(logmsg,'(A,l)') trim(subname)//': Wave multigrid setting is ',multigrid
+    call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
+    
+    ! Determine wave-ice coupling
+    wav_coupling_to_cice = .false.
+    call NUOPC_CompAttributeGet(gcomp, name='wav_coupling_to_cice', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    if (isPresent .and. isSet) wav_coupling_to_cice=(trim(cvalue)=="true")
+    write(logmsg,'(A,l)') trim(subname)//': Wave wav_coupling_to_cice setting is ',wav_coupling_to_cice
     call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
 
     call advertise_fields(importState, exportState, flds_scalar_name, rc)
@@ -644,6 +653,10 @@ contains
 #endif
 
     ! call mpi_barrier ( mpi_comm, ierr )
+    if ( root_task ) then
+       inquire(unit=nds(1), name=logfile)
+       print *,'WW3 log written to '//trim(logfile)
+    end if
 
     !--------------------------------------------------------------------
     ! Mesh initialization
@@ -720,7 +733,7 @@ contains
     EMeshTemp = ESMF_MeshCreate(filename=trim(cvalue), fileformat=ESMF_FILEFORMAT_ESMFMESH, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
     if ( root_task ) then
-       write(stdout,*)'mesh file for domain is ',trim(cvalue)
+       write(nds(1),*)'mesh file for domain is ',trim(cvalue)
     end if
 
     ! recreate the mesh using the above distGrid
@@ -849,15 +862,15 @@ contains
     endif
 
     if (wav_coupling_to_cice) then
-      call state_getfldptr(exportState, 'wav_tauice1', wav_tauice1, rc=rc)
-      if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      call state_getfldptr(exportState, 'wav_tauice2', wav_tauice2, rc=rc)
-      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      !call state_getfldptr(exportState, 'wav_tauice1', wav_tauice1, rc=rc)
+      !if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      !call state_getfldptr(exportState, 'wav_tauice2', wav_tauice2, rc=rc)
+      !if (ChkErr(rc,__LINE__,u_FILE_u)) return
       call state_getfldptr(exportState, 'wave_elevation_spectrum', wave_elevation_spectrum, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
-       wav_tauice1(:) = 0.
-       wav_tauice2(:) = 0.
+       !wav_tauice1(:) = 0.
+       !wav_tauice2(:) = 0.
        wave_elevation_spectrum(:,:) = 0.
     endif
 
@@ -1043,7 +1056,7 @@ contains
        end if
        if ( root_task ) then
           !  write(nds(1),*) 'wav_comp_nuopc time', time, timen
-          !  write(nds(1),*) 'ww3 hist flag ', histwr, outfreq, hh, mod(hh, outfreq)
+          !  write(nds(1),*) 'ww3 hist flag ', histwr, outfreq, hh
        end if
     end if
 
