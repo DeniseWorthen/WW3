@@ -365,7 +365,7 @@
 !/
 
       USE W3GDATMD    , only : IGRID, NSEAL, NSPEC, NX, NY, NK
-      USE W3GDATMD    , only : GTYPE, UNGTYPE, SMCTYPE, RSTYPE
+      USE W3GDATMD    , only : GTYPE, UNGTYPE, SMCTYPE, RSTYPE, FILEXT
       USE W3GDATMD    , only : MAPSF, MAPFS, MAPSTA, IOBP, CTHG0S
       USE W3GDATMD    , only : FLCTH, FSREFRACTION, FLCK, FSFREQSHIFT, FLAGLL, FLDRY
       USE W3GDATMD    , only : FSTOTALIMP, FLCX, FLCY, FLSOU, FLAGST
@@ -1852,18 +1852,9 @@
 #endif
 !
 #ifdef W3_REF1
-       REFLEC=REFLC(:,ISEA)
+       REFLEC(:)=REFLC(:,ISEA)
        REFLEC(4)=BERG(ISEA)*REFLEC(4)
-       REFLED=REFLD(:,ISEA)
-#endif
-#ifdef W3_BT4
-        D50=SED_D50(ISEA)
-        PSIC=SED_PSIC(ISEA)
-#endif
-#ifdef W3_REF1
-       REFLEC=REFLC(:,ISEA)
-       REFLEC(4)=BERG(ISEA)*REFLEC(4)
-       REFLED=REFLD(:,ISEA)
+       REFLED(:)=REFLD(:,ISEA)
 #endif
 #ifdef W3_BT4
         D50=SED_D50(ISEA)
@@ -2721,9 +2712,9 @@
 #endif
 !
 #ifdef W3_REF1
-          REFLEC=REFLC(:,ISEA)
+          REFLEC(:)=REFLC(:,ISEA)
           REFLEC(4)=BERG(ISEA)*REFLEC(4)
-          REFLED=REFLD(:,ISEA)
+          REFLED(:)=REFLD(:,ISEA)
 #endif
 #ifdef W3_BT4
            D50=SED_D50(ISEA)
