@@ -361,13 +361,34 @@
 ! 10. Source code :
 !
 !/ ------------------------------------------------------------------- /
-      USE CONSTANTS
+      !USE CONSTANTS
 !/
-      USE W3GDATMD
-      USE W3WDATMD
-      USE W3ADATMD
+
+      USE W3GDATMD    , only : IGRID, IMOD, NSEAL, NSPEC, NX, NY, NK
+      USE W3GDATMD    , only : GTYPE, UNGTYPE, SMCTYPE, RSTYPE
+      USE W3GDATMD    , only : MAPSF, MAPFS, MAPSTA, IOBP, CTHG0S
+      USE W3GDATMD    , only : FLCTH, FSREFRACTION, FLCK, FSFREQSHIFT, FLAGLL, FLDRY
+      USE W3GDATMD    , only : FSTOTALIMP, FLCX, FLCY, FLSOU, FLAGST
+      USE W3GDATMD    , only : SIG, CLATS, TRNX, TRNY
+      USE W3GDATMD    , only : DTMAX, DTCFLI, DTH, DMIN
+      USE W3WDATMD    , only : UST, IWDATA, TIME, TLEV, TICE, TIC1, VA, ASF, RHOAIR
+      USE W3WDATMD    , only : USTDIR, ICE, ICEH, ICEF, ICEDMAX, BERG, FPIS
+      USE W3ADATMD    , only : FLIWND, FLCOLD, NRQSG1, IAPPRO, IRQSG1, IDLAST
+      USE W3ADATMD    , only : IADATA, IPASS, ITIME, CFLXYMAX, CFLTHMAX, CFLKMAX, DTDYN
+      USE W3ADATMD    , only : CG, DW, CX, CY, DCDX, DCDY, DCXDX, DCXDY, DCYDX, DCYDY
+      USE W3ADATMD    , only : AS, TAUOX, TAUOY, TAUWIX, TAUWIY, TAUWNX, TAUWNY, DDDX, DDDY
+      USE W3ADATMD    , only : ALPHA, WN, U10, U10D, TAUA, TAUADIR, FCUT, WHITECAP, BEDFORMS
+      USE W3ADATMD    , only : TAUBBL, TAUICE, PHIBBL, TAUOCX, TAUOCY, WNMEAN, PHIAW, PHIOC
+      USE W3ADATMD    , only : TWS, PHICE, CHARN
       USE W3IDATMD
-      USE W3ODATMD
+      USE W3ODATMD    , only : FLOUT, FLOGRD, FLOGR2, FLBPI, NOGE, NRQGO, IRQGO, NRQGO2, IRQGO2
+      USE W3ODATMD    , only : NRQPO, NRQRS, IRQRS, IOUTP, NDS, NOGE, NAPLOG, NAPOUT, NDSO, SCREEN
+      USE W3ODATMD    , only : NOTYPE, IRQPO1, NRQBP, IRQBP1, NAPBPT, IRQBP2, NRQBP2
+      USE W3ODATMD    , only : TOFRST, TONEXT, TBPIN, TBPI0, TOLAST, DTOUT, NAPFLD, NAPPNT
+      USE W3GDATMD    , only : W3SETG
+      USE W3ODATMD    , only : W3SETO
+      USE W3ADATMD    , only : W3SETA
+      USE W3WDATMD    , only : W3SETW
 !/
       USE W3UPDTMD
       USE W3SRCEMD
@@ -1873,7 +1894,7 @@
                    VSioDummy, VDioDummy, SHAVETOT(JSEA),  &
                    ALPHA(1:NK,JSEA), WN(1:NK,ISEA),               &
                    CG(1:NK,ISEA), CLATS(ISEA), DW(ISEA), U10(ISEA),            &
-                   U10D(ISEA),                                    & 
+                   U10D(ISEA),                                    &
 #ifdef W3_FLX5
                    TAUA(ISEA), TAUADIR(ISEA),                  &
 #endif
@@ -1910,8 +1931,8 @@
               DTDYN (JSEA) = UNDEF
               FCUT  (JSEA) = UNDEF
             END IF
-          END DO ! JSEA 
-        END IF ! PDLIB 
+          END DO ! JSEA
+        END IF ! PDLIB
 #endif
 
 
@@ -2067,7 +2088,7 @@
              IX     = MAPSF(ISEA,1)
              IF (JSEA.EQ.1) &
                WRITE(995,*) '       IP  dtmax_exp(ip)        x-coord        y-coord        z-coord'
-             WRITE(995,'(I10,F10.2,3F10.4)') IX,  DTCFL1(JSEA), XGRD(1,IX), YGRD(2,IX), ZB(IX)  
+             WRITE(995,'(I10,F10.2,3F10.4)') IX,  DTCFL1(JSEA), XGRD(1,IX), YGRD(2,IX), ZB(IX)
            END DO ! JSEA
            CLOSE(995)
          END IF
@@ -2448,8 +2469,8 @@
             ISPEC = 0
              JSEA = IY
 #endif
-#endif 
-! W3_SMC ... 
+#endif
+! W3_SMC ...
 !
 #ifdef W3_SMC
  !!Li   Assign boundary cell spectra.
