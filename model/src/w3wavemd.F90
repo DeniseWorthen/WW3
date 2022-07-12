@@ -400,6 +400,9 @@
 #ifdef W3_REF1
       USE W3GDATMD    , only : RLGTYPE, SX, SY, CLGTYPE, HPFAC, HQFAC, REFLC, REFLD
 #endif
+#ifdef W3_BT4
+      USE W3GDATMD    , only : SED_D50, SED_PSIC
+#endif
 #ifdef W3_PR1
       USE W3PRO1MD
 #endif
@@ -459,6 +462,7 @@
 #endif
 
 #ifdef W3_OASIS
+      USE W3WDATMD, ONLY: TIME00, TIMEEND
       USE W3OACPMD, ONLY: ID_OASIS_TIME, CPLT0
 #endif
 #ifdef W3_OASOCM
