@@ -397,8 +397,8 @@
       USE W3ODATMD    , only : NRQRS, IRQRS, IRQPO1, NRQBP, IRQBP1, IRQBP2, NRQBP2
       USE W3ADATMD    , only : NRQSG1, IRQSG1, NRQSG1
 #endif
-#ifdef WW3_REF1
-      USE W3GDATMD    , only : RLGTYPE, SX, SY, CLGTYPE, HPFAC, HQFAC, REFLC
+#ifdef W3_REF1
+      USE W3GDATMD    , only : RLGTYPE, SX, SY, CLGTYPE, HPFAC, HQFAC, REFLC, REFLD
 #endif
 #ifdef W3_PR1
       USE W3PRO1MD
@@ -1852,9 +1852,9 @@
 #endif
 !
 #ifdef W3_REF1
-       REFLEC(:)=REFLC(:,ISEA)
+       REFLEC=REFLC(:,ISEA)
        REFLEC(4)=BERG(ISEA)*REFLEC(4)
-       REFLED(:)=REFLD(:,ISEA)
+       REFLED=REFLD(:,ISEA)
 #endif
 #ifdef W3_BT4
         D50=SED_D50(ISEA)
@@ -2712,9 +2712,9 @@
 #endif
 !
 #ifdef W3_REF1
-          REFLEC(:)=REFLC(:,ISEA)
+          REFLEC=REFLC(:,ISEA)
           REFLEC(4)=BERG(ISEA)*REFLEC(4)
-          REFLED(:)=REFLD(:,ISEA)
+          REFLED=REFLD(:,ISEA)
 #endif
 #ifdef W3_BT4
            D50=SED_D50(ISEA)
