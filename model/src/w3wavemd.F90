@@ -425,8 +425,8 @@
       USE W3GDATMD    , only : SED_D50, SED_PSIC
 #endif
 #ifdef W3_PR1
-     USE W3PRO1MD
-     USE W3PROFSMD
+      USE W3PRO1MD    , only : W3MAP1, W3XYP1, W3KTP1
+      USE W3PROFSMD   , only : W3XYPUG
 #endif
 #ifdef W3_PR2
       USE W3PRO2MD    , only : W3XYP2, W3MAP2, W3KTP2
