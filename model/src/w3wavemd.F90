@@ -385,7 +385,8 @@
       USE W3ADATMD    , only : TWS, PHICE, CHARN
 
       USE W3IDATMD    , only : IIDATA
-      USE W3IDATMD    , only : INFLAGS1, FLLEV, FLCUR, FLWIND, FLICE, FLTAUA, FLRHOA, FLIC1
+      USE W3IDATMD    , only : INFLAGS1, FLLEV, FLCUR, FLWIND, FLICE, FLTAUA, FLRHOA
+      USE W3IDATMD    , only : FLIC1, FLIC2, FLIC3, FLIC4, FLIC5
       USE W3IDATMD    , only : TLN, TC0, TCN, TW0, TWN, TIN, TU0, TUN, TI1, TGN, TG0, GA0, GAN
       USE W3IDATMD    , only : GD0, GDN, TDN, TRN
 
@@ -409,11 +410,13 @@
       USE W3IORSMD    , only : W3IORS
       USE W3IOBCMD    , only : W3IOBC
       USE W3IOSFMD    , only : W3IOSF, W3CPRT
+      USE W3SERVMD    , only : EXTCDE, WWTIME
+      USE W3TIMEMD    , only : DSEC21, TICK21, STME21
 !/
 #ifdef W3_MPI
       USE W3ODATMD    , only : NRQGO, NRQGO2, IRQGO, IRQGO2, NRQPO, NRQPO2, IRQPO1, IRQPO2
       USE W3ODATMD    , only : NRQRS, IRQRS, IRQPO1, NRQBP, IRQBP1, IRQBP2, NRQBP2
-      USE W3ADATMD    , only : NRQSG1, IRQSG1, NRQSG1
+      USE W3ADATMD    , only : NRQSG1, IRQSG1, NRQSG1, MPI_COMM_WAVE
 #endif
 #ifdef W3_REF1
       USE W3GDATMD    , only : RLGTYPE, SX, SY, CLGTYPE, HPFAC, HQFAC, REFLC, REFLD
@@ -434,7 +437,11 @@
       USE W3PROFSMD   , only : W3XYPUG, W3CFLUG
 #endif
 #ifdef W3_SMC
-      USE W3PSMCMD
+      USE W3GDATMD    , only : ANGARC, ARCTC, NBAC, NBGL, NGLO, NCel, ICLBAC, SPCBAC
+      USE W3ADATMD    , only : DHDX, DHDY, DHLMT
+      USE W3GDATMD    , only : NTH
+      USE W3PSMCMD    , only : SMCDHXY, SMCDCXY, W3SCATSMC, W3GATHSMC, W3PSMC, W3KRTN
+      USE W3SERVMD    , only : W3ACTURN
 #endif
 !
 !/
@@ -449,13 +456,15 @@
       USE yowNodepool      , only : npa, iplg, np
 #endif
 !/
-      !USE W3SERVMD
-      USE W3TIMEMD    , only : DSEC21
 #ifdef W3_IC3
-      USE W3SIC3MD
+      USE W3GDATMD    , only : IC3PARS
+      USE W3SIC3MD    , only : CALLEDIC3TABLE, IC3TABLE_CHENG, W3IC3WNCG_V1, W3IC3WNCG_CHENG
+      USE W3IDATMD    , only : ICEP1, ICEP2, ICEP3, ICEP4
 #endif
 #ifdef W3_IS2
-      USE W3SIS2MD
+      USE W3WDATMD    , only : TIC5
+      USE W3IDATMD    , only : TI5
+      USE W3UPDTMD    , only : W3UIC5
 #endif
 #ifdef W3_UOST
       USE W3UOSTMD, ONLY: UOST_SETGRID
@@ -515,9 +524,6 @@
 !/ ------------------------------------------------------------------- /
 !/ Local parameters :
 !/
-#ifdef W3_T
-      INTEGER                 :: ILEN
-#endif
 #ifdef W3_S
       INTEGER, SAVE           :: IENT = 0
 #endif
@@ -753,8 +759,7 @@
 ! 0.d Test output
 !
 #ifdef W3_T
-      ILEN   = LEN_TRIM(FILEXT)
-      WRITE (NDST,9000) IMOD, FILEXT(:ILEN), TEND
+      WRITE (NDST,9000) IMOD, trim(FILEXT), TEND
 #endif
 !
 ! 1.  Check the consistency of the input ----------------------------- /
