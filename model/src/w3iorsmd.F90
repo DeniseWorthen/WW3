@@ -245,38 +245,40 @@
 ! 10. Source code :
 !
 !/ ------------------------------------------------------------------- /
-      USE W3GDATMD, ONLY: W3SETG, W3SETREF, RSTYPE
-      USE W3ODATMD, ONLY: W3SETO
-      USE W3ADATMD, ONLY: W3SETA, W3XETA, NSEALM
-      USE W3ADATMD, ONLY: CX, CY, HS, WLM, T0M1, T01, FP0, THM, CHARN,&
-                          TAUWIX, TAUWIY, TWS, TAUOX, TAUOY, BHD,     &
-                          PHIOC, TUSX, TUSY, USSX, USSY, TAUICE,      &
-                          UBA, UBD, PHIBBL, TAUBBL, TAUOCX, TAUOCY,   &
-                          WNMEAN
+      USE W3GDATMD, ONLY : W3SETG, W3SETREF, RSTYPE
+      USE W3ODATMD, ONLY : W3SETO
+      USE W3WDATMD, only : W3SETW, W3DIMW
+      USE W3ADATMD, ONLY : W3SETA, W3XETA, NSEALM
+      USE W3ADATMD, ONLY : CX, CY, HS, WLM, T0M1, T01, FP0, THM, CHARN,&
+                           TAUWIX, TAUWIY, TWS, TAUOX, TAUOY, BHD,     &
+                           PHIOC, TUSX, TUSY, USSX, USSY, TAUICE,      &
+                           UBA, UBD, PHIBBL, TAUBBL, TAUOCX, TAUOCY,   &
+                           WNMEAN
 !/
-      USE W3GDATMD, ONLY: NX, NY, NSEA, NSEAL, NSPEC, MAPSTA, MAPST2, &
-                          GNAME, FILEXT, GTYPE, UNGTYPE
-      USE W3TRIAMD, ONLY: SET_UG_IOBP
-      USE W3WDATMD
+      USE W3GDATMD, ONLY : NX, NY, NSEA, NSEAL, NSPEC, MAPSTA, MAPST2, &
+                           GNAME, FILEXT, GTYPE, UNGTYPE
+      USE W3TRIAMD, ONLY : SET_UG_IOBP
+      USE W3WDATMD, only : DINIT, VA, TIME, TLEV, TICE, TRHO, ICE, UST
+      USE W3WDATMD, only : USTDIR, ASF, FPIS, ICEF, TIC1, TIC5, WLV
 #ifdef W3_WRST
-      USE W3IDATMD, ONLY: WXN, WYN, W3SETI
-      USE W3IDATMD, ONLY: WXNwrst, WYNwrst
+      USE W3IDATMD, ONLY : WXN, WYN, W3SETI
+      USE W3IDATMD, ONLY : WXNwrst, WYNwrst
 #endif
-      USE W3ODATMD, ONLY: NDSE, NDST, IAPROC, NAPROC, NAPERR, NAPRST, &
-                          IFILE => IFILE4, FNMPRE, NTPROC, IOSTYP,    &
-                          FLOGRR, NOGRP, NGRPP, SCREEN
+      USE W3ODATMD, ONLY : NDSE, NDST, IAPROC, NAPROC, NAPERR, NAPRST, &
+                           IFILE => IFILE4, FNMPRE, NTPROC, IOSTYP,    &
+                           FLOGRR, NOGRP, NGRPP, SCREEN
 #ifdef W3_MPI
-      USE W3ODATMD, ONLY: NRQRS, NBLKRS, RSBLKS, IRQRS, IRQRSS,  &
+      USE W3ODATMD, ONLY : NRQRS, NBLKRS, RSBLKS, IRQRS, IRQRSS,  &
                                VAAUX
-      USE W3ADATMD, ONLY: MPI_COMM_WCMP
+      USE W3ADATMD, ONLY : MPI_COMM_WCMP
 #endif
 !/
-      USE W3SERVMD, ONLY: EXTCDE
-      USE CONSTANTS, only: LPDLIB, file_endian
-      USE W3PARALL, ONLY: INIT_GET_ISEA, INIT_GET_JSEA_ISPROC
-      USE W3GDATMD, ONLY: NK, NTH
+      USE W3SERVMD,  ONLY : EXTCDE
+      USE CONSTANTS, only : LPDLIB, file_endian
+      USE W3PARALL,  ONLY : INIT_GET_ISEA, INIT_GET_JSEA_ISPROC
+      USE W3GDATMD,  ONLY : NK, NTH
 #ifdef W3_TIMINGS
-      USE W3PARALL, ONLY: PRINT_MY_TIME
+      USE W3PARALL, ONLY  : PRINT_MY_TIME
 #endif
 #ifdef W3_CESMCOUPLED
       USE W3ADATMD   , ONLY : LAMULT
@@ -287,7 +289,7 @@
     USE PDLIB_FIELD_VEC
 #endif
 #ifdef W3_S
-      USE W3SERVMD, ONLY: STRACE
+      USE W3SERVMD, ONLY : STRACE
 #endif
 !
       IMPLICIT NONE
