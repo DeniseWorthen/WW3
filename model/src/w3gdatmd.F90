@@ -781,18 +781,18 @@ MODULE W3GDATMD
      REAL              :: DDELTA2                                         ! W3_ST3
 
      INTEGER           :: SSDSISO, SSDSBRFDF                              ! W3_ST3, W3_ST4
-     REAL              :: AALPHA, BBETA, ZZ0MAX, ZZ0RAT, ZZALP            ! W3_ST3, W3_ST4 
-     REAL              :: SSINTHP, TTAUWSHELTER                           ! W3_ST3, W3_ST4 
+     REAL              :: AALPHA, BBETA, ZZ0MAX, ZZ0RAT, ZZALP            ! W3_ST3, W3_ST4
+     REAL              :: SSINTHP, TTAUWSHELTER                           ! W3_ST3, W3_ST4
      REAL              :: SSDSP, SSDSBR                                   ! W3_ST3, W3_ST4
      REAL              :: FFXPM, FFXFM                                    ! W3_ST3, W3_ST4
      REAL              :: ZZWND                                           ! W3_ST3, W3_ST4
      REAL              :: WWNMEANP, SSTXFTF, SSTXFTWN                     ! W3_ST3, W3_ST4
 #ifdef W3_ST3
      REAL              :: SSWELLF(1:6)                                    ! W3_ST3
-#endif     
+#endif
 #ifdef W3_ST4
-     REAL              :: SSWELLF(1:7)                                    ! W3_ST4 
-#endif     
+     REAL              :: SSWELLF(1:7)                                    ! W3_ST4
+#endif
 
      INTEGER           :: SSWELLFPAR                                      ! W3_ST4
      INTEGER,  POINTER :: IKTAB(:,:), SATINDICES(:,:)                     ! W3_ST4
@@ -981,8 +981,8 @@ MODULE W3GDATMD
   INTEGER,           POINTER :: ISMCBP(:),   ICLBAC(:)                ! W3_SMC
                                                                       !
   INTEGER,           POINTER :: NITERSEC1                             ! W3_SEC1
-  REAL,              POINTER :: SX, SY, X0, Y0, DTCFL, DTCFLI, DTMAX 
-  REAL,              POINTER :: DTMIN, DMIN, CTMAX, FICE0, FICEN 
+  REAL,              POINTER :: SX, SY, X0, Y0, DTCFL, DTCFLI, DTMAX
+  REAL,              POINTER :: DTMIN, DMIN, CTMAX, FICE0, FICEN
   REAL,              POINTER :: FICEL, PFMOVE, STEXU, STEYU, STEDU
   REAL,              POINTER :: IICEHMIN, IICEHINIT, ICESCALES(:)
   REAL,              POINTER :: IICEHFAC, IICEHDISP, IICEDDISP, IICEFDISP
@@ -3097,7 +3097,7 @@ CONTAINS
        DO IY=2, NY-1
           DO IX=2, NX-1
              IF (REFPARS(1).GT.0) RREF(1)=.TRUE.
-             !No reflection from artificial island on pole. 
+             !No reflection from artificial island on pole.
              IF (FLAGLL.AND.(YGRD(IY,IX).GT.85)) RREF(1)=.FALSE.
              IF (MAPSTA(IY,IX).GT.0) THEN
                 !
@@ -3113,11 +3113,11 @@ CONTAINS
                 !
                 ! resolved shoreline reflection
                 !
-                IF (RREF(1)) THEN 
+                IF (RREF(1)) THEN
                    REFLC(1,  MAPFS(IY,IX)) = 0.
                    REFLD(1:6,MAPFS(IY,IX)) = 0
                    !
-                   ! Search for neighboring coastline.        3 2 1 
+                   ! Search for neighboring coastline.        3 2 1
                    ! around X. These are the neighbors of X:  4 X 0
                    !                                          5 6 7
                    !
@@ -3127,9 +3127,9 @@ CONTAINS
                    NEIGH1(4)=8*MAPST2(IY,IX-1)+MAPSTA(IY,IX-1)
                    NEIGH1(5:7)=8*MAPST2(IY-1,IX-1:IX+1)+MAPSTA(IY-1,IX-1:IX+1)
                    !
-                   ! if one of the surrounding points is land: determines directions ... 
-                   !              
-                   IF (MINVAL(ABS(NEIGH1)).EQ.0) THEN 
+                   ! if one of the surrounding points is land: determines directions ...
+                   !
+                   IF (MINVAL(ABS(NEIGH1)).EQ.0) THEN
                       IF ( FLAGLL ) THEN
                          CLAT   = COS(YGRD(IY,IX)*DERA)
                       ELSE
@@ -3140,33 +3140,33 @@ CONTAINS
                       ANGLES(2)= ATAN2(DYDQ(IY,IX),DXDQ(IY,IX)*CLAT)
                       ANGLES(3)= ATAN2(DYDQ(IY,IX)-DYDP(IY,IX),(DXDQ(IY,IX)-DXDP(IY,IX))*CLAT)
                       ANGLES(4:7)= ANGLES(0:3)+PI
-                      IF ((NEIGH1(0).GE.1).AND.(NEIGH1(4).GE.1)) THEN 
+                      IF ((NEIGH1(0).GE.1).AND.(NEIGH1(4).GE.1)) THEN
                          REFLD(3,MAPFS(IY,IX))=0
-                      ELSE 
+                      ELSE
                          IF ((NEIGH1(0).GE.1).OR.(NEIGH1(4).GE.1)) REFLD(3,MAPFS(IY,IX))=1
                       END IF
-                      IF ((NEIGH1(2).EQ.1).AND.(NEIGH1(6).GE.1)) THEN 
+                      IF ((NEIGH1(2).EQ.1).AND.(NEIGH1(6).GE.1)) THEN
                          REFLD(4,MAPFS(IY,IX))=0
                       ELSE
                          IF ((NEIGH1(2).GE.1).OR.(NEIGH1(6).GE.1)) REFLD(4,MAPFS(IY,IX))=1
                       END IF
                       !
-                      ! Looks for a locally straight coast in all 8 orientations 
+                      ! Looks for a locally straight coast in all 8 orientations
                       !
                       J=0
                       REFLD(1,MAPFS(IY,IX))=0
                       COSAVG=0
                       SINAVG=0
-                      ! Shore angle is corrected for grid rotation in w3ref1md.ftn with  REFLD(5:6,MAPFS(IY,IX)) 
+                      ! Shore angle is corrected for grid rotation in w3ref1md.ftn with  REFLD(5:6,MAPFS(IY,IX))
                       REFLD(5,MAPFS(IY,IX))= MOD(NTH+NINT(ANGLES(0)/TPI*NTH),NTH)
                       REFLD(6,MAPFS(IY,IX))= MOD(NTH+NINT((ANGLES(2)/TPI-0.25)*NTH),NTH)
                       if (w3_reft_flag) then
-                         IF (IY.EQ.4) THEN 
+                         IF (IY.EQ.4) THEN
                             WRITE(6,*) 'POINT (IX,IY):',IX,IY
-                            WRITE(6,*) 'REFT:',NEIGH1(3),NEIGH1(2), NEIGH1(1) 
-                            WRITE(6,*) 'REFT:',NEIGH1(4),1, NEIGH1(0) 
+                            WRITE(6,*) 'REFT:',NEIGH1(3),NEIGH1(2), NEIGH1(1)
+                            WRITE(6,*) 'REFT:',NEIGH1(4),1, NEIGH1(0)
                             WRITE(6,*) 'REFT:',NEIGH1(5:7)
-                            WRITE(6,*) 'ANG:',ANGLES(3)*RADE,ANGLES(2)*RADE, ANGLES(1)*RADE 
+                            WRITE(6,*) 'ANG:',ANGLES(3)*RADE,ANGLES(2)*RADE, ANGLES(1)*RADE
                             WRITE(6,*) 'ANG:',ANGLES(4)*RADE,1, ANGLES(0) *RADE
                             WRITE(6,*) 'ANG:',ANGLES(5:7)*RADE
                             WRITE(6,*) 'REFT:',XGRD(IY+1,IX-1:IX+1), YGRD(IY+1,IX-1:IX+1)
@@ -3178,7 +3178,7 @@ CONTAINS
                       DO K=0,7
                          IF (NEIGH1(K).EQ.0.AND.NEIGH1(MOD(K+7,8)).EQ.0 &
                               .AND.NEIGH1(MOD(K+1,8)).EQ.0 &
-                              .AND.NEIGH1(MOD(K+4,8)).NE.0) THEN 
+                              .AND.NEIGH1(MOD(K+4,8)).NE.0) THEN
                             REFLC(1,MAPFS(IY,IX))= REFPARS(1)
                             !
                             ! Defines direction index for specular reflection (normal to coast)
@@ -3187,7 +3187,7 @@ CONTAINS
                             !  (NB: 1 is sea, 0 is land)             1 X 0
                             !                                        1 1 0
                             !
-                            !  then there is only a coastline detection for K=0, giving J=1 
+                            !  then there is only a coastline detection for K=0, giving J=1
                             !  and the final result will be REFLD(1,MAPFS(IY,IX))=1
                             !  Namely, the direction TH(REFLD) is the direction pointing INTO the coast
                             !
@@ -3197,9 +3197,9 @@ CONTAINS
                             J=J+1
                          ENDIF
                       END DO
-                      IF (J.GT.0) THEN 
+                      IF (J.GT.0) THEN
                          IF (J.GT.1) REFLD(2,MAPFS(IY,IX))= 1
-                         THAVG=ATAN2(SINAVG,COSAVG) 
+                         THAVG=ATAN2(SINAVG,COSAVG)
 #if defined(TEST_W3GDATMD) || defined(TEST_W3GDATMD_W3SETREF)
                          !WRITE (6,*) 'COASTAL REFLECTION:',IX,IY,   &
                          !SINAVG,COSAVG,THAVG/TPI,NINT(THAVG/TPI*NTH),MOD(NTH+NINT(THAVG/TPI*NTH),NTH)
@@ -3207,12 +3207,12 @@ CONTAINS
                          REFLD(1,MAPFS(IY,IX))=1+MOD(NTH+NINT(THAVG/TPI*NTH),NTH)
                       ELSE
 
-                         !                             1 1 1 
+                         !                             1 1 1
                          ! Looks for mild corners like 1 1 1
-                         !                             1 0 0          
+                         !                             1 0 0
                          DO K=0,7
                             IF (NEIGH1(K).EQ.0.AND.NEIGH1(MOD(K+1,8)).EQ.0 &
-                                 .AND.NEIGH1(MOD(K+4,8)).NE.0) THEN 
+                                 .AND.NEIGH1(MOD(K+4,8)).NE.0) THEN
                                REFLC(1,MAPFS(IY,IX))= REFPARS(1)
                                REFLD(1,MAPFS(IY,IX))= 1+MOD((K*NTH+(K+1)*NTH)/16,NTH)
                                REFLD(2,MAPFS(IY,IX))= 1
@@ -3220,10 +3220,10 @@ CONTAINS
                          END DO
                          !                              1 1 1                        1 1 1
                          ! Looks for sharp corners like 1 1 1 but not diagonals like 1 1 1
-                         !                              1 0 1                        1 1 0          
-                         IF (REFLC(1,MAPFS(IY,IX)).LE.0) THEN 
+                         !                              1 0 1                        1 1 0
+                         IF (REFLC(1,MAPFS(IY,IX)).LE.0) THEN
                             DO K=0,7,2
-                               IF ( NEIGH1(K).EQ.0.AND.NEIGH1(MOD(K+4,8)).NE.0) THEN 
+                               IF ( NEIGH1(K).EQ.0.AND.NEIGH1(MOD(K+4,8)).NE.0) THEN
                                   REFLC(1,MAPFS(IY,IX))= REFPARS(1)
                                   REFLD(1,MAPFS(IY,IX))= 1+(K*NTH)/8
                                   REFLD(2,MAPFS(IY,IX))= 0
@@ -3235,7 +3235,7 @@ CONTAINS
                       ! End of test if surrounding point is land
                    END IF
                    if (w3_reft_flag) then
-                      IF (REFLC(1,MAPFS(IY,IX)).GT.0)  THEN 
+                      IF (REFLC(1,MAPFS(IY,IX)).GT.0)  THEN
                          WRITE (6,*) 'COAST DIRECTION AT POINT:',IX,IY,' IS ', &
                               REFLD(:,MAPFS(IY,IX)),TH(REFLD(1,MAPFS(IY,IX)))*360/TPI
                       ENDIF
