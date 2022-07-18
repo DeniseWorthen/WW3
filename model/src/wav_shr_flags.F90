@@ -853,6 +853,18 @@ module wav_shr_flags
    logical ::  w3_sbs_flag = .false.     !< @public a flag for "W3_SBS"
 #endif
 
+#ifdef W3_BT4
+   logical ::  w3_bt4_flag = .true.      !< @public a flag for "W3_BT4"
+#else
+   logical ::  w3_bt4_flag = .false.     !< @public a flag for "W3_BT4"
+#endif
+
+#ifdef W3_WCOR
+   logical ::  w3_wcor_flag = .true.      !< @public a flag for "W3_WCOR"
+#else
+   logical ::  w3_wcor_flag = .false.     !< @public a flag for "W3_WCOR"
+#endif
+
   interface print_logmsg
     module procedure print_logmsg_1line
     module procedure print_logmsg_2line
