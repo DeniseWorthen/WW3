@@ -2610,20 +2610,17 @@
                              MPI_COMM_BCT, IERR_MPI )
             CALL MPI_BCAST ( FILEXT, 10, MPI_CHARACTER, 0,       &
                              MPI_COMM_BCT, IERR_MPI )
-            IF ( MPI_COMM_GRD .EQ. MPI_COMM_NULL )               &
-                 CALL W3DIMX  ( I, NX, NY, NSEA, MDSE, MDST      &
-#endif
+            IF ( MPI_COMM_GRD .EQ. MPI_COMM_NULL )  then
 #ifdef W3_SMC
- !!  SMC grid related variables are not needed beyond MPI_COMM_GRD
- !!  so all dimensions are minimised to 1.  JGLi29Mar2021
+               !!  SMC grid related variables are not needed beyond MPI_COMM_GRD
+               !!  so all dimensions are minimised to 1.  JGLi29Mar2021
+               CALL W3DIMX  ( I, NX, NY, NSEA, MDSE, MDST,    &
+                    MCel=1, MUFc=1, MVFc=1, MRLv=1, MBSMC=1,  &
+                    MARC=1, MBAC=1, MSPEC=1)
+#else
+               CALL W3DIMX  ( I, NX, NY, NSEA, MDSE, MDST)
 #endif
-#ifdef W3_MPI
-#ifdef W3_SMC
- !!Li        , NCel, NUFc, NVFc, NRLv, NBSMC  &
- !!Li        , NARC, NBAC, NSPEC              &
-             , 1, 1, 1, 1, 1, 1, 1, 1         &
-#endif
-                )
+            end IF
             CALL MPI_BCAST ( HQFAC, NX*NY, MPI_REAL, 0,          &
                              MPI_COMM_BCT, IERR_MPI )
             CALL MPI_BCAST ( HPFAC, NX*NY, MPI_REAL, 0,          &
@@ -2649,9 +2646,6 @@
                              MPI_COMM_BCT, IERR_MPI )
             CALL MPI_BCAST ( GRIDSHIFT, 1, MPI_DOUBLE_PRECISION, 0, &
                              MPI_COMM_BCT, IERR_MPI )
-#endif
-!
-#ifdef W3_MPI
             CALL MPI_BCAST ( NK   , 1, MPI_INTEGER, 0,           &
                              MPI_COMM_BCT, IERR_MPI )
             CALL MPI_BCAST ( NTH  , 1, MPI_INTEGER, 0,           &
@@ -2664,18 +2658,12 @@
                  CALL W3DIMS ( I, NK, NTH, MDSE, MDST )
             CALL MPI_BCAST ( TH , NTH, MPI_REAL   , 0,           &
                              MPI_COMM_BCT, IERR_MPI )
-#endif
-!
-#ifdef W3_MPI
             CALL MPI_BCAST ( NAPROC,1, MPI_INTEGER, 0,           &
                              MPI_COMM_BCT, IERR_MPI )
             CALL MPI_BCAST ( NAPPNT,1, MPI_INTEGER, 0,           &
                              MPI_COMM_BCT, IERR_MPI )
             CALL MPI_BCAST ( NBI  , 1, MPI_INTEGER, 0,           &
                              MPI_COMM_BCT, IERR_MPI )
-#endif
-!
-#ifdef W3_MPI
             CALL MPI_BCAST ( FLOUT,  8, MPI_LOGICAL, 0,          &
                              MPI_COMM_BCT, IERR_MPI )
             CALL MPI_BCAST ( DTOUT , 8, MPI_REAL, 0,             &
@@ -2684,12 +2672,9 @@
                              MPI_COMM_BCT, IERR_MPI )
             CALL MPI_BCAST ( TOLAST,16, MPI_INTEGER, 0,          &
                              MPI_COMM_BCT, IERR_MPI )
-#endif
-!
-#ifdef W3_MPI
           END IF
         END DO
-      CALL MPI_BARRIER (MPI_COMM_MWAVE,IERR_MPI)
+        CALL MPI_BARRIER (MPI_COMM_MWAVE,IERR_MPI)
 #endif
 !
       DO I=1, NRGRD
@@ -2802,13 +2787,11 @@
       DO I=1, NRGRD
         CALL WMSETM ( I, MDSE, MDST )
         CALL W3SETG ( I, MDSE, MDST )
-#endif
-! the next line (with the W3GSUD call) removed Jan 8 2013. 
-! ...ref: personal communication, 
-! ...email from Rogers to Alves, Campbell, Tolman, Chawla Dec 13 2012.
-! REMOVED  !/MPI        IF ( MPI_COMM_GRD .EQ. MPI_COMM_NULL ) CALL W3GSUD( GSU )
-#ifdef W3_MPI
-        END DO
+        ! the next line (with the W3GSUD call) removed Jan 8 2013. 
+        ! ...ref: personal communication, 
+        ! ...email from Rogers to Alves, Campbell, Tolman, Chawla Dec 13 2012.
+        ! REMOVED  !/MPI IF ( MPI_COMM_GRD .EQ. MPI_COMM_NULL ) CALL W3GSUD( GSU )
+     END DO
 #endif
 !
 ! ..... Unit numbers

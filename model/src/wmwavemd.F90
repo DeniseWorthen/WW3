@@ -930,7 +930,7 @@
 #endif
 !
                 CALL WMSETM ( I, MDSE, MDST )
-                CALL W3WAVE ( I, DUMMY2, TSYNC(:,I), .FALSE., .TRUE. )
+                CALL W3WAVE ( I, DUMMY2, TSYNC(:,I), STAMP=.FALSE., NO_OUT=.TRUE. )
                 IF ( FLLSTL ) INFLAGS1(1) = .FALSE.
                 IF ( FLLSTI ) INFLAGS1(4) = .FALSE.
                 IF ( FLLSTR ) INFLAGS1(6) = .FALSE.
@@ -1265,7 +1265,7 @@
 !
                       END IF
 !
-                    CALL W3WAVE ( I, DUMMY2, TSYNC(:,I), .FALSE. )
+                    CALL W3WAVE ( I, DUMMY2, TSYNC(:,I), STAMP=.FALSE. )
 !
                     IF ( FLGHG1 .AND. .NOT.FLGHG2 .AND.               &
                          GRDHGH(I,0).GT.0 ) THEN

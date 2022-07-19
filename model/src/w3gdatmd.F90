@@ -787,8 +787,13 @@ MODULE W3GDATMD
      REAL              :: FFXPM, FFXFM                                    ! W3_ST3, W3_ST4
      REAL              :: ZZWND                                           ! W3_ST3, W3_ST4
      REAL              :: WWNMEANP, SSTXFTF, SSTXFTWN                     ! W3_ST3, W3_ST4
-     REAL              :: SSWELLF(1:7)                                    ! W3_ST3, W3_ST4 
-
+#ifdef W3_ST3
+     REAL              :: SSWELLF(1:6)                                    ! W3_ST3
+#elif W3_ST4
+     REAL              :: SSWELLF(1:7)                                    ! W3_ST4
+#else
+     REAL              :: SSWELLF(1)                                      ! needed to use pointers below
+#endif
      INTEGER           :: SSWELLFPAR                                      ! W3_ST4
      INTEGER,  POINTER :: IKTAB(:,:), SATINDICES(:,:)                     ! W3_ST4
      REAL,     POINTER :: DCKI(:,:), SATWEIGHTS(:,:),CUMULW(:,:),QBI(:,:) ! W3_ST4
@@ -1057,7 +1062,7 @@ MODULE W3GDATMD
   !/
   !/ Data aliasses for structure SLNP(S)
   !/
-  REAL, POINTER           :: SLNC1, FSPM, FSHF ! W3_LN1
+  REAL, POINTER      :: SLNC1, FSPM, FSHF ! W3_LN1
   !/
   !/ Data aliasses for structure SRCP(S)
   !/
@@ -1305,16 +1310,10 @@ CONTAINS
   END SUBROUTINE W3NMOD
 
   !/ ------------------------------------------------------------------- /
-#ifdef W3_SMC
   SUBROUTINE W3DIMX  ( IMOD, MX, MY, MSEA, NDSE, NDST, &
                        MCel, MUFc, MVFc, MRLv, MBSMC,  &
                        MARC, MBAC, MSPEC)
-#else
-  SUBROUTINE W3DIMX  ( IMOD, MX, MY, MSEA, NDSE, NDST)
-#endif
-#ifdef W3_SMC
     !!Li    A few dimensional numbers for SMC grid.
-#endif
     !/
     !/                  +-----------------------------------+
     !/                  | WAVEWATCH III           NOAA/NCEP |
@@ -1399,11 +1398,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, MX, MY, MSEA, NDSE, NDST
-#ifdef W3_SMC
-    INTEGER, INTENT(IN)     :: MCel, MUFc, MVFc, MRLv, MBSMC
-    INTEGER, INTENT(IN)     :: MARC, MBAC, MSPEC
-#endif
+    INTEGER, INTENT(IN)           :: IMOD, MX, MY, MSEA, NDSE, NDST
+    INTEGER, INTENT(IN), optional :: MCel, MUFc, MVFc, MRLv, MBSMC
+    INTEGER, INTENT(IN), optional :: MARC, MBAC, MSPEC
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1510,57 +1507,57 @@ CONTAINS
        CHECK_ALLOC_STATUS ( ISTAT )
     end if
     !
-#ifdef W3_SMC
-    ! Note that the following dimensions are based on input arguments
-    ALLOCATE ( GRIDS(IMOD)%NLvCel(0:MRLv),     STAT=ISTAT)
-    CHECK_ALLOC_STATUS ( ISTAT )
-    ALLOCATE ( GRIDS(IMOD)%NLvUFc(0:MRLv),     STAT=ISTAT)
-    CHECK_ALLOC_STATUS ( ISTAT )
-    ALLOCATE ( GRIDS(IMOD)%NLvVFc(0:MRLv),     STAT=ISTAT)
-    CHECK_ALLOC_STATUS ( ISTAT )
-    ALLOCATE ( GRIDS(IMOD)%IJKCel(5, -9:MCel), STAT=ISTAT)
-    CHECK_ALLOC_STATUS ( ISTAT )
-    ALLOCATE ( GRIDS(IMOD)%IJKUFc(7,MUFc),     STAT=ISTAT)
-    CHECK_ALLOC_STATUS ( ISTAT )
-    ALLOCATE ( GRIDS(IMOD)%IJKVFc(8,MVFc),     STAT=ISTAT)
-    CHECK_ALLOC_STATUS ( ISTAT )
-    ALLOCATE ( GRIDS(IMOD)%CTRNX(-9:MCel),     STAT=ISTAT)
-    CHECK_ALLOC_STATUS ( ISTAT )
-    ALLOCATE ( GRIDS(IMOD)%CTRNY(-9:MCel),     STAT=ISTAT)
-    CHECK_ALLOC_STATUS ( ISTAT )
-    ALLOCATE ( GRIDS(IMOD)%CLATF(MVFc),        STAT=ISTAT)
-    CHECK_ALLOC_STATUS ( ISTAT )
-    !
-    !! Arctic part related variables, declare minimum 1 element.
-    IARC = MARC
-    IF( MARC .LE. 1 ) IARC = 1
-    IBAC = MBAC
-    IF( MBAC .LE. 1 ) IBAC = 1
-    IBSMC = MBSMC
-    IF( MBSMC .LE. 1 ) IBSMC = 1
-    ALLOCATE ( GRIDS(IMOD)%ICLBAC(IBAC),       STAT=ISTAT)
-    CHECK_ALLOC_STATUS ( ISTAT )
-    ALLOCATE ( GRIDS(IMOD)%ANGARC(IARC),       STAT=ISTAT)
-    CHECK_ALLOC_STATUS ( ISTAT )
-    ALLOCATE ( GRIDS(IMOD)%SPCBAC(MSPEC,IBAC), STAT=ISTAT)
-    CHECK_ALLOC_STATUS ( ISTAT )
-    ALLOCATE ( GRIDS(IMOD)%ISMCBP(IBSMC),      STAT=ISTAT)
+    if (w3_smc_flag) then
+       ! Note that the following dimensions are based on input arguments
+       ALLOCATE ( GRIDS(IMOD)%NLvCel(0:MRLv),     STAT=ISTAT)
+       CHECK_ALLOC_STATUS ( ISTAT )
+       ALLOCATE ( GRIDS(IMOD)%NLvUFc(0:MRLv),     STAT=ISTAT)
+       CHECK_ALLOC_STATUS ( ISTAT )
+       ALLOCATE ( GRIDS(IMOD)%NLvVFc(0:MRLv),     STAT=ISTAT)
+       CHECK_ALLOC_STATUS ( ISTAT )
+       ALLOCATE ( GRIDS(IMOD)%IJKCel(5, -9:MCel), STAT=ISTAT)
+       CHECK_ALLOC_STATUS ( ISTAT )
+       ALLOCATE ( GRIDS(IMOD)%IJKUFc(7,MUFc),     STAT=ISTAT)
+       CHECK_ALLOC_STATUS ( ISTAT )
+       ALLOCATE ( GRIDS(IMOD)%IJKVFc(8,MVFc),     STAT=ISTAT)
+       CHECK_ALLOC_STATUS ( ISTAT )
+       ALLOCATE ( GRIDS(IMOD)%CTRNX(-9:MCel),     STAT=ISTAT)
+       CHECK_ALLOC_STATUS ( ISTAT )
+       ALLOCATE ( GRIDS(IMOD)%CTRNY(-9:MCel),     STAT=ISTAT)
+       CHECK_ALLOC_STATUS ( ISTAT )
+       ALLOCATE ( GRIDS(IMOD)%CLATF(MVFc),        STAT=ISTAT)
+       CHECK_ALLOC_STATUS ( ISTAT )
+       !
+       !! Arctic part related variables, declare minimum 1 element.
+       IARC = MARC
+       IF( MARC .LE. 1 ) IARC = 1
+       IBAC = MBAC
+       IF( MBAC .LE. 1 ) IBAC = 1
+       IBSMC = MBSMC
+       IF( MBSMC .LE. 1 ) IBSMC = 1
+       ALLOCATE ( GRIDS(IMOD)%ICLBAC(IBAC),       STAT=ISTAT)
+       CHECK_ALLOC_STATUS ( ISTAT )
+       ALLOCATE ( GRIDS(IMOD)%ANGARC(IARC),       STAT=ISTAT)
+       CHECK_ALLOC_STATUS ( ISTAT )
+       ALLOCATE ( GRIDS(IMOD)%SPCBAC(MSPEC,IBAC), STAT=ISTAT)
+       CHECK_ALLOC_STATUS ( ISTAT )
+       ALLOCATE ( GRIDS(IMOD)%ISMCBP(IBSMC),      STAT=ISTAT)
 
-    !! All SMC grid related varialbes are initialised in case SMC
-    !! switch is selected but SMCTYPE is not used.  JGLi08Mar2021
-    GRIDS(IMOD)%NLvCel(:) = 0
-    GRIDS(IMOD)%NLvUFc(:) = 0
-    GRIDS(IMOD)%NLvVFc(:) = 0
-    GRIDS(IMOD)%ISMCBP(:) = 0
-    GRIDS(IMOD)%ICLBAC(:) = 0
-    GRIDS(IMOD)%IJKCel(:,:) = 0
-    GRIDS(IMOD)%IJKUFc(:,:) = 0
-    GRIDS(IMOD)%IJKVFc(:,:) = 0
-    GRIDS(IMOD)%CTRNX(:)  = 0.0
-    GRIDS(IMOD)%CTRNY(:)  = 0.0
-    GRIDS(IMOD)%CLATF(:)  = 0.0
-    GRIDS(IMOD)%ANGARC(:) = 0.0
-#endif
+       !! All SMC grid related varialbes are initialised in case SMC
+       !! switch is selected but SMCTYPE is not used.  JGLi08Mar2021
+       GRIDS(IMOD)%NLvCel(:) = 0
+       GRIDS(IMOD)%NLvUFc(:) = 0
+       GRIDS(IMOD)%NLvVFc(:) = 0
+       GRIDS(IMOD)%ISMCBP(:) = 0
+       GRIDS(IMOD)%ICLBAC(:) = 0
+       GRIDS(IMOD)%IJKCel(:,:) = 0
+       GRIDS(IMOD)%IJKUFc(:,:) = 0
+       GRIDS(IMOD)%IJKVFc(:,:) = 0
+       GRIDS(IMOD)%CTRNX(:)  = 0.0
+       GRIDS(IMOD)%CTRNY(:)  = 0.0
+       GRIDS(IMOD)%CLATF(:)  = 0.0
+       GRIDS(IMOD)%ANGARC(:) = 0.0
+    end if
     !
     GRIDS(IMOD)%FLAGST = .TRUE.
     GRIDS(IMOD)%GINIT  = .TRUE.
@@ -2759,7 +2756,7 @@ CONTAINS
 #if defined(TEST_W3GDATMD) || defined(TEST_W3GDATMD_W3GNTX)
             COSA=COSA,                                      &
 #endif
-       RC=ISTAT )
+            RC=ISTAT )
        IF ( ISTAT.NE.0 ) THEN
           WRITE (NDSE,1004) GTYPE
           CALL EXTCDE (4)
@@ -2774,7 +2771,7 @@ CONTAINS
 #if defined(TEST_W3GDATMD) || defined(TEST_W3GDATMD_W3GNTX)
             COSA=COSA,                                      &
 #endif
-       RC=ISTAT )
+            RC=ISTAT )
        IF ( ISTAT.NE.0 ) THEN
           WRITE (NDSE,1004) GTYPE
           CALL EXTCDE (4)

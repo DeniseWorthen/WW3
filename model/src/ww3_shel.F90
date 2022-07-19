@@ -2202,11 +2202,12 @@
       IF ( .NOT. FLFLG ) THEN
 !
         IF ( IAPROC .EQ. NAPOUT ) WRITE (NDSO,960)
-        CALL W3WAVE ( 1, ODAT, TIMEN                      &
 #ifdef W3_OASIS
-                     , .TRUE., .FALSE., MPI_COMM, TIMEN     &
+        CALL W3WAVE ( 1, ODAT, TIMEN, &
+             STAMP=.TRUE., NO_OUT=.FALSE., ID_LCOMM=MPI_COMM, TIMEN=TIMEN)
+#else 
+        CALL W3WAVE ( 1, ODAT, TIMEN)
 #endif
-                    )
 !
         GOTO 2222
 !
@@ -2809,11 +2810,12 @@
 !
       TIME0  = TTIME
 !
-      CALL W3WAVE ( 1, ODAT, TIME0                                    &
 #ifdef W3_OASIS
-             , .TRUE., .FALSE., MPI_COMM, TIMEN                         &
+      CALL W3WAVE ( 1, ODAT, TIME0, &
+           STAMP=.TRUE., NO_OUT=.FALSE., ID_LCOMM=MPI_COMM, TIMEN=TIMEN)
+#else
+      CALL W3WAVE ( 1, ODAT, TIME0)
 #endif
-                  )
 
 #ifdef W3_MEMCHECK
       write(740+IAPROC,*) 'memcheck_____:', 'WW3_SHEL SECTION 9'
@@ -2857,11 +2859,12 @@
 
         IF ( DTTST .EQ. 0. ) THEN
           IF ( IAPROC .EQ. NAPOUT ) WRITE (NDSO,*) ' '
-          CALL W3WAVE ( 1, ODAT, TIME0                                 & 
 #ifdef W3_OASIS
-                       , .TRUE., .FALSE., MPI_COMM, TIMEN              &
+          CALL W3WAVE ( 1, ODAT, TIME0, &
+               STAMP=.TRUE., NO_OUT=.FALSE., ID_LCOMM=MPI_COMM, TIMEN=TIMEN)
+#else
+          CALL W3WAVE ( 1, ODAT, TIME0)
 #endif
-                      )
         END IF
       END IF
 !
