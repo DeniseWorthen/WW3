@@ -392,7 +392,7 @@ CONTAINS
     USE W3ODATMD        , only : NDS, NOGE, NAPLOG, NAPOUT, NDSO, NDSE, NDST, NAPROC, NAPERR, SCREEN
     USE W3ODATMD        , only : IAPROC, IOUTP, NOTYPE, NAPBPT
     USE W3ODATMD        , only : TOFRST, TONEXT, TBPIN, TBPI0, TOLAST, DTOUT, NAPFLD, NAPPNT
-    USE W3ODATMD        , only : NTPROC    
+    USE W3ODATMD        , only : NTPROC
     USE W3ODATMD        , only : TOSNL5
 
     USE W3GDATMD        , only : W3SETG
@@ -580,12 +580,12 @@ CONTAINS
     !Li   Temperature spectra for Arctic boundary update.
     REAL, ALLOCATABLE    :: BACSPEC(:) ! only for  W3_SMC
     REAL                 :: BACANGL    ! only for  W3_SMC
-    ! 
+    !
     logical :: setup_mpi_write, write_now
-    logical :: do_gridded_output 
-    logical :: do_point_output 
-    logical :: do_track_output 
-    logical :: do_restart_output 
+    logical :: do_gridded_output
+    logical :: do_point_output
+    logical :: do_track_output
+    logical :: do_restart_output
     logical :: do_boundary_output
     logical :: do_sf_output
     logical :: do_coupler_output
@@ -1995,8 +1995,7 @@ CONTAINS
                 DO ITLOC=1, ITLOCH
                    !
 #ifdef W3_OMPG
-                   !$OMP PARALLEL PRIVATE (JSEA,ISEA,IX,IY,DEPTH,IXrel)
-                   !$OMP DO SCHEDULE (DYNAMIC,1)
+                   !$OMP PARALLEL PRIVATE (JSEA,ISEA,IX,IY,DEPTH,IXrel) SCHEDULE (DYNAMIC,1)
 #endif
                    !
                    if (w3_debugrun_flag) then
@@ -2075,8 +2074,7 @@ CONTAINS
                    END DO  ! DO JSEA=1, NSEAL
                    !
 #ifdef W3_OMPG
-                   !$OMP END DO
-                   !$OMP END PARALLEL
+                   !$OMP END PARALLEL DO
 #endif
                    !
                 END DO
@@ -2144,30 +2142,30 @@ CONTAINS
                 IF (FSTOTALIMP .and. (IT .ne. 0)) THEN
                    if (w3_debugrun_flag) then
                       WRITE(740+IAPROC,*) 'W3WAVE, step 6.12.3A'
-                      WRITE(*,*), 'W3WAVE, step 6.12.3A'
+                      WRITE(*,*) 'W3WAVE, step 6.12.3A'
                       FLUSH(740+IAPROC)
                    end if
                    CALL PDLIB_W3XYPUG_BLOCK_IMPLICIT (FACX, FACX, DTG, VGX, VGY)
                    if (w3_debugrun_flag) then
                       WRITE(740+IAPROC,*) 'W3WAVE, step 6.12.4A'
-                      WRITE(*,*), 'W3WAVE, step 6.12.4A'
+                      WRITE(*,*) 'W3WAVE, step 6.12.4A'
                       FLUSH(740+IAPROC)
                    end if
                 ELSE IF(FSTOTALEXP .and. (IT .ne. 0)) THEN
                    if (w3_debugrun_flag) then
                       WRITE(740+IAPROC,*) 'W3WAVE, step 6.12.3B'
-                      WRITE(*,*), 'W3WAVE, step 6.12.3B'
+                      WRITE(*,*) 'W3WAVE, step 6.12.3B'
                       FLUSH(740+IAPROC)
                    end if
                    CALL PDLIB_W3XYPUG_BLOCK_EXPLICIT(FACX, FACX, DTG, VGX, VGY)
                    if (w3_debugrun_flag) then
                       WRITE(740+IAPROC,*) 'W3WAVE, step 6.12.4B'
-                      WRITE(*,*), 'W3WAVE, step 6.12.4B'
+                      WRITE(*,*) 'W3WAVE, step 6.12.4B'
                       FLUSH(740+IAPROC)
                    end if
                 ENDIF
 #endif
-             ELSE  ! IF ((GTYPE .EQ. UNGTYPE) .and. LPDLIB) 
+             ELSE  ! IF ((GTYPE .EQ. UNGTYPE) .and. LPDLIB)
 
                 IF (FLCX .or. FLCY) THEN
                    if (w3_debugrun_flag) then
@@ -2574,7 +2572,7 @@ CONTAINS
                               PHIBBL(JSEA), TMP3, TMP4, PHICE(JSEA),      &
                               TAUOCX(JSEA), TAUOCY(JSEA), WNMEAN(JSEA),   &
                               RHOAIR(ISEA), ASF(ISEA))
-#else 
+#else
                          ! note that there are no TAUA and TAUADIR arguments below
                          CALL W3SRCE(srce_imp_post,IT,ISEA,JSEA,IX,IY,IMOD,  &
                               VAOLD(:,JSEA), VA(:,JSEA),                  &
@@ -2959,11 +2957,11 @@ CONTAINS
           END IF ! set_write
 #endif
 
-#ifndef W3_MPI 
+#ifndef W3_MPI
 #ifdef W3_PDLIB
           CALL DO_OUTPUT_EXCHANGES(IMOD)
 #endif
-#endif          
+#endif
           call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP1')
           !
           if (w3_debugrun_flag) then
