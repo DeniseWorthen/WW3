@@ -787,12 +787,7 @@ MODULE W3GDATMD
      REAL              :: FFXPM, FFXFM                                    ! W3_ST3, W3_ST4
      REAL              :: ZZWND                                           ! W3_ST3, W3_ST4
      REAL              :: WWNMEANP, SSTXFTF, SSTXFTWN                     ! W3_ST3, W3_ST4
-#ifdef W3_ST3
-     REAL              :: SSWELLF(1:6)                                    ! W3_ST3
-#endif
-#ifdef W3_ST4
-     REAL              :: SSWELLF(1:7)                                    ! W3_ST4
-#endif
+     REAL              :: SSWELLF(1:7)                                    ! W3_ST3, W3_ST4 
 
      INTEGER           :: SSWELLFPAR                                      ! W3_ST4
      INTEGER,  POINTER :: IKTAB(:,:), SATINDICES(:,:)                     ! W3_ST4
