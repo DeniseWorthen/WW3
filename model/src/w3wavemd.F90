@@ -1995,7 +1995,8 @@ CONTAINS
                 DO ITLOC=1, ITLOCH
                    !
 #ifdef W3_OMPG
-                   !$OMP PARALLEL PRIVATE (JSEA,ISEA,IX,IY,DEPTH,IXrel) SCHEDULE (DYNAMIC,1)
+!$OMP PARALLEL PRIVATE (JSEA,ISEA,IX,IY,DEPTH,IXrel)
+!$OMP DO SCHEDULE (DYNAMIC,1)
 #endif
                    !
                    if (w3_debugrun_flag) then
@@ -2074,7 +2075,8 @@ CONTAINS
                    END DO  ! DO JSEA=1, NSEAL
                    !
 #ifdef W3_OMPG
-                   !$OMP END PARALLEL DO
+!$OMP END DO
+!$OMP END PARALLEL
 #endif
                    !
                 END DO
