@@ -392,7 +392,7 @@ CONTAINS
     USE W3ODATMD        , only : NDS, NOGE, NAPLOG, NAPOUT, NDSO, NDSE, NDST, NAPROC, NAPERR, SCREEN
     USE W3ODATMD        , only : IAPROC, IOUTP, NOTYPE, NAPBPT
     USE W3ODATMD        , only : TOFRST, TONEXT, TBPIN, TBPI0, TOLAST, DTOUT, NAPFLD, NAPPNT
-    USE W3ODATMD        , only : NTPROC
+    USE W3ODATMD        , only : NTPROC    
     USE W3ODATMD        , only : TOSNL5
 
     USE W3GDATMD        , only : W3SETG
@@ -580,12 +580,12 @@ CONTAINS
     !Li   Temperature spectra for Arctic boundary update.
     REAL, ALLOCATABLE    :: BACSPEC(:) ! only for  W3_SMC
     REAL                 :: BACANGL    ! only for  W3_SMC
-    !
+    ! 
     logical :: setup_mpi_write, write_now
-    logical :: do_gridded_output
-    logical :: do_point_output
-    logical :: do_track_output
-    logical :: do_restart_output
+    logical :: do_gridded_output 
+    logical :: do_point_output 
+    logical :: do_track_output 
+    logical :: do_restart_output 
     logical :: do_boundary_output
     logical :: do_sf_output
     logical :: do_coupler_output
@@ -1076,7 +1076,7 @@ CONTAINS
        ELSE
           IT0    = 1
        END IF
-       call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE')
+       call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE')
        !
        if (w3_t_flag) then
           WRITE (NDST,9020) IT0, NT, DTGA
@@ -1128,7 +1128,7 @@ CONTAINS
              CALL PRINT_MY_TIME("After assigning VAOLD")
           end if
           !
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 0')
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 0')
           !
           ITIME  = ITIME + 1
           !
@@ -1143,7 +1143,7 @@ CONTAINS
              FLUSH(740+IAPROC)
           end if
           !
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 1')
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 1')
 
           IF ( TSTAMP .AND. SCREEN.NE.NDSO .AND. IAPROC.EQ.NAPOUT ) THEN
              CALL WWTIME ( STTIME )
@@ -1151,7 +1151,7 @@ CONTAINS
              WRITE (SCREEN,950) IDTIME, STTIME
           END IF
 
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 2')
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 2')
 
           if (w3_debugrun_flag) then
              DO JSEA = 1, NSEAL
@@ -1205,7 +1205,7 @@ CONTAINS
              WRITE(740+IAPROC,*) 'Debug DCXDX FLCUR=', FLCUR
           end if
 
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 3a')
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 3a')
 
           IF ( FLCUR  ) THEN
              if (w3_debugrun_flag) then
@@ -1234,7 +1234,7 @@ CONTAINS
                 FLUSH(740+IAPROC)
              end if
 
-             call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 3b')
+             call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 3b')
 
              IF (GTYPE .EQ. SMCTYPE) THEN
                 IX = 1
@@ -1255,7 +1255,7 @@ CONTAINS
                 CALL W3DZXY(CY(1:UBOUND(CY,1)),'m/s',DCYDX, DCYDY) !CY GRADIENT
              ENDIF  !! End GTYPE
              !
-             call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 4')
+             call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 4')
              !
           ELSE IF ( FLFRST ) THEN
              UGDTUPDATE=.TRUE.
@@ -1267,7 +1267,7 @@ CONTAINS
              CALL PRINT_MY_TIME("After CX/CY assignation")
           end if
           !
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 5')
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 5')
           IF ( FLWIND ) THEN
              IF ( FLFRST ) ASF = 1.
              CALL W3UWND ( FLFRST, VGX, VGY )
@@ -1291,7 +1291,7 @@ CONTAINS
           !        STOP
           !      ENDIF
 
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 6')
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 6')
           if (w3_timings_flag) then
              CALL PRINT_MY_TIME("After U10, etc. assignation")
           end if
@@ -1342,7 +1342,7 @@ CONTAINS
              FLUSH(740+IAPROC)
           end if
 
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 7')
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 7')
           IF ( FLBPI .AND. LOCAL ) THEN
              !
              DO
@@ -1382,7 +1382,7 @@ CONTAINS
 
           END IF
 
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 7')
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 7')
 #ifdef W3_PDLIB
           CALL APPLY_BOUNDARY_CONDITION_VA
           if (w3_debugcoh_flag) then
@@ -1392,7 +1392,7 @@ CONTAINS
           if (w3_timings_flag) then
              CALL PRINT_MY_TIME("After FLBPI and LOCAL")
           end if
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 8')
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 8')
           !
           ! 3.3.1 Update ice coverage (if new ice map).
           !     Need to be run on output nodes too, to update MAPSTx
@@ -1440,7 +1440,7 @@ CONTAINS
           end if
 #endif
 
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 9')
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 9')
           !
           ! 3.3.2 Update ice thickness
           !
@@ -1466,7 +1466,7 @@ CONTAINS
              END IF
              !
           END IF
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 10')
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 10')
           !
           ! 3.3.3 Update ice floe diameter
           !
@@ -1494,7 +1494,7 @@ CONTAINS
           END IF
 #endif
 
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 11a')
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 11a')
           !
           ! 3.4 Transform grid (if new water level).
           !
@@ -1567,7 +1567,7 @@ CONTAINS
              FLUSH(740+IAPROC)
           end if
 
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 11b')
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 11b')
           !
           ! 3.5 Update maps and derivatives.
           !
@@ -1617,7 +1617,7 @@ CONTAINS
              FLDDIR = .FALSE.
           END IF
 
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 12')
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 12')
           if (w3_debugrun_flag) then
              WRITE(740+IAPROC,*) 'W3WAVE, step 6.8.3 DTG=', DTG
              FLUSH(740+IAPROC)
@@ -1668,7 +1668,7 @@ CONTAINS
           END IF
 #endif
 
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 13')
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 13')
           !
 ! W3_PDLIB start
 #ifdef W3_PDLIB
@@ -1818,7 +1818,7 @@ CONTAINS
 #endif
 ! W3_PDLIB end
 
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 14')
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 14')
           IF ( FLZERO ) THEN
              if (w3_t_flag) then
                 WRITE (NDST,9022)
@@ -1904,7 +1904,7 @@ CONTAINS
              FLUSH(740+IAPROC)
           end if
 
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 15')
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 15')
           !
           if (w3_debugrun_flag) then
              DO JSEA = 1, NSEAL
@@ -2081,7 +2081,7 @@ CONTAINS
                    !
                 END DO
              END IF  ! IF ( FLCTH .OR. FLCK ) THEN
-             call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 17')
+             call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 17')
 #ifdef W3_PDLIB
              if (w3_debugcoh_flag) then
                 CALL ALL_VA_INTEGRAL_PRINT(IMOD, "Before spatial advection")
@@ -2167,7 +2167,7 @@ CONTAINS
                    end if
                 ENDIF
 #endif
-             ELSE  ! IF ((GTYPE .EQ. UNGTYPE) .and. LPDLIB)
+             ELSE  ! IF ((GTYPE .EQ. UNGTYPE) .and. LPDLIB) 
 
                 IF (FLCX .or. FLCY) THEN
                    if (w3_debugrun_flag) then
@@ -2265,7 +2265,7 @@ CONTAINS
                    END IF
 #endif
 
-                   call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE TIME LOOP 17')
+                   call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE TIME LOOP 17')
                    !
                    IK=1
                    IX=1
@@ -2574,7 +2574,7 @@ CONTAINS
                               PHIBBL(JSEA), TMP3, TMP4, PHICE(JSEA),      &
                               TAUOCX(JSEA), TAUOCY(JSEA), WNMEAN(JSEA),   &
                               RHOAIR(ISEA), ASF(ISEA))
-#else
+#else 
                          ! note that there are no TAUA and TAUADIR arguments below
                          CALL W3SRCE(srce_imp_post,IT,ISEA,JSEA,IX,IY,IMOD,  &
                               VAOLD(:,JSEA), VA(:,JSEA),                  &
@@ -2807,7 +2807,7 @@ CONTAINS
        if (w3_t_flag) then
           WRITE (NDST,9030)
        end if
-       call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE END TIME LOOP')
+       call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE END TIME LOOP')
        !
        !     End of loop over time steps
        ! ==================================================================== /
@@ -2959,12 +2959,12 @@ CONTAINS
           END IF ! set_write
 #endif
 
-#ifndef W3_MPI
+#ifndef W3_MPI 
 #ifdef W3_PDLIB
           CALL DO_OUTPUT_EXCHANGES(IMOD)
 #endif
-#endif
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP1')
+#endif          
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP1')
           !
           if (w3_debugrun_flag) then
              WRITE(740+IAPROC,*) 'After DO_OUTPUT_EXCHANGES, step 1'
@@ -3058,7 +3058,7 @@ CONTAINS
 #ifdef W3_MPI
           IF ( NRQMAX .NE. 0 ) ALLOCATE ( STATIO(MPI_STATUS_SIZE,NRQMAX) )
 #endif
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP2')
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP2')
           !
           ! 4.c Reset next output time
           !
@@ -3269,7 +3269,7 @@ CONTAINS
              !
           END DO
           !
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP3')
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP3')
 
           ! If there is a second stream of restart files then J=8 and FLOUT(8)=.TRUE.
           J=8
@@ -3319,7 +3319,7 @@ CONTAINS
           END IF
           !        END OF CHECKPOINT
           !
-          call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP3')
+          call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP3')
           !
 #ifdef W3_MPI
           IF ( FLGMPI(0) ) CALL MPI_WAITALL( NRQGO, IRQGO , STATIO, IERR_MPI )
@@ -3348,7 +3348,7 @@ CONTAINS
 #ifdef W3_TIMINGS
        CALL PRINT_MY_TIME("Before update log file")
 #endif
-       call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP4')
+       call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP4')
        !
        ! 5.  Update log file ------------------------------------------------ /
 
@@ -3406,7 +3406,7 @@ CONTAINS
 #endif
     END DO
     !
-    call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP5')
+    call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP5')
     !
     IF ( TSTAMP .AND. SCREEN.NE.NDSO .AND. IAPROC.EQ.NAPOUT ) THEN
        CALL WWTIME ( STTIME )
@@ -3418,7 +3418,7 @@ CONTAINS
     DEALLOCATE(FIELD)
     DEALLOCATE(TAUWX, TAUWY)
     !
-    call print_memcheck(IAPROC, 'memcheck_____:'//' WW3_WAVE END W3WAVE')
+    call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE END W3WAVE')
     !
     RETURN
     !
@@ -3577,16 +3577,13 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3SERVMD, ONLY: STRACE ! W3_S
-    !/
+    USE W3SERVMD, ONLY: STRACE                               ! W3_S
     USE W3GDATMD, ONLY: NSPEC, NX, NY, NSEA, NSEAL, MAPSF, DMIN
     USE W3PARALL, ONLY: INIT_GET_ISEA
     USE W3WDATMD, ONLY: A => VA
-#ifdef W3_MPI
-    USE W3ADATMD, ONLY: MPIBUF, BSTAT, IBFLOC, ISPLOC, BISPL
-    USE W3ADATMD, ONLY: NSPLOC, NRQSG2, IRQSG2, GSTORE
-    USE W3ODATMD, ONLY: NDST, IAPROC, NAPROC, NOTYPE
-#endif
+    USE W3ADATMD, ONLY: MPIBUF, BSTAT, IBFLOC, ISPLOC, BISPL ! W3_MPI
+    USE W3ADATMD, ONLY: NSPLOC, NRQSG2, IRQSG2, GSTORE       ! W3_MPI
+    USE W3ODATMD, ONLY: NDST, IAPROC, NAPROC, NOTYPE         ! W3_MPI
     !/
     IMPLICIT NONE
     !
@@ -3603,11 +3600,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: ISEA, IXY ! only for W3_SHRD
-#ifdef W3_MPI
-    INTEGER                 :: STATUS(MPI_STATUS_SIZE,NSPEC)
-    CHARACTER(LEN=15)       :: STR(MPIBUF), STRT
-#endif
+    INTEGER                 :: ISEA, IXY                     ! W3_SHRD
+    INTEGER                 :: STATUS(MPI_STATUS_SIZE,NSPEC) ! W3_MPI
+    CHARACTER(LEN=15)       :: STR(MPIBUF), STRT             ! W3_MPI
     INTEGER                 :: IOFF, IERR_MPI, JSEA
     INTEGER                 :: IS0, IB0, NPST, J
     INTEGER, SAVE           :: IENT ! only for W3_S
@@ -3627,9 +3622,6 @@ CONTAINS
        IXY        = MAPSF(ISEA,3)
        FIELD(IXY) = A(ISPEC,ISEA)
     END DO
-#endif
-    !
-#ifdef W3_SHRD
     RETURN
 #endif
     !
@@ -3640,7 +3632,6 @@ CONTAINS
     ISPLOC = ISPLOC + 1
     IBFLOC = IBFLOC + 1
     IF ( IBFLOC .GT. MPIBUF ) IBFLOC = 1
-#endif
     !
     if (w3_mpit_flag) then
        IF ( ISPLOC .EQ. 1 ) THEN
@@ -3655,54 +3646,42 @@ CONTAINS
     ! 2.b Check status of present buffer
     ! 2.b.1 Scatter (send) still in progress, wait to end
     !
-#ifdef W3_MPI
     IF ( BSTAT(IBFLOC) .EQ. 2 ) THEN
        IOFF =  1 + (BISPL(IBFLOC)-1)*NRQSG2
        IF ( NRQSG2 .GT. 0 ) CALL                              &
             MPI_WAITALL ( NRQSG2, IRQSG2(IOFF,2),             &
             STATUS, IERR_MPI )
        BSTAT(IBFLOC) = 0
-#endif
        if (w3_mpit_flag) then
           STRT(13:13) = 'S'
        end if
-#ifdef W3_MPI
     END IF
-#endif
     !
     ! 2.b.2 Gather (recv) not yet posted, post now
     !
-#ifdef W3_MPI
     IF ( BSTAT(IBFLOC) .EQ. 0 ) THEN
        BSTAT(IBFLOC) = 1
        BISPL(IBFLOC) = ISPLOC
        IOFF =  1 + (ISPLOC-1)*NRQSG2
        IF ( NRQSG2 .GT. 0 ) CALL                              &
             MPI_STARTALL ( NRQSG2, IRQSG2(IOFF,1), IERR_MPI )
-#endif
        if (w3_mpit_flag) then
           STRT(10:10) = 'g'
        end if
-#ifdef W3_MPI
     END IF
-#endif
     !
     ! 2.c Put local spectral densities in store
     !
-#ifdef W3_MPI
     DO JSEA=1, NSEAL
        CALL INIT_GET_ISEA(ISEA, JSEA)
        GSTORE(ISEA,IBFLOC) = A(ISPEC,JSEA)
     END DO
-#endif
     !
     ! 2.d Wait for remote spectral densities
     !
-#ifdef W3_MPI
     IOFF =  1 + (BISPL(IBFLOC)-1)*NRQSG2
     IF ( NRQSG2 .GT. 0 ) CALL                                  &
          MPI_WAITALL ( NRQSG2, IRQSG2(IOFF,1), STATUS, IERR_MPI )
-#endif
     !
     if (w3_mpit_flag) then
        STRT(11:11) = 'G'
@@ -3712,22 +3691,17 @@ CONTAINS
     !
     ! 2.e Convert storage array to field.
     !
-#ifdef W3_MPI
     DO ISEA=1, NSEA
        IXY        = MAPSF(ISEA,3)
        FIELD(IXY) = GSTORE(ISEA,IBFLOC)
     END DO
-#endif
     !
     ! 2.f Pre-fetch data in available buffers
     !
-#ifdef W3_MPI
     IS0    = ISPLOC
     IB0    = IBFLOC
     NPST   = 0
-#endif
     !
-#ifdef W3_MPI
     DO J=1, MPIBUF-1
        IS0    = IS0 + 1
        IF ( IS0 .GT. NSPLOC ) EXIT
@@ -3738,19 +3712,16 @@ CONTAINS
           IOFF       = 1 + (IS0-1)*NRQSG2
           IF ( NRQSG2 .GT. 0 ) CALL                            &
                MPI_STARTALL ( NRQSG2, IRQSG2(IOFF,1), IERR_MPI )
-          NPST       = NPST + 1
-#endif
+          NPST = NPST + 1
           if (w3_mpit_flag) then
              STRT        = STR(IB0)
              STRT(10:10) = 'g'
              WRITE (STRT(1:7),'(I2,I5)') BSTAT(IB0), BISPL(IB0)
              STR(IB0)    = STRT
           end if
-#ifdef W3_MPI
        END IF
        IF ( NPST .GE. 2 ) EXIT
     END DO
-#endif
     !
     ! 2.g Test output
     !
@@ -3769,7 +3740,6 @@ CONTAINS
        WRITE (NDST,9010) ISPLOC, STR
     end if
     !
-#ifdef W3_MPI
     RETURN
 #endif
     !

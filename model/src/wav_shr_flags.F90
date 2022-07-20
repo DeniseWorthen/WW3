@@ -138,6 +138,12 @@ module wav_shr_flags
    logical ::  w3_flx4_flag = .false.     !< @public a flag for "W3_FLX4"
 #endif
   
+#ifdef W3_FLX5
+   logical ::  w3_flx5_flag = .true.      !< @public a flag for "W3_FLX5"
+#else
+   logical ::  w3_flx5_flag = .false.     !< @public a flag for "W3_FLX5"
+#endif
+
 !   linear input
   
 #ifdef W3_LN0
@@ -890,6 +896,12 @@ module wav_shr_flags
    logical ::  w3_wcor_flag = .false.     !< @public a flag for "W3_WCOR"
 #endif
 
+#ifdef W3_SETUP
+   logical ::  w3_setup_flag = .true.      !< @public a flag for "W3_SETUP"
+#else
+   logical ::  w3_setup_flag = .false.     !< @public a flag for "W3_SETUP"
+#endif
+
   interface print_logmsg
     module procedure print_logmsg_1line
     module procedure print_logmsg_2line
@@ -1019,17 +1031,17 @@ contains
 !!
 !> @details Writes a single line of memory statistics to unit 40000+iaproc
 !!
-   subroutine print_memcheck(iaproc, msg)
+   subroutine print_memcheck(iun, msg)
 #if W3_MEMCHECK
      USE MallocInfo_m
 #endif
-     integer          , pointer    :: iaproc
+     integer          , intent(in) :: iun
      character(len=*) , intent(in) :: msg
 
 #if W3_MEMCHECK
-     write(40000+IAPROC,*) trim(msg)
+     write(iun,*) trim(msg)
      call getMallocInfo(mallinfos)
-     call printMallInfo(IAPROC+40000,mallInfos)
+     call printMallInfo(iun, mallInfos)
 #endif
    end subroutine print_memcheck
 
