@@ -3216,9 +3216,9 @@ CONTAINS
                                if (w3_oasocm_flag) then
                                   CALL SND_FIELDS_TO_OCEAN()
                                end if
-#ifdef W3_OASICM
-                               CALL SND_FIELDS_TO_ICE()
-#endif
+                               if (w3_oasicm_flag) then
+                                  CALL SND_FIELDS_TO_ICE()
+                               end if
                                IF (.NOT. CPLT0) ID_OASIS_TIME = NINT(DSEC21 ( TIME00 , TIME ))
                             ENDIF
                          ENDIF
