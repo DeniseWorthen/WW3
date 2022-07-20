@@ -173,9 +173,7 @@ MODULE W3WAVEMD
   !  7. Source code :
   !
   !/ ------------------------------------------------------------------- /
-#ifdef W3_MPI
-  USE W3ADATMD, ONLY: MPIBUF
-#endif
+  USE W3ADATMD, ONLY: MPIBUF  ! W3_MPI
   use wav_shr_flags
   !
   PUBLIC
@@ -432,34 +430,25 @@ CONTAINS
     USE W3UPDTMD        , only : W3UIC5
 #endif
     !/
-#ifdef W3_MPI
-    USE W3ODATMD        , only : NRQGO, NRQGO2, IRQGO, IRQGO2, NRQPO, NRQPO2, IRQPO1, IRQPO2
-    USE W3ODATMD        , only : NRQRS, IRQRS, IRQPO1, NRQBP, IRQBP1, IRQBP2, NRQBP2
-    USE W3ADATMD        , only : NRQSG1, IRQSG1, NRQSG1, MPI_COMM_WAVE
-#endif
-#ifdef W3_REF1
-    USE W3GDATMD        , only : RLGTYPE, SX, SY, CLGTYPE, HPFAC, HQFAC, REFLC, REFLD
-#endif
-#ifdef W3_BT4
-    USE W3GDATMD        , only : SED_D50, SED_PSIC
-#endif
-#ifdef W3_SMC
-    USE W3GDATMD        , only : ANGARC, ARCTC, NBAC, NBGL, NGLO, NCel, ICLBAC, SPCBAC
-    USE W3ADATMD        , only : DHDX, DHDY, DHLMT
-    USE W3GDATMD        , only : NTH
-#endif
+    USE W3ODATMD        , only : NRQGO, NRQGO2, IRQGO, IRQGO2, NRQPO, NRQPO2, IRQPO1, IRQPO2 ! W3_MPI
+    USE W3ODATMD        , only : NRQRS, IRQRS, IRQPO1, NRQBP, IRQBP1, IRQBP2, NRQBP2         ! W3_MPI
+    USE W3ADATMD        , only : NRQSG1, IRQSG1, NRQSG1, MPI_COMM_WAVE                       ! W3_MPI
+    USE W3GDATMD        , only : RLGTYPE, SX, SY, CLGTYPE, HPFAC, HQFAC, REFLC, REFLD ! W3_REF1
+    USE W3GDATMD        , only : SED_D50, SED_PSIC  ! W3_BT4
+    USE W3GDATMD        , only : ANGARC, ARCTC, NBAC, NBGL, NGLO, NCel, ICLBAC, SPCBAC ! W3_SMC
+    USE W3ADATMD        , only : DHDX, DHDY, DHLMT                                     ! W3_SMC
+    USE W3GDATMD        , only : NTH                                                   ! W3_SMC
     !
     !/
+    USE W3GDATMD        , only : IOBP_LOC, IOBPD_LOC, IOBPA_LOC, IOBDP_LOC ! W3_PDLIB
 #ifdef W3_PDLIB
     USE PDLIB_W3PROFSMD , only : APPLY_BOUNDARY_CONDITION_VA
     USE PDLIB_W3PROFSMD , only : PDLIB_W3XYPUG, PDLIB_W3XYPUG_BLOCK_IMPLICIT, PDLIB_W3XYPUG_BLOCK_EXPLICIT
     USE PDLIB_W3PROFSMD , only : ALL_VA_INTEGRAL_PRINT, ALL_VAOLD_INTEGRAL_PRINT, ALL_FIELD_INTEGRAL_PRINT
     USE W3PARALL        , only : PDLIB_NSEAL, PDLIB_NSEALM
-    USE W3GDATMD        , only : IOBP_LOC, IOBPD_LOC, IOBPA_LOC, IOBDP_LOC
     USE W3WDATMD        , only : VAOLD, VSTOT, VDTOT, SHAVETOT
     USE yowNodepool     , only : npa, iplg, np
 #endif
-
     !/
 #ifdef W3_IC3
     USE W3GDATMD        , only : IC3PARS
@@ -478,7 +467,6 @@ CONTAINS
 #ifdef W3_SETUP
     USE W3WAVSET        , only : WAVE_SETUP_COMPUTATION
 #endif
-
 #ifdef W3_OASIS
     USE W3WDATMD        , ONLY : TIME00, TIMEEND
     USE W3OACPMD        , ONLY : ID_OASIS_TIME, CPLT0
@@ -699,10 +687,10 @@ CONTAINS
     !
     IF( GTYPE .EQ. SMCTYPE ) THEN
        J = 1
-#ifdef W3_SMC
        !!Li   Use sea point only field for SMC grid.
-       ALLOCATE ( FIELD(NCel) )
-#endif
+       if (w3_smc_flag) then
+          ALLOCATE ( FIELD(NCel) )
+       end if
     ELSE
        ALLOCATE ( FIELD(1-NY:NY*(NX+2)) )
     ENDIF
@@ -1673,7 +1661,6 @@ CONTAINS
 ! W3_PDLIB start
 #ifdef W3_PDLIB
           IF ( FLSOU .and. LPDLIB .and. FSSOURCE) THEN
-             !!$OMP PARALLEL DO PRIVATE (JSEA,ISEA,IX,IY) SCHEDULE (DYNAMIC,1)
              D50=0.0002
              REFLEC(:)=0.
              REFLED(:)=0
@@ -1815,7 +1802,6 @@ CONTAINS
                 WRITE(740+IAPROC,*) '     sum(VDTOT)=', sum(VDTOT(:,DEBUG_NODE))
              END IF
           end if
-          !!$OMP END PARALLEL DO
 #endif
 ! W3_PDLIB end
 
@@ -1868,7 +1854,10 @@ CONTAINS
                    NKCFL=1
                 end if
                 !
-!!$OMP PARALLEL DO PRIVATE (JSEA,ISEA) SCHEDULE (DYNAMIC,1)
+#ifdef W3_OMPG
+!$OMP PARALLEL DO PRIVATE (JSEA,ISEA) SCHEDULE (DYNAMIC,1)
+#endif
+                !
                 DO JSEA=1, NSEAL
                    CALL INIT_GET_ISEA(ISEA, JSEA)
 #ifdef W3_PR3
@@ -1896,7 +1885,9 @@ CONTAINS
                    END IF
 #endif
                 END DO
-!!$OMP END PARALLEL DO
+#ifdef W3_OMPG
+!$OMP END PARALLEL DO
+#endif
                 !
              END IF  ! IF (FSTOTALIMP .eqv. .FALSE.) THEN
           END IF  ! IF ( FLOGRD(9,3).AND. UGDTUPDATE ) THEN
@@ -1996,7 +1987,8 @@ CONTAINS
                 DO ITLOC=1, ITLOCH
                    !
 #ifdef W3_OMPG
-!!$OMP PARALLEL DO PRIVATE (JSEA,ISEA,IX,IY,DEPTH,IXrel) SCHEDULE (DYNAMIC,1)
+!$OMP PARALLEL PRIVATE (JSEA,ISEA,IX,IY,DEPTH,IXrel)
+!$OMP DO SCHEDULE (DYNAMIC,1)
 #endif
                    !
                    if (w3_debugrun_flag) then
@@ -2075,7 +2067,8 @@ CONTAINS
                    END DO  ! DO JSEA=1, NSEAL
                    !
 #ifdef W3_OMPG
-!!$OMP END PARALLEL DO
+!$OMP END DO
+!$OMP END PARALLEL
 #endif
                    !
                 END DO
@@ -2376,7 +2369,8 @@ CONTAINS
                 DO ITLOC=ITLOCH+1, NTLOC
                    !
 #ifdef W3_OMPG
-!!$OMP PARALLEL DO PRIVATE (JSEA,ISEA,IX,IY,DEPTH,IXrel) SCHEDULE (DYNAMIC,1)
+!$OMP PARALLEL PRIVATE (JSEA,ISEA,IX,IY,DEPTH,IXrel)
+!$OMP DO SCHEDULE (DYNAMIC,1)
 #endif
                    !
                    if (w3_debugrun_flag) then
@@ -2455,7 +2449,8 @@ CONTAINS
                    END DO  !  DO JSEA = 1, NSEAL
                    !
 #ifdef W3_OMPG
-!!$OMP END PARALLEL DO
+!$OMP END DO
+!$OMP END PARALLEL
 #endif
                    !
                 END DO  ! DO ITLOC=ITLOCH+1, NTLOC
@@ -2503,8 +2498,9 @@ CONTAINS
 #endif
                 !
 #ifdef W3_OMPG
-!!$OMP PARALLEL DO PRIVATE (JSEA,ISEA,IX,IY,DELA,DELX,DELY,        &
-!!$OMP&                  REFLEC,REFLED,D50,PSIC,TMP1,TMP2,TMP3,TMP4) SCHEDULE (DYNAMIC,1)
+!$OMP PARALLEL PRIVATE (JSEA,ISEA,IX,IY,DELA,DELX,DELY,        &
+!$OMP&                  REFLEC,REFLED,D50,PSIC,TMP1,TMP2,TMP3,TMP4)
+!$OMP DO SCHEDULE (DYNAMIC,1)
 #endif
                 !
                 DO JSEA=1, NSEAL
@@ -2686,7 +2682,8 @@ CONTAINS
                 end if
                 !
 #ifdef W3_OMPG
-!!$OMP END PARALLEL DO
+!$OMP END DO
+!$OMP END PARALLEL
 #endif
                 !
 #ifdef W3_PDLIB
@@ -2709,7 +2706,7 @@ CONTAINS
                 !!/MPI            ELSE
                 !!/MPI              CALL MPI_BARRIER (MPI_COMM_WCMP,IERR_MPI)
                 !
-             END IF ! IF ( FLSOU ) THEN
+             END IF
              if (w3_debugrun_flag) then
                 WRITE(740+IAPROC,*) 'W3WAVE, step 6.18'
                 FLUSH(740+IAPROC)
@@ -3596,8 +3593,10 @@ CONTAINS
     !/ Local parameters
     !/
     INTEGER                 :: ISEA, IXY                     ! W3_SHRD
-    INTEGER                 :: STATUS(MPI_STATUS_SIZE,NSPEC) ! W3_MPI
-    CHARACTER(LEN=15)       :: STR(MPIBUF), STRT             ! W3_MPI
+#ifdef W3_MPI
+    INTEGER                 :: STATUS(MPI_STATUS_SIZE,NSPEC) 
+    CHARACTER(LEN=15)       :: STR(MPIBUF), STRT             
+#endif
     INTEGER                 :: IOFF, IERR_MPI, JSEA
     INTEGER                 :: IS0, IB0, NPST, J
     INTEGER, SAVE           :: IENT ! only for W3_S
@@ -3758,6 +3757,7 @@ CONTAINS
     !/ End of W3GATH ----------------------------------------------------- /
     !/
   END SUBROUTINE W3GATH
+
   !/ ------------------------------------------------------------------- /
   SUBROUTINE W3SCAT ( ISPEC, MAPSTA, FIELD )
     !/
@@ -3883,7 +3883,7 @@ CONTAINS
     !
 #ifdef W3_SHRD
     DO ISEA=1, NSEA
-       IXY           = MAPSF(ISEA,3)
+       IXY = MAPSF(ISEA,3)
        IF ( MAPSTA(IXY) .NE. 0 ) A(ISPEC,ISEA) = FIELD(IXY)
     END DO
 #endif

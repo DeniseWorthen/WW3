@@ -13,6 +13,11 @@ module wav_shr_flags
   public
 
 !   debug/logging
+#ifdef W3_DEBUG
+   logical ::  w3_debug_flag = .true.     !< @public a flag for "W3_DEBUG"
+#else
+   logical ::  w3_debug_flag = .false.     !< @public a flag for "W3_DEBUG"
+#endif
   
 #ifdef W3_DEBUGCOH
    logical ::  w3_debugcoh_flag = .true.      !< @public a flag for "W3_DEBUGCOH"
