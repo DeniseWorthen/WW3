@@ -1985,16 +1985,16 @@ CONTAINS
              end if
              IF ( FLCTH .OR. FLCK ) THEN
                 DO ITLOC=1, ITLOCH
+                   if (w3_debugrun_flag) then
+                      WRITE(740+IAPROC,*) ' ITLOC=', ITLOC
+                      WRITE(740+IAPROC,*) ' 1: Before call to W3KTP1 / W3KTP2 / W3KTP3'
+                   end if
                    !
 #ifdef W3_OMPG
 !$OMP PARALLEL PRIVATE (JSEA,ISEA,IX,IY,DEPTH,IXrel)
 !$OMP DO SCHEDULE (DYNAMIC,1)
 #endif
                    !
-                   if (w3_debugrun_flag) then
-                      WRITE(740+IAPROC,*) ' ITLOC=', ITLOC
-                      WRITE(740+IAPROC,*) ' 1: Before call to W3KTP1 / W3KTP2 / W3KTP3'
-                   end if
                    DO JSEA=1, NSEAL
                       CALL INIT_GET_ISEA(ISEA, JSEA)
                       IX     = MAPSF(ISEA,1)
@@ -2367,16 +2367,16 @@ CONTAINS
              !
              IF ( FLCTH .OR. FLCK ) THEN
                 DO ITLOC=ITLOCH+1, NTLOC
+                   if (w3_debugrun_flag) then
+                      WRITE(740+IAPROC,*) ' ITLOC=', ITLOC
+                      WRITE(740+IAPROC,*) ' 2: Before call to W3KTP1 / W3KTP2 / W3KTP3'
+                   end if
                    !
 #ifdef W3_OMPG
 !$OMP PARALLEL PRIVATE (JSEA,ISEA,IX,IY,DEPTH,IXrel)
 !$OMP DO SCHEDULE (DYNAMIC,1)
 #endif
                    !
-                   if (w3_debugrun_flag) then
-                      WRITE(740+IAPROC,*) ' ITLOC=', ITLOC
-                      WRITE(740+IAPROC,*) ' 2: Before call to W3KTP1 / W3KTP2 / W3KTP3'
-                   end if
                    DO JSEA = 1, NSEAL
                       CALL INIT_GET_ISEA(ISEA, JSEA)
                       IX     = MAPSF(ISEA,1)
@@ -2662,7 +2662,12 @@ CONTAINS
                       WRITE(740+IAPROC,*) 'RET: min/max/sum(VA)=',minval(VA(:,JSEA)),maxval(VA(:,JSEA)),sum(VA(:,JSEA))
                    end if
                 END DO  ! DO JSEA=1, NSEAL
-
+                !
+#ifdef W3_OMPG
+!$OMP END DO
+!$OMP END PARALLEL
+#endif
+                !
                 if (w3_debugrun_flag) then
                    WRITE(740+IAPROC,*) 'min/max/sum(VAtot)=', minval(VA), maxval(VA), sum(VA)
                    FLUSH(740+IAPROC)
@@ -2680,12 +2685,6 @@ CONTAINS
                       STOP
                    ENDIF
                 end if
-                !
-#ifdef W3_OMPG
-!$OMP END DO
-!$OMP END PARALLEL
-#endif
-                !
 #ifdef W3_PDLIB
                 if (w3_debugsrc_flag) then
                    WRITE(740+IAPROC,*) 'ITIME=', ITIME, ' IT=', IT
