@@ -390,7 +390,7 @@ CONTAINS
     USE W3ODATMD        , only : NDS, NOGE, NAPLOG, NAPOUT, NDSO, NDSE, NDST, NAPROC, NAPERR, SCREEN
     USE W3ODATMD        , only : IAPROC, IOUTP, NOTYPE, NAPBPT
     USE W3ODATMD        , only : TOFRST, TONEXT, TBPIN, TBPI0, TOLAST, DTOUT, NAPFLD, NAPPNT
-    USE W3ODATMD        , only : NTPROC    
+    USE W3ODATMD        , only : NTPROC
     USE W3ODATMD        , only : TOSNL5
 
     USE W3GDATMD        , only : W3SETG
@@ -568,12 +568,12 @@ CONTAINS
     !Li   Temperature spectra for Arctic boundary update.
     REAL, ALLOCATABLE    :: BACSPEC(:) ! only for  W3_SMC
     REAL                 :: BACANGL    ! only for  W3_SMC
-    ! 
+    !
     logical :: setup_mpi_write, write_now
-    logical :: do_gridded_output 
-    logical :: do_point_output 
-    logical :: do_track_output 
-    logical :: do_restart_output 
+    logical :: do_gridded_output
+    logical :: do_point_output
+    logical :: do_track_output
+    logical :: do_restart_output
     logical :: do_boundary_output
     logical :: do_sf_output
     logical :: do_coupler_output
@@ -2159,7 +2159,7 @@ CONTAINS
                    end if
                 ENDIF
 #endif
-             ELSE  ! IF ((GTYPE .EQ. UNGTYPE) .and. LPDLIB) 
+             ELSE  ! IF ((GTYPE .EQ. UNGTYPE) .and. LPDLIB)
 
                 IF (FLCX .or. FLCY) THEN
                    if (w3_debugrun_flag) then
@@ -2566,7 +2566,7 @@ CONTAINS
                               PHIBBL(JSEA), TMP3, TMP4, PHICE(JSEA),      &
                               TAUOCX(JSEA), TAUOCY(JSEA), WNMEAN(JSEA),   &
                               RHOAIR(ISEA), ASF(ISEA))
-#else 
+#else
                          ! note that there are no TAUA and TAUADIR arguments below
                          CALL W3SRCE(srce_imp_post,IT,ISEA,JSEA,IX,IY,IMOD,  &
                               VAOLD(:,JSEA), VA(:,JSEA),                  &
@@ -2951,11 +2951,11 @@ CONTAINS
           END IF ! set_write
 #endif
 
-#ifndef W3_MPI 
+#ifndef W3_MPI
 #ifdef W3_PDLIB
           CALL DO_OUTPUT_EXCHANGES(IMOD)
 #endif
-#endif          
+#endif
           call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP1')
           !
           if (w3_debugrun_flag) then
@@ -3573,7 +3573,7 @@ CONTAINS
     USE W3GDATMD, ONLY: NSPEC, NX, NY, NSEA, NSEAL, MAPSF, DMIN
     USE W3PARALL, ONLY: INIT_GET_ISEA
     USE W3WDATMD, ONLY: A => VA
-    USE W3ADATMD, ONLY: MPIBUF, BSTAT, IBFLOC, ISPLOC, BISPL ! W3_MPI
+    USE W3ADATMD, ONLY: MPIBUF, BSTAT, IBFLOC, ISPLOC, BISPL ! W3_MPI/MPIT
     USE W3ADATMD, ONLY: NSPLOC, NRQSG2, IRQSG2, GSTORE       ! W3_MPI
     USE W3ODATMD, ONLY: NDST, IAPROC, NAPROC, NOTYPE         ! W3_MPI
     !/
@@ -3594,12 +3594,12 @@ CONTAINS
     !/
     INTEGER                 :: ISEA, IXY                     ! W3_SHRD
 #ifdef W3_MPI
-    INTEGER                 :: STATUS(MPI_STATUS_SIZE,NSPEC) 
-    CHARACTER(LEN=15)       :: STR(MPIBUF), STRT             
+    INTEGER                 :: STATUS(MPI_STATUS_SIZE,NSPEC)
 #endif
     INTEGER                 :: IOFF, IERR_MPI, JSEA
     INTEGER                 :: IS0, IB0, NPST, J
     INTEGER, SAVE           :: IENT ! only for W3_S
+    CHARACTER(LEN=15)       :: STR(MPIBUF), STRT ! only for W3_MPI/MPIT
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -3841,9 +3841,9 @@ CONTAINS
     !/
     USE W3WDATMD, ONLY: A => VA
 #ifdef W3_MPI
-    USE W3ADATMD, ONLY: MPIBUF, BSTAT, IBFLOC, ISPLOC, BISPL
     USE W3ADATMD, ONLY: NSPLOC, NRQSG2, IRQSG2, SSTORE
 #endif
+    USE W3ADATMD, ONLY: MPIBUF, BSTAT, IBFLOC, ISPLOC, BISPL !W3_MPI/MPIT
     USE W3ODATMD, ONLY: NDST
     USE W3ODATMD, ONLY: IAPROC, NAPROC ! W3_MPI
     USE CONSTANTS, ONLY : LPDLIB
@@ -3867,11 +3867,11 @@ CONTAINS
     INTEGER           :: ISEA, IXY, IOFF, IERR_MPI, J! only for W3_MPI
 #ifdef W3_MPI
     INTEGER           :: STATUS(MPI_STATUS_SIZE,NSPEC)
-    CHARACTER(LEN=15) :: STR(MPIBUF), STRT ! only for W3_MPIT
 #endif
     INTEGER           :: JSEA, IB0
     INTEGER, SAVE     :: IENT ! only for W3_S
     LOGICAL           :: DONE ! only for W3_MPI
+    CHARACTER(LEN=15) :: STR(MPIBUF), STRT ! only for W3_MPI/MPIT
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -3886,15 +3886,13 @@ CONTAINS
        IXY = MAPSF(ISEA,3)
        IF ( MAPSTA(IXY) .NE. 0 ) A(ISPEC,ISEA) = FIELD(IXY)
     END DO
-#endif
-    !
-#ifdef W3_SHRD
     RETURN
 #endif
     !
     ! 2.  Distributed memory version ( MPI ) ----------------------------- *
     ! 2.a Initializations
     !
+#ifdef W3_MPI
     if (w3_mpit_flag) then
        DO IB0=1, MPIBUF
           STR(IB0) = '              |'
@@ -3908,21 +3906,17 @@ CONTAINS
     !
     ! 2.b Convert full grid to sea grid, active points only
     !
-#ifdef W3_MPI
     DO ISEA=1, NSEA
        IXY    = MAPSF(ISEA,3)
        IF ( MAPSTA(IXY) .NE. 0 ) SSTORE(ISEA,IBFLOC) = FIELD(IXY)
     END DO
-#endif
     !
     ! 2.c Send spectral densities to appropriate remote
     !
-#ifdef W3_MPI
     IOFF   = 1 + (ISPLOC-1)*NRQSG2
     IF ( NRQSG2 .GT. 0 ) CALL                                  &
          MPI_STARTALL ( NRQSG2, IRQSG2(IOFF,2), IERR_MPI )
     BSTAT(IBFLOC) = 2
-#endif
     if (w3_mpit_flag) then
        STRT(12:12) = 's'
        WRITE (STRT(1:7),'(I2,I5)') BSTAT(IBFLOC), ISPLOC
@@ -3931,21 +3925,16 @@ CONTAINS
     !
     ! 2.d Save locally stored results
     !
-#ifdef W3_MPI
     DO JSEA=1, NSEAL
        CALL INIT_GET_ISEA(ISEA, JSEA)
        IXY    = MAPSF(ISEA,3)
        IF (MAPSTA(IXY) .NE. 0) A(ISPEC,JSEA) = SSTORE(ISEA,IBFLOC)
     END DO
-#endif
     !
     ! 2.e Check if any sends have finished
     !
-#ifdef W3_MPI
     IB0    = IBFLOC
-#endif
     !
-#ifdef W3_MPI
     DO J=1, MPIBUF
        IB0    = 1 + MOD(IB0,MPIBUF)
        IF ( BSTAT(IB0) .EQ. 2 ) THEN
@@ -3961,26 +3950,20 @@ CONTAINS
                STATUS, IERR_MPI )
           IF ( DONE ) THEN
              BSTAT(IB0) = 0
-#endif
              if (w3_mpit_flag) then
                 STRT        = STR(IB0)
                 WRITE (STRT(1:7),'(I2,I5)') BSTAT(IB0), BISPL(IB0)
                 STRT(13:13) = 'S'
                 STR(IB0)    = STRT
              end if
-#ifdef W3_MPI
           END IF
        END IF
     END DO
-#endif
     !
     ! 2.f Last component, finish message passing, reset buffer control
     !
-#ifdef W3_MPI
     IF ( ISPLOC .EQ. NSPLOC ) THEN
-#endif
        !
-#ifdef W3_MPI
        DO IB0=1, MPIBUF
           IF ( BSTAT(IB0) .EQ. 2 ) THEN
              IOFF   = 1 + (BISPL(IB0)-1)*NRQSG2
@@ -3988,26 +3971,19 @@ CONTAINS
                   MPI_WAITALL ( NRQSG2, IRQSG2(IOFF,2),       &
                   STATUS, IERR_MPI )
              BSTAT(IB0) = 0
-#endif
              if (w3_mpit_flag) then
                 STRT        = STR(IB0)
                 WRITE (STRT(1:7),'(I2,I5)') BSTAT(IB0), BISPL(IB0)
                 STRT(13:13) = 'S'
                 STR(IB0)    = STRT
              end if
-#ifdef W3_MPI
           END IF
        END DO
-#endif
        !
-#ifdef W3_MPI
        ISPLOC = 0
        IBFLOC = 0
-#endif
        !
-#ifdef W3_MPI
     END IF
-#endif
     !
     ! 2.g Test output
     !
@@ -4039,7 +4015,6 @@ CONTAINS
        END IF
     end if
     !
-#ifdef W3_MPI
     RETURN
 #endif
     !
