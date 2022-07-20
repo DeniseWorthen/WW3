@@ -1673,7 +1673,7 @@ CONTAINS
 ! W3_PDLIB start
 #ifdef W3_PDLIB
           IF ( FLSOU .and. LPDLIB .and. FSSOURCE) THEN
-             !$OMP PARALLEL DO PRIVATE (JSEA,ISEA,IX,IY), SCHEDULE(DYNAMIC,1)
+             !$OMP PARALLEL DO PRIVATE (JSEA,ISEA,IX,IY) SCHEDULE (DYNAMIC,1)
              D50=0.0002
              REFLEC(:)=0.
              REFLED(:)=0
@@ -1868,7 +1868,7 @@ CONTAINS
                    NKCFL=1
                 end if
                 !
-                !$OMP PARALLEL DO PRIVATE (JSEA,ISEA), SCHEDULE(DYNAMIC,1)
+                !$OMP PARALLEL DO PRIVATE (JSEA,ISEA) SCHEDULE (DYNAMIC,1)
                 DO JSEA=1, NSEAL
                    CALL INIT_GET_ISEA(ISEA, JSEA)
 #ifdef W3_PR3
@@ -1996,7 +1996,8 @@ CONTAINS
                 DO ITLOC=1, ITLOCH
                    !
 #ifdef W3_OMPG
-!$OMP PARALLEL PRIVATE (JSEA,ISEA,IX,IY,DEPTH,IXrel), SCHEDULE(DYNAMIC,1)
+!$OMP PARALLEL PRIVATE (JSEA,ISEA,IX,IY,DEPTH,IXrel)
+!$OMP DO SCHEDULE (DYNAMIC,1)
 #endif
                    !
                    if (w3_debugrun_flag) then
@@ -2075,7 +2076,8 @@ CONTAINS
                    END DO  ! DO JSEA=1, NSEAL
                    !
 #ifdef W3_OMPG
-!$OMP END PARALLEL DO
+!$OMP END DO
+!$OMP END PARALLEL
 #endif
                    !
                 END DO
@@ -2376,7 +2378,8 @@ CONTAINS
                 DO ITLOC=ITLOCH+1, NTLOC
                    !
 #ifdef W3_OMPG
-!$OMP PARALLEL PRIVATE (JSEA,ISEA,IX,IY,DEPTH,IXrel), SCHEDULE(DYNAMIC,1)
+                   !$OMP PARALLEL PRIVATE (JSEA,ISEA,IX,IY,DEPTH,IXrel)
+                   !$OMP DO SCHEDULE (DYNAMIC,1)
 #endif
                    !
                    if (w3_debugrun_flag) then
@@ -2455,7 +2458,8 @@ CONTAINS
                    END DO  !  DO JSEA = 1, NSEAL
                    !
 #ifdef W3_OMPG
-                   !$OMP END PARALLEL DO
+                   !$OMP END DO
+                   !$OMP END PARALLEL
 #endif
                    !
                 END DO  ! DO ITLOC=ITLOCH+1, NTLOC
@@ -2503,8 +2507,9 @@ CONTAINS
 #endif
                 !
 #ifdef W3_OMPG
-!$OMP PARALLEL PRIVATE (JSEA,ISEA,IX,IY,DELA,DELX,DELY,REFLEC,REFLED,D50,PSIC,TMP1, &
-!$OMP                   TMP2,TMP3,TMP4), SCHEDULE(DYNAMIC,1)
+                !$OMP PARALLEL PRIVATE (JSEA,ISEA,IX,IY,DELA,DELX,DELY,        &
+                !$OMP&                  REFLEC,REFLED,D50,PSIC,TMP1,TMP2,TMP3,TMP4)
+                !$OMP DO SCHEDULE (DYNAMIC,1)
 #endif
                 !
                 DO JSEA=1, NSEAL
@@ -2686,7 +2691,8 @@ CONTAINS
                 end if
                 !
 #ifdef W3_OMPG
-                !$OMP END PARALLEL DO
+                !$OMP END DO
+                !$OMP END PARALLEL
 #endif
                 !
 #ifdef W3_PDLIB
