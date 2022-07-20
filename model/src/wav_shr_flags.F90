@@ -28,7 +28,7 @@ module wav_shr_flags
 #ifdef W3_DEBUGIOBP
    logical ::  w3_debugiobp_flag = .true.      !< @public a flag for "W3_DEBUGIOBP"
 #else
-   logical ::  w3_debugciobp_flag = .false.    !< @public a flag for "W3_DEBUGIOBP"
+   logical ::  w3_debugiobp_flag = .false.    !< @public a flag for "W3_DEBUGIOBP"
 #endif
 
 #ifdef W3_DEBUGDCXDX
