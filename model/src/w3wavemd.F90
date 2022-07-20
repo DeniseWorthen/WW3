@@ -3209,16 +3209,15 @@ CONTAINS
                               (DSEC21 (TIME00, TIME) .GT. 0.0) ) THEN
                             IF ( (CPLT0 .AND. (DSEC21 (TIME, TIMEN) .GT. 0.0)) .OR. .NOT. CPLT0 ) THEN
                                IF (CPLT0) ID_OASIS_TIME = NINT(DSEC21 ( TIME00 , TIME ))
-
-                               if (w3_oasacm_flag) then
+#ifdef W3_OASACM
                                   CALL SND_FIELDS_TO_ATMOS()
-                               end if
-                               if (w3_oasocm_flag) then
+#endif
+#ifdef W3_OASOCM
                                   CALL SND_FIELDS_TO_OCEAN()
-                               end if
-                               if (w3_oasicm_flag) then
+#endif
+#ifdef W3_OASICM
                                   CALL SND_FIELDS_TO_ICE()
-                               end if
+#endif
                                IF (.NOT. CPLT0) ID_OASIS_TIME = NINT(DSEC21 ( TIME00 , TIME ))
                             ENDIF
                          ENDIF
