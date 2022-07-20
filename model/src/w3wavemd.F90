@@ -1673,7 +1673,6 @@ CONTAINS
 ! W3_PDLIB start
 #ifdef W3_PDLIB
           IF ( FLSOU .and. LPDLIB .and. FSSOURCE) THEN
-             !$OMP PARALLEL DO PRIVATE (JSEA,ISEA,IX,IY) SCHEDULE (DYNAMIC,1)
              D50=0.0002
              REFLEC(:)=0.
              REFLED(:)=0
@@ -1815,7 +1814,6 @@ CONTAINS
                 WRITE(740+IAPROC,*) '     sum(VDTOT)=', sum(VDTOT(:,DEBUG_NODE))
              END IF
           end if
-          !$OMP END PARALLEL DO
 #endif
 ! W3_PDLIB end
 
@@ -2715,7 +2713,7 @@ CONTAINS
                 !!/MPI            ELSE
                 !!/MPI              CALL MPI_BARRIER (MPI_COMM_WCMP,IERR_MPI)
                 !
-             END IF
+             END IF ! IF ( FLSOU ) THEN
              if (w3_debugrun_flag) then
                 WRITE(740+IAPROC,*) 'W3WAVE, step 6.18'
                 FLUSH(740+IAPROC)
