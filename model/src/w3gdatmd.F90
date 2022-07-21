@@ -3084,6 +3084,11 @@ CONTAINS
     !
     ! 1.  Preparations --------------------------------------------------- *
     !
+#ifdef W3_REF1
+      IF (REFPARS(2).GT.0) RREF(2)=.TRUE.
+      IF (REFPARS(3).GT.0) RREF(3)=.TRUE.
+      IF (REFPARS(4).GT.0) RREF(4)=.TRUE.
+#endif
     !
     if (w3_ref1_flag) then
        DO IY=2, NY-1
