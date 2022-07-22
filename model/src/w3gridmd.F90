@@ -64,7 +64,7 @@
 !/    30-Oct-2009 : Implement curvilinear grid type.    ( version 3.14 )
 !/                  (W. E. Rogers & T. J. Campbell, NRL)
 !/    29-Oct-2010 : Clean up of unstructured grids      ( version 3.14.4 )
-!/                  (A. Roland and F. Ardhuin) 
+!/                  (A. Roland and F. Ardhuin)
 !/    06-Dec-2010 : Change from GLOBAL (logical) to ICLOSE (integer) to
 !/                  specify index closure for a grid. Change GLOBAL
 !/                  input in ww3_grid.inp to CSTRG.     ( version 3.14 )
@@ -73,7 +73,7 @@
 !/    16-Sep-2011 : Clean up.                           ( version 4.05 )
 !/    01-Dec-2011 : New namelist for reflection         ( version 4.05 )
 !/    01-Mar-2012 : Bug correction for NLPROP in ST2    ( version 4.05 )
-!/    12-Jun-2012 : Add /RTD rotated grid option. JGLi  ( version 4.06 ) 
+!/    12-Jun-2012 : Add /RTD rotated grid option. JGLi  ( version 4.06 )
 !/    13-Jul-2012 : Move data structures GMD (SNL3) and nonlinear
 !/                  filter (SNLS) from 3.15 (HLT).      ( version 4.07 )
 !/    02-Sep-2012 : Clean up of reflection and UG grids ( version 4.08 )
@@ -103,7 +103,7 @@
 !/    20-Jun-2018 : Update of ST6  (Q. Liu)             ( version 6.06 )
 !/    26-Aug-2018 : UOST (Mentaschi et al. 2015, 2018)  ( version 6.06 )
 !/    27-Aug-2018 : Add WBT parameter                   ( version 6.06 )
-!/    22-Jan-2020 : Update default values for IS2       ( version 7.05 ) 
+!/    22-Jan-2020 : Update default values for IS2       ( version 7.05 )
 !/    20-Feb-2020 : Include Romero's dissipation in ST4 ( version 7.06 )
 !/    15-Apr-2020 : Adds optional opt-out for CFL on BC ( version 7.08 )
 !/    18-Jun-2020 : Adds 360-day calendar option        ( version 7.08 )
@@ -116,7 +116,7 @@
 !/
 !/    Copyright 2009-2013 National Weather Service (NWS),
 !/       National Oceanic and Atmospheric Administration.  All rights
-!/       reserved.  WAVEWATCH III is a trademark of the NWS. 
+!/       reserved.  WAVEWATCH III is a trademark of the NWS.
 !/       No unauthorized use without permission.
 !/
 !  1. Purpose :
@@ -285,29 +285,29 @@
 !
 ! (Begin SMC description)
 !
-!      Spherical Multiple-Cell (SMC) grid 
+!      Spherical Multiple-Cell (SMC) grid
 !     -----------------------------------
 !
-!     SMC grid is a multi-resolution grid using cells of multiple times 
-!     of each other.  It is similar to the lat-lon grid using rectangular 
-!     cells but only cells at sea points are retained.  All land points 
-!     have been removed from the model.  At high latitudes, cells are 
-!     merged longitudinally to relax the CFL resctiction on time steps. 
-!     Near coastlines, cells are divided into quarters in a few steps so 
-!     that high resolution is achieved to refine coastlines and resolve 
+!     SMC grid is a multi-resolution grid using cells of multiple times
+!     of each other.  It is similar to the lat-lon grid using rectangular
+!     cells but only cells at sea points are retained.  All land points
+!     have been removed from the model.  At high latitudes, cells are
+!     merged longitudinally to relax the CFL resctiction on time steps.
+!     Near coastlines, cells are divided into quarters in a few steps so
+!     that high resolution is achieved to refine coastlines and resolve
 !     small islands.  At present, three tiers of quarter cells are used.
-!     For locating purpose, a usual x-y counter is setup by the smallest 
-!     cell size and starting from the south-west corner of the usual 
-!     rectuangular domain.  Each sea cell is then given a pair of x-y 
-!     index, plus a pair of increments.  These four index are stored in 
+!     For locating purpose, a usual x-y counter is setup by the smallest
+!     cell size and starting from the south-west corner of the usual
+!     rectuangular domain.  Each sea cell is then given a pair of x-y
+!     index, plus a pair of increments.  These four index are stored in
 !     the cell array IJKCel(NCel, 5), each row holds i, j, di, dj, ndps
 !     where ndps is an integer depth in metre.  If precision higher than
 !     a metre is required, it may use other unit (cm for instance) with a
-!     conversion factor.  
-!    
-!     For transport calculation, two face arrays, IJKUFc(NUFc, 7) and 
-!     IJKVFc(NVFc,8), are also created to store the neighbouring cell 
-!     sequential numbers and the face location and size.  The 3 arrays 
+!     conversion factor.
+!
+!     For transport calculation, two face arrays, IJKUFc(NUFc, 7) and
+!     IJKVFc(NVFc,8), are also created to store the neighbouring cell
+!     sequential numbers and the face location and size.  The 3 arrays
 !     are calculated outside the wave model and input from text files.
 !
 !     Boundary condition is added for SMC grid so that it can be used for
@@ -318,15 +318,15 @@
 !     reset with an input value because the NX-Y double loop overcount
 !     the boundary cells for merged cells in the SMC grid.  ISBPI
 !     boundary cell mapping array is fine as MAPFS uses duplicated cell
-!     number in any merged cell.  From there, all original NBI loops are 
-!     reusable. 
+!     number in any merged cell.  From there, all original NBI loops are
+!     reusable.
 !
 !     The whole Arctic can be included in the SMC grid if ARCTC variable
 !     is set to be .TRUE. within the SMC option.  The ARCTC option appends
 !     the polar Arctic part above 86N to the existing SMC grid and uses
 !     a map-east reference direction for this extra polar region.
 !     Because the map-east direction changes with latitude and longitude
-!     the wave spectra defined to the map-east direction could not be 
+!     the wave spectra defined to the map-east direction could not be
 !     mixed up with the conventional spectra defined to the local east
 !     direction.  A rotation sub is provided for convertion from one to
 !     another.  Propagation part will be calculated together, including
@@ -341,17 +341,17 @@
 !     are required for a Arctic regional model, users may consider use
 !     the rotated SMC grid options (RTD and SMC).
 !
-!     For more information about the SMC grid, please refer to  
+!     For more information about the SMC grid, please refer to
 !     Li, J.G. (2012) Propagation of Ocean Surface Waves on a Spherical
 !     Multiple-Cell Grid.  J. Comput. Phys., 231, 8262-8277.  online at
 !     http://dx.doi.org/10.1016/j.jcp.2012.08.007
 !
 ! (End SMC description)
 !
-!     ICEWIND is the scale factor for reduction of wind input by ice 
-!     concentration. Value specified corresponds to the fractional 
+!     ICEWIND is the scale factor for reduction of wind input by ice
+!     concentration. Value specified corresponds to the fractional
 !     input for 100% ice concentration. Default is 1.0, meaning that
-!     100% ice concentration result in zero wind input. 
+!     100% ice concentration result in zero wind input.
 !     Sin_in_ice=Sin_in_open_water * (1-ICE*ICEWIND)
 
 !     -----------------------------------------------------------------*
@@ -448,11 +448,11 @@
 !
 !     !/BT0   No bottom friction included.
 !     !/BT1   JONSWAP bottom friction package.
-!     !/BT4   SHOWEX bottom friction using movable bed roughness 
+!     !/BT4   SHOWEX bottom friction using movable bed roughness
 !                  (Tolman 1994, Ardhuin & al. 2003)
 !
 !     !/IC1   Sink term for interaction with ice (uniform k_i)
-!     !/IC2   Sink term for under-ice boundary layer friction 
+!     !/IC2   Sink term for under-ice boundary layer friction
 !                  (Liu et al.    1991: JGR 96 (C3), 4605-4621)
 !                  (Liu and Mollo 1988: JPO 18       1720-1712)
 !     !/IC3   Sink term for interaction with ice (Wang and Shen method)
@@ -480,7 +480,7 @@
 !     !/PR3   Averaging ULTIMATE QUICKEST scheme.
 !
 !     !/RTD   Rotated regular lat-lon grid. Special case is standard Polat=90.
-!     !/SMC   Spherical Multiple-Cell grid, may includes the whole Arctic.   
+!     !/SMC   Spherical Multiple-Cell grid, may includes the whole Arctic.
 !
 !     !/MGG   GSE correction for moving grid.
 !
@@ -509,7 +509,7 @@
       USE W3SERVMD, ONLY: W3EQTOLL, W3LLTOEQ
 #endif
 #ifdef W3_SMC
-      USE W3SERVMD, ONLY: W3LLTOEQ 
+      USE W3SERVMD, ONLY: W3LLTOEQ
 #endif
 #ifdef W3_S
       USE W3SERVMD, ONLY: STRACE
@@ -595,12 +595,12 @@
       INTEGER                 :: NCOL =  78
 #ifdef W3_SMC
  !!Li     Offset to change Equator index = 0 to regular index JEQT
- !!Li     LvSMC  levels of refinded resolutions for SMC grid.  
- !!Li     NBISMC number of boundary point for regional SMC grid.  
- !!Li     ISHFT for SMC i-index from smc origin to regular grid west edge. 
+ !!Li     LvSMC  levels of refinded resolutions for SMC grid.
+ !!Li     NBISMC number of boundary point for regional SMC grid.
+ !!Li     ISHFT for SMC i-index from smc origin to regular grid west edge.
  !!Li     SMC cell only subgrid obstruction array dimensions NCObst, JObs.
       INTEGER      :: JEQT, LvSMC, NBISMC, JS, NCObst, JObs, ISHFT
-      INTEGER      :: NGUI, NGVJ,  NAUI, NAVJ 
+      INTEGER      :: NGUI, NGVJ,  NAUI, NAVJ
 #endif
 !
 #ifdef W3_O2
@@ -686,7 +686,7 @@
       INTEGER, ALLOCATABLE    :: NBICelin(:),  IJKObstr(:,:)
       REAL                    :: PoLonAC, PoLatAC
       INTEGER, ALLOCATABLE    :: IJKCelAC(:,:),IJKUFcAC(:,:),IJKVFcAC(:,:)
-      REAL,    ALLOCATABLE    :: XLONAC(:),YLATAC(:),ELONAC(:),ELATAC(:) 
+      REAL,    ALLOCATABLE    :: XLONAC(:),YLATAC(:),ELONAC(:),ELATAC(:)
 #endif
 !
 #ifdef W3_RTD
@@ -786,11 +786,11 @@
 #endif
 
 #ifdef W3_SCRIP
- INTEGER :: NCID 
+ INTEGER :: NCID
  INTEGER :: grid_size_dimid, grid_rank_dimid, grid_corners_dimid
  INTEGER :: grid_center_lat_varid, grid_center_lon_varid
  INTEGER :: grid_corner_lat_varid, grid_corner_lon_varid
- INTEGER :: grid_area_varid, grid_imask_varid 
+ INTEGER :: grid_area_varid, grid_imask_varid
  INTEGER :: grid_dims_varid
  REAL (SCRIP_R8) :: CONV_DX,CONV_DY,OFFSET
 #endif
@@ -853,7 +853,7 @@
                                  SDSSTRAIN, SDSSTRAINA, SDSSTRAIN2,   &
                                  SDSBR, SDSP, SDSBT, SDS4A, SDKOF,    &
                                  SDSCOS, SDSDTH, SDSBCK, SDSABK,      &
-                                 SDSPBK, SDSBINT, SDSHCK,             &               
+                                 SDSPBK, SDSBINT, SDSHCK,             &
                                  SDSBRF1,                             &
                                  SDSBM0, SDSBM1, SDSBM2, SDSBM3,      &
                                  SDSBM4, SDSFACMTF, SDSCUMP,  SDSNUW, &
@@ -896,8 +896,8 @@
 !
 #ifdef W3_SMC
       REAL                    :: DTIMS, CFLSM, RFMAXD, SYMR, YJ0R
-      LOGICAL                 :: UNO3, AVERG, SEAWND, Arctic 
-      CHARACTER               :: PNSMC*30 
+      LOGICAL                 :: UNO3, AVERG, SEAWND, Arctic
+      CHARACTER               :: PNSMC*30
 #endif
 !
 #ifdef W3_PR3
@@ -934,7 +934,7 @@
            REAL*8  :: CRIT_DEP_SETUP = 0.
 !
            CHARACTER               :: UGOBCFILE*60
-           REAL                    :: UGOBCDEPTH 
+           REAL                    :: UGOBCDEPTH
            LOGICAL                 :: UGOBCOK
 
 #ifdef W3_RTD
@@ -977,7 +977,7 @@
 #ifdef W3_IG1
       NAMELIST /SIG1/  IGMETHOD, IGADDOUTP, IGSOURCE, IGBCOVERWRITE,   &
                       IGMAXFREQ, IGSTERMS, IGSWELLMAX,                &
-                      IGSOURCEATBP, IGKDMIN, IGFIXEDDEPTH, IGEMPIRICAL 
+                      IGSOURCEATBP, IGKDMIN, IGFIXEDDEPTH, IGEMPIRICAL
 #endif
 #ifdef W3_LN1
       NAMELIST /SLN1/ CLIN, RFPM, RFHF
@@ -1069,9 +1069,9 @@
 #endif
 #ifdef W3_SMC
       NAMELIST /PSMC/ CFLSM, DTIMS, RFMAXD, Arctic, AVERG, UNO3, &
-                      LvSMC, ISHFT, JEQT,   NBISMC, SEAWND 
+                      LvSMC, ISHFT, JEQT,   NBISMC, SEAWND
 #endif
-! 
+!
 #ifdef W3_PR3
       NAMELIST /PRO3/ CFLTM, WDTHCG, WDTHTH
 #endif
@@ -1094,7 +1094,7 @@
                            JGS_SOURCE_NONLINEAR,                      &
                            SETUP_APPLY_WLV, SOLVERTHR_SETUP,          &
                            CRIT_DEP_SETUP
-           NAMELIST /MISC/ CICE0, CICEN, LICE, XSEED, FLAGTR, XP, XR, & 
+           NAMELIST /MISC/ CICE0, CICEN, LICE, XSEED, FLAGTR, XP, XR, &
                       XFILT, PMOVE, IHM, HSPM, WSM, WSC, FLC, FMICHE, &
                       RWNDC, FACBERG, NOSW, GSHIFT, WCOR1, WCOR2,     &
                       STDX, STDY, STDT, ICEHMIN, ICEHINIT, ICEDISP,   &
@@ -1129,7 +1129,7 @@
 !/
 #ifdef W3_RTD
       NAMELIST /ROTD/ PLAT, PLON, UNROT
-! Poles of destination grids for boundary conditions output 
+! Poles of destination grids for boundary conditions output
       NAMELIST /ROTB/ BPLAT, BPLON
 #endif
 !/
@@ -1166,14 +1166,14 @@
       NDSS   = 99
       NDSM   = 20
 !
-      INQUIRE(FILE=TRIM(FNMPRE)//"ww3_grid.nml", EXIST=FLGNML) 
+      INQUIRE(FILE=TRIM(FNMPRE)//"ww3_grid.nml", EXIST=FLGNML)
       IF (FLGNML) THEN
          ! Read namelist
          CALL W3NMLGRID (NDSI, TRIM(FNMPRE)//'ww3_grid.nml', NML_SPECTRUM, NML_RUN,  &
                          NML_TIMESTEPS, NML_GRID, NML_RECT, NML_CURV,   &
                          NML_UNST, NML_SMC, NML_DEPTH, NML_MASK,        &
                          NML_OBST, NML_SLOPE, NML_SED, NML_INBND_COUNT, &
-                         NML_INBND_POINT, NML_EXCL_COUNT,               &                  
+                         NML_INBND_POINT, NML_EXCL_COUNT,               &
                          NML_EXCL_POINT, NML_EXCL_BODY,                 &
                          NML_OUTBND_COUNT, NML_OUTBND_LINE, IERR)
       ELSE
@@ -1356,10 +1356,10 @@
         READ (NDSI,*,END=2001,ERR=2002) DTMAX, DTCFL, DTCFLI, DTMIN
       END IF
 #ifdef W3_SEC1
-      IF (DTMAX.LT.1.) THEN 
+      IF (DTMAX.LT.1.) THEN
         NITERSEC1=CEILING(1./DTMAX)
         WRITE (NDSO,913) NITERSEC1
-      ELSE 
+      ELSE
         NITERSEC1=1
         END IF
 #endif
@@ -1701,28 +1701,28 @@
 #ifdef W3_ST3
       ZWND   =   10.
       ALPHA0 = 0.0095
-      Z0MAX = 0.0    
+      Z0MAX = 0.0
       BETAMAX  = 1.2       !  default WAM4 / WAM4 + is 1.2 with rhow=1000
-      SINTHP   = 2.     
-      SWELLF = 0.         
+      SINTHP   = 2.
+      SWELLF = 0.
       ZALP   = 0.0110
 #endif
 !
 #ifdef W3_ST4
       ZWND   =   10.
       ALPHA0 = 0.0095
-      Z0MAX = 0.0    
-      Z0RAT = 0.04 
-      BETAMAX   = 1.43     
-      SINTHP    = 2.     
-      SWELLF    = 0.66     
+      Z0MAX = 0.0
+      Z0RAT = 0.04
+      BETAMAX   = 1.43
+      SINTHP    = 2.
+      SWELLF    = 0.66
       SWELLFPAR = 1
       SWELLF2 = -0.018
       SWELLF3 = 0.022
       SWELLF4 = 1.5E5
       SWELLF5 = 1.2
       SWELLF6 = 0.
-      SWELLF7 = 360000. 
+      SWELLF7 = 360000.
       TAUWSHELTER = 0.3
       ZALP   = 0.006
       SINBR   = 0.
@@ -2076,30 +2076,30 @@
 #ifdef W3_ST3
       SDSC1  = -2.1 !! This is Bidlot et al. 2005,  Otherwise WAM4 uses -4.5
       WNMEANP = 0.5 !! This is Bidlot et al. 2005,  Otherwise WAM4 uses -0.5
-      FXFM3 = 2.5 
+      FXFM3 = 2.5
       FXPM3 = 4.
-      WNMEANPTAIL = 0.5 
+      WNMEANPTAIL = 0.5
       SDSDELTA1 = 0.4 !! This is Bidlot et al. 2005,  Otherwise WAM4 uses 0.5
       SDSDELTA2 = 0.6 !! This is Bidlot et al. 2005,  Otherwise WAM4 uses 0.5
 #endif
 !
 #ifdef W3_ST4
       WNMEANP = 0.5    ! taken from Bidlot et al. 2005
-      FXFM3 = 2.5 
-      FXFMAGE = 0. 
+      FXFM3 = 2.5
+      FXFMAGE = 0.
       FXPM3 = 4.
       WNMEANPTAIL = -0.5
-      SDSBCHOICE =1 ! 1: Ardhuin et al., 2: Filipot & Ardhuin, 3: Romero 
+      SDSBCHOICE =1 ! 1: Ardhuin et al., 2: Filipot & Ardhuin, 3: Romero
       SDSC2     = -2.2E-5     ! -3.8 for Romero
       SDSCUM    = -0.40344
       SDSC4     = 1.
-      SDSC5     = 0. 
+      SDSC5     = 0.
       SDSNUW    = 0.
       SDSC6     = 0.3
-      SDSBR     = 0.90E-3     ! 0.005 for Romero                                
+      SDSBR     = 0.90E-3     ! 0.005 for Romero
       SDSBRFDF  = 0
       SDSBRF1   = 0.5
-      SDSP      = 2.   ! this is now fixed in w3sds4, should be cleaned up 
+      SDSP      = 2.   ! this is now fixed in w3sds4, should be cleaned up
       SDSDTH    = 80.
       SDSCOS    = 2.
       SDSISO    = 2
@@ -2114,23 +2114,23 @@
       SDSBINT   = 0.3
       SDSHCK    = 1.5
       WHITECAPWIDTH = 0.3
-      SDSSTRAIN = 0.       
+      SDSSTRAIN = 0.
       SDSFACMTF =  400    ! MTF factor for Lambda , Romero (2019)
       SDSSTRAINA = 15.
       SDSSTRAIN2 = 0.
-      WHITECAPDUR   = 0.56 ! breaking duration factor 
+      WHITECAPDUR   = 0.56 ! breaking duration factor
 ! b (strength of breaking)
-      SDSBT     = 1.100E-3 ! B_T (sturation threshold for dissipation rate b) 
+      SDSBT     = 1.100E-3 ! B_T (sturation threshold for dissipation rate b)
 ! Lambda parameters
-      SDSL     = 3.5000e-05  ! L scaling 
+      SDSL     = 3.5000e-05  ! L scaling
 ! MTF
-      SPMSS     = 0.5    ! cmss^SPMSS 
-      SDSNMTF   = 1.5    ! MTF power 
+      SPMSS     = 0.5    ! cmss^SPMSS
+      SDSNMTF   = 1.5    ! MTF power
       SDSCUMP   = 2.
 ! MW
       SDSMWD    = .9  ! new AFo
       SDSMWPOW  = 1.  ! (k )^pow
-      SDKOF     = 3.  !  ko factor such that ko= g (SDKOF/(28 us))^2 
+      SDKOF     = 3.  !  ko factor such that ko= g (SDKOF/(28 us))^2
 #endif
 !
 #ifdef W3_ST6
@@ -2198,7 +2198,7 @@
 #ifdef W3_ST4
       CALL READNL ( NDSS, 'SDS4', STATUS )
       WRITE (NDSO,924) STATUS
-      WRITE (NDSO,925) SDSC2, SDSBCK, SDSCUM, WNMEANP 
+      WRITE (NDSO,925) SDSC2, SDSBCK, SDSCUM, WNMEANP
       SSDSC(1)   = REAL(SDSBCHOICE)
       SSDSC(2)   = SDSC2
       SSDSC(3)   = SDSCUM
@@ -2206,20 +2206,20 @@
       SSDSC(5)   = SDSC5
       SSDSC(6)   = SDSC6
       SSDSC(7)   = WHITECAPWIDTH
-      SSDSC(8)   = SDSSTRAIN   ! Straining constant ... 
+      SSDSC(8)   = SDSSTRAIN   ! Straining constant ...
       SSDSC(9)   = SDSL
       SSDSC(10)  = SDSSTRAINA*NTH/360. ! angle Aor enhanced straining
-      SSDSC(11)  = SDSSTRAIN2  ! straining constant for directional part 
+      SSDSC(11)  = SDSSTRAIN2  ! straining constant for directional part
       SSDSC(12)  = SDSBT
       SSDSC(13)  = SDSMWD
       SSDSC(14)  = SPMSS
-      SSDSC(15)  = SDSMWPOW 
+      SSDSC(15)  = SDSMWPOW
       SSDSC(16)  = SDKOF
-      SSDSC(17)  = WHITECAPDUR  
+      SSDSC(17)  = WHITECAPDUR
       SSDSC(18)  = SDSFACMTF
-      SSDSC(19)  = SDSNMTF 
-      SSDSC(20)  = SDSCUMP 
-      SSDSC(21)  = SDSNUW 
+      SSDSC(19)  = SDSNMTF
+      SSDSC(20)  = SDSCUMP
+      SSDSC(21)  = SDSNUW
 #endif
 !
 #ifdef W3_ST4
@@ -2317,7 +2317,7 @@
       SBTCX(6)=BOTROUGHMIN
       SBTCX(7)=BOTROUGHFAC
 #endif
-!        
+!
 !
 ! 6.h Define Sdb.
 !
@@ -2413,7 +2413,7 @@
             //'Required field input: ice parameters 1, 2, 3 and 4.'
 #endif
 !
-! 6.l Read unstructured data 
+! 6.l Read unstructured data
 ! initialisation of logical related to unstructured grid
        UGOBCAUTO = .TRUE.
        UGBCCFL = .TRUE.
@@ -2425,7 +2425,7 @@
        EXPFSFCT  = .FALSE.
        IMPFSN    = .FALSE.
        IMPTOTAL  = .FALSE.
-       EXPTOTAL  = .FALSE. 
+       EXPTOTAL  = .FALSE.
        IMPREFRACTION = .FALSE.
        IMPFREQSHIFT = .FALSE.
        IMPSOURCE = .FALSE.
@@ -2606,8 +2606,8 @@
       CFLSM  = MAX ( 0. , CFLSM )
       DTIMS  = MAX ( 0. , DTIMS )
       RFMAXD = MIN ( 80.0, ABS(RFMAXD) )
-      Refran = RFMAXD * DERA 
-  !! Printing out SMC grid parameters. 
+      Refran = RFMAXD * DERA
+  !! Printing out SMC grid parameters.
       WRITE (NDSO,1950)
       WRITE (NDSO,1951) PNSMC
       WRITE (NDSO,1953) CFLSM, DTIMS/3600., RFMAXD
@@ -2623,11 +2623,11 @@
         " Advection use 3rd order UNO3 instead of UNO2 scheme."
       IF( FVERG ) WRITE (NDSO,*)                &
         " Extra 1-2-1 average smoothing activated on SMC grid."
-      IF( FSWND ) WRITE (NDSO,*)                & 
+      IF( FSWND ) WRITE (NDSO,*)                &
         " Sea-point only wind input is required for SMC grid. "
-      IF( ARCTC ) WRITE (NDSO,*)                & 
+      IF( ARCTC ) WRITE (NDSO,*)                &
         " Arctic polar part will be appended to this SMC grid."
-      NRLv = LvSMC 
+      NRLv = LvSMC
       WRITE (NDSO,4001) NRLv
       WRITE (NDSO,4002) JEQT
       WRITE (NDSO,4302) ISHFT
@@ -2670,7 +2670,7 @@
          WRITE( NDSE, 1052 )
          CALL EXTCDE ( 33 )
        ENDIF
- ! Default poles of output b. c. are non-rotated: 
+ ! Default poles of output b. c. are non-rotated:
       BPLAT = 90.
       BPLON = -180.
       CALL READNL ( NDSS, 'ROTB', STATUS )
@@ -2692,9 +2692,9 @@
       CICE0  = 0.5
       CICEN  = 0.5
       LICE   = 0.
-      ICEHFAC= 1.0  
+      ICEHFAC= 1.0
       ICEHMIN= 0.2  ! the 0.2 value is arbitrary and needs to be tuned.
-      ICEHINIT= 0.5  
+      ICEHINIT= 0.5
       ICESLN = 1.0
       ICEWIND= 1.0
       ICESNL = 1.0
@@ -2717,7 +2717,7 @@
       TRCKCMPR = .TRUE.
       NOSW   = 5
 !
-! Gas fluxes 
+! Gas fluxes
 !
       AIRCMIN   = 2.0  ! cmin for whitecap coverage and entrained air
       AIRGB     = 0.2  ! volume of entrained air constant (Deike et al. 2017)
@@ -2730,41 +2730,41 @@
       PTFC   = 0.1  ! Part. method 5 cutoff freq default. C. Bunney
       FMICHE = 1.6
       RWNDC  = 1.
-      WCOR1  = 99. 
+      WCOR1  = 99.
       WCOR2  = 0.
       BTBET  = 1.2 ! β for c / [U cos(θ - φ)] < β
 ! Variables for Space-Time Extremes
 !  Default negative values make w3iogomd switch off space-time extremes
 !  forces user to provide NAMELIST if wanting to compute STE parameters
-      STDX = -1. 
-      STDY = -1. 
-      STDT = -1. 
+      STDX = -1.
+      STDY = -1.
+      STDT = -1.
       ICEDISP = .FALSE.
       CALTYPE = 'standard'
 ! Variables for 3D array output
-      E3D=0 
+      E3D=0
       I1E3D=1
       I2E3D=NK
       P2SF   = 0
-      I1P2SF = 1	
+      I1P2SF = 1
       I2P2SF = 15
-      US3D   = 0 
+      US3D   = 0
       I1US3D = 1
       I2US3D = NK
       USSP=0
       IUSSP=1
       STK_WN(:)=0.0
       STK_WN(1)=TPI/100. !Set default decay of 100 m for Stokes drift
-      TH1MF=0 
+      TH1MF=0
       I1TH1M=1
       I2TH1M=NK
-      STH1MF=0 
+      STH1MF=0
       I1STH1M=1
       I2STH1M=NK
       TH2MF=0
       I1TH2M=1
       I2TH2M=NK
-      STH2MF=0 
+      STH2MF=0
       I1STH2M=1
       I2STH2M=NK
 !
@@ -2785,7 +2785,7 @@
       ISC1 = 1.
       IS2C2 = 0.   ! 0.025
       IS2C3 = 0.   ! 2.4253
-      IS2CONC = 0.   
+      IS2CONC = 0.
       IS2BACKSCAT = 1.
       IS2BREAK = .FALSE.
       IS2BREAKF = 3.6
@@ -2838,7 +2838,7 @@
 !
 #ifdef W3_IG1
        IGMETHOD = 2
-       IGADDOUTP= 0 
+       IGADDOUTP= 0
        IGSOURCE = 2
        IGSTERMS = 0
        IGMAXFREQ=0.03
@@ -2856,10 +2856,10 @@
 #endif
 !
 #ifdef W3_IC2
-       IC2DISPER = .FALSE. 
+       IC2DISPER = .FALSE.
        IC2TURB = 1.
        IC2TURBS = 0.
-       IC2ROUGH = 0.01 
+       IC2ROUGH = 0.01
        IC2REYNOLDS = 1.5E5
        IC2SMOOTH = 2E5
        IC2VISC = 1.
@@ -2932,7 +2932,7 @@
       WRITE (NDSO,4970) STATUS
 !
 !
-! output of frequency spectra, th1m ... 
+! output of frequency spectra, th1m ...
 !
       E3DF(1,1) = E3D
       E3DF(2,1) = MIN(MAX(1,I1E3D),NK)
@@ -2972,7 +2972,7 @@
          WRITE(NDSE,*) "   intended for use with more than 25   "
          WRITE(NDSE,*) "   partitions.  Please reduce IUSSP     "
          WRITE(NDSE,*) "   specified in ww3_grid.inp to proceed "
-         CALL EXTCDE( 31) 
+         CALL EXTCDE( 31)
       ENDIF
 
       DO J=1,USSPF(2)
@@ -2999,7 +2999,7 @@
       ICESNL  = MIN ( 1. , MAX ( 0. , ICESNL ) )
       FICEN  = CICEN
       GRIDSHIFT=GSHIFT
-      ICESCALES(1)=ICESLN 
+      ICESCALES(1)=ICESLN
       ICESCALES(2)=ICEWIND
       ICESCALES(3)=ICESNL
       ICESCALES(4)=ICESDS
@@ -3048,7 +3048,7 @@
          WRITE (NDSO,1042)
       END IF
       IF ( STDT .GT. 0 ) THEN
-         WRITE (NDSO,1043) STDT 
+         WRITE (NDSO,1043) STDT
       ELSE
          WRITE (NDSO,1044)
       END IF
@@ -3066,11 +3066,11 @@
       WRITE (NDSO,1972) TRCKCMPR
       FACSD  = XSEED
 #ifdef W3_RWND
- RWINDC = RWNDC 
+ RWINDC = RWNDC
 #endif
 #ifdef W3_WCOR
- WWCOR(1) = WCOR1 
- WWCOR(2) = WCOR2 
+ WWCOR(1) = WCOR1
+ WWCOR(2) = WCOR2
 #endif
 !
       XP     = MAX ( 1.E-6 , XP )
@@ -3134,7 +3134,7 @@
 !
       IF (TRIM(CALTYPE) .NE. 'standard' .AND.                           &
           TRIM(CALTYPE) .NE. '360_day'  .AND.                           &
-          TRIM(CALTYPE) .NE. '365_day' ) GOTO 2003 
+          TRIM(CALTYPE) .NE. '365_day' ) GOTO 2003
       WRITE (NDST,1973) CALTYPE
       WRITE (NDSO,*)
 !
@@ -3301,7 +3301,7 @@
 #endif
 #ifdef W3_SMC
           WRITE (NDSO,2954) CFLSM, DTIMS, Arctic, RFMAXD, UNO3, &
-                      AVERG, LvSMC, NBISMC, ISHFT, JEQT, SEAWND 
+                      AVERG, LvSMC, NBISMC, ISHFT, JEQT, SEAWND
 #endif
 #ifdef W3_PR3
           WRITE (NDSO,2953) CFLTM, WDTHCG, WDTHTH
@@ -3325,7 +3325,7 @@
                           JGS_SOURCE_NONLINEAR
 !
         WRITE (NDSO,2976)    P2SF, I1P2SF, I2P2SF,                    &
-                             US3D, I1US3D, I2US3D,                    & 
+                             US3D, I1US3D, I2US3D,                    &
                              USSP, IUSSP,                             &
                              E3D, I1E3D, I2E3D,                       &
                              TH1MF, I1TH1M, I2TH1M,                   &
@@ -3343,7 +3343,7 @@
          WRITE(NDSO,2977) IGMETHOD, IGADDOUTP, IGSOURCE,         &
                     IGSTERMS, IGBCOVERWRITE, IGSWELLMAX,         &
                     IGMAXFREQ, IGSOURCEATBP, IGKDMIN,            &
-                    IGFIXEDDEPTH, IGEMPIRICAL 
+                    IGFIXEDDEPTH, IGEMPIRICAL
 #endif
 !
 #ifdef W3_IC2
@@ -3516,7 +3516,7 @@
         CASE DEFAULT
           WRITE (NDSE,1007) TRIM(GSTRG)
           CALL EXTCDE ( 25 )
-        END SELECT      
+        END SELECT
 !
       IF ( FLAGLL ) THEN
           FACTOR = 1.
@@ -3589,21 +3589,21 @@
           NY=1
         END SELECT
       ELSE
-        IF ( GTYPE.NE.UNGTYPE) THEN 
+        IF ( GTYPE.NE.UNGTYPE) THEN
           CALL NEXTLN ( COMSTR , NDSI , NDSE )
           READ (NDSI,*,END=2001,ERR=2002) NX, NY
           NX     = MAX ( 3 , NX )
           NY     = MAX ( 3 , NY )
           WRITE (NDSO,3003) NX, NY
-        ELSE 
-          NY =1 
+        ELSE
+          NY =1
         END IF
       END IF
 !
 ! Propagation specific to unstructured grids
 !
       DO_CHANGE_WLV=.FALSE.
-      IF ( GTYPE.EQ.UNGTYPE) THEN 
+      IF ( GTYPE.EQ.UNGTYPE) THEN
         UNSTSCHEMES = 0
         IF (EXPFSN)   UNSTSCHEMES(1) = 1
         IF (EXPFSPSI) UNSTSCHEMES(2) = 1
@@ -3618,11 +3618,11 @@
         ELSE IF (SUM(UNSTSCHEMES) .gt. 1) THEN
           WRITE(NDSE,*) 'MORE THAN ONE UNST SCHEME SELECTED'
           CALL EXTCDE ( 19 )
-        ENDIF 
+        ENDIF
 
         UNSTSCHEME=-1
         DO IX=1,6
-          IF (UNSTSCHEMES(IX).EQ.1) THEN 
+          IF (UNSTSCHEMES(IX).EQ.1) THEN
             UNSTSCHEME=IX
             EXIT
           END IF
@@ -3630,23 +3630,23 @@
  
         FSBCCFL = UGBCCFL
         SELECT CASE (UNSTSCHEME)
-        CASE (1) 
+        CASE (1)
           FSN = EXPFSN
           PNAME2 = 'N Explicit (Fluctuation Splitting) '
-        CASE (2) 
+        CASE (2)
           FSPSI = EXPFSPSI
           PNAME2 = 'PSI Explicit (Fluctuation Splitting)  '
-        CASE (3) 
+        CASE (3)
           FSFCT = EXPFSFCT
           PNAME2 = ' Flux Corrected Transport Explicit'
-        CASE (4) 
-          FSNIMP = IMPFSN 
+        CASE (4)
+          FSNIMP = IMPFSN
           PNAME2 = 'N Implicit (Fluctuation Splitting) '
         CASE (5)
           FSTOTALIMP = IMPTOTAL
           PNAME2 = 'N Implicit (Fluctuation Splitting) for total implicit'
         CASE (6)
-          FSTOTALEXP = EXPTOTAL 
+          FSTOTALEXP = EXPTOTAL
           PNAME2 = 'N Explicit (Fluctuation Splitting) for one exchange explicit DC HPCF '
         END SELECT
 !
@@ -3692,11 +3692,11 @@
 !
 ! 7.c.1 Rectilinear grid
 !
-!!Li  SMC grid shares domain info with RLGTYPE.   JGLi12Oct2020 
+!!Li  SMC grid shares domain info with RLGTYPE.   JGLi12Oct2020
         CASE ( RLGTYPE, SMCTYPE )
 !
           IF (FLGNML) THEN
-            SX = NML_RECT%SX 
+            SX = NML_RECT%SX
             SY = NML_RECT%SY
             VSC = NML_RECT%SF
             X0 = NML_RECT%X0
@@ -3931,9 +3931,9 @@
 !
 ! 7.e Read bottom depths
 !
-      IF ( GTYPE.NE.UNGTYPE ) THEN 
+      IF ( GTYPE.NE.UNGTYPE ) THEN
 !
-! Reading depths on structured grid 
+! Reading depths on structured grid
 !
         ALLOCATE ( ZBIN(NX,NY), OBSX(NX,NY), OBSY(NX,NY) )
 !
@@ -3972,7 +3972,7 @@
                             STATUS='OLD',ERR=2000,IOSTAT=IERR)
                     END IF
                 END IF
-            END IF  !( NDSG .EQ. NDSI ) 
+            END IF  !( NDSG .EQ. NDSI )
 !
           CALL INA2R ( ZBIN, NX, NY, 1, NX, 1, NY, NDSG, NDST, NDSE,      &
                        IDFM, RFORM, IDLA, VSC, 0.0)
@@ -4135,7 +4135,7 @@
  ! Default values PLON=-180, PLAT=90, UNROT=.FALSE. for standard lat-lon
 
        ALLOCATE( AnglDin(NX,NY) )
- ! For standard lat-lon the rotation angles are zero 
+ ! For standard lat-lon the rotation angles are zero
        IF ( PoLat == 90. ) THEN
          AnglDin = 0.
        ELSE
@@ -4151,7 +4151,7 @@
          END IF
  !     Write out rotation information
        WRITE (NDSO,4203)   PoLat, PoLon
-       WRITE (NDSO,4200) 
+       WRITE (NDSO,4200)
        WRITE (NDSO,4201)    (        IX,     IX=1,NX,NX/3)
        WRITE (NDSO,4202)    1,(AnglDin(IX, 1), IX=1,NX,NX/3)
        WRITE (NDSO,4202)   NY,(AnglDin(IX,NY), IX=1,NX,NX/3)
@@ -4165,7 +4165,7 @@
        IF( GTYPE .EQ. SMCTYPE ) THEN
 
  !! Overwrite 2 parameters for SMC grid.  JGLi03Mar2021
-       DTMS   = DTIMS 
+       DTMS   = DTIMS
        CTMAX  = CFLSM
 #endif
 !
@@ -4176,7 +4176,7 @@
          IDFM = NML_SMC%MCELS%IDFM
          RFORM = TRIM(NML_SMC%MCELS%FORMAT)
          TNAME = TRIM(NML_SMC%MCELS%FILENAME)
-       ELSE  
+       ELSE
          CALL NEXTLN ( COMSTR , NDSI , NDSE )
          READ (NDSI,*,END=2001,ERR=2002) NDSTR, IDLA, IDFM, RFORM, TNAME
        END IF
@@ -4193,7 +4193,7 @@
                     IDFM, RFORM, IDLA, 1, 0)
        CLOSE(NDSTR)
  !!Li     Offset to change Equator index = 0 to regular grid index JEQT
-       IJKCelin( 2, :) = IJKCelin( 2, :) + JEQT 
+       IJKCelin( 2, :) = IJKCelin( 2, :) + JEQT
  !!Li     Offset to change i-index = 0 to regular grid index ISHFT
        IJKCelin( 1, :) = IJKCelin( 1, :) + ISHFT
 
@@ -4208,7 +4208,7 @@
          IDFM = NML_SMC%ISIDE%IDFM
          RFORM = TRIM(NML_SMC%ISIDE%FORMAT)
          TNAME = TRIM(NML_SMC%ISIDE%FILENAME)
-       ELSE  
+       ELSE
          CALL NEXTLN ( COMSTR , NDSI , NDSE )
          READ (NDSI,*,END=2001,ERR=2002) NDSTR, IDLA, IDFM, RFORM, TNAME
        END IF
@@ -4217,7 +4217,7 @@
        ALLOCATE (  NLvUFcsk( 0:NRLv ) )
        READ (NDSTR,*)  NLvUFcsk
        NUFc = NLvUFcsk(0)
-       NGUI = NUFc 
+       NGUI = NUFc
        WRITE (NDSO,4007)   NUFc, NLvUFcsk
 
        ALLOCATE (   IJKUFcin( 7, NUFc) )
@@ -4225,7 +4225,7 @@
                     IDFM, RFORM, IDLA, 1, 0)
        CLOSE(NDSTR)
  !!Li     Offset to change Equator index = 0 to regular grid index
-       IJKUFcin( 2, :) = IJKUFcin( 2, :) + JEQT 
+       IJKUFcin( 2, :) = IJKUFcin( 2, :) + JEQT
        IJKUFcin( 1, :) = IJKUFcin( 1, :) + ISHFT
 
        WRITE (NDSO,4008) TNAME
@@ -4239,7 +4239,7 @@
          IDFM = NML_SMC%JSIDE%IDFM
          RFORM = TRIM(NML_SMC%JSIDE%FORMAT)
          TNAME = TRIM(NML_SMC%JSIDE%FILENAME)
-       ELSE  
+       ELSE
          CALL NEXTLN ( COMSTR , NDSI , NDSE )
          READ (NDSI,*,END=2001,ERR=2002) NDSTR, IDLA, IDFM, RFORM, TNAME
        END IF
@@ -4256,7 +4256,7 @@
                     IDFM, RFORM, IDLA, 1, 0)
        CLOSE(NDSTR)
  !!Li     Offset to change Equator index = 0 to regular grid index
-       IJKVFcin( 2, :) = IJKVFcin( 2, :) + JEQT 
+       IJKVFcin( 2, :) = IJKVFcin( 2, :) + JEQT
        IJKVFcin( 1, :) = IJKVFcin( 1, :) + ISHFT
 
        WRITE (NDSO,4011) TNAME
@@ -4271,7 +4271,7 @@
          IDFM = NML_SMC%SUBTR%IDFM
          RFORM = TRIM(NML_SMC%SUBTR%FORMAT)
          TNAME = TRIM(NML_SMC%SUBTR%FILENAME)
-       ELSE  
+       ELSE
          CALL NEXTLN ( COMSTR , NDSI , NDSE )
          READ (NDSI,*,END=2001,ERR=2002) NDSTR, IDLA, IDFM, RFORM, TNAME
        END IF
@@ -4298,7 +4298,7 @@
          IDFM = NML_SMC%BUNDY%IDFM
          RFORM = TRIM(NML_SMC%BUNDY%FORMAT)
          TNAME = TRIM(NML_SMC%BUNDY%FILENAME)
-       ELSE  
+       ELSE
          CALL NEXTLN ( COMSTR , NDSI , NDSE )
          READ (NDSI,*,END=2001,ERR=2002) NDSTR, IDLA, IDFM, RFORM, TNAME
        END IF
@@ -4318,8 +4318,8 @@
 #endif
 !
 #ifdef W3_SMC
- !! 7.j  Read Arctic grid cell and boundary cell integer arrays.  
-       IF( ARCTC ) THEN    
+ !! 7.j  Read Arctic grid cell and boundary cell integer arrays.
+       IF( ARCTC ) THEN
 
        IF (FLGNML) THEN
          NDSTR = NML_SMC%MBARC%IDF
@@ -4327,7 +4327,7 @@
          IDFM = NML_SMC%MBARC%IDFM
          RFORM = TRIM(NML_SMC%MBARC%FORMAT)
          TNAME = TRIM(NML_SMC%MBARC%FILENAME)
-       ELSE  
+       ELSE
          CALL NEXTLN ( COMSTR , NDSI , NDSE )
          READ (NDSI,*,END=2001,ERR=2002) NDSTR, IDLA, IDFM, RFORM, TNAME
        END IF
@@ -4341,7 +4341,7 @@
                     IDFM, RFORM, IDLA, 1, 0)
        CLOSE(NDSTR)
  !!Li     Offset to change Equator index = 0 to regular grid index JEQT
-       IJKCelAC( 2, :) = IJKCelAC( 2, :) + JEQT 
+       IJKCelAC( 2, :) = IJKCelAC( 2, :) + JEQT
        IJKCelAC( 1, :) = IJKCelAC( 1, :) + ISHFT
 
        WRITE (NDSO,4016) TNAME
@@ -4355,7 +4355,7 @@
          IDFM = NML_SMC%AISID%IDFM
          RFORM = TRIM(NML_SMC%AISID%FORMAT)
          TNAME = TRIM(NML_SMC%AISID%FILENAME)
-       ELSE  
+       ELSE
          CALL NEXTLN ( COMSTR , NDSI , NDSE )
          READ (NDSI,*,END=2001,ERR=2002) NDSTR, IDLA, IDFM, RFORM, TNAME
        END IF
@@ -4369,7 +4369,7 @@
                     IDFM, RFORM, IDLA, 1, 0)
        CLOSE(NDSTR)
  !!Li     Offset to change Equator index = 0 to regular grid index
-       IJKUFcAC( 2, :) = IJKUFcAC( 2, :) + JEQT 
+       IJKUFcAC( 2, :) = IJKUFcAC( 2, :) + JEQT
        IJKUFcAC( 1, :) = IJKUFcAC( 1, :) + ISHFT
  !!Li     Offset Arctic cell sequential numbers by global cell number NGLO
        DO  IP=1, NAUI
@@ -4389,13 +4389,13 @@
          IDFM = NML_SMC%AJSID%IDFM
          RFORM = TRIM(NML_SMC%AJSID%FORMAT)
          TNAME = TRIM(NML_SMC%AJSID%FILENAME)
-       ELSE  
+       ELSE
          CALL NEXTLN ( COMSTR , NDSI , NDSE )
          READ (NDSI,*,END=2001,ERR=2002) NDSTR, IDLA, IDFM, RFORM, TNAME
        END IF
        OPEN (NDSTR,FILE=TRIM(FNMPRE)//TNAME,             &
                    FORM='FORMATTED',STATUS='OLD',ERR=2000)
-       READ (NDSTR,*) NAVJ 
+       READ (NDSTR,*) NAVJ
        WRITE (NDSO,4019)   NAVJ
 
        ALLOCATE (   IJKVFcAC( 8, NAVJ) )
@@ -4403,7 +4403,7 @@
                     IDFM, RFORM, IDLA, 1, 0)
        CLOSE(NDSTR)
  !!Li     Offset to change Equator index = 0 to regular grid index
-       IJKVFcAC( 2, :) = IJKVFcAC( 2, :) + JEQT 
+       IJKVFcAC( 2, :) = IJKVFcAC( 2, :) + JEQT
        IJKVFcAC( 1, :) = IJKVFcAC( 1, :) + ISHFT
  !!Li     Offset Arctic cell sequential numbers by global cell number NGLO
        DO  IP=1, NAVJ
@@ -4422,15 +4422,15 @@
        NUFc = NGUI + NAUI
        NVFc = NGVJ + NAVJ
  !!Li  Also append Arctic part into base level sub-loops
-       NLvCelsk(NRLv)=NLvCelsk(NRLv)+NARC 
-       NLvUFcsk(NRLv)=NLvUFcsk(NRLv)+NAUI 
-       NLvVFcsk(NRLv)=NLvVFcsk(NRLv)+NAVJ 
+       NLvCelsk(NRLv)=NLvCelsk(NRLv)+NARC
+       NLvUFcsk(NRLv)=NLvUFcsk(NRLv)+NAUI
+       NLvVFcsk(NRLv)=NLvVFcsk(NRLv)+NAVJ
  !!Li  Reset NBAC to total number of boundary cells.
        NBAC = NBGL + NBAC
 
        ENDIF  !! ARCTC section.
 
-       ENDIF  !! GTYPE .EQ. SMCTYPE 
+       ENDIF  !! GTYPE .EQ. SMCTYPE
 #endif
 !
 !--- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -4459,7 +4459,7 @@
         FROM = TRIM(NML_MASK%FROM)
         TNAME = TRIM(NML_MASK%FILENAME)
         IF (TNAME.EQ.'unset' .OR. TNAME.EQ.'UNSET') FROM='PART'
-      ELSE  
+      ELSE
         CALL NEXTLN ( COMSTR , NDSI , NDSE )
         READ (NDSI,*,END=2001,ERR=2002) NDSTR, IDLA, IDFT, RFORM,     &
                                         FROM, TNAME
@@ -4507,7 +4507,7 @@
             IF (FLGNML) THEN
               ! inbound points
               IF (ILOOP.EQ.1) THEN
-                IF (NML_INBND_COUNT%N_POINT.GT.0 .AND. I.LE.NML_INBND_COUNT%N_POINT) THEN 
+                IF (NML_INBND_COUNT%N_POINT.GT.0 .AND. I.LE.NML_INBND_COUNT%N_POINT) THEN
                   IX = NML_INBND_POINT(I)%X_INDEX
                   IY = NML_INBND_POINT(I)%Y_INDEX
                   CONNCT = NML_INBND_POINT(I)%CONNECT
@@ -4517,7 +4517,7 @@
                 END IF
               ! excluded points
               ELSE IF (ILOOP.EQ.2) THEN
-                IF (NML_EXCL_COUNT%N_POINT.GT.0 .AND. I.LE.NML_EXCL_COUNT%N_POINT) THEN 
+                IF (NML_EXCL_COUNT%N_POINT.GT.0 .AND. I.LE.NML_EXCL_COUNT%N_POINT) THEN
                   IX = NML_EXCL_POINT(I)%X_INDEX
                   IY = NML_EXCL_POINT(I)%Y_INDEX
                   CONNCT = NML_EXCL_POINT(I)%CONNECT
@@ -4540,7 +4540,7 @@
 ! ... Check if last point reached.
 !
             IF (IX.EQ.0 .AND. IY.EQ.0) EXIT
-!           
+!
 ! ... Check if point in grid.
 !
             IF (GTYPE.EQ.UNGTYPE.AND.(UGOBCAUTO.OR.UGOBCOK)) CYCLE
@@ -4571,7 +4571,7 @@
                       IY     = IY + IDY
                       IF ( TMPSTA(IY,IX).EQ.1 .OR. J.EQ.2 ) THEN
                         TMPSTA(IY,IX) = NSTAT
-                      ELSE 
+                      ELSE
                         WRITE(NDSO,*) 'WARNING: POINT (',IX,',',IY,  &
                                    ') CANNOT BE GIVEN THE STATUS ',NSTAT
                       END IF
@@ -4612,7 +4612,7 @@
             DO
               IF (FLGNML) THEN
                 ! excluded bodies
-                IF (NML_EXCL_COUNT%N_BODY.GT.0 .AND. I.LE.NML_EXCL_COUNT%N_BODY) THEN 
+                IF (NML_EXCL_COUNT%N_BODY.GT.0 .AND. I.LE.NML_EXCL_COUNT%N_BODY) THEN
                   IX = NML_EXCL_BODY(I)%X_INDEX
                   IY = NML_EXCL_BODY(I)%Y_INDEX
                   I=I+1
@@ -4712,7 +4712,7 @@
 !
 ! ... Outer boundary excluded points
 !
-            IF ( GTYPE.NE.UNGTYPE ) THEN    
+            IF ( GTYPE.NE.UNGTYPE ) THEN
 
               DO IX=1, NX
                 IF ( TMPSTA( 1,IX) .EQ. 1 ) TMPSTA( 1,IX) = NSTAT
@@ -4767,8 +4767,8 @@
           IF (IDLA.LT.1 .OR. IDLA.GT.4) IDLA   = 1
           IF (IDFT.LT.1 .OR. IDFT.GT.3) IDFT   = 1
 
-!!Li  Suspended for SMC grid though the file input line in  ww3_grid.inp 
-!!Li  is kept to divert the program into this block.  JGLi15Oct2014 
+!!Li  Suspended for SMC grid though the file input line in  ww3_grid.inp
+!!Li  is kept to divert the program into this block.  JGLi15Oct2014
 !!Li
           IF( GTYPE .NE. SMCTYPE ) THEN
 !!Li
@@ -4858,14 +4858,14 @@
 #ifdef W3_SMC
       IF( GTYPE .EQ. SMCTYPE ) THEN
  !Li   Moved before FLBPI is defined with NBI value.  JGLi05Jun2015
- !Li   Overwrite NSEA with NCel for SMC grid. 
+ !Li   Overwrite NSEA with NCel for SMC grid.
         NSEA = NCel
  !Li   Use input NBI number for SMC grid because merged
- !Li   cells are over-counted by model.   
+ !Li   cells are over-counted by model.
         NBI = NBISMC
- !Li   No land points are used in SMC grid.   JGLi26Feb2016 
+ !Li   No land points are used in SMC grid.   JGLi26Feb2016
         NLAND = 0
-      ENDIF  !!  GTYPE .EQ. SMCTYPE 
+      ENDIF  !!  GTYPE .EQ. SMCTYPE
 #endif
 !
       WRITE (NDSO,980)
@@ -4920,11 +4920,8 @@
 #else
         CALL W3DIMX ( 1, NX, NY, NSEA, NDSE, NDST)
 #endif
-#ifdef W3_SMC
-        WRITE (NDSO,4021)   NCel
-#endif
 !
-! 8.g Activation of reflections and scattering 
+! 8.g Activation of reflections and scattering
       FFACBERG=FACBERG
 #ifdef W3_REF1
       REFPARS(1)=REFCOAST
@@ -4937,7 +4934,7 @@
       REFPARS(9)=REFRMAX
       REFPARS(10)=REFFREQPOW
       IF (GTYPE.EQ.UNGTYPE) REFPARS(2:5)=0.
-      IF (REFMAP.EQ.0) THEN 
+      IF (REFMAP.EQ.0) THEN
         REFLC(3,:)=REFPARS(7)
         END IF
 #endif
@@ -4950,13 +4947,13 @@
             YGRD(IY,IX) = YGRDIN(IX,IY)
             END DO
           END DO
-          DEALLOCATE ( XGRDIN, YGRDIN )   
-          CALL W3GNTX ( 1, 6, 6 )  
-      ELSE 
+          DEALLOCATE ( XGRDIN, YGRDIN )
+          CALL W3GNTX ( 1, 6, 6 )
+      ELSE
       END IF   ! GTYPE
-!      
+!
 #ifdef W3_SMC
- !!Li  Shelter MAPSTA LLG definition for SMC 
+ !!Li  Shelter MAPSTA LLG definition for SMC
       IF( GTYPE .NE. SMCTYPE ) THEN
 #endif
 !
@@ -5018,9 +5015,9 @@
 
 !/ ------------------------------------------------------------------- /
 
-! notes: Oct 22 2012: I moved the following "if-then" statement from 
+! notes: Oct 22 2012: I moved the following "if-then" statement from
 ! inside the  "IF ( MAPSTA(IY,IX) .NE. 0 )" statement to outside that
-! statement. This is needed since later on, ATRNX is computed from 
+! statement. This is needed since later on, ATRNX is computed from
 ! TRNX(ix-1) , TRNX(ix) etc. which causes boundary effects if the
 ! MAPSTA=0 values are set to TRNX=0
 
@@ -5040,7 +5037,7 @@
 !
 #ifdef W3_SMC
  !!Li SMC grid definition of mapping arrays.
-      ELSE 
+      ELSE
 #endif
 !
 #ifdef W3_SMC
@@ -5075,17 +5072,17 @@
        IJKVFc(:, NGVJ+1:NVFc)=IJKVFcAC(:, 1:NAVJ)
        ENDIF !! ARCTC
 
-       WRITE (NDSO,4026) 
+       WRITE (NDSO,4026)
        WRITE (NDSO,4006)    1,(IJKCel(ix,  1), ix=1,5)
        JJ=NCel
        WRITE (NDSO,4006)   JJ,(IJKCel(ix, JJ), ix=1,5)
        WRITE (NDSO,*) ' '
-       WRITE (NDSO,4027) 
+       WRITE (NDSO,4027)
        WRITE (NDSO,4009)    1,(IJKUFc(ix,  1), ix=1,7)
        JJ=NUFc
        WRITE (NDSO,4009)   JJ,(IJKUFc(ix, JJ), ix=1,7)
        WRITE (NDSO,*) ' '
-       WRITE (NDSO,4028) 
+       WRITE (NDSO,4028)
        WRITE (NDSO,4012)    1,(IJKVFc(ix,  1), ix=1,8)
        JJ=NVFc
        WRITE (NDSO,4012)   JJ,(IJKVFc(ix, JJ), ix=1,8)
@@ -5094,30 +5091,30 @@
  !Li    Boundary -9 to 0 cells for cell x-size 2**n
  !Li    Note the position indice for bounary cell are not used.
        IJKCel(1, -9:0)=0
- !Li    Use Equator Y index for boundary cells.  JGLi04Apr2011 
- !Li   IJKCel(2, -9:0)=0  
+ !Li    Use Equator Y index for boundary cells.  JGLi04Apr2011
+ !Li   IJKCel(2, -9:0)=0
        IJKCel(2, -9:0)=JEQT
        IJKCel(3,    0)=1
        IJKCel(4,    0)=1
- !Li    Use minimum 10 m depth for boundary cells. 
- !Li    Y-size is restricted below base-cell value. 
- !Li    For refined boundary cells, its y-size is replaced with 
- !Li    the inner cell y-size for flux gradient. 
+ !Li    Use minimum 10 m depth for boundary cells.
+ !Li    Y-size is restricted below base-cell value.
+ !Li    For refined boundary cells, its y-size is replaced with
+ !Li    the inner cell y-size for flux gradient.
        IJKCel(5,    0)=10
        DO ip=1,9
           IJKCel(3,-ip)=IJKCel(3,-ip+1)*2
-          IK=MIN(ip, NRLv-1) 
-          IJKCel(4,-ip)=2**IK 
+          IK=MIN(ip, NRLv-1)
+          IJKCel(4,-ip)=2**IK
           IJKCel(5,-ip)=10
        ENDDO
-       WRITE (NDSO,4029) 
+       WRITE (NDSO,4029)
        DO ip=0, -9, -1
        WRITE (NDSO,4030)  IJKCel(:,ip)
        ENDDO
 
        WRITE (NDSO,4031)   NCel
  !Li    Multi-resolution SMC grid requires rounding of x, y indices
- !Li    by a factor MRFct. 
+ !Li    by a factor MRFct.
        MRFct = 2**(NRLv - 1)
        WRITE (NDSO,4032)   MRFct
 
@@ -5128,7 +5125,7 @@
 
        DO ISEA=1, NCel
  !Li   There is no polar cell row so it is mapped to last row.
-        IF( ARCTC .AND. (ISEA .EQ. NCel) ) THEN 
+        IF( ARCTC .AND. (ISEA .EQ. NCel) ) THEN
              IX=1
              IY=NY
              IK=1
@@ -5151,7 +5148,7 @@
              CALL EXTCDE(65)
         END IF
 
- !Li  Minimum DMIN depth is used as well for SMC. 
+ !Li  Minimum DMIN depth is used as well for SMC.
           ZB(ISEA)= - MAX( DMIN, FLOAT( IJKCel(5, ISEA) ) )
           MAPFS(IY:IY+JS-1,IX:IX+IK-1)  = ISEA
          MAPSTA(IY:IY+JS-1,IX:IX+IK-1)  = 1
@@ -5162,7 +5159,7 @@
  
  !Li   New variable CLATS to hold cosine latitude at cell centre.
  !Li   Also added CLATIS and CTHG0S for version 4.08.
- !Li   Use adjusted j-index to calculate cell centre y from YJ0R.  
+ !Li   Use adjusted j-index to calculate cell centre y from YJ0R.
           Y = YJ0R + SYMR*( FLOAT(IJKCel(2,ISEA))+0.5*FLOAT(IJKCel(4,ISEA)) )
  !Li   Arctic polar cell does not need COS(LAT), set 1 row down.
           IF(Y .GE. HPI-0.1*SYMR) Y=HPI - SYMR*0.5*FLOAT( MRFct )
@@ -5172,9 +5169,9 @@
           CTHG0S(ISEA)= - TAN( Y ) / RADIUS
  !!Li  Sub-grid obstruction is set zero beyond NCObst cells.
          IF(ISEA .GT. NCObst) THEN
-           TRNMX=1.0 
+           TRNMX=1.0
            TRNMY=1.0
-         ELSE 
+         ELSE
  !!Li    Present obstruction is isotropic and in percentage.
            TRNMX=1.0 - IJKObstr(1,    ISEA)*0.01
            TRNMY=1.0 - IJKObstr(JObs, ISEA)*0.01
@@ -5183,8 +5180,8 @@
            CTRNY(ISEA) = MAX(0.11, TRNMY)
        END DO
  !!Li    Transparency for boundary cells are 1.0   JGLi16Jan2012
-           CTRNX(-9:0) = 1.0 
-           CTRNY(-9:0) = 1.0 
+           CTRNX(-9:0) = 1.0
+           CTRNY(-9:0) = 1.0
  !!Li  Check range of MAPSF and MAPFS
        WRITE (NDSO,4033) MINVAL( MAPSF(:,1) ), MAXVAL( MAPSF(:,1) )
        WRITE (NDSO,4034) MINVAL( MAPSF(:,2) ), MAXVAL( MAPSF(:,2) )
@@ -5200,7 +5197,7 @@
        IF(NBISMC .GT. 0) THEN
  !Li   Save input boundary SMC list to ISMCBP(NBSMC)
           ISMCBP(1:NBISMC) = NBICelin(1:NBISMC)
- !Li   Reset MAPSTA for boundary cells if any.  
+ !Li   Reset MAPSTA for boundary cells if any.
        DO IP=1, NBISMC
           ISEA = NBICelin(IP)
           IX=IJKCel(1,ISEA)/MRFct + 1
@@ -5236,43 +5233,43 @@
           ENDIF
           XLONAC(ISEA-NGLO)= X0 + REAL(IX-1+IK/2)*SX
           YLATAC(ISEA-NGLO)= Y0 + REAL(IY-1+JS/2)*SY
-       ENDDO 
+       ENDDO
 
         CALL W3LLTOEQ ( YLATAC, XLONAC, ELATAC, ELONAC,   &
       &                 ANGARC, PoLatAC, PoLonAC, NARC  )
 
-       WRITE (NDSO,4037)  NARC 
+       WRITE (NDSO,4037)  NARC
        WRITE (NDSO,4038) (ANGARC(ix), ix=1,NARC,NARC/8)
 
 #endif
 !
 #ifdef W3_SMC
  !Li   Mapping Arctic boundary cells with inner model cells
-       DO IP=1, NBAC 
+       DO IP=1, NBAC
              IX=IJKCel(1,IP+NGLO)
              IY=IJKCel(2,IP+NGLO)
-          DO ISEA=1, NGLO 
+          DO ISEA=1, NGLO
              IF( (IX .EQ. IJKCel(1,ISEA)) .AND.      &
-      &          (IY .EQ. IJKCel(2,ISEA)) ) THEN 
+      &          (IY .EQ. IJKCel(2,ISEA)) ) THEN
                  ICLBAC(IP) = ISEA
              ENDIF
           ENDDO
        ENDDO
-       WRITE (NDSO,4039)  NBAC 
+       WRITE (NDSO,4039)  NBAC
        WRITE (NDSO,4040) (ICLBAC(ix), ix=1,NBAC,NBAC/8)
 
- !Li   Redefine GCT term factor for Arctic part or the netative of 
+ !Li   Redefine GCT term factor for Arctic part or the netative of
  !Li   tangient of rotated latitude divided by radius. JGLi14Sep2015
        DO ISEA=NGLO+1, NCel-1
           CTHG0S(ISEA)= - TAN( ELATAC(ISEA-NGLO)*DERA ) / RADIUS
-       ENDDO 
+       ENDDO
           CTHG0S(NCel)=0.0
        
        ENDIF  !! ARCTC section.
 #endif
 !
 #ifdef W3_SMC
-      ENDIF  !! (GTYPE .NE. SMCTYPE) ELSE SMCTYPE block. 
+      ENDIF  !! (GTYPE .NE. SMCTYPE) ELSE SMCTYPE block.
 #endif
 !
 #ifdef W3_RTD
@@ -5369,7 +5366,7 @@
          END DO
        IGMINDEP=MINVAL(ZB*(-1.)-2)  ! -2 / +2 is there for water level changes
        IGMAXDEP=MAXVAL(ZB*(-1.)+2)
-       IF (IGSOURCEATBP.EQ.1)  IGMINDEP=1.   ! should use true minimum depth ... 
+       IF (IGSOURCEATBP.EQ.1)  IGMINDEP=1.   ! should use true minimum depth ...
        IGPARS(6)=1+NINT(LOG(MAX(IGMAXDEP,1.0)/MAX(IGMINDEP,1.0))/LOG(1.1))
        IGPARS(7)=MAX(IGMINDEP,1.0)
        IGPARS(8)=IGSOURCEATBP
@@ -5434,14 +5431,14 @@
       IS2PARS(1) = ISC1
       IS2PARS(2) = IS2BACKSCAT
       IS2PARS(3)=0.
-      IF (IS2BREAK) IS2PARS(3)=1. 
+      IF (IS2BREAK) IS2PARS(3)=1.
       IS2PARS(4)=IS2C2
       IS2PARS(5)=IS2C3
       IS2PARS(6)=0.
       IF (IS2DISP) IS2PARS(6)=1.
       IS2PARS(7)=IS2DAMP
       IS2PARS(8)=IS2FRAGILITY
-      IS2PARS(9)=IS2DMIN 
+      IS2PARS(9)=IS2DMIN
       IS2PARS(10)=0.
       IF (IS2DUPDATE) IS2PARS(10)=1.
       IS2PARS(11)=IS2CONC
@@ -5463,12 +5460,12 @@
 #endif
 !
 ! 9.d Estimates shoreline direction for reflection
-!     and shoreline treatment in general for UNST grids. 
+!     and shoreline treatment in general for UNST grids.
 ! NB: this is updated with moving water levels in W3ULEV
 ! AR: this is not anymore needed and will be deleted ...
 !
-      IF (GTYPE.EQ.UNGTYPE) THEN 
-        CALL SET_UG_IOBP 
+      IF (GTYPE.EQ.UNGTYPE) THEN
+        CALL SET_UG_IOBP
 
 #ifdef W3_REF1
       ELSE
@@ -5476,13 +5473,13 @@
 #endif
         END IF
 #ifdef W3_REF1
-! 
+!
 !  9.a Reads shoreline slope  (whith REF1 switch only)
 !
       ALLOCATE ( REFD(NX,NY), REFD2(NX,NY), REFS(NX,NY) )
-      IF (REFMAP.EQ.0) THEN 
+      IF (REFMAP.EQ.0) THEN
         REFS(:,:)=1.
-      ELSE 
+      ELSE
 !
 !  9.b Info from input file
 !
@@ -5622,10 +5619,10 @@
                                             FROM, TNAME
           END IF
 !
-          IF (   ABS(VSC) .LT. 1.E-7  ) THEN 
+          IF (   ABS(VSC) .LT. 1.E-7  ) THEN
             VSC    = 1.
-          ELSE 
-! WARNING TO BE ADDED ... 
+          ELSE
+! WARNING TO BE ADDED ...
           END IF
           IF (IDLA.LT.1 .OR. IDLA.GT.4) IDLA   = 1
           IF (IDFT.LT.1 .OR. IDFT.GT.3) IDFT   = 1
@@ -5680,7 +5677,7 @@
           WRITE (NDSO,*) 'Min and Max values of grain sizes:',MINVAL(SED_D50FILE), MAXVAL(SED_D50FILE)
           WRITE (NDSO,*)
 !
-      ELSE 
+      ELSE
         SED_D50FILE(:,:)=SED_D50_UNIFORM
         END IF
 !
@@ -5688,12 +5685,12 @@
         DO IX=1, NX
           ISEA = MAPFS (IY,IX)
           SED_D50(ISEA)       = SED_D50FILE(IX,IY)
-          SED_D50(ISEA)       = MAX(SED_D50(ISEA),1E-5)  
+          SED_D50(ISEA)       = MAX(SED_D50(ISEA),1E-5)
    ! Critical Shields number, Soulsby, R.L. and R J S W Whitehouse
    ! Threshold of sed. motion in coastal environments, Proc. Pacific Coasts and
    ! ports, 1997 conference, Christchurch, p149-154, University of Cantebury, NZ
-          SED_DSTAR=(GRAV*(SED_SG-1)/nu_water**2)**(0.333333)*SED_D50(ISEA)  
-          SED_PSIC(ISEA)=0.3/(1+1.2*SED_DSTAR)+0.55*(1-exp(-0.02*SED_DSTAR)) 
+          SED_DSTAR=(GRAV*(SED_SG-1)/nu_water**2)**(0.333333)*SED_D50(ISEA)
+          SED_PSIC(ISEA)=0.3/(1+1.2*SED_DSTAR)+0.55*(1-exp(-0.02*SED_DSTAR))
 #endif
 
 
@@ -5733,7 +5730,7 @@
         DO
           IF (FLGNML) THEN
             ! outbound lines
-            IF (NML_OUTBND_COUNT%N_LINE.GT.0 .AND. I.LE.NML_OUTBND_COUNT%N_LINE) THEN 
+            IF (NML_OUTBND_COUNT%N_LINE.GT.0 .AND. I.LE.NML_OUTBND_COUNT%N_LINE) THEN
               XO0 = NML_OUTBND_LINE(I)%X0
               YO0 = NML_OUTBND_LINE(I)%Y0
               DXO = NML_OUTBND_LINE(I)%DX
@@ -5772,13 +5769,13 @@
                   bPolat = BPLAT(NFBPO+1)
                   bPolon = BPLON(NFBPO+1)
                 END IF
- !          
+ !
 #endif
               IF ( NFBPO.GE.1 .AND. ILOOP.EQ.2 ) THEN
                   WRITE (NDSO,991)  NFBPO, NBO(NFBPO) - NBO(NFBPO-1), &
                                           NBO2(NFBPO) - NBO2(NFBPO-1)
 #ifdef W3_RTD
- ! Print dest. Pole lat/lon if either the dest or present grid is rotated 
+ ! Print dest. Pole lat/lon if either the dest or present grid is rotated
                  IF ( BPLAT(NFBPO) < 90. .OR. Polat < 90. )      &
                      WRITE (NDSO,1991) BPLAT(NFBPO), BPLON(NFBPO)
  !
@@ -5857,7 +5854,7 @@
           allocate( BDYLON(NPO), BDYLAT(NPO))
           IF ( bPolat < 90. .OR. Polat < 90. ) &
             allocate( ELatbdy(NPO), ELonbdy(NPO), Anglbdy(NPO) )
- !            
+ !
 #endif
 #ifdef W3_T
           WRITE (NDST,9090)
@@ -5919,7 +5916,7 @@
               YO = BDYLAT(IP)
               END IF
 #endif
-!   
+!
 ! ... Compute bilinear remapping weights
 !
             INGRID = W3GRMP( GSU, XO, YO, IXR, IYR, RD )
@@ -6107,14 +6104,14 @@
             END IF
         ENDIF ! GTYPE .EQ. UNGTYPE
               
-     WRITE (NDSO,9999)  
+     WRITE (NDSO,9999)
 
 #ifdef W3_SCRIP
       GRID1_UNITS='degrees' ! the other option is radians...we don't use this
       GRID1_NAME='src' ! this is not used, except for netcdf output
-      CALL GET_SCRIP_INFO(1,                                            &    
-     &   GRID1_CENTER_LON, GRID1_CENTER_LAT,                            &    
-     &   GRID1_CORNER_LON, GRID1_CORNER_LAT, GRID1_MASK,                &    
+      CALL GET_SCRIP_INFO(1,                                            &
+     &   GRID1_CENTER_LON, GRID1_CENTER_LAT,                            &
+     &   GRID1_CORNER_LON, GRID1_CORNER_LAT, GRID1_MASK,                &
      &   GRID1_DIMS, GRID1_SIZE, GRID1_CORNERS, GRID1_RANK)
 
       
@@ -6136,7 +6133,7 @@
        ENDIF
        DO J = 1,GRID1_CORNERS
          IF (GRID1_CORNER_LON(J,I) < 0.0) THEN
-           GRID1_CORNER_LON(J,I) = GRID1_CORNER_LON(J,I)+360.0 
+           GRID1_CORNER_LON(J,I) = GRID1_CORNER_LON(J,I)+360.0
          ENDIF
        ENDDO
      ENDDO
@@ -6322,7 +6319,7 @@
  2920 FORMAT ( '  &SIN3 ZWND =',F5.1,', ALPHA0 =',F8.5,', Z0MAX =',F8.5,', BETAMAX =', &
                   F8.5,','/                                           &
               '        SINTHP =',F8.5,', ZALP =',F8.5,','/            &
-              '        SWELLF =',F8.5,'R /'/)                              
+              '        SWELLF =',F8.5,'R /'/)
 #endif
 !
 #ifdef W3_ST4
@@ -6483,18 +6480,18 @@
         ' --------------------------------------------------')
   925 FORMAT ( '       SDSC1                       :',1E11.3/    &
                '       Power of k in mean k        :',F8.2/      &
-               '       weights of k and k^2        :',F9.3,F6.3/)  
+               '       weights of k and k^2        :',F9.3,F6.3/)
  2924 FORMAT ( '  &SDS3 SDSC1 =',E12.4,', WNMEANP =',F4.2,       &
-               ', FXPM3 =', F4.2,',FXFM3 =',F4.2,', '/           &  
+               ', FXPM3 =', F4.2,',FXFM3 =',F4.2,', '/           &
                '        SDSDELTA1 =', F5.2,', SDSDELTA2 =',F5.2, &
-               ' /')                               
+               ' /')
 #endif
 !
 #ifdef W3_ST4
   924 FORMAT (/' Dissipation (Ardhuin / Filipot / Romero ) ',A/          &
         ' --------------------------------------------------')
   925 FORMAT ( '       SDSC2, SDSBCK, SDSCUM       :',3E11.3/    &
-               '       Power of k in mean k        :',F8.2/)      
+               '       Power of k in mean k        :',F8.2/)
 #endif
 
 
@@ -6560,11 +6557,11 @@
                ' --------------------------------------------------')
   927 FORMAT ( '       SEDMAPD50, SED_D50_UNIFORM        :',L3,1X,F8.6/ &
                '       RIPFAC1,RIPFAC2,RIPFAC3,RIPFAC4   :',4F8.4/      &
-               '       SIGDEPTH, BOTROUGHMIN, BOTROUGHFAC:',3F8.4/)          
+               '       SIGDEPTH, BOTROUGHMIN, BOTROUGHFAC:',3F8.4/)
  2926 FORMAT ( '  &SBT4 SEDMAPD50 =',L3,', SED_D50_UNIFORM =',F8.6,','/ &
                '        RIPFAC1 =',F8.4,', RIPFAC2 =',F8.4,      &
                ', RIPFAC3 =',F8.4,', RIPFAC4 =',F8.4,','/        &
-               '        SIGDEPTH =',F8.4,', BOTROUGHMIN =',F8.4, & 
+               '        SIGDEPTH =',F8.4,', BOTROUGHMIN =',F8.4, &
                ', BOTROUGHFAC =',F4.1,' /')
 #endif
 !
@@ -6712,7 +6709,7 @@
                '       Effective swell age     (h) :',F8.2/      &
                '       Maximum refraction  (degr.) :',F8.2/)
  2954 FORMAT ( '  &PSMC CFLSM  =',F5.2,', DTIMS  =', F9.1/     &
-               '        Arctic =',L5,  ', RFMAXD =', F9.2/     & 
+               '        Arctic =',L5,  ', RFMAXD =', F9.2/     &
                '        UNO3   =',L5,  ', AVERG  =',L5/        &
                '        LvSMC  =',i5,  ', NBISMC =',i9/        &
                '        ISHFT  =',i5,  ', JEQT   =',i9/        &
@@ -6846,21 +6843,21 @@
  4981 FORMAT ( '       Coefficient for shorelines  :',F6.4)
  4989 FORMAT ( '          *** CURVLINEAR GRID: REFLECTION NOT IMPLEMENTED YET ***')
  2977 FORMAT ( '  &SIG1  IGMETHOD =',I2,', IGADDOUTP =',I2,', IGSOURCE =',I2, &
-               ', IGSTERMS = ',I2,', IGBCOVERWRITE =', L3,','/        & 
+               ', IGSTERMS = ',I2,', IGBCOVERWRITE =', L3,','/        &
                '        IGSWELLMAX =', L3,', IGMAXFREQ =',F6.4,       &
                ', IGSOURCEATBP = ',I2,', IGKDMIN = ',F6.4,','/        &
                '        IGFIXEDDEPTH = ',F6.2,', IGEMPIRICAL = ',F8.6,' /')
 !
  2978 FORMAT ( '  &SIC2  IC2DISPER =',L3,', IC2TURB =',F6.2,          &
                ', IC2ROUGH  =',F10.6,','/                             &
-               '        IC2REYNOLDS = ',F10.1,', IC2SMOOTH = ',F10.1, & 
+               '        IC2REYNOLDS = ',F10.1,', IC2SMOOTH = ',F10.1, &
                ', IC2VISC =',F6.3,','/                                &
                ',       IC2TURBS =',F8.2,', IC2DMAX =',F5.3,' /')
 !
  2979 FORMAT ( '  &SIC3 IC3MAXTHK =',F6.2, ', IC3MAXCNC =',F6.2,','/  &
                '        IC2TURB =',F8.2,                              &
                ', IC2ROUGH  =',F7.3,','/                              &
-               '        IC2REYNOLDS = ',F10.1,', IC2SMOOTH = ',F10.1, & 
+               '        IC2REYNOLDS = ',F10.1,', IC2SMOOTH = ',F10.1, &
                ', IC2VISC =',F10.3,','/                               &
                '        IC2TURBS =',F8.2,', IC3CHENG =',L3,           &
                ', USECGICE =',L3,', IC3HILIM = ',F6.2,','/            &
@@ -6895,17 +6892,17 @@
                      ', CALTYPE = ',A8,' , TRCKCMPR = ', L3,','/      &
                '        BTBET  = ', F6.2, ' /')
 !
- 2976 FORMAT ( '  &OUTS P2SF  =',I2,', I1P2SF =',I2,', I2P2SF =',I3,','/&    
-               '        US3D  =',I2,', I1US3D =',I3,', I2US3D =',I3,','/&  
+ 2976 FORMAT ( '  &OUTS P2SF  =',I2,', I1P2SF =',I2,', I2P2SF =',I3,','/&
+               '        US3D  =',I2,', I1US3D =',I3,', I2US3D =',I3,','/&
                '        USSP  =',I2,', IUSSP  =',I3,','/&
-               '        E3D   =',I2,', I1E3D  =',I3,', I2E3D  =',I3,','/&  
-               '        TH1MF =',I2,', I1TH1M =',I3,', I2TH1M =',I3,','/&  
-               '        STH1MF=',I2,', I1STH1M=',I3,', I2STH1M=',I3,','/&  
-               '        TH2MF =',I2,', I1TH2M =',I3,', I2TH2M =',I3,','/&  
+               '        E3D   =',I2,', I1E3D  =',I3,', I2E3D  =',I3,','/&
+               '        TH1MF =',I2,', I1TH1M =',I3,', I2TH1M =',I3,','/&
+               '        STH1MF=',I2,', I1STH1M=',I3,', I2STH1M=',I3,','/&
+               '        TH2MF =',I2,', I1TH2M =',I3,', I2TH2M =',I3,','/&
                '        STH2MF=',I2,', I1STH2M=',I3,', I2STH2M=',I3,' /')
 !
  2986 FORMAT ( '  &REF1 REFCOAST =',F5.2,', REFFREQ =',F5.2,', REFSLOPE =',F5.3, &
-               ', REFMAP =',F4.1, ', REFMAPD =',F4.1, ', REFSUBGRID =',F5.2,','/ &   
+               ', REFMAP =',F4.1, ', REFMAPD =',F4.1, ', REFSUBGRID =',F5.2,','/ &
                '        REFRMAX=',F5.2,', REFFREQPOW =',F5.2,                    &
                ', REFICEBERG =',F5.2,', REFCOSP_STRAIGHT =',F4.1,' /')
 !
@@ -6943,11 +6940,11 @@
  3008 FORMAT ( '       Format                      : ',A)
  3009 FORMAT ( '       File name                   : ',A)
 #ifdef W3_SMC
- 4001 FORMAT ( '       SMC refined levels NRLv   = ',I8) 
- 4002 FORMAT ( '       SMC Equator j shift no.   = ',I8) 
- 4302 FORMAT ( '       SMC I-index shift number  = ',I8) 
+ 4001 FORMAT ( '       SMC refined levels NRLv   = ',I8)
+ 4002 FORMAT ( '       SMC Equator j shift no.   = ',I8)
+ 4302 FORMAT ( '       SMC I-index shift number  = ',I8)
  4003 FORMAT ( '       SMC input boundary  no.   = ',I8)
- 4004 FORMAT ( '       SMC NCel   = ',6I9)  
+ 4004 FORMAT ( '       SMC NCel   = ',6I9)
  4005 FORMAT ( '       IJKCel(5,NCel) read from ', A)
  4006 FORMAT (6I8)
  4007 FORMAT ( '       SMC NUFc   = ',6I9)
@@ -7256,7 +7253,7 @@
  9096 FORMAT ( '            ',I3,2I8)
 #endif
 
-      END SUBROUTINE 
+      END SUBROUTINE
 !/
 !/ Internal function READNL ------------------------------------------ /
 !/
@@ -7334,7 +7331,7 @@
 !
       DO
         READ (NDS,'(A)',END=800,ERR=800,IOSTAT=IERR) LINE
-        DO I=1, 70 
+        DO I=1, 70
           IF ( LINE(I:I) .NE. ' ' ) THEN
               IF ( LINE(I:I) .EQ. '&' ) THEN
                   IF ( LINE(I+1:I+4) .EQ. NAME ) THEN
@@ -7475,33 +7472,33 @@
                           READ (NDS,NML=PRO3,END=801,ERR=802,IOSTAT=J)
 #endif
 #ifdef W3_RTD
-                        CASE('ROTD') 
+                        CASE('ROTD')
                           READ (NDS,NML=ROTD,END=801,ERR=802,IOSTAT=J)
                         CASE('ROTB')
-                          READ (NDS,NML=ROTB,END=801,ERR=802,IOSTAT=J) 
+                          READ (NDS,NML=ROTB,END=801,ERR=802,IOSTAT=J)
 #endif
 #ifdef W3_REF1
-                       CASE('REF1') 
+                       CASE('REF1')
                          READ (NDS,NML=REF1,END=801,ERR=802,IOSTAT=J)
 #endif
 #ifdef W3_IG1
-                        CASE('SIG1') 
+                        CASE('SIG1')
                          READ (NDS,NML=SIG1,END=801,ERR=802,IOSTAT=J)
 #endif
 #ifdef W3_IC2
-                        CASE('SIC2') 
+                        CASE('SIC2')
                          READ (NDS,NML=SIC2,END=801,ERR=802,IOSTAT=J)
 #endif
 #ifdef W3_IC3
-                        CASE('SIC3') 
+                        CASE('SIC3')
                          READ (NDS,NML=SIC3,END=801,ERR=802,IOSTAT=J)
 #endif
 #ifdef W3_IC4
-                        CASE('SIC4 ') 
+                        CASE('SIC4 ')
                          READ (NDS,NML=SIC4,END=801,ERR=802,IOSTAT=J)
 #endif
 #ifdef W3_IC5
-                        CASE('SIC5 ') 
+                        CASE('SIC5 ')
                          READ (NDS,NML=SIC5,END=801,ERR=802,IOSTAT=J)
 #endif
                         CASE('UNST')
