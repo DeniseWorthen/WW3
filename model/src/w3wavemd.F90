@@ -173,9 +173,7 @@ MODULE W3WAVEMD
   !  7. Source code :
   !
   !/ ------------------------------------------------------------------- /
-#ifdef W3_MPI
-  USE W3ADATMD, ONLY: MPIBUF
-#endif
+  USE W3ADATMD, ONLY: MPIBUF  ! W3_MPI
   use wav_shr_flags
   !
   PUBLIC
@@ -3218,13 +3216,12 @@ CONTAINS
                               (DSEC21 (TIME00, TIME) .GT. 0.0) ) THEN
                             IF ( (CPLT0 .AND. (DSEC21 (TIME, TIMEN) .GT. 0.0)) .OR. .NOT. CPLT0 ) THEN
                                IF (CPLT0) ID_OASIS_TIME = NINT(DSEC21 ( TIME00 , TIME ))
-
-                               if (w3_oasacm_flag) then
+#ifdef W3_OASACM
                                   CALL SND_FIELDS_TO_ATMOS()
-                               end if
-                               if (w3_oasocm_flag) then
+#endif
+#ifdef W3_OASOCM
                                   CALL SND_FIELDS_TO_OCEAN()
-                               end if
+#endif
 #ifdef W3_OASICM
                                CALL SND_FIELDS_TO_ICE()
 #endif
@@ -3578,15 +3575,12 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE W3SERVMD, ONLY: STRACE ! W3_S
-    !/
     USE W3GDATMD, ONLY: NSPEC, NX, NY, NSEA, NSEAL, MAPSF, DMIN
     USE W3PARALL, ONLY: INIT_GET_ISEA
     USE W3WDATMD, ONLY: A => VA
-#ifdef W3_MPI
-    USE W3ADATMD, ONLY: MPIBUF, BSTAT, IBFLOC, ISPLOC, BISPL
-    USE W3ADATMD, ONLY: NSPLOC, NRQSG2, IRQSG2, GSTORE
-    USE W3ODATMD, ONLY: NDST, IAPROC, NAPROC, NOTYPE
-#endif
+    USE W3ADATMD, ONLY: MPIBUF, BSTAT, IBFLOC, ISPLOC, BISPL ! W3_MPI/MPIT
+    USE W3ADATMD, ONLY: NSPLOC, NRQSG2, IRQSG2, GSTORE       ! W3_MPI
+    USE W3ODATMD, ONLY: NDST, IAPROC, NAPROC, NOTYPE         ! W3_MPI
     !/
     IMPLICIT NONE
     !
@@ -3603,14 +3597,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: ISEA, IXY ! only for W3_SHRD
+    INTEGER                 :: ISEA, IXY                     ! W3_SHRD
 #ifdef W3_MPI
     INTEGER                 :: STATUS(MPI_STATUS_SIZE,NSPEC)
-    CHARACTER(LEN=15)       :: STR(MPIBUF), STRT
 #endif
     INTEGER                 :: IOFF, IERR_MPI, JSEA
     INTEGER                 :: IS0, IB0, NPST, J
     INTEGER, SAVE           :: IENT ! only for W3_S
+    CHARACTER(LEN=15)       :: STR(MPIBUF), STRT ! only for W3_MPI/MPIT
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -3876,9 +3870,9 @@ CONTAINS
     !/
     USE W3WDATMD, ONLY: A => VA
 #ifdef W3_MPI
-    USE W3ADATMD, ONLY: MPIBUF, BSTAT, IBFLOC, ISPLOC, BISPL
     USE W3ADATMD, ONLY: NSPLOC, NRQSG2, IRQSG2, SSTORE
 #endif
+    USE W3ADATMD, ONLY: MPIBUF, BSTAT, IBFLOC, ISPLOC, BISPL !W3_MPI/MPIT
     USE W3ODATMD, ONLY: NDST
     USE W3ODATMD, ONLY: IAPROC, NAPROC ! W3_MPI
     USE CONSTANTS, ONLY : LPDLIB
@@ -3902,11 +3896,11 @@ CONTAINS
     INTEGER           :: ISEA, IXY, IOFF, IERR_MPI, J! only for W3_MPI
 #ifdef W3_MPI
     INTEGER           :: STATUS(MPI_STATUS_SIZE,NSPEC)
-    CHARACTER(LEN=15) :: STR(MPIBUF), STRT ! only for W3_MPIT
 #endif
     INTEGER           :: JSEA, IB0
     INTEGER, SAVE     :: IENT ! only for W3_S
     LOGICAL           :: DONE ! only for W3_MPI
+    CHARACTER(LEN=15) :: STR(MPIBUF), STRT ! only for W3_MPI/MPIT
     !/
     !/ ------------------------------------------------------------------- /
     !/

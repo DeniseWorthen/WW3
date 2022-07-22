@@ -10,19 +10,20 @@
 module wav_shr_flags
 
   implicit none
+  public
 
 !   debug/logging
  
-#ifdef W3_DEBUGSRC
-   logical ::  w3_debugsrc_flag = .true.      !< @public a flag for "W3_DEBUGSRC"
+#ifdef W3_DEBUGCOH
+   logical ::  w3_debugcoh_flag = .true.      !< @public a flag for "W3_DEBUGCOH"
 #else
-   logical ::  w3_debugsrc_flag = .false.     !< @public a flag for "W3_DEBUGSRC"
+   logical ::  w3_debugcoh_flag = .false.     !< @public a flag for "W3_DEBUGCOH"
 #endif
  
-#ifdef W3_MPI
-   logical ::  w3_mpi_flag = .true.      !< @public a flag for "W3_MPI"
+#ifdef W3_DEBUGIOBP
+   logical ::  w3_debugiobp_flag = .true.      !< @public a flag for "W3_DEBUGIOBP"
 #else
-   logical ::  w3_mpi_flag = .false.     !< @public a flag for "W3_MPI"
+   logical ::  w3_debugiobp_flag = .false.    !< @public a flag for "W3_DEBUGIOBP"
 #endif
 
 #ifdef W3_DEBUGDCXDX
@@ -35,6 +36,11 @@ module wav_shr_flags
    logical ::  w3_debugiobc_flag = .true.      !< @public a flag for "W3_DEBUGIOBC"
 #else
    logical ::  w3_debugiobc_flag = .false.     !< @public a flag for "W3_DEBUGIOBC"
+#endif
+#ifdef W3_DEBUGSRC
+   logical ::  w3_debugsrc_flag = .true.      !< @public a flag for "W3_DEBUGSRC"
+#else
+   logical ::  w3_debugsrc_flag = .false.     !< @public a flag for "W3_DEBUGSRC"
 #endif
 
 #ifdef W3_DEBUGINIT
@@ -131,6 +137,11 @@ module wav_shr_flags
    logical ::  w3_flx4_flag = .false.     !< @public a flag for "W3_FLX4"
 #endif
   
+#ifdef W3_FLX5
+   logical ::  w3_flx5_flag = .true.      !< @public a flag for "W3_FLX5"
+#else
+   logical ::  w3_flx5_flag = .false.     !< @public a flag for "W3_FLX5"
+#endif
 !   linear input
   
 #ifdef W3_LN0
@@ -679,6 +690,12 @@ module wav_shr_flags
    logical ::  w3_mlim_flag = .false.     !< @public a flag for "W3_MLIM"
 #endif
   
+#ifdef W3_MPI
+   logical ::  w3_mpi_flag = .true.      !< @public a flag for "W3_MPI"
+#else
+   logical ::  w3_mpi_flag = .false.     !< @public a flag for "W3_MPI"
+#endif
+
 #ifdef W3_MPIBDI
    logical ::  w3_mpibdi_flag = .true.      !< @public a flag for "W3_MPIBDI"
 #else
@@ -877,6 +894,11 @@ module wav_shr_flags
    logical ::  w3_wcor_flag = .false.     !< @public a flag for "W3_WCOR"
 #endif
 
+#ifdef W3_SETUP
+   logical ::  w3_setup_flag = .true.      !< @public a flag for "W3_SETUP"
+#else
+   logical ::  w3_setup_flag = .false.     !< @public a flag for "W3_SETUP"
+#endif
   interface print_logmsg
     module procedure print_logmsg_1line
     module procedure print_logmsg_2line
