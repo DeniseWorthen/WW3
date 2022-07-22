@@ -2144,25 +2144,25 @@ CONTAINS
                 IF (FSTOTALIMP .and. (IT .ne. 0)) THEN
                    if (w3_debugrun_flag) then
                       WRITE(740+IAPROC,*) 'W3WAVE, step 6.12.3A'
-                      WRITE(*,*), 'W3WAVE, step 6.12.3A'
+                      WRITE(*,*) 'W3WAVE, step 6.12.3A'
                       FLUSH(740+IAPROC)
                    end if
                    CALL PDLIB_W3XYPUG_BLOCK_IMPLICIT (FACX, FACX, DTG, VGX, VGY)
                    if (w3_debugrun_flag) then
                       WRITE(740+IAPROC,*) 'W3WAVE, step 6.12.4A'
-                      WRITE(*,*), 'W3WAVE, step 6.12.4A'
+                      WRITE(*,*) 'W3WAVE, step 6.12.4A'
                       FLUSH(740+IAPROC)
                    end if
                 ELSE IF(FSTOTALEXP .and. (IT .ne. 0)) THEN
                    if (w3_debugrun_flag) then
                       WRITE(740+IAPROC,*) 'W3WAVE, step 6.12.3B'
-                      WRITE(*,*), 'W3WAVE, step 6.12.3B'
+                      WRITE(*,*) 'W3WAVE, step 6.12.3B'
                       FLUSH(740+IAPROC)
                    end if
                    CALL PDLIB_W3XYPUG_BLOCK_EXPLICIT(FACX, FACX, DTG, VGX, VGY)
                    if (w3_debugrun_flag) then
                       WRITE(740+IAPROC,*) 'W3WAVE, step 6.12.4B'
-                      WRITE(*,*), 'W3WAVE, step 6.12.4B'
+                      WRITE(*,*) 'W3WAVE, step 6.12.4B'
                       FLUSH(740+IAPROC)
                    end if
                 ENDIF
