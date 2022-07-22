@@ -818,13 +818,14 @@
      WRITE(740+IAPROC,*) 'W3IOGR, step 7.2'
      FLUSH(740+IAPROC)
 #endif
-!!Li      IF (.NOT.GINIT) CALL W3DIMX ( IGRD, NX, NY, NSEA, NDSE, NDST )
-          IF (.NOT.GINIT) CALL W3DIMX ( IGRD, NX, NY, NSEA, NDSE, NDST &
 #ifdef W3_SMC
-                                 , NCel, NUFc, NVFc, NRLv, NBSMC  &
-                                 , NARC, NBAC, NSPEC              &
+     !!Li  IF (.NOT.GINIT) CALL W3DIMX ( IGRD, NX, NY, NSEA, NDSE, NDST )
+     CALL W3DIMX ( 1, NX, NY, NSEA, NDSE, NDST,  &
+          MCel=Ncel, MUFc=NUFc, MVFc=NVFc, MRLv=NRLv, MBSMC=NBSMC,  &
+          MARC=NARC, MBAC=NBAC, MSPEC=NSPEC)
+#else
+     IF (.NOT.GINIT) CALL W3DIMX ( IGRD, NX, NY, NSEA, NDSE, NDST)
 #endif
-                                      )
 #ifdef W3_DEBUGIOGR
      WRITE(740+IAPROC,*) 'W3IOGR, step 7.3'
      FLUSH(740+IAPROC)

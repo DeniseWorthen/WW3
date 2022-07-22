@@ -4912,12 +4912,14 @@
 !
 ! 8.f Set up all maps
 !
-        CALL W3DIMX ( 1, NX, NY, NSEA, NDSE, NDST  &
 #ifdef W3_SMC
-             , NCel, NUFc, NVFc, NRLv, NBSMC  &
-             , NARC, NBAC, NSPEC              &
+        CALL W3DIMX ( 1, NX, NY, NSEA, NDSE, NDST,  &
+             MCel=Ncel, MUFc=NUFc, MVFc=NVFc, MRLv=NRLv, MBSMC=NBSMC,  &
+             MARC=NARC, MBAC=NBAC, MSPEC=NSPEC)
+        WRITE (NDSO,4021) NCel
+#else
+        CALL W3DIMX ( 1, NX, NY, NSEA, NDSE, NDST)
 #endif
-                  )
 #ifdef W3_SMC
         WRITE (NDSO,4021)   NCel
 #endif

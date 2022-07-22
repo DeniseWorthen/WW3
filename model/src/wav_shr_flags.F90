@@ -12,7 +12,19 @@ module wav_shr_flags
   implicit none
 
 !   debug/logging
-  
+ 
+#ifdef W3_DEBUGSRC
+   logical ::  w3_debugsrc_flag = .true.      !< @public a flag for "W3_DEBUGSRC"
+#else
+   logical ::  w3_debugsrc_flag = .false.     !< @public a flag for "W3_DEBUGSRC"
+#endif
+ 
+#ifdef W3_MPI
+   logical ::  w3_mpi_flag = .true.      !< @public a flag for "W3_MPI"
+#else
+   logical ::  w3_mpi_flag = .false.     !< @public a flag for "W3_MPI"
+#endif
+
 #ifdef W3_DEBUGDCXDX
    logical ::  w3_debugdcxdx_flag = .true.      !< @public a flag for "W3_DEBUGDCXDX"
 #else
@@ -988,4 +1000,24 @@ module wav_shr_flags
    flush(unum)
 
    end subroutine print_logmsg_4line
+
+  !========================================================================
+!> Write memory statistics if requisted
+!!
+!> @details Writes a single line of memory statistics to unit 40000+iaproc
+!!
+   subroutine print_memcheck(iaproc, msg)
+#if W3_MEMCHECK
+     USE MallocInfo_m
+#endif
+     integer          , pointer    :: iaproc
+     character(len=*) , intent(in) :: msg
+
+#if W3_MEMCHECK
+     write(40000+IAPROC,*) trim(msg)
+     call getMallocInfo(mallinfos)
+     call printMallInfo(IAPROC+40000,mallInfos)
+#endif
+   end subroutine print_memcheck
+
 end module wav_shr_flags
