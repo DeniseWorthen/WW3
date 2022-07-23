@@ -51,8 +51,8 @@
 !  7. Source code :
 !
 !/ ------------------------------------------------------------------- /
-      PUBLIC
       IMPLICIT NONE
+      PUBLIC
 !/
       ! Add fields needed for OASIS coupling in restart
       LOGICAL :: OARST
