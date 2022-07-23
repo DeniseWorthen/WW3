@@ -74,8 +74,8 @@
 !  7. Source code :
 !
 !/ ------------------------------------------------------------------- /
-      PUBLIC
       IMPLICIT NONE
+      PUBLIC
 !/
 !/ Private parameter statements (ID strings)
 !/
