@@ -8,6 +8,8 @@
 
 module W3IOGONCDMD
 
+  IMPLICIT NONE
+
 contains
 
 !/ ------------------------------------------------------------------- /
@@ -45,7 +47,6 @@ contains
     use w3odatmd   , only: use_user_histname, user_histfname
     USE NETCDF
 
-    IMPLICIT NONE
 !/
 !/ ------------------------------------------------------------------- /
 !/ Local parameters
@@ -727,7 +728,6 @@ contains
     USE W3SERVMD, ONLY: EXTCDE
     USE NETCDF
 
-    IMPLICIT NONE
 
     ! input/output variables
     integer         ,intent(in) :: ierr

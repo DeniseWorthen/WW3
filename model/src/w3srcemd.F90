@@ -45,6 +45,7 @@
 !
 !/ ------------------------------------------------------------------- /
 !/
+      IMPLICIT NONE
       REAL, PARAMETER, PRIVATE:: OFFSET = 1.
 !/
       CONTAINS
@@ -508,7 +509,6 @@
     USE W3PARALL, ONLY: ONESIXTH, ZERO, THR, IMEM, LSLOC
 #endif
 !/
-      IMPLICIT NONE
 !/
 !/ ------------------------------------------------------------------- /
 !/ Parameter list
@@ -2258,7 +2258,6 @@
       USE W3SERVMD, ONLY: STRACE
 #endif
 !
-      IMPLICIT NONE
 !/
 !/ ------------------------------------------------------------------- /
 !/ Parameter list
@@ -2360,7 +2359,6 @@
 #endif
 !
         USE W3GDATMD, only : NTH, NK, NSPEC
-        IMPLICIT NONE
 !/
 !/ ------------------------------------------------------------------- /
 !/ Parameter list
@@ -2437,7 +2435,6 @@
 !
 
         USE W3GDATMD, only : NTH, NK, NSPEC
-        IMPLICIT NONE
 !/
 !/ ------------------------------------------------------------------- /
 !/ Parameter list

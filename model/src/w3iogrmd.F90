@@ -63,6 +63,7 @@
 !  7. Source code :
 !
 !/ ------------------------------------------------------------------- /
+      IMPLICIT NONE
       PUBLIC
 !/
 !/ Private parameter statements (ID strings)
@@ -272,7 +273,6 @@
       USE MallocInfo_m
 #endif
 !
-      IMPLICIT NONE
 !
 #ifdef W3_MPI
       INCLUDE "mpif.h"

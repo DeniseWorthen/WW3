@@ -338,6 +338,7 @@ MODULE W3ADATMD
   !
   !/ ------------------------------------------------------------------- /
   use wav_shr_flags
+  IMPLICIT NONE
 
   PUBLIC
   !/
@@ -683,7 +684,6 @@ CONTAINS
     USE W3ODATMD, ONLY: IAPROC
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -841,7 +841,6 @@ CONTAINS
     USE W3SERVMD  , ONLY: EXTCDE
     USE W3SERVMD  , ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -1469,7 +1468,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -2402,7 +2400,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -2600,7 +2597,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -3028,7 +3024,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list

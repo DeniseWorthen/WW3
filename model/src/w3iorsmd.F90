@@ -52,6 +52,7 @@
 !
 !/ ------------------------------------------------------------------- /
       PUBLIC
+      IMPLICIT NONE
 !/
       ! Add fields needed for OASIS coupling in restart
       LOGICAL :: OARST
@@ -287,7 +288,6 @@
       use w3timemd, only: set_user_timestring
       use w3odatmd, only: use_user_restname, user_restfname, ndso, naplog
 
-      IMPLICIT NONE
 !
 #ifdef W3_MPI
       INCLUDE "mpif.h"

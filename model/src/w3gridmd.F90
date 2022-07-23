@@ -548,8 +548,8 @@
 #ifdef W3_NLS
       USE W3SNLSMD, ONLY: ABMAX
 #endif
-!
       IMPLICIT NONE
+!
 !/
 !/ ------------------------------------------------------------------- /
 !/ Local parameters

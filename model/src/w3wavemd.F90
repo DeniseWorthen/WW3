@@ -175,6 +175,7 @@ MODULE W3WAVEMD
   !/ ------------------------------------------------------------------- /
   USE W3ADATMD, ONLY: MPIBUF  ! W3_MPI
   use wav_shr_flags
+  IMPLICIT NONE
   !
   PUBLIC
   !/
@@ -390,7 +391,7 @@ CONTAINS
     USE W3ODATMD        , only : NDS, NOGE, NAPLOG, NAPOUT, NDSO, NDSE, NDST, NAPROC, NAPERR, SCREEN
     USE W3ODATMD        , only : IAPROC, IOUTP, NOTYPE, NAPBPT
     USE W3ODATMD        , only : TOFRST, TONEXT, TBPIN, TBPI0, TOLAST, DTOUT, NAPFLD, NAPPNT
-    USE W3ODATMD        , only : NTPROC    
+    USE W3ODATMD        , only : NTPROC
     USE W3ODATMD        , only : TOSNL5
 
     USE W3GDATMD        , only : W3SETG
@@ -495,7 +496,6 @@ CONTAINS
     use w3odatmd        , only : user_histalarm, user_restalarm
     use w3odatmd        , only : histwr, rstwr, user_gridncout
     !
-    IMPLICIT NONE
     !
 #ifdef W3_MPI
     INCLUDE "mpif.h"
@@ -570,12 +570,12 @@ CONTAINS
     !Li   Temperature spectra for Arctic boundary update.
     REAL, ALLOCATABLE    :: BACSPEC(:) ! only for  W3_SMC
     REAL                 :: BACANGL    ! only for  W3_SMC
-    ! 
+    !
     logical :: setup_mpi_write, write_now
-    logical :: do_gridded_output 
-    logical :: do_point_output 
-    logical :: do_track_output 
-    logical :: do_restart_output 
+    logical :: do_gridded_output
+    logical :: do_point_output
+    logical :: do_track_output
+    logical :: do_restart_output
     logical :: do_boundary_output
     logical :: do_sf_output
     logical :: do_coupler_output
@@ -2161,7 +2161,7 @@ CONTAINS
                    end if
                 ENDIF
 #endif
-             ELSE  ! IF ((GTYPE .EQ. UNGTYPE) .and. LPDLIB) 
+             ELSE  ! IF ((GTYPE .EQ. UNGTYPE) .and. LPDLIB)
 
                 IF (FLCX .or. FLCY) THEN
                    if (w3_debugrun_flag) then
@@ -2568,7 +2568,7 @@ CONTAINS
                               PHIBBL(JSEA), TMP3, TMP4, PHICE(JSEA),      &
                               TAUOCX(JSEA), TAUOCY(JSEA), WNMEAN(JSEA),   &
                               RHOAIR(ISEA), ASF(ISEA))
-#else 
+#else
                          ! note that there are no TAUA and TAUADIR arguments below
                          CALL W3SRCE(srce_imp_post,IT,ISEA,JSEA,IX,IY,IMOD,  &
                               VAOLD(:,JSEA), VA(:,JSEA),                  &
@@ -2953,11 +2953,11 @@ CONTAINS
           END IF ! set_write
 #endif
 
-#ifndef W3_MPI 
+#ifndef W3_MPI
 #ifdef W3_PDLIB
           CALL DO_OUTPUT_EXCHANGES(IMOD)
 #endif
-#endif          
+#endif
           call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP1')
           !
           if (w3_debugrun_flag) then
@@ -3578,7 +3578,6 @@ CONTAINS
     USE W3ADATMD, ONLY: NSPLOC, NRQSG2, IRQSG2, GSTORE       ! W3_MPI
     USE W3ODATMD, ONLY: NDST, IAPROC, NAPROC, NOTYPE         ! W3_MPI
     !/
-    IMPLICIT NONE
     !
 #ifdef W3_MPI
     INCLUDE "mpif.h"
@@ -3849,7 +3848,6 @@ CONTAINS
     USE CONSTANTS, ONLY : LPDLIB
     USE W3PARALL, only: INIT_GET_ISEA
     !/
-    IMPLICIT NONE
     !
 #ifdef W3_MPI
     INCLUDE "mpif.h"
@@ -4094,7 +4092,6 @@ CONTAINS
     USE W3ODATMD, ONLY: NDST, NAPROC
     USE W3PARALL, ONLY: INIT_GET_JSEA_ISPROC
     !/
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list

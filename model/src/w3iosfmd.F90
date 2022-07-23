@@ -21,14 +21,14 @@
 !/    30-Oct-2009 : Implement curvilinear grid type.    ( version 3.14 )
 !/                  (W. E. Rogers & T. J. Campbell, NRL)
 !/    06-Mar-2012 : Reparing test output under MPI.     ( version 4.07 )
-!/    08-Jun-2018 : use W3ADATMD, W3PARALL, INIT_GET_ISEA and 
+!/    08-Jun-2018 : use W3ADATMD, W3PARALL, INIT_GET_ISEA and
 !/                            INIT_GET_JSEA_ISPROC      ( version 6.04 )
 !/    25-Jul-2018 : Changed DIMXP size for partitioning ( version 6.05 )
 !/                  methods 4 and 5. (C Bunney, UKMO)
 !/
 !/    Copyright 2009-2012 National Weather Service (NWS),
 !/       National Oceanic and Atmospheric Administration.  All rights
-!/       reserved.  WAVEWATCH III is a trademark of the NWS. 
+!/       reserved.  WAVEWATCH III is a trademark of the NWS.
 !/       No unauthorized use without permission.
 !/
 !  1. Purpose :
@@ -75,6 +75,7 @@
 !
 !/ ------------------------------------------------------------------- /
       PUBLIC
+      IMPLICIT NONE
 !/
 !/ Private parameter statements (ID strings)
 !/
@@ -163,7 +164,6 @@
      USE W3ODATMD, ONLY: NDST
 #endif
 !
-      IMPLICIT NONE
 !/
 !/ ------------------------------------------------------------------- /
 !/ Parameter list
@@ -227,7 +227,7 @@
         CALL INIT_GET_ISEA(ISEA, JSEA)
         IX     = MAPSF(ISEA,1)
         IY     = MAPSF(ISEA,2)
-        ICPRT(JSEA+1,2) = ICPRT(JSEA,2) 
+        ICPRT(JSEA+1,2) = ICPRT(JSEA,2)
 !
         IF ( MAPSTA(IY,IX) .LT. 0 ) CYCLE
 !
@@ -267,13 +267,13 @@
             IF ( ICPRT(JSEA,2)+NP .GT. TMPSIZ ) THEN
                 ALLOCATE ( TMP2(DIMP,TMPSIZ) )
                 TMP2   = TMP
-                DEALLOCATE ( TMP ) 
+                DEALLOCATE ( TMP )
                 OLDSIZ = TMPSIZ
                 TMPSIZ = TMPSIZ + MAX ( TSFAC*NSEAL , DIMXP )
                 ALLOCATE ( TMP(DIMP,TMPSIZ) )
                 TMP(:,1:OLDSIZ) = TMP2(:,1:OLDSIZ)
                 TMP(:,OLDSIZ+1:) = 0.
-                DEALLOCATE ( TMP2 ) 
+                DEALLOCATE ( TMP2 )
 #ifdef W3_T
             WRITE (NDST,9050) JSEA, OLDSIZ, TMPSIZ
 #endif
@@ -344,7 +344,7 @@
 !/
 !  1. Purpose :
 !
-!     Write partitioned spectrakl data to file. Unlike other 
+!     Write partitioned spectrakl data to file. Unlike other
 !     WAVEWATCH III IO routines, this one writes only.
 !     First ad-hoc version.
 !
@@ -417,7 +417,6 @@
       USE W3ODATMD, ONLY: NDST
 #endif
 !
-      IMPLICIT NONE
 !
 #ifdef W3_MPI
       INCLUDE "mpif.h"
@@ -556,7 +555,7 @@
       IF ( IAPROC .NE. NAPPRT ) RETURN
 !
 ! -------------------------------------------------------------------- /
-! 3.  Point to and/or gather data 
+! 3.  Point to and/or gather data
 ! 3.a Set up storage
 !
       ALLOCATE ( PROC(NAPROC) )

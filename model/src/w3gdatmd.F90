@@ -590,6 +590,7 @@ MODULE W3GDATMD
   !/
   USE W3GSRUMD
   USE WAV_SHR_FLAGS
+  IMPLICIT NONE
   !/
   !/ Specify default accessibility
   !/
@@ -1225,7 +1226,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -1392,7 +1392,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !
     !/
     !/ ------------------------------------------------------------------- /
@@ -1742,7 +1741,6 @@ CONTAINS
     USE CONSTANTS, ONLY: RADE  ! only for W3_ST4
     USE W3SERVMD, ONLY: STRACE ! only for W3_S
     !
-    IMPLICIT NONE
     !
     !/
     !/ ------------------------------------------------------------------- /
@@ -1968,7 +1966,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE  ! W3_S
     !
-    IMPLICIT NONE
     !
     !/
     !/ ------------------------------------------------------------------- /
@@ -2662,7 +2659,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -2890,7 +2886,6 @@ CONTAINS
 #endif
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !
     !/
     !/ ------------------------------------------------------------------- /
@@ -3065,7 +3060,6 @@ CONTAINS
     USE CONSTANTS
     USE W3SERVMD, ONLY : STRACE ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/
