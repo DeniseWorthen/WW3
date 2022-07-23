@@ -77,8 +77,8 @@ MODULE W3SERVMD
   !  7. Source code :
   !
   !/ ------------------------------------------------------------------- /
-  PUBLIC
   IMPLICIT NONE
+  PUBLIC
   !
   INTEGER, PRIVATE        :: NDSTRC = 6, NTRACE = 0
   !
