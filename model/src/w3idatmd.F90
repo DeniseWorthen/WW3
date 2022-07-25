@@ -138,6 +138,7 @@ MODULE W3IDATMD
   !
   !/ ------------------------------------------------------------------- /
   use wav_shr_flags
+  implicit none
   !/
   PUBLIC
   !/
@@ -168,46 +169,46 @@ MODULE W3IDATMD
      REAL          :: GD0
      REAL          :: GAN
      REAL          :: GDN
-     REAL, POINTER :: WXNwrst(:,:)      ! W3_WRST
-     REAL, POINTER :: WYNwrst(:,:)      ! W3_WRST 
-     REAL, POINTER :: WX0(:,:)
-     REAL, POINTER :: WY0(:,:)
-     REAL, POINTER :: DT0(:,:)
-     REAL, POINTER :: WXN(:,:)
-     REAL, POINTER :: WYN(:,:)
-     REAL, POINTER :: DTN(:,:)
-     REAL, POINTER :: CX0(:,:)
-     REAL, POINTER :: CY0(:,:)
-     REAL, POINTER :: CXN(:,:)
-     REAL, POINTER :: CYN(:,:)
-     REAL, POINTER :: WLEV(:,:)
-     REAL, POINTER :: ICEI(:,:)
-     REAL, POINTER :: UX0(:,:)
-     REAL, POINTER :: UY0(:,:)
-     REAL, POINTER :: UXN(:,:)
-     REAL, POINTER :: UYN(:,:)
-     REAL, POINTER :: RH0(:,:)
-     REAL, POINTER :: RHN(:,:)
-     REAL, POINTER :: BERGI(:,:)
-     REAL, POINTER :: MUDT(:,:)
-     REAL, POINTER :: MUDV(:,:)
-     REAL, POINTER :: MUDD(:,:)
-     REAL, POINTER :: ICEP1(:,:)
-     REAL, POINTER :: ICEP2(:,:)
-     REAL, POINTER :: ICEP3(:,:)
-     REAL, POINTER :: ICEP4(:,:)
-     REAL, POINTER :: ICEP5(:,:)
-     REAL, POINTER :: CXTIDE(:,:,:,:)   ! W3_TIDE
-     REAL, POINTER :: CYTIDE(:,:,:,:)   ! W3_TIDE
-     REAL, POINTER :: WLTIDE(:,:,:,:)   ! W3_TIDE
-     REAL, POINTER :: HML(:,:)          ! W3_CESMCOUPLED
+     REAL, POINTER :: WXNwrst(:,:)    => null()      ! W3_WRST
+     REAL, POINTER :: WYNwrst(:,:)    => null()      ! W3_WRST
+     REAL, POINTER :: WX0(:,:)        => null()
+     REAL, POINTER :: WY0(:,:)        => null()
+     REAL, POINTER :: DT0(:,:)        => null()
+     REAL, POINTER :: WXN(:,:)        => null()
+     REAL, POINTER :: WYN(:,:)        => null()
+     REAL, POINTER :: DTN(:,:)        => null()
+     REAL, POINTER :: CX0(:,:)        => null()
+     REAL, POINTER :: CY0(:,:)        => null()
+     REAL, POINTER :: CXN(:,:)        => null()
+     REAL, POINTER :: CYN(:,:)        => null()
+     REAL, POINTER :: WLEV(:,:)       => null()
+     REAL, POINTER :: ICEI(:,:)       => null()
+     REAL, POINTER :: UX0(:,:)        => null()
+     REAL, POINTER :: UY0(:,:)        => null()
+     REAL, POINTER :: UXN(:,:)        => null()
+     REAL, POINTER :: UYN(:,:)        => null()
+     REAL, POINTER :: RH0(:,:)        => null()
+     REAL, POINTER :: RHN(:,:)        => null()
+     REAL, POINTER :: BERGI(:,:)      => null()
+     REAL, POINTER :: MUDT(:,:)       => null()
+     REAL, POINTER :: MUDV(:,:)       => null()
+     REAL, POINTER :: MUDD(:,:)       => null()
+     REAL, POINTER :: ICEP1(:,:)      => null()
+     REAL, POINTER :: ICEP2(:,:)      => null()
+     REAL, POINTER :: ICEP3(:,:)      => null()
+     REAL, POINTER :: ICEP4(:,:)      => null()
+     REAL, POINTER :: ICEP5(:,:)      => null()
+     REAL, POINTER :: CXTIDE(:,:,:,:) => null()   ! W3_TIDE
+     REAL, POINTER :: CYTIDE(:,:,:,:) => null()   ! W3_TIDE
+     REAL, POINTER :: WLTIDE(:,:,:,:) => null()   ! W3_TIDE
+     REAL, POINTER :: HML(:,:)        => null()   ! W3_CESMCOUPLED
      LOGICAL       :: IINIT
      LOGICAL       :: WRSTIINIT=.FALSE. ! W3_WRST
      ! note that if size of INFLAGS1 is changed, then TFLAGS in wminitmd.ftn
      !    also must be resized.
      LOGICAL       :: INFLAGS1(-7:14)
-     LOGICAL       :: FLAGSC(-7:14)
      LOGICAL       :: INFLAGS2(-7:14)
+     LOGICAL       ::   FLAGSC(-7:14)
   END TYPE INPUT
   !/
   !/ Data storage
@@ -216,34 +217,75 @@ MODULE W3IDATMD
   !/
   !/ Data aliasses for structure INPUT(S)
   !/
-  INTEGER, POINTER :: TFN(:,:), TLN(:), TC0(:), TCN(:)
-  INTEGER, POINTER :: TW0(:), TWN(:), TU0(:), TUN(:)
-  INTEGER, POINTER :: TIN(:), TR0(:), TRN(:), T0N(:)
-  INTEGER, POINTER :: T1N(:), T2N(:), TDN(:), TG0(:)
-  INTEGER, POINTER :: TGN(:), TTN(:), TVN(:), TZN(:)
-  INTEGER, POINTER :: TI1(:), TI2(:), TI3(:), TI4(:), TI5(:)
+  INTEGER, POINTER :: TFN(:,:)        => null()
+  INTEGER, POINTER :: TLN(:)          => null()
+  INTEGER, POINTER :: TC0(:)          => null()
+  INTEGER, POINTER :: TCN(:)          => null()
+  INTEGER, POINTER :: TW0(:)          => null()
+  INTEGER, POINTER :: TWN(:)          => null()
+  INTEGER, POINTER :: TU0(:)          => null()
+  INTEGER, POINTER :: TUN(:)          => null()
+  INTEGER, POINTER :: TIN(:)          => null()
+  INTEGER, POINTER :: TR0(:)          => null()
+  INTEGER, POINTER :: TRN(:)          => null()
+  INTEGER, POINTER :: T0N(:)          => null()
+  INTEGER, POINTER :: T1N(:)          => null()
+  INTEGER, POINTER :: T2N(:)          => null()
+  INTEGER, POINTER :: TDN(:)          => null()
+  INTEGER, POINTER :: TG0(:)          => null()
+  INTEGER, POINTER :: TGN(:)          => null()
+  INTEGER, POINTER :: TTN(:)          => null()
+  INTEGER, POINTER :: TVN(:)          => null()
+  INTEGER, POINTER :: TZN(:)          => null()
+  INTEGER, POINTER :: TI1(:)          => null()
+  INTEGER, POINTER :: TI2(:)          => null()
+  INTEGER, POINTER :: TI3(:)          => null()
+  INTEGER, POINTER :: TI4(:)          => null()
+  INTEGER, POINTER :: TI5(:)          => null()
   REAL,    POINTER :: GA0, GD0, GAN, GDN
-  REAL,    POINTER :: WX0(:,:), WY0(:,:), DT0(:,:)
-  REAL,    POINTER :: WXN(:,:), WYN(:,:), DTN(:,:)
-  REAL,    POINTER :: WXNwrst(:,:),WYNwrst(:,:)        ! W3_RST
-  REAL,    POINTER :: CX0(:,:), CY0(:,:), CXN(:,:)
-  REAL,    POINTER :: CYN(:,:), WLEV(:,:), ICEI(:,:)
-  REAL,    POINTER :: UX0(:,:), UY0(:,:), UXN(:,:)
-  REAL,    POINTER :: UYN(:,:), RH0(:,:), RHN(:,:)
-  REAL,    POINTER :: BERGI(:,:), MUDT(:,:), MUDV(:,:)
-  REAL,    POINTER :: MUDD(:,:), ICEP1(:,:), ICEP2(:,:)
-  REAL,    POINTER :: ICEP3(:,:), ICEP4(:,:), ICEP5(:,:)
-  REAL,    POINTER :: CXTIDE(:,:,:,:)                  ! W3_TIDE
-  REAL,    POINTER :: CYTIDE(:,:,:,:), WLTIDE(:,:,:,:) ! W3_TIDE
+  REAL,    POINTER :: WX0(:,:)        => null()
+  REAL,    POINTER :: WY0(:,:)        => null()
+  REAL,    POINTER :: DT0(:,:)        => null()
+  REAL,    POINTER :: WXN(:,:)        => null()
+  REAL,    POINTER :: WYN(:,:)        => null()
+  REAL,    POINTER :: DTN(:,:)        => null()
+  REAL,    POINTER :: WXNwrst(:,:)    => null() ! W3_RST
+  REAL,    POINTER :: WYNwrst(:,:)    => null() ! W3_RST
+  REAL,    POINTER :: CX0(:,:)        => null()
+  REAL,    POINTER :: CY0(:,:)        => null()
+  REAL,    POINTER :: CXN(:,:)        => null()
+  REAL,    POINTER :: CYN(:,:)        => null()
+  REAL,    POINTER :: WLEV(:,:)       => null()
+  REAL,    POINTER :: ICEI(:,:)       => null()
+  REAL,    POINTER :: UX0(:,:)        => null()
+  REAL,    POINTER :: UY0(:,:)        => null()
+  REAL,    POINTER :: UXN(:,:)        => null()
+  REAL,    POINTER :: UYN(:,:)        => null()
+  REAL,    POINTER :: RH0(:,:)        => null()
+  REAL,    POINTER :: RHN(:,:)        => null()
+  REAL,    POINTER :: BERGI(:,:)      => null()
+  REAL,    POINTER :: MUDT(:,:)       => null()
+  REAL,    POINTER :: MUDV(:,:)       => null()
+  REAL,    POINTER :: MUDD(:,:)       => null()
+  REAL,    POINTER :: ICEP1(:,:)      => null()
+  REAL,    POINTER :: ICEP2(:,:)      => null()
+  REAL,    POINTER :: ICEP3(:,:)      => null()
+  REAL,    POINTER :: ICEP4(:,:)      => null()
+  REAL,    POINTER :: ICEP5(:,:)      => null()
+  REAL,    POINTER :: CXTIDE(:,:,:,:) => null() ! W3_TIDE
+  REAL,    POINTER :: CYTIDE(:,:,:,:) => null()
+  REAL,    POINTER :: WLTIDE(:,:,:,:) => null() ! W3_TIDE
   LOGICAL, POINTER :: IINIT
-  LOGICAL, POINTER :: INFLAGS1(:), INFLAGS2(:), FLAGSC(:)
+  LOGICAL, POINTER :: INFLAGS1(:)     => null()
+  LOGICAL, POINTER :: INFLAGS2(:)     => null()
+  LOGICAL, POINTER :: FLAGSC(:)       => null()
   LOGICAL, POINTER :: FLLEV, FLCUR, FLWIND, FLICE, FLTAUA
   LOGICAL, POINTER :: FLRHOA
   LOGICAL, POINTER :: FLMTH, FLMVS, FLMDN
   LOGICAL, POINTER :: FLIC1, FLIC2, FLIC3, FLIC4, FLIC5
-  LOGICAL, POINTER :: FLLEVTIDE, FLCURTIDE             ! W3_TIDE  
-  LOGICAL, POINTER :: FLLEVRESI, FLCURRESI             ! W3_TIDE
-  REAL   , POINTER :: HML(:,:) ! W3_CESMCOUPLED
+  LOGICAL, POINTER :: FLLEVTIDE, FLCURTIDE      ! W3_TIDE
+  LOGICAL, POINTER :: FLLEVRESI, FLCURRESI      ! W3_TIDE
+  REAL   , POINTER :: HML(:,:)        => null() ! W3_CESMCOUPLED
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
@@ -457,15 +499,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, NDSE, NDST
-    LOGICAL, INTENT(IN), OPTIONAL     :: FLAGSTIDEIN(4)
+    INTEGER, INTENT(IN)           :: IMOD, NDSE, NDST
+    LOGICAL, INTENT(IN), OPTIONAL :: FLAGSTIDEIN(4)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: JGRID
-    LOGICAL                 :: FLAGSTIDE(4)=.FALSE.
-    INTEGER, SAVE           :: IENT = 0 ! W3_S
+    INTEGER                       :: JGRID
+    LOGICAL                       :: FLAGSTIDE(4)=.FALSE.
+    INTEGER, SAVE                 :: IENT = 0 ! W3_S
     !/
     if (w3_s_flag) then
        CALL STRACE (IENT, 'W3DIMI')
@@ -499,11 +541,9 @@ CONTAINS
     ! -------------------------------------------------------------------- /
     ! 2.  Allocate arrays
     !
-    if (w3_tide_flag) then
-       IF ( PRESENT(FLAGSTIDEIN) ) THEN
-          FLAGSTIDE(:) = FLAGSTIDEIN(:)
-       END IF
-    end if
+    IF ( PRESENT(FLAGSTIDEIN) ) THEN
+       FLAGSTIDE(:) = FLAGSTIDEIN(:)
+    END IF
 
     FLIC1  => INPUTS(IMOD)%INFLAGS1(-7)
     FLIC2  => INPUTS(IMOD)%INFLAGS1(-6)
@@ -517,22 +557,21 @@ CONTAINS
     !
     FLLEV  => INPUTS(IMOD)%INFLAGS1(1)
     FLCUR  => INPUTS(IMOD)%INFLAGS1(2)
-    if (w3_tide_flag) then
-       FLLEVTIDE  => INPUTS(IMOD)%INFLAGS1(11)
-       FLCURTIDE  => INPUTS(IMOD)%INFLAGS1(12)
-       FLLEVRESI  => INPUTS(IMOD)%INFLAGS1(13)
-       FLCURRESI  => INPUTS(IMOD)%INFLAGS1(14)
-       !
-       FLLEVTIDE = FLAGSTIDE(1)
-       FLCURTIDE = FLAGSTIDE(2)
-       FLLEVRESI = FLAGSTIDE(3)
-       FLCURRESI = FLAGSTIDE(4)
-    end if
-
     FLWIND => INPUTS(IMOD)%INFLAGS1(3)
     FLICE  => INPUTS(IMOD)%INFLAGS1(4)
     FLTAUA => INPUTS(IMOD)%INFLAGS1(5)
     FLRHOA => INPUTS(IMOD)%INFLAGS1(6)
+
+    FLLEVTIDE  => INPUTS(IMOD)%INFLAGS1(11)
+    FLCURTIDE  => INPUTS(IMOD)%INFLAGS1(12)
+    FLLEVRESI  => INPUTS(IMOD)%INFLAGS1(13)
+    FLCURRESI  => INPUTS(IMOD)%INFLAGS1(14)
+
+    FLLEVTIDE = FLAGSTIDE(1)
+    FLCURTIDE = FLAGSTIDE(2)
+    FLLEVRESI = FLAGSTIDE(3)
+    FLCURRESI = FLAGSTIDE(4)
+      
     !
     ! notes: future improvement: flags for ICEPx should be
     !     "all or nothing" rather than 5 individual flags
@@ -600,7 +639,6 @@ CONTAINS
        end if
     END IF
     !
-    if (w3_tide_flag) then
        IF ( FLLEVTIDE  ) THEN
           ALLOCATE ( INPUTS(IMOD)%WLTIDE(NX,NY,NTIDE,2), STAT=ISTAT )
           CHECK_ALLOC_STATUS ( ISTAT )
@@ -611,16 +649,12 @@ CONTAINS
                INPUTS(IMOD)%CYTIDE(NX,NY,NTIDE,2), STAT=ISTAT )
           CHECK_ALLOC_STATUS ( ISTAT )
        END IF
-    end if
-    !
 
-    if (w3_wrst_flag) then
        IF(.NOT.(INPUTS(IMOD)%WRSTIINIT)) THEN
-          ALLOCATE (   INPUTS(IMOD)%WXNwrst(NX,NY) ,              &
-               INPUTS(IMOD)%WYNwrst(NX,NY) , STAT=ISTAT )
+          ALLOCATE (INPUTS(IMOD)%WXNwrst(NX,NY) ,              &
+                    INPUTS(IMOD)%WYNwrst(NX,NY) , STAT=ISTAT )
           INPUTS(IMOD)%WRSTIINIT=.TRUE.
        ENDIF
-    end if
 
     IF ( FLWIND ) THEN
        if (w3_smc_flag) then
@@ -659,7 +693,7 @@ CONTAINS
     !
     IF ( FLICE  ) THEN
        ALLOCATE ( INPUTS(IMOD)%ICEI(NX,NY),              &
-            INPUTS(IMOD)%BERGI(NX,NY), STAT=ISTAT )
+                  INPUTS(IMOD)%BERGI(NX,NY), STAT=ISTAT )
        CHECK_ALLOC_STATUS ( ISTAT )
        INPUTS(IMOD)%BERGI = 0.
     END IF
@@ -876,152 +910,105 @@ CONTAINS
     ! -------------------------------------------------------------------- /
     ! 3.  Set pointers
     !
-    TFN    => INPUTS(IMOD)%TFN
-    TC0    => INPUTS(IMOD)%TC0
-    TW0    => INPUTS(IMOD)%TW0
-    TU0    => INPUTS(IMOD)%TU0
-    TR0    => INPUTS(IMOD)%TR0
-    TG0    => INPUTS(IMOD)%TG0
-    TDN    => INPUTS(IMOD)%TDN
-    !
-    TI1    => INPUTS(IMOD)%TFN(:,-7)
-    TI2    => INPUTS(IMOD)%TFN(:,-6)
-    TI3    => INPUTS(IMOD)%TFN(:,-5)
-    TI4    => INPUTS(IMOD)%TFN(:,-4)
-    TI5    => INPUTS(IMOD)%TFN(:,-3)
-    !
-    TZN    => INPUTS(IMOD)%TFN(:,-2)
-    TTN    => INPUTS(IMOD)%TFN(:,-1)
-    TVN    => INPUTS(IMOD)%TFN(:,0)
-    !
-    TLN    => INPUTS(IMOD)%TFN(:,1)
-    TCN    => INPUTS(IMOD)%TFN(:,2)
-    TWN    => INPUTS(IMOD)%TFN(:,3)
-    TIN    => INPUTS(IMOD)%TFN(:,4)
-    TUN    => INPUTS(IMOD)%TFN(:,5)
-    TRN    => INPUTS(IMOD)%TFN(:,6)
-    T0N    => INPUTS(IMOD)%TFN(:,7)
-    T1N    => INPUTS(IMOD)%TFN(:,8)
-    T2N    => INPUTS(IMOD)%TFN(:,9)
-    TGN    => INPUTS(IMOD)%TFN(:,10)
-    !
-    GA0    => INPUTS(IMOD)%GA0
-    GD0    => INPUTS(IMOD)%GD0
-    GAN    => INPUTS(IMOD)%GAN
-    GDN    => INPUTS(IMOD)%GDN
-    !
-    IINIT  => INPUTS(IMOD)%IINIT
-    INFLAGS1  => INPUTS(IMOD)%INFLAGS1
-    INFLAGS2  => INPUTS(IMOD)%INFLAGS2
-    FLAGSC => INPUTS(IMOD)%FLAGSC
-    !
-    FLIC1  => INPUTS(IMOD)%INFLAGS1(-7)
-    FLIC2  => INPUTS(IMOD)%INFLAGS1(-6)
-    FLIC3  => INPUTS(IMOD)%INFLAGS1(-5)
-    FLIC4  => INPUTS(IMOD)%INFLAGS1(-4)
-    FLIC5  => INPUTS(IMOD)%INFLAGS1(-3)
-    !
-    FLMDN  => INPUTS(IMOD)%INFLAGS1(-2)
-    FLMTH  => INPUTS(IMOD)%INFLAGS1(-1)
-    FLMVS  => INPUTS(IMOD)%INFLAGS1(0)
-    !
-    FLLEV  => INPUTS(IMOD)%INFLAGS1(1)
-    FLCUR  => INPUTS(IMOD)%INFLAGS1(2)
-    if (w3_tide_flag) then
-       FLLEVTIDE  => INPUTS(IMOD)%INFLAGS1(11)
-       FLCURTIDE  => INPUTS(IMOD)%INFLAGS1(12)
-       FLLEVRESI  => INPUTS(IMOD)%INFLAGS1(13)
-       FLCURRESI  => INPUTS(IMOD)%INFLAGS1(14)
+    if (allocated(inputs)) then
+       TFN       => INPUTS(IMOD)%TFN
+       TC0       => INPUTS(IMOD)%TC0
+       TW0       => INPUTS(IMOD)%TW0
+       TU0       => INPUTS(IMOD)%TU0
+       TR0       => INPUTS(IMOD)%TR0
+       TG0       => INPUTS(IMOD)%TG0
+       TDN       => INPUTS(IMOD)%TDN
+       !
+       TI1       => INPUTS(IMOD)%TFN(:,-7)
+       TI2       => INPUTS(IMOD)%TFN(:,-6)
+       TI3       => INPUTS(IMOD)%TFN(:,-5)
+       TI4       => INPUTS(IMOD)%TFN(:,-4)
+       TI5       => INPUTS(IMOD)%TFN(:,-3)
+       !
+       TZN       => INPUTS(IMOD)%TFN(:,-2)
+       TTN       => INPUTS(IMOD)%TFN(:,-1)
+       TVN       => INPUTS(IMOD)%TFN(:,0)
+       !
+       TLN       => INPUTS(IMOD)%TFN(:,1)
+       TCN       => INPUTS(IMOD)%TFN(:,2)
+       TWN       => INPUTS(IMOD)%TFN(:,3)
+       TIN       => INPUTS(IMOD)%TFN(:,4)
+       TUN       => INPUTS(IMOD)%TFN(:,5)
+       TRN       => INPUTS(IMOD)%TFN(:,6)
+       T0N       => INPUTS(IMOD)%TFN(:,7)
+       T1N       => INPUTS(IMOD)%TFN(:,8)
+       T2N       => INPUTS(IMOD)%TFN(:,9)
+       TGN       => INPUTS(IMOD)%TFN(:,10)
+       !
+       GA0       => INPUTS(IMOD)%GA0
+       GD0       => INPUTS(IMOD)%GD0
+       GAN       => INPUTS(IMOD)%GAN
+       GDN       => INPUTS(IMOD)%GDN
+       !
+       IINIT     => INPUTS(IMOD)%IINIT
+       INFLAGS1  => INPUTS(IMOD)%INFLAGS1
+       INFLAGS2  => INPUTS(IMOD)%INFLAGS2
+       FLAGSC    => INPUTS(IMOD)%FLAGSC
+       !
+       FLIC1     => INPUTS(IMOD)%INFLAGS1(-7)
+       FLIC2     => INPUTS(IMOD)%INFLAGS1(-6)
+       FLIC3     => INPUTS(IMOD)%INFLAGS1(-5)
+       FLIC4     => INPUTS(IMOD)%INFLAGS1(-4)
+       FLIC5     => INPUTS(IMOD)%INFLAGS1(-3)
+       !
+       FLMDN     => INPUTS(IMOD)%INFLAGS1(-2)
+       FLMTH     => INPUTS(IMOD)%INFLAGS1(-1)
+       FLMVS     => INPUTS(IMOD)%INFLAGS1(0)
+       !
+       FLLEV     => INPUTS(IMOD)%INFLAGS1(1)
+       FLCUR     => INPUTS(IMOD)%INFLAGS1(2)
+       FLWIND    => INPUTS(IMOD)%INFLAGS1(3)
+       FLICE     => INPUTS(IMOD)%INFLAGS1(4)
+       FLTAUA    => INPUTS(IMOD)%INFLAGS1(5)
+       FLRHOA    => INPUTS(IMOD)%INFLAGS1(6)
+  
+       FLLEVTIDE => INPUTS(IMOD)%INFLAGS1(11)
+       FLCURTIDE => INPUTS(IMOD)%INFLAGS1(12)
+       FLLEVRESI => INPUTS(IMOD)%INFLAGS1(13)
+       FLCURRESI => INPUTS(IMOD)%INFLAGS1(14)
+       !
+       IF ( IINIT ) THEN
+          if (associated(INPUTS(IMOD)%ICEP1   )) ICEP1   => INPUTS(IMOD)%ICEP1
+          if (associated(INPUTS(IMOD)%ICEP2   )) ICEP2   => INPUTS(IMOD)%ICEP2
+          if (associated(INPUTS(IMOD)%ICEP3   )) ICEP3   => INPUTS(IMOD)%ICEP3
+          if (associated(INPUTS(IMOD)%ICEP4   )) ICEP4   => INPUTS(IMOD)%ICEP4
+          if (associated(INPUTS(IMOD)%ICEP5   )) ICEP5   => INPUTS(IMOD)%ICEP5
+          if (associated(INPUTS(IMOD)%MUDD    )) MUDD    => INPUTS(IMOD)%MUDD
+          if (associated(INPUTS(IMOD)%MUDT    )) MUDT    => INPUTS(IMOD)%MUDT
+          if (associated(INPUTS(IMOD)%MUDV    )) MUDV    => INPUTS(IMOD)%MUDV
+          if (associated(INPUTS(IMOD)%WLEV    )) WLEV    => INPUTS(IMOD)%WLEV
+          if (associated(INPUTS(IMOD)%CX0     )) CX0     => INPUTS(IMOD)%CX0
+          if (associated(INPUTS(IMOD)%CY0     )) CY0     => INPUTS(IMOD)%CY0
+          if (associated(INPUTS(IMOD)%CXN     )) CXN     => INPUTS(IMOD)%CXN
+          if (associated(INPUTS(IMOD)%CYN     )) CYN     => INPUTS(IMOD)%CYN
+          if (associated(INPUTS(IMOD)%WLTIDE  )) WLTIDE  => INPUTS(IMOD)%WLTIDE
+          if (associated(INPUTS(IMOD)%CXTIDE  )) CXTIDE  => INPUTS(IMOD)%CXTIDE
+          if (associated(INPUTS(IMOD)%CYTIDE  )) CYTIDE  => INPUTS(IMOD)%CYTIDE
+          if (associated(INPUTS(IMOD)%WXNwrst )) WXNwrst => INPUTS(IMOD)%WXNwrst
+          if (associated(INPUTS(IMOD)%WYNwrst )) WYNwrst => INPUTS(IMOD)%WYNwrst
+          if (associated(INPUTS(IMOD)%WX0     )) WX0     => INPUTS(IMOD)%WX0
+          if (associated(INPUTS(IMOD)%WY0     )) WY0     => INPUTS(IMOD)%WY0
+          if (associated(INPUTS(IMOD)%DT0     )) DT0     => INPUTS(IMOD)%DT0
+          if (associated(INPUTS(IMOD)%WXN     )) WXN     => INPUTS(IMOD)%WXN
+          if (associated(INPUTS(IMOD)%WYN     )) WYN     => INPUTS(IMOD)%WYN
+          if (associated(INPUTS(IMOD)%DTN     )) DTN     => INPUTS(IMOD)%DTN
+          if (associated(INPUTS(IMOD)%ICEI    )) ICEI    => INPUTS(IMOD)%ICEI
+          if (associated(INPUTS(IMOD)%BERGI   )) BERGI   => INPUTS(IMOD)%BERGI
+          if (associated(INPUTS(IMOD)%HML     )) HML     => INPUTS(IMOD)%HML
+          if (associated(INPUTS(IMOD)%UX0     )) UX0     => INPUTS(IMOD)%UX0
+          if (associated(INPUTS(IMOD)%UY0     )) UY0     => INPUTS(IMOD)%UY0
+          if (associated(INPUTS(IMOD)%UXN     )) UXN     => INPUTS(IMOD)%UXN
+          if (associated(INPUTS(IMOD)%UYN     )) UYN     => INPUTS(IMOD)%UYN
+          if (associated(INPUTS(IMOD)%RH0     )) RH0     => INPUTS(IMOD)%RH0
+          if (associated(INPUTS(IMOD)%RHN     )) RHN     => INPUTS(IMOD)%RHN
+          !
+       END IF
     end if
-
-    FLWIND => INPUTS(IMOD)%INFLAGS1(3)
-    FLICE  => INPUTS(IMOD)%INFLAGS1(4)
-    FLTAUA => INPUTS(IMOD)%INFLAGS1(5)
-    FLRHOA => INPUTS(IMOD)%INFLAGS1(6)
-    !
-    IF ( IINIT ) THEN
-       !
-       IF ( FLIC1  ) THEN
-          ICEP1  => INPUTS(IMOD)%ICEP1
-       END IF
-       IF ( FLIC2  ) THEN
-          ICEP2  => INPUTS(IMOD)%ICEP2
-       END IF
-       IF ( FLIC3  ) THEN
-          ICEP3  => INPUTS(IMOD)%ICEP3
-       END IF
-       IF ( FLIC4  ) THEN
-          ICEP4  => INPUTS(IMOD)%ICEP4
-       END IF
-       IF ( FLIC5  ) THEN
-          ICEP5  => INPUTS(IMOD)%ICEP5
-       END IF
-       !
-       IF ( FLMDN  ) THEN
-          MUDD   => INPUTS(IMOD)%MUDD
-       END IF
-       IF ( FLMTH  ) THEN
-          MUDT   => INPUTS(IMOD)%MUDT
-       END IF
-       IF ( FLMVS  ) THEN
-          MUDV   => INPUTS(IMOD)%MUDV
-       END IF
-       !
-       IF ( FLLEV  ) THEN
-          WLEV   => INPUTS(IMOD)%WLEV
-       END IF
-       !
-       IF ( FLCUR  ) THEN
-          CX0    => INPUTS(IMOD)%CX0
-          CY0    => INPUTS(IMOD)%CY0
-          CXN    => INPUTS(IMOD)%CXN
-          CYN    => INPUTS(IMOD)%CYN
-       END IF
-       if (w3_tide_flag) then
-          IF ( FLLEVTIDE ) THEN
-             WLTIDE => INPUTS(IMOD)%WLTIDE
-          END IF
-          IF ( FLCURTIDE ) THEN
-             CXTIDE => INPUTS(IMOD)%CXTIDE
-             CYTIDE => INPUTS(IMOD)%CYTIDE
-          END IF
-       end if
-       !
-       if (w3_wrst_flag) then
-          WXNwrst    => INPUTS(IMOD)%WXNwrst
-          WYNwrst    => INPUTS(IMOD)%WYNwrst
-       end if
-
-       IF ( FLWIND  ) THEN
-          WX0    => INPUTS(IMOD)%WX0
-          WY0    => INPUTS(IMOD)%WY0
-          DT0    => INPUTS(IMOD)%DT0
-          WXN    => INPUTS(IMOD)%WXN
-          WYN    => INPUTS(IMOD)%WYN
-          DTN    => INPUTS(IMOD)%DTN
-       END IF
-       !
-       IF ( FLICE  ) THEN
-          ICEI   => INPUTS(IMOD)%ICEI
-          BERGI  => INPUTS(IMOD)%BERGI
-       END IF
-       if (w3_cesmcoupled_flag) then
-          HML    => INPUTS(IMOD)%HML
-       end if
-       !
-       IF ( FLTAUA  ) THEN
-          UX0    => INPUTS(IMOD)%UX0
-          UY0    => INPUTS(IMOD)%UY0
-          UXN    => INPUTS(IMOD)%UXN
-          UYN    => INPUTS(IMOD)%UYN
-       END IF
-       !
-       IF ( FLRHOA  ) THEN
-          RH0    => INPUTS(IMOD)%RH0
-          RHN    => INPUTS(IMOD)%RHN
-       END IF
-       !
-    END IF
     !
     RETURN
     !
@@ -1041,5 +1028,6 @@ CONTAINS
   END SUBROUTINE W3SETI
   !/
   !/ End of module W3IDATMD -------------------------------------------- /
+
   !/
 END MODULE W3IDATMD
