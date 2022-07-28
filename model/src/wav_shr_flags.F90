@@ -12,7 +12,20 @@ module wav_shr_flags
   implicit none
   public
 
+#ifdef W3_DIST
+   logical ::  w3_dist_flag = .true.     !< @public a flag for "W3_DIST"
+#else
+   logical ::  w3_dist_flag = .false.     !< @public a flag for "W3_DIST"
+#endif
+
+#ifdef W3_SHRD
+   logical ::  w3_shrd_flag = .true.     !< @public a flag for "W3_SHRD"
+#else
+   logical ::  w3_shrd_flag = .false.     !< @public a flag for "W3_SHRD"
+#endif
+
 !   debug/logging
+
 #ifdef W3_DEBUG
    logical ::  w3_debug_flag = .true.     !< @public a flag for "W3_DEBUG"
 #else

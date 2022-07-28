@@ -81,9 +81,7 @@
 !      FLCUR     Log.  Public   Flag for current input.
 !      FLWIND    Log.  Public   Flag for wind input.
 !      FLICE     Log.  Public   Flag for ice input.
-#ifdef W3_CESMCOUPLED
-!      HML       R.A.  Public   Mixed layer depth
-#endif
+!      HML       R.A.  Public   Mixed layer depth (W3_CESMCOUPLED)
 !      FLTAUA    Log.  Public   Flag for atmospheric momentum input
 !      FLRHOA    Log.  Public   Flag for air density input
 !      INFLAGS1  L.A.  Public   Array consolidating the above six
