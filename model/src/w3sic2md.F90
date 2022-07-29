@@ -19,21 +19,21 @@ MODULE W3SIC2MD
   !  1. Purpose :
   !
   !     Calculate ice dissipation source term S_{ice}.
-  !          Exponential decay rate according to Liu et al., which 
+  !          Exponential decay rate according to Liu et al., which
   !          uses as input: 1) ice thickness, and 2) an eddy
   !          viscosity parameter. This method is non-uniform in
-  !          frequency. This is discussed further below, in 
+  !          frequency. This is discussed further below, in
   !          subroutine "LIU_REVERSE_DISPERSION".
   !
-  !          Includes generalization by F. Ardhuin with viscous and tubulent 
-  !          boundary layers. That part is activating by setting namelist 
-  !          parameters that define the under-ice roughness and a friction 
+  !          Includes generalization by F. Ardhuin with viscous and tubulent
+  !          boundary layers. That part is activating by setting namelist
+  !          parameters that define the under-ice roughness and a friction
   !          coefficient. For example: &IC2 IC2TURB = 1. , IC2ROUGH =0.0001
   !
   !        References for Subtype 2:
   !              Liu et al.    1991: JGR 96 (C3), 4605-4621
   !              Liu and Mollo 1988: JPO 18       1720-1712
-  !              Stopa et al.  2016: The Cryosphere 
+  !              Stopa et al.  2016: The Cryosphere
   !
   !  2. Variables and types :
   !
@@ -51,10 +51,10 @@ MODULE W3SIC2MD
   !  5. Remarks :
   !
   !     Reference:Rogers, W.E. and M.D. Orzech, 2013: Implementation and
-  !        Testing of Ice and Mud Source Functions in WAVEWATCH III(R), 
+  !        Testing of Ice and Mud Source Functions in WAVEWATCH III(R),
   !        NRL/MR/7320--13-9462, 31pp.
   !        available from http://www7320.nrlssc.navy.mil/pubs.php
-  !        Direct link: 
+  !        Direct link:
   !        http://www7320.nrlssc.navy.mil/pubs/2013/rogers2-2013.pdf
   !
   !  6. Switches :
@@ -96,7 +96,7 @@ CONTAINS
     !/
     !/    Copyright 2009 National Weather Service (NWS),
     !/       National Oceanic and Atmospheric Administration.  All rights
-    !/       reserved.  WAVEWATCH III is a trademark of the NWS. 
+    !/       reserved.  WAVEWATCH III is a trademark of the NWS.
     !/       No unauthorized use without permission.
     !/
     !  1. Purpose :
@@ -121,23 +121,23 @@ CONTAINS
     !     Sea ice affects the wavenumber k of wind-generated ocean waves.
     !     The ice-modified wavenumber can be expressed as a complex number
     !     k = k_r + i*k_i, with the real part k_r representing impact of
-    !     the sea ice on the physical wavelength and propagation speeds, 
-    !     producing something analogous to shoaling and refraction by 
-    !     bathymetry, whereas the imaginary part of the complex 
-    !     wavenumber, k_i, is an exponential decay coefficient 
-    !     k_i(x,y,t,sigma) (depending on location, time and frequency, 
-    !     respectively), representing wave attenuation, and can be 
-    !     introduced in a wave model such as WW3 as S_ice/E=-2*Cg*k_i, 
-    !     where S_ice is one of several dissipation mechanisms, along 
-    !     with whitecapping, for example, S_ds=S_wc+S_ice+⋯. The k_r - 
-    !     modified by ice would enter the model via the C calculations 
+    !     the sea ice on the physical wavelength and propagation speeds,
+    !     producing something analogous to shoaling and refraction by
+    !     bathymetry, whereas the imaginary part of the complex
+    !     wavenumber, k_i, is an exponential decay coefficient
+    !     k_i(x,y,t,sigma) (depending on location, time and frequency,
+    !     respectively), representing wave attenuation, and can be
+    !     introduced in a wave model such as WW3 as S_ice/E=-2*Cg*k_i,
+    !     where S_ice is one of several dissipation mechanisms, along
+    !     with whitecapping, for example, S_ds=S_wc+S_ice+⋯. The k_r -
+    !     modified by ice would enter the model via the C calculations
     !     on the left-hand side of the governing equation.The fundamentals
-    !     are straightforward, e.g. Rogers and Holland (2009 and 
-    !     subsequent unpublished work) modified a similar model, SWAN 
-    !     (Booij et al. 1999) to include the effects of a viscous mud 
+    !     are straightforward, e.g. Rogers and Holland (2009 and
+    !     subsequent unpublished work) modified a similar model, SWAN
+    !     (Booij et al. 1999) to include the effects of a viscous mud
     !     layer using the same approach (k = k_r + i*k_i) previously.
     !
-    !     General approach is analogous to Rogers and Holland (2009) 
+    !     General approach is analogous to Rogers and Holland (2009)
     !         approach for mud.
     !     See text near their eq. 1 :
     !       k        = k_r  +  i * k_i
@@ -145,10 +145,10 @@ CONTAINS
     !       a        = a0 * exp( -k_i * x )
     !       S / E    = -2 * Cg * k_i (see also Komen et al. (1994, pg. 170)
     !
-    !     Please note that S is source term for action. 
+    !     Please note that S is source term for action.
     !
-    !     Notes regarding numerics: 
-    !     (Note by F. Ardhuin: these may not apply in version 5 thanks to splitting 
+    !     Notes regarding numerics:
+    !     (Note by F. Ardhuin: these may not apply in version 5 thanks to splitting
     !                          of ice source terms and implicit integration in W3SRCE)
     !     Experiments with constant k_i values suggest that :
     !       for dx=20.0 km, k_i should not exceed 3.5e-6
@@ -164,8 +164,8 @@ CONTAINS
     !
     !     {put more equations here}
     !
-    !     The laminar to turbulent transition is described in 
-    !         Stopa et al. (The Cryosphere, 2016). 
+    !     The laminar to turbulent transition is described in
+    !         Stopa et al. (The Cryosphere, 2016).
     !
     !  3. Parameters :
     !
@@ -173,7 +173,7 @@ CONTAINS
     !     ----------------------------------------------------------------
     !       A       R.A.   I   Action density spectrum (1-D)
     !       DEPTH   Real   I   Local water depth
-    !       ICEH    Real   I   Ice thickness 
+    !       ICEH    Real   I   Ice thickness
     !       CG      R.A.   I   Group velocities
     !       WN      R.A.   I   Wavenumbers
     !       IX,IY   I.S.   I   Grid indices
@@ -185,7 +185,7 @@ CONTAINS
     !       R       R.A.   I   Ratio of energy to wave energy without ice
     !       ICEF    Real   I   Ice Floe diameter
     !
-    !       imported via module: 
+    !       imported via module:
     !       ICEP2   R.A.   I   Eddy viscosity
     !     ----------------------------------------------------------------
     !
@@ -234,7 +234,7 @@ CONTAINS
     USE W3ODATMD, ONLY: NDSE
     USE W3SERVMD, ONLY: EXTCDE
     USE W3DISPMD
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, MAPWN, IC2PARS, DDEN,  & 
+    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, MAPWN, IC2PARS, DDEN,  &
          FLAGLL, YGRD, GTYPE, RLGTYPE
     USE W3IDATMD, ONLY: INFLAGS2,ICEP1,ICEP2,ICEP3,ICEP4,ICEP5,ICEI
     USE W3ODATMD, ONLY: NDST ! W3_T
@@ -249,7 +249,7 @@ CONTAINS
     REAL, INTENT(IN)       :: A(NSPEC), DEPTH, ICEH
     REAL, INTENT(IN)       :: CG(NK),   WN(NK)
     REAL, INTENT(OUT)      :: S(NSPEC), D(NSPEC)
-    REAL, INTENT(IN)       :: ALPHA(NK) ! exponential (spatial) decay rate for energy (1/m)   
+    REAL, INTENT(IN)       :: ALPHA(NK) ! exponential (spatial) decay rate for energy (1/m)
     INTEGER, INTENT(IN)    :: IX, IY
     REAL, INTENT(IN)       :: WN_R(NK), CG_ICE(NK), R(NK)
     REAL, INTENT(IN)       :: ICEF ! Hypothesis: friction does not occur for broken ice
@@ -266,11 +266,11 @@ CONTAINS
     REAL                    :: ICECOEF1, ICECOEF2, ICECONC
     REAL, ALLOCATABLE       :: WN_I(:)  ! exponential (spatial) decay rate for amplitude (1/m)
     REAL                    :: VISCM=1.83E-6 ! molecular viscosity of water at freezing
-    REAL                    :: PTURB, PVISC, DTURB, DVISC,   & 
+    REAL                    :: PTURB, PVISC, DTURB, DVISC,   &
          SMOOTH, RE, UORB, AORB, EB,   &
-         DELI1, DELI2, FW, XI, FTURB,  & 
+         DELI1, DELI2, FW, XI, FTURB,  &
          CG_EFF(NK), WLG_R(NK), SMOOTH_DMAX(NK)
-    INTEGER                 :: IND, ITH, IS
+    INTEGER                 :: IND, IS
     LOGICAL                 :: NOICE=.FALSE.
     ! Warning, ALPHA = 2 * WN_I -> Makes WN_I useless, doesnt it ?
     !/
@@ -291,7 +291,7 @@ CONTAINS
     ICECONC  = 0.0
     CG_EFF = 0.
     SMOOTH_DMAX(:)=1.
-    !       
+    !
     IF (INFLAGS2(-7))ICECOEF1 = ICEH
     IF (INFLAGS2(-6))ICECOEF2 = ICEP2(IX,IY)
     IF (INFLAGS2(4))  ICECONC = ICEI(IX,IY)
@@ -322,10 +322,10 @@ CONTAINS
        !  ICECOEF1 = H_ICE
        !  ICECOEF2 = VISC
        !
-       ! Branches out depending on choice of dispersion relation... 
+       ! Branches out depending on choice of dispersion relation...
        ! by default IC2PARS(1)=0, and attenuation computed as described in Stopa et al. 2016
        !
-       IF (IC2PARS(1).GT.0.5) THEN 
+       IF (IC2PARS(1).GT.0.5) THEN
           IF (.NOT.INFLAGS2(-7))THEN
              WRITE (NDSE,1001) 'ICE PARAMETER 1'
              CALL EXTCDE(2)
@@ -347,13 +347,13 @@ CONTAINS
           ! Alternative by F.A.: generalization to a turbulent boundary layer
           !                      uses the ice-free dispersion, to be updated later
           !
-       ELSE ! goes here if IC2PARS(1).LE.0.5 (this is the default behavior) 
-          IF (IC2PARS(2).GT.0.) THEN 
+       ELSE ! goes here if IC2PARS(1).LE.0.5 (this is the default behavior)
+          IF (IC2PARS(2).GT.0.) THEN
              UORB=0.
              AORB=0.
              FTURB = IC2PARS(2)
-             ! Special treatment in the southern ocean ... 
-             IF (IC2PARS(7).GT.0) THEN 
+             ! Special treatment in the southern ocean ...
+             IF (IC2PARS(7).GT.0) THEN
                 IF (YGRD(IY,IX).LT.0.AND.GTYPE.EQ.RLGTYPE.AND.FLAGLL) FTURB = IC2PARS(7)
              END IF
              DO IK=1, NK
@@ -364,12 +364,12 @@ CONTAINS
                 END DO
                 !
                 !  UORB and AORB are the variances of the orbital velocity and surface elevation
-                ! of the water relative to the ice ... this is only correct if the ice layer 
-                ! does not move. This should is changed by taking into account DMAX when IC2DMAX > 0: 
+                ! of the water relative to the ice ... this is only correct if the ice layer
+                ! does not move. This should is changed by taking into account DMAX when IC2DMAX > 0:
                 !
 #ifdef W3_IS2
                 IF (IC2PARS(8).GT.0) THEN
-                   WLG_R(IK)=TPI/WN_R(IK)   
+                   WLG_R(IK)=TPI/WN_R(IK)
                    SMOOTH_DMAX(IK)= (0.5*(1+TANH((ICEF-IC2PARS(8)*WLG_R(IK))/(ICEF*0.5))))**2
                 END IF
 #endif
@@ -386,7 +386,7 @@ CONTAINS
 
              END DO
              !
-             AORB = 2*SQRT(AORB)  ! significant amplitude 
+             AORB = 2*SQRT(AORB)  ! significant amplitude
              UORB = 2*SQRT(UORB)  ! significant amplitude
 
              RE = UORB*AORB / VISCM
@@ -404,11 +404,11 @@ CONTAINS
              DTURB = 0.
              PTURB = 0.
              PVISC = 1.
-          END IF ! IF (IC2PARS(2).GT.0.)  
+          END IF ! IF (IC2PARS(2).GT.0.)
           !
           DO IK=1, NK
              ! WN_R is used here but warning, this is only OK for unbroken ice
-             DVISC = IC2PARS(6) * WN_R(IK) * SQRT(VISCM* SIG(IK) / 2.) 
+             DVISC = IC2PARS(6) * WN_R(IK) * SQRT(VISCM* SIG(IK) / 2.)
              D1D(IK) = -1.*(PTURB*MAX(DTURB*SIG(IK)**2,DVISC) + PVISC*DVISC) &
                   *SMOOTH_DMAX(IK)
           END DO
