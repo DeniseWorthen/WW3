@@ -2496,7 +2496,10 @@ CONTAINS
                       WRITE(740+IAPROC,*) 'RET: min/max/sum(VA)=',minval(VA(:,JSEA)),maxval(VA(:,JSEA)),sum(VA(:,JSEA))
                    end if
                 END DO  !  DO JSEA=1, NSEAL
-
+#ifdef W3_OMPG
+                !$OMP END DO
+                !$OMP END PARALLEL
+#endif
                 if (w3_debugrun_flag) then
                    WRITE(740+IAPROC,*) 'min/max/sum(VAtot)=', minval(VA), maxval(VA), sum(VA)
                    DO JSEA = 1, NSEAL
@@ -2511,12 +2514,6 @@ CONTAINS
                       STOP
                    ENDIF
                 end if
-                !
-#ifdef W3_OMPG
-                !$OMP END DO
-                !$OMP END PARALLEL
-#endif
-                !
 #ifdef W3_PDLIB
                 if (w3_debugsrc_flag) then
                    WRITE(740+IAPROC,*) 'ITIME=', ITIME, ' IT=', IT
@@ -2904,6 +2901,8 @@ CONTAINS
                 TOUT(:) = TONEXT(:,J)
                 DTTST   = DSEC21 ( TIME, TOUT )
                 !
+                write(6,*)'DEBUG: J,TONEXT = ',j,tonext(:,j)
+
                 IF ( DTTST .EQ. 0. ) THEN
 
                    if (do_gridded_output) then
@@ -3390,7 +3389,9 @@ CONTAINS
     !/ Local parameters
     !/
     INTEGER           :: ISEA, JSEA, IXY
-    INTEGER           :: STATUS(MPI_STATUS_SIZE,NSPEC) ! W3_MPI
+#ifdef W3_MPI
+    INTEGER           :: STATUS(MPI_STATUS_SIZE,NSPEC)
+#endif
     INTEGER           :: IOFF, IERR_MPI                ! W3_MPI
     INTEGER           :: IS0, IB0, NPST, J             ! W3_MPI
     CHARACTER(LEN=15) :: STR(MPIBUF), STRT             ! W3_MPIT
@@ -3660,7 +3661,9 @@ CONTAINS
     !/
     INTEGER           :: ISEA, JSEA, IXY
     INTEGER           :: IOFF, IERR_MPI, J             ! W3_MPI
+#ifdef W3_MPI
     INTEGER           :: STATUS(MPI_STATUS_SIZE,NSPEC) ! W3_MPI
+#endif
     INTEGER           :: IB0                           ! W3_MPI
     CHARACTER(LEN=15) :: STR(MPIBUF), STRT             ! W3_MPIT
     LOGICAL           :: DONE                          ! W3_MPI
