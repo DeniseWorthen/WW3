@@ -1227,68 +1227,64 @@ CONTAINS
        WRITE(740+IAPROC,*) 'W3IOGR, step 16'
     end if
     !
-    if (w3_st3_flag) then
-       IF ( write_flag ) THEN
-          WRITE (NDSM)                                           &
-               ZZWND, AALPHA, ZZ0MAX, BBETA, SSINTHP, ZZALP,    &
-               SSWELLF, SSDSC1, WWNMEANP, WWNMEANPTAIL, SSTXFTF,&
-               SSTXFTFTAIL, SSTXFTWN,                           &
-               DDELTA1, DDELTA2, SSTXFTF, SSTXFTWN,             &
-               FFXPM, FFXFM
-       ELSE
-          READ (NDSM,END=801,ERR=802,IOSTAT=IERR)                &
-               ZZWND, AALPHA, ZZ0MAX, BBETA, SSINTHP, ZZALP,    &
-               SSWELLF, SSDSC1, WWNMEANP, WWNMEANPTAIL, SSTXFTF,&
-               SSTXFTFTAIL, SSTXFTWN,                           &
-               DDELTA1, DDELTA2, SSTXFTF, SSTXFTWN,             &
-               FFXPM, FFXFM
-          IF ( .NOT. FLINP ) THEN
 #ifdef W3_ST3
-             CALL INSIN3
-#endif
-             FLINP  = .TRUE.
-          END IF
+    IF ( write_flag ) THEN
+       WRITE (NDSM)                                           &
+            ZZWND, AALPHA, ZZ0MAX, BBETA, SSINTHP, ZZALP,    &
+            SSWELLF, SSDSC1, WWNMEANP, WWNMEANPTAIL, SSTXFTF,&
+            SSTXFTFTAIL, SSTXFTWN,                           &
+            DDELTA1, DDELTA2, SSTXFTF, SSTXFTWN,             &
+            FFXPM, FFXFM
+    ELSE
+       READ (NDSM,END=801,ERR=802,IOSTAT=IERR)                &
+            ZZWND, AALPHA, ZZ0MAX, BBETA, SSINTHP, ZZALP,    &
+            SSWELLF, SSDSC1, WWNMEANP, WWNMEANPTAIL, SSTXFTF,&
+            SSTXFTFTAIL, SSTXFTWN,                           &
+            DDELTA1, DDELTA2, SSTXFTF, SSTXFTWN,             &
+            FFXPM, FFXFM
+       IF ( .NOT. FLINP ) THEN
+          CALL INSIN3
+          FLINP  = .TRUE.
        END IF
-    end if
+    END IF
+#endif
     !
     if (w3_debugiogr_flag) then
        WRITE(740+IAPROC,*) 'W3IOGR, step 17'
     end if
     !
-    if (w3_st4_flag) then
-       IF ( write_flag ) THEN
 #ifdef W3_ST4
-          CALL INSIN4(.TRUE.)
-#endif
-          WRITE (NDSM)                                           &
-               ZZWND, AALPHA, ZZ0MAX, BBETA, SSINTHP, ZZALP,     &
-               TTAUWSHELTER, SSWELLFPAR, SSWELLF, SSINBR,        &
-               ZZ0RAT, SSDSC,                                    &
-               SSDSISO, SSDSBR, SSDSBT, SSDSBM, SSDSP,           &
-               SSDSCOS, SSDSDTH, WWNMEANP, WWNMEANPTAIL,SSTXFTF, &
-               SSTXFTFTAIL, SSTXFTWN, SSTXFTF, SSTXFTWN,         &
-               SSDSBRF1, SSDSBRF2, SSDSBRFDF,SSDSBCK, SSDSABK,   &
-               SSDSPBK, SSDSBINT, FFXPM, FFXFM, FFXFA,           &
-               SSDSHCK, DELUST, DELTAIL, DELTAUW,                &
-               DELU, DELALP, TAUT, TAUHFT, TAUHFT2,              &
-               IKTAB, DCKI, QBI, SATINDICES, SATWEIGHTS,         &
-               DIKCUMUL, CUMULW
-       ELSE
-          READ (NDSM,END=801,ERR=802,IOSTAT=IERR)                &
-               ZZWND, AALPHA, ZZ0MAX, BBETA, SSINTHP, ZZALP,     &
-               TTAUWSHELTER, SSWELLFPAR, SSWELLF, SSINBR,        &
-               ZZ0RAT, SSDSC,                                    &
-               SSDSISO, SSDSBR, SSDSBT, SSDSBM, SSDSP,           &
-               SSDSCOS, SSDSDTH, WWNMEANP, WWNMEANPTAIL,SSTXFTF, &
-               SSTXFTFTAIL, SSTXFTWN, SSTXFTF, SSTXFTWN,         &
-               SSDSBRF1, SSDSBRF2, SSDSBRFDF,SSDSBCK, SSDSABK,   &
-               SSDSPBK, SSDSBINT, FFXPM, FFXFM, FFXFA,           &
-               SSDSHCK, DELUST, DELTAIL, DELTAUW,                &
-               DELU, DELALP, TAUT, TAUHFT, TAUHFT2,              &
-               IKTAB, DCKI, QBI, SATINDICES, SATWEIGHTS,         &
-               DIKCUMUL, CUMULW
-       END IF
-    end if
+    IF ( write_flag ) THEN
+       CALL INSIN4(.TRUE.)
+       WRITE (NDSM)                                           &
+            ZZWND, AALPHA, ZZ0MAX, BBETA, SSINTHP, ZZALP,     &
+            TTAUWSHELTER, SSWELLFPAR, SSWELLF, SSINBR,        &
+            ZZ0RAT, SSDSC,                                    &
+            SSDSISO, SSDSBR, SSDSBT, SSDSBM, SSDSP,           &
+            SSDSCOS, SSDSDTH, WWNMEANP, WWNMEANPTAIL,SSTXFTF, &
+            SSTXFTFTAIL, SSTXFTWN, SSTXFTF, SSTXFTWN,         &
+            SSDSBRF1, SSDSBRF2, SSDSBRFDF,SSDSBCK, SSDSABK,   &
+            SSDSPBK, SSDSBINT, FFXPM, FFXFM, FFXFA,           &
+            SSDSHCK, DELUST, DELTAIL, DELTAUW,                &
+            DELU, DELALP, TAUT, TAUHFT, TAUHFT2,              &
+            IKTAB, DCKI, QBI, SATINDICES, SATWEIGHTS,         &
+            DIKCUMUL, CUMULW
+    ELSE
+       READ (NDSM,END=801,ERR=802,IOSTAT=IERR)                &
+            ZZWND, AALPHA, ZZ0MAX, BBETA, SSINTHP, ZZALP,     &
+            TTAUWSHELTER, SSWELLFPAR, SSWELLF, SSINBR,        &
+            ZZ0RAT, SSDSC,                                    &
+            SSDSISO, SSDSBR, SSDSBT, SSDSBM, SSDSP,           &
+            SSDSCOS, SSDSDTH, WWNMEANP, WWNMEANPTAIL,SSTXFTF, &
+            SSTXFTFTAIL, SSTXFTWN, SSTXFTF, SSTXFTWN,         &
+            SSDSBRF1, SSDSBRF2, SSDSBRFDF,SSDSBCK, SSDSABK,   &
+            SSDSPBK, SSDSBINT, FFXPM, FFXFM, FFXFA,           &
+            SSDSHCK, DELUST, DELTAIL, DELTAUW,                &
+            DELU, DELALP, TAUT, TAUHFT, TAUHFT2,              &
+            IKTAB, DCKI, QBI, SATINDICES, SATWEIGHTS,         &
+            DIKCUMUL, CUMULW
+    END IF
+#endif    
     !
     if (w3_debugiogr_flag) then
        WRITE(740+IAPROC,*) 'W3IOGR, step 18'
