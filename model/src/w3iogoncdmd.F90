@@ -8,10 +8,11 @@
 
 module W3IOGONCDMD
 
+  use wav_shr_flags
   USE W3GDATMD      , ONLY: NK, NX, NY, MAPSF, MAPSTA, NSEA
   USE W3ODATMD      , ONLY: NOSWLL, UNDEF
   use w3odatmd      , only : nds, iaproc, napout
-  !use wav_shr_mod   , only : dbug_flag
+  !use wav_shr_mod  , only : dbug_flag
   USE NETCDF
 
   implicit none
@@ -61,9 +62,8 @@ contains
     USE W3ADATMD, ONLY: CFLXYMAX, CFLTHMAX, CFLKMAX, P2SMS, US3D
     USE W3ADATMD, ONLY: TH1M, STH1M, TH2M, STH2M, HSIG, PHICE, TAUICE
     USE W3ADATMD, ONLY: STMAXE, STMAXD, HMAXE, HCMAXE, HMAXD, HCMAXD, USSP, TAUOCX, TAUOCY
-#ifdef CESMCOUPLED
-    USE W3ADATMD, ONLY: LANGMT
-#endif
+    USE W3ADATMD, ONLY: LANGMT ! W3_CESMCOUPLED
+    !
     use wav_grdout , only: varatts, outvars
     use w3timemd   , only: set_user_timestring
     use w3odatmd   , only: time_origin, calendar_name, elapsed_secs
@@ -323,9 +323,10 @@ contains
            if (vname .eq.   'PHICE') call write_var2d(vname, phice(1:nsea))
            if (vname .eq.  'TAUOCX') call write_var2d(vname, tauocx(1:nsea))
            if (vname .eq.  'TAUOCY') call write_var2d(vname, tauocy(1:nsea))
-#ifdef CESMCOUPLED
-           if (vname .eq.  'LANGMT') call write_var2d(vname, langmt(1:nsea))
-#endif
+           if (w3_cesmcoupled_flag) then
+              if (vname .eq.  'LANGMT') call write_var2d(vname, langmt(1:nsea))
+           end if
+
            ! Group 7
            if (vname .eq.     'ABAX') call write_var2d(vname, aba(1:nsea), cos(abd(1:nsea)))
            if (vname .eq.     'ABAY') call write_var2d(vname, aba(1:nsea), sin(abd(1:nsea)))

@@ -253,13 +253,12 @@ CONTAINS
     INTEGER, INTENT(IN)    :: IX, IY
     REAL, INTENT(IN)       :: WN_R(NK), CG_ICE(NK), R(NK)
     REAL, INTENT(IN)       :: ICEF ! Hypothesis: friction does not occur for broken ice
-
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER, SAVE           :: IENT = 0 ! W3_S
-    INTEGER                 :: ITH ! W3_T0
+    INTEGER                 :: ITH
     REAL                    :: DOUT(NK,NTH)
     INTEGER                 :: IKTH, IK
     REAL                    :: D1D(NK)        !In SBT1: D1D was named "CBETA"
@@ -267,9 +266,9 @@ CONTAINS
     REAL, ALLOCATABLE       :: WN_I(:)  ! exponential (spatial) decay rate for amplitude (1/m)
     REAL                    :: VISCM=1.83E-6 ! molecular viscosity of water at freezing
     REAL                    :: PTURB, PVISC, DTURB, DVISC,   &
-         SMOOTH, RE, UORB, AORB, EB,   &
-         DELI1, DELI2, FW, XI, FTURB,  &
-         CG_EFF(NK), WLG_R(NK), SMOOTH_DMAX(NK)
+                               SMOOTH, RE, UORB, AORB, EB,   &
+                               DELI1, DELI2, FW, XI, FTURB,  &
+                               CG_EFF(NK), WLG_R(NK), SMOOTH_DMAX(NK)
     INTEGER                 :: IND, IS
     LOGICAL                 :: NOICE=.FALSE.
     ! Warning, ALPHA = 2 * WN_I -> Makes WN_I useless, doesnt it ?
