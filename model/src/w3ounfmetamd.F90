@@ -150,11 +150,11 @@
 !> @author Chris Bunney @date 02-Nov-2020
 !>
 !> ### Change log
-!>   Date      | Ver  | Comments  
+!>   Date      | Ver  | Comments
 !> ------------|------|---------
-!> 02-Nov-2020 | 7.12 | Creation 
+!> 02-Nov-2020 | 7.12 | Creation
 !> 26-Jan-2021 | 7.12 | Added Tp and alternative dir/mag metadata for directional fields.
-!> 16-Dec-2020 | 7.12 | Added user partition templates and coordinate reference system. 
+!> 16-Dec-2020 | 7.12 | Added user partition templates and coordinate reference system.
 !> 02-Feb-2021 | 7.12 | Improved partitioned parameter template string implementation.
 !> 22-Mar-2021 | 7.12 | Add extra coupling fields
 !> 02-Sep-2021 | 7.12 | Add coordinates attribute
@@ -326,13 +326,13 @@ CONTAINS
     if (w3_rtd_flag) then
        ! Is the grid really rotated?
        IF ( POLAT < 90. ) FLRTD = .True.
-       if (w3_smc_flag) then
-          if (w3_rtd_flag) then
-             ! SMC type 3/4 outputs are currently on standard pole grid only
-             IF(SMCOTYPE .EQ. 3 .OR. SMCOTYPE .EQ. 4) FLRTD = .FALSE.
-          end if
-       end if
     end if
+#ifdef W3_SMC
+    if (w3_rtd_flag) then
+       ! SMC type 3/4 outputs are currently on standard pole grid only
+       IF(SMCOTYPE .EQ. 3 .OR. SMCOTYPE .EQ. 4) FLRTD = .FALSE.
+    end if
+#endif
     !
     ! 1. Allocate nested GROUP, FIELD structure:
     ALLOCATE(GROUP(NOGRP))
