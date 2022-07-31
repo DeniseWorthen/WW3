@@ -42,6 +42,7 @@ add_compile_definitions(W3_NCO)
 #
 add_compile_definitions(W3_DIST)
 add_compile_definitions(W3_MPI)
+#
 #add_compile_definitions(W3_SHRD)
 #
 add_compile_definitions(W3_OMPG)
@@ -91,6 +92,10 @@ set_property(SOURCE w3initmd.F90
 # Note that w3iogocdmd is a new file for netcdf io
 # Set source files
 set(SRCFILES constants.F90
+# for ww3_grid.F90
+             w3gridmd.F90 
+             w3nmlgridmd.F90
+# for wav_comp_nuopc.F90
              w3adatmd.F90
              w3arrymd.F90
              w3cspcmd.F90

@@ -33,6 +33,12 @@ module wav_shr_flags
    logical ::  w3_debug_flag = .false.     !< @public a flag for "W3_DEBUG"
 #endif
   
+#ifdef W3_DEBUGGRID
+   logical ::  w3_debuggrid_flag = .true.     !< @public a flag for "W3_DEBUGGRID"
+#else
+   logical ::  w3_debuggrid_flag = .false.     !< @public a flag for "W3_DEBUGGRID"
+#endif
+
 #ifdef W3_DEBUGSTP
    logical ::  w3_debugstp_flag = .true.     !< @public a flag for "W3_DEBUGSTP"
 #else
@@ -1023,10 +1029,34 @@ module wav_shr_flags
    logical ::  w3_setup_flag = .false.     !< @public a flag for "W3_SETUP"
 #endif
 
+#ifdef W3_O2A
+   logical ::  w3_O2a_flag = .true.      !< @public a flag for "W3_O2A"
+#else
+   logical ::  w3_O2a_flag = .false.     !< @public a flag for "W3_O2A"
+#endif
+
+#ifdef W3_O2B
+   logical ::  w3_O2b_flag = .true.      !< @public a flag for "W3_O2B"
+#else
+   logical ::  w3_O2b_flag = .false.     !< @public a flag for "W3_O2B"
+#endif
+
+#ifdef W3_O2C
+   logical ::  w3_O2c_flag = .true.      !< @public a flag for "W3_O2C"
+#else
+   logical ::  w3_O2c_flag = .false.     !< @public a flag for "W3_O2C"
+#endif
+
 #ifdef W3_O7A
    logical ::  w3_O7a_flag = .true.      !< @public a flag for "W3_O7A"
 #else
    logical ::  w3_O7a_flag = .false.     !< @public a flag for "W3_O7A"
+#endif
+
+#ifdef W3_01
+   logical ::  w3_01_flag = .true.      !< @public a flag for "W3_01"
+#else
+   logical ::  w3_01_flag = .false.     !< @public a flag for "W3_01"
 #endif
 
   interface print_logmsg

@@ -1,22 +1,23 @@
 #include "w3macros.h" 
 !/ ------------------------------------------------------------------- /
-      MODULE W3NMLBOUNCMD
-!/
-!/                  +-----------------------------------+
-!/                  | WAVEWATCH III           NOAA/NCEP |
-!/                  |           M. Accensi              |
-!/                  |                                   |
-!/                  |                        FORTRAN 90 |
-!/                  | Last update :         15-May-2018 |
-!/                  +-----------------------------------+
-!/
-!/    For updates see subroutines.
-!/
-!  1. Purpose :
-!
-!     Manages namelists from configuration file ww3_bounc.nml for ww3_bounc program
-!
-!/ ------------------------------------------------------------------- /
+MODULE W3NMLBOUNCMD
+  !/
+  !/                  +-----------------------------------+
+  !/                  | WAVEWATCH III           NOAA/NCEP |
+  !/                  |           M. Accensi              |
+  !/                  |                                   |
+  !/                  |                        FORTRAN 90 |
+  !/                  | Last update :         15-May-2018 |
+  !/                  +-----------------------------------+
+  !/
+  !/    For updates see subroutines.
+  !/
+  !  1. Purpose :
+  !
+  !     Manages namelists from configuration file ww3_bounc.nml for ww3_bounc program
+  !
+  !/ ------------------------------------------------------------------- /
+  use wav_shr_flags
 
   ! module defaults
   IMPLICIT NONE
@@ -25,86 +26,80 @@
 
   ! bound structure
   TYPE NML_BOUND_T
-    CHARACTER(5)                :: MODE
-    INTEGER                     :: INTERP
-    INTEGER                     :: VERBOSE
-    CHARACTER(128)              :: FILE
+     CHARACTER(5)                :: MODE
+     INTEGER                     :: INTERP
+     INTEGER                     :: VERBOSE
+     CHARACTER(128)              :: FILE
   END TYPE NML_BOUND_T
-
 
   ! miscellaneous
   CHARACTER(256)                :: MSG
   INTEGER                       :: NDSN
 
-
-
-
-  CONTAINS
-!/ ------------------------------------------------------------------- /
+CONTAINS
+  !/ ------------------------------------------------------------------- /
   SUBROUTINE W3NMLBOUNC (NDSI, INFILE, NML_BOUND, IERR)
-!/
-!/                  +-----------------------------------+
-!/                  | WAVEWATCH III           NOAA/NCEP |
-!/                  |           M. Accensi              |
-!/                  |                                   |
-!/                  |                        FORTRAN 90 |
-!/                  | Last update :         15-May-2018 |
-!/                  +-----------------------------------+
-!/
-!
-!  1. Purpose :
-!
-!     Reads all the namelist to define the input boundary
-!
-!  2. Method :
-!
-!     See source term routines.
-!
-!  3. Parameters :
-!
-!     Parameter list
-!     ----------------------------------------------------------------
-!      NDSI        Int.
-!      INFILE      Char.
-!      NML_BOUND   type.
-!      IERR        Int.
-!     ----------------------------------------------------------------
-!
-!  4. Subroutines used :
-!
-!      Name      TYPE  Module   Description
-!     ----------------------------------------------------------------
-!      STRACE    Subr. W3SERVMD SUBROUTINE tracing.
-!      READ_BOUND_NML
-!     ----------------------------------------------------------------
-!
-!  5. Called by :
-!
-!      Name      TYPE  Module   Description
-!     ----------------------------------------------------------------
-!      WW3_BOUNC  Prog.   N/A    Preprocess input boundaries.
-!     ----------------------------------------------------------------
-!
-!  6. Error messages :
-!
-!     None.
-!
-!  7. Remarks :
-!
-!  8. Structure :
-!
-!     See source code.
-!
-!  9. Switches :
-!
-! 10. Source code :
-!
-!/ ------------------------------------------------------------------- /
+    !/
+    !/                  +-----------------------------------+
+    !/                  | WAVEWATCH III           NOAA/NCEP |
+    !/                  |           M. Accensi              |
+    !/                  |                                   |
+    !/                  |                        FORTRAN 90 |
+    !/                  | Last update :         15-May-2018 |
+    !/                  +-----------------------------------+
+    !/
+    !
+    !  1. Purpose :
+    !
+    !     Reads all the namelist to define the input boundary
+    !
+    !  2. Method :
+    !
+    !     See source term routines.
+    !
+    !  3. Parameters :
+    !
+    !     Parameter list
+    !     ----------------------------------------------------------------
+    !      NDSI        Int.
+    !      INFILE      Char.
+    !      NML_BOUND   type.
+    !      IERR        Int.
+    !     ----------------------------------------------------------------
+    !
+    !  4. Subroutines used :
+    !
+    !      Name      TYPE  Module   Description
+    !     ----------------------------------------------------------------
+    !      STRACE    Subr. W3SERVMD SUBROUTINE tracing.
+    !      READ_BOUND_NML
+    !     ----------------------------------------------------------------
+    !
+    !  5. Called by :
+    !
+    !      Name      TYPE  Module   Description
+    !     ----------------------------------------------------------------
+    !      WW3_BOUNC  Prog.   N/A    Preprocess input boundaries.
+    !     ----------------------------------------------------------------
+    !
+    !  6. Error messages :
+    !
+    !     None.
+    !
+    !  7. Remarks :
+    !
+    !  8. Structure :
+    !
+    !     See source code.
+    !
+    !  9. Switches :
+    !
+    ! 10. Source code :
+    !
+    !/ ------------------------------------------------------------------- /
 
     USE W3ODATMD, ONLY: NDSE
-#ifdef W3_S
-      USE W3SERVMD, ONLY: STRACE
-#endif
+    USE W3SERVMD, ONLY: STRACE ! W3_S
 
     IMPLICIT NONE
 
@@ -112,28 +107,26 @@
     CHARACTER*(*), INTENT(IN)                   :: INFILE
     TYPE(NML_BOUND_T), INTENT(INOUT)            :: NML_BOUND
     INTEGER, INTENT(OUT)                        :: IERR
-#ifdef W3_S
-      INTEGER, SAVE                             :: IENT = 0
-#endif
+    INTEGER, SAVE                             :: IENT = 0 ! W3_S
 
     IERR = 0
-#ifdef W3_S
-      CALL STRACE (IENT, 'W3NMLBOUNC')
-#endif
+    if (w3_s_flag) then
+       CALL STRACE (IENT, 'W3NMLBOUNC')
+    end if
 
     ! open namelist log file
     NDSN = 3
     OPEN (NDSN, file=TRIM(INFILE)//'.log', form='formatted', iostat=IERR)
-       IF (IERR.NE.0) THEN
-      WRITE (NDSE,'(A)') 'ERROR: open full nml file '//TRIM(INFILE)//'.log failed'
-      RETURN
+    IF (IERR.NE.0) THEN
+       WRITE (NDSE,'(A)') 'ERROR: open full nml file '//TRIM(INFILE)//'.log failed'
+       RETURN
     END IF
 
     ! open input file
     OPEN (NDSI, file=TRIM(INFILE), form='formatted', status='old', iostat=IERR)
     IF (IERR.NE.0) THEN
-      WRITE (NDSE,'(A)') 'ERROR: open input file '//TRIM(INFILE)//' failed'
-      RETURN
+       WRITE (NDSE,'(A)') 'ERROR: open input file '//TRIM(INFILE)//' failed'
+       RETURN
     END IF
 
     ! read bound namelist
@@ -147,75 +140,73 @@
   END SUBROUTINE W3NMLBOUNC
 
 
-!/ ------------------------------------------------------------------- /
+  !/ ------------------------------------------------------------------- /
 
 
 
 
 
 
-!/ ------------------------------------------------------------------- /
+  !/ ------------------------------------------------------------------- /
 
   SUBROUTINE READ_BOUND_NML (NDSI, NML_BOUND)
-!/
-!/                  +-----------------------------------+
-!/                  | WAVEWATCH III           NOAA/NCEP |
-!/                  |           M. Accensi              |
-!/                  |                                   |
-!/                  |                        FORTRAN 90 |
-!/                  | Last update :         15-May-2018 |
-!/                  +-----------------------------------+
-!/
-!  1. Purpose :
-!
-!
-!  2. Method :
-!
-!     See source term routines.
-!
-!  3. Parameters :
-!
-!     Parameter list
-!     ----------------------------------------------------------------
-!      NDSI         Int.
-!      NML_BOUND    Type.
-!     ----------------------------------------------------------------
-!
-!  4. Subroutines used :
-!
-!      Name      TYPE  Module   Description
-!     ----------------------------------------------------------------
-!      STRACE    Subr. W3SERVMD SUBROUTINE tracing.
-!     ----------------------------------------------------------------
-!
-!  5. Called by :
-!
-!      Name      TYPE  Module   Description
-!     ----------------------------------------------------------------
-!      W3NMLBOUNC Subr.   N/A    Namelist configuration routine.
-!     ----------------------------------------------------------------
-!
-!  6. Error messages :
-!
-!     None.
-!
-!  7. Remarks :
-!
-!  8. Structure :
-!
-!     See source code.
-!
-!  9. Switches :
-!
-! 10. Source code :
-!
-!/ ------------------------------------------------------------------- /
+    !/
+    !/                  +-----------------------------------+
+    !/                  | WAVEWATCH III           NOAA/NCEP |
+    !/                  |           M. Accensi              |
+    !/                  |                                   |
+    !/                  |                        FORTRAN 90 |
+    !/                  | Last update :         15-May-2018 |
+    !/                  +-----------------------------------+
+    !/
+    !  1. Purpose :
+    !
+    !
+    !  2. Method :
+    !
+    !     See source term routines.
+    !
+    !  3. Parameters :
+    !
+    !     Parameter list
+    !     ----------------------------------------------------------------
+    !      NDSI         Int.
+    !      NML_BOUND    Type.
+    !     ----------------------------------------------------------------
+    !
+    !  4. Subroutines used :
+    !
+    !      Name      TYPE  Module   Description
+    !     ----------------------------------------------------------------
+    !      STRACE    Subr. W3SERVMD SUBROUTINE tracing.
+    !     ----------------------------------------------------------------
+    !
+    !  5. Called by :
+    !
+    !      Name      TYPE  Module   Description
+    !     ----------------------------------------------------------------
+    !      W3NMLBOUNC Subr.   N/A    Namelist configuration routine.
+    !     ----------------------------------------------------------------
+    !
+    !  6. Error messages :
+    !
+    !     None.
+    !
+    !  7. Remarks :
+    !
+    !  8. Structure :
+    !
+    !     See source code.
+    !
+    !  9. Switches :
+    !
+    ! 10. Source code :
+    !
+    !/ ------------------------------------------------------------------- /
 
     USE W3ODATMD, ONLY: NDSE
     USE W3SERVMD, ONLY: EXTCDE
-#ifdef W3_S
-      USE W3SERVMD, ONLY: STRACE
-#endif
+    USE W3SERVMD, ONLY: STRACE ! W3_S
 
     IMPLICIT NONE
 
@@ -226,14 +217,12 @@
     INTEGER                   :: IERR
     TYPE(NML_BOUND_T) :: BOUND
     NAMELIST /BOUND_NML/ BOUND
-#ifdef W3_S
-      INTEGER, SAVE                           :: IENT = 0
-#endif
+    INTEGER, SAVE                           :: IENT = 0 ! W3_S
 
     IERR = 0
-#ifdef W3_S
-      CALL STRACE (IENT, 'READ_BOUND_NML')
-#endif
+    if (w3_s_flag) then
+       CALL STRACE (IENT, 'READ_BOUND_NML')
+    end if
 
     ! set default values for track structure
     BOUND%MODE       = 'WRITE'
@@ -245,10 +234,10 @@
     REWIND (NDSI)
     READ (NDSI, nml=BOUND_NML, iostat=IERR, iomsg=MSG)
     IF (IERR.GT.0) THEN
-      WRITE (NDSE,'(A,/A)') &
-        'ERROR: READ_BOUND_NML: namelist read error', &
-        'ERROR: '//TRIM(MSG)
-      CALL EXTCDE (1)
+       WRITE (NDSE,'(A,/A)') &
+            'ERROR: READ_BOUND_NML: namelist read error', &
+            'ERROR: '//TRIM(MSG)
+       CALL EXTCDE (1)
     END IF
 
     ! save namelist
@@ -256,7 +245,7 @@
 
   END SUBROUTINE READ_BOUND_NML
 
-!/ ------------------------------------------------------------------- /
+  !/ ------------------------------------------------------------------- /
 
 
 
@@ -265,83 +254,79 @@
 
 
 
-!/ ------------------------------------------------------------------- /
+  !/ ------------------------------------------------------------------- /
 
   SUBROUTINE REPORT_BOUND_NML (NML_BOUND)
-!/
-!/                  +-----------------------------------+
-!/                  | WAVEWATCH III           NOAA/NCEP |
-!/                  |           M. Accensi              |
-!/                  |                        FORTRAN 90 |
-!/                  | Last update :         15-May-2018 |
-!/                  +-----------------------------------+
-!/
-!/
-!  1. Purpose :
-!
-!
-!  2. Method :
-!
-!     See source term routines.
-!
-!  3. Parameters :
-!
-!     Parameter list
-!     ----------------------------------------------------------------
-!      NML_BOUND  Type.
-!     ----------------------------------------------------------------
-!
-!  4. Subroutines used :
-!
-!      Name      TYPE  Module   Description
-!     ----------------------------------------------------------------
-!      STRACE    Subr. W3SERVMD SUBROUTINE tracing.
-!     ----------------------------------------------------------------
-!
-!  5. Called by :
-!
-!      Name      TYPE  Module   Description
-!     ----------------------------------------------------------------
-!      W3NMLBOUNC Subr.   N/A    Namelist configuration routine.
-!     ----------------------------------------------------------------
-!
-!  6. Error messages :
-!
-!     None.
-!
-!  7. Remarks :
-!
-!  8. Structure :
-!
-!     See source code.
-!
-!  9. Switches :
-!
-! 10. Source code :
-!
-!/ ------------------------------------------------------------------- /
+    !/
+    !/                  +-----------------------------------+
+    !/                  | WAVEWATCH III           NOAA/NCEP |
+    !/                  |           M. Accensi              |
+    !/                  |                        FORTRAN 90 |
+    !/                  | Last update :         15-May-2018 |
+    !/                  +-----------------------------------+
+    !/
+    !/
+    !  1. Purpose :
+    !
+    !
+    !  2. Method :
+    !
+    !     See source term routines.
+    !
+    !  3. Parameters :
+    !
+    !     Parameter list
+    !     ----------------------------------------------------------------
+    !      NML_BOUND  Type.
+    !     ----------------------------------------------------------------
+    !
+    !  4. Subroutines used :
+    !
+    !      Name      TYPE  Module   Description
+    !     ----------------------------------------------------------------
+    !      STRACE    Subr. W3SERVMD SUBROUTINE tracing.
+    !     ----------------------------------------------------------------
+    !
+    !  5. Called by :
+    !
+    !      Name      TYPE  Module   Description
+    !     ----------------------------------------------------------------
+    !      W3NMLBOUNC Subr.   N/A    Namelist configuration routine.
+    !     ----------------------------------------------------------------
+    !
+    !  6. Error messages :
+    !
+    !     None.
+    !
+    !  7. Remarks :
+    !
+    !  8. Structure :
+    !
+    !     See source code.
+    !
+    !  9. Switches :
+    !
+    ! 10. Source code :
+    !
+    !/ ------------------------------------------------------------------- /
 
-#ifdef W3_S
-      USE W3SERVMD, ONLY: STRACE
-#endif
+    USE W3SERVMD, ONLY: STRACE ! W3_S
 
     IMPLICIT NONE
 
     TYPE(NML_BOUND_T), INTENT(IN) :: NML_BOUND
-#ifdef W3_S
-      INTEGER, SAVE                           :: IENT = 0
-#endif
+    INTEGER, SAVE                           :: IENT = 0 ! W3_S
 
-#ifdef W3_S
-      CALL STRACE (IENT, 'REPORT_BOUND_NML')
-#endif
+    if (w3_s_flag) then
+       CALL STRACE (IENT, 'REPORT_BOUND_NML')
+    end if
 
-      WRITE (MSG,'(A)') 'BOUND % '
-      WRITE (NDSN,'(A)')
-      WRITE (NDSN,10) TRIM(MSG),'MODE       = ', TRIM(NML_BOUND%MODE)
-      WRITE (NDSN,11) TRIM(MSG),'INTERP     = ', NML_BOUND%INTERP
-      WRITE (NDSN,11) TRIM(MSG),'VERBOSE    = ', NML_BOUND%VERBOSE
-      WRITE (NDSN,10) TRIM(MSG),'FILE       = ', TRIM(NML_BOUND%FILE)
+    WRITE (MSG,'(A)') 'BOUND % '
+    WRITE (NDSN,'(A)')
+    WRITE (NDSN,10) TRIM(MSG),'MODE       = ', TRIM(NML_BOUND%MODE)
+    WRITE (NDSN,11) TRIM(MSG),'INTERP     = ', NML_BOUND%INTERP
+    WRITE (NDSN,11) TRIM(MSG),'VERBOSE    = ', NML_BOUND%VERBOSE
+    WRITE (NDSN,10) TRIM(MSG),'FILE       = ', TRIM(NML_BOUND%FILE)
 
 
 10  FORMAT (A,2X,A,A)
@@ -349,7 +334,7 @@
 
   END SUBROUTINE REPORT_BOUND_NML
 
-!/ ------------------------------------------------------------------- /
+  !/ ------------------------------------------------------------------- /
 
 
 
