@@ -39,6 +39,7 @@ set(ftn_src
   w3servmd.F90
   w3srcemd.F90
   w3strkmd.F90
+  w3smcomd.F90
   w3timemd.F90
   w3triamd.F90
   w3updtmd.F90
