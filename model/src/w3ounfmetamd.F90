@@ -150,11 +150,11 @@
 !> @author Chris Bunney @date 02-Nov-2020
 !>
 !> ### Change log
-!>   Date      | Ver  | Comments
+!>   Date      | Ver  | Comments  
 !> ------------|------|---------
-!> 02-Nov-2020 | 7.12 | Creation
+!> 02-Nov-2020 | 7.12 | Creation 
 !> 26-Jan-2021 | 7.12 | Added Tp and alternative dir/mag metadata for directional fields.
-!> 16-Dec-2020 | 7.12 | Added user partition templates and coordinate reference system.
+!> 16-Dec-2020 | 7.12 | Added user partition templates and coordinate reference system. 
 !> 02-Feb-2021 | 7.12 | Improved partitioned parameter template string implementation.
 !> 22-Mar-2021 | 7.12 | Add extra coupling fields
 !> 02-Sep-2021 | 7.12 | Add coordinates attribute
@@ -179,7 +179,9 @@ MODULE W3OUNFMETAMD
   USE CONSTANTS, ONLY: TPIINV
   USE W3GDATMD,  ONLY: SIG, NK, GTYPE, UNGTYPE
   USE W3GDATMD,  ONLY: FLAGUNR, POLAT, POLON ! W3_RTD
+#ifdef W3_SMC
   USE W3SMCOMD,  ONLY: SMCOTYPE
+#endif
   USE W3ODATMD,  ONLY: PTMETH, PTFCUT, NOGRP, NOGE, NGRPP, NDSE, FNMPRE, NOSWLL
   USE W3SERVMD,  ONLY: EXTCDE, STR_TO_UPPER
   USE W3METAMD
