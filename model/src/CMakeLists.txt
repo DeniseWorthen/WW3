@@ -104,6 +104,7 @@ set(SRCFILES constants.F90
              w3nmluprstrmd.F90
              w3metamd.F90
              w3ounfmetamd.F90
+             w3src1md.F90
 # for ww3_grid.F90
              w3gridmd.F90 
              w3nmlgridmd.F90
