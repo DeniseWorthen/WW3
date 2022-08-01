@@ -612,14 +612,16 @@ CONTAINS
              END IF
           end if
        END IF
-       !
-       if (w3_t_flag) then
+    END IF
+   !
+    if (w3_t_flag) then
+       IF (TYPE.EQ.'FULL') THEN
           WRITE (NDST,9003) TIME
        ELSE
           WRITE (NDST,9004)
        end if
-       !
-    END IF
+    end if
+
     !
     ! Spectra ------------------------------------------------------------ *
     !          ( Bail out if write for TYPE.EQ.'WIND' )

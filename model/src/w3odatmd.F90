@@ -1604,7 +1604,9 @@ CONTAINS
        CALL EXTCDE (2)
     END IF
     !
-    WRITE (NDSTST,9000) IMOD ! W3_T
+    if (w3_t_flag) then
+       WRITE (NDSTST,9000) IMOD ! W3_T
+    end if
     !
     ! -------------------------------------------------------------------- /
     ! 2.  Set model number

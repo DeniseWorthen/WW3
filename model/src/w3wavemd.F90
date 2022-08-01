@@ -2901,7 +2901,7 @@ CONTAINS
                 TOUT(:) = TONEXT(:,J)
                 DTTST   = DSEC21 ( TIME, TOUT )
                 !
-                write(6,*)'DEBUG: J,TONEXT = ',j,tonext(:,j)
+                !write(6,*)'DEBUG: J,TONEXT = ',j,tonext(:,j)
 
                 IF ( DTTST .EQ. 0. ) THEN
 
