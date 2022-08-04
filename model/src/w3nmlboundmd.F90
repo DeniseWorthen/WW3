@@ -17,6 +17,7 @@ MODULE W3NMLBOUNDMD
   !     Manages namelists from configuration file ww3_bound.nml for ww3_bound program
   !
   !/ ------------------------------------------------------------------- /
+  use wav_shr_flags
 
   ! module defaults
   IMPLICIT NONE
@@ -25,18 +26,18 @@ MODULE W3NMLBOUNDMD
 
   ! bound structure
   TYPE NML_BOUND_T
-     CHARACTER(5)                :: MODE      !< read/write mode
-     INTEGER                     :: INTERP    !< interpolation mode
-     INTEGER                     :: VERBOSE   !< verbose flag
-     CHARACTER(128)              :: FILE      !< listing spec file unit
+     CHARACTER(5)   :: MODE      !< read/write mode
+     INTEGER        :: INTERP    !< interpolation mode
+     INTEGER        :: VERBOSE   !< verbose flag
+     CHARACTER(128) :: FILE      !< listing spec file unit
   END TYPE NML_BOUND_T
 
-
   ! miscellaneous
-  CHARACTER(256)                :: MSG      !< report message
-  INTEGER                       :: NDSN     !< namelist file unit
+  CHARACTER(256)    :: MSG      !< report message
+  INTEGER           :: NDSN     !< namelist file unit
 
 CONTAINS
+
   !/ ------------------------------------------------------------------- /
   SUBROUTINE W3NMLBOUND (NDSI, INFILE, NML_BOUND, IERR)
     !/

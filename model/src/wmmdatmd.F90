@@ -424,13 +424,13 @@ MODULE WMMDATMD
   END TYPE MDATA
   !
   TYPE BPST
-     INTEGER          :: NRQBPS   !< NRQBPS ! W3_MPI
-     INTEGER          :: STIME(2)   !< STIME
-     INTEGER          :: VTIME(2)   !< VTIME
+     INTEGER          :: NRQBPS      !< NRQBPS ! W3_MPI
+     INTEGER          :: STIME(2)    !< STIME
+     INTEGER          :: VTIME(2)    !< VTIME
      INTEGER, POINTER :: IRQBPS(:)   !< IRQBPS ! W3_MPI
      REAL, POINTER    :: SBPI(:,:)   !< SBPI
-     REAL, POINTER    :: TSTORE(:,:)   !< TSTORE ! W3_MPI
-     LOGICAL          :: INIT   !< INIT
+     REAL, POINTER    :: TSTORE(:,:) !< TSTORE ! W3_MPI
+     LOGICAL          :: INIT        !< INIT
   END TYPE BPST
   !
   TYPE HGST

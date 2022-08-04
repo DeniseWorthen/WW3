@@ -350,18 +350,18 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD      , ONLY : NGRIDS, IGRID, W3SETG, NSPEC, NSEA, NSEAL, GRIDS
-    USE W3ODATMD      , ONLY : NAPROC, IAPROC
-    USE W3SERVMD      , ONLY : EXTCDE
     USE CONSTANTS     , ONLY : LPDLIB, DAIR
+    USE W3GDATMD      , ONLY : NGRIDS, IGRID, W3SETG, NSPEC, NSEA, NSEAL, GRIDS
+    USE W3GDATMD      , ONLY : QI5NNZ         ! W3_NL5
+    USE W3GDATMD      , ONLY : GTYPE, UNGTYPE ! W3_PDLIB
+    USE W3ODATMD      , ONLY : NAPROC, IAPROC
     USE W3PARALL      , ONLY : SET_UP_NSEAL_NSEALM, LSLOC 
-    USE W3GDATMD      , ONLY : QI5NNZ ! W3_NL5
+    USE W3SERVMD      , ONLY : EXTCDE
+    USE W3SERVMD      , ONLY : STRACE         ! W3_S
 #ifdef W3_PDLIB
     use yowNodepool   , only : npa, np
     use yowRankModule , only : rank
-    USE W3GDATMD      , ONLY : GTYPE, UNGTYPE
 #endif
-    USE W3SERVMD      , ONLY : STRACE ! W3_S
     !
     IMPLICIT NONE
     !
@@ -375,17 +375,18 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER       :: JGRID, NSEALM, NSEATM
-    INTEGER       :: NSEAL_DUMMY, ISEA
-    INTEGER       :: IRANK ! W3_PDLIB
-    INTEGER, SAVE :: IENT = 0 ! W3_S
+    INTEGER :: JGRID, NSEALM, NSEATM
+    INTEGER :: NSEAL_DUMMY, ISEA
+    INTEGER :: IRANK ! W3_PDLIB
+    INTEGER :: IENT = 0 ! W3_S
+    !/
+    !/ ------------------------------------------------------------------- /
     !/
     if (w3_s_flag) then
        CALL STRACE (IENT, 'W3DIMW')
     end if
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3DIMW, step 1'
-       FLUSH(740+IAPROC)
     end if
     !
     ! -------------------------------------------------------------------- /
@@ -398,7 +399,6 @@ CONTAINS
     END IF
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3DIMW, step 2'
-       FLUSH(740+IAPROC)
     end if
     !
     IF ( NGRIDS .EQ. -1 ) THEN
@@ -407,7 +407,6 @@ CONTAINS
     END IF
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3DIMW, step 3'
-       FLUSH(740+IAPROC)
     end if
     !
     IF ( IMOD.LT.1 .OR. IMOD.GT.NWDATA ) THEN
@@ -416,7 +415,6 @@ CONTAINS
     END IF
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3DIMW, step 4'
-       FLUSH(740+IAPROC)
     end if
     !
     IF ( WDATAS(IMOD)%DINIT ) THEN
@@ -425,7 +423,6 @@ CONTAINS
     END IF
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3DIMW, step 5'
-       FLUSH(740+IAPROC)
     end if
     !
     if (w3_t_flag) then
@@ -436,7 +433,6 @@ CONTAINS
     IF ( JGRID .NE. IMOD ) CALL W3SETG ( IMOD, NDSE, NDST )
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3DIMW, step 6'
-       FLUSH(740+IAPROC)
     end if
     !
     ! -------------------------------------------------------------------- /
@@ -445,12 +441,10 @@ CONTAINS
     CALL SET_UP_NSEAL_NSEALM(NSEAL_DUMMY, NSEALM)
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3DIMW, step 7'
-       FLUSH(740+IAPROC)
     end if
     NSEATM = NSEALM * NAPROC
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3DIMW, step 8'
-       FLUSH(740+IAPROC)
     end if
     !
     IF ( FL_ALL ) THEN
@@ -554,18 +548,17 @@ CONTAINS
     !
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3DIMW, step 12'
-       FLUSH(740+IAPROC)
     end if
     RETURN
     !
     ! Formats
     !
-1001 FORMAT (/' *** ERROR W3DIMW : GRIDS NOT INITIALIZED *** '/      &
-         '                    RUN W3NMOD FIRST '/)
-1002 FORMAT (/' *** ERROR W3DIMW : ILLEGAL MODEL NUMBER *** '/       &
-         '                    IMOD   = ',I10/                   &
-         '                    NWDATA = ',I10/)
-1003 FORMAT (/' *** ERROR W3DIMW : ARRAY(S) ALREADY ALLOCATED *** ')
+1001 FORMAT (/ ' *** ERROR W3DIMW : GRIDS NOT INITIALIZED *** '/      &
+               '                    RUN W3NMOD FIRST '/)
+1002 FORMAT (/ ' *** ERROR W3DIMW : ILLEGAL MODEL NUMBER *** '/       &
+               '                    IMOD   = ',I10/                   &
+               '                    NWDATA = ',I10/)
+1003 FORMAT (/ ' *** ERROR W3DIMW : ARRAY(S) ALREADY ALLOCATED *** ')
     !
 9000 FORMAT (' TEST W3DIMW : MODEL ',I4,' DIM. AT ',2I5,I7)
     !

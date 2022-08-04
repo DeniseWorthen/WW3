@@ -92,6 +92,24 @@ set_property(SOURCE w3initmd.F90
 # Note that w3iogocdmd is a new file for netcdf io
 # Set source files
 set(SRCFILES constants.F90
+# for compilation testing
+             w3bullmd.F90
+             w3nmlbouncmd.F90
+             w3nmlboundmd.F90
+             w3nmlmultimd.F90
+             w3nmlounfmd.F90
+             w3nmlounpmd.F90
+             w3nmlprncmd.F90
+             w3nmltrncmd.F90
+             w3nmluprstrmd.F90
+             w3metamd.F90
+             w3ounfmetamd.F90
+             w3snl3md.F90
+             w3src1md.F90
+             w3src2md.F90
+             w3src3md.F90
+             w3src4md.F90
+             w3src6md.F90
 # for ww3_grid.F90
              w3gridmd.F90 
              w3nmlgridmd.F90
@@ -123,6 +141,8 @@ set(SRCFILES constants.F90
              w3odatmd.F90
              w3parall.F90
              w3partmd.F90
+             w3pro1md.F90
+             w3pro2md.F90
              w3pro3md.F90
              w3profsmd.F90
              w3sdb1md.F90

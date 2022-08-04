@@ -1983,10 +1983,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, NFR0, NFR, NTH
-    REAL, INTENT(IN)        :: E(NFR0,*), FR(*), FACSP, FSC, RRCUT
-    CHARACTER, INTENT(IN)   :: PRVAR*(*), PRUNIT*(*), PNTNME*(*),  &
-         UFR*(*)
+    INTEGER  , INTENT(IN) :: NDS, NFR0, NFR, NTH
+    REAL     , INTENT(IN) :: E(NFR0,*), FR(*), FACSP, FSC, RRCUT
+    CHARACTER, INTENT(IN) :: PRVAR*(*), PRUNIT*(*), PNTNME*(*), UFR*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

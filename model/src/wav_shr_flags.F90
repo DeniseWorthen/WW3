@@ -117,6 +117,12 @@ module wav_shr_flags
    logical ::  w3_debugio_flag = .false.     !< @public a flag for "W3_DEBUGIO"
 #endif
   
+#ifdef W3_DEBUGW3ULEV
+   logical ::  w3_debugw3ulev_flag = .true.      !< @public a flag for "W3_DEBUGW3ULEV"
+#else
+   logical ::  w3_debugw3ulev_flag = .false.     !< @public a flag for "W3_DEBUGW3ULEV"
+#endif
+
 #ifdef W3_TIMINGS
    logical ::  w3_timings_flag = .true.      !< @public a flag for "W3_TIMINGS"
 #else
