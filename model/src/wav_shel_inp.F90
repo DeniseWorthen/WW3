@@ -106,33 +106,28 @@ contains
 !> @date 01-05-2022
   subroutine read_shel_config(mpi_comm, time0_overwrite, timen_overwrite)
 
-    use w3nmlshelmd    , only: nml_domain_t, nml_input_t, nml_output_type_t
-    use w3nmlshelmd    , only: nml_output_date_t, nml_homog_count_t, nml_homog_input_t
-    use w3nmlshelmd    , only: w3nmlshel
-    use w3gdatmd       , only: flagll, dtmax, nx, ny, gtype
-    use w3wdatmd       , only: time, w3ndat, w3dimw, w3setw
-    use w3adatmd       , only: w3naux, w3dima, w3seta
-    use w3idatmd       , only: inflags1, inflags2, flagsc
-    use w3odatmd       , only: w3nout, w3seto, nds
-    use w3odatmd       , only: naproc, iaproc, napout, naperr
-    use w3odatmd       , only: idout, fnmpre, iostyp, notype
-    use w3odatmd       , only: flogrr, flogr, ofiles
-    use w3iogrmd       , only: w3iogr
-    use w3iogomd       , only: w3readflgrd, fldout, w3flgrdflag
-    use w3servmd       , only: nextln, extcde
-    use w3timemd       , only: dsec21, stme21, tick21, t2d, d2j
+    use wav_shr_flags
+    use w3nmlshelmd    , only : nml_domain_t, nml_input_t, nml_output_type_t
+    use w3nmlshelmd    , only : nml_output_date_t, nml_homog_count_t, nml_homog_input_t
+    use w3nmlshelmd    , only : w3nmlshel
+    use w3gdatmd       , only : flagll, dtmax, nx, ny, gtype
+    use w3wdatmd       , only : time, w3ndat, w3dimw, w3setw
+    use w3adatmd       , only : w3naux, w3dima, w3seta
+    use w3idatmd       , only : inflags1, inflags2, flagsc
+    use w3odatmd       , only : w3nout, w3seto, nds
+    use w3odatmd       , only : naproc, iaproc, napout, naperr
+    use w3odatmd       , only : idout, fnmpre, iostyp, notype
+    use w3odatmd       , only : flogrr, flogr, ofiles
+    use w3iogrmd       , only : w3iogr
+    use w3iogomd       , only : w3readflgrd, fldout, w3flgrdflag
+    use w3servmd       , only : nextln, extcde
+    use w3timemd       , only : dsec21, stme21, tick21, t2d, d2j
 #ifdef W3_OASIS
-    use w3wdatmd       , only: time00, timeend
+    use w3wdatmd       , only : time00, timeend
 #endif
 #ifdef W3_NL5
-    use w3wdatmd       , only: qi5tbeg
+    use w3wdatmd       , only : qi5tbeg
 #endif
-    use wav_shr_flags  , only : w3_debuginit_flag, w3_cou_flag, w3_oasis_flag
-    use wav_shr_flags  , only : w3_o7_flag, w3_t_flag, w3_mgw_flag, w3_mgp_flag
-    use wav_shr_flags  , only : w3_nl5_flag, w3_ic1_flag, w3_ic2_flag, w3_is2_flag
-    use wav_shr_flags  , only : w3_ic3_flag, w3_bt8_flag, w3_bt9_flag, w3_ic4_flag
-    use wav_shr_flags  , only : w3_ic5_flag, w3_nco_flag, w3_pdlib_flag
-    use wav_shr_flags  , only : print_logmsg
 
     ! input/output parameters
     integer, intent(in) :: mpi_comm
@@ -176,6 +171,7 @@ contains
     integer             :: thrlev = 1
     integer             :: time0(2), timen(2), ttime(2)
     character(len=80)   :: msg1
+    integer             :: msgunit
 
     data idflds / 'ice param. 1 ' , 'ice param. 2 ' ,               &
                   'ice param. 3 ' , 'ice param. 4 ' ,               &
@@ -201,10 +197,13 @@ contains
     !---------------------------------------------------
     !
     !---------------------------------------------------
+
+    msgunit = 740+iaproc
+
     flgr2 = .false.
     flh(:) = .false.
     iprt(:) = 0
-    call print_logmsg(740+iaproc, 'read_shel_config, step 1', w3_debuginit_flag)
+    call print_logmsg(msgunit, 'read_shel_config, step 1', w3_debuginit_flag)
 
     ndsi = 10
     ndss = 90
@@ -243,7 +242,7 @@ contains
     ndsf(7)  = 17
     ndsf(8)  = 18
     ndsf(9)  = 19
-    call print_logmsg(740+iaproc, 'read_shel_config, step 2', w3_debuginit_flag)
+    call print_logmsg(msgunit, 'read_shel_config, step 2', w3_debuginit_flag)
 
     if (w3_nco_flag) then
        ndsi    = 11
@@ -266,11 +265,12 @@ contains
 
     ! Default COMSTR to "$" (for when using nml input files)
     COMSTR = "$"
-    call print_logmsg(740+iaproc, 'read_shel_config, step 2', w3_debuginit_flag)
+    call print_logmsg(msgunit, 'read_shel_config, step 2', w3_debuginit_flag)
 
     ! If using experimental mud or ice physics, additional lines will
-    !  be read in from read_shel_config.inp and applied, so JFIRST is changed from
-    !  its initialization setting "JFIRST=1" to some lower value.
+    !  be read in from read_shel_config.inp and applied, so JFIRST is
+    !  changed from its initialization setting "JFIRST=1" to some
+    !  lower value.
     jfirst=1
     if (w3_ic1_flag) jfirst = -7
     if (w3_ic2_flag) jfirst = -7
@@ -282,8 +282,7 @@ contains
     if (w3_ic5_flag) jfirst = -7
 
     write(msg1,*)'JFIRST=', JFIRST
-    call print_logmsg(740+iaproc, 'read_shel_config, step 4', &
-                                   trim(msg1), w3_debuginit_flag)
+    call print_logmsg(msgunit, 'read_shel_config, step 4', trim(msg1), w3_debuginit_flag)
 
     !--- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     ! 2.  Define input fields
@@ -430,15 +429,15 @@ contains
             write (ndso,921) idflds(10), 'yes/--', ' '
 
        flflg  = inflags1(-7) .or. inflags1(-6) .or. inflags1(-5) .or. inflags1(-4) &
-           .or. inflags1(-3) .or. inflags1(-2) .or. inflags1(-1) &
-           .or. inflags1(0)  .or. inflags1(1)  .or. inflags1(2)  &
-           .or. inflags1(3)  .or. inflags1(4)  .or. inflags1(5)  &
-           .or. inflags1(6)  .or. inflags1(7)  .or. inflags1(8)  &
-                             .or. inflags1(9)
+            .or. inflags1(-3) .or. inflags1(-2) .or. inflags1(-1) &
+            .or. inflags1(0)  .or. inflags1(1)  .or. inflags1(2)  &
+            .or. inflags1(3)  .or. inflags1(4)  .or. inflags1(5)  &
+            .or. inflags1(6)  .or. inflags1(7)  .or. inflags1(8)  &
+            .or. inflags1(9)
        flhom  = flh(-7) .or. flh(-6) .or. flh(-5) .or. flh(-4) &
-           .or. flh(-3) .or. flh(-2) .or. flh(-1) .or. flh(0)  &
-           .or. flh(1) .or. flh(2) .or. flh(3) .or. flh(4)     &
-           .or. flh(5) .or. flh(6) .or. flh(10)
+            .or. flh(-3) .or. flh(-2) .or. flh(-1) .or. flh(0)  &
+            .or. flh(1) .or. flh(2) .or. flh(3) .or. flh(4)     &
+            .or. flh(5) .or. flh(6) .or. flh(10)
 
        if ( iaproc .eq. napout ) write (ndso,922)
        ! inflags2 is just "initial value of inflags1", i.e. does *not* get
@@ -794,7 +793,6 @@ contains
 
        end if ! flhom
 
-
     end if ! flgnml
 
     !
@@ -804,15 +802,14 @@ contains
     !
     if (.not. flgnml) then
 
-       call print_logmsg(740+iaproc, ' fnmpre'//trim(fnmpre), w3_debuginit_flag)
+       call print_logmsg(msgunit, ' fnmpre'//trim(fnmpre), w3_debuginit_flag)
        open (ndsi,file=trim(fnmpre)//'ww3_shel.inp',status='old',iostat=ierr)
        rewind (ndsi)
-       call print_logmsg(740+iaproc, 'Before read 2002, case 1', w3_debuginit_flag)
+       call print_logmsg(msgunit, 'Before read 2002, case 1', w3_debuginit_flag)
        !ar: i changed the error handling for err=2002, see commit message ...
 
        read (ndsi,'(a)') comstr
-       call print_logmsg(740+iaproc, ' comstr='//trim(comstr), &
-                                     ' After read 2002, case 1', w3_debuginit_flag)
+       call print_logmsg(msgunit, ' comstr='//trim(comstr), ' After read 2002, case 1', w3_debuginit_flag)
        if (comstr.eq.' ') comstr = '$'
        if ( iaproc .eq. napout ) write (ndso,901) comstr
 
@@ -824,19 +821,17 @@ contains
        do j=jfirst, 9
           call nextln ( comstr , ndsi , ndsen )
           if ( j .le. 6 ) then
-             call print_logmsg(740+iaproc, 'Before read 2002, case 2', w3_debuginit_flag)
+             call print_logmsg(msgunit, 'Before read 2002, case 2', w3_debuginit_flag)
              read (ndsi,*) flagtfc(j), flh(j)
 
              write(msg1,*)'     J=', j, ' FLAGTFC=', flagtfc(j), ' FLH=', flh(j)
-             call print_logmsg(740+iaproc, trim(msg1), &
-                                           ' After read 2002, case 2', w3_debuginit_flag)
+             call print_logmsg(msgunit, trim(msg1), ' After read 2002, case 2', w3_debuginit_flag)
           else
-             call print_logmsg(740+iaproc, 'Before read 2002, case 3', w3_debuginit_flag)
+             call print_logmsg(msgunit, 'Before read 2002, case 3', w3_debuginit_flag)
              read (ndsi,*) flagtfc(j)
 
              write(msg1,*) '     J=', j, ' FLAGTFC=', flagtfc(j)
-             call print_logmsg(740+iaproc, trim(msg1), &
-                                           ' After read 2002, case 3 ', w3_debuginit_flag)
+             call print_logmsg(msgunit, trim(msg1), ' After read 2002, case 3 ', w3_debuginit_flag)
           end if
        end do
 
@@ -876,13 +871,8 @@ contains
           if (flagsc(2) .and. inflags1(1) .and. .not. flagsc(1)) goto 2102
        end if
 
-#ifdef W3_MEMCHECK
-       write(740+IAPROC,*) 'memcheck_____:', 'read_shel_config SECTION 2b'
-       call getMallocInfo(mallinfos)
-       call printMallInfo(IAPROC,mallInfos)
-#endif
-
-       call print_logmsg(740+iaproc, 'read_shel_config, step 5', w3_debuginit_flag)
+       call print_memcheck(msgunit, 'memcheck_____:'//'read_shel_config SECTION 2b')
+       call print_logmsg(msgunit, 'read_shel_config, step 5', w3_debuginit_flag)
 
        inflags1(10) = .false.
        if (w3_mgw_flag .or. w3_mgp_flag) then
@@ -917,35 +907,25 @@ contains
        !--------------------
 
        call nextln ( comstr , ndsi , ndsen )
-       call print_logmsg(740+iaproc, 'Before read 2002, case 4', w3_debuginit_flag)
+       call print_logmsg(msgunit, 'Before read 2002, case 4', w3_debuginit_flag)
        read (ndsi,*) time0
-       call print_logmsg(740+iaproc, ' After read 2002, case 4', w3_debuginit_flag)
 
-#ifdef W3_MEMCHECK
-       write(740+IAPROC,*) 'memcheck_____:', 'read_shel_config SECTION 2c'
-       call getMallocInfo(mallinfos)
-       call printMallInfo(IAPROC,mallInfos)
-#endif
+       call print_logmsg(msgunit, ' After read 2002, case 4', w3_debuginit_flag)
+       call print_memcheck(msgunit, 'memcheck_____:'//'read_shel_config SECTION 2c')
 
        call nextln ( comstr , ndsi , ndsen )
-       call print_logmsg(740+iaproc, 'Before read 2002, case 5', w3_debuginit_flag)
+       call print_logmsg(msgunit, 'Before read 2002, case 5', w3_debuginit_flag)
        read (ndsi,*) timen
-       call print_logmsg(740+iaproc, ' After read 2002, case 5', &
-                                     'read_shel_config, step 6', w3_debuginit_flag)
-       !
-#ifdef W3_MEMCHECK
-       write(740+IAPROC,*) 'memcheck_____:', 'read_shel_config SECTION 2d'
-       call getMallocInfo(mallinfos)
-       call printMallInfo(IAPROC,mallInfos)
-#endif
+       call print_logmsg(msgunit, ' After read 2002, case 5', 'read_shel_config, step 6', w3_debuginit_flag)
+       call print_memcheck(msgunit, 'memcheck_____:'//'read_shel_config SECTION 2d')
 
        !--------------------
        ! 2.3 Domain setup
        !--------------------
 
-       call print_logmsg(740+iaproc, 'read_shel_config, step 7', w3_debuginit_flag)
+       call print_logmsg(msgunit, 'read_shel_config, step 7', w3_debuginit_flag)
        call nextln ( COMSTR , NDSI , NDSEN )
-       call print_logmsg(740+iaproc, 'Before read 2002, case 6', w3_debuginit_flag)
+       call print_logmsg(msgunit, 'Before read 2002, case 6', w3_debuginit_flag)
        read (ndsi,*) iostyp
        if (w3_pdlib_flag) then
           if (iostyp .gt. 1) then
@@ -953,14 +933,14 @@ contains
              call extcde ( 6666 )
           endif
        end if
-       call print_logmsg(740+iaproc, ' After read 2002, case 6', w3_debuginit_flag)
+       call print_logmsg(msgunit, ' After read 2002, case 6', w3_debuginit_flag)
        call w3iogr ( 'GRID', ndsf(7) )
        if ( flagll ) then
           factor = 1.
        else
           factor = 1.e-3
        end if
-       call print_logmsg(740+iaproc, 'read_shel_config, step 8', w3_debuginit_flag)
+       call print_logmsg(msgunit, 'read_shel_config, step 8', w3_debuginit_flag)
 
        !--------------------
        ! 2.4 Output dates
@@ -971,12 +951,12 @@ contains
        if (w3_cou_flag) then
           notype = 7
        end if
-       call print_logmsg(740+iaproc, 'Before NOTYPE loop', w3_debuginit_flag)
+       call print_logmsg(msgunit, 'Before NOTYPE loop', w3_debuginit_flag)
        do j = 1, notype
           write(msg1,*)'J=', J, '/ NOTYPE=', NOTYPE
-          call print_logmsg(740+iaproc, trim(msg1), w3_debuginit_flag)
+          call print_logmsg(msgunit, trim(msg1), w3_debuginit_flag)
           call nextln ( comstr , ndsi , ndsen )
-          call print_logmsg(740+iaproc, 'Before read 2002, case 7', w3_debuginit_flag)
+          call print_logmsg(msgunit, 'Before read 2002, case 7', w3_debuginit_flag)
 
           ! checkpoint
           if (j .eq. 4) then
@@ -1060,21 +1040,19 @@ contains
              end if !j le 2
              ! write(*,*) 'ofiles(j)= ', ofiles(j),j
              !
-             call print_logmsg(740+iaproc, ' After read 2002, case 7', w3_debuginit_flag)
+             call print_logmsg(msgunit, ' After read 2002, case 7', w3_debuginit_flag)
              odat(5*(j-1)+3) = max ( 0 , odat(5*(j-1)+3) )
              !
-#ifdef W3_MEMCHECK
-             write(740+IAPROC,*) 'memcheck_____:', 'read_shel_config NOTTYPE', J
-             call getMallocInfo(mallinfos)
-             call printMallInfo(IAPROC,mallInfos)
-#endif
+             write(msg1, *) 'read_shel_config NOTTYPE', J
+             call print_memcheck(msgunit, 'memcheck_____:'//trim(msg1))
+
              !--------------------
              ! 2.5 Output types
              !--------------------
 
              if ( odat(5*(j-1)+3) .ne. 0 ) then
 
-                call print_logmsg(740+iaproc, ' Case analysis', w3_debuginit_flag)
+                call print_logmsg(msgunit, ' Case analysis', w3_debuginit_flag)
                 if ( j .eq. 1 ) then
 
                    ! type 1: fields of mean wave parameters
@@ -1109,9 +1087,9 @@ contains
                       npts   = 0
                       do
                          call nextln ( comstr , ndsi , ndsen )
-                         call print_logmsg(740+iaproc, 'before read 2002, case 8', w3_debuginit_flag)
+                         call print_logmsg(msgunit, 'before read 2002, case 8', w3_debuginit_flag)
                          read (ndsi2,*) xx, yy, pn
-                         call print_logmsg(740+iaproc, ' After read 2002, case 8', w3_debuginit_flag)
+                         call print_logmsg(msgunit, ' After read 2002, case 8', w3_debuginit_flag)
                          if ( iloop.eq.1 .and. iaproc.eq.1 ) then
                             backspace (ndsi)
                             read (ndsi,'(a)') line
@@ -1160,9 +1138,9 @@ contains
 
                    ! Type 3: track output
                    call nextln ( comstr , ndsi , ndsen )
-                   call print_logmsg(740+iaproc, 'Before read 2002, case 9', w3_debuginit_flag)
+                   call print_logmsg(msgunit, 'Before read 2002, case 9', w3_debuginit_flag)
                    read (ndsi,*) tflagi
-                   call print_logmsg(740+iaproc, ' After read 2002, case 9', w3_debuginit_flag)
+                   call print_logmsg(msgunit, ' After read 2002, case 9', w3_debuginit_flag)
 
                    if ( .not. tflagi ) nds(11) = -nds(11)
                    if ( iaproc .eq. napout ) then
@@ -1178,10 +1156,9 @@ contains
                    ! Type 6: partitioning
                    !             IPRT: IX0, IXN, IXS, IY0, IYN, IYS
                    call nextln ( comstr , ndsi , ndsen )
-                   call print_logmsg(740+iaproc, 'Before reading IPRT', &
-                                                 'Before read 2002, case 10', w3_debuginit_flag)
+                   call print_logmsg(msgunit, 'Before reading IPRT', 'Before read 2002, case 10', w3_debuginit_flag)
                    read (ndsi,*) iprt, prtfrm
-                   call print_logmsg(740+iaproc, ' After read 2002, case 10', w3_debuginit_flag)
+                   call print_logmsg(msgunit, ' After read 2002, case 10', w3_debuginit_flag)
 
                    if ( iaproc .eq. napout ) then
                       if ( prtfrm ) then
@@ -1222,9 +1199,9 @@ contains
           ! Start of loop
           do
              call nextln ( comstr , ndsi , ndsen )
-             call print_logmsg(740+iaproc, 'before read 2002, case 11', w3_debuginit_flag)
+             call print_logmsg(msgunit, 'before read 2002, case 11', w3_debuginit_flag)
              read (ndsi,*) idtst
-             call print_logmsg(740+iaproc, ' after read 2002, case 11', w3_debuginit_flag)
+             call print_logmsg(msgunit, ' after read 2002, case 11', w3_debuginit_flag)
 
 
              ! Exit if illegal id
@@ -1250,57 +1227,53 @@ contains
                    nh(j)    = nh(j) + 1
                    if ( nh(j) .gt. nhmax ) goto 2006
                    IF ( J .LE. 1  ) THEN ! water levels, etc. : get HA
-                      call print_logmsg(740+iaproc, 'Before read 2002, case 12', w3_debuginit_flag)
+                      call print_logmsg(msgunit, 'Before read 2002, case 12', w3_debuginit_flag)
                       read (ndsi,*) idtst,           &
                            tho(1,j,nh(j)), tho(2,j,nh(j)),            &
                            ha(nh(j),j)
-                      call print_logmsg(740+iaproc, ' After read 2002, case 12', w3_debuginit_flag)
+                      call print_logmsg(msgunit, ' After read 2002, case 12', w3_debuginit_flag)
                    ELSE IF ( J .EQ. 2 ) THEN ! currents: get HA and HD
-                      call print_logmsg(740+iaproc, 'Before read 2002, case 13', w3_debuginit_flag)
+                      call print_logmsg(msgunit, 'Before read 2002, case 13', w3_debuginit_flag)
                       read (ndsi,*) idtst,           &
                            tho(1,j,nh(j)), tho(2,j,nh(j)),            &
                            ha(nh(j),j), hd(nh(j),j)
-                      call print_logmsg(740+iaproc, ' After read 2002, case 13', w3_debuginit_flag)
+                      call print_logmsg(msgunit, ' After read 2002, case 13', w3_debuginit_flag)
                    ELSE IF ( J .EQ. 3 ) THEN ! wind: get HA HD and HS
-                      call print_logmsg(740+iaproc, 'Before read 2002, case 14', w3_debuginit_flag)
+                      call print_logmsg(msgunit, 'Before read 2002, case 14', w3_debuginit_flag)
                       read (ndsi,*) idtst,           &
                            tho(1,j,nh(j)), tho(2,j,nh(j)),            &
                            ha(nh(j),j), hd(nh(j),j), hs(nh(j),j)
-                      call print_logmsg(740+iaproc, ' After read 2002, case 14', w3_debuginit_flag)
+                      call print_logmsg(msgunit, ' After read 2002, case 14', w3_debuginit_flag)
                    ELSE IF ( J .EQ. 4 ) THEN ! ice
-                      call print_logmsg(740+iaproc, 'Before read 2002, case 15', w3_debuginit_flag)
+                      call print_logmsg(msgunit, 'Before read 2002, case 15', w3_debuginit_flag)
                       read (ndsi,*) idtst,           &
                            tho(1,j,nh(j)), tho(2,j,nh(j)),            &
                            ha(nh(j),j)
-                      call print_logmsg(740+iaproc, ' After read 2002, case 15', w3_debuginit_flag)
+                      call print_logmsg(msgunit, ' After read 2002, case 15', w3_debuginit_flag)
                    ELSE IF ( J .EQ. 5 ) THEN ! atmospheric momentum
-                      call print_logmsg(740+iaproc, 'Before read 2002, case 16', w3_debuginit_flag)
+                      call print_logmsg(msgunit, 'Before read 2002, case 16', w3_debuginit_flag)
                       read (ndsi,*) idtst,           &
                            tho(1,j,nh(j)), tho(2,j,nh(j)),            &
                            ha(nh(j),j), hd(nh(j),j)
-                      call print_logmsg(740+iaproc, ' After read 2002, case 16', w3_debuginit_flag)
+                      call print_logmsg(msgunit, ' After read 2002, case 16', w3_debuginit_flag)
                    ELSE IF ( J .EQ. 6 ) THEN ! air density
-                      call print_logmsg(740+iaproc, 'Before read 2002, case 17', w3_debuginit_flag)
+                      call print_logmsg(msgunit, 'Before read 2002, case 17', w3_debuginit_flag)
                       read (ndsi,*) idtst,           &
                            tho(1,j,nh(j)), tho(2,j,nh(j)),            &
                            ha(nh(j),j)
-                      call print_logmsg(740+iaproc, ' After read 2002, case 17', w3_debuginit_flag)
+                      call print_logmsg(msgunit, ' After read 2002, case 17', w3_debuginit_flag)
                    ELSE IF ( J .EQ. 10 ) THEN ! mov: HA and HD
-                      call print_logmsg(740+iaproc, 'Before read 2002, case 18', w3_debuginit_flag)
+                      call print_logmsg(msgunit, 'Before read 2002, case 18', w3_debuginit_flag)
                       read (ndsi,*) idtst,           &
                            tho(1,j,nh(j)), tho(2,j,nh(j)),            &
                            ha(nh(j),j), hd(nh(j),j)
-                      call print_logmsg(740+iaproc, ' After read 2002, case 18', w3_debuginit_flag)
+                      call print_logmsg(msgunit, ' After read 2002, case 18', w3_debuginit_flag)
                    END IF
                 end if
              end do
           end do
+          call print_memcheck(msgunit, 'memcheck_____:'//'read_shel_config SECTION 3')
 
-#ifdef W3_MEMCHECK
-          write(740+IAPROC,*) 'memcheck_____:', 'read_shel_config SECTION 3'
-          call getMallocInfo(mallinfos)
-          call printMallInfo(IAPROC,mallInfos)
-#endif
           if (w3_o7_flag) then
              do j=jfirst, 10
                 if ( flh(j) .and. iaproc.eq.napout ) then
@@ -1336,13 +1309,10 @@ contains
 
        end if ! flhom
 
+       close (ndsi)
     end if  ! .not. flgnml
 
-#ifdef W3_MEMCHECK
-    write(740+IAPROC,*) 'memcheck_____:', 'read_shel_config SECTION 4'
-    call getMallocInfo(mallinfos)
-    call printMallInfo(IAPROC,mallInfos)
-#endif
+    call print_memcheck(msgunit, 'memcheck_____:'//'read_shel_config SECTION 4')
 
     !--------------------
     ! 2.2 Time setup
@@ -1508,11 +1478,9 @@ contains
        continue
     end if
     !
-#ifdef W3_MEMCHECK
-    write(740+IAPROC,*) 'memcheck_____:', 'read_shel_config SECTION 5'
-    call getMallocInfo(mallinfos)
-    call printMallInfo(IAPROC,mallInfos)
-#endif
+
+    call print_memcheck(msgunit, 'memcheck_____:'//'read_shel_config SECTION 5')
+
     !--- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     if ( iaproc .eq. napout ) write (ndso,951) 'Wave model ...'
@@ -1603,7 +1571,7 @@ contains
 952 FORMAT ( '       ',I6,2X,A)
 953 FORMAT ( '          ',I6,I11.8,I7.6,3E12.4)
 1001 FORMAT (/' *** WAVEWATCH III ERROR IN W3SHEL : *** '/           &
-               '     PREMATURE END OF INPUT FILE'/)
+              '     PREMATURE END OF INPUT FILE'/)
 1002 FORMAT (/' *** WAVEWATCH III ERROR IN W3SHEL : *** '/           &
               '     ERROR IN READING FROM INPUT FILE'/               &
               '     IOSTAT =',I5/)

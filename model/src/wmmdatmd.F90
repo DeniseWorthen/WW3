@@ -410,7 +410,7 @@ MODULE WMMDATMD
      ! W3_PDLIB
      INTEGER, POINTER :: SEA_IPGL(:)         !< SEA_IPGL
      INTEGER, POINTER :: SEA_IPGL_TO_PROC(:) !< SEA_IPGL_TO_PROC
-                                                  !
+     !
      LOGICAL          :: MINIT               !< MINIT
      LOGICAL          :: MSKINI              !< MSKINI
      LOGICAL          :: FLLSTL              !< FLLSTL
@@ -633,18 +633,18 @@ CONTAINS
     ! 2.  Set variable and allocate arrays
     !
     ALLOCATE ( MDATAS(NGRIDS),        &
-               BPSTGE(NGRIDS,NGRIDS), &
-               HGSTGE(NGRIDS,NGRIDS), &
-               EQSTGE(NGRIDS,NGRIDS), &
-               BCDUMP(NRGRD),         &
-               IFLSTI(NRINP),         &
-               IFLSTL(NRINP),         &
-               IFLSTR(NRINP), STAT=ISTAT )
+         BPSTGE(NGRIDS,NGRIDS), &
+         HGSTGE(NGRIDS,NGRIDS), &
+         EQSTGE(NGRIDS,NGRIDS), &
+         BCDUMP(NRGRD),         &
+         IFLSTI(NRINP),         &
+         IFLSTL(NRINP),         &
+         IFLSTR(NRINP), STAT=ISTAT )
     CHECK_ALLOC_STATUS ( ISTAT )
     if (w3_mpi_flag) then
        ALLOCATE ( NBISTA(NGRIDS), &
-                  HGHSTA(NGRIDS), &
-                  EQLSTA(NGRIDS), STAT=ISTAT )
+            HGHSTA(NGRIDS), &
+            EQLSTA(NGRIDS), STAT=ISTAT )
        CHECK_ALLOC_STATUS ( ISTAT )
     end if
     NMDATA = NGRIDS
@@ -721,8 +721,8 @@ CONTAINS
     ! Formats
     !
 1001 FORMAT (/' *** ERROR WMNDAT : NGRIDS NOT YET SET *** '/         &
-              '                    NGRIDS = ',I10/                   &
-              '                    RUN W3NMOD FIRST'/)
+         '                    NGRIDS = ',I10/                   &
+         '                    RUN W3NMOD FIRST'/)
     !
 9000 FORMAT (' TEST WMNDAT : SETTING UP FOR ',I4,' GRIDS') ! W3_T
     !/

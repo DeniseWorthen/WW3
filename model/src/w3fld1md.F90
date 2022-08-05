@@ -14,26 +14,26 @@ Module W3FLD1MD
   !/                                                      ( B. G. Reichl )
   !/    27-Jul-2016 : Added Charnock output  (J.Meixner)  ( version 5.12 )
   !/    22-Jun-2018 : updated SIG2WN subroutine (X.Chen)  ( version 6.06 )
-  !/                  modified the range of wind profile computation; 
+  !/                  modified the range of wind profile computation;
   !/                  corrected direction of the shortest waves
   !/    22-Mar-2021 : Consider DAIR a variable            ( version 7.13 )
-  !/                  
+  !/
   !/
   !/    Copyright 2009 National Weather Service (NWS),
   !/       National Oceanic and Atmospheric Administration.  All rights
-  !/       reserved.  WAVEWATCH III is a trademark of the NWS. 
+  !/       reserved.  WAVEWATCH III is a trademark of the NWS.
   !/       No unauthorized use without permission.
   !/
   !  1. Purpose :
   !
   !     This Module contains routines to compute the wind stress vector
-  !     from the wave spectrum, the wind vector, and the lower atmospheric 
+  !     from the wave spectrum, the wind vector, and the lower atmospheric
   !     stability (the form included here is for neutral conditions, but
-  !     the structure needed to include stability is included in comments).  
+  !     the structure needed to include stability is included in comments).
   !     The stress calculated via this subroutine is
   !     intended for coupling to serve as the boundary condition
   !     between the ocean and atmosphere, and (for now)
-  !     and has no impact on the wave spectrum calculated. 
+  !     and has no impact on the wave spectrum calculated.
   !     The calculation in w3fld1 is based on the method
   !     presented in Reichl, Hara, and Ginis (2014), "Sea State Dependence
   !     of the Wind Stress under Hurricane Winds."
@@ -82,9 +82,9 @@ Module W3FLD1MD
   !$omp threadprivate(Tail_Choice)
 #endif
   REAL, SAVE    :: Tail_Level !if Tail_Choice=0, tail is constant
-  REAL, SAVE    :: Tail_transition_ratio1! freq/fpi where tail 
+  REAL, SAVE    :: Tail_transition_ratio1! freq/fpi where tail
   !  adjustment begins
-  REAL, SAVE    :: Tail_transition_ratio2! freq/fpi where tail 
+  REAL, SAVE    :: Tail_transition_ratio2! freq/fpi where tail
   !  adjustment ends
 #ifdef W3_OMPG
   !$omp threadprivate(Tail_Level)
@@ -94,7 +94,7 @@ Module W3FLD1MD
 CONTAINS
 
   !/ ------------------------------------------------------------------- /
-  SUBROUTINE W3FLD1( ASPC, FPI, WNDX,WNDY, ZWND,               & 
+  SUBROUTINE W3FLD1( ASPC, FPI, WNDX,WNDY, ZWND,               &
        DEPTH, RIB, DAIR, UST, USTD, Z0,               &
        TAUNUX, TAUNUY, CHARN)
     !/
@@ -126,8 +126,8 @@ CONTAINS
     !     Parameter list
     !     ----------------------------------------------------------------
     !       ASPC    Real   I   1-D Wave action spectrum.
-    !       FPI     Real   I   Peak input frequency. 
-    !       WNDX    Real   I   X-dir wind (assumed referenced to current)    
+    !       FPI     Real   I   Peak input frequency.
+    !       WNDX    Real   I   X-dir wind (assumed referenced to current)
     !       WNDY    Real   I   Y-dir wind (assumed referenced to current)
     !       ZWND    Real   I   Wind height.
     !       DEPTH   Real   I   Water depth.
@@ -140,7 +140,7 @@ CONTAINS
     !       UST     Real   O   Friction velocity.
     !       USTD    Real   O   Direction of friction velocity.
     !       Z0      Real   O   Surface roughness length
-    !       CHARN   Real   O,optional    Charnock parameter 
+    !       CHARN   Real   O,optional    Charnock parameter
     !     ----------------------------------------------------------------
     !
     !  4. Subroutines used :
@@ -189,14 +189,14 @@ CONTAINS
     !/
     REAL, INTENT(IN)            :: ASPC(NSPEC), WNDX, WNDY
     REAL, INTENT(IN)            :: ZWND, DEPTH, RIB, DAIR, FPI
-    REAL, INTENT(OUT)           :: UST, USTD, Z0 
+    REAL, INTENT(OUT)           :: UST, USTD, Z0
     REAL, INTENT(INOUT)         :: TAUNUX, TAUNUY
     REAL, INTENT(OUT), OPTIONAL :: CHARN
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    REAL, PARAMETER         ::  NU=0.105/10000.0 
+    REAL, PARAMETER         ::  NU=0.105/10000.0
     REAL, PARAMETER         ::  DELTA=0.03
     ! Commonly used parameters
     REAL                    ::  wnd_in_mag, wnd_in_dir
@@ -210,7 +210,7 @@ CONTAINS
                                 USTSM, Z0SM, Z1
     !For stress calculation
     REAL                    ::  WAGE, CBETA, BP, CD,       &
-                                USTRB, ANGDIF, USTAR, ZNU, & 
+                                USTRB, ANGDIF, USTAR, ZNU, &
                                 TAUT, TAUX, TAUY, BETAG, TAUDIR, &
                                 TAUDIRB
     !For wind profile calculation
@@ -282,8 +282,8 @@ CONTAINS
     ! 1.  Attach Tail ---------------------------------------------------- *
     !
     ! If the depth remains constant, the allocation could be limited to the
-    !   first time step.  Since this code is designed for coupled 
-    !   implementation where the water level can change, I keep it the 
+    !   first time step.  Since this code is designed for coupled
+    !   implementation where the water level can change, I keep it the
     !   allocation on every time step.  When computational efficiency is
     !   important, this process may be rethought.
     !
@@ -291,7 +291,7 @@ CONTAINS
     call sig2wn(sig(nk),depth,kmax)
     NKT = NK
     ! ii. Find additional wavenumber bins to extended to cm scale waves
-    DO WHILE ( KMAX .LT. 366.0 ) 
+    DO WHILE ( KMAX .LT. 366.0 )
        NKT = NKT + 1
        KMAX = ( KMAX * XFR**2 )
     ENDDO!K<366
@@ -323,7 +323,7 @@ CONTAINS
     DWN(NKT) = WN(NKT)*XFR**2 - WN(NKT)
     !
     ! 1b. Attach initial tail--------------------------------------------- *
-    ! 
+    !
     !i. Convert action spectrum to variance spectrum
     !   SPC(k,theta) = A(k,theta) * sig(k)
     ! This could be redone for computational efficiency
@@ -371,7 +371,7 @@ CONTAINS
     !
     ! 2.  Prepare for iterative calculation of wave-form stress----------- *
     !
-    DTX = 0.00005 
+    DTX = 0.00005
     DTY = 0.00005
     iter_thresh = 0.001
     !
@@ -424,7 +424,7 @@ CONTAINS
           !|-----Calculate first guess at growth rate and local turbulent stress-|
           !|-----for integration as a function of wavedirection------------------|
           !|---------------------------------------------------------------------|
-          DO ZI = 2, NKT 
+          DO ZI = 2, NKT
              USTL=0.0
              TLTND(zi)=0.0
              TLTED(zi)=0.0
@@ -543,7 +543,7 @@ CONTAINS
                    TLTE(ZI)=TAUNUX+TLTEA(ZI)
                 endif
              ENDDO
-             TAUY=TLTN(NKT) !by NKT full stress is entirely 
+             TAUY=TLTN(NKT) !by NKT full stress is entirely
              TAUX=TLTE(NKT) !from turbulent stress
              TAUT=SQRT(TAUY**2.0+TAUX**2.0)
              USTAR=SQRT(SQRT(TAUY**2.0+TAUX**2.0)/DAIR)
@@ -621,10 +621,10 @@ CONTAINS
              VPROF(ZI) = VPROF(ZI-1) + VP(ZI) * ( ZOFK(Z2) - ZOFK(Z2+1) )
           ENDDO
           !|---------------------------------------------------------------------|
-          !|----Iteration completion/checks--------------------------------------| 
+          !|----Iteration completion/checks--------------------------------------|
           !|---------------------------------------------------------------------|
           !ZI = ( KB + 1 )
-          ! Now solving for 'ZWND' height wind 
+          ! Now solving for 'ZWND' height wind
           UPROF(NKT+1) = UPROF(NKT) + ( SQRT( SQRT( TAUY**2.0 + &
                TAUX**2.0 ) / DAIR ) ) / KAPPA * TAUX &
                / SQRT( TAUY**2.0 +TAUX**2.0 ) * LOG( ZWND &
@@ -1184,7 +1184,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     wn1=sig**2/GRAV
     SWITCH=.true.
-    !/ Updated code with Newton's method by XYC: 
+    !/ Updated code with Newton's method by XYC:
     if (tanh(wn1*depth) .LT. 0.99) then
        do while (SWITCH)
           fk=grav*wn1*tanh(wn1*depth) - sig**2
@@ -1194,7 +1194,7 @@ CONTAINS
 
           if (abs(wn2-wn1)/wn1 .LT. 0.0001 ) then
              SWITCH = .FALSE.
-          else 
+          else
              wn1=wn2
           endif
        enddo
@@ -1219,7 +1219,7 @@ CONTAINS
     !                    dsigdk=(sig2-sig1)/(wn2-wn1)
     !                    WN1=WN1+(SIG2-SIG1)/dsigdk
     !                    wn2=wn1+wn1*0.00001
-    !                 else 
+    !                 else
     !                    SWITCH = .FALSE.
     !                 endif
     !              endif
@@ -1249,15 +1249,15 @@ CONTAINS
     !     Get bulk momentum z0 from 10-m wind.
     !          Bulk stress corresponds to 2015 GFDL Hurricane model
     !          Not published yet, but contact Brandon Reichl or
-    !          Isaac Ginis (Univ. of Rhode Island) for further info 
+    !          Isaac Ginis (Univ. of Rhode Island) for further info
     !
     !  2. Method :
-    !          This has now been updated for 2016 HWRF z0 using routines 
+    !          This has now been updated for 2016 HWRF z0 using routines
     !          from HWRF  znot_m_v1, Biju Thomas, 02/07/2014
     !           and       znot_wind10m Weiguo Wang, 02/24/2016
     !
     !  3. Parameters :
-    !       Name  Unit  Type      Description 
+    !       Name  Unit  Type      Description
     !     ----------------------------------------------------------------
     !       W10M   m/s  input    10 m neutral wind [m/s]
     !       ZNOTM  m    output   Roughness scale for momentum
@@ -1274,7 +1274,7 @@ CONTAINS
     !      Name      Type  Module   Description
     !     ----------------------------------------------------------------
     !      W3FLD1    Subr. W3FLD1MD Corresponding source term.
-    !      W3FLD2    Subr. W3FLD2MD Corresponding source term. 
+    !      W3FLD2    Subr. W3FLD2MD Corresponding source term.
     !     ----------------------------------------------------------------
     !
     !  6. Error messages :
@@ -1316,12 +1316,16 @@ CONTAINS
     REAL, PARAMETER :: cf4 = 7.107636825694182e-06
     REAL, PARAMETER :: cf5 = -0.0013914681964973246
     REAL, PARAMETER :: cf6 = 0.0406766967657759
-
+    !
     !Variables from znot_wind10m
     REAL            :: Z10, U10,AAA,TMP
+    !
+    INTEGER         :: IENT = 0 ! W3_S
+    !/ ------------------------------------------------------------------- /
 
-    INTEGER, SAVE           :: IENT = 0 ! W3_S
-    CALL STRACE (IENT, 'WND2Z0M')
+    if (w3_s_flag) then
+       CALL STRACE (IENT, 'WND2Z0M')
+    end if
 
     !Values as set in znot_wind10m
     Z10=10.0
@@ -1341,9 +1345,9 @@ CONTAINS
             cf1*U10**5 + cf0*U10**6
     END IF
 
-    !Modifications as in znot_wind10m for icoef_sf=4 
+    !Modifications as in znot_wind10m for icoef_sf=4
 
-    !for wind<20, cd similar to icoef=2 at 10m, then reduced 
+    !for wind<20, cd similar to icoef=2 at 10m, then reduced
     TMP=0.4*0.4/(ALOG(10.0/ZNOTM))**2   ! cd at zlev
     AAA=0.75
     IF (U10 < 20) THEN
@@ -1368,7 +1372,7 @@ CONTAINS
     !/
     !  1. Purpose :
     !
-    !     Gives level of saturation spectrum to produce 
+    !     Gives level of saturation spectrum to produce
     !         equivalent Cd as in wnd2z0m (for neutral 10m wind)
     !         tuned for method of Reichl et al. 2014
     !
@@ -1418,12 +1422,14 @@ CONTAINS
     !/
     REAL, INTENT(IN) :: WND10
     REAL, INTENT(OUT) :: SAT
-    INTEGER, SAVE           :: IENT = 0 ! W3_S
+    !
+    INTEGER :: IENT = 0 ! W3_S
+    !/ ------------------------------------------------------------------- /
     !
     if (w3_s_flag) then
        CALL STRACE (IENT, 'WND2SAT')
     end if
-    !/ Old HWRF 2015 and ST2 
+    !/ Old HWRF 2015 and ST2
     !        SAT =0.000000000001237 * WND10**6 +&
     !             -0.000000000364155 * WND10**5 +&
     !             0.000000037435015 * WND10**4 +&
@@ -1432,7 +1438,7 @@ CONTAINS
     !             0.000778467452178 * WND10**1 +&
     !             0.002962335390055
     !
-    !     SAT values based on 
+    !     SAT values based on
     !     HWRF 2016 CD curve, created with  fetch limited cases ST4 physics
     IF (WND10<20.0) THEN
        SAT = -0.000018541921682*WND10**2  &

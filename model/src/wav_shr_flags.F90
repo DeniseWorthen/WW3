@@ -1059,6 +1059,12 @@ module wav_shr_flags
    logical ::  w3_O7a_flag = .false.     !< @public a flag for "W3_O7A"
 #endif
 
+#ifdef W3_O7B
+   logical ::  w3_O7b_flag = .true.      !< @public a flag for "W3_O7B"
+#else
+   logical ::  w3_O7b_flag = .false.     !< @public a flag for "W3_O7B"
+#endif
+
 #ifdef W3_01
    logical ::  w3_01_flag = .true.      !< @public a flag for "W3_01"
 #else
@@ -1190,10 +1196,16 @@ contains
    end subroutine print_logmsg_4line
 
   !========================================================================
-!> Write memory statistics if requisted
-!!
-!> @details Writes a single line of memory statistics to unit 40000+iaproc
-!!
+  !> Write memory statistics if requested
+  !!
+  !> @details Writes a single line of memory statistics to unit 40000+iaproc
+  !!
+  !! @param[in]   iun               unit number
+  !! @param[in]   msg               message
+  !!
+  !> @author mvertens@ucar.edu, Denise.Worthen@noaa.gov
+  !> @date 06-01-2022
+
    subroutine print_memcheck(iun, msg)
 #if W3_MEMCHECK
      USE MallocInfo_m

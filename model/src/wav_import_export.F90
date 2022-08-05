@@ -13,6 +13,7 @@ module wav_import_export
   use ESMF
   use NUOPC
   use NUOPC_Model
+  use wav_shr_flags
   use wav_kind_mod , only : r8 => shr_kind_r8, r4 => shr_kind_r4, i4 => shr_kind_i4
   use wav_kind_mod , only : CL => shr_kind_cl, CS => shr_kind_cs
   use wav_shr_mod  , only : ymd2date
@@ -20,6 +21,7 @@ module wav_import_export
   use wav_shr_mod  , only : state_diagnose, state_reset, state_getfldptr, state_fldchk
   use wav_shr_mod  , only : wav_coupling_to_cice, merge_import, dbug_flag, multigrid
   use constants    , only : grav, tpi, dwat
+  use wav_shr_flags, only : w3_cesmcoupled_flag
 
   implicit none
   private ! except
@@ -55,12 +57,6 @@ module wav_import_export
 
   real(r4), allocatable  :: import_mask(:)          !< the mask for valid import data
   real(r8), parameter    :: zero  = 0.0_r8          !< a named constant
-
-#ifdef W3_CESMCOUPLED
-  logical :: cesmcoupled = .true.                   !< logical defining a CESM use case
-#else
-  logical :: cesmcoupled = .false.                  !< logical defining a non-CESM use case (UWM)
-#endif
 
   integer, parameter :: nwav_elev_spectrum = 25     !< the size of the wave spectrum exported if coupling
                                                     !! waves to cice6
@@ -111,7 +107,7 @@ contains
     call fldlist_add(fldsToWav_num, fldsToWav, 'So_v'       )
     call fldlist_add(fldsToWav_num, fldsToWav, 'So_t'       )
     call fldlist_add(fldsToWav_num, fldsToWav, 'Sa_tbot'    )
-    if (cesmcoupled) then
+    if (w3_cesmcoupled_flag) then
        call fldlist_add(fldsToWav_num, fldsToWav, 'Sa_u'       )
        call fldlist_add(fldsToWav_num, fldsToWav, 'Sa_v'       )
        call fldlist_add(fldsToWav_num, fldsToWav, 'So_bldepth' )
@@ -136,7 +132,7 @@ contains
     !--------------------------------
 
     call fldlist_add(fldsFrWav_num, fldsFrWav, trim(flds_scalar_name))
-    if (cesmcoupled) then
+    if (w3_cesmcoupled_flag) then
        call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_lamult' )
        call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_ustokes')
        call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_vstokes')
@@ -275,8 +271,11 @@ contains
     use w3idatmd    , only: HML
 #else
     use wmupdtmd    , only: wmupd2
-    use wmmdatmd    , only: wmsetm, mpi_comm_grd
+    use wmmdatmd    , only: wmsetm
     use wmmdatmd    , only: mdse, mdst, nrgrd, inpmap
+#ifdef W3_MPI
+    use wmmdatmd    , only: mpi_comm_grd
+#endif
 #endif
 
     ! input/output variables
@@ -304,7 +303,7 @@ contains
     rc = ESMF_SUCCESS
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
 
-    if (cesmcoupled) then
+    if (w3_cesmcoupled_flag) then
        uwnd = 'Sa_u'
        vwnd = 'Sa_v'
     else
@@ -474,6 +473,7 @@ contains
           call FillGlobalInput(global_data, ICEI)
        end if
     end if
+
 #ifdef W3_CESMCOUPLED
     ! ---------------
     ! ocean boundary layer depth - always assume that this is being imported for CESM
@@ -553,14 +553,15 @@ contains
                 !TODO: when is this active? jmod = -999
                 jmod = inpmap(imod,j)
                 if ( jmod.lt.0 .and. jmod.ne.-999 ) then
-                  call wmupd2( imod, j, jmod, rc )
-                  if (ChkErr(rc,__LINE__,u_FILE_u)) return
+                   call wmupd2( imod, j, jmod, rc )
+                   if (ChkErr(rc,__LINE__,u_FILE_u)) return
                 endif
              end do
           end if
        end do
     end if
 #endif
+
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
 
   end subroutine import_fields
@@ -641,7 +642,7 @@ contains
     call NUOPC_ModelGet(gcomp, exportState=exportState, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
-#ifndef W3_CESMCOUPLED
+#ifndef CESMCOUPLED
     call w3setg ( 1, mdse, mdst )
     call w3setw ( 1, mdse, mdst )
     call w3seta ( 1, mdse, mdst )
@@ -650,7 +651,9 @@ contains
     if (multigrid) then
        call wmsetm ( 1, mdse, mdst )
     end if
-#else
+#endif
+
+#ifdef W3_CESMCOUPLED
     if (state_fldchk(exportState, 'Sw_lamult')) then
        call state_getfldptr(exportState, 'Sw_lamult', sw_lamult, rc=rc)
        if (ChkErr(rc,__LINE__,u_FILE_u)) return

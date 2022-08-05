@@ -409,8 +409,7 @@ CONTAINS
     USE W3ODATMD    , only : TOFRST, TONEXT, TBPIN, TBPI0, TOLAST, DTOUT, NAPFLD, NAPPNT
     USE W3ODATMD    , only : NRQGO, NRQGO2, IRQGO, IRQGO2, NRQPO, NRQPO2, IRQPO1, IRQPO2 ! W3_MPI
     USE W3ODATMD    , only : NRQRS, IRQRS, IRQPO1, NRQBP, IRQBP1, IRQBP2, NRQBP2         ! W3_MPI
-    use w3odatmd    , only : user_histalarm, user_restalarm
-    use w3odatmd    , only : histwr, rstwr, user_gridncout
+    use w3odatmd    , only : user_netcdf_grdout, rstwr
     USE W3ODATMD    , only : W3SETO
     !
     USE W3GDATMD    , only : RLGTYPE, SX, SY, CLGTYPE, HPFAC, HQFAC, REFLC, REFLD  ! W3_REF1
@@ -492,7 +491,7 @@ CONTAINS
     USE MallocInfo_m
 #endif
 #ifdef W3_SETUP
-    USE W3WAVSET, only: WAVE_SETUP_COMPUTATION
+    USE W3WAVSET, only : WAVE_SETUP_COMPUTATION
 #endif
 #ifdef W3_OASIS
     USE W3OACPMD, ONLY: ID_OASIS_TIME, CPLT0
@@ -506,6 +505,8 @@ CONTAINS
 #ifdef W3_OASICM
     USE W3IGCMMD, ONLY: SND_FIELDS_TO_ICE
 #endif
+    use w3iogoncdmd   , only : w3iogoncd
+    use w3odatmd      , only : user_netcdf_grdout
     !
     IMPLICIT NONE
     !
@@ -586,7 +587,7 @@ CONTAINS
     REAL                 :: BACANGL    ! only for  W3_SMC
     integer              :: loop_count
     !
-    logical :: setup_mpi_write, write_now
+    logical :: setup_mpi_write
     logical :: do_gridded_output
     logical :: do_point_output
     logical :: do_track_output
@@ -1169,9 +1170,9 @@ CONTAINS
              DTTST2 = DSEC21 ( TG0, TGN )
              FAC    = DTTST1 / MAX ( 1. , DTTST2 )
              VGX    = (FAC*GA0+(1.-FAC)*GAN) * &
-                   COS(FAC*GD0+(1.-FAC)*GDN)
+                  COS(FAC*GD0+(1.-FAC)*GDN)
              VGY    = (FAC*GA0+(1.-FAC)*GAN) * &
-                   SIN(FAC*GD0+(1.-FAC)*GDN)
+                  SIN(FAC*GD0+(1.-FAC)*GDN)
           END IF
           if (w3_timings_flag) then
              CALL PRINT_MY_TIME("After VGX/VGY assignation")
@@ -2572,7 +2573,6 @@ CONTAINS
           !
 380       CONTINUE
           !
-! i am here
 
           if (w3_debugrun_flag) then
              WRITE(740+IAPROC,*) 'W3WAVE, step 6.20'
@@ -2708,16 +2708,8 @@ CONTAINS
           NRQMAX = 0
           !
           setup_mpi_write = .false.
-          if (user_histalarm ) then
-             if (  histwr .and. (FLOUT(1) .OR.  FLOUT(7)) ) then
-                setup_mpi_write = .true.
-             end if
-          else
-             IF ( ( (DSEC21(TIME,TONEXT(:,1)).EQ.0.) .AND. FLOUT(1) ) .OR. &
-                  ( (DSEC21(TIME,TONEXT(:,7)).EQ.0.) .AND. FLOUT(7) .AND. SBSED ) ) then
-                setup_mpi_write = .true.
-             end IF
-          end if
+          IF ( ( (DSEC21(TIME,TONEXT(:,1)).EQ.0.) .AND. FLOUT(1) ) .OR. &
+               (  (DSEC21(TIME,TONEXT(:,7)).EQ.0.) .AND. FLOUT(7) .AND. SBSED ) ) setup_mpi_write = .true.
 
           if (setup_mpi_write ) then
              IF (.NOT. LPDLIB .or. (GTYPE.ne.UNGTYPE)) THEN
@@ -2727,7 +2719,6 @@ CONTAINS
                            NRQGO, IRQGO, GTYPE, UNGTYPE, .NOT. LPDLIB .or. (GTYPE.ne.UNGTYPE)
                    end if
                    CALL MPI_STARTALL ( NRQGO, IRQGO , IERR_MPI )
-                   !if(histwr) print *,'histwr mpi_startall', histwr, NRQGO, IERR_MPI'
                    if (w3_debugrun_flag) then
                       WRITE(740+IAPROC,*) 'AFTER STARTALL NRQGO.NE.0, step 0'
                    end if
@@ -2746,7 +2737,6 @@ CONTAINS
 
                    CALL MPI_STARTALL ( NRQGO2, IRQGO2, IERR_MPI )
 
-                   !if(histwr) print *,'histwr mpi_startall', histwr, NRQGO2, IERR_MPI'
                    if (w3_debugrun_flag) then
                       WRITE(740+IAPROC,*) 'AFTER STARTALL NRQGO2.NE.0, step 0'
                    end if
@@ -2765,6 +2755,7 @@ CONTAINS
 #endif
              END IF ! IF (.NOT. LPDLIB .or. (GTYPE.ne.UNGTYPE))
           END IF ! if (setup_mpi_write )
+
           call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP1')
           !
           if (w3_debugrun_flag) then
@@ -2900,47 +2891,33 @@ CONTAINS
 #endif
                 TOUT(:) = TONEXT(:,J)
                 DTTST   = DSEC21 ( TIME, TOUT )
-                !
-                write(6,*)'DEBUG: J,TONEXT = ',j,tonext(:,j)
 
+                !
                 IF ( DTTST .EQ. 0. ) THEN
 
                    if (do_gridded_output) then
 
-                      if (user_gridncout) then
-                         ! if using alarms, restrict output writing to alarm
-                         ! frequencies, otherwise native (inp) frequencies will
-                         ! be used
-                         write_now = .false.
-                         if (user_histalarm) then
-                            if ( histwr .and. j .ne. 7) then
-                               write_now = .true.
-                            end if
-                         else
-                            write_now = .true.
-                         end if
-                         if (write_now) then
+                      if (user_netcdf_grdout) then
 #ifdef W3_MPI
-                            CALL MPI_WAITALL( NRQGO, IRQGO, STATIO, IERR_MPI )
-                            FLGMPI(0) = .FALSE.
+                         CALL MPI_WAITALL( NRQGO, IRQGO, STATIO, IERR_MPI )
+                         FLGMPI(0) = .FALSE.
 #endif
-                            IF ( IAPROC .EQ. NAPFLD ) THEN
+                         IF ( IAPROC .EQ. NAPFLD ) THEN
 #ifdef W3_MPI
-                               IF ( FLGMPI(1) ) CALL MPI_WAITALL( NRQGO2, IRQGO2, STATIO, IERR_MPI )
-                               FLGMPI(1) = .FALSE.
+                            IF ( FLGMPI(1) ) CALL MPI_WAITALL( NRQGO2, IRQGO2, STATIO, IERR_MPI )
+                            FLGMPI(1) = .FALSE.
 #endif
-                               CALL W3IOGONCD ()
-                            END IF
-                         end if
-                         ! default (binary) output
-                      else
+                            write(6,*)'DEBUG: here1'
+                            CALL W3IOGONCD ()
+                            write(6,*)'DEBUG: here2'
+                         END IF
+                      else ! default (binary) output
 
                          IF ( IAPROC .EQ. NAPFLD ) THEN
 #ifdef W3_MPI
                             IF ( FLGMPI(1) ) CALL MPI_WAITALL( NRQGO2, IRQGO2, STATIO, IERR_MPI )
                             FLGMPI(1) = .FALSE.
 #endif
-                            !
                             if (w3_sbs_flag) then
                                IF ( J .EQ. 1 ) THEN
                                   CALL W3IOGO( 'WRITE', NDS(7), ITEST, IMOD )
@@ -2953,9 +2930,12 @@ CONTAINS
                                     // IDTIME(12:13) // '.' // TRIM(FILEXT)
                                OPEN( UNIT=NDSOFLG, FILE=FOUTNAME)
                                CLOSE( NDSOFLG )
-                            end if
-                         END IF
-                      end if ! user_grdncout
+                            else
+                               CALL W3IOGO( 'WRITE', NDS(7), ITEST, IMOD )
+                            endif
+
+                         end if
+                      end if ! user_netcdf_grdout
 
                    ELSE IF ( J .EQ. 2 ) THEN
 
@@ -2972,12 +2952,7 @@ CONTAINS
                       CALL W3IOTR ( NDS(11), NDS(12), VA, IMOD )
 
                    ELSE IF ( J .EQ. 4 ) THEN
-
-                      if (user_restalarm ) then
-                         if (rstwr) CALL W3IORS ('HOT', NDS(6), XXX,  IMOD, FLOUT(8) )
-                      else
-                         CALL W3IORS ('HOT', NDS(6), XXX, IMOD, FLOUT(8) )
-                      end if
+                      CALL W3IORS('HOT', NDS(6), XXX, IMOD, FLOUT(8) )
                       ITEST = RSTYPE
 
                    ELSE IF ( J .EQ. 5 ) THEN
@@ -3107,7 +3082,7 @@ CONTAINS
           IF ( FLGMPI(0) ) then
              CALL MPI_WAITALL( NRQGO, IRQGO , STATIO, IERR_MPI )
           end IF
-          if (user_gridncout) then
+          if (user_netcdf_grdout) then
              if ( FLGMPI(1) .and. ( IAPROC .EQ. NAPFLD ) ) then
                 CALL MPI_WAITALL ( NRQGO2, IRQGO2 , STATIO, IERR_MPI )
              end IF
@@ -3145,6 +3120,7 @@ CONTAINS
        !
        IF ( IAPROC.EQ.NAPLOG ) THEN
           !
+          write(6,*)'DEBUG: here1'
           CALL STME21 ( TIME , IDTIME )
           IF ( FLCUR ) THEN
              DTTST  = DSEC21 ( TIME , TCN )
@@ -3185,11 +3161,15 @@ CONTAINS
        ! 6.  If time is not ending time, branch back to 2 ------------------- /
        !
        DTTST  = DSEC21 ( TIME, TEND )
+       write(6,*)'DEBUG: TIME= ',TIME
+       write(6,*)'DEBUG: TEND= ',TEND
+       write(6,*)'DEBUG: DTTST= ',DTTST
        IF ( DTTST .EQ. 0. ) EXIT
        if (w3_timings_flag) then
           CALL PRINT_MY_TIME("Continuing the loop")
        end if
-    END DO
+       write(6,*)'DEBUG: continuing the loop'
+    END DO  ! DO statement at 2. 
     call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP5')
     !
     IF ( TSTAMP .AND. SCREEN.NE.NDSO .AND. IAPROC.EQ.NAPOUT ) THEN
