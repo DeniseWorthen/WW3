@@ -80,8 +80,8 @@ add_compile_definitions(W3_IS0)
 add_compile_definitions(W3_REF0)
 add_compile_definitions(ENDIANNESS="big_endian")
 # add for debugging
-#add_compile_definitions(W3_DEBUGINIT)
-#add_compile_definitions(W3_DEBUGIO)
+# add_compile_definitions(W3_DEBUGINIT)
+# add_compile_definitions(W3_DEBUGIO)
 
 set_property(SOURCE w3initmd.F90
   APPEND
@@ -110,6 +110,15 @@ set(SRCFILES constants.F90
              w3src3md.F90
              w3src4md.F90
              w3src6md.F90
+# for multi grid
+             wmgridmd.F90
+             wminiomd.F90             
+             wmiopomd.F90
+             wminitmd.F90
+             wmmdatmd.F90
+             wmunitmd.F90
+             wmupdtmd.F90
+             wmwavemd.F90
 # for ww3_grid.F90
              w3gridmd.F90 
              w3nmlgridmd.F90
