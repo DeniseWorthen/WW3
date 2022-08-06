@@ -3075,7 +3075,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
+#ifdef W3_MPI
     INTEGER :: STATUS(MPI_STATUS_SIZE,NSPEC) ! W3_MPI
+#endif
     INTEGER :: IOFF, IERR_MPI, JSEA, ISEA
     INTEGER :: IXY, IS0, IB0, NPST, J
     INTEGER :: IENT                          ! W3_S
@@ -3292,7 +3294,10 @@ CONTAINS
     !/ Local parameters
     !/
     INTEGER :: ISEA, IXY, IOFF, IERR_MPI, J 
-    INTEGER :: STATUS(MPI_STATUS_SIZE,NSPEC), JSEA, IB0 ! W3_MPI
+#ifdef W3_MPI
+    INTEGER :: STATUS(MPI_STATUS_SIZE,NSPEC)
+#endif
+    INTEGER :: JSEA, IB0 ! W3_MPI
     INTEGER :: IENT ! W3_S
     LOGICAL :: DONE ! W3_MPI
     !/

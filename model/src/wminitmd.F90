@@ -2005,7 +2005,7 @@ CONTAINS
           mpi_comm_grd_not_null = .false.
        end if
 #else
-       mpi_comm_grid_not_null = .false. ! This is needed just for compilation
+       mpi_comm_grd_not_null = .false. ! This is needed just for compilation
 #endif
        !
        DO II=IP1, IPN

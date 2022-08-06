@@ -40,10 +40,10 @@ message("ESMF_F90COMPILEPATHS:   ${ESMF_F90COMPILEPATHS}")
 add_compile_definitions(W3_CESMCOUPLED)
 add_compile_definitions(W3_NCO)
 #
-add_compile_definitions(W3_DIST)
-add_compile_definitions(W3_MPI)
+#add_compile_definitions(W3_DIST)
+#add_compile_definitions(W3_MPI)
 #
-#add_compile_definitions(W3_SHRD)
+add_compile_definitions(W3_SHRD)
 #
 add_compile_definitions(W3_OMPG)
 add_compile_definitions(W3_OMPH)

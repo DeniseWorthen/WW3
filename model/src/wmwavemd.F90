@@ -1868,17 +1868,19 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER :: ITAG, IP, IERR_MPI, STATUS(MPI_STATUS_SIZE) ! W3_MPI
-    INTEGER :: IENT = 0 ! W3_S
-    !/ ------------------------------------------------------------------- /
-    !/
-    if (w3_s_flag) then
-       CALL STRACE (IENT, 'WMBCST')
-    end if
+#ifdef W3_MPI
+    INTEGER :: STATUS(MPI_STATUS_SIZE)
+#endif
+    INTEGER :: ITAG, IP, IERR_MPI ! W3_MPI
+    INTEGER :: IENT = 0           ! W3_S
     !
     ! -------------------------------------------------------------------- /
     ! 0.  Initializations
     !
+    if (w3_s_flag) then
+       CALL STRACE (IENT, 'WMBCST')
+    end if
+
     if (w3_mpi_flag) then
        ITAG   = MTAGB + IMOD + ID*NMOD
     end if
@@ -2012,13 +2014,10 @@ CONTAINS
     !
     USE W3ADATMD, ONLY: W3SETA
     USE W3ADATMD, ONLY: MPI_COMM_WAVE
-    !
     USE W3ODATMD, ONLY: W3SETO                 ! W3_MPI
     USE W3ODATMD, ONLY: IAPROC, NAPROC, NTPROC ! W3_MPI
-    !
     USE WMMDATMD, ONLY: MDST, MDSE, MTAGB
     use WMMDATMD, only: mpi_comm_grd_not_null  ! W3_MPI
-    !
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
     IMPLICIT NONE
@@ -2035,7 +2034,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER :: ITAG, IP, IERR_MPI, STATUS(MPI_STATUS_SIZE) ! W3_MPI
+#ifdef W3_MPI
+    INTEGER :: STATUS(MPI_STATUS_SIZE)
+#endif
+    INTEGER :: ITAG, IP, IERR_MPI ! W3_MPI
     INTEGER :: IENT = 0 ! W3_S
     REAL    :: DUMMY = 999. ! W3_MPI
     !/

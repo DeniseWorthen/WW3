@@ -305,24 +305,14 @@ CONTAINS
 #ifdef W3_MPI
        FLBARR = FLBARR .OR. MDATAS(I)%FBCAST
        IF ( MDATAS(I)%FBCAST .AND.  MDATAS(I)%MPI_COMM_BCT.NE.MPI_COMM_NULL ) THEN
-          NXYG   = GRIDS(I)%NX * GRIDS(I)%NY
-          CALL MPI_BCAST ( GRIDS(I)%MAPSTA(1,1), NXYG,        &
-               MPI_INTEGER, 0,                    &
-               MDATAS(I)%MPI_COMM_BCT, IERR_MPI )
-          CALL MPI_BCAST ( GRIDS(I)%MAPST2(1,1), NXYG,        &
-               MPI_INTEGER, 0,                    &
-               MDATAS(I)%MPI_COMM_BCT, IERR_MPI )
-          CALL MPI_BCAST ( GRIDS(I)%MAPFS (1,1), NXYG,        &
-               MPI_INTEGER, 0,                    &
-               MDATAS(I)%MPI_COMM_BCT, IERR_MPI )
-          NXYG   = 3*GRIDS(I)%NSEA
-          CALL MPI_BCAST ( GRIDS(I)%MAPSF (1,1), NXYG,        &
-               MPI_INTEGER, 0,                    &
-               MDATAS(I)%MPI_COMM_BCT, IERR_MPI )
-          CALL MPI_BCAST ( GRIDS(I)%CLATIS(1), NSEA, MPI_REAL, 0,&
-               MDATAS(I)%MPI_COMM_BCT, IERR_MPI )
-          CALL MPI_BCAST ( SGRDS(I)%SIG(0), NK+2, MPI_REAL, 0,&
-               MDATAS(I)%MPI_COMM_BCT, IERR_MPI )
+          NXYG = GRIDS(I)%NX * GRIDS(I)%NY
+          CALL MPI_BCAST ( GRIDS(I)%MAPSTA(1,1), NXYG, MPI_INTEGER, 0, MDATAS(I)%MPI_COMM_BCT, IERR_MPI )
+          CALL MPI_BCAST ( GRIDS(I)%MAPST2(1,1), NXYG, MPI_INTEGER, 0, MDATAS(I)%MPI_COMM_BCT, IERR_MPI )
+          CALL MPI_BCAST ( GRIDS(I)%MAPFS (1,1), NXYG, MPI_INTEGER, 0, MDATAS(I)%MPI_COMM_BCT, IERR_MPI )
+          NXYG = 3*GRIDS(I)%NSEA
+          CALL MPI_BCAST ( GRIDS(I)%MAPSF (1 ,1), NXYG, MPI_INTEGER, 0, MDATAS(I)%MPI_COMM_BCT, IERR_MPI )
+          CALL MPI_BCAST ( GRIDS(I)%CLATIS(1)   , NSEA, MPI_REAL,    0, MDATAS(I)%MPI_COMM_BCT, IERR_MPI )
+          CALL MPI_BCAST ( SGRDS(I)%SIG(0)      , NK+2, MPI_REAL,    0, MDATAS(I)%MPI_COMM_BCT, IERR_MPI )
        END IF
 #endif
     END DO
@@ -1368,11 +1358,10 @@ CONTAINS
     !KRL  Allocate helper arrays to enable bottleneck loop parallelization
     ALLOCATE ( NX_BEG(NMPROC), NX_END(NMPROC), STAT=ISTAT )
     CHECK_ALLOC_STATUS ( ISTAT )
-    if (w3_mpibdi_flag) then
-       ALLOCATE ( NX_SIZE(NMPROC), IRQ(2*NMPROC), &
-                  MSTAT(MPI_STATUS_SIZE,2*NMPROC), STAT=ISTAT )
-       CHECK_ALLOC_STATUS ( ISTAT )
-    end if
+#ifdef W3_MPIBDI
+    ALLOCATE ( NX_SIZE(NMPROC), IRQ(2*NMPROC), MSTAT(MPI_STATUS_SIZE,2*NMPROC), STAT=ISTAT )
+    CHECK_ALLOC_STATUS ( ISTAT )
+#endif
     !
     !!HT:
     !!HT: Set up and initialize storage data structures ....
@@ -1393,9 +1382,7 @@ CONTAINS
                 CHECK_DEALLOC_STATUS ( ISTAT )
              END IF
              IF ( HGSTGE(GDST,GSRC)%NSND .NE. 0 ) THEN
-                DEALLOCATE (                                         &
-                     HGSTGE(GDST,GSRC)%ISEND ,                          &
-                     STAT=ISTAT )
+                DEALLOCATE ( HGSTGE(GDST,GSRC)%ISEND, STAT=ISTAT )
                 CHECK_DEALLOC_STATUS ( ISTAT )
              END IF
              HGSTGE(GDST,GSRC)%NTOT = 0
@@ -5226,7 +5213,6 @@ CONTAINS
     INTEGER                             :: NR, NT, NA, NTL, JJ, NIT, NG, NOUT
     INTEGER                             :: ISEA, JSEA, IPRC, ITAG, TGRP, NPMX
     INTEGER                             :: IP, NP, ICROOT, JCROOT, IEER
-    INTEGER, Dimension(MPI_STATUS_SIZE) :: MPIState ! W3_MPI
     INTEGER                             :: IENT = 0 ! W3_S
     INTEGER, ALLOCATABLE                :: NREC(:),  NSND(:),  NTPP(:)
     INTEGER, ALLOCATABLE                :: IBPTS(:), JBPTS(:), IPBPT(:)
@@ -5352,9 +5338,7 @@ CONTAINS
           CHECK_ALLOC_STATUS ( ISTAT )
 
           !  Use saved I-grid boundary cell list.
-#ifdef W3_MPI
-          IF( IMPROC .EQ. ICROOT )  THEN
-#endif
+          if ((w3_mpi_flag .and. ( IMPROC .EQ. ICROOT )) .or. .not. w3_mpi_flag) then 
              IF( GRIDS(I)%GTYPE .EQ. RLGTYPE ) THEN
                 !! Loop over regular grid mesh to find boundary points.
                 IXY = 0
@@ -5385,9 +5369,7 @@ CONTAINS
                 end if
                 !
              ENDIF     !!  RLGTYPE
-#ifdef W3_MPI
-          ENDIF  !!  ICROOT
-#endif
+          ENDIF  
           !
           !  All have to wait for ICROOT finishes conversion of cell ids to XLon-YLat 
           if (w3_mpi_flag) then
@@ -5395,18 +5377,13 @@ CONTAINS
           end if
           !
           ! Then broadcast IBPTS, IPBPT, XLon, and YLat to all PEs
-          if (w3_mpi_flag) then
-             CALL MPI_BCAST( IBPTS(1), NT, MPI_INTEGER,  &
-                  ICROOT-1, MPI_COMM_MWAVE, IEER) 
-             CALL MPI_BCAST( JBPTS(1), NT, MPI_INTEGER,  &
-                  ICROOT-1, MPI_COMM_MWAVE, IEER) 
-             CALL MPI_BCAST( IPBPT(1), NT, MPI_INTEGER,  &
-                  ICROOT-1, MPI_COMM_MWAVE, IEER) 
-             CALL MPI_BCAST( XLon(1), NT, MPI_REAL,  &
-                  ICROOT-1, MPI_COMM_MWAVE, IEER) 
-             CALL MPI_BCAST( YLat(1), NT, MPI_REAL,  &
-                  ICROOT-1, MPI_COMM_MWAVE, IEER) 
-          end if
+#ifdef W3_MPI
+             CALL MPI_BCAST( IBPTS(1) , NT, MPI_INTEGER, ICROOT-1, MPI_COMM_MWAVE, IEER) 
+             CALL MPI_BCAST( JBPTS(1) , NT, MPI_INTEGER, ICROOT-1, MPI_COMM_MWAVE, IEER) 
+             CALL MPI_BCAST( IPBPT(1) , NT, MPI_INTEGER, ICROOT-1, MPI_COMM_MWAVE, IEER) 
+             CALL MPI_BCAST( XLon(1)  , NT, MPI_REAL,    ICROOT-1, MPI_COMM_MWAVE, IEER) 
+             CALL MPI_BCAST( YLat(1)  , NT, MPI_REAL,    ICROOT-1, MPI_COMM_MWAVE, IEER) 
+#endif
 
           ! 1.d  Loop over J grids, select same rank
           !
