@@ -1019,11 +1019,11 @@ CONTAINS
     !
     ! 3.d Unified point output
     !
-    if (w3_mprf_flag) then
-       CALL PRTIME ( PRFTN )
-       WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'START Sec. 8.b'
-       PRFT0  = PRFTN
-    end if
+#ifdef W3_MPRF
+    CALL PRTIME ( PRFTN )
+    WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'START Sec. 8.b'
+    PRFT0  = PRFTN
+#endif
     !
     IF ( UNIPTS ) THEN
        !
@@ -2201,11 +2201,11 @@ CONTAINS
     !
     ! 8.  Actual initializations ----------------------------------------- /
     !
-    if (w3_mprf_flag) then
-       CALL PRTIME ( PRFTN )
-       WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'START Sec. 8'
-       PRFT0  = PRFTN
-    end if
+#ifdef W3_MPRF
+    CALL PRTIME ( PRFTN )
+    WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'START Sec. 8'
+    PRFT0  = PRFTN
+#endif
     !
     IF ( MDSS.NE.MDSO .AND. NMPSCR.EQ.IMPROC ) WRITE (MDSS,980)
     ALLOCATE ( TSYNC(2,0:NRGRD), TMAX(2,NRGRD), TOUTP(2,0:NRGRD),   &
@@ -2226,11 +2226,11 @@ CONTAINS
     if (w3_t_flag) then
        WRITE (MDST,9080)
     end if
-    if (w3_mprf_flag) then
-       CALL PRTIME ( PRFTN )
-       WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'START Sec. 8.a'
-       PRFT0  = PRFTN
-    end if
+#ifdef W3_MPRF
+    CALL PRTIME ( PRFTN )
+    WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'START Sec. 8.a'
+    PRFT0  = PRFTN
+#endif
     !
     DO I=1, NRGRD
 
@@ -2629,11 +2629,11 @@ CONTAINS
     !
     ! 8.b Input files
     !
-    if (w3_mprf_flag) then
-       CALL PRTIME ( PRFTN )
-       WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'START Sec. 8.c'
-       PRFT0  = PRFTN
-    end if
+#ifdef W3_MPRF
+    CALL PRTIME ( PRFTN )
+    WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'START Sec. 8.c'
+    PRFT0  = PRFTN
+#endif
     !
     DO I=1, NRINP
        !
@@ -2687,11 +2687,11 @@ CONTAINS
     !
     ! 8.c Inter model initialization
     !
-    if (w3_mprf_flag) then
-       CALL PRTIME ( PRFTN )
-       WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'START Sec. 8.d'
-       PRFT0  = PRFTN
-    end if
+#ifdef W3_MPRF
+    CALL PRTIME ( PRFTN )
+    WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'START Sec. 8.d'
+    PRFT0  = PRFTN
+#endif
 
     ! 8.c.1 Spectral conversion flags and source term flags
     !
@@ -2990,10 +2990,10 @@ CONTAINS
     CALL DATE_AND_TIME ( VALUES=CLKDT2 )
     CLKFIN = TDIFF ( CLKDT1,CLKDT2 )
     !
-    if (w3_mprf_flag) then
-       CALL PRTIME ( PRFTN )
-       WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'END'
-    end if
+#ifdef W3_MPRF
+    CALL PRTIME ( PRFTN )
+    WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'END'
+#endif
     !
     IF ( MDSS.NE.MDSO .AND. NMPSCR.EQ.IMPROC ) WRITE (MDSS,998)
     if (w3_o10_flag) then
@@ -4291,11 +4291,11 @@ CONTAINS
     !
     ! 3.d Unified point output
     !
-    if (w3_mprf_flag) then
-       CALL PRTIME ( PRFTN )
-       WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'START Sec. 8.b'
-       PRFT0  = PRFTN
-    end if
+#ifdef W3_MPRF
+    CALL PRTIME ( PRFTN )
+    WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'START Sec. 8.b'
+    PRFT0  = PRFTN
+#endif
     !
     IF ( UNIPTS ) THEN
        !
@@ -5202,11 +5202,11 @@ CONTAINS
     !
     ! 8.  Actual initializations ----------------------------------------- /
     !
-    if (w3_mprf_flag) then
-       CALL PRTIME ( PRFTN )
-       WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'START Sec. 8'
-       PRFT0  = PRFTN
-    end if
+#ifdef W3_MPRF
+    CALL PRTIME ( PRFTN )
+    WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'START Sec. 8'
+    PRFT0  = PRFTN
+#endif
     !
     IF ( MDSS.NE.MDSO .AND. NMPSCR.EQ.IMPROC ) WRITE (MDSS,980)
     ALLOCATE ( TSYNC(2,0:NRGRD), TMAX(2,NRGRD), TOUTP(2,0:NRGRD),   &
@@ -5227,11 +5227,11 @@ CONTAINS
     if (w3_t_flag) then
        WRITE (MDST,9080)
     end if
-    if (w3_mprf_flag) then
-       CALL PRTIME ( PRFTN )
-       WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'START Sec. 8.a'
-       PRFT0  = PRFTN
-    end if
+#ifdef W3_MPRF
+    CALL PRTIME ( PRFTN )
+    WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'START Sec. 8.a'
+    PRFT0  = PRFTN
+#endif
     !
     DO I=1, NRGRD
        J      = LEN_TRIM(MNAMES(I))
@@ -5623,11 +5623,11 @@ CONTAINS
     !
     ! 8.b Input files
     !
-    if (w3_mprf_flag) then
-       CALL PRTIME ( PRFTN )
-       WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'START Sec. 8.c'
-       PRFT0  = PRFTN
-    end if
+#ifdef W3_MPRF
+    CALL PRTIME ( PRFTN )
+    WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'START Sec. 8.c'
+    PRFT0  = PRFTN
+#endif
     !
     DO I=1, NRINP
        !
@@ -5680,11 +5680,11 @@ CONTAINS
     !
     ! 8.c Inter model initialization
     !
-    if (w3_mprf_flag) then
-       CALL PRTIME ( PRFTN )
-       WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'START Sec. 8.d'
-       PRFT0  = PRFTN
-    end if
+#ifdef W3_MPRF
+    CALL PRTIME ( PRFTN )
+    WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'START Sec. 8.d'
+    PRFT0  = PRFTN
+#endif
 
     ! 8.c.1 Spectral conversion flags and source term flags
     !
@@ -5983,10 +5983,10 @@ CONTAINS
     CALL DATE_AND_TIME ( VALUES=CLKDT2 )
     CLKFIN = TDIFF ( CLKDT1,CLKDT2 )
     !
-    if (w3_mprf_flag) then
-       CALL PRTIME ( PRFTN )
-       WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'END'
-    end if
+#ifdef W3_MPRF
+    CALL PRTIME ( PRFTN )
+    WRITE (MDSP,990) PRFT0, PRFTN, get_memory(), 'END'
+#endif
     !
     IF ( MDSS.NE.MDSO .AND. NMPSCR.EQ.IMPROC ) WRITE (MDSS,998)
     if (w3_o10_flag) then

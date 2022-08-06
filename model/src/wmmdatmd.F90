@@ -529,7 +529,7 @@ MODULE WMMDATMD
 
   LOGICAL, POINTER :: FBCAST              !< FBCAST ! W3_MPI
   !
-  logical          :: mpi_comm_grd_not_null
+  logical          :: mpi_comm_grd_not_null  !< true if (MPI_COMM_GRD .NE. MPI_COMM_NULL)
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /

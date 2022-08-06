@@ -155,6 +155,7 @@ set(SRCFILES constants.F90
              w3pro3md.F90
              w3profsmd.F90
              w3sdb1md.F90
+             w3psmcmd.F90
              w3servmd.F90
              w3sic4md.F90
              w3snl1md.F90

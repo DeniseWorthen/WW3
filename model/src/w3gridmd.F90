@@ -4839,10 +4839,8 @@ CONTAINS
     ELSE 
     END IF   ! GTYPE
     !      
-#ifdef W3_SMC
-    !!Li  Shelter MAPSTA LLG definition for SMC 
-    IF( GTYPE .NE. SMCTYPE ) THEN
-#endif
+    if ((w3_smc_flag .and. ( GTYPE .NE. SMCTYPE )) .or. (.not. w3_smc_flag)) then
+       !!Li  Shelter MAPSTA LLG definition for SMC 
        !
        MAPSTA = TMPSTA
        MAPFS  = 0
@@ -5151,9 +5149,7 @@ CONTAINS
           ENDIF  !! ARCTC section.
        end if
        !
-#ifdef W3_SMC
-    ENDIF  !! (GTYPE .NE. SMCTYPE) ELSE SMCTYPE block. 
-#endif
+    end if ! if ((w3_smc_flag .and. ( GTYPE .NE. SMCTYPE )) .or. (.not. w3_smc_flag))
     !
     if (w3_rtd_flag) then
        !Li   Assign rotated grid angle for all sea points.  JGLi01Feb2016

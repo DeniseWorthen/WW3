@@ -110,6 +110,7 @@ MODULE W3INITMD
   !
   !/ ------------------------------------------------------------------- /
   use wav_shr_flags
+  !
   PUBLIC
   !/
   REAL, PARAMETER                :: CRITOS = 15.

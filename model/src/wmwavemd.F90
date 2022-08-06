@@ -390,10 +390,10 @@ CONTAINS
        CALL MPI_BARRIER (MPI_COMM_MWAVE,IERR_MPI)
     end if
     !
-    if (w3_mprf_flag) then
-       CALL PRTIME ( PRFTN )
-       WRITE (MDSP,990) PRFT0, PRFTN, get_memory()
-    end if
+#ifdef W3_MPRF
+    CALL PRTIME ( PRFTN )
+    WRITE (MDSP,990) PRFT0, PRFTN, get_memory()
+#endif
     !
     ! 1.  Setting up loop structure -------------------------------------- /
     !
@@ -515,10 +515,10 @@ CONTAINS
                    DONE      = .TRUE.
                 END IF
                 !
-                if (w3_mprf_flag) then
-                   CALL PRTIME ( PRFTN )
-                   WRITE (MDSP,991) PRFT0, PRFTN, get_memory(),'ST00', I
-                end if
+#ifdef W3_MPRF
+                CALL PRTIME ( PRFTN )
+                WRITE (MDSP,991) PRFT0, PRFTN, get_memory(),'ST00', I
+#endif
                 !
              END IF
              !
@@ -536,10 +536,10 @@ CONTAINS
                          IF (FLSYNC(I)) CALL PRTIME ( PRFT0 )
                       end if
                       IF ( FBCAST ) CALL WMBCST ( TDATA(1,I), 2, I, NRGRD, 1 )
-                      if (w3_mprf_flag) then
-                         IF (FLSYNC(I)) CALL PRTIME ( PRFTN )
-                         IF (FLSYNC(I)) WRITE (MDSP,991) PRFT0, PRFTN, get_memory(), 'BCST',I
-                      end if
+#ifdef W3_MPRF
+                      IF (FLSYNC(I)) CALL PRTIME ( PRFTN )
+                      IF (FLSYNC(I)) WRITE (MDSP,991) PRFT0, PRFTN, get_memory(), 'BCST',I
+#endif
                       if (w3_mpit_flag) then
                          WRITE (MDST,9902) I, GRSTAT(I), 'SYNCING DONE'
                       end if
@@ -625,10 +625,10 @@ CONTAINS
                    DONE      = .TRUE.
                 END IF
                 !
-                if (w3_mprf_flag) then
-                   CALL PRTIME ( PRFTN )
-                   WRITE (MDSP,991) PRFT0, PRFTN, get_memory(),'ST01', I
-                end if
+#ifdef W3_MPRF
+                CALL PRTIME ( PRFTN )
+                WRITE (MDSP,991) PRFT0, PRFTN, get_memory(),'ST01', I
+#endif
              END IF ! IF ( GRSTAT(I) .EQ. 1 )
              !
              ! 4.  Update model time step ----------------------------------------- /
@@ -740,10 +740,10 @@ CONTAINS
                          END IF
                       END DO
                       DONE   = .TRUE.
-                      if (w3_mprf_flag) then
-                         CALL PRTIME ( PRFTS )
-                         WRITE (MDSP,992) PRFTS, PRFTS, get_memory(), 'TIME', TSYNC(:,0)
-                      end if
+#ifdef W3_MPRF
+                      CALL PRTIME ( PRFTS )
+                      WRITE (MDSP,992) PRFTS, PRFTS, get_memory(), 'TIME', TSYNC(:,0)
+#endif
                       !
                       ! 4.b.4 Output
                       !
@@ -756,10 +756,10 @@ CONTAINS
                       ! 4.b.5 Skip computations so that all grids start processing
                       !       simultaneously.
                       !
-                      if (w3_mprf_flag) then
-                         CALL PRTIME ( PRFTN )
-                         WRITE (MDSP,991) PRFT0, PRFTN, get_memory(), 'ST02', I
-                      end if
+#ifdef W3_MPRF
+                      CALL PRTIME ( PRFTN )
+                      WRITE (MDSP,991) PRFT0, PRFTN, get_memory(), 'ST02', I
+#endif
                       if (w3_t_flag) then
                          IF ( INGRP(J,0) .GT. 1 ) WRITE (MDST,9006)
                       end if
@@ -829,11 +829,10 @@ CONTAINS
                       !
                       ! 4.c.6 Skip computations so that all grids in group are advanced
                       !       simultaneously.
-
-                      if (w3_mprf_flag) then
-                         CALL PRTIME ( PRFTN )
-                         WRITE (MDSP,991) PRFT0, PRFTN, get_memory(),  'ST02', I
-                      end if
+#ifdef W3_MPRF
+                      CALL PRTIME ( PRFTN )
+                      WRITE (MDSP,991) PRFT0, PRFTN, get_memory(),  'ST02', I
+#endif
                       if (w3_t_flag) then
                          IF ( INGRP(J,0) .GT. 1 ) WRITE (MDST,9006)
                       end if
@@ -883,10 +882,10 @@ CONTAINS
                 GRSTAT(I) = 4
                 DONE      = .TRUE.
                 !
-                if (w3_mprf_flag) then
-                   CALL PRTIME ( PRFTN )
-                   WRITE (MDSP,991) PRFT0, PRFTN, get_memory(),'ST03', I
-                end if
+#ifdef W3_MPRF
+                CALL PRTIME ( PRFTN )
+                WRITE (MDSP,991) PRFT0, PRFTN, get_memory(),'ST03', I
+#endif
                 !
              END IF
              !
@@ -936,10 +935,10 @@ CONTAINS
                          end if
                       END DO
                       DONE      = .TRUE.
-                      if (w3_mprf_flag) then
-                         CALL PRTIME ( PRFTN )
-                         WRITE (MDSP,991) PRFT0, PRFTN, get_memory(), 'ST04', I
-                      end if
+#ifdef W3_MPRF
+                      CALL PRTIME ( PRFTN )
+                      WRITE (MDSP,991) PRFT0, PRFTN, get_memory(), 'ST04', I
+#endif
                       !
                       if (w3_t_flag) then
                          IF ( INGRP(J,0) .GT. 1 ) WRITE (MDST,9006)
@@ -989,19 +988,18 @@ CONTAINS
                       END IF
                    end if
                    !
-                   if (w3_mprf_flag) then
-                      CALL PRTIME ( PRFTN )
-                      WRITE (MDSP,991) PRFT0, PRFTN, get_memory(), 'ST04', I
-                   end if
+#ifdef W3_MPRF
+                   CALL PRTIME ( PRFTN )
+                   WRITE (MDSP,991) PRFT0, PRFTN, get_memory(), 'ST04', I
+#endif
                    CYCLE LOOP_JJ
                    !
                 END IF
                 !
-                if (w3_mprf_flag) then
-                   CALL PRTIME ( PRFTN )
-                   WRITE (MDSP,991) PRFT0, PRFTN,              &
-                        get_memory(),  'ST04', I
-                end if
+#ifdef W3_MPRF
+                CALL PRTIME ( PRFTN )
+                WRITE (MDSP,991) PRFT0, PRFTN, get_memory(),  'ST04', I
+#endif
                 !
              END IF
              !
@@ -1084,11 +1082,10 @@ CONTAINS
                 if (w3_t_flag) then
                    IF (GRSTAT(I).EQ.6) WRITE(MDST,9003) I, GRSTAT(I)
                 end if
-                if (w3_mprf_flag) then
-                   CALL PRTIME ( PRFTN )
-                   WRITE (MDSP,991) PRFT0, PRFTN, get_memory(),     &
-                        'ST05', I
-                end if
+#ifdef W3_MPRF
+                CALL PRTIME ( PRFTN )
+                WRITE (MDSP,991) PRFT0, PRFTN, get_memory(), 'ST05', I
+#endif
              END IF
              !
              ! 8.  Perform data assimmilation ------------------------------------- /
@@ -1102,11 +1099,10 @@ CONTAINS
                    WRITE (MDST,9002) I, GRSTAT(I), ' '
                 end if
                 GRSTAT(I) = 7
-                if (w3_mprf_flag) then
-                   CALL PRTIME ( PRFTN )
-                   WRITE (MDSP,991) PRFT0, PRFTN, get_memory(),     &
-                        'ST06', I
-                end if
+#ifdef W3_MPRF
+                CALL PRTIME ( PRFTN )
+                WRITE (MDSP,991) PRFT0, PRFTN, get_memory(), 'ST06', I
+#endif
                 DONE      = .TRUE.
              END IF
              !
@@ -1157,11 +1153,10 @@ CONTAINS
              if ( (w3_shrd_flag .and. ( GRSTAT(I) .EQ. 7 )) .or. &
                   (w3_mpi_flag  .and. ( GRSTAT(I) .EQ. 7 ) .and. mpi_comm_grd_not_null) )  THEN
                 !
-                !!/MPRF                CALL PRTIME ( PRFT0 )
-                !!/MPRF                CALL WMWOUT ( I, NRGRD, 3 )
-                !!/MPRF                CALL PRTIME ( PRFTN )
-                !!/MPRF                WRITE (MDSP,991) PRFT0, PRFTN, get_memory(),  &
-                !!/MPRF                                'BCST',I
+                !!/MPRF CALL PRTIME ( PRFT0 )
+                !!/MPRF CALL WMWOUT ( I, NRGRD, 3 )
+                !!/MPRF CALL PRTIME ( PRFTN )
+                !!/MPRF WRITE (MDSP,991) PRFT0, PRFTN, get_memory(), 'BCST',I
                 !
                 if (w3_mprf_flag) then
                    CALL PRTIME ( PRFT0 )
@@ -1266,10 +1261,10 @@ CONTAINS
                    !
                 END IF !  IF ( UNIPTS )
                 !
-                if (w3_mprf_flag) then
-                   CALL PRTIME ( PRFTN )
-                   WRITE (MDSP,991) PRFT0, PRFTN,get_memory(),'ST07', I
-                end if
+#ifdef W3_MPRF
+                CALL PRTIME ( PRFTN )
+                WRITE (MDSP,991) PRFT0, PRFTN,get_memory(),'ST07', I
+#endif
                 !
                 ! 9.e Update TOUPT outside communicator
                 !
@@ -1419,11 +1414,10 @@ CONTAINS
                       END DO
                       !
                       DONE      = .TRUE.
-                      if (w3_mprf_flag) then
-                         CALL PRTIME ( PRFTN )
-                         WRITE (MDSP,991) PRFT0, PRFTN,          &
-                              get_memory(), 'UPTS',I
-                      end if
+#ifdef W3_MPRF
+                      CALL PRTIME ( PRFTN )
+                      WRITE (MDSP,991) PRFT0, PRFTN, get_memory(), 'UPTS',I
+#endif
                    END IF
                    !
                 ELSE
@@ -1532,7 +1526,7 @@ CONTAINS
     ! Formats
     !
 900 FORMAT (           ' ========== STARTING WAVE MODEL (WMWAVE) ==========', &
-         '============================'/)
+                       '============================'/)
 901 FORMAT (           '  MWW3 calculating for ',A,' at ',A,'  status [',      &
          I2,           '-',I2,']')
 902 FORMAT (           '  MWW3 reached the end of the computation loop at ',A)
@@ -1540,35 +1534,35 @@ CONTAINS
 991 FORMAT (1X,3F12.3, ' WMWAVE ',A4,I6)
 992 FORMAT (1X,3F12.3, ' WMWAVE ',A4,I9.8,I7.6)
 999 FORMAT (/          ' ========== END OF WAVE MODEL (WMWAVE) ============', &
-         '============================'/)
+                       '============================'/)
     !
 1000 FORMAT (/         ' *** WAVEWATCH III ERROR IN WMWAVE : *** '/           &
-         '     GRID',I3,' HAS ILLEGAL GRSTAT :',I8/)
+                       '     GRID',I3,' HAS ILLEGAL GRSTAT :',I8/)
     !
 1001 FORMAT (/         ' *** WAVEWATCH III ERROR IN WMWAVE : *** '/           &
-         '     GRID',I3,' HAS ILLEGAL TSYNC / TEND '/           &
-         '     TSYNC :',I9.8,I7.6/                              &
-         '     TEND  :',I9.8,I7.6/)
+                       '     GRID',I3,' HAS ILLEGAL TSYNC / TEND '/           &
+                       '     TSYNC :',I9.8,I7.6/                              &
+                       '     TEND  :',I9.8,I7.6/)
     !
 1002 FORMAT (/         ' *** WAVEWATCH III ERROR IN WMWAVE : *** '/           &
-         '     GROUP',I3,' HAS INCOMPATIBLE TIMES ',            &
-         'IN GRIDS ',I3,' AND ',I3/                             &
-         '     TSYNC :',I9.8,I7.6,1X,I9.8,I7.6/                 &
-         '     TEND  :',I9.8,I7.6,1X,I9.8,I7.6/)
+                       '     GROUP',I3,' HAS INCOMPATIBLE TIMES ',            &
+                       'IN GRIDS ',I3,' AND ',I3/                             &
+                       '     TSYNC :',I9.8,I7.6,1X,I9.8,I7.6/                 &
+                       '     TEND  :',I9.8,I7.6,1X,I9.8,I7.6/)
     !
     ! Note: This 1099 error can occur when multi-grid time steps are not
     !       compatible.
 1099 FORMAT (/         ' *** WAVEWATCH III ERROR IN WMWAVE : *** '/           &
-         '     ABORT FOR POSSIBLE ENDLESS LOOP '/)
+                       '     ABORT FOR POSSIBLE ENDLESS LOOP '/)
     !
 9000 FORMAT (          ' TEST WMWAVE : LOOP',I8,' ======================', & ! W3_T
-         '===== (',I9.8,I7.6,' ) =='/ &
-         '               GRID, GRSTAT, TIME, TSYNC, TEND')
+                       '===== (',I9.8,I7.6,' ) =='/ &
+                       '               GRID, GRSTAT, TIME, TSYNC, TEND')
 9001 FORMAT (          '              ',I3,I3,3(I10.8,I7.6))
 9002 FORMAT (          ' TEST WMWAVE : PROCESSING GRID',I3,                &
-         ' STATUS',I3,' ',A)
+                       ' STATUS',I3,' ',A)
 9902 FORMAT (          ' MPIT WMWAVE : PROCESSING GRID',I3,             & ! W3_MPIT
-         ' STATUS',I3,' ',A)
+                       ' STATUS',I3,' ',A)
 9003 FORMAT (          ' TEST WMWAVE : GRID',I3,' STATUS RESET TO',I3) ! W3_T
 9004 FORMAT (          ' TEST WMWAVE : FLAGOK = ',L1)
 9005 FORMAT (          ' TEST WMWAVE : FLEQOK = ',L1)
@@ -1576,20 +1570,20 @@ CONTAINS
     !
 9020 FORMAT (          ' TEST WMWAVE : DTTST ',E10.3) ! W3_T
 9021 FORMAT (          ' TEST WMWAVE : TIME  :',I10.8,I7.6/                &
-         '               TDATA :',I10.8,I7.6/                &
-         '               TEND  :',I10.8,I7.6)
+                       '               TDATA :',I10.8,I7.6/                &
+                       '               TEND  :',I10.8,I7.6)
     !
 9040 FORMAT (          ' TEST WMWAVE : TMAX  :',I10.8,I7.6,F8.2/           & ! W3_T
-         '               DTMAX :',I10.8,I7.6/                &
-         '               TDATA :',I10.8,I7.6/                &
-         '               TOUTP :',I10.8,I7.6/                &
-         '               UPNEXT:',I10.8,I7.6)
+                       '               DTMAX :',I10.8,I7.6/                &
+                       '               TDATA :',I10.8,I7.6/                &
+                       '               TOUTP :',I10.8,I7.6/                &
+                       '               UPNEXT:',I10.8,I7.6)
 9041 FORMAT (          ' TEST WMWAVE : TMAX  :',I10.8,I7.6)
 9941 FORMAT (          ' MPIT WMWAVE : TMAX  :',I10.8,I7.6) ! W3_MPIT
 9042 FORMAT (          ' TEST WMWAVE : GRANK :',I4,' FOR GRSTAT = 2') ! W3_T
 9043 FORMAT (          ' TEST WMWAVE : GLOBAL TSYNC :',I10.8,I7.6)
 9044 FORMAT (          ' TEST WMWAVE : LOCAL TSYNC :',I10.8,I7.6,          &
-         ' (',I8.8,I7.6,')')
+                       ' (',I8.8,I7.6,')')
 9045 FORMAT (          ' TEST WMWAVE : GRID TSYNC')
 9046 FORMAT (          '             ',I5,I10.8,I7.6)
     !
@@ -1604,7 +1598,7 @@ CONTAINS
 9096 FORMAT (          '               ALL GRIDS, FLAGOK = ',L1)
     !
 9100 FORMAT (          ' TEST WMWAVE : LOOP DONE  ======================', & ! W3_T
-         '==============================')
+                       '==============================')
     !/
     !/ End of WMWAVE ----------------------------------------------------- /
     !/

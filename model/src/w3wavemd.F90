@@ -409,8 +409,7 @@ CONTAINS
     USE W3ODATMD    , only : TOFRST, TONEXT, TBPIN, TBPI0, TOLAST, DTOUT, NAPFLD, NAPPNT
     USE W3ODATMD    , only : NRQGO, NRQGO2, IRQGO, IRQGO2, NRQPO, NRQPO2, IRQPO1, IRQPO2 ! W3_MPI
     USE W3ODATMD    , only : NRQRS, IRQRS, IRQPO1, NRQBP, IRQBP1, IRQBP2, NRQBP2         ! W3_MPI
-    use w3odatmd    , only : user_histalarm, user_restalarm
-    use w3odatmd    , only : histwr, rstwr, user_gridncout
+    use w3odatmd    , only : user_netcdf_grdout, rstwr
     USE W3ODATMD    , only : W3SETO
     !
     USE W3GDATMD    , only : RLGTYPE, SX, SY, CLGTYPE, HPFAC, HQFAC, REFLC, REFLD  ! W3_REF1
@@ -471,9 +470,7 @@ CONTAINS
     USE W3PRO3MD    , only : W3MAPT, W3XYP3, W3CFLXY, W3MAP3, W3KTP3
     USE W3PROFSMD   , only : W3XYPUG, W3CFLUG
 #endif
-#ifdef W3_SMC
-    USE W3PSMCMD    , only : SMCDHXY, SMCDCXY, W3SCATSMC, W3GATHSMC, W3PSMC, W3KRTN
-#endif
+    USE W3PSMCMD    , only : SMCDHXY, SMCDCXY, W3SCATSMC, W3GATHSMC, W3PSMC, W3KRTN  ! W3_SMC
 #ifdef W3_PDLIB
     USE PDLIB_W3PROFSMD , only : APPLY_BOUNDARY_CONDITION_VA
     USE PDLIB_W3PROFSMD , only : PDLIB_W3XYPUG, PDLIB_W3XYPUG_BLOCK_IMPLICIT, PDLIB_W3XYPUG_BLOCK_EXPLICIT
@@ -488,11 +485,8 @@ CONTAINS
 #ifdef W3_UOST
     USE W3UOSTMD, ONLY: UOST_SETGRID
 #endif
-#ifdef W3_MEMCHECK
-    USE MallocInfo_m
-#endif
 #ifdef W3_SETUP
-    USE W3WAVSET, only: WAVE_SETUP_COMPUTATION
+    USE W3WAVSET, only : WAVE_SETUP_COMPUTATION
 #endif
 #ifdef W3_OASIS
     USE W3OACPMD, ONLY: ID_OASIS_TIME, CPLT0
@@ -506,6 +500,8 @@ CONTAINS
 #ifdef W3_OASICM
     USE W3IGCMMD, ONLY: SND_FIELDS_TO_ICE
 #endif
+    use w3iogoncdmd   , only : w3iogoncd
+    use w3odatmd      , only : user_netcdf_grdout
     !
     IMPLICIT NONE
     !
@@ -586,7 +582,7 @@ CONTAINS
     REAL                 :: BACANGL    ! only for  W3_SMC
     integer              :: loop_count
     !
-    logical :: setup_mpi_write, write_now
+    logical :: setup_mpi_write
     logical :: do_gridded_output
     logical :: do_point_output
     logical :: do_track_output
@@ -1169,9 +1165,9 @@ CONTAINS
              DTTST2 = DSEC21 ( TG0, TGN )
              FAC    = DTTST1 / MAX ( 1. , DTTST2 )
              VGX    = (FAC*GA0+(1.-FAC)*GAN) * &
-                   COS(FAC*GD0+(1.-FAC)*GDN)
+                  COS(FAC*GD0+(1.-FAC)*GDN)
              VGY    = (FAC*GA0+(1.-FAC)*GAN) * &
-                   SIN(FAC*GD0+(1.-FAC)*GDN)
+                  SIN(FAC*GD0+(1.-FAC)*GDN)
           END IF
           if (w3_timings_flag) then
              CALL PRINT_MY_TIME("After VGX/VGY assignation")
@@ -1222,10 +1218,10 @@ CONTAINS
 
              IF (GTYPE .EQ. SMCTYPE) THEN
                 IX = 1
-#ifdef W3_SMC
-                !!Li  Use new sub for DCXDX/Y and DCYDX/Y assignment.
-                CALL SMCDCXY
-#endif
+                if (w3_smc_flag) then
+                   !!Li  Use new sub for DCXDX/Y and DCYDX/Y assignment.
+                   CALL SMCDCXY
+                end if
              ELSE IF (GTYPE .EQ. UNGTYPE) THEN
                 if (w3_debugdcxdx_flag) then
                    WRITE(740+IAPROC,*) 'Before call to UG_GRADIENT for assigning DCXDX/DCXDY array'
@@ -1559,10 +1555,10 @@ CONTAINS
           IF ( FLDDIR ) THEN
              IF (GTYPE .EQ. SMCTYPE) THEN
                 IX = 1
-#ifdef W3_SMC
-                !!Li  Use new sub for DDDX and DDDY assignment.
-                CALL SMCDHXY
-#endif
+                if (w3_smc_flag) then
+                   !!Li  Use new sub for DDDX and DDDY assignment.
+                   CALL SMCDHXY
+                end if
              ELSE IF (GTYPE .EQ. UNGTYPE) THEN
                 CALL UG_GRADIENTS(DW, DDDX, DDDY)
              ELSE
@@ -1788,9 +1784,7 @@ CONTAINS
                    NKCFL=1
                 end if
                 !
-#ifdef W3_OMPG
                 !$OMP PARALLEL DO PRIVATE (JSEA,ISEA) SCHEDULE (DYNAMIC,1)
-#endif
                 DO JSEA=1, NSEAL
                    CALL INIT_GET_ISEA(ISEA, JSEA)
 #ifdef W3_PR3
@@ -1808,9 +1802,7 @@ CONTAINS
                    END IF
 #endif
                 END DO
-#ifdef W3_OMPG
                 !$OMP END PARALLEL DO
-#endif
              END IF
           END IF
           if (w3_debugrun_flag) then
@@ -1909,10 +1901,8 @@ CONTAINS
                       WRITE(740+IAPROC,*) ' ITLOC=', ITLOC
                       WRITE(740+IAPROC,*) ' 1: Before call to W3KTP1 / W3KTP2 / W3KTP3'
                    end if
-#ifdef W3_OMPG
                    !$OMP PARALLEL PRIVATE (JSEA,ISEA,IX,IY,DEPTH,IXrel)
                    !$OMP DO SCHEDULE (DYNAMIC,1)
-#endif
                    DO JSEA=1, NSEAL
                       CALL INIT_GET_ISEA(ISEA, JSEA)
                       IX     = MAPSF(ISEA,1)
@@ -1938,19 +1928,18 @@ CONTAINS
                          !
                          IF( GTYPE .EQ. SMCTYPE ) THEN
                             J = 1
-#ifdef W3_SMC
-                            !!Li    Refraction and GCT in theta direction is done by rotation.
-                            CALL W3KRTN ( ISEA, FACTH, FACK, CTHG0S(ISEA), &
-                                 CG(:,ISEA), WN(:,ISEA), DEPTH,            &
-                                 DHDX(ISEA), DHDY(ISEA), DHLMT(:,ISEA),    &
-                                 CX(ISEA), CY(ISEA), DCXDX(IY,IX),         &
-                                 DCXDY(IY,IX), DCYDX(IY,IX), DCYDY(IY,IX), &
-                                 DCDX(:,IY,IX), DCDY(:,IY,IX), VA(:,JSEA) )
-#endif
+                            if (w3_smc_flag) then
+                               !!Li    Refraction and GCT in theta direction is done by rotation.
+                               CALL W3KRTN ( ISEA, FACTH, FACK, CTHG0S(ISEA), &
+                                    CG(:,ISEA), WN(:,ISEA), DEPTH,            &
+                                    DHDX(ISEA), DHDY(ISEA), DHLMT(:,ISEA),    &
+                                    CX(ISEA), CY(ISEA), DCXDX(IY,IX),         &
+                                    DCXDY(IY,IX), DCYDX(IY,IX), DCYDY(IY,IX), &
+                                    DCDX(:,IY,IX), DCDY(:,IY,IX), VA(:,JSEA) )
+                            end if
                             !
                          ELSE
                             J = 1
-                            !
 #ifdef W3_PR1
                             CALL W3KTP1 ( ISEA, FACTH, FACK, CTHG0S(ISEA),       &
                                  CG(:,ISEA), WN(:,ISEA), DEPTH,                  &
@@ -1981,11 +1970,8 @@ CONTAINS
                          !
                       END IF ! IF ( MAPSTA(IY,IX) .EQ. 1 )
                    END DO ! DO JSEA=1, NSEAL
-                   !
-#ifdef W3_OMPG
                    !$OMP END DO
                    !$OMP END PARALLEL
-#endif
                    !
                 END DO ! DO ITLOC=1, ITLOCH
              END IF ! IF ( FLCTH .OR. FLCK )
@@ -2097,41 +2083,34 @@ CONTAINS
                          !
                          IF( GTYPE .EQ. SMCTYPE ) THEN
                             IX = 1
-#ifdef W3_SMC
-                            !!Li   Use SMC sub to gether field
-                            CALL W3GATHSMC ( ISPEC, FIELD )
-#endif
+                            if (w3_smc_flag) then
+                               !!Li   Use SMC sub to gether field
+                               CALL W3GATHSMC ( ISPEC, FIELD )
+                            end if
                          ELSE IF (.NOT.LPDLIB ) THEN
                             CALL W3GATH ( ISPEC, FIELD )
                          END IF   !! GTYPE
                          !
                          IF (GTYPE .EQ. SMCTYPE) THEN
                             IX = 1
-#ifdef W3_SMC
-                            !!Li   Propagation on SMC grid uses UNO2 scheme.
-                            CALL W3PSMC ( ISPEC, DTG, FIELD )
-#endif
+                            if (w3_smc_flag) then
+                               !!Li   Propagation on SMC grid uses UNO2 scheme.
+                               CALL W3PSMC ( ISPEC, DTG, FIELD )
+                            end if
                             !
                          ELSE IF (GTYPE .EQ. UNGTYPE) THEN
                             IX = 1
-#ifdef W3_MPI
-                            IF (.NOT. LPDLIB) THEN
-#endif
+                            if ( (w3_mpi_flag .and. .not. LPDLIB) .or. (.not. w3_mpi_flag)) then
 #ifdef W3_PR1
-                               CALL W3XYPUG ( ISPEC, FACX, FACX, DTG,           &
-                                    FIELD, VGX, VGY, UGDTUPDATE )
+                               CALL W3XYPUG ( ISPEC, FACX, FACX, DTG, FIELD, VGX, VGY, UGDTUPDATE )
 #endif
 #ifdef W3_PR2
-                               CALL W3XYPUG ( ISPEC, FACX, FACX, DTG,           &
-                                    FIELD, VGX, VGY, UGDTUPDATE )
+                               CALL W3XYPUG ( ISPEC, FACX, FACX, DTG, FIELD, VGX, VGY, UGDTUPDATE )
 #endif
 #ifdef W3_PR3
-                               CALL W3XYPUG ( ISPEC, FACX, FACX, DTG,           &
-                                    FIELD, VGX, VGY, UGDTUPDATE )
+                               CALL W3XYPUG ( ISPEC, FACX, FACX, DTG, FIELD, VGX, VGY, UGDTUPDATE )
 #endif
-#ifdef W3_MPI
-                            END IF
-#endif
+                            end if
                             !
                          ELSE
                             IX = 1
@@ -2149,10 +2128,10 @@ CONTAINS
                          !
                          IF( GTYPE .EQ. SMCTYPE ) THEN
                             IX = 1
-#ifdef W3_SMC
-                            !!Li   Use SMC sub to scatter field
-                            CALL W3SCATSMC ( ISPEC, MAPSTA, FIELD )
-#endif
+                            if (w3_smc_flag) then
+                               !!Li   Use SMC sub to scatter field
+                               CALL W3SCATSMC ( ISPEC, MAPSTA, FIELD )
+                            end if
                          ELSE IF (.NOT.LPDLIB ) THEN
                             CALL W3SCAT ( ISPEC, MAPSTA, FIELD )
                          END IF   !! GTYPE
@@ -2174,68 +2153,69 @@ CONTAINS
                    IK=1
                    IX=1
                    IY=1
-#ifdef W3_SMC
-                   ! begin W3_SMC ifdef
-                   !Li    Find source boundary spectra and assign to SPCBAC
-                   IF( ARCTC ) THEN
+                   !
+                   if (w3_smc_flag) then
+                      !Li    Find source boundary spectra and assign to SPCBAC
+                      IF( ARCTC ) THEN
 
-                      DO IK = 1, NBAC
-                         IF( IK .LE. (NBAC-NBGL) ) THEN
-                            IY = ICLBAC(IK)
-                         ELSE
-                            IY = NGLO + IK
-                         ENDIF
+                         DO IK = 1, NBAC
+                            IF( IK .LE. (NBAC-NBGL) ) THEN
+                               IY = ICLBAC(IK)
+                            ELSE
+                               IY = NGLO + IK
+                            ENDIF
 
-                         !Li    Work out root PE (ISPEC) and JSEA numbers for IY
-                         if (w3_dist_flag) then
-                            ISPEC = MOD( IY-1, NAPROC )
-                            JSEA = 1 + (IY - ISPEC - 1)/NAPROC
-                         else if (w3_shrd_flag) then
-                            ISPEC = 0
-                            JSEA = IY
-                         end if
-                         !
-                         !!Li   Assign boundary cell spectra.
-                         IF( IAPROC .EQ. ISPEC+1 ) THEN
-                            SPCBAC(:,IK)=VA(:,JSEA)
-                         ENDIF
-                         !!Li   Broadcast local SPCBAC(:,IK) to all other PEs.
+                            !Li    Work out root PE (ISPEC) and JSEA numbers for IY
+                            if (w3_dist_flag) then
+                               ISPEC = MOD( IY-1, NAPROC )
+                               JSEA = 1 + (IY - ISPEC - 1)/NAPROC
+                            else if (w3_shrd_flag) then
+                               ISPEC = 0
+                               JSEA = IY
+                            end if
+                            !
+                            !!Li   Assign boundary cell spectra.
+                            IF( IAPROC .EQ. ISPEC+1 ) THEN
+                               SPCBAC(:,IK)=VA(:,JSEA)
+                            ENDIF
+                            !!Li   Broadcast local SPCBAC(:,IK) to all other PEs.
 #ifdef W3_MPI
-                         CALL MPI_BCAST(SPCBAC(1,IK),NSPEC,MPI_REAL,ISPEC,MPI_COMM_WAVE,IERR_MPI)
-                         CALL MPI_BARRIER (MPI_COMM_WAVE,IERR_MPI)
+                            CALL MPI_BCAST(SPCBAC(1,IK),NSPEC,MPI_REAL,ISPEC,MPI_COMM_WAVE,IERR_MPI)
+                            CALL MPI_BARRIER (MPI_COMM_WAVE,IERR_MPI)
 #endif
-                      END DO   !! Loop IK ends.
-                      !!Li    Update Arctic boundary cell spectra if within local range
-                      ALLOCATE ( BACSPEC(NSPEC) )
-                      DO IK = 1, NBAC
-                         IF( IK .LE. (NBAC-NBGL) ) THEN
-                            IX = NGLO + IK
-                            BACANGL = ANGARC(IK)
-                         ELSE
-                            IX = ICLBAC(IK)
-                            BACANGL = - ANGARC(IK)
-                         ENDIF
-
-                         !!Li    Work out boundary PE (ISPEC) and JSEA numbers for IX
-                         if (w3_dist_flag) then
-                            ISPEC = MOD( IX-1, NAPROC )
-                            JSEA = 1 + (IX - ISPEC - 1)/NAPROC
-                         else if (w3_shrd_flag) then
-                            ISPEC = 0
-                            JSEA = IX
-                         end if
-
-                         IF( IAPROC .EQ. ISPEC+1 ) THEN
-                            BACSPEC = SPCBAC(:,IK)
-                            CALL w3acturn( NTH, NK, BACANGL, BACSPEC )
-                            VA(:,JSEA) = BACSPEC
-                            !!Li  WRITE(NDSE,*) "IAPROC, IX, JSEAx, IK=", IAPROC, IX, JSEA, IK
-                         ENDIF
-                      END DO  !! Loop IK ends.
-                      DEALLOCATE ( BACSPEC )
-                   ENDIF  ! IF( ARCTC )
-#endif
-                   ! end W3_SMC ifdef
+                         END DO   !! Loop IK ends.
+                         !
+                         !!Li    Update Arctic boundary cell spectra if within local range
+                         ALLOCATE ( BACSPEC(NSPEC) )
+                         DO IK = 1, NBAC
+                            IF( IK .LE. (NBAC-NBGL) ) THEN
+                               IX = NGLO + IK
+                               BACANGL = ANGARC(IK)
+                            ELSE
+                               IX = ICLBAC(IK)
+                               BACANGL = - ANGARC(IK)
+                            ENDIF
+                            
+                            !!Li    Work out boundary PE (ISPEC) and JSEA numbers for IX
+                            if (w3_dist_flag) then
+                               ISPEC = MOD( IX-1, NAPROC )
+                               JSEA = 1 + (IX - ISPEC - 1)/NAPROC
+                            else if (w3_shrd_flag) then
+                               ISPEC = 0
+                               JSEA = IX
+                            end if
+                            
+                            IF( IAPROC .EQ. ISPEC+1 ) THEN
+                               BACSPEC = SPCBAC(:,IK)
+                               CALL w3acturn( NTH, NK, BACANGL, BACSPEC )
+                               VA(:,JSEA) = BACSPEC
+                               !!Li  WRITE(NDSE,*) "IAPROC, IX, JSEAx, IK=", IAPROC, IX, JSEA, IK
+                            ENDIF
+                         END DO  !! Loop IK ends.
+                         DEALLOCATE ( BACSPEC )
+                      ENDIF  ! IF( ARCTC )
+                      !
+                   end if ! if (w3_smc_flag)
                    !
                 END IF !  IF (FLCX .or. FLCY)
                 !
@@ -2264,11 +2244,9 @@ CONTAINS
                       WRITE(740+IAPROC,*) ' ITLOC=', ITLOC
                       WRITE(740+IAPROC,*) ' 2: Before call to W3KTP1 / W3KTP2 / W3KTP3'
                    end if
-#ifdef W3_OMPG
+                   !
                    !$OMP PARALLEL PRIVATE (JSEA,ISEA,IX,IY,DEPTH,IXrel)
                    !$OMP DO SCHEDULE (DYNAMIC,1)
-#endif
-                   !
                    DO JSEA = 1, NSEAL
 
                       CALL INIT_GET_ISEA(ISEA, JSEA)
@@ -2296,15 +2274,15 @@ CONTAINS
                          !
                          IF( GTYPE .EQ. SMCTYPE ) THEN
                             J = 1
-#ifdef W3_SMC
-                            !!Li    Refraction and GCT in theta direction is done by rotation.
-                            CALL W3KRTN ( ISEA, FACTH, FACK, CTHG0S(ISEA), &
-                                 CG(:,ISEA), WN(:,ISEA), DEPTH,            &
-                                 DHDX(ISEA), DHDY(ISEA), DHLMT(:,ISEA),    &
-                                 CX(ISEA), CY(ISEA), DCXDX(IY,IX),         &
-                                 DCXDY(IY,IX), DCYDX(IY,IX), DCYDY(IY,IX), &
-                                 DCDX(:,IY,IX), DCDY(:,IY,IX), VA(:,JSEA) )
-#endif
+                            if (w3_smc_flag) then
+                               !!Li    Refraction and GCT in theta direction is done by rotation.
+                               CALL W3KRTN ( ISEA, FACTH, FACK, CTHG0S(ISEA), &
+                                    CG(:,ISEA), WN(:,ISEA), DEPTH,            &
+                                    DHDX(ISEA), DHDY(ISEA), DHLMT(:,ISEA),    &
+                                    CX(ISEA), CY(ISEA), DCXDX(IY,IX),         &
+                                    DCXDY(IY,IX), DCYDX(IY,IX), DCYDY(IY,IX), &
+                                    DCDX(:,IY,IX), DCDY(:,IY,IX), VA(:,JSEA) )
+                            end if
                             !
                          ELSE
                             J = 1
@@ -2336,13 +2314,11 @@ CONTAINS
                             !
                          END IF  !! GTYPE
                          !
-                      END IF
-                   END DO
-                   !
-#ifdef W3_OMPG
+                      END IF !  IF ( MAPSTA(IY,IX) .EQ. 1 )
+                      !
+                   END DO ! DO JSEA = 1, NSEAL
                    !$OMP END DO
                    !$OMP END PARALLEL
-#endif
                    !
                 END DO
              END IF
@@ -2387,12 +2363,9 @@ CONTAINS
                 end if
 #endif
                 !
-#ifdef W3_OMPG
                 !$OMP PARALLEL PRIVATE (JSEA,ISEA,IX,IY,DELA,DELX,DELY,        &
                 !$OMP&                  REFLEC,REFLED,D50,PSIC,TMP1,TMP2,TMP3,TMP4)
                 !$OMP DO SCHEDULE (DYNAMIC,1)
-#endif
-                !
                 DO JSEA=1, NSEAL
                    CALL INIT_GET_ISEA(ISEA, JSEA)
                    IX     = MAPSF(ISEA,1)
@@ -2496,10 +2469,9 @@ CONTAINS
                       WRITE(740+IAPROC,*) 'RET: min/max/sum(VA)=',minval(VA(:,JSEA)),maxval(VA(:,JSEA)),sum(VA(:,JSEA))
                    end if
                 END DO  !  DO JSEA=1, NSEAL
-#ifdef W3_OMPG
                 !$OMP END DO
                 !$OMP END PARALLEL
-#endif
+                !
                 if (w3_debugrun_flag) then
                    WRITE(740+IAPROC,*) 'min/max/sum(VAtot)=', minval(VA), maxval(VA), sum(VA)
                    DO JSEA = 1, NSEAL
@@ -2572,7 +2544,6 @@ CONTAINS
           !
 380       CONTINUE
           !
-! i am here
 
           if (w3_debugrun_flag) then
              WRITE(740+IAPROC,*) 'W3WAVE, step 6.20'
@@ -2708,16 +2679,8 @@ CONTAINS
           NRQMAX = 0
           !
           setup_mpi_write = .false.
-          if (user_histalarm ) then
-             if (  histwr .and. (FLOUT(1) .OR.  FLOUT(7)) ) then
-                setup_mpi_write = .true.
-             end if
-          else
-             IF ( ( (DSEC21(TIME,TONEXT(:,1)).EQ.0.) .AND. FLOUT(1) ) .OR. &
-                  ( (DSEC21(TIME,TONEXT(:,7)).EQ.0.) .AND. FLOUT(7) .AND. SBSED ) ) then
-                setup_mpi_write = .true.
-             end IF
-          end if
+          IF ( ( (DSEC21(TIME,TONEXT(:,1)).EQ.0.) .AND. FLOUT(1) ) .OR. &
+               (  (DSEC21(TIME,TONEXT(:,7)).EQ.0.) .AND. FLOUT(7) .AND. SBSED ) ) setup_mpi_write = .true.
 
           if (setup_mpi_write ) then
              IF (.NOT. LPDLIB .or. (GTYPE.ne.UNGTYPE)) THEN
@@ -2727,7 +2690,6 @@ CONTAINS
                            NRQGO, IRQGO, GTYPE, UNGTYPE, .NOT. LPDLIB .or. (GTYPE.ne.UNGTYPE)
                    end if
                    CALL MPI_STARTALL ( NRQGO, IRQGO , IERR_MPI )
-                   !if(histwr) print *,'histwr mpi_startall', histwr, NRQGO, IERR_MPI'
                    if (w3_debugrun_flag) then
                       WRITE(740+IAPROC,*) 'AFTER STARTALL NRQGO.NE.0, step 0'
                    end if
@@ -2746,7 +2708,6 @@ CONTAINS
 
                    CALL MPI_STARTALL ( NRQGO2, IRQGO2, IERR_MPI )
 
-                   !if(histwr) print *,'histwr mpi_startall', histwr, NRQGO2, IERR_MPI'
                    if (w3_debugrun_flag) then
                       WRITE(740+IAPROC,*) 'AFTER STARTALL NRQGO2.NE.0, step 0'
                    end if
@@ -2765,6 +2726,7 @@ CONTAINS
 #endif
              END IF ! IF (.NOT. LPDLIB .or. (GTYPE.ne.UNGTYPE))
           END IF ! if (setup_mpi_write )
+
           call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP1')
           !
           if (w3_debugrun_flag) then
@@ -2900,47 +2862,31 @@ CONTAINS
 #endif
                 TOUT(:) = TONEXT(:,J)
                 DTTST   = DSEC21 ( TIME, TOUT )
-                !
-                write(6,*)'DEBUG: J,TONEXT = ',j,tonext(:,j)
 
+                !
                 IF ( DTTST .EQ. 0. ) THEN
 
                    if (do_gridded_output) then
 
-                      if (user_gridncout) then
-                         ! if using alarms, restrict output writing to alarm
-                         ! frequencies, otherwise native (inp) frequencies will
-                         ! be used
-                         write_now = .false.
-                         if (user_histalarm) then
-                            if ( histwr .and. j .ne. 7) then
-                               write_now = .true.
-                            end if
-                         else
-                            write_now = .true.
-                         end if
-                         if (write_now) then
+                      if (user_netcdf_grdout) then
 #ifdef W3_MPI
-                            CALL MPI_WAITALL( NRQGO, IRQGO, STATIO, IERR_MPI )
-                            FLGMPI(0) = .FALSE.
+                         CALL MPI_WAITALL( NRQGO, IRQGO, STATIO, IERR_MPI )
+                         FLGMPI(0) = .FALSE.
 #endif
-                            IF ( IAPROC .EQ. NAPFLD ) THEN
+                         IF ( IAPROC .EQ. NAPFLD ) THEN
 #ifdef W3_MPI
-                               IF ( FLGMPI(1) ) CALL MPI_WAITALL( NRQGO2, IRQGO2, STATIO, IERR_MPI )
-                               FLGMPI(1) = .FALSE.
+                            IF ( FLGMPI(1) ) CALL MPI_WAITALL( NRQGO2, IRQGO2, STATIO, IERR_MPI )
+                            FLGMPI(1) = .FALSE.
 #endif
-                               CALL W3IOGONCD ()
-                            END IF
-                         end if
-                         ! default (binary) output
-                      else
+                            CALL W3IOGONCD ()
+                         END IF
+                      else ! default (binary) output
 
                          IF ( IAPROC .EQ. NAPFLD ) THEN
 #ifdef W3_MPI
                             IF ( FLGMPI(1) ) CALL MPI_WAITALL( NRQGO2, IRQGO2, STATIO, IERR_MPI )
                             FLGMPI(1) = .FALSE.
 #endif
-                            !
                             if (w3_sbs_flag) then
                                IF ( J .EQ. 1 ) THEN
                                   CALL W3IOGO( 'WRITE', NDS(7), ITEST, IMOD )
@@ -2953,9 +2899,12 @@ CONTAINS
                                     // IDTIME(12:13) // '.' // TRIM(FILEXT)
                                OPEN( UNIT=NDSOFLG, FILE=FOUTNAME)
                                CLOSE( NDSOFLG )
-                            end if
-                         END IF
-                      end if ! user_grdncout
+                            else
+                               CALL W3IOGO( 'WRITE', NDS(7), ITEST, IMOD )
+                            endif
+
+                         end if
+                      end if ! user_netcdf_grdout
 
                    ELSE IF ( J .EQ. 2 ) THEN
 
@@ -2972,12 +2921,7 @@ CONTAINS
                       CALL W3IOTR ( NDS(11), NDS(12), VA, IMOD )
 
                    ELSE IF ( J .EQ. 4 ) THEN
-
-                      if (user_restalarm ) then
-                         if (rstwr) CALL W3IORS ('HOT', NDS(6), XXX,  IMOD, FLOUT(8) )
-                      else
-                         CALL W3IORS ('HOT', NDS(6), XXX, IMOD, FLOUT(8) )
-                      end if
+                      CALL W3IORS('HOT', NDS(6), XXX, IMOD, FLOUT(8) )
                       ITEST = RSTYPE
 
                    ELSE IF ( J .EQ. 5 ) THEN
@@ -3001,8 +2945,7 @@ CONTAINS
                       IF (DTOUT(7).NE.0) THEN
                          IF ( (MOD(ID_OASIS_TIME,NINT(DTOUT(7))) .EQ. 0 ) .AND. &
                               (DSEC21 (TIME00, TIME) .GT. 0.0) ) THEN
-                            IF ( (CPLT0 .AND. (DSEC21 (TIME, TIMEN) .GT. 0.0)) .OR. &
-                                 .NOT. CPLT0 ) THEN
+                            IF ( (CPLT0 .AND. (DSEC21 (TIME, TIMEN) .GT. 0.0)) .OR. .NOT. CPLT0 ) THEN
                                IF (CPLT0) ID_OASIS_TIME = NINT(DSEC21 ( TIME00 , TIME ))
 
 #ifdef W3_OASACM
@@ -3029,8 +2972,7 @@ CONTAINS
                    IF ( FLOUT(J) ) THEN
                       OUTID(2*J-1:2*J-1) = 'X'
 #ifdef W3_OASIS
-                      IF ( (DTOUT(7).NE.0) .AND.           &
-                           (DSEC21(TIME,TIME00).EQ.0 .OR.  &
+                      IF ( (DTOUT(7).NE.0) .AND. (DSEC21(TIME,TIME00).EQ.0 .OR. &
                            DSEC21(TIME,TIMEEND).EQ.0) ) OUTID(13:13) = ' '
 #endif
                    ELSE
@@ -3107,7 +3049,7 @@ CONTAINS
           IF ( FLGMPI(0) ) then
              CALL MPI_WAITALL( NRQGO, IRQGO , STATIO, IERR_MPI )
           end IF
-          if (user_gridncout) then
+          if (user_netcdf_grdout) then
              if ( FLGMPI(1) .and. ( IAPROC .EQ. NAPFLD ) ) then
                 CALL MPI_WAITALL ( NRQGO2, IRQGO2 , STATIO, IERR_MPI )
              end IF
@@ -3189,7 +3131,7 @@ CONTAINS
        if (w3_timings_flag) then
           CALL PRINT_MY_TIME("Continuing the loop")
        end if
-    END DO
+    END DO  ! DO statement at 2. 
     call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP5')
     !
     IF ( TSTAMP .AND. SCREEN.NE.NDSO .AND. IAPROC.EQ.NAPOUT ) THEN
