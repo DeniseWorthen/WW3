@@ -638,7 +638,7 @@
    integer (SCRIP_i4), intent(in) :: &
       errorCode        ! error flag to detect any errors encountered
 
-   CHARACTER*(*), INTENT(IN)  :: errormsg
+   CHARACTER(LEN=*), INTENT(IN)  :: errormsg
 !-----------------------------------------------------------------------
 !
 !  call SCRIP error print function to output any logged errors that

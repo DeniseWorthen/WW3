@@ -152,7 +152,7 @@ CONTAINS
     IMPLICIT NONE
 
     INTEGER, INTENT(IN)                         :: NDSI
-    CHARACTER*(*), INTENT(IN)                   :: INFILE
+    CHARACTER(LEN=*), INTENT(IN)                   :: INFILE
     TYPE(NML_POINT_T), INTENT(INOUT)            :: NML_POINT
     TYPE(NML_FILE_T), INTENT(INOUT)             :: NML_FILE
     TYPE(NML_SPECTRA_T), INTENT(INOUT)          :: NML_SPECTRA

@@ -109,7 +109,7 @@ CONTAINS
     !                           IDFM = 1 : Free format.
     !                           IDFM = 2 : Fixed format RFORM.
     !                           IDFM = 3 : Unformatted.
-    !       RFORM   C*(*)  I   Format, if IDFM = 2
+    !       RFORM   Char   I   Format, if IDFM = 2
     !       IDLA    Int.   I   Lay out indicator.
     !                           IDLA = 1 : Read for IY=LY-HY, IX=LX-HX,
     !                                      IX line by IX line.
@@ -154,16 +154,16 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER   , INTENT(IN)  :: MX, MY, LX, HX, LY, HY, NDS, NDST, NDSE, IDFM, IDLA
-    REAL      , INTENT(IN)  :: VSC, VOF
-    CHARACTER , INTENT(IN)  :: RFORM*(*)
-    REAL      , INTENT(OUT) :: ARRAY(MX,MY)
+    INTEGER          , INTENT(IN)  :: MX, MY, LX, HX, LY, HY, NDS, NDST, NDSE, IDFM, IDLA
+    REAL             , INTENT(IN)  :: VSC, VOF
+    CHARACTER(len=*) , INTENT(IN)  :: RFORM
+    REAL             , INTENT(OUT) :: ARRAY(MX,MY)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IIDFM, IIDLA, IX, IY, ISTAT
-    INTEGER, SAVE           :: IENT = 0 ! W3_S
+    INTEGER :: IIDFM, IIDLA, IX, IY, ISTAT
+    INTEGER :: IENT = 0 ! W3_S
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -319,10 +319,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MX, MY, LX, HX, LY, HY, NDS, NDST,  &
-         NDSE, IDFM, IDLA, VSC, VOF
-    INTEGER, INTENT(OUT)    :: ARRAY(MX,MY)
-    CHARACTER, INTENT(IN)   :: RFORM*(*)
+    INTEGER          , INTENT(IN)  :: MX, MY, LX, HX, LY, HY, NDS, NDST, NDSE, IDFM, IDLA, VSC, VOF
+    INTEGER          , INTENT(OUT) :: ARRAY(MX,MY)
+    CHARACTER(len=*) , INTENT(IN)  :: RFORM
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -490,10 +489,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MX, MY, LX, HX, LY, HY, NDS, NDST,  &
-         NDSE, IDFM, IDLA
-    REAL, INTENT(IN)        :: VSC, VOF, ARRAY(MX,MY)
-    CHARACTER, INTENT(IN)   :: RFORM*(*)
+    INTEGER          , INTENT(IN)  :: MX, MY, LX, HX, LY, HY, NDS, NDST, NDSE, IDFM, IDLA
+    REAL             , INTENT(IN)  :: VSC, VOF, ARRAY(MX,MY)
+    CHARACTER(len=*) , INTENT(IN)  :: RFORM
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -640,10 +638,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MX, MY, LX, HX, LY, HY, NDS, NDST,  &
-         NDSE, IDFM, IDLA, ARRAY(MX,MY)
+    INTEGER, INTENT(IN)     :: MX, MY, LX, HX, LY, HY, NDS, NDST, NDSE, IDFM, IDLA, ARRAY(MX,MY)
     INTEGER, INTENT(IN)     :: VSC, VOF
-    CHARACTER, INTENT(IN)   :: RFORM*(*)
+    CHARACTER(len=*), INTENT(IN)   :: RFORM
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -787,7 +784,7 @@ CONTAINS
     !/
     INTEGER, INTENT(IN)     :: NDS, DIM
     REAL, INTENT(IN)        :: ARRAY(DIM)
-    CHARACTER, INTENT(IN)   :: ANAME*(*)
+    CHARACTER(len=*), INTENT(IN)   :: ANAME
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -873,7 +870,7 @@ CONTAINS
     !       NDS     Int.   I   Output unit number.
     !       IARRAY  I.A.   I   Array to be printed.
     !       DIM     Int.   I   Number of elements to be printed.
-    !       ANAME   C*(*)  I   Name of array.
+    !       ANAME   Char   I   Name of array.
     !     ----------------------------------------------------------------
     !
     !  4. Subroutines used :
@@ -896,7 +893,7 @@ CONTAINS
     !/ Parameter list
     !/
     INTEGER, INTENT(IN)     :: NDS, DIM, IARRAY(DIM)
-    CHARACTER, INTENT(IN)   :: ANAME*(*)
+    CHARACTER(len=*), INTENT(IN)   :: ANAME
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -985,7 +982,7 @@ CONTAINS
     !       MX      Int.   I   Dimension of first index.
     !       NX      Int.   I   Number of points for first index.
     !       NY      Int.   I   Number of points for scond index.
-    !       MNAME   C*(*)  I   Name of matrix.
+    !       MNAME   Char   I   Name of matrix.
     !     ----------------------------------------------------------------
     !
     !  4. Subroutines used :
@@ -1009,7 +1006,7 @@ CONTAINS
     !/
     INTEGER, INTENT(IN)     :: NDS, MX, NX, NY
     REAL, INTENT(IN)        :: A(MX,NY)
-    CHARACTER, INTENT(IN)   :: MNAME*(*)
+    CHARACTER(len=*), INTENT(IN)   :: MNAME
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1108,8 +1105,8 @@ CONTAINS
     !       IX1-3   Int.   I   Firts, last, increment grid points in X
     !                          direction.
     !       IY1-3   Int.   I   Id. Y direction.
-    !       PRVAR   C*(*)  I   Name of variable.
-    !       PRUNIT  C*(*)  I   Units of spectrum.
+    !       PRVAR   Char   I   Name of variable.
+    !       PRUNIT  Char   I   Units of spectrum.
     !     ----------------------------------------------------------------
     !
     !  4. Subroutines used :
@@ -1151,20 +1148,21 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, NX, NY, MX, MAP(MX,NY), MAP0,  &
-         IX1, IX2, IX3, IY1, IY2, IY3
-    REAL, INTENT(IN)        :: F(MX,NY), FSC
-    CHARACTER, INTENT(IN)   :: PRVAR*(*), PRUNIT*(*)
+    INTEGER          , INTENT(IN) :: NDS, NX, NY, MX, MAP(MX,NY), MAP0, IX1, IX2, IX3, IY1, IY2, IY3
+    REAL             , INTENT(IN) :: F(MX,NY), FSC
+    CHARACTER(len=*) , INTENT(IN) :: PRVAR, PRUNIT
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IX, IY, JJ, JM, K1, LX, I
-    INTEGER, SAVE           :: IENT = 0 ! W3_S
-    REAL                    :: FMAX, RR
-    LOGICAL                 :: FLSCLE
-    CHARACTER               :: PNUM*5, STRA*5, PNUM2*2, STRA3*3
-    DIMENSION               :: PNUM(25), PNUM2(61)
+    INTEGER          :: IX, IY, JJ, JM, K1, LX, I
+    INTEGER          :: IENT = 0 ! W3_S
+    REAL             :: FMAX, RR
+    LOGICAL          :: FLSCLE
+    character(len=5) :: PNUM(25)
+    character(len=2) :: PNUM2(61)
+    character(len=5) :: STRA
+    character(len=3) :: STRA3
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -1351,14 +1349,14 @@ CONTAINS
     !       NFR     Int.   I   Number of frequencies.
     !       E       R.A.   I   Spectral densities.
     !       FR      R.A.   I   Frequencies.
-    !       UFR     C*(*)  I   If 'HZ', frequencies in Hz, otherwise in
+    !       UFR     Char   I   If 'HZ', frequencies in Hz, otherwise in
     !                          rad/s (N.B., does not re-scale spectrum).
     !       NLINES  Int.   I   Hight of plot in lines.
     !       FTOPI   Real   I   Highest value of density in plot,
     !                          if FTOPI.LE.0., automatic scaling.
-    !       PRVAR   C*(*)  I   Name of variable.
-    !       PRUNIT  C*(*)  I   Units of spectrum.
-    !       PNTNME  C*(*)  I   Name of location.
+    !       PRVAR   Char   I   Name of variable.
+    !       PRUNIT  Char   I   Units of spectrum.
+    !       PNTNME  Char   I   Name of location.
     !     ----------------------------------------------------------------
     !
     !  4. Subroutines used :
@@ -1406,22 +1404,22 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, NFR, NLINES
-    REAL, INTENT(IN)        :: FTOPI, E(NFR), FR(NFR)
-    CHARACTER, INTENT(IN)   :: PRVAR*(*), PRUNIT*(*), PNTNME*(*),  &
-         UFR*(*)
+    INTEGER,          INTENT(IN) :: NDS, NFR, NLINES
+    REAL,             INTENT(IN) :: FTOPI, E(NFR), FR(NFR)
+    CHARACTER(len=*), INTENT(IN) :: PRVAR, PRUNIT, PNTNME, UFR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: NFRB, IFR, IL, IL0
-    INTEGER, SAVE           :: IENT = 0 ! W3_S
-    REAL, SAVE              :: TOPFAC = 1.1
-    REAL                    :: FTOP, RLINES, FACFR, FSC, FLINE,    &
-         EMAX, EMIN, EXTR, FLOC
-    LOGICAL                 :: FLSCLE
-    CHARACTER               :: STRA*10, STRA2*2, PNUM2*2
-    DIMENSION               :: PNUM2(NFM2)
+    INTEGER           :: NFRB, IFR, IL, IL0
+    INTEGER           :: IENT = 0 ! W3_S
+    REAL              :: TOPFAC = 1.1
+    REAL              :: FTOP, RLINES, FACFR, FSC, FLINE
+    REAL              :: EMAX, EMIN, EXTR, FLOC
+    LOGICAL           :: FLSCLE
+    character(len=2)  :: PNUM2(NFM2)
+    character(len=10) :: STRA
+    character(len=2)  :: STRA2
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -1614,9 +1612,9 @@ CONTAINS
     !       NLINES  Int.   I   Hight of plot in lines.
     !       FTOPI   Real   I   Highest value of density in plot,
     !                          if FTOP.LE.0., automatic scaling.
-    !       PRVAR   C*(*)  I   Name of variable.
-    !       PRUNIT  C*(*)  I   Units of spectrum.
-    !       PNTNME  C*(*)  I   Name of location.
+    !       PRVAR   Char   I   Name of variable.
+    !       PRUNIT  Char   I   Units of spectrum.
+    !       PNTNME  Char   I   Name of location.
     !     ----------------------------------------------------------------
     !
     !  4. Subroutines used :
@@ -1664,25 +1662,25 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, NFR, NE, NLINES
-    REAL, INTENT(IN)        :: FTOPI, E(NFR,NE), FR(NFR)
-    CHARACTER, INTENT(IN)   :: PRVAR*(*), PRUNIT*(*), PNTNME*(*),  &
-         UFR*(*)
-    DIMENSION               :: PRVAR(NE)
+    INTEGER          , INTENT(IN) :: NDS, NFR, NE, NLINES
+    REAL             , INTENT(IN) :: FTOPI, E(NFR,NE), FR(NFR)
+    CHARACTER(len=*) , INTENT(IN) :: PRVAR, PRUNIT, PNTNME, UFR
+    character(len=*) , INTENT(IN) :: PRVAR(:)  ! size NE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER, PARAMETER      :: NFRMAX = 100
-    INTEGER, PARAMETER      :: NFM2   = NFRMAX+1
-    INTEGER                 :: NFRB, IFR, IE, IL
-    INTEGER, SAVE           :: IENT = 0 ! W3_S
-    REAL, SAVE              :: TOPFAC = 1.1
-    REAL                    :: FTOP, RLINES, FACFR, FSC, FLINE,    &
-         EMAX, EMIN, EXTR, FLOC
-    LOGICAL                 :: FLSCLE
-    CHARACTER               :: STRA*10, STRA2*2, STRAX*2, PNUM2*2
-    DIMENSION               :: PNUM2(NFM2)
+    INTEGER, PARAMETER :: NFRMAX = 100
+    INTEGER, PARAMETER :: NFM2   = NFRMAX+1
+    INTEGER            :: NFRB, IFR, IE, IL
+    INTEGER            :: IENT = 0 ! W3_S
+    REAL               :: TOPFAC = 1.1
+    REAL               :: FTOP, RLINES, FACFR, FSC, FLINE, EMAX, EMIN, EXTR, FLOC
+    LOGICAL            :: FLSCLE
+    character(len=10)  :: STRA
+    character(len=2)   :: STRA2
+    character(len=2)   :: STRAX
+    character(len=2)   :: PNUM2(2)
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -1694,29 +1692,29 @@ CONTAINS
     !
     if (w3_t_flag) then
        WRITE (*,*)
-       WRITE (*,*) 'TEST OUTPUT PRT1DM, ECHO OF INPUT'
-       WRITE (*,*) '=======================================',    &
-            '======================================='
-       WRITE (*,*) 'File unit number      : ', NDS
-       WRITE (*,*) 'Number of frequencies : ', NFR
-       WRITE (*,*) 'Number of spectra     : ', NE
+       WRITE (*,*)    'TEST OUTPUT PRT1DM, ECHO OF INPUT'
+       WRITE (*,*)    '=======================================',    &
+                      '======================================='
+       WRITE (*,*)    'File unit number      : ', NDS
+       WRITE (*,*)    'Number of frequencies : ', NFR
+       WRITE (*,*)    'Number of spectra     : ', NE
        DO IE=1, NE
           WRITE (*,*) 'Spectral densities spectrum ', IE
-          WRITE (*,'(6X,8E9.2)') (E(IFR,IE),IFR=1,NFR)
+          WRITE (*,   '(6X,8E9.2)') (E(IFR,IE),IFR=1,NFR)
        END DO
-       WRITE (*,*) 'Frequencies'
-       WRITE (*,'(6X,8E9.2)') (FR(IFR),IFR=1,NFR)
-       WRITE (*,*) 'Frequency type        : ', UFR
-       WRITE (*,*) 'NLINES                : ', NLINES
-       WRITE (*,*) 'FTOPI                 : ', FTOPI
-       WRITE (*,*) 'Names of spectra      : ', PRVAR(1)
+       WRITE (*,*)    'Frequencies'
+       WRITE (*,      '(6X,8E9.2)') (FR(IFR),IFR=1,NFR)
+       WRITE (*,*)    'Frequency type        : ', UFR
+       WRITE (*,*)    'NLINES                : ', NLINES
+       WRITE (*,*)    'FTOPI                 : ', FTOPI
+       WRITE (*,*)    'Names of spectra      : ', PRVAR(1)
        DO IE=2, NE
           WRITE (*,*) '                        ', PRVAR(IE)
        END DO
-       WRITE (*,*) 'Units of spectra      : ', PRUNIT
-       WRITE (*,*) 'Name of location      : ', PNTNME
-       WRITE (*,*) '=======================================',    &
-            '======================================='
+       WRITE (*,*)    'Units of spectra      : ', PRUNIT
+       WRITE (*,*)    'Name of location      : ', PNTNME
+       WRITE (*,*)    '=======================================',    &
+                      '======================================='
        WRITE (*,*)
     end if
     !
@@ -1883,7 +1881,7 @@ CONTAINS
     ! Formats
     !
 900 FORMAT (/'  Location : ',A                                &
-         /'  Extreme value : ',E10.3,1X,A/)
+            /'  Extreme value : ',E10.3,1X,A/)
     !
 910 FORMAT (A10,A2,60A2)
 911 FORMAT (10X,15F8.3)
@@ -1924,16 +1922,16 @@ CONTAINS
     !       NTH     Int.   I   Number of frequencies.
     !       E       R.A.   I   Spectral densities.
     !       FR      R.A.   I   Frequencies.
-    !       UFR     C*(*)  I   If 'HZ', frequencies in Hz, otherwise in
+    !       UFR     Char   I   If 'HZ', frequencies in Hz, otherwise in
     !                          rad/s
     !       FACSP   Real   I   Conversion factor to obtain (Hz,degr)
     !                          spectrum from E
     !       FSC     Real   I   Scale factor, if FSC.eq.0. automatic
     !                          scaling for "compressed" block.
     !       RRCUT   Real   I   Relative cut-off for printing.
-    !       PRVAR   C*(*)  I   Name of variable.
-    !       PRUNIT  C*(*)  I   Units of spectrum.
-    !       PNTNME  C*(*)  I   Name of location.
+    !       PRVAR   Char   I   Name of variable.
+    !       PRUNIT  Char   I   Units of spectrum.
+    !       PNTNME  Char   I   Name of location.
     !     ----------------------------------------------------------------
     !
     !  4. Subroutines used :
@@ -1983,19 +1981,22 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER  , INTENT(IN) :: NDS, NFR0, NFR, NTH
-    REAL     , INTENT(IN) :: E(NFR0,*), FR(*), FACSP, FSC, RRCUT
-    CHARACTER, INTENT(IN) :: PRVAR*(*), PRUNIT*(*), PNTNME*(*), UFR*(*)
+    INTEGER          , INTENT(IN) :: NDS, NFR0, NFR, NTH
+    REAL             , INTENT(IN) :: E(NFR0,*), FR(*), FACSP, FSC, RRCUT
+    CHARACTER(len=*) , INTENT(IN) :: PRVAR, PRUNIT, PNTNME, UFR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IFR, ITH, NFRB, INTANG, ITHSEC
-    INTEGER, SAVE           :: IENT = 0 ! W3_S
-    LOGICAL                 :: FLSCLE
-    REAL                    :: FACFR, EMAX, EMIN, DTHDEG, RR, RRC
-    CHARACTER               :: PNUM*5, STRA*5, STRANG*5, PNUM2*2, STRA2*2
-    DIMENSION               :: PNUM(25), PNUM2(101)
+    INTEGER          :: IFR, ITH, NFRB, INTANG, ITHSEC
+    INTEGER          :: IENT = 0 ! W3_S
+    LOGICAL          :: FLSCLE
+    REAL             :: FACFR, EMAX, EMIN, DTHDEG, RR, RRC
+    character(len=5) :: STRA
+    character(len=2) :: STRA2
+    character(len=5) :: STRANG
+    character(len=2) :: PNUM2(101)
+    character(len=5) :: PNUM(25)
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -2264,14 +2265,14 @@ CONTAINS
       !/ ------------------------------------------------------------------- /
       !/ Parameter list
       !/
-      INTEGER, INTENT(IN)     :: IANG, ILEN, INUM
-      CHARACTER, INTENT(OUT)  :: SANG*(*)
+      INTEGER          , INTENT(IN)     :: IANG, ILEN, INUM
+      CHARACTER(len=*) , INTENT(OUT)  :: SANG
       !/
       !/ ------------------------------------------------------------------- /
       !/ Local parameters
       !/
-      INTEGER                 :: I, J
-      CHARACTER               :: SAUX*4
+      INTEGER          :: I, J
+      CHARACTER(len=4) :: SAUX
       !/
       !/ ------------------------------------------------------------------- /
       !/

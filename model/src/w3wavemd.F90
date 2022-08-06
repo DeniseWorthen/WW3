@@ -409,7 +409,7 @@ CONTAINS
     USE W3ODATMD    , only : TOFRST, TONEXT, TBPIN, TBPI0, TOLAST, DTOUT, NAPFLD, NAPPNT
     USE W3ODATMD    , only : NRQGO, NRQGO2, IRQGO, IRQGO2, NRQPO, NRQPO2, IRQPO1, IRQPO2 ! W3_MPI
     USE W3ODATMD    , only : NRQRS, IRQRS, IRQPO1, NRQBP, IRQBP1, IRQBP2, NRQBP2         ! W3_MPI
-    use w3odatmd    , only : user_netcdf_grdout, rstwr
+    use w3odatmd    , only : user_netcdf_grdout, rstwr, histwr
     USE W3ODATMD    , only : W3SETO
     !
     USE W3GDATMD    , only : RLGTYPE, SX, SY, CLGTYPE, HPFAC, HQFAC, REFLC, REFLD  ! W3_REF1
@@ -2195,7 +2195,7 @@ CONTAINS
                                IX = ICLBAC(IK)
                                BACANGL = - ANGARC(IK)
                             ENDIF
-                            
+
                             !!Li    Work out boundary PE (ISPEC) and JSEA numbers for IX
                             if (w3_dist_flag) then
                                ISPEC = MOD( IX-1, NAPROC )
@@ -2204,7 +2204,7 @@ CONTAINS
                                ISPEC = 0
                                JSEA = IX
                             end if
-                            
+
                             IF( IAPROC .EQ. ISPEC+1 ) THEN
                                BACSPEC = SPCBAC(:,IK)
                                CALL w3acturn( NTH, NK, BACANGL, BACSPEC )
@@ -2838,7 +2838,11 @@ CONTAINS
                 if (w3_sbs_flag) then
                    do_gridded_output = ( j .eq. 1 )  .or. ( j .eq. 7 )
                 else
-                   do_gridded_output = ( j .eq. 1 )
+                   if (w3_cesmcoupled_flag) then
+                      do_gridded_output = ( j .eq. 1 ) .and. histwr
+                   else
+                      do_gridded_output = ( j .eq. 1 )
+                   end if
                 end if
                 do_point_output                = (j .eq. 2)
                 do_track_output                = (j .eq. 3)
@@ -2878,7 +2882,7 @@ CONTAINS
                             IF ( FLGMPI(1) ) CALL MPI_WAITALL( NRQGO2, IRQGO2, STATIO, IERR_MPI )
                             FLGMPI(1) = .FALSE.
 #endif
-                            CALL W3IOGONCD ()
+                            CALL W3IOGONCD()
                          END IF
                       else ! default (binary) output
 
@@ -2906,7 +2910,7 @@ CONTAINS
                          end if
                       end if ! user_netcdf_grdout
 
-                   ELSE IF ( J .EQ. 2 ) THEN
+                   ELSE IF ( do_point_output ) THEN
 
                       IF ( IAPROC .EQ. NAPPNT ) THEN
                          ! Point output
@@ -2915,16 +2919,16 @@ CONTAINS
                          CALL W3IOPO ( 'WRITE', NDS(8), ITEST, IMOD )
                       END IF
 
-                   ELSE IF ( J .EQ. 3 ) THEN
+                   ELSE IF ( do_track_output ) THEN
 
                       ! Track output
                       CALL W3IOTR ( NDS(11), NDS(12), VA, IMOD )
 
-                   ELSE IF ( J .EQ. 4 ) THEN
+                   ELSE IF ( do_restart_output ) THEN
                       CALL W3IORS('HOT', NDS(6), XXX, IMOD, FLOUT(8) )
                       ITEST = RSTYPE
 
-                   ELSE IF ( J .EQ. 5 ) THEN
+                   ELSE IF ( do_wavefield_separation_output ) THEN
 
                       IF ( IAPROC .EQ. NAPBPT ) THEN
 #ifdef W3_MPI
@@ -2933,11 +2937,11 @@ CONTAINS
                          CALL W3IOBC ( 'WRITE', NDS(10), TIME, TIME, ITEST, IMOD )
                       END IF
 
-                   ELSE IF ( J .EQ. 6 ) THEN
+                   ELSE IF ( do_sf_output ) THEN
 
                       CALL W3IOSF ( NDS(13), IMOD )
 
-                   ELSE IF ( J .EQ. 7 ) THEN
+                   ELSE IF ( do_coupler_output ) THEN
 
 #ifdef W3_OASIS
                       ! Send variables to atmospheric or ocean circulation or ice model
@@ -3131,7 +3135,7 @@ CONTAINS
        if (w3_timings_flag) then
           CALL PRINT_MY_TIME("Continuing the loop")
        end if
-    END DO  ! DO statement at 2. 
+    END DO  ! DO statement at 2.
     call print_memcheck(IAPROC+40000, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP5')
     !
     IF ( TSTAMP .AND. SCREEN.NE.NDSO .AND. IAPROC.EQ.NAPOUT ) THEN

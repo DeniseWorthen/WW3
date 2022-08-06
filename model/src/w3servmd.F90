@@ -192,7 +192,7 @@ CONTAINS
     !/ Parameter list
     !/
     INTEGER, INTENT(INOUT)  :: IENT
-    CHARACTER, INTENT(IN)   :: SNAME*(*)
+    CHARACTER(len=*), INTENT(IN)   :: SNAME
     !/
     !/ ------------------------------------------------------------------- /
     !/

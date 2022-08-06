@@ -3526,7 +3526,7 @@
 
       INTEGER, INTENT(IN)               :: EXTRADIM
       INTEGER, INTENT(IN)               :: NCTYPE
-      CHARACTER*(*), INTENT(IN)         :: NCFILE
+      CHARACTER(LEN=*), INTENT(IN)         :: NCFILE
       INTEGER, INTENT(OUT)              :: NCID
       INTEGER, INTENT(OUT)              :: DIMID(6)
       INTEGER, INTENT(IN)               :: DIMLN(6)

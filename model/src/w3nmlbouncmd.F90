@@ -104,7 +104,7 @@ CONTAINS
     IMPLICIT NONE
 
     INTEGER, INTENT(IN)                         :: NDSI
-    CHARACTER*(*), INTENT(IN)                   :: INFILE
+    CHARACTER(LEN=*), INTENT(IN)                   :: INFILE
     TYPE(NML_BOUND_T), INTENT(INOUT)            :: NML_BOUND
     INTEGER, INTENT(OUT)                        :: IERR
     INTEGER, SAVE                             :: IENT = 0 ! W3_S

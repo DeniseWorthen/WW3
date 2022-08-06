@@ -657,7 +657,7 @@ CONTAINS
     !/
     INTEGER, INTENT(IN)                 :: NDS, NDST, NDSE, NX, NY
     CHARACTER(LEN=3), INTENT(INOUT)     :: IDFLD
-    CHARACTER*(*), INTENT(IN)           :: INXOUT
+    CHARACTER(LEN=*), INTENT(IN)           :: INXOUT
     INTEGER, INTENT(OUT)                :: IERR
     !/
     !/ ------------------------------------------------------------------- /
@@ -843,7 +843,7 @@ CONTAINS
     !/
     INTEGER, INTENT(IN)                 :: NDS, NDST, NDSE, NX, NY, IDAT
     CHARACTER(LEN=3), INTENT(INOUT)     :: IDFLD
-    CHARACTER*(*), INTENT(IN)           :: INXOUT
+    CHARACTER(LEN=*), INTENT(IN)           :: INXOUT
     INTEGER, INTENT(OUT)                :: IERR
     !/
     !/ ------------------------------------------------------------------- /
@@ -976,16 +976,10 @@ CONTAINS
   END SUBROUTINE W3FLDTIDE2
 
   !/ ------------------------------------------------------------------- /
-#ifdef W3_OASIS
   SUBROUTINE W3FLDG (INXOUT, IDFLD, NDS, NDST, NDSE, MX, MY, &
        NX, NY, T0, TN, TF0, FX0, FY0, FA0,                   &
        TFN, FXN, FYN, FAN, IERR, FLAGSC,                     &
        COUPL_COMM)
-#else
-  SUBROUTINE W3FLDG (INXOUT, IDFLD, NDS, NDST, NDSE, MX, MY, &
-       NX, NY, T0, TN, TF0, FX0, FY0, FA0,                   &
-       TFN, FXN, FYN, FAN, IERR, FLAGSC)
-#endif
     !/
     !/                  +-----------------------------------+
     !/                  | WAVEWATCH III           NOAA/NCEP |
@@ -1127,9 +1121,7 @@ CONTAINS
     CHARACTER,        INTENT(IN)              :: INXOUT*(*)
     CHARACTER(LEN=3), INTENT(IN)              :: IDFLD
     LOGICAL,          INTENT(INOUT), OPTIONAL :: FLAGSC
-#ifdef W3_OASIS
-    INTEGER,          INTENT(IN), OPTIONAL    :: COUPL_COMM
-#endif
+    INTEGER,          INTENT(IN)   , OPTIONAL :: COUPL_COMM
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

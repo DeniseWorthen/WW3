@@ -115,7 +115,7 @@ CONTAINS
     IMPLICIT NONE
 
     INTEGER, INTENT(IN)                         :: NDSI
-    CHARACTER*(*), INTENT(IN)                   :: INFILE
+    CHARACTER(LEN=*), INTENT(IN)                   :: INFILE
     TYPE(NML_RESTART_T), INTENT(INOUT)          :: NML_RESTART
     TYPE(NML_UPDATE_T), INTENT(INOUT)           :: NML_UPDATE
     INTEGER, INTENT(OUT)                        :: IERR

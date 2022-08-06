@@ -551,7 +551,7 @@ CONTAINS
     LOGICAL, INTENT(IN)     :: FLAG
     CHARACTER(LEN=3), INTENT(IN), OPTIONAL ::                       &
          TYPE
-    CHARACTER*(*), INTENT(IN), OPTIONAL ::                          &
+    CHARACTER(LEN=*), INTENT(IN), OPTIONAL ::                          &
          NAME, DESC
     !/
     !/ ------------------------------------------------------------------- /

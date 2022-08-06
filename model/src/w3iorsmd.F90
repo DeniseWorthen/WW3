@@ -144,7 +144,7 @@ CONTAINS
     !
     !     Parameter list
     !     ----------------------------------------------------------------
-    !       INXOUT  C*(*)  I   Test string for read/write, valid are:
+    !       INXOUT  Char   I   Test string for read/write, valid are:
     !                          'READ' Reading of a restart file.
     !                          'HOT'  Writing a full restart from the model.
     !                          'COLD' Writing a cold start file.
@@ -298,7 +298,7 @@ CONTAINS
     !      INTEGER, INTENT(IN)           :: NDSR
     INTEGER, INTENT(IN), OPTIONAL :: IMOD
     REAL, INTENT(INOUT)           :: DUMFPI
-    CHARACTER, INTENT(IN)         :: INXOUT*(*)
+    CHARACTER(len=*), INTENT(IN)         :: INXOUT
     LOGICAL, INTENT(IN),OPTIONAL  :: FLRSTRT
     !/
     !/ ------------------------------------------------------------------- /

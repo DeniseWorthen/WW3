@@ -105,7 +105,7 @@ CONTAINS
     IMPLICIT NONE
 
     INTEGER, INTENT(IN)                         :: NDSI       !< input file unit
-    CHARACTER*(*), INTENT(IN)                   :: INFILE     !< input file name
+    CHARACTER(LEN=*), INTENT(IN)                   :: INFILE     !< input file name
     TYPE(NML_BOUND_T), INTENT(INOUT)            :: NML_BOUND  !< bound structure
     INTEGER, INTENT(OUT)                        :: IERR       !< error code
     !/S      INTEGER, SAVE                             :: IENT = 0   !< strace error code

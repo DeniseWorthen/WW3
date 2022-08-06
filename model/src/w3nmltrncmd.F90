@@ -114,7 +114,7 @@ CONTAINS
     IMPLICIT NONE
 
     INTEGER, INTENT(IN)                         :: NDSI
-    CHARACTER*(*), INTENT(IN)                   :: INFILE
+    CHARACTER(LEN=*), INTENT(IN)                   :: INFILE
     TYPE(NML_TRACK_T), INTENT(INOUT)            :: NML_TRACK
     TYPE(NML_FILE_T), INTENT(INOUT)             :: NML_FILE
     INTEGER, INTENT(OUT)                        :: IERR

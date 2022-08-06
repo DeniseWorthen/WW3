@@ -248,7 +248,7 @@ CONTAINS
     IMPLICIT NONE
 
     INTEGER,                              INTENT(IN)    :: MPI_COMM, NDSI
-    CHARACTER*(*),                        INTENT(IN)    :: INFILE
+    CHARACTER(LEN=*),                     INTENT(IN)    :: INFILE
     TYPE(NML_DOMAIN_T),                   INTENT(INOUT) :: NML_DOMAIN
     TYPE(NML_INPUT_T),                    INTENT(INOUT) :: NML_INPUT
     TYPE(NML_OUTPUT_TYPE_T),              INTENT(INOUT) :: NML_OUTPUT_TYPE

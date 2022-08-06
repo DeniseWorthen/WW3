@@ -141,7 +141,7 @@ CONTAINS
     IMPLICIT NONE
 
     INTEGER, INTENT(IN)                         :: NDSI
-    CHARACTER*(*), INTENT(IN)                   :: INFILE
+    CHARACTER(LEN=*), INTENT(IN)                   :: INFILE
     TYPE(NML_FIELD_T), INTENT(INOUT)            :: NML_FIELD
     TYPE(NML_FILE_T), INTENT(INOUT)             :: NML_FILE
     TYPE(NML_SMC_T), INTENT(INOUT)              :: NML_SMC

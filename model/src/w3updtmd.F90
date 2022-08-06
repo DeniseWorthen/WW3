@@ -2972,9 +2972,9 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL,      INTENT(IN)  :: ZZ(NSEA)
-    CHARACTER, INTENT(IN)  :: ZUNIT*(*)
-    REAL,      INTENT(OUT) :: DZZDX(NY,NX), DZZDY(NY,NX)
+    REAL,              INTENT(IN)  :: ZZ(NSEA)
+    CHARACTER(len=*) , INTENT(IN)  :: ZUNIT
+    REAL,              INTENT(OUT) :: DZZDX(NY,NX), DZZDY(NY,NX)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

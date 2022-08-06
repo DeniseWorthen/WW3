@@ -797,7 +797,7 @@
       IMPLICIT NONE
 
       INTEGER, INTENT(IN)               :: NCTYPE
-      CHARACTER*(*), INTENT(IN)         :: NCFILE
+      CHARACTER(LEN=*), INTENT(IN)         :: NCFILE
       INTEGER, INTENT(IN)               :: DIMLN(:)
       INTEGER, INTENT(OUT)              :: DIMID(:), VARID(:), NCID
       INTEGER                           :: IRET
