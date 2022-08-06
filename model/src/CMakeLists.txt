@@ -94,6 +94,7 @@ set_property(SOURCE w3initmd.F90
 set(SRCFILES constants.F90
 # for compilation testing
              w3bullmd.F90
+             w3gkemd.F90
              w3nmlbouncmd.F90
              w3nmlboundmd.F90
              w3nmlmultimd.F90
@@ -105,6 +106,7 @@ set(SRCFILES constants.F90
              w3metamd.F90
              w3ounfmetamd.F90
              w3snl3md.F90
+             w3snl5md.F90
              w3src1md.F90
              w3src2md.F90
              w3src3md.F90
