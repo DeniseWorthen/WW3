@@ -7,9 +7,9 @@
 !/ ------------------------------------------------------------------- /
 !>
 !> @brief Convert direct access track output file to netCDF file.
-!> 
+!>
 !> @details Info read from track_o.ww3, written to track.nc.
-!> 
+!>
 !> @author M. Accensi  @date 15-May-2018
 !>
       PROGRAM W3TRNC
@@ -28,7 +28,7 @@
 !/
 !/    Copyright 2014 National Weather Service (NWS),
 !/       National Oceanic and Atmospheric Administration.  All rights
-!/       reserved.  WAVEWATCH III is a trademark of the NWS. 
+!/       reserved.  WAVEWATCH III is a trademark of the NWS.
 !/       No unauthorized use without permission.
 !/
 !  1. Purpose :
@@ -158,7 +158,7 @@
 !
 ! process ww3_trnc namelist
 !
-      INQUIRE(FILE=TRIM(FNMPRE)//"ww3_trnc.nml", EXIST=FLGNML) 
+      INQUIRE(FILE=TRIM(FNMPRE)//"ww3_trnc.nml", EXIST=FLGNML)
       IF (FLGNML) THEN
         ! Read namelist
         CALL W3NMLTRNC (NDSI, TRIM(FNMPRE)//'ww3_trnc.nml', NML_TRACK, NML_FILE, IERR)
@@ -323,7 +323,7 @@
 ! 4.1.3 Defines the stop date
         CALL T2D(TOUT,STOPDATE,IERR)
         WRITE(STRSTOPDATE,'(I4.4,A,4(I2.2,A),I2.2)') STOPDATE(1),'-',STOPDATE(2), &
-              '-',STOPDATE(3),' ',STOPDATE(5),':',STOPDATE(6),':',STOPDATE(7) 
+              '-',STOPDATE(3),' ',STOPDATE(5),':',STOPDATE(6),':',STOPDATE(7)
 
         IF ( IOUT .GE. NOUT ) EXIT
       END DO
@@ -431,16 +431,16 @@
 
 !> @brief Perform actual track output in NetCDF file.
 !>
-!> @param[in] FILEPREFIX 
+!> @param[in] FILEPREFIX
 !> @param[in] NCTYPE
 !> @param[inout] NCID
 !> @param[inout] S3
 !> @param[in] STRTSTOPDATE
 !> @param[in] MK
 !> @param[in] MTH
-!>        
+!>
 !> @author M. Accensi  @date 08-Apr-2016
-!>        
+!>
       SUBROUTINE W3EXNC ( FILEPREFIX, NCTYPE, NCID, S3, STRSTOPDATE, MK, MTH )
 !/
 !/                  +-----------------------------------+
@@ -539,15 +539,15 @@
       ! S3 defines the number of characters in the date for the filename
       ! S3=4-> YYYY, S3=6 -> YYYYMM, S3=10 -> YYYYMMDDHH
       ! Setups min and max date format
-      IF (S3.LT.4) S3=4 
-      IF (S3.GT.10) S3=10 
+      IF (S3.LT.4) S3=4
+      IF (S3.GT.10) S3=10
 !
       ! Defines the format of FILETIME
       S5=S3-8
       S4=S3
       OLDTIMEID=TIMEID
       ! if S3=>YYYYMMDDHH then filetime='YYYYMMDDTHHMMSSZ'
-      IF (S3.EQ.10) THEN 
+      IF (S3.EQ.10) THEN
         S4=S4+2 ! add chars for ISO8601 : day T hours Z
         WRITE(FORMAT1,'(A,I1,A,I1,A)') '(I8.8,A1,I',S5,'.',S5,',A1)'
         WRITE (TIMEID,FORMAT1) TIME(1), 'T', &
@@ -558,10 +558,10 @@
         WRITE (TIMEID,FORMAT1) TIME(1)
       ! if S3=>YYYYMM then filetime='YYYYMM'
       ! or S3=>YYYY then filetime='YYYY'
-      ELSE 
+      ELSE
         WRITE(FORMAT1,'(A,I1,A,I1,A)') '(I',S3,'.',S3,')'
         WRITE (TIMEID,FORMAT1) FLOOR(REAL(TIME(1))/NINT(10.**(8-S3)))
-      END IF       
+      END IF
       ! redefines filename with updated date format
       S1=LEN_TRIM(FILEPREFIX)
       FNAMENC=''
@@ -610,17 +610,17 @@
         NCID=NCID
       END IF
 
-                        
+
 ! 1.4 Creates the netcdf file
 
-      IF (NCID.EQ.0) THEN 
+      IF (NCID.EQ.0) THEN
 
         ! Initializes the time iteration counter n
         IT      = 0
         ILOC    = 0
         ISPEC   = 0
 
-! 1.4.1 Creates the NetCDF file 
+! 1.4.1 Creates the NetCDF file
 
         CALL W3CRNC(NCTYPE,FNAMENC,NCID,DIMID,DIMLN,VARID)
 
@@ -673,11 +673,11 @@
 
 
 ! 1.5 Defines the current time step and index
-     
+
       CALL T2D(TIME,CURDATE,IERR)
       OUTJULDAY=TSUB(REFDATE,CURDATE)
       WRITE(NDSO,'(3A,I6,A,I4,A,I2.2,A,I2.2,A,I2.2,A,I2.2,A,I2.2,2A)')       &
-            'Writing new record ', ENAME(2:) ,'number ',IT,                  & 
+            'Writing new record ', ENAME(2:) ,'number ',IT,                  &
             ' for ',CURDATE(1),':',CURDATE(2),':',CURDATE(3),'T',CURDATE(5), &
             ':',CURDATE(6),':',CURDATE(7),' in file ',TRIM(FNAMENC)
 
@@ -704,7 +704,7 @@
       ELSE
         CDO = 0.
       END IF
-              
+
 !
 ! 1.7.1 Puts dimensions variables in NetCDF file
 !
@@ -739,7 +739,7 @@
       CALL CHECK_ERR(IRET)
       ! Write CAO (current - x direction)
       IRET=NF90_PUT_VAR(NCID, VARID(11),CAO ,start=(/IT/))
-      CALL CHECK_ERR(IRET)   
+      CALL CHECK_ERR(IRET)
       ! Write CDO (current - y direction)
       IRET=NF90_PUT_VAR(NCID,VARID(12),CDO ,start=(/IT/))
       CALL CHECK_ERR(IRET)
@@ -787,21 +787,21 @@
 !> @param[out] DIMID
 !> @param[in] DIMLN
 !> @param[out] VARID
-!>      
+!>
 !> @author NA  @date NA
-!>      
+!>
       SUBROUTINE W3CRNC (NCTYPE,NCFILE,NCID,DIMID,DIMLN,VARID)
 
       USE NETCDF
 
       IMPLICIT NONE
 
-      INTEGER, INTENT(IN)               :: NCTYPE
-      CHARACTER(LEN=*), INTENT(IN)         :: NCFILE
-      INTEGER, INTENT(IN)               :: DIMLN(:)
-      INTEGER, INTENT(OUT)              :: DIMID(:), VARID(:), NCID
-      INTEGER                           :: IRET
-      INTEGER                           :: DEFLATE=1
+      INTEGER, INTENT(IN)          :: NCTYPE
+      CHARACTER(LEN=*), INTENT(IN) :: NCFILE
+      INTEGER, INTENT(IN)          :: DIMLN(:)
+      INTEGER, INTENT(OUT)         :: DIMID(:), VARID(:), NCID
+      INTEGER                      :: IRET
+      INTEGER                      :: DEFLATE=1
 
 !
 ! Creation in netCDF3 or netCDF4
@@ -841,7 +841,7 @@
       IRET=NF90_PUT_ATT(NCID,VARID(1),'units','days since 1990-01-01 00:00:00')
       IRET=NF90_PUT_ATT(NCID,VARID(1),'conventions',                   &
          'Relative julian days with decimal part (as parts of the day)')
-      IRET=NF90_PUT_ATT(NCID,VARID(1),'axis','T') 
+      IRET=NF90_PUT_ATT(NCID,VARID(1),'axis','T')
       IRET=NF90_PUT_ATT(NCID,VARID(1),'calendar',TRIM(CALTYPE))
 
 ! frequency
@@ -855,7 +855,7 @@
       IRET=NF90_PUT_ATT(NCID,VARID(2),'valid_min',0.)
       IRET=NF90_PUT_ATT(NCID,VARID(2),'valid_max',10.)
       IRET=NF90_PUT_ATT(NCID,VARID(2),'_FillValue',NF90_FILL_FLOAT)
-      IRET=NF90_PUT_ATT(NCID,VARID(2),'axis','Y') 
+      IRET=NF90_PUT_ATT(NCID,VARID(2),'axis','Y')
 
 !frequency1
       IRET=NF90_DEF_VAR(NCID, 'frequency1', NF90_FLOAT, (/DIMID(2)/), VARID(3))
@@ -914,9 +914,9 @@
       IRET=NF90_PUT_ATT(NCID,VARID(6),'valid_min',0.)
       IRET=NF90_PUT_ATT(NCID,VARID(6),'valid_max',360.)
       IRET=NF90_PUT_ATT(NCID,VARID(6),'_FillValue',NF90_FILL_FLOAT)
-      IRET=NF90_PUT_ATT(NCID,VARID(6),'axis','Z') 
+      IRET=NF90_PUT_ATT(NCID,VARID(6),'axis','Z')
 
-      IF (FLAGLL) THEN 
+      IF (FLAGLL) THEN
 !  longitude
         IRET=NF90_DEF_VAR(NCID, 'longitude', NF90_FLOAT, (/DIMID(1)/),VARID(7))
         IF (NCTYPE.EQ.4) IRET=NF90_DEF_VAR_DEFLATE(NCID, VARID(7), 1, 1, DEFLATE)
@@ -1080,7 +1080,7 @@
       IF (NCTYPE.EQ.4) IRET=NF90_DEF_VAR_DEFLATE(NCID, VARID(17), 1, 1, DEFLATE)
       IRET=NF90_PUT_ATT(NCID,VARID(17),'long_name','track_name number of characters')
       IRET=NF90_PUT_ATT(NCID,VARID(17),'_FillValue',NF90_FILL_INT)
-      IRET=NF90_PUT_ATT(NCID,VARID(17),'axis','W') 
+      IRET=NF90_PUT_ATT(NCID,VARID(17),'axis','W')
 
 !  track_name
       IRET=NF90_DEF_VAR(NCID, 'track_name', NF90_CHAR, (/DIMID(4),DIMID(1)/), VARID(18))
@@ -1092,7 +1092,7 @@
 
       RETURN
 
-      END SUBROUTINE W3CRNC 
+      END SUBROUTINE W3CRNC
 
 !==============================================================================
 !>
@@ -1128,7 +1128,3 @@
 !/ End of W3TRNC ----------------------------------------------------- /
 !/
       END PROGRAM W3TRNC
-
-
-
-

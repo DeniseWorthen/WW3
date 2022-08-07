@@ -1,6 +1,6 @@
 !> @file
 !> @brief Contains module WMUNITMD.
-!> 
+!>
 !> @author H. L. Tolman @date 29-May-2009
 !>
 
@@ -10,7 +10,7 @@
 !>
 !> @brief Dynamic assignement of unit numbers for the multi-grid wave
 !>  model.
-!> 
+!>
 !> @details Allowed range of unit numbers is set in parameter statements.
 !>
 !> @author H. L. Tolman  @date 29-May-2009
@@ -29,7 +29,7 @@ MODULE WMUNITMD
   !/
   !/    Copyright 2009 National Weather Service (NWS),
   !/       National Oceanic and Atmospheric Administration.  All rights
-  !/       reserved.  WAVEWATCH III is a trademark of the NWS. 
+  !/       reserved.  WAVEWATCH III is a trademark of the NWS.
   !/       No unauthorized use without permission.
   !/
   !  1. Purpose :
@@ -46,7 +46,7 @@ MODULE WMUNITMD
   !      UNITLW    I.P.  Private  Lowest unit number.
   !      UNITHG    I.P.  Private  Highest unit number.
   !      INPLOW, INPHGH, OUTLOW, OUTHGH, SCRLOW, SCRHGH
-  !                I.P.  Private  Low and high for input, output and 
+  !                I.P.  Private  Low and high for input, output and
   !                               scratch files.
   !      FLINIT    Log.  Private  Flag for intialization.
   !
@@ -117,13 +117,13 @@ CONTAINS
   !/ ------------------------------------------------------------------- /
   !>
   !> @brief Allocate and initialize arrays of module.
-  !> 
+  !>
   !> @details Allocate and test parameter setting.
-  !>        
+  !>
   !> @param[in] NDSE Unit number for error output.
   !> @param[in] NDST Unit number for test output.
   !> @author H. L. Tolman @date 25-Mar-2005
-  !>        
+  !>
   SUBROUTINE WMUINI ( NDSE, NDST )
     !/
     !/                  +-----------------------------------+
@@ -322,14 +322,14 @@ CONTAINS
     !/
   END SUBROUTINE WMUINI
   !/ ------------------------------------------------------------------- /
-  !>      
+  !>
   !> @brief Display assigned unit number information from private data base.
-  !> 
+  !>
   !> @param[in] NDS Unit number for output.
   !> @param[in] IREQ Request identifier.
-  !>      
+  !>
   !> @author H. L. Tolman @date 25-Mar-2005
-  !>      
+  !>
 
   SUBROUTINE WMUDMP ( NDS, IREQ )
     !/
@@ -456,11 +456,11 @@ CONTAINS
 930 FORMAT (/' WMUDMP: Unit information '//                         &
          '    Nr Flg Type  Name                  Description '/ &
          '  -------------------------------------------------', &
-         '---------------------') 
+         '---------------------')
 931 FORMAT (/' WMUDMP: Unit information (assigned only)'//          &
          '    Nr Flg Type  Name                  Description '/ &
          '  -------------------------------------------------', &
-         '---------------------') 
+         '---------------------')
 932 FORMAT ( 2X,I4,L4,2X,A3,2X,A20,2X,A)
     !
 1000 FORMAT (/' *** ERROR WMUDMP: DATA STRUCTURE READY ***'/         &
@@ -484,7 +484,7 @@ CONTAINS
   !> @param[in] DESC Description of file.
   !>
   !> @author H. L. Tolman @date 25-Mar-2005
-  !>    
+  !>
   SUBROUTINE WMUSET ( NDSE, NDST, NDS, FLAG, TYPE, NAME, DESC )
     !/
     !/                  +-----------------------------------+
@@ -547,12 +547,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDSE, NDST, NDS
-    LOGICAL, INTENT(IN)     :: FLAG
-    CHARACTER(LEN=3), INTENT(IN), OPTIONAL ::                       &
-         TYPE
-    CHARACTER(LEN=*), INTENT(IN), OPTIONAL ::                          &
-         NAME, DESC
+    INTEGER          , INTENT(IN)           :: NDSE, NDST, NDS
+    LOGICAL          , INTENT(IN)           :: FLAG
+    CHARACTER(LEN=3) , INTENT(IN), OPTIONAL :: TYPE
+    CHARACTER(LEN=*) , INTENT(IN), OPTIONAL :: NAME, DESC
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -637,9 +635,9 @@ CONTAINS
   !/ ------------------------------------------------------------------- /
   !>
   !> @brief Find a free unit number for a given file type.
-  !> 
+  !>
   !> @details Search the data base.
-  !>      
+  !>
   !> @param[in] NDSE Unit number for error output.
   !> @param[in] NDST Unit number for test output.
   !> @param[out] NDS Unit number to be assigned.
@@ -740,7 +738,7 @@ CONTAINS
     END IF
     !
     IF ( PRESENT(NR) ) THEN
-       NRC    = MAX ( 1 , NR ) 
+       NRC    = MAX ( 1 , NR )
     ELSE
        NRC    = 1
     END IF
@@ -795,7 +793,7 @@ CONTAINS
 1010 FORMAT (/' *** ERROR WMUGET: INITIALIZE FIRST !!! ***')
 1020 FORMAT (/' *** ERROR WMUGET: CANNOT FIND FREE UNIT FOR TYPE ',  &
          A,' ***'/)
-    !  
+    !
 9010 FORMAT ( ' TEST WMUGET: LOOKING FOR UNIT FOR TYPE ',A,' [',  & ! W3_T
          I2,']')
 9020 FORMAT ( ' TEST WMUGET: UNIT NUMBER SET TO',I4)
@@ -804,7 +802,7 @@ CONTAINS
     !/
   END SUBROUTINE WMUGET
   !/ ------------------------------------------------------------------- /
-  !>      
+  !>
   !> @brief Update data base information for a given unit number.
   !>
   !> @details FORTRAN INQUIRE statement.
@@ -814,7 +812,7 @@ CONTAINS
   !> @param[in] NDS  Unit number to be assigned.
   !>
   !> @author H. L. Tolman  @date 29-Mar-2005
-  !>      
+  !>
   SUBROUTINE WMUINQ ( NDSE, NDST, NDS )
     !/
     !/                  +-----------------------------------+

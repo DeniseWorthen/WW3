@@ -1,6 +1,6 @@
 !> @file
 !> @brief Contains module WMWAVEMD.
-!> 
+!>
 !> @author H. L. Tolman @date 22-Mar-2021
 
 #include "w3macros.h"
@@ -8,7 +8,7 @@
 !>
 !> @brief Running the multi-grid version of WAVEWATCH III up to a
 !>  given ending time for each grid.
-!> 
+!>
 !> @author H. L. Tolman @date 22-Mar-2021
 !>
 MODULE WMWAVEMD
@@ -39,7 +39,7 @@ MODULE WMWAVEMD
   !/
   !/    Copyright 2009-2014 National Weather Service (NWS),
   !/       National Oceanic and Atmospheric Administration.  All rights
-  !/       reserved.  WAVEWATCH III is a trademark of the NWS. 
+  !/       reserved.  WAVEWATCH III is a trademark of the NWS.
   !/       No unauthorized use without permission.
   !/
   !  1. Purpose :
@@ -87,7 +87,7 @@ CONTAINS
   !>
   !> @param[in] TEND Ending time for calculations for each grid.
   !> @author H. L. Tolman @date 22-Mar-2021
-  !>        
+  !>
 
   SUBROUTINE WMWAVE ( TEND )
     !/
@@ -151,7 +151,7 @@ CONTAINS
     !      WWTIME    Subr    Id.    System time in readable format.
     !      PRTIME    Subr    Id.    Profiling routine ( !/MPRF )
     !      STME21    Subr  W3TIMEMD Print date and time readable.
-    !      DSEC21    Func    Id.    Difference between times.             
+    !      DSEC21    Func    Id.    Difference between times.
     !      TICK21    Subr    Id.    Advance time.
     !      WMSETM    Subr  WMMDATMD Point to grid/model.
     !      WMUPDT    Subr  WMUPDTMD Update input fields at driver level.
@@ -182,7 +182,7 @@ CONTAINS
     !
     !  7. Remarks :
     !
-    !     - If no action is taken in the endless loop, an error is 
+    !     - If no action is taken in the endless loop, an error is
     !       assumed (code 2099). This should never take place in the
     !       default driver, but may be a problem in a coupled model.
     !     - If output is requested for the initial model time, TSYNC
@@ -297,7 +297,7 @@ CONTAINS
     if (w3_mprf_flag) then
        CALL PRTIME ( PRFT0 )
     end if
-    !              
+    !
     if (w3_o10_flag) then
        IF ( MDSS.NE.MDSO .AND. NMPSCR.EQ.IMPROC ) WRITE (MDSS,900)
     end if
@@ -404,7 +404,7 @@ CONTAINS
     LOOP_OUTER: DO
        !
        IF ( MDSS.NE.MDSO .AND. NMPSCR.EQ.IMPROC .AND. DSEC21(TPRNT,TSYNC(:,0)).NE.0. ) THEN
-          IF ( .NOT. TSTAMP ) WRITE (MDSS,*) 
+          IF ( .NOT. TSTAMP ) WRITE (MDSS,*)
           CALL WMPRNT ( MDSO, NRGRD, TSYNC(:,0), GRSTAT )
           CALL STME21 ( TSYNC(:,0), MTIME )
           CALL WWTIME ( WTIME )
@@ -464,10 +464,10 @@ CONTAINS
                 end if
                 !
                 IF ( TDATA(1,I) .EQ. -1 ) THEN
-                   DTTST  = 0.  
-                ELSE 
+                   DTTST  = 0.
+                ELSE
                    CALL W3SETW ( I, MDSE, MDST )
-                   DTTST  = DSEC21 ( TIME , TDATA(:,I) ) 
+                   DTTST  = DSEC21 ( TIME , TDATA(:,I) )
                 END IF
                 if (w3_t_flag) then
                    WRITE (MDST,9020) DTTST
@@ -877,7 +877,7 @@ CONTAINS
                 end if
                 CALL WMIOES ( I )
                 !
-                ! 5.c Finish up 
+                ! 5.c Finish up
                 !
                 GRSTAT(I) = 4
                 DONE      = .TRUE.
@@ -1120,10 +1120,10 @@ CONTAINS
                 end if
                 !
                 IF ( TOUTP(1,I) .EQ. -1 ) THEN
-                   DTTST  = 1.  
-                ELSE 
+                   DTTST  = 1.
+                ELSE
                    CALL W3SETW ( I, MDSE, MDST )
-                   DTTST  = DSEC21 ( TIME , TOUTP(:,I) ) 
+                   DTTST  = DSEC21 ( TIME , TOUTP(:,I) )
                 END IF
                 if (w3_t_flag) then
                    WRITE (MDST,9090) DTTST
@@ -1277,7 +1277,7 @@ CONTAINS
                    TIME       = TOUTP(:,I)
                    TOUTP(1,I) = -1
                    TOUTP(2,I) =  0
-                   ! 
+                   !
                    DO JO=1, NOTYPE
                       !
                       IF ( FLOUT(JO) ) THEN
@@ -1477,7 +1477,7 @@ CONTAINS
        CALL WWTIME ( WTIME )
        WRITE (MDSS,902) WTIME
     ENDIF
-    !              
+    !
     if (w3_mpi_flag) then
        DO I=1, NRGRD
           CALL WMSETM ( I, MDSE, MDST )
@@ -1611,9 +1611,9 @@ CONTAINS
   !> @param[in] NRGRD Number of grids.
   !> @param[in] TSYNC Synchronization time.
   !> @param[in] GRSTAT Status array per grid.
-  !>    
+  !>
   !> @author H. L. Tolman  @date 22-Feb-2005
-  !>     
+  !>
   SUBROUTINE WMPRNT ( MDSO, NRGRD, TSYNC, GRSTAT )
     !/
     !/                  +-----------------------------------+
@@ -1767,16 +1767,16 @@ CONTAINS
     !/
   END SUBROUTINE WMPRNT
   !/ ------------------------------------------------------------------- /
-  !>     
+  !>
   !> @brief Non-blocking broadcast for integer arrays.
   !>
-  !> @details Non-blocking broadcast, initially for times only, 
+  !> @details Non-blocking broadcast, initially for times only,
   !>  but made for any integer array. Sending data from first process
-  !>  in the model communicator to all processes that are in the overall 
+  !>  in the model communicator to all processes that are in the overall
   !>  communicator but not in the model communicator.
-  !> 
+  !>
   !>  Standard send and receives using defined communicator. Send
-  !>  form first processor in communicator.    
+  !>  form first processor in communicator.
   !>
   !> @param[inout] DATA Data to be send/received.
   !> @param[in] NR Size of array.
@@ -1784,7 +1784,7 @@ CONTAINS
   !> @param[in] NMOD Number of models.
   !> @param[in] ID ID number, used with NMOD for ITAG.
   !> @author H. L. Tolman  @date 02-Feb-2007
-  !>      
+  !>
   SUBROUTINE WMBCST ( DATA, NR, IMOD, NMOD, ID )
     !/
     !/                  +-----------------------------------+
@@ -1799,8 +1799,8 @@ CONTAINS
     !  1. Purpose :
     !
     !     Non-blocking broadcast, initially for times only, but made for
-    !     any integer array. Sending data from first process in the 
-    !     model cummunicator to all processes that are in the overall 
+    !     any integer array. Sending data from first process in the
+    !     model cummunicator to all processes that are in the overall
     !     communicator but not in the model communicator.
     !
     !  2. Method :
@@ -1848,7 +1848,7 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !
-    USE WMMDATMD, ONLY: MDST, MTAGB, IMPROC, NMPROC, ALLPRC ! W3_MPI 
+    USE WMMDATMD, ONLY: MDST, MTAGB, IMPROC, NMPROC, ALLPRC ! W3_MPI
     USE WMMDATMD, ONLY: CROOT, MPI_COMM_MWAVE               ! W3_MPI
     use WMMDATMD, only: mpi_comm_grd_not_null               ! W3_MPI
     USE W3SERVMD, ONLY: STRACE                              ! W3_S
@@ -1947,9 +1947,9 @@ CONTAINS
   !> @param[in] IMOD Model number.
   !> @param[in] NMOD Number of models.
   !> @param[in] ID ID number, used with NMOD for ITAG.
-  !>      
+  !>
   !> @author H. L. Tolman  @date 21-Jun-2007
-  !>      
+  !>
   SUBROUTINE WMWOUT ( IMOD, NMOD, ID )
     !/
     !/                  +-----------------------------------+

@@ -1,4 +1,4 @@
-#include "w3macros.h" 
+#include "w3macros.h"
 !/ ------------------------------------------------------------------- /
 MODULE W3NMLMULTIMD
   !/
@@ -70,7 +70,7 @@ MODULE W3NMLMULTIMD
      LOGICAL                     :: BOUND_FLAG
   END TYPE NML_MODEL_RESOURCE_T
   !
-  TYPE NML_MODEL_GRID_T 
+  TYPE NML_MODEL_GRID_T
      CHARACTER(13)               :: NAME
      TYPE(NML_MODEL_FORCING_T)   :: FORCING
      TYPE(NML_MODEL_ASSIM_T)     :: ASSIM
@@ -157,7 +157,7 @@ MODULE W3NMLMULTIMD
 
 
   ! output date structure
-  TYPE NML_OUTPUT_TIME_T 
+  TYPE NML_OUTPUT_TIME_T
      CHARACTER(15)               :: START
      CHARACTER(15)               :: STRIDE
      CHARACTER(15)               :: STOP
@@ -218,7 +218,7 @@ CONTAINS
     !
     !  1. Purpose :
     !
-    !     Reads the domain definition namelist to define the number of 
+    !     Reads the domain definition namelist to define the number of
     !     model and forcing grids
     !
     !  2. Method :
@@ -276,10 +276,10 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                       :: MPI_COMM, NDSI
-    CHARACTER(LEN=*), INTENT(IN)                 :: INFILE
-    TYPE(NML_DOMAIN_T), INTENT(OUT)           :: NML_DOMAIN 
-    INTEGER, INTENT(OUT)                      :: IERR
+    INTEGER            , INTENT(IN)  :: MPI_COMM, NDSI
+    CHARACTER(LEN=*)   , INTENT(IN)  :: INFILE
+    TYPE(NML_DOMAIN_T) , INTENT(OUT) :: NML_DOMAIN
+    INTEGER            , INTENT(OUT) :: IERR
 
     ! locals
 #ifdef W3_MPI
@@ -425,16 +425,16 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                       :: MPI_COMM, NDSI
-    CHARACTER(LEN=*), INTENT(IN)                 :: INFILE
-    TYPE(NML_DOMAIN_T), INTENT(INOUT)         :: NML_DOMAIN
-    TYPE(NML_INPUT_GRID_T), INTENT(INOUT)     :: NML_INPUT_GRID(:) 
-    TYPE(NML_MODEL_GRID_T), INTENT(INOUT)     :: NML_MODEL_GRID(:) 
-    TYPE(NML_OUTPUT_TYPE_T), INTENT(INOUT)    :: NML_OUTPUT_TYPE(:)
-    TYPE(NML_OUTPUT_DATE_T), INTENT(INOUT)    :: NML_OUTPUT_DATE(:)
-    TYPE(NML_HOMOG_COUNT_T), INTENT(INOUT)    :: NML_HOMOG_COUNT
-    TYPE(NML_HOMOG_INPUT_T), ALLOCATABLE, INTENT(INOUT)    :: NML_HOMOG_INPUT(:)
-    INTEGER, INTENT(OUT)                      :: IERR
+    INTEGER                              , INTENT(IN)    :: MPI_COMM, NDSI
+    CHARACTER(LEN=*)                     , INTENT(IN)    :: INFILE
+    TYPE(NML_DOMAIN_T)                   , INTENT(INOUT) :: NML_DOMAIN
+    TYPE(NML_INPUT_GRID_T)               , INTENT(INOUT) :: NML_INPUT_GRID(:)
+    TYPE(NML_MODEL_GRID_T)               , INTENT(INOUT) :: NML_MODEL_GRID(:)
+    TYPE(NML_OUTPUT_TYPE_T)              , INTENT(INOUT) :: NML_OUTPUT_TYPE(:)
+    TYPE(NML_OUTPUT_DATE_T)              , INTENT(INOUT) :: NML_OUTPUT_DATE(:)
+    TYPE(NML_HOMOG_COUNT_T)              , INTENT(INOUT) :: NML_HOMOG_COUNT
+    TYPE(NML_HOMOG_INPUT_T), ALLOCATABLE , INTENT(INOUT) :: NML_HOMOG_INPUT(:)
+    INTEGER                              , INTENT(OUT)   :: IERR
 
     ! locals
 #ifdef W3_MPI

@@ -1,4 +1,4 @@
-#include "w3macros.h" 
+#include "w3macros.h"
 !/ ------------------------------------------------------------------- /
 MODULE W3NMLOUNFMD
   !/
@@ -140,13 +140,13 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                         :: NDSI
-    CHARACTER(LEN=*), INTENT(IN)                   :: INFILE
-    TYPE(NML_FIELD_T), INTENT(INOUT)            :: NML_FIELD
-    TYPE(NML_FILE_T), INTENT(INOUT)             :: NML_FILE
-    TYPE(NML_SMC_T), INTENT(INOUT)              :: NML_SMC
-    INTEGER, INTENT(OUT)                        :: IERR
-    INTEGER, SAVE                             :: IENT = 0 ! W3_S
+    INTEGER           , INTENT(IN)    :: NDSI
+    CHARACTER(LEN=*)  , INTENT(IN)    :: INFILE
+    TYPE(NML_FIELD_T) , INTENT(INOUT) :: NML_FIELD
+    TYPE(NML_FILE_T)  , INTENT(INOUT) :: NML_FILE
+    TYPE(NML_SMC_T)   , INTENT(INOUT) :: NML_SMC
+    INTEGER           , INTENT(OUT)   :: IERR
+    INTEGER, SAVE                     :: IENT = 0 ! W3_S
 
     IERR = 0
     if (w3_s_flag) then
@@ -793,54 +793,3 @@ CONTAINS
 END MODULE W3NMLOUNFMD
 
 !/ ------------------------------------------------------------------- /
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

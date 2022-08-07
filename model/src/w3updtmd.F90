@@ -1641,8 +1641,8 @@ CONTAINS
     USE W3GDATMD, ONLY: NX, NY, NSEA, MAPSF, MAPSTA, MAPST2, NSPEC, FICEN
     USE W3WDATMD, ONLY: TIME, TICE, ICE, BERG, UST
     USE W3ADATMD, ONLY: NSEALM
-    USE W3GDATMD, ONLY: aalpha ! W3_UWM or W3_CESMCOUPLED 
-    USE W3ADATMD, ONLY: charn  ! W3_UWM or W3_CESMCOUPLED 
+    USE W3GDATMD, ONLY: aalpha ! W3_UWM or W3_CESMCOUPLED
+    USE W3ADATMD, ONLY: charn  ! W3_UWM or W3_CESMCOUPLED
     USE W3IDATMD, ONLY: TIN, ICEI, BERGI
     USE W3PARALL, ONLY: INIT_GET_JSEA_ISPROC, INIT_GET_ISEA
     !/
@@ -2286,7 +2286,7 @@ CONTAINS
           end if
        END IF
        !
-    END DO ! NSEA 
+    END DO ! NSEA
     if (w3_debugw3ulev_flag) then
        WRITE(740+IAPROC,*) 'Beginning of W3ULEV, step 7'
     end if
@@ -2972,9 +2972,9 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL,              INTENT(IN)  :: ZZ(NSEA)
-    CHARACTER(len=*) , INTENT(IN)  :: ZUNIT
-    REAL,              INTENT(OUT) :: DZZDX(NY,NX), DZZDY(NY,NX)
+    REAL             , INTENT(IN)  :: ZZ(NSEA)
+    CHARACTER(LEN=*) , INTENT(IN)  :: ZUNIT
+    REAL             , INTENT(OUT) :: DZZDX(NY,NX), DZZDY(NY,NX)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

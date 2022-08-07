@@ -1,4 +1,4 @@
-#include "w3macros.h" 
+#include "w3macros.h"
 !/ ------------------------------------------------------------------- /
 MODULE W3NMLUPRSTRMD
   !/
@@ -114,12 +114,12 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                         :: NDSI
-    CHARACTER(LEN=*), INTENT(IN)                   :: INFILE
-    TYPE(NML_RESTART_T), INTENT(INOUT)          :: NML_RESTART
-    TYPE(NML_UPDATE_T), INTENT(INOUT)           :: NML_UPDATE
-    INTEGER, INTENT(OUT)                        :: IERR
-    INTEGER, SAVE                             :: IENT = 0 ! W3_S
+    INTEGER             , INTENT(IN)    :: NDSI
+    CHARACTER(LEN=*)    , INTENT(IN)    :: INFILE
+    TYPE(NML_RESTART_T) , INTENT(INOUT) :: NML_RESTART
+    TYPE(NML_UPDATE_T)  , INTENT(INOUT) :: NML_UPDATE
+    INTEGER             , INTENT(OUT)   :: IERR
+    INTEGER, SAVE                       :: IENT = 0 ! W3_S
 
     IERR = 0
     if (w3_s_flag) then

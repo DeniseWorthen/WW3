@@ -324,7 +324,7 @@
       IF( GTYPE .EQ. SMCTYPE )  THEN
           SMCGRD = .TRUE.
           WRITE (NDSO, *) " Conversion for SMCTYPE:", GTYPE
-      ENDIF 
+      ENDIF
 #endif
 !
 !--- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -423,7 +423,7 @@
 !       and are hardcoded for .inp files:
         TTYPE = "D"
         TIMEUNIT = "D"
-        NOVAL = UNDEF 
+        NOVAL = UNDEF
         VECTOR = .TRUE.
 
         CALL NEXTLN ( COMSTR , NDSI , NDSE )
@@ -446,7 +446,7 @@
         ENDIF
         SMCNOVAL = NOVAL
 #endif
-        ELSE 
+        ELSE
            READ (NDSI,*,END=801,ERR=802) IX1, IXN, IY1, IYN
         ENDIF
 
@@ -593,7 +593,7 @@
       IF(SMCOTYPE .EQ. 3 .OR. SMCOTYPE .EQ. 4) RTDL = .FALSE.
 #endif
 #endif
-      ELSE 
+      ELSE
         IX1    = MAX ( IX1 , 1 )
         IXN    = MIN ( IXN , NX )
         IY1    = MAX ( IY1 , 1 )
@@ -848,7 +848,7 @@
 !> @param[in] IY1 Grid index along Y
 !> @param[in] IYN Grid index along Y
 !> @param[in] NSEA Number of sea points
-!> @param[inout] FILEPREFIX 
+!> @param[inout] FILEPREFIX
 !> @param[in] E3DF
 !> @param[in] P2MSF
 !> @param[in] US3DF
@@ -859,11 +859,11 @@
 !> @param[in] FLG2D
 !> @param[inout] NCIDS
 !> @param[inout] S3
-!> @param[in] STRSTOPDATE     
+!> @param[in] STRSTOPDATE
 !> @author F. Ardhuin
 !> @author M. Accensi
 !> @date 22-Mar-2021
-!>        
+!>
       SUBROUTINE W3EXNC ( NX, NY, IX1, IXN, IY1, IYN, NSEA,             &
                           FILEPREFIX, E3DF, P2MSF, US3DF, USSPF,NCTYPE, &
                           TOGETHER, NCVARTYPEI, FLG2D, NCIDS, S3, STRSTOPDATE )
@@ -1000,7 +1000,7 @@
       INTEGER, SAVE           :: IENT   =   0
 #endif
 !
-      ! Make the below allocatable to avoid stack overflow on some machines 
+      ! Make the below allocatable to avoid stack overflow on some machines
       INTEGER(KIND=2), ALLOCATABLE    :: MX1(:,:), MXX(:,:), MYY(:,:), &
                                          MXY(:,:), MAPOUT(:,:)
 !
@@ -2564,7 +2564,7 @@
               END IF
 
               ! Writes status map array at variable index 2+1+coordtype+idim-4
-              IF (MAPSTAOUT) THEN 
+              IF (MAPSTAOUT) THEN
                 START(1)=1
                 START(2)=1
                 COUNT(1)=IXN-IX1+1
@@ -2645,12 +2645,12 @@
                     CALL CHECK_ERR(IRET)
                     IF (NCTYPE.EQ.4) IRET = NF90_DEF_VAR_DEFLATE(NCID, VARID(IVAR), 1, 1, DEFLATE)
                     IF (NCTYPE.EQ.4) CALL CHECK_ERR(IRET)
-                  ELSE 
+                  ELSE
                     IRET = NF90_DEF_VAR(NCID,META(I)%VARNM, NF90_FLOAT, DIMFIELD(1:2+EXTRADIM), VARID(IVAR))
                     CALL CHECK_ERR(IRET)
                     IF (NCTYPE.EQ.4) IRET = NF90_DEF_VAR_DEFLATE(NCID, VARID(IVAR), 1, 1, DEFLATE)
                     IF (NCTYPE.EQ.4) CALL CHECK_ERR(IRET)
-                  END IF  
+                  END IF
                 END IF
 
                 ! Set scale factor to 1.0 if using FLOAT variables for output
@@ -3507,7 +3507,7 @@
 !> @param[in] EXTRADIM
 !> @param[in] NCTYPE
 !> @param[in] MAPSTAOUT
-!>      
+!>
 !> @author NA @date NA
       SUBROUTINE W3CRNC (NCFILE, NCID, DIMID, DIMLN, VARID,  &
                          EXTRADIM, NCTYPE, MAPSTAOUT )
@@ -3522,16 +3522,14 @@
 
       IMPLICIT NONE
 
-
-
-      INTEGER, INTENT(IN)               :: EXTRADIM
-      INTEGER, INTENT(IN)               :: NCTYPE
-      CHARACTER(LEN=*), INTENT(IN)         :: NCFILE
-      INTEGER, INTENT(OUT)              :: NCID
-      INTEGER, INTENT(OUT)              :: DIMID(6)
-      INTEGER, INTENT(IN)               :: DIMLN(6)
-      INTEGER, INTENT(OUT)              :: VARID(300)
-      LOGICAL, INTENT(IN)               :: MAPSTAOUT
+      INTEGER, INTENT(IN)          :: EXTRADIM
+      INTEGER, INTENT(IN)          :: NCTYPE
+      CHARACTER(LEN=*), INTENT(IN) :: NCFILE
+      INTEGER, INTENT(OUT)         :: NCID
+      INTEGER, INTENT(OUT)         :: DIMID(6)
+      INTEGER, INTENT(IN)          :: DIMLN(6)
+      INTEGER, INTENT(OUT)         :: VARID(300)
+      LOGICAL, INTENT(IN)          :: MAPSTAOUT
 !
 !/ ------------------------------------------------------------------- /
 !   Local parameters
@@ -3899,8 +3897,8 @@
 !
 !  Status map: useful for grid combination
 !
-      IF (MAPSTAOUT) THEN 
-        IF (GTYPE.EQ.UNGTYPE) THEN 
+      IF (MAPSTAOUT) THEN
+        IF (GTYPE.EQ.UNGTYPE) THEN
           IRET = NF90_DEF_VAR(NCID,'MAPSTA', NF90_SHORT,(/ DIMID(2) /), VARID(20))
         ELSE
           IRET = NF90_DEF_VAR(NCID,'MAPSTA', NF90_SHORT,(/ DIMID(2) , DIMID(3) /), &
@@ -4008,7 +4006,7 @@
 !>  to oceanograhic convention.
 !>
 !> @param[inout] S Sea point array
-!> @param[out] X Gridded array     
+!> @param[out] X Gridded array
 !> @param[in] FLDIRN Directional field flag
 !> @author C Bunney  @date 03-Nov-2021
       SUBROUTINE S2GRID(S, X, FLDIRN)

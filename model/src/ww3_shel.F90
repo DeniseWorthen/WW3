@@ -289,9 +289,7 @@ PROGRAM W3SHEL
 #ifdef W3_OASICM
   USE W3IGCMMD, ONLY: SND_FIELDS_TO_ICE
 #endif
-#ifdef W3_TIDE
   USE W3TIDEMD
-#endif
   !
   USE W3NMLSHELMD
   IMPLICIT NONE
@@ -318,7 +316,7 @@ PROGRAM W3SHEL
   INTEGER             :: NDSI, NDSI2, NDSS, NDSO, NDSE, NDST, NDSL
   INTEGER             :: NDSEN, IERR, J, I, ILOOP, IPTS, NPTS
   INTEGER             :: NDTNEW, MPI_COMM = -99
-  INTEGER             :: FLAGTIDE, COUPL_COMM, IH, N_TOT
+  INTEGER             :: FLAGTIDE, COUPL_COMM = -99, IH, N_TOT
   INTEGER             :: NDSF(-7:9), NDS(13), NTRACE(2), NDT(7:9)
   INTEGER             :: TIME0(2), TIMEN(2), TTIME(2), TTT(2)
   INTEGER             :: NH(-7:10), THO(2,-7:10,NHMAX), RCLD(7:9)
@@ -447,11 +445,11 @@ PROGRAM W3SHEL
 #endif
 #ifdef W3_MPI
      if (w3_debuginit_flag) then
-        write(740+IAPROC,*), 'Before MPI_INIT, ww3_shel'
+        write(740+IAPROC,*) 'Before MPI_INIT, ww3_shel'
      end if
      CALL MPI_INIT ( IERR_MPI )
      if (w3_debuginit_flag) then
-        write(740+IAPROC,*), 'After MPI_INIT, ww3_shel'
+        write(740+IAPROC,*) 'After MPI_INIT, ww3_shel'
      end if
 #endif
 #ifdef W3_OMPH
@@ -1025,17 +1023,15 @@ PROGRAM W3SHEL
                  END IF
                  WRITE (NDSO,6945) IPRT, YESXNO
               END IF
-
-              ! Type 7: coupling
+#ifdef W3_COU
+           ! Type 7: coupling
            ELSE IF ( J .EQ. 7 ) THEN
-              if (w3_cou_flag) then
                  FLDOUT = NML_OUTPUT_TYPE%COUPLING%SENT
                  CALL W3FLGRDFLAG ( NDSO, NDSO, NDSE, FLDOUT, FLG2, FLGR2, IAPROC, NAPOUT, IERR )
                  IF ( IERR .NE. 0 ) GOTO 2222
                  FLDIN = NML_OUTPUT_TYPE%COUPLING%RECEIVED
                  CPLT0 = NML_OUTPUT_TYPE%COUPLING%COUPLET0
-              end if
-
+#endif
            END IF ! J
         END IF ! ODAT
      END DO ! J
@@ -1299,26 +1295,26 @@ PROGRAM W3SHEL
 
      CALL NEXTLN ( COMSTR , NDSI , NDSEN )
      if (w3_debuginit_flag) then
-        write(740+IAPROC,*), 'Before read 2002, case 4'
+        write(740+IAPROC,*) 'Before read 2002, case 4'
      end if
      READ (NDSI,*) TIME0
      if (w3_debuginit_flag) then
-        write(740+IAPROC,*), ' After read 2002, case 4'
+        write(740+IAPROC,*) ' After read 2002, case 4'
      end if
 
      call print_memcheck(740+IAPROC, 'memcheck_____:'//' WW3_SHEL SECTION 2c')
 
      CALL NEXTLN ( COMSTR , NDSI , NDSEN )
      if (w3_debuginit_flag) then
-        write(740+IAPROC,*), 'Before read 2002, case 5'
+        write(740+IAPROC,*) 'Before read 2002, case 5'
      end if
      READ (NDSI,*) TIMEN
      if (w3_debuginit_flag) then
-        write(740+IAPROC,*), ' After read 2002, case 5'
+        write(740+IAPROC,*) ' After read 2002, case 5'
      end if
 
      if (w3_debuginit_flag) then
-        write(740+IAPROC,*), 'ww3_shel, step 6'
+        write(740+IAPROC,*) 'ww3_shel, step 6'
      end if
      !
      call print_memcheck(740+IAPROC, 'memcheck_____:'//' WW3_SHEL SECTION 2d')
@@ -1326,11 +1322,11 @@ PROGRAM W3SHEL
      ! 2.3 Domain setup
 
      if (w3_debuginit_flag) then
-        write(740+IAPROC,*), 'ww3_shel, step 7'
+        write(740+IAPROC,*) 'ww3_shel, step 7'
      end if
      CALL NEXTLN ( COMSTR , NDSI , NDSEN )
      if (w3_debuginit_flag) then
-        write(740+IAPROC,*), 'Before read 2002, case 6'
+        write(740+IAPROC,*) 'Before read 2002, case 6'
      end if
      READ (NDSI,*) IOSTYP
      if (w3_pdlib_flag) then
@@ -1340,7 +1336,7 @@ PROGRAM W3SHEL
         ENDIF
      end if
      if (w3_debuginit_flag) then
-        write(740+IAPROC,*), ' After read 2002, case 6'
+        write(740+IAPROC,*) ' After read 2002, case 6'
      end if
      CALL W3IOGR ( 'GRID', NDSF(7) )
      IF ( FLAGLL ) THEN
@@ -1349,7 +1345,7 @@ PROGRAM W3SHEL
         FACTOR = 1.E-3
      END IF
      if (w3_debuginit_flag) then
-        write(740+IAPROC,*), 'ww3_shel, step 8'
+        write(740+IAPROC,*) 'ww3_shel, step 8'
      end if
 
      ! 2.4 Output dates
@@ -1360,15 +1356,15 @@ PROGRAM W3SHEL
         NOTYPE = 7
      end if
      if (w3_debuginit_flag) then
-        write(740+IAPROC,*), 'Before NOTYPE loop'
+        write(740+IAPROC,*) 'Before NOTYPE loop'
      end if
      DO J = 1, NOTYPE
         if (w3_debuginit_flag) then
-           write(740+IAPROC,*), 'J=', J, '/ NOTYPE=', NOTYPE
+           write(740+IAPROC,*) 'J=', J, '/ NOTYPE=', NOTYPE
         end if
         CALL NEXTLN ( COMSTR , NDSI , NDSEN )
         if (w3_debuginit_flag) then
-           write(740+IAPROC,*), 'Before read 2002, case 7'
+           write(740+IAPROC,*) 'Before read 2002, case 7'
         end if
         !
         ! CHECKPOINT
@@ -1424,9 +1420,8 @@ PROGRAM W3SHEL
               ELSE
                  READ(WORDS( 6 ), * ) OFILES(J)
               END IF
-
+#ifdef W3_COU
            ELSE IF(J .EQ. 7) THEN
-              if (w3_cou_flag) then
                  WORDS(1:6)=''
                  READ (NDSI,'(A)') LINEIN
                  READ(LINEIN,*,iostat=ierr) WORDS
@@ -1442,7 +1437,7 @@ PROGRAM W3SHEL
                  ELSE
                     CPLT0 = .FALSE.
                  END IF
-              end if
+#endif
 
            ELSE
               OFILES(J)=0
@@ -1452,7 +1447,7 @@ PROGRAM W3SHEL
            !          WRITE(*,*) 'OFILES(J)= ', OFILES(J),J
            !
            if (w3_debuginit_flag) then
-              write(740+IAPROC,*), ' After read 2002, case 7'
+              write(740+IAPROC,*) ' After read 2002, case 7'
            end if
            ODAT(5*(J-1)+3) = MAX ( 0 , ODAT(5*(J-1)+3) )
            !
@@ -1464,7 +1459,7 @@ PROGRAM W3SHEL
            IF ( ODAT(5*(J-1)+3) .NE. 0 ) THEN
 
               if (w3_debuginit_flag) then
-                 write(740+IAPROC,*), 'Case analysis'
+                 write(740+IAPROC,*) 'Case analysis'
               end if
               IF ( J .EQ. 1 ) THEN
 
@@ -1501,11 +1496,11 @@ PROGRAM W3SHEL
                     DO
                        CALL NEXTLN ( COMSTR , NDSI , NDSEN )
                        if (w3_debuginit_flag) then
-                          write(740+IAPROC,*), 'Before read 2002, case 8'
+                          write(740+IAPROC,*) 'Before read 2002, case 8'
                        end if
                        READ (NDSI2,*) XX, YY, PN
                        if (w3_debuginit_flag) then
-                          write(740+IAPROC,*), ' After read 2002, case 8'
+                          write(740+IAPROC,*) ' After read 2002, case 8'
                        end if
                        IF ( ILOOP.EQ.1 .AND. IAPROC.EQ.1 ) THEN
                           BACKSPACE (NDSI)
@@ -1556,11 +1551,11 @@ PROGRAM W3SHEL
                  ! Type 3: track output
                  CALL NEXTLN ( COMSTR , NDSI , NDSEN )
                  if (w3_debuginit_flag) then
-                    write(740+IAPROC,*), 'Before read 2002, case 9'
+                    write(740+IAPROC,*) 'Before read 2002, case 9'
                  end if
                  READ (NDSI,*) TFLAGI
                  if (w3_debuginit_flag) then
-                    write(740+IAPROC,*), ' After read 2002, case 9'
+                    write(740+IAPROC,*) ' After read 2002, case 9'
                  end if
                  !
                  IF ( .NOT. TFLAGI ) NDS(11) = -NDS(11)
@@ -1578,12 +1573,12 @@ PROGRAM W3SHEL
                  ! IPRT: IX0, IXN, IXS, IY0, IYN, IYS
                  CALL NEXTLN ( COMSTR , NDSI , NDSEN )
                  if (w3_debuginit_flag) then
-                    write(740+IAPROC,*), 'Before reading IPRT'
-                    write(740+IAPROC,*), 'Before read 2002, case 10'
+                    write(740+IAPROC,*) 'Before reading IPRT'
+                    write(740+IAPROC,*) 'Before read 2002, case 10'
                  end if
                  READ (NDSI,*) IPRT, PRTFRM
                  if (w3_debuginit_flag) then
-                    write(740+IAPROC,*), ' After read 2002, case 10'
+                    write(740+IAPROC,*) ' After read 2002, case 10'
                  end if
                  !
                  IF ( IAPROC .EQ. NAPOUT ) THEN
@@ -1622,11 +1617,11 @@ PROGRAM W3SHEL
         DO
            CALL NEXTLN ( COMSTR , NDSI , NDSEN )
            if (w3_debuginit_flag) then
-              write(740+IAPROC,*), 'Before read 2002, case 11'
+              write(740+IAPROC,*) 'Before read 2002, case 11'
            end if
            READ (NDSI,*) IDTST
            if (w3_debuginit_flag) then
-              write(740+IAPROC,*), ' After read 2002, case 11'
+              write(740+IAPROC,*) ' After read 2002, case 11'
            end if
            ! Exit if illegal id
            IF ( IDTST.NE.IDSTR(-7) .AND. IDTST.NE.IDSTR(-6) .AND.   &
@@ -1652,79 +1647,79 @@ PROGRAM W3SHEL
                  IF ( NH(J) .GT. NHMAX ) GOTO 2006
                  IF ( J .LE. 1  ) THEN ! water levels, etc. : get HA
                     if (w3_debuginit_flag) then
-                       write(740+IAPROC,*), 'Before read 2002, case 12'
+                       write(740+IAPROC,*) 'Before read 2002, case 12'
                     end if
                     READ (NDSI,*) IDTST,           &
                          THO(1,J,NH(J)), THO(2,J,NH(J)),            &
                          HA(NH(J),J)
                     if (w3_debuginit_flag) then
-                       write(740+IAPROC,*), ' After read 2002, case 12'
+                       write(740+IAPROC,*) ' After read 2002, case 12'
                     end if
 
                  ELSE IF ( J .EQ. 2 ) THEN ! currents: get HA and HD
                     if (w3_debuginit_flag) then
-                       write(740+IAPROC,*), 'Before read 2002, case 13'
+                       write(740+IAPROC,*) 'Before read 2002, case 13'
                     end if
                     READ (NDSI,*) IDTST,           &
                          THO(1,J,NH(J)), THO(2,J,NH(J)),            &
                          HA(NH(J),J), HD(NH(J),J)
                     if (w3_debuginit_flag) then
-                       write(740+IAPROC,*), ' After read 2002, case 13'
+                       write(740+IAPROC,*) ' After read 2002, case 13'
                     end if
 
                  ELSE IF ( J .EQ. 3 ) THEN ! wind: get HA HD and HS
                     if (w3_debuginit_flag) then
-                       write(740+IAPROC,*), 'Before read 2002, case 14'
+                       write(740+IAPROC,*) 'Before read 2002, case 14'
                     end if
                     READ (NDSI,*) IDTST,           &
                          THO(1,J,NH(J)), THO(2,J,NH(J)),            &
                          HA(NH(J),J), HD(NH(J),J), HS(NH(J),J)
                     if (w3_debuginit_flag) then
-                       write(740+IAPROC,*), ' After read 2002, case 14'
+                       write(740+IAPROC,*) ' After read 2002, case 14'
                     end if
 
                  ELSE IF ( J .EQ. 4 ) THEN ! ice
                     if (w3_debuginit_flag) then
-                       write(740+IAPROC,*), 'Before read 2002, case 15'
+                       write(740+IAPROC,*) 'Before read 2002, case 15'
                     end if
                     READ (NDSI,*) IDTST,           &
                          THO(1,J,NH(J)), THO(2,J,NH(J)),            &
                          HA(NH(J),J)
                     if (w3_debuginit_flag) then
-                       write(740+IAPROC,*), ' After read 2002, case 15'
+                       write(740+IAPROC,*) ' After read 2002, case 15'
                     end if
 
                  ELSE IF ( J .EQ. 5 ) THEN ! atmospheric momentum
                     if (w3_debuginit_flag) then
-                       write(740+IAPROC,*), 'Before read 2002, case 16'
+                       write(740+IAPROC,*) 'Before read 2002, case 16'
                     end if
                     READ (NDSI,*) IDTST,           &
                          THO(1,J,NH(J)), THO(2,J,NH(J)),            &
                          HA(NH(J),J), HD(NH(J),j)
                     if (w3_debuginit_flag) then
-                       write(740+IAPROC,*), ' After read 2002, case 16'
+                       write(740+IAPROC,*) ' After read 2002, case 16'
                     end if
 
                  ELSE IF ( J .EQ. 6 ) THEN ! air density
                     if (w3_debuginit_flag) then
-                       write(740+IAPROC,*), 'Before read 2002, case 17'
+                       write(740+IAPROC,*) 'Before read 2002, case 17'
                     end if
                     READ (NDSI,*) IDTST,           &
                          THO(1,J,NH(J)), THO(2,J,NH(J)),            &
                          HA(NH(J),J)
                     if (w3_debuginit_flag) then
-                       write(740+IAPROC,*), ' After read 2002, case 16'
+                       write(740+IAPROC,*) ' After read 2002, case 16'
                     end if
 
                  ELSE IF ( J .EQ. 10 ) THEN ! mov: HA and HD
                     if (w3_debuginit_flag) then
-                       write(740+IAPROC,*), 'Before read 2002, case 18'
+                       write(740+IAPROC,*) 'Before read 2002, case 18'
                     end if
                     READ (NDSI,*) IDTST,           &
                          THO(1,J,NH(J)), THO(2,J,NH(J)),            &
                          HA(NH(J),J), HD(NH(J),J)
                     if (w3_debuginit_flag) then
-                       write(740+IAPROC,*), ' After read 2002, case 18'
+                       write(740+IAPROC,*) ' After read 2002, case 18'
                     end if
                  END IF
               END IF
@@ -1785,7 +1780,7 @@ PROGRAM W3SHEL
      !
      DO J=JFIRST, 6
         if (w3_debuginit_flag) then
-           write(740+IAPROC,*), 'J=',J,'INFLAGS1(J)=',INFLAGS1(J), 'FLAGSC(J)=', FLAGSC(J)
+           write(740+IAPROC,*) 'J=',J,'INFLAGS1(J)=',INFLAGS1(J), 'FLAGSC(J)=', FLAGSC(J)
         end if
         IF ( INFLAGS1(J) .AND. .NOT. FLAGSC(J)) THEN
            IF ( FLH(J) ) THEN
@@ -1987,17 +1982,17 @@ PROGRAM W3SHEL
   END IF
 #endif
   !
-  if (w3_cou_flag) then
-     ! Sent coupled fields must be written in the restart when coupling at T+0
-     IF (CPLT0) THEN
-        DO J=1, NOGRP
-           FLOGR(J)  = FLOGR(J)  .OR. FLG2(J)
-           DO I=1, NGRPP
-              FLOGRR(J,I) = FLOGRR(J,I) .OR. FLGR2(J,I)
-           END DO
+#ifdef W3_COU
+  ! Sent coupled fields must be written in the restart when coupling at T+0
+  IF (CPLT0) THEN
+     DO J=1, NOGRP
+        FLOGR(J)  = FLOGR(J)  .OR. FLG2(J)
+        DO I=1, NGRPP
+           FLOGRR(J,I) = FLOGRR(J,I) .OR. FLGR2(J,I)
         END DO
-     ENDIF
-  end if
+     END DO
+  ENDIF
+#endif
   !
   OARST = ANY(FLOGR)
   !
@@ -2198,8 +2193,10 @@ PROGRAM W3SHEL
                       TTT, XXX, XXX, XXX, TI1, XXX, XXX, ICEP1, IERR)
               ELSE
                  if (w3_oasicm_flag) then
-                    IF (FLAGSC(J)) FLAGSCI = .TRUE.
-                    IF (.NOT.FLAGSCI) ID_OASIS_TIME = -1
+#ifdef W3_OASICM
+                 IF (FLAGSC(J)) FLAGSCI = .TRUE.
+                 IF (.NOT.FLAGSCI) ID_OASIS_TIME = -1
+#endif
                     CALL W3FLDG ('READ', IDSTR(J), NDSF(J),         &
                          NDST, NDSEN, NX, NY, NX, NY, TIME0, TIMEN, &
                          TTT, XXX, XXX, XXX, TI1, XXX, XXX, ICEP1,  &
@@ -2344,7 +2341,7 @@ PROGRAM W3SHEL
                     ELSE
                        CALL TICK21 ( TLN, TIDE_DT )
                     END IF
-                 else if ((w3_tide_flag .and. not. FLLEVTIDE) .or. .not. w3_tide_flag)
+                 else if ((w3_tide_flag .and. .not. FLLEVTIDE) .or. .not. w3_tide_flag) then
 #ifdef W3_OASOCM
                     IF (.NOT.FLAGSC(J)) ID_OASIS_TIME = -1
 #endif
@@ -2380,7 +2377,7 @@ PROGRAM W3SHEL
                          CX0, CY0, XXX, TCN, CXN, CYN, XXX, IERR)
                  end if
               ELSE
-                 if (w3_tide_flag .and. FLCURTIDE) then 
+                 if (w3_tide_flag .and. FLCURTIDE) then
                     IERR=0
                     IF ( TCN(1) .EQ. -1 ) THEN
                        TCN = TIME

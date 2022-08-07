@@ -1,4 +1,4 @@
-#include "w3macros.h" 
+#include "w3macros.h"
 !/ ------------------------------------------------------------------- /
 MODULE W3NMLBOUNDMD
   !/
@@ -100,18 +100,20 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
 
     USE W3ODATMD, ONLY: NDSE
-    !/S      USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD, ONLY: STRACE  ! W3_S
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                         :: NDSI       !< input file unit
-    CHARACTER(LEN=*), INTENT(IN)                   :: INFILE     !< input file name
-    TYPE(NML_BOUND_T), INTENT(INOUT)            :: NML_BOUND  !< bound structure
-    INTEGER, INTENT(OUT)                        :: IERR       !< error code
-    !/S      INTEGER, SAVE                             :: IENT = 0   !< strace error code
+    INTEGER           , INTENT(IN)    :: NDSI       !< input file unit
+    CHARACTER(LEN=*)  , INTENT(IN)    :: INFILE     !< input file name
+    TYPE(NML_BOUND_T) , INTENT(INOUT) :: NML_BOUND  !< bound structure
+    INTEGER           , INTENT(OUT)   :: IERR       !< error code
+    INTEGER, SAVE                     :: IENT = 0   !< strace error code
 
     IERR = 0
-    !/S      CALL STRACE (IENT, 'W3NMLBOUND')
+    if (w3_s_flag) then
+       CALL STRACE (IENT, 'W3NMLBOUND')
+    end if
 
     ! open namelist log file
     NDSN = 3

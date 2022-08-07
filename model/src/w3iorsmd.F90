@@ -296,10 +296,10 @@ CONTAINS
     !/
     INTEGER                       :: NDSR
     !      INTEGER, INTENT(IN)           :: NDSR
-    INTEGER, INTENT(IN), OPTIONAL :: IMOD
-    REAL, INTENT(INOUT)           :: DUMFPI
-    CHARACTER(len=*), INTENT(IN)         :: INXOUT
-    LOGICAL, INTENT(IN),OPTIONAL  :: FLRSTRT
+    INTEGER          , INTENT(IN), OPTIONAL :: IMOD
+    REAL             , INTENT(INOUT)        :: DUMFPI
+    CHARACTER(len=*) , INTENT(IN)           :: INXOUT
+    LOGICAL          , INTENT(IN), OPTIONAL :: FLRSTRT
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

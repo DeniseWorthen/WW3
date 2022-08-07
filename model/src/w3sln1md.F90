@@ -14,7 +14,7 @@ MODULE W3SLN1MD
   !/
   !/    Copyright 2009 National Weather Service (NWS),
   !/       National Oceanic and Atmospheric Administration.  All rights
-  !/       reserved.  WAVEWATCH III is a trademark of the NWS. 
+  !/       reserved.  WAVEWATCH III is a trademark of the NWS.
   !/       No unauthorized use without permission.
   !/
   !  1. Purpose :
@@ -49,6 +49,7 @@ MODULE W3SLN1MD
   !/
   !/ ------------------------------------------------------------------- /
   !/
+  use wav_shr_flags
   PUBLIC
   !/
 CONTAINS
@@ -79,7 +80,7 @@ CONTAINS
     !       Sln  = SLNC1 * k   * max | 0., | U* cos(Dtheta) | |        (1)
     !                                \     \                / /
     !
-    !                             2     -2 
+    !                             2     -2
     !              SLNC1 = 80 RHOr  GRAV   FILT                        (2)
     !
     !     Where :

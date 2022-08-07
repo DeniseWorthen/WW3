@@ -11,7 +11,7 @@ MODULE W3ARRYMD
   !/
   !/    Copyright 2009 National Weather Service (NWS),
   !/       National Oceanic and Atmospheric Administration.  All rights
-  !/       reserved.  WAVEWATCH III is a trademark of the NWS. 
+  !/       reserved.  WAVEWATCH III is a trademark of the NWS.
   !/       No unauthorized use without permission.
   !/
   !  1. Purpose :
@@ -638,9 +638,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MX, MY, LX, HX, LY, HY, NDS, NDST, NDSE, IDFM, IDLA, ARRAY(MX,MY)
-    INTEGER, INTENT(IN)     :: VSC, VOF
-    CHARACTER(len=*), INTENT(IN)   :: RFORM
+    INTEGER          , INTENT(IN)  :: MX, MY, LX, HX, LY, HY, NDS, NDST, NDSE, IDFM
+    INTEGER          , INTENT(IN)  :: IDLA, ARRAY(MX,MY)
+    INTEGER          , INTENT(IN)  :: VSC, VOF
+    CHARACTER(len=*) , INTENT(IN)  :: RFORM
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -782,9 +783,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, DIM
-    REAL, INTENT(IN)        :: ARRAY(DIM)
-    CHARACTER(len=*), INTENT(IN)   :: ANAME
+    INTEGER          , INTENT(IN)   :: NDS, DIM
+    REAL             , INTENT(IN)   :: ARRAY(DIM)
+    CHARACTER(len=*) , INTENT(IN)   :: ANAME
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -795,7 +796,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/
     if (w3_s_flag) then
-       CALL STRACE (IENT, 'OUTREA') 
+       CALL STRACE (IENT, 'OUTREA')
     end if
     !
     WRITE (NDS,8000) ANAME
@@ -892,8 +893,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, DIM, IARRAY(DIM)
-    CHARACTER(len=*), INTENT(IN)   :: ANAME
+    INTEGER          , INTENT(IN)   :: NDS, DIM, IARRAY(DIM)
+    CHARACTER(len=*) , INTENT(IN)   :: ANAME
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1004,9 +1005,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, MX, NX, NY
-    REAL, INTENT(IN)        :: A(MX,NY)
-    CHARACTER(len=*), INTENT(IN)   :: MNAME
+    INTEGER          , INTENT(IN) :: NDS, MX, NX, NY
+    REAL             , INTENT(IN) :: A(MX,NY)
+    CHARACTER(len=*) , INTENT(IN) :: MNAME
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1404,9 +1405,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER,          INTENT(IN) :: NDS, NFR, NLINES
-    REAL,             INTENT(IN) :: FTOPI, E(NFR), FR(NFR)
-    CHARACTER(len=*), INTENT(IN) :: PRVAR, PRUNIT, PNTNME, UFR
+    INTEGER          , INTENT(IN) :: NDS, NFR, NLINES
+    REAL             , INTENT(IN) :: FTOPI, E(NFR), FR(NFR)
+    CHARACTER(len=*) , INTENT(IN) :: PRVAR, PRUNIT, PNTNME, UFR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1664,7 +1665,7 @@ CONTAINS
     !/
     INTEGER          , INTENT(IN) :: NDS, NFR, NE, NLINES
     REAL             , INTENT(IN) :: FTOPI, E(NFR,NE), FR(NFR)
-    CHARACTER(len=*) , INTENT(IN) :: PRVAR, PRUNIT, PNTNME, UFR
+    CHARACTER(len=*) , INTENT(IN) :: PRUNIT, PNTNME, UFR
     character(len=*) , INTENT(IN) :: PRVAR(:)  ! size NE
     !/
     !/ ------------------------------------------------------------------- /
@@ -1948,7 +1949,7 @@ CONTAINS
     !
     !  7. Remarks :
     !
-    !       PNUM2: dimensioning changed from 51 to 71 due to "subscript out 
+    !       PNUM2: dimensioning changed from 51 to 71 due to "subscript out
     !           of range" fault (Sep 28 2012)
     !
     !  8. Structure :

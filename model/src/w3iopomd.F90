@@ -649,7 +649,6 @@ CONTAINS
     USE W3ODATMD, ONLY: IRQPO2                ! W3_MPI
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE                ! W3_S
-    USE W3ARRYMD, ONLY: PRT2DS                ! W3_T
     !
     IMPLICIT NONE
     !
@@ -912,16 +911,7 @@ CONTAINS
        end if
        !
        if (w3_t_flag) then
-          WRITE (NDST,9004) DPO(I), WAO(I), WDO(I)*RADE,             &
-               CAO(I), CDO(I)*RADE
-       end if
-
-       ! FA COMMENTED OUT: BUG
-       !At line 1974 of file w3arrymd.f90
-       !Fortran runtime error: Index '52' of dimension 1 of array 'pnum2' above upper bound of 51
-       if (w3_t_flag) then
-          ! CALL PRT2DS (NDST, NK, NK, NTH, SPTEST, SIG(1:), ' ', 1.,0.,&
-          !              0.0001, 'E(f,theta)', 'm**2s', 'TEST OUTPUT' )
+          WRITE (NDST,9004) DPO(I), WAO(I), WDO(I)*RADE, CAO(I), CDO(I)*RADE
        end if
        !
     END DO

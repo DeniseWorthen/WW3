@@ -1,6 +1,6 @@
 !> @file
 !> @brief Contains module WMGRIDMD.
-!> 
+!>
 !> @author H. L. Tolman
 !> @author W. E. Rogers
 !> @date 10-Dec-2014
@@ -9,9 +9,9 @@
 #include "w3macros.h"
 !/ ------------------------------------------------------------------- /
 !>
-!> @brief Routines to determine and process grid dependencies in the 
+!> @brief Routines to determine and process grid dependencies in the
 !>  multi-grid wave model.
-!> 
+!>
 !> @author H. L. Tolman
 !> @author W. E. Rogers
 !> @date 10-Dec-2014
@@ -63,12 +63,12 @@ MODULE WMGRIDMD
   !/
   !/    Copyright 2009-2013 National Weather Service (NWS),
   !/       National Oceanic and Atmospheric Administration.  All rights
-  !/       reserved.  WAVEWATCH III is a trademark of the NWS. 
+  !/       reserved.  WAVEWATCH III is a trademark of the NWS.
   !/       No unauthorized use without permission.
   !/
   !  1. Purpose :
   !
-  !     Routines to determine and process grid dependencies in the 
+  !     Routines to determine and process grid dependencies in the
   !     multi-grid wave model.
   !
   !  2. Variables and types :
@@ -80,7 +80,7 @@ MODULE WMGRIDMD
   !      WMGLOW    Subr. Public   Dependencies to lower ranked grids.
   !      WMGHGH    Subr. Public   Dependencies to higher ranked grids.
   !      WMGEQL    Subr. Public   Dependencies to same ranked grids.
-  !      WMRSPC    Subr. Public   Make map of flags for spectral 
+  !      WMRSPC    Subr. Public   Make map of flags for spectral
   !                               conversion between grids.
   !      WMSMCEQL  Subr. Public   Dependencies on same ranked SMC grids.
   !     ----------------------------------------------------------------
@@ -142,14 +142,14 @@ CONTAINS
   !> @brief Determine relations to lower ranked grids for each grid.
   !>
   !> @details On the fly, the opposite relations are also saved.
-  !>  Map active boundary points to lower ranked grids.        
+  !>  Map active boundary points to lower ranked grids.
   !>
   !> @param[out] FLRBPI Array with flags for external file use.
   !>
   !> @author H. L. Tolman
   !> @author W. E. Rogers
   !> @date 06-Jun-2018
-  !>        
+  !>
   SUBROUTINE WMGLOW ( FLRBPI )
     !/
     !/                  +-----------------------------------+
@@ -268,8 +268,8 @@ CONTAINS
     LOGICAL              :: GRIDD(NRGRD,NRGRD) ! indicates grid-to-grid dependency
     LOGICAL              :: RFILE(NRGRD),  FLAGOK
     LOGICAL              :: INGRID             ! indicates whether boundary point is in lower rank grid
-    INTEGER              :: IVER(4),JVER(4)    ! (I,J) indices of vertices 
-                                               ! of cell (in lower rank grid J) enclosing 
+    INTEGER              :: IVER(4),JVER(4)    ! (I,J) indices of vertices
+                                               ! of cell (in lower rank grid J) enclosing
                                                ! boundary point (in higher rank grid I)
     REAL                 :: RW(4)              ! Array of interpolation weights.
     INTEGER              :: KVER               ! counter for 4 vertices
@@ -346,7 +346,7 @@ CONTAINS
        ALLOCATE ( NBI2G(NRGRD,NRGRD), STAT=ISTAT )
        CHECK_ALLOC_STATUS ( ISTAT )
     END IF
-    NBI2G  = 0 
+    NBI2G  = 0
     !
     if (w3_t_flag) then
        WRITE (MDST,9020)
@@ -380,7 +380,7 @@ CONTAINS
        if (w3_smc_flag) then
           !!  SMC grid only appears in same ranked group.  JGLi23Mar2021
           IF( GRIDS(I)%GTYPE .EQ. SMCTYPE ) THEN
-             IF( IMPROC.EQ.NMPERR ) WRITE(MDSE,*) ' WMGLOW skip SMC grid', I 
+             IF( IMPROC.EQ.NMPERR ) WRITE(MDSE,*) ' WMGLOW skip SMC grid', I
              CYCLE
           END IF
        end if
@@ -411,7 +411,7 @@ CONTAINS
                 XA     = REAL(XGRD(IY,IX)) !old code: X0 + REAL(IX-1)*SX
                 YA     = REAL(YGRD(IY,IX)) !old code: Y0 + REAL(IY-1)*SY
                 !
-                ! ... Loop over previous (lower ranked) grids, going in order from highest 
+                ! ... Loop over previous (lower ranked) grids, going in order from highest
                 !          of lower ranked grids (I-1) to lowest of lower ranked grids (1)
                 !
                 JS     = 0
@@ -423,17 +423,17 @@ CONTAINS
                    if (w3_smc_flag) then
                       !!  SMC grid only suppots same ranked group so far.  JGLi12Apr2021
                       IF( GRIDS(J)%GTYPE .EQ. SMCTYPE ) THEN
-                         IF( IMPROC.EQ.NMPERR ) WRITE(MDSE,*) ' WMGLOW skip SMC grid', J 
+                         IF( IMPROC.EQ.NMPERR ) WRITE(MDSE,*) ' WMGLOW skip SMC grid', J
                          CYCLE
                       END IF
                    end if
                    !
                    ! ... Check if in grid
                    !
-                   ! notes: 
+                   ! notes:
                    ! old version (v4.00):
                    !        if in grid, return location in grid: a) JX, JY
-                   !                                   (lower left indices of cell), 
+                   !                                   (lower left indices of cell),
                    !                                             b) RX, RY
                    !                                   (normalized location in cell)
                    !        in not in grid, cycle (search next grid)
@@ -533,7 +533,7 @@ CONTAINS
                         RW(4)   .LT.0.05 ) .AND.      &
                         ! point 3:
                         ( ABS(GRIDS(J)%MAPSTA(JVER(3),IVER(3))).GE.1 .OR.  &
-                        RW(3)   .LT.0.05 ) 
+                        RW(3)   .LT.0.05 )
                    !
                    IF ( .NOT.FLAGOK ) CYCLE
                    !
@@ -725,10 +725,10 @@ CONTAINS
     ! 3.a Get size of array and dimension
     !
 
-    ! notes: 
+    ! notes:
     !    GRIDD(I,J) indicates whether grid I is dependent on lower ranked grid J
-    !    JS counts the number of grids J that grid I is dependent on      
-    !    GRDLOW is sized to accomodate the grid with the largest JS   
+    !    JS counts the number of grids J that grid I is dependent on
+    !    GRDLOW is sized to accomodate the grid with the largest JS
 
     JTOT   = 0
     DO I=1, NRGRD
@@ -761,18 +761,18 @@ CONTAINS
           IF ( GRIDD(I,J) ) THEN
              JTOT   = JTOT + 1
              GRDLOW(I,JTOT) = J
-             ! ... error checking: catch situation where ranks are inconsistent with 
+             ! ... error checking: catch situation where ranks are inconsistent with
              !                     resolution
 
              ! notes:
-             ! old code:   SXJ=GRIDS(J)%SX 
+             ! old code:   SXJ=GRIDS(J)%SX
              !             SXI=GRIDS(I)%SX
              !             SYJ=GRIDS(J)%SY
              !             SYI=GRIDS(I)%SY
-             !             also, old code did not need to check both min and max, 
+             !             also, old code did not need to check both min and max,
              !             since they were the same
              ! new code:
-             !       SXI(:,:) ==> GRIDS(I)%HPFAC ! resolution in higher rank grid I 
+             !       SXI(:,:) ==> GRIDS(I)%HPFAC ! resolution in higher rank grid I
              !                    (approximate in case of irregular grids)
              !       SYI(:,:) ==> GRIDS(I)%HQFAC ! viz.
              !       SXJ(:,:) ==> GRIDS(J)%HPFAC ! resolution in lower rank grid J
@@ -789,7 +789,7 @@ CONTAINS
              !     making 4 checks total.
              ! This is strict, and may generate "false positives" in error checking
              !     here. In this case, the user may wish to disable this error checking.
-             ! For case of regular grids, we cannot use HPFAC, since it goes to zero 
+             ! For case of regular grids, we cannot use HPFAC, since it goes to zero
              !     at pole. We instead use good ol' SX and SY
 
              IF ( GRIDS(I)%GTYPE .EQ. CLGTYPE ) THEN
@@ -959,7 +959,7 @@ CONTAINS
        DO J=1, NRGRD
           IF ( GRIDD(J,I) ) THEN ! grid j is of higher rank than grid i
              ! *and* there is dependency
-             JTOT   = JTOT + 1  ! count the number of grids of higher 
+             JTOT   = JTOT + 1  ! count the number of grids of higher
              ! rank than grid i
              GRDHGH(I,JTOT) = J ! save the grid number of the higher rank grid
           END IF
@@ -1043,7 +1043,7 @@ CONTAINS
   !> @author H. L. Tolman
   !> @author W. E. Rogers
   !> @date 10-Dec-2014
-  !>      
+  !>
   SUBROUTINE WMGHGH
     !/
     !/                  +-----------------------------------+
@@ -1110,31 +1110,31 @@ CONTAINS
     !  7. Remarks :
     !
     !     Regarding the map of distances to the boundary :
-    !      - v4.00 : the map of distances to the boundary was intentionally 
-    !                not an accurate characteristic distance. It was felt that 
-    !                it was more important that it be 'safe' and quick to compute. 
-    !                An iterative method was used to compute distance by starting 
-    !                at boundary and working inwards one grid row layer at a time, 
+    !      - v4.00 : the map of distances to the boundary was intentionally
+    !                not an accurate characteristic distance. It was felt that
+    !                it was more important that it be 'safe' and quick to compute.
+    !                An iterative method was used to compute distance by starting
+    !                at boundary and working inwards one grid row layer at a time,
     !                incrementing distance by dx etc. until the distance map was
     !                filled in. This was characterized as "local increment solution
     !                only."
     !      - v4.01 : conversion to work with irregular grids. Author could not
     !                think of any way to retain "local increment solution" method
     !                for situation of irregular grids. Therefore method has been
-    !                changed to compute accurate distances. New method is also 
-    !                more transparent and simpler with much less code, thus 
-    !                easier to modify or debug. It is expected that this method 
-    !                could be more expensive to compute. Isolated timings were 
-    !                not performed. Since the iteration step has been removed, 
+    !                changed to compute accurate distances. New method is also
+    !                more transparent and simpler with much less code, thus
+    !                easier to modify or debug. It is expected that this method
+    !                could be more expensive to compute. Isolated timings were
+    !                not performed. Since the iteration step has been removed,
     !                it is hoped that the expense is at least offset somewhat.
     !
     !     Regarding method of calculating weights :
-    !              o If SCRIP software is not compiled into WW3 by user 
+    !              o If SCRIP software is not compiled into WW3 by user
     !                (i.e. if SCRIP switch is not set, then original method
     !                (denoted "_OM") will be used.
-    !              o If SCRIP is activated by user, and all grids are 
-    !                regular and specified in terms of meters (cartesian), 
-    !                then WMGHGH will calculate weights using both methods, 
+    !              o If SCRIP is activated by user, and all grids are
+    !                regular and specified in terms of meters (cartesian),
+    !                then WMGHGH will calculate weights using both methods,
     !                and then compare the two, producing an error message
     !                if they do not match (built-in regression testing)
     !                For more info, see Section 0a below.
@@ -1154,7 +1154,7 @@ CONTAINS
     !           * grid rank > 1 and NBI=0 : do nothing w/ warning message
     !           * grid rank = 1 and NBI>0 : do nothing
     !           * grid rank = 1 and NBI=0 : do nothing
-    !         
+    !
     !  8. Structure :
     !
     !     See source code.
@@ -1204,7 +1204,7 @@ CONTAINS
     !/ Local parameters
     !/
 
-    ! notes re: variable names: During the extension for irregular grids, 
+    ! notes re: variable names: During the extension for irregular grids,
     !    some variable were renamed to make the code more readable:
     !         JX==> ISRC
     !         JY==> JSRC
@@ -1232,7 +1232,7 @@ CONTAINS
     INTEGER, ALLOCATABLE          :: TMPINT_OM(:,:),TMPINT(:,:)
     REAL, ALLOCATABLE             :: TMPRL_OM(:,:) ,TMPRL(:,:)
     REAL, ALLOCATABLE             :: BDIST_OM(:)   ,BDIST(:)
-    INTEGER                       :: NR0   , NR1   , NR2   , NRL   , NLOC   
+    INTEGER                       :: NR0   , NR1   , NR2   , NRL   , NLOC
     INTEGER                       :: NR0_OM, NR1_OM, NR2_OM, NRL_OM, NLOC_OM
     INTEGER, ALLOCATABLE          :: LTAG(:)                        ! W3_DIST
     REAL                          :: FACTOR, STX, STY, STXY, NEWVAL
@@ -1272,32 +1272,32 @@ CONTAINS
 
     LOGICAL                       :: LSCRIP=.FALSE.                 ! true if SCRIP switch is set,
                                                                     ! indicates that SCRIP code has
-                                                                    ! been compiled into WW3 
+                                                                    ! been compiled into WW3
     LOGICAL                       :: LSCRIPNC=.FALSE.               ! true if SCRIPNC switch is set,
                                                                     ! indicates that SCRIP code has
-                                                                    ! been compiled with netCDF 
-                                                                    ! into WW3 
+                                                                    ! been compiled with netCDF
+                                                                    ! into WW3
     LOGICAL                       :: L_STOP = .FALSE.               ! true if SCRIPNC switch is set
                                                                     ! and STOP_SCRIP file exists
-    LOGICAL                       :: T38=.FALSE.                    ! true if T38 switch is set. 
-                                                                    ! This logical is necessary 
-                                                                    ! since it isn't possible to 
-                                                                    ! have two switches disabling 
+    LOGICAL                       :: T38=.FALSE.                    ! true if T38 switch is set.
+                                                                    ! This logical is necessary
+                                                                    ! since it isn't possible to
+                                                                    ! have two switches disabling
                                                                     ! the same line of code.
-    LOGICAL                       :: ALL_REGULAR=.TRUE.             ! true if all grids are 
+    LOGICAL                       :: ALL_REGULAR=.TRUE.             ! true if all grids are
                                                                     ! regular grids
-    LOGICAL                       :: DO_CHECKING=.FALSE.            ! true if we will be 
+    LOGICAL                       :: DO_CHECKING=.FALSE.            ! true if we will be
                                                                     ! checking "old method" of
-                                                                    ! computing weights vs. 
+                                                                    ! computing weights vs.
                                                                     ! SCRIP method of computing
                                                                     ! weights.
     LOGICAL                       :: OLD_METHOD=.FALSE.             ! true if we will compute
                                                                     ! using "old method" (does
-                                                                    ! not necessarily mean 
+                                                                    ! not necessarily mean
                                                                     ! that this solution is
                                                                     ! utilized)
     LOGICAL                       :: LMPIBDI=.FALSE.                ! true if MPIBDI switch is set
-    LOGICAL                       :: CALLED_SCRIP=.FALSE.           ! true if SCRIP has been 
+    LOGICAL                       :: CALLED_SCRIP=.FALSE.           ! true if SCRIP has been
                                                                     ! called for this processor
 
     INTEGER                       :: ITRI, IM1, IM2, IT, JT, IsFirst
@@ -1409,10 +1409,10 @@ CONTAINS
     ! 0.a Plan future behavior by setting logical variables.
 
     if (w3_scrip_flag) then
-       LSCRIP=.TRUE. 
+       LSCRIP=.TRUE.
     end if
     if (w3_scripnc_flag) then
-       LSCRIPNC=.TRUE. 
+       LSCRIPNC=.TRUE.
     end if
     if (w3_t38_flag) then
        T38=.TRUE.
@@ -1420,7 +1420,7 @@ CONTAINS
 
     DO GDST=1, NRGRD
        IF ( GRIDS(GDST)%GTYPE .NE. RLGTYPE .AND.        &
-            GRIDS(GDST)%GTYPE .NE. SMCTYPE ) THEN  
+            GRIDS(GDST)%GTYPE .NE. SMCTYPE ) THEN
           !!Li  Add SMCTYPE option into ALL_REGULAR case.  JGLi20Nov2020
           ALL_REGULAR=.FALSE.
        END IF
@@ -1428,12 +1428,12 @@ CONTAINS
 
     ! Notes re: FLAGLL case: Old method calculates overlap area based on deg lat
     !       and deg lon. New method (SCRIP) calculates overlap area based on real
-    !       distances. Therefore weights will not match for FLAGLL case, so we 
-    !       do not perform checking for FLAGLL case. 
+    !       distances. Therefore weights will not match for FLAGLL case, so we
+    !       do not perform checking for FLAGLL case.
 
     IF ( (.NOT.FLAGLL) .AND. ALL_REGULAR .AND. LSCRIP ) THEN
        IF ( IMPROC.EQ.NMPERR ) &
-            WRITE (MDSE,'(/2A)')'We will check SCRIP calculations ', & 
+            WRITE (MDSE,'(/2A)')'We will check SCRIP calculations ', &
             'against old method of calculating weights.'
        DO_CHECKING=.TRUE.
     END IF
@@ -1458,7 +1458,7 @@ CONTAINS
     ! 1.a Check if needed
     !
     !!HT: FLGBDI is a flag set in WMMDATMD to .FALSE. and is used to identify
-    !!HT:        if the boundary distance maps have been initialized 
+    !!HT:        if the boundary distance maps have been initialized
     !!HT:
     !!HT: For each individual grid a map is generated identifying the distance
     !!HT: to open boundaries (MAPBDI, saved in structure MDATA in WMMDATMD).
@@ -1515,7 +1515,7 @@ CONTAINS
              ! -------------------------------------------------------------------- /
              ! Inconsistent RANK vs NBI (warning message)
              !   This was an error, now changed to a warning (see notes section)
-             IF ( (GRANK(GDST).NE.1) .AND. (NBI.EQ.0) ) THEN 
+             IF ( (GRANK(GDST).NE.1) .AND. (NBI.EQ.0) ) THEN
                 IF ( IMPROC.EQ.NMPERR ) &
                      WRITE (MDSE,'(/2A)') ' WARNING in WMGHGH:   ', &
                      'NBI=0 AND RANK > 1 '
@@ -1594,7 +1594,7 @@ CONTAINS
                    DO JDST=1, NY
                       IF ( MAPSTA(JDST,IDST) .EQ. 0 ) THEN ! (excluded point)
                          MAPBDI(JDST,IDST) = -1. / SIG(1) * DTMAX ! new (bug fix)
-                      ELSE IF ( ABS(MAPSTA(JDST,IDST)) .EQ. 2 ) THEN 
+                      ELSE IF ( ABS(MAPSTA(JDST,IDST)) .EQ. 2 ) THEN
                          ! (boundary point)
                          MAPBDI(JDST,IDST) =  0.
                       ELSE ! ABS(MAPSTA)=1 (sea point)
@@ -1629,7 +1629,7 @@ CONTAINS
 
                                   ! Notes: The origin of "0.58 * GRAV" is to translate from distance (in meters)
                                   ! to time (in seconds) required for a wave to travel from the boundary to point
-                                  ! JDST,IDST based on a specific group velocity 0.58*grav would be the group  
+                                  ! JDST,IDST based on a specific group velocity 0.58*grav would be the group
                                   ! velocity of a 7.3 s wave in deep water. Significance of T=7.3 s is explained
                                   ! in notes by HT below.
 
@@ -1683,7 +1683,7 @@ CONTAINS
                 !!HT: (1)
                 !!HT:
                 !!HT: CHANGE array is used to identify grid points that still need to
-                !!HT: be processed, and that are adjacent to points that have been 
+                !!HT: be processed, and that are adjacent to points that have been
                 !!HT: processed. Only those points can be updated in this step of the
                 !!HT: loop started above here. The two loops below set the CHANGE array.
                 !!HT:
@@ -1701,7 +1701,7 @@ CONTAINS
                 !!HT: This defines MAPBDI similar to an inverse CFL number.
                 !!HT:
                 !!HT: (3)
-                !!HT: 
+                !!HT:
                 !!HT: ERROR : Should be CLAT(JDST), not CLATI(JDST) : "STX    = FACTOR * SX * CLATI(JDST) / ( 0.58 * GRAV )"
 
                 ! 1.e Test output
@@ -1749,7 +1749,7 @@ CONTAINS
        ALLOCATE(LGRDWRITE(NGRDRANK(1)-1, NGRDRANK(2)), STAT=ISTAT )
        CHECK_ALLOC_STATUS ( ISTAT )
        DO GDST=1, NRGRD
-          DO JJ = 1, GRDHGH(GDST,0) 
+          DO JJ = 1, GRDHGH(GDST,0)
              IF ( GRDHGH(GDST,0) .EQ. 0 ) THEN
                 !             If no remap, then no file
                 LGRDREAD(GDST,JJ)  = .FALSE.
@@ -1829,11 +1829,11 @@ CONTAINS
           !################################################################
           ! Start new block of code: Calculate weights by calling SCRIP interface
           !################################################################
-          
+
           ! Notes on grid variables:
           ! GRIDS(GSRC)%{grid variable} (src grid, high rank, high resolution grid)
           ! GRIDS(GDST)%{grid variable} (dst grid, low rank, low resolution grid)
-          
+
           !   At this point, we are working on a particular low rank (dst) grid.
           !   We will save our weight information in the structure "ALLWGTS".
           !   For this dst grid, it is possible to have many src grids. That is
@@ -1841,13 +1841,13 @@ CONTAINS
           !   First, we ALLOCATE ALLWGTS from 1 up to the largest value of all
           !      the possible source grids. This will be referenced as "GSRC"
           !      Not every value of GSRC will be filled (e.g. "1" usually isn't filled)
-          !      but since we are doing this as a derived data type, we are still 
+          !      but since we are doing this as a derived data type, we are still
           !      efficient in terms of memory usage.
           !   Inside SCRIP interface, we have:
           !      type weight_data
           !         integer (kind=int_kind)              :: n    ! number of weights for
           !                                               dst cell, formerly npnts(:)
-          !         real    (kind=dbl_kind), allocatable :: w(:) ! weights, sized by n, 
+          !         real    (kind=dbl_kind), allocatable :: w(:) ! weights, sized by n,
           !                                               formerly wxwy(:,:)
           !         integer (kind=int_kind), allocatable :: k(:) ! source grid cells,
           !                                               sized by n, formerly KSRC(:,:)
@@ -1857,15 +1857,15 @@ CONTAINS
           !   ....
           !     ALLOCATE ( WGTDATA(grid2_size), STAT=ISTAT ) ! grid2=destination grid
           !     CHECK_ALLOC_STATUS ( ISTAT )
-          
+
 #ifdef W3_SCRIP
           NJDST=NY
           NIDST=NX
-          ALLOCATE ( ALLWGTS(MAXVAL(GRDHGH)), STAT=ISTAT ) 
+          ALLOCATE ( ALLWGTS(MAXVAL(GRDHGH)), STAT=ISTAT )
           CHECK_ALLOC_STATUS ( ISTAT )
 
           ! Next, we loop through the src grids for the dst grid that we are working on.
-          DO JJ=1, GRDHGH(GDST,0) 
+          DO JJ=1, GRDHGH(GDST,0)
 #endif
              if (w3_t38_flag) then
                 CALL DATE_AND_TIME ( CDATE_TIME(1), CDATE_TIME(2), CDATE_TIME(3), DATE_TIME)
@@ -1885,9 +1885,9 @@ CONTAINS
              ! 1) Not using L_STOP: in this case, all processes need all the weight
              !    information, so all processes need to call SCRIP for all grid pairs
              ! OR
-             ! 2) Using L_STOP, writing .nc files and not reading .nc files. With 
+             ! 2) Using L_STOP, writing .nc files and not reading .nc files. With
              !    L_STOP, different processors are doing different things, and so
-             !    have different settings for L_WRITE. L_READ is the same for all 
+             !    have different settings for L_WRITE. L_READ is the same for all
              !    processors, since it is simply based on whether the file already
              !    exists.
 
@@ -1920,7 +1920,7 @@ CONTAINS
 #endif
 
 #ifdef W3_SCRIPNC
-             IF ((.NOT. L_STOP) .OR. ((.NOT. L_READ) .AND. L_WRITE)) THEN 
+             IF ((.NOT. L_STOP) .OR. ((.NOT. L_READ) .AND. L_WRITE)) THEN
 #endif
 #ifdef W3_SCRIP
                 IF (L_STOP) THEN ! we are sending different grids to different processors
@@ -1946,8 +1946,8 @@ CONTAINS
                 IF (.NOT. L_READ) THEN
                    IMPROC_ASSIGN = IMPROC_ASSIGN + 1
                    IF (IMPROC_ASSIGN .GT. NMPROC) IMPROC_ASSIGN = 1
-                   IF(CALLED_SCRIP)THEN ! we called scrip_wrapper, so we need  
-                      ! to deallocate before leaving               
+                   IF(CALLED_SCRIP)THEN ! we called scrip_wrapper, so we need
+                      ! to deallocate before leaving
                       DST_GRID_SIZE=NIDST*NJDST
                       DO KDST=1,DST_GRID_SIZE
                          DEALLOCATE(WGTDATA(KDST)%W, STAT=ISTAT )
@@ -1958,7 +1958,7 @@ CONTAINS
                       DEALLOCATE(WGTDATA, STAT=ISTAT )
                       CHECK_DEALLOC_STATUS ( ISTAT )
                    END IF
-                   CYCLE ! cycle out of this loop :  DO JJ=1, GRDHGH(GDST,0) 
+                   CYCLE ! cycle out of this loop :  DO JJ=1, GRDHGH(GDST,0)
                 END IF
              END IF
 #endif
@@ -1977,7 +1977,7 @@ CONTAINS
                 CALL EXTCDE (506)
              ENDIF
 
-             ! SCRIP has now created the data strucure "WGTDATA" and stored the weights 
+             ! SCRIP has now created the data strucure "WGTDATA" and stored the weights
              ! in it. However, this is only for the present src grid. We want to store the
              ! data for all the src grids. Thus, we use a new data structure of type
              ! "ALLWGT" to store this data. First though, we need to ALLOCATE it:
@@ -1999,7 +1999,7 @@ CONTAINS
 
              ! Notes re: short and long way to do this:
              ! pgf90 on IBM Opteron, gfortran, g95, xlf, all tested ok with "short method"
-             ! pgf90 on our linux workstations (Intel) requires the "long method" 
+             ! pgf90 on our linux workstations (Intel) requires the "long method"
              ! (possible compiler bug)
              ! ALLWGTS(GSRC)%WGTDATA = WGTDATA                               !short method
 
@@ -2037,7 +2037,7 @@ CONTAINS
              ! (again note that "k" is equivalent to isea, but includes *all* points)
 
              IF(T38)THEN
-                WRITE(MDST,'(/2A)')'      XDST       YDST     ', & 
+                WRITE(MDST,'(/2A)')'      XDST       YDST     ', &
                      '     XSRC          YSRC          WXWY'
                 DO JDST=1,NJDST
                    DO IDST=1,NIDST
@@ -2066,7 +2066,7 @@ CONTAINS
              end if
 
 #ifdef W3_SCRIP
-          END DO ! DO JJ=1, GRDHGH(GDST,0) 
+          END DO ! DO JJ=1, GRDHGH(GDST,0)
           GSRC = -999 ! unset grid
 #endif
           ! If SCRIPNC and L_STOP, then cycle LOWRANK_GRID loop and deallocate
@@ -2083,7 +2083,7 @@ CONTAINS
                 CHECK_DEALLOC_STATUS ( ISTAT )
              END IF
              IF ( ALLOCATED(ALLWGTS) ) THEN
-                DO JJ=1, GRDHGH(GDST,0) 
+                DO JJ=1, GRDHGH(GDST,0)
                    GSRC = GRDHGH(GDST,JJ)
                    IF ( ASSOCIATED(ALLWGTS(GSRC)%WGTDATA) ) THEN
                       DO KDST=1, DST_GRID_SIZE
@@ -2119,21 +2119,21 @@ CONTAINS
           ! 2.b.2 Find points used for boundary data in higher ranked grids
           !
           !!HT: These points are marked in MAPTST as negative values to assure
-          !!HT: that the grid poits used for boundary data are not getting 
+          !!HT: that the grid poits used for boundary data are not getting
           !!HT: averaged values from high-reswolution grids as that will result
           !!HT: in cyclic, possibly non-conservative updating.
           !!HT:
           !!HT: NBI2S has all necessary data set in WMGLOW as called before WMGHGH.
           !!HT:
-          !!HT: JJ loop goes over grids that reviously have been identified as 
+          !!HT: JJ loop goes over grids that reviously have been identified as
           !!HT: getting data from the grid presently cousidered.
           !
           ! notes: The purpose of this is to identify points
-          !        that should not be used in the averaging procedure. It is 
-          !        related to statement in Tolman (OM, 2008):  "Second, Eq (7) is not 
-          !        applied to grid points in the low resolution grid that contribute 
+          !        that should not be used in the averaging procedure. It is
+          !        related to statement in Tolman (OM, 2008):  "Second, Eq (7) is not
+          !        applied to grid points in the low resolution grid that contribute
           !        to boundary data for the high resolution grid. This avoids cyclic
-          !        updating of data between grids. 
+          !        updating of data between grids.
 
           ! notes:   GRDHGH(GDST,0) is number of grids of higher rank than the present
           !                         grid (GDST)
@@ -2144,7 +2144,7 @@ CONTAINS
           !        we would need a new variable to use in its place, since we need
           !        to mark the point for use in STMASK determination.
 
-          DO JJ=1, GRDHGH(GDST,0) 
+          DO JJ=1, GRDHGH(GDST,0)
              GSRC   = GRDHGH(GDST,JJ)
              DO IB=1, SIZE(MDATAS(GSRC)%NBI2S(:,1))
                 IF ( MDATAS(GSRC)%NBI2S(IB,1) .EQ. GDST ) THEN
@@ -2176,7 +2176,7 @@ CONTAINS
 
           !
           !       Notes: For case of lower ranked grid GDST being irregular, grid indices
-          !              i and j do not correspond to x and y, so optimization 
+          !              i and j do not correspond to x and y, so optimization
           !              by limiting search in manner of pre-curvilinear versions of
           !              WW3 is not appropriate.
           !
@@ -2189,7 +2189,7 @@ CONTAINS
 
           ELSE
 
-             ! loop through higher ranked grids GSRC 
+             ! loop through higher ranked grids GSRC
 
              DO JJ=1, GRDHGH(GDST,0)
                 GSRC   = GRDHGH(GDST,JJ)
@@ -2207,8 +2207,8 @@ CONTAINS
                 !              will not work in a simple way for spherical grids,
                 !              so we don't even try ....
                 !
-                !       Notes: SX and SY are only used in cases where GTYPE .NE. CLGTYPE, 
-                !              i.e. regular grids. In case of regular grids, SX and SY 
+                !       Notes: SX and SY are only used in cases where GTYPE .NE. CLGTYPE,
+                !              i.e. regular grids. In case of regular grids, SX and SY
                 !              can be replaced with HPFAC HQFAC, if desired.
                 !
                 ! find upper and lower bounds of higher ranks grids
@@ -2216,7 +2216,7 @@ CONTAINS
                 IF ( (GRIDS(GSRC)%GTYPE .EQ. CLGTYPE) .OR. &
                      (GRIDS(GSRC)%GTYPE .EQ. UNGTYPE) ) THEN
 
-                   !       Notes: in case of irregular grids, there is no obvious way to 
+                   !       Notes: in case of irregular grids, there is no obvious way to
                    !              offset by dx/2 dy/2, so we omit that sliver (thus we increase
                    !              search area slightly).
 
@@ -2234,7 +2234,7 @@ CONTAINS
                    YH     = GRIDS(GSRC)%Y0 + ( REAL(GRIDS(GSRC)%NY) - 1.5 ) &
                         * GRIDS(GSRC)%SY
 
-                ENDIF ! IF ( GRIDS(GSRC)%GTYPE .EQ. CLGTYPE ) 
+                ENDIF ! IF ( GRIDS(GSRC)%GTYPE .EQ. CLGTYPE )
 
                 !
                 ! find where this falls in the current (low) ranked grid
@@ -2281,7 +2281,7 @@ CONTAINS
           !
           ! 2.b.4 Point by point check
           !
-          ! Notes: We loop through all grids of higher rank 
+          ! Notes: We loop through all grids of higher rank
           !        GSRC=the grid number of the higher rank grid.
           !        NLMAX is used for dimensioning purposes.
           !        It is apparently using the ratio between the resolution
@@ -2297,7 +2297,7 @@ CONTAINS
 
              ! Notes: NLMAX is used to dimension TMPINT,TMPRL, and to set ITAG and LTAG
              !        (MPI case).
-             !        As we remove more of the older code, it may turn out that 
+             !        As we remove more of the older code, it may turn out that
              !        NLMAX is no longer needed, in which case we can remove this
              !        block of code. For example, the weights data structure is introduced
              !        to WW3 already dimensioned.
@@ -2382,7 +2382,7 @@ CONTAINS
                 DY_MIN_GSRC=DIST_MIN
              END IF
 
-             ! notes: original code was much simpler: 
+             ! notes: original code was much simpler:
              !              NLMAX  = MAX ( NLMAX , (2+INT(SX/GRIDS(J)%SX+0.001)) *  &
              !                                     (2+INT(SY/GRIDS(J)%SY+0.001)) )
 
@@ -2393,7 +2393,7 @@ CONTAINS
              if (w3_t38_flag) then
                 WRITE(MDST,*)'ratio 1 = ',(DX_MAX_GDST/DX_MIN_GSRC), &
                      DX_MAX_GDST,DX_MIN_GSRC
-                WRITE(MDST,*)'ratio 2 = ',(DY_MAX_GDST/DY_MIN_GSRC), & 
+                WRITE(MDST,*)'ratio 2 = ',(DY_MAX_GDST/DY_MIN_GSRC), &
                      DY_MAX_GDST,DY_MIN_GSRC
                 WRITE(MDSE,*)'GSRC, NLMAX = ',GSRC,NLMAX
              end if
@@ -2412,20 +2412,20 @@ CONTAINS
           GSRC=-999 ! unset grid
 
           ! Notes regarding 3 possible scenarios:
-          !        If only using SCRIP, then 
+          !        If only using SCRIP, then
           !            * set NLMAX=NLMAX_SCRIP here.
           !            * TMPRL_OM will not be created
           !            * TMPRL will be calculated using SCRIP
           !        If only using old method
           !            * NLMAX is already set, and SCRIP switch does not exist, so
           !               nothing is done here
-          !            * both TMPRL and TMPRL_OM will be dimensioned 
+          !            * both TMPRL and TMPRL_OM will be dimensioned
           !            * TMPRL_OM will be calculated
-          !            * TMPRL_OM will be copied to TMPRL for use 
+          !            * TMPRL_OM will be copied to TMPRL for use
           !        If using both methods ("DO_CHECKING")
           !            * set NLMAX=MAX(NLMAX, NLMAX_SCRIP) here.
           !            * both TMPRL_OM and TMPRL will be created
-          !            * both will be calculated using the 2 methods, and 
+          !            * both will be calculated using the 2 methods, and
           !               checked against each other
           !            * the SCRIP version of weights (TMPRL) will be the ones used.
 
@@ -2475,10 +2475,10 @@ CONTAINS
           !!HT: grid. Necxt two loops over all relevant point in target grid.
           !!HT:
 
-          ! Notes: This is the start of the large loop through the individual 
+          ! Notes: This is the start of the large loop through the individual
           !        grid points of the low-rank grid.
           !        The checks below for JDST.LT.JDSTLA , IDST.LT.IDSTLA etc are to save
-          !        time but will only be useful for the case of regular grids. 
+          !        time but will only be useful for the case of regular grids.
 
           LOWRANK_J : DO JDST=1, NY
              IF ( JDST.LT.JDSTLA .OR. JDST.GT.JDSTHA ) CYCLE
@@ -2490,7 +2490,7 @@ CONTAINS
                 ! MAPTST: see Section 2.b.2 above
                 IF ( MAPTST(JDST,IDST) .LT. 0 ) CYCLE
                 XA     = REAL(XGRD(JDST,IDST)) ! old code: X0 + REAL(IDST-1)*SX
-                YA     = REAL(YGRD(JDST,IDST)) ! old code: Y0 + REAL(JDST-1)*SY 
+                YA     = REAL(YGRD(JDST,IDST)) ! old code: Y0 + REAL(JDST-1)*SY
 
                 !!HT: For each point in the target grid, loop over all relevant high-res
                 !!HT: grid (JJ loop).
@@ -2511,15 +2511,15 @@ CONTAINS
                    !       Note for LLG: Assumption is made that the higher ranked grid
                    !                     cannot be global.
                    !
-                   !!HT: Set search range in [candidate] high-res grid. 
+                   !!HT: Set search range in [candidate] high-res grid.
 
-                   ! Notes: The quantities XL YL XH YH apear to be a bounding box in 
-                   !        index space for later searching within the high rank grid (or 
-                   !        otherwise making computations from the high rank grid). They 
-                   !        are the distance from the coarse grid point to the origin of 
-                   !        the high rank grid, measured in grid cells of the high rank 
-                   !        grid. So, they are the i and j values in the high rank  
-                   !        bounding the low rank grid cell. 
+                   ! Notes: The quantities XL YL XH YH apear to be a bounding box in
+                   !        index space for later searching within the high rank grid (or
+                   !        otherwise making computations from the high rank grid). They
+                   !        are the distance from the coarse grid point to the origin of
+                   !        the high rank grid, measured in grid cells of the high rank
+                   !        grid. So, they are the i and j values in the high rank
+                   !        bounding the low rank grid cell.
 
                    IF (OLD_METHOD)THEN
                       ! ...then  we do the counting using the old method
@@ -2560,14 +2560,14 @@ CONTAINS
                       !        Purpose of counting is unknown (for dimensioning?)
 
                       ! Initialize
-                      NR0_OM    = 0 ! counter of MAPSTA=0 (indicates 
+                      NR0_OM    = 0 ! counter of MAPSTA=0 (indicates
                       ! excluded point)
-                      NRL_OM    = 0 ! counter of MAPSTA=0 (indicates 
-                      ! excluded point) and MAPST2=0 
+                      NRL_OM    = 0 ! counter of MAPSTA=0 (indicates
+                      ! excluded point) and MAPST2=0
                       ! (indicates land)
-                      NR1_OM    = 0 ! counter of |MAPSTA|=1 
+                      NR1_OM    = 0 ! counter of |MAPSTA|=1
                       ! (indicates sea point)
-                      NR2_OM    = 0 ! counter of |MAPSTA|=2 
+                      NR2_OM    = 0 ! counter of |MAPSTA|=2
                       ! (indicates boundary point)
                       BDIST_OM(JJ) = 9.99E33
 
@@ -2577,9 +2577,9 @@ CONTAINS
                                ! excluded point
                                NR0_OM    = NR0_OM + 1
 
-                               ! Notes: Q: What does MAPST2=0 indicate? 
+                               ! Notes: Q: What does MAPST2=0 indicate?
                                !        A: MAPST2 is the "second grid status map"
-                               !           For disabled points (MAPSTA=0) , MAPST2 indicates land (0) or 
+                               !           For disabled points (MAPSTA=0) , MAPST2 indicates land (0) or
                                !           excluded (1). For sea and active boundary points, MAPST2 indicates
                                !           a) ice coverage b) drying out of points c) land in moving grid or
                                !           inferred land in nesting and d) masked in two-way nesting
@@ -2591,7 +2591,7 @@ CONTAINS
                                NR1_OM    = NR1_OM + 1
 
                                ! Notes: check against stored "distance to boundary point"
-                               !        This BDIST_OM array will be used later, when we select 
+                               !        This BDIST_OM array will be used later, when we select
                                !        the high rank grid to average from.
 
                                BDIST_OM(JJ) = MIN ( BDIST_OM(JJ) ,     &
@@ -2618,7 +2618,7 @@ CONTAINS
 #ifdef W3_SCRIP
                    BDIST(JJ) = 9.99E33
 
-                   ! Notes on variables used here:  
+                   ! Notes on variables used here:
                    ! IDST, JDST given by loop, NIDST set above, the rest we need to set here
 
                    NISRC=GRIDS(GSRC)%NX
@@ -2641,10 +2641,10 @@ CONTAINS
                    END DO
 
                    ! Pull NR0, etc. from storage...
-                   NR0 = ALLWGTS(GSRC)%WGTDATA(KDST)%NR0 
+                   NR0 = ALLWGTS(GSRC)%WGTDATA(KDST)%NR0
                    !                             counter of MAPSTA=0 (indicates excluded point)
                    NRL = ALLWGTS(GSRC)%WGTDATA(KDST)%NRL
-                   !                             counter of MAPSTA=0 (indicates excluded point) 
+                   !                             counter of MAPSTA=0 (indicates excluded point)
                    !                             and MAPST2=0 (indicates land)
                    NR1 = ALLWGTS(GSRC)%WGTDATA(KDST)%N
                    !                             counter of |MAPSTA|=1 (indicates sea point)
@@ -2685,7 +2685,7 @@ CONTAINS
                       IF(BDIST_OM(JJ).NE.BDIST(JJ))THEN
                          IF ( IMPROC.EQ.NMPERR ) &
                               WRITE (MDSE,'(/2A,2(F12.5))') &
-                              ' *** ERROR WMGHGH: ', & 
+                              ' *** ERROR WMGHGH: ', &
                               ' BDIST_OM(JJ),BDIST(JJ) = ', &
                               BDIST_OM(JJ),BDIST(JJ)
                          CALL EXTCDE ( 999 )
@@ -2707,13 +2707,13 @@ CONTAINS
                    END IF
 
                    ! Notes: Potential future improvement: for irregular grids, it would make
-                   ! more sense to use the overlapped area, rather than simply counting cells 
-                   ! to decide on "inferred land". However, since grid cell size it typically 
+                   ! more sense to use the overlapped area, rather than simply counting cells
+                   ! to decide on "inferred land". However, since grid cell size it typically
                    ! fairly uniform locally, the current approach will suffice for now.
 
-                   ! Notes: This is the only place that the "NRL" "NR0" "NR1" and "NR2" variables 
+                   ! Notes: This is the only place that the "NRL" "NR0" "NR1" and "NR2" variables
                    !        are used directly. They affect MAPST2 indirectly below.
-                   !        The calculation itself is essentially "50% or more of the grid 
+                   !        The calculation itself is essentially "50% or more of the grid
                    !        cells are land".
 
                    IF ( NRL .GT. (NR0+NR1+NR2)/2 ) THEN
@@ -2745,7 +2745,7 @@ CONTAINS
 
                    ! Notes: If any grids are OK for this dst point, then we override any prior
                    ! setting of INFLD=1. Apparently this is for the situation of having some src
-                   ! grids giving INFLD=1 and another giving INFLD=0 for the same dst point. 
+                   ! grids giving INFLD=1 and another giving INFLD=0 for the same dst point.
                    ! I wouldn't expect this to happen very often.
 
                    INFLND(JDST,IDST) = 0
@@ -2754,16 +2754,16 @@ CONTAINS
                 !
                 ! 2.b.5 Select source grid
                 !
-                ! Notes: It appears that we are selecting the high rank grid from 
+                ! Notes: It appears that we are selecting the high rank grid from
                 !        which we will perform the averaging.
-                !        The code is written such that the first higher rank 
+                !        The code is written such that the first higher rank
                 !        grid that we find has the rank that we want, but isn't necessarily the
-                !        grid that we want. 
+                !        grid that we want.
                 !        Are grids necessarily in order of rank? If so, then we want the grid
                 !        that is higher rank but of nearest rank to the present grid.
                 !        Anyway, once we have decided on the grid rank that we want, we select
                 !        the specific grid according to criterion: larger distance to
-                !        boundary = better 
+                !        boundary = better
                 !        Keep in mind that this grid is selected for *this* (IDST,JDST) and not
                 !        necesssarily for the next...
 
@@ -2774,22 +2774,22 @@ CONTAINS
                 !!HT: the boundary distance in the high-res grid, stored in BDIST is
                 !!HT: used to make the choice.
 
-                !!ER: Old logic was to select a grid that is of the "next rank up, 
-                !!ER: for which data is available". This was done by searching 
+                !!ER: Old logic was to select a grid that is of the "next rank up,
+                !!ER: for which data is available". This was done by searching
                 !!ER: from 1 to GRDHGH (remember that the available source grids
                 !!ER: are in order of rank), and exiting when the rank increased.
                 !!ER: The problem with selecting the "lowest rank grid with rank
-                !!ER: greater than that of GDST" is that at this point, we have 
+                !!ER: greater than that of GDST" is that at this point, we have
                 !!ER: no knowledge of what will be masked in that SRC grid, since
                 !!ER: we haven't updated MAPSTA for that GSRC yet, based on what
                 !!ER: points are covered by higher rank grids (in case of masking
-                !!ER: computations). We can avoid this problem by reversing the 
+                !!ER: computations). We can avoid this problem by reversing the
                 !!ER: order of GSRC search (from highest rank to lowest rank of
-                !!ER: higher rank). For example, grid 1 wants data from grid 2, 
+                !!ER: higher rank). For example, grid 1 wants data from grid 2,
                 !!ER: but just gets zeros because grid 2 is masked there, because
                 !!ER: grid 2 is masked by grid 3 in Section 2.3.2 below. Going
-                !!ER: directly to GSRC=3 for GDST=1 (skipping GSRC=2) avoids 
-                !!ER: this: the highest rank at that location will never be 
+                !!ER: directly to GSRC=3 for GDST=1 (skipping GSRC=2) avoids
+                !!ER: this: the highest rank at that location will never be
                 !!ER: masked by a higher rank grid.
 
                 DO JJ=GRDHGH(GDST,0),1,-1
@@ -2799,7 +2799,7 @@ CONTAINS
 
                    IF ( GRIDOK(JJ) ) THEN
                       IF ( JF .EQ. 0 ) THEN ! we haven't already found a grid
-                         JF     = GSRC ! now we have found a grid. 
+                         JF     = GSRC ! now we have found a grid.
                          JR     = GRANK(GSRC)
                          ! this is the rank that we want....the rank of the first grid that we find
                          JD     = BDIST(JJ) ! larger distance = better
@@ -2807,7 +2807,7 @@ CONTAINS
                          ! we already found a grid, but maybe this one is better
                          IF ( GRANK(GSRC) .NE. JR ) EXIT
                          ! this is not the rank that we want
-                         IF ( BDIST(JJ) .GT. JD ) THEN 
+                         IF ( BDIST(JJ) .GT. JD ) THEN
                             ! we like this grid better
                             JF     = GSRC
                             JD     = BDIST(JJ)
@@ -2838,14 +2838,14 @@ CONTAINS
                 TMPRL (NRTOT, 0) = JD * SIG(1) / DTMAX
 
                 ! Notes: Calculation for XL YL XH YH is same as it was in section 2.b.4, so
-                !        see notes in that section. 
+                !        see notes in that section.
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 !...Begin block of code for computing weights using old method
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
                 IF (OLD_METHOD)THEN
-                   ! it is OK to do the counting using the old method 
+                   ! it is OK to do the counting using the old method
                    ! (These variables are saved with "_OM" suffix)
 
                    DO ITMP=-4,-1
@@ -2909,7 +2909,7 @@ CONTAINS
                 !...Begin block of code for "computing" weights using new method
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-                ! Notes: Weights have already been computed by SCRIP. 
+                ! Notes: Weights have already been computed by SCRIP.
                 !        We just need to transfer them to TMPINT and TMPRL
 
 #ifdef W3_SCRIP
@@ -2927,7 +2927,7 @@ CONTAINS
                 IF ( NLOC .GT. NLMAX ) THEN
                    IF ( IMPROC.EQ.NMPERR ) THEN
                       WRITE (MDSE,'(/2A,4(1x,I8))') &
-                           ' *** ERROR WMGHGH: ', & 
+                           ' *** ERROR WMGHGH: ', &
                            ' IDST,JDST,NLOC,NLMAX = ', &
                            IDST,JDST,NLOC,NLMAX
                       WRITE(MDSE,1021)
@@ -2949,7 +2949,7 @@ CONTAINS
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                !...Begin block of code that is just for testing 
+                !...Begin block of code that is just for testing
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
                 IF (DO_CHECKING)THEN
@@ -3008,7 +3008,7 @@ CONTAINS
              WRITE(MDST,*)'WMGHGH Section 2.b.6 completed.'
           end if
 
-          ! Notes: We are done with the counting. If we didn't use SCRIP to get 
+          ! Notes: We are done with the counting. If we didn't use SCRIP to get
           !     TMPINT, TMPRL, then we need to set them using the _OM variables.
 
           IF(.NOT.LSCRIP)THEN
@@ -3060,8 +3060,8 @@ CONTAINS
           !!HT:        MAPTST that have been marked as used for boundary points in
           !!HT:        the corrsponding high-res grids.
           !!HT: NIT sets the stencil width of the propagation scheme, used to see
-          !!HT:        how far we need to move in from the boundary points of 
-          !!HT:        the high-res grid to reach the area in the low-res grid 
+          !!HT:        how far we need to move in from the boundary points of
+          !!HT:        the high-res grid to reach the area in the low-res grid
           !!HT:        where we do not need to compute.
 
           STMASK(:,1:NX) = MAPTST .LT. 0
@@ -3084,7 +3084,7 @@ CONTAINS
           IDSTLA=2
           IDSTHA=NX-1
 
-          ! notes....bug fix: in official release 3.14, the if-then below 
+          ! notes....bug fix: in official release 3.14, the if-then below
           !  was missing. This would produce incorrect results for a global grid that
           !  had a higher rank grid on the branch cut (180 to -180 or 360 to 0). See
           !  treatment of STMASK after the if-then statement. There, it is clear that
@@ -3321,23 +3321,17 @@ CONTAINS
              DO JDST=NY,1 , -1
                 WRITE (MDST,9026) MAPTST(JDST,:) + 88*INFLND(JDST,:)
              END DO
-          end if
           !
-          if (w3_t_flag) then
              WRITE (MDST,9025) 'MAPSTA'
              DO JDST=NY,1 , -1
                 WRITE (MDST,9026) MAPSTA(JDST,:)
              END DO
-          end if
           !
-          if (w3_t_flag) then
              WRITE (MDST,9025) 'MAPST2'
              DO JDST=NY,1 , -1
                 WRITE (MDST,9026) MAPST2(JDST,:)
              END DO
-          end if
           !
-          if (w3_t_flag) then
              WRITE (MDST,9025) 'FLAGST'
              DO JDST=NY,1 , -1
                 WRITE (MDST,9027) MAPST(JDST,:)
@@ -3419,7 +3413,7 @@ CONTAINS
           !        dst grid.
 
 #if W3_SCRIP
-          DO JJ=1, GRDHGH(GDST,0) 
+          DO JJ=1, GRDHGH(GDST,0)
              GSRC   = GRDHGH(GDST,JJ)
              DO KDST=1,DST_GRID_SIZE
                 DEALLOCATE ( ALLWGTS(GSRC)%WGTDATA(KDST)%W, STAT=ISTAT )
@@ -3474,37 +3468,27 @@ CONTAINS
        DO JJ=1, NRGRD
           WRITE (MDST,9029) HGSTGE(JJ,:)%NTOT
        END DO
-    end if
     !
-    if (w3_t_flag) then
        WRITE (MDST,9028) 'NREC'
        DO JJ=1, NRGRD
           WRITE (MDST,9029) HGSTGE(JJ,:)%NREC
        END DO
-    end if
     !
-    if (w3_t_flag) then
        WRITE (MDST,9028) 'NRC1'
        DO JJ=1, NRGRD
           WRITE (MDST,9029) HGSTGE(JJ,:)%NRC1
        END DO
-    end if
     !
-    if (w3_t_flag) then
        WRITE (MDST,9028) 'NSND'
        DO JJ=1, NRGRD
           WRITE (MDST,9029) HGSTGE(JJ,:)%NSND
        END DO
-    end if
     !
-    if (w3_t_flag) then
        WRITE (MDST,9028) 'NSN1'
        DO JJ=1, NRGRD
           WRITE (MDST,9029) HGSTGE(JJ,:)%NSN1
        END DO
-    end if
     !
-    if (w3_t_flag) then
        WRITE (MDST,9028) 'NSMX'
        DO JJ=1, NRGRD
           WRITE (MDST,9029) HGSTGE(JJ,:)%NSMX
@@ -3805,10 +3789,10 @@ CONTAINS
        END IF
 
        ! Unresolved bug: this triggers even for 2 irregular grids that are not overlapping!
-       !   We should only be checking for cases of 2 irregular grids of equal rank that 
+       !   We should only be checking for cases of 2 irregular grids of equal rank that
        !   are overlapping. Unfortunately, at this point in the routine, we don't know
        !   whether they are overlapping...requires more code to do this, since all code
-       !   in this routine is for regular grids. Fortunately, there is really no 
+       !   in this routine is for regular grids. Fortunately, there is really no
        !   disadvantage to making the two irregular grids to be different rank using
        !   ww3_multi.inp
 
@@ -4037,7 +4021,7 @@ CONTAINS
              IY     = STORES(I,J)%IY(JJ)
              IF ( IX.EQ.1 .OR. IX.EQ.NX .OR. IY.EQ.1 .OR. IY.EQ.NY ) THEN
                 MASKA(IY,IX) = STORES(I,J)%FLA(JJ) .OR.               &
-                     STORES(I,J)%NAV(JJ).EQ.0 
+                     STORES(I,J)%NAV(JJ).EQ.0
                 IF ( ABS(MAPSTA(IY,IX)).EQ.2 .AND.                    &
                      .NOT.STORES(I,J)%FLA(JJ) .AND.                   &
                      STORES(I,J)%NAV(JJ).GT.0 ) THEN
@@ -4307,8 +4291,8 @@ CONTAINS
        CHECK_ALLOC_STATUS ( ISTAT )
        MAP3D  = 0
        WGT3D  = 0.
-       NREC   = 0 
-       NSND   = 0 
+       NREC   = 0
+       NSND   = 0
        !
        ! 3.b Filling MAP3D and WGT3D, as well as NREC and NSND
        !
@@ -4630,7 +4614,7 @@ CONTAINS
        !
        ! 4.b.2 All other grids, info for receiving
        !
-       DO J=1, NRGRD 
+       DO J=1, NRGRD
           IF ( .NOT. SHRANK(I,J) ) CYCLE
           IF ( EQSTGE(I,J)%NREC .EQ. 0 ) CYCLE
           NTL    = 0
@@ -4655,7 +4639,7 @@ CONTAINS
        !
        ! 4.b.3 All other grids, info for sending
        !
-       DO J=1, NRGRD 
+       DO J=1, NRGRD
           IF ( .NOT. SHRANK(I,J) ) CYCLE
           IF ( EQSTGE(I,J)%NSND .EQ. 0 ) CYCLE
           NTPP   = 0
@@ -4818,9 +4802,9 @@ CONTAINS
     !
     ! notes: This resolution test, with FACMAX=2, is pretty strict, so
     !        it is not going to be appropriate for irregular grids.
-    !        We'll just have to trust the judgement of the user in the 
-    !        case of irregular grids. But if we change our minds and do 
-    !        some kind of check for irregular grids, we could make 
+    !        We'll just have to trust the judgement of the user in the
+    !        case of irregular grids. But if we change our minds and do
+    !        some kind of check for irregular grids, we could make
     !        a check against median(HPFAC) and median(HQFAC).
 
     DO I=1, NRGRD
@@ -4972,7 +4956,7 @@ CONTAINS
   END SUBROUTINE WMGEQL
   !/ ------------------------------------------------------------------- /
   !>
-  !> @brief Generate map with flags for need of spectral grid conversion 
+  !> @brief Generate map with flags for need of spectral grid conversion
   !>  between models.
   !>
   !> @details Test of parameters as introduced before in W3IOBC.
@@ -4996,7 +4980,7 @@ CONTAINS
     !/
     !  1. Purpose :
     !
-    !     Generate map with flogs for need of spectral grid conversion 
+    !     Generate map with flogs for need of spectral grid conversion
     !     between models.
     !
     !  2. Method :
@@ -5115,19 +5099,19 @@ CONTAINS
   !> @details Set boundary points update for regular grid in same ranked group.
   !>
   !>  Cross mapping of grid points, use nearest sea points and no
-  !>  interpolation is required so far. 
-  !>      
+  !>  interpolation is required so far.
+  !>
   !> @author J G Li  @date 12-Apr-2021
-  !>      
+  !>
   SUBROUTINE WMSMCEQL
     !!
     !!    Adapted from multi-grid sub WMGEQL for set up equal ranked SMC
     !!    grid boundary points.       JGLi10Aug2020
     !!    Move boundary point matching to sub-grid root PEs and broadcast to
     !!    all other PEs.              JGLi02Dec2020
-    !!    Clear bugs for 3 sub-grids case and finalise output messages. 
+    !!    Clear bugs for 3 sub-grids case and finalise output messages.
     !!                                JGLi26Jan2021
-    !!    Add regular grid to SMC grid same ranked group. 
+    !!    Add regular grid to SMC grid same ranked group.
     !!                                JGLi12Apr2021
     !!
     !  1. Purpose :
@@ -5160,12 +5144,12 @@ CONTAINS
     !
     !  7. Remarks :
     !
-    !       SMC J sub-grid has own boundary cell number W3GDATMD's NBSMC and 
-    !       their ID list are stored in W3GDATMD's GRIDS(J)%ISMCBP(NBSMC), 
-    !       which are the global ISEA values of the NBSMC boundary cells.  
-    !       So there is no need to look for boundary points, but just 
-    !       fetching the boundary cell list from each SMC sub-grid. 
-    !       No interpolation is required as one to one correspondance is 
+    !       SMC J sub-grid has own boundary cell number W3GDATMD's NBSMC and
+    !       their ID list are stored in W3GDATMD's GRIDS(J)%ISMCBP(NBSMC),
+    !       which are the global ISEA values of the NBSMC boundary cells.
+    !       So there is no need to look for boundary points, but just
+    !       fetching the boundary cell list from each SMC sub-grid.
+    !       No interpolation is required as one to one correspondance is
     !       assumed among SMC sub-grid boundary points.  JGLi06Nov2020
     !       Sub WMIOEG and WMIOES are modified to use the new EQSTGE array
     !       for same ranked SMC sub-grids only.          JGLi26Jan2021
@@ -5175,7 +5159,7 @@ CONTAINS
     !  9. Switches :
     !
     !     !/PRn  Propagation scheme.
-    !     !/SMC  For SMC grid. 
+    !     !/SMC  For SMC grid.
     !
     !     !/S    Enable subroutine tracing.
     !     !/T    Enable test output.
@@ -5218,8 +5202,8 @@ CONTAINS
     INTEGER, ALLOCATABLE                :: IBPTS(:), JBPTS(:), IPBPT(:)
     REAL, PARAMETER                     :: ODIMAX = 25.
     REAL, ALLOCATABLE                   :: XLon(:), YLat(:)
-    LOGICAL                             :: CHANGE 
-    LOGICAL, ALLOCATABLE                :: SHRANK(:,:), DOGRID(:) 
+    LOGICAL                             :: CHANGE
+    LOGICAL, ALLOCATABLE                :: SHRANK(:,:), DOGRID(:)
     CHARACTER(LEN=18), ALLOCATABLE      :: TSTR(:)  ! W3_T5
     CHARACTER(LEN=18)                   :: DSTR     ! W3_T5
     !
@@ -5298,11 +5282,11 @@ CONTAINS
        end if
        NP     = OUTPTS(I)%NAPROC
        !
-       ! 1.c Fetch Grid I boundary points. 
+       ! 1.c Fetch Grid I boundary points.
        !
        NT = 0
        IF( GRIDS(I)%GTYPE .EQ. RLGTYPE ) THEN
-          ! 1.c.1 Regular grid I boundary points are stored in NBI. 
+          ! 1.c.1 Regular grid I boundary points are stored in NBI.
           NT = OUTPTS(I)%OUT5%NBI
           if (w3_mpi_flag) then
              IF( IMPROC .EQ. ICROOT )  THEN
@@ -5317,14 +5301,14 @@ CONTAINS
           if (w3_smc_flag) then
 #ifdef W3_MPI
              IF( IMPROC .EQ. ICROOT )  THEN
-                NT = GRIDS(I)%NBSMC    
+                NT = GRIDS(I)%NBSMC
                 WRITE(MDSE,*) "ICROOT, NT are", ICROOT, NT
              ENDIF
-             CALL MPI_BCAST( NT, 1, MPI_INTEGER,  ICROOT-1, MPI_COMM_MWAVE, IEER) 
+             CALL MPI_BCAST( NT, 1, MPI_INTEGER,  ICROOT-1, MPI_COMM_MWAVE, IEER)
              !  Need to wait for all PEs get these values.
              CALL MPI_BARRIER (MPI_COMM_MWAVE,IEER)
 #else
-             NT = GRIDS(I)%NBSMC    
+             NT = GRIDS(I)%NBSMC
              WRITE(MDSE,*) "ICROOT, NT are", ICROOT, NT
 #endif
           end if
@@ -5338,7 +5322,7 @@ CONTAINS
           CHECK_ALLOC_STATUS ( ISTAT )
 
           !  Use saved I-grid boundary cell list.
-          if ((w3_mpi_flag .and. ( IMPROC .EQ. ICROOT )) .or. .not. w3_mpi_flag) then 
+          if ((w3_mpi_flag .and. ( IMPROC .EQ. ICROOT )) .or. .not. w3_mpi_flag) then
              IF( GRIDS(I)%GTYPE .EQ. RLGTYPE ) THEN
                 !! Loop over regular grid mesh to find boundary points.
                 IXY = 0
@@ -5347,9 +5331,9 @@ CONTAINS
                    IY = MAPSF(ISEA, 2)
                    IF( ABS(MAPSTA(IY,IX)) .EQ. 2 ) THEN
                       IXY = IXY + 1
-                      XLon (IXY) = REAL(XGRD(IY,IX)) 
+                      XLon (IXY) = REAL(XGRD(IY,IX))
                       YLat (IXY) = REAL(YGRD(IY,IX))
-                      IBPTS(IXY) = ISEA 
+                      IBPTS(IXY) = ISEA
                       JBPTS(IXY) = 1 + (ISEA - 1)/NP
                       IPBPT(IXY) = ICROOT-1 + ISEA-(JBPTS(IXY)-1)*NP
                    ENDIF
@@ -5364,25 +5348,25 @@ CONTAINS
                       ISEA = IBPTS(IX)
                       JSEA = 1 + (ISEA - 1)/NP
                       IPBPT(IX) = ICROOT - 1 + ISEA - (JSEA - 1)*NP
-                      JBPTS(IX) = JSEA 
+                      JBPTS(IX) = JSEA
                    ENDDO
                 end if
                 !
              ENDIF     !!  RLGTYPE
-          ENDIF  
+          ENDIF
           !
-          !  All have to wait for ICROOT finishes conversion of cell ids to XLon-YLat 
+          !  All have to wait for ICROOT finishes conversion of cell ids to XLon-YLat
           if (w3_mpi_flag) then
              CALL MPI_BARRIER (MPI_COMM_MWAVE,IEER)
           end if
           !
           ! Then broadcast IBPTS, IPBPT, XLon, and YLat to all PEs
 #ifdef W3_MPI
-             CALL MPI_BCAST( IBPTS(1) , NT, MPI_INTEGER, ICROOT-1, MPI_COMM_MWAVE, IEER) 
-             CALL MPI_BCAST( JBPTS(1) , NT, MPI_INTEGER, ICROOT-1, MPI_COMM_MWAVE, IEER) 
-             CALL MPI_BCAST( IPBPT(1) , NT, MPI_INTEGER, ICROOT-1, MPI_COMM_MWAVE, IEER) 
-             CALL MPI_BCAST( XLon(1)  , NT, MPI_REAL,    ICROOT-1, MPI_COMM_MWAVE, IEER) 
-             CALL MPI_BCAST( YLat(1)  , NT, MPI_REAL,    ICROOT-1, MPI_COMM_MWAVE, IEER) 
+             CALL MPI_BCAST( IBPTS(1) , NT, MPI_INTEGER, ICROOT-1, MPI_COMM_MWAVE, IEER)
+             CALL MPI_BCAST( JBPTS(1) , NT, MPI_INTEGER, ICROOT-1, MPI_COMM_MWAVE, IEER)
+             CALL MPI_BCAST( IPBPT(1) , NT, MPI_INTEGER, ICROOT-1, MPI_COMM_MWAVE, IEER)
+             CALL MPI_BCAST( XLon(1)  , NT, MPI_REAL,    ICROOT-1, MPI_COMM_MWAVE, IEER)
+             CALL MPI_BCAST( YLat(1)  , NT, MPI_REAL,    ICROOT-1, MPI_COMM_MWAVE, IEER)
 #endif
 
           ! 1.d  Loop over J grids, select same rank
@@ -5409,7 +5393,7 @@ CONTAINS
                        STORES(I,J)%JCVBP(NT), STORES(I,J)%IPCVB(NT), &
                        STORES(I,J)%ISS(NT),   STORES(I,J)%JSS(NT),   &
                        STORES(I,J)%IPS(NT),   STORES(I,J)%ITG(NT),   &
-                       STORES(I,J)%FLA(NT),   STAT=ISTAT ) 
+                       STORES(I,J)%FLA(NT),   STAT=ISTAT )
              CHECK_ALLOC_STATUS ( ISTAT )
              STORES(I,J)%ICVBP = 0
              STORES(I,J)%JCVBP = 0
@@ -5421,29 +5405,29 @@ CONTAINS
              STORES(I,J)%ITG   = 0
              STORES(I,J)%FLA   = .FALSE.
              !
-             !  Work out which I-grid bounary points are matched in J-grid on JCROOT. 
+             !  Work out which I-grid bounary points are matched in J-grid on JCROOT.
              if (w3_smc_flag) then
 #ifdef W3_MPI
                 IF( IMPROC .EQ. JCROOT ) THEN
                    CALL W3SMCGMP( J, NT, XLon, YLat, STORES(I,J)%MSDBP )
                 ENDIF
                 ! Then broadcast the results to all PEs
-                CALL MPI_BCAST( STORES(I,J)%MSDBP(1), NT, MPI_INTEGER,  JCROOT-1, MPI_COMM_MWAVE, IEER) 
+                CALL MPI_BCAST( STORES(I,J)%MSDBP(1), NT, MPI_INTEGER,  JCROOT-1, MPI_COMM_MWAVE, IEER)
                 !  Need to wait for all PEs get these values.
                 CALL MPI_BARRIER( MPI_COMM_MWAVE, IEER)
 #else
                 CALL W3SMCGMP( J, NT, XLon, YLat, STORES(I,J)%MSDBP )
 #endif
              !
-                STORES(I,J)%ICVBP = IBPTS 
-                STORES(I,J)%JCVBP = JBPTS 
-                STORES(I,J)%IPCVB = IPBPT 
+                STORES(I,J)%ICVBP = IBPTS
+                STORES(I,J)%JCVBP = JBPTS
+                STORES(I,J)%IPCVB = IPBPT
              end if
              !
              !  Check which I-grid boundary points matched inside J-Grid
              NTL= 0
-             DO JX=1, NT 
-                IF( STORES(I,J)%MSDBP(JX) .EQ. 0 )  CYCLE 
+             DO JX=1, NT
+                IF( STORES(I,J)%MSDBP(JX) .EQ. 0 )  CYCLE
 
                 !  Process J-grid send point if it matches I-grid boundary point.
                 NTL    = NTL + 1
@@ -5464,26 +5448,26 @@ CONTAINS
              !  so there is no need for interpolation.   JGLi03Nov2020
              !
              STORES(I,J)%NTOT = NT
-             STORES(I,J)%NFIN = NTL 
+             STORES(I,J)%NFIN = NTL
              !
              if (w3_smc_flag) then
 #ifdef W3_MPI
-                IF( IMPROC .EQ. NMPERR ) WRITE(MDSE,1060) I, NT, J, NTL 
+                IF( IMPROC .EQ. NMPERR ) WRITE(MDSE,1060) I, NT, J, NTL
 #else
-                WRITE(MDSE,1060) I, NT, J, NTL 
+                WRITE(MDSE,1060) I, NT, J, NTL
 #endif
              end if
              !
              ! ... End of loops J in 1.c
           END DO
           !
-          !!  Free temporary space for I-grid. 
+          !!  Free temporary space for I-grid.
           DEALLOCATE( IBPTS, JBPTS, IPBPT, XLon, YLat, STAT=ISTAT )
           CHECK_DEALLOC_STATUS ( ISTAT )
 
        END IF   ! NT > 0
        !
-       ! ... End of 1.a loop I grid. 
+       ! ... End of 1.a loop I grid.
     END DO
     !
     ! -------------------------------------------------------------------- /
@@ -5503,8 +5487,8 @@ CONTAINS
        CALL W3SETO ( I, MDSE, MDST )
        CALL WMSETM ( I, MDSE, MDST )
        !
-       NREC   = 0 
-       NSND   = 0 
+       NREC   = 0
+       NSND   = 0
        !
        ! Find local root PE and maximum PE for I grid.
        if (w3_shrd_flag) then
@@ -5518,7 +5502,7 @@ CONTAINS
        ! 3.b Filling NREC and NSND for grid I
        !
        !!  Work out how many I-grid boundary points to be updated by other grids.
-       !!  Use matched J-grid points to selected I-grid points. JGLi26Jan2021 
+       !!  Use matched J-grid points to selected I-grid points. JGLi26Jan2021
        DO J=1, NRGRD
           IF( .NOT. SHRANK(I,J) ) CYCLE
           IF( STORES(I,J)%NFIN > 0 ) THEN
@@ -5532,8 +5516,8 @@ CONTAINS
           END IF
        END DO
 
-       !  Accumulate all related I-Grid points to be send to other sub-grids. 
-       !  Add IPRC range check to ensure sending from I-grid.  JGLi22Jan2021 
+       !  Accumulate all related I-Grid points to be send to other sub-grids.
+       !  Add IPRC range check to ensure sending from I-grid.  JGLi22Jan2021
        DO J=1, NRGRD
           IF( .NOT. SHRANK(J,I) ) CYCLE
           IF( STORES(J,I)%NFIN > 0 ) THEN
@@ -5574,7 +5558,7 @@ CONTAINS
        END IF
        !
        !! Initial NTOT for grid I before summing over other grids.  JGLi18Jan2021
-       EQSTGE(I,I)%NTOT = 0 
+       EQSTGE(I,I)%NTOT = 0
        !
        ! 4.a.1 Local counters, arrays weights etc.  (grid 'J' receive)
        !
@@ -5582,7 +5566,7 @@ CONTAINS
           IF( I .EQ. J ) CYCLE
           !
           !!   Looks strange to store in EQSTGE(I,I) as other J-grid may
-          !!   overwrite the value. Should be suspended?  JGLi30Dec2020 
+          !!   overwrite the value. Should be suspended?  JGLi30Dec2020
           !         EQSTGE(I,I)%NTOT = STORES(I,J)%NFIN
           !!   Changed to summation ove all other J-grids NFIN.  Not sure where
           !!   NTOT is used but keep it anyway.   JGLi18Jan2021
@@ -5641,7 +5625,7 @@ CONTAINS
        NT = 0
        !
        ! 4.b.2 Info for I-grid receiving from all other grids
-       DO J=1, NRGRD 
+       DO J=1, NRGRD
           IF( .NOT. SHRANK(I,J) ) CYCLE
           IF( EQSTGE(I,J)%NREC .EQ. 0 ) CYCLE
           NTL = 0
@@ -5652,17 +5636,17 @@ CONTAINS
                 NT = NT + 1
                 EQSTGE(I,I)%ISEA(NT) = STORES(I,J)%ICVBP(IX)
                 EQSTGE(I,I)%JSEA(NT) = STORES(I,J)%JCVBP(IX)
-                ! No need to alter local spectra for SMC grid.  JGLi08Dec2020 
-                EQSTGE(I,I)%WGHT(NT) = 1.0 
+                ! No need to alter local spectra for SMC grid.  JGLi08Dec2020
+                EQSTGE(I,I)%WGHT(NT) = 1.0
 
                 ! Boundary points received by I-grid from J-grid.
                 NTL = NTL + 1
                 EQSTGE(I,J)%ISEA(NTL) = STORES(I,J)%ICVBP(IX)
                 EQSTGE(I,J)%JSEA(NTL) = STORES(I,J)%JCVBP(IX)
-                !! Boundary spectra will be substituted fully.  JGLi08Dec2020 
+                !! Boundary spectra will be substituted fully.  JGLi08Dec2020
                 EQSTGE(I,J)%WGHT(NTL) = 1.0
                 EQSTGE(I,J)%NAVG(NTL) = 1
-                EQSTGE(I,J)%WAVG(NTL,1) = 1.0 
+                EQSTGE(I,J)%WAVG(NTL,1) = 1.0
                 EQSTGE(I,J)%RIP (NTL,1) = STORES(I,J)%IPS(IX)
                 EQSTGE(I,J)%RTG (NTL,1) = STORES(I,J)%ITG(IX)
              END IF
@@ -5672,13 +5656,13 @@ CONTAINS
        !
        ! 4.b.3 All other grids, info for sending
        !
-       DO J=1, NRGRD 
+       DO J=1, NRGRD
           IF ( .NOT. SHRANK(J,I) ) CYCLE
           IF ( EQSTGE(J,I)%NSND .EQ. 0 ) CYCLE
           NTPP   = 0
           NTL    = 0
           DO IY =1, STORES(J,I)%NTOT
-             IF(    STORES(J,I)%MSDBP(IY) > 0 ) THEN 
+             IF(    STORES(J,I)%MSDBP(IY) > 0 ) THEN
                 IPRC=STORES(J,I)%IPS(  IY)
                 NTPP(IPRC) = NTPP(IPRC) + 1
                 IF( IPRC .EQ. IMPROC ) THEN
@@ -5755,7 +5739,7 @@ CONTAINS
        END IF
     END DO
     !
-    !  Wait all PEs finishing EQSTGE setup before clean up.  JGLi20Jan2021 
+    !  Wait all PEs finishing EQSTGE setup before clean up.  JGLi20Jan2021
     if (w3_smc_flag) then
 #ifdef W3_MPI
        CALL MPI_BARRIER (MPI_COMM_MWAVE,IEER)
@@ -5813,7 +5797,7 @@ CONTAINS
          '     OVERLAPPING GRIDS NEED TO BE IN SAME GROUP '/    &
          '         GRID',I4,' IN GROUP',I4/                     &
          '         GRID',I4,' IN GROUP',I4/)
-1060 FORMAT (' Grid NBPI from',2I6,' found in',2I6) 
+1060 FORMAT (' Grid NBPI from',2I6,' found in',2I6)
 
     !
 9010 FORMAT ( ' TEST WMSMCEQL : STARTING LOOP OVER GRIDS') ! W3_T

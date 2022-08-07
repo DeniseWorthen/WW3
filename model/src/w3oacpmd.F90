@@ -17,7 +17,7 @@ MODULE W3OACPMD
   !/
   !/    Copyright 2009-2012 National Weather Service (NWS),
   !/       National Oceanic and Atmospheric Administration.  All rights
-  !/       reserved.  WAVEWATCH III is a trademark of the NWS. 
+  !/       reserved.  WAVEWATCH III is a trademark of the NWS.
   !/       No unauthorized use without permission.
   !/
   !  1. Purpose :
@@ -35,7 +35,7 @@ MODULE W3OACPMD
   !      CPL_OASIS_DEFINE    Subr. Public   Partition definition
   !      CPL_OASIS_SND       Subr. Public   Send fields to ocean/atmos model
   !      CPL_OASIS_RCV       Subr. Public   Receive fields from ocean/atmos model
-  !      CPL_OASIS_FINALIZE  Subr. Public   Finalize the coupling  
+  !      CPL_OASIS_FINALIZE  Subr. Public   Finalize the coupling
   !     ----------------------------------------------------------------
   !
   !  4. Subroutines and functions used :
@@ -57,20 +57,20 @@ MODULE W3OACPMD
   !/ ------------------------------------------------------------------- /
   !
   use wav_shr_flags
-  USE MOD_OASIS                                      ! OASIS3-MCT module 
+  USE MOD_OASIS                                      ! OASIS3-MCT module
   !
   IMPLICIT NONE
   PRIVATE
   !
   INTEGER               :: IL_COMPID                 ! Component model ID returned by oasis_init_comp
-  CHARACTER(LEN=6)      :: CL_MODEL_NAME = 'wwatch'  ! Model name (same as in namcouple)   
+  CHARACTER(LEN=6)      :: CL_MODEL_NAME = 'wwatch'  ! Model name (same as in namcouple)
   INTEGER               :: IL_ERR                    ! Return error code
-  INTEGER, PUBLIC       :: IL_NB_RCV, IL_NB_SND      ! Number of coupling fields    
+  INTEGER, PUBLIC       :: IL_NB_RCV, IL_NB_SND      ! Number of coupling fields
   INTEGER, PARAMETER    :: IP_MAXFLD=50              ! Maximum number of coupling fields
   INTEGER               :: NNODES                    ! Total numbers of cell in the grid
-  !   
+  !
   TYPE, PUBLIC          :: CPL_FIELD                 ! Type for coupling field information
-     CHARACTER(LEN = 8) :: CL_FIELD_NAME             ! Name of the coupling field   
+     CHARACTER(LEN = 8) :: CL_FIELD_NAME             ! Name of the coupling field
      INTEGER            :: IL_FIELD_ID               ! Field ID
   END TYPE CPL_FIELD
   !
@@ -83,7 +83,7 @@ MODULE W3OACPMD
   ! * Accessibility
   PUBLIC CPL_OASIS_INIT
   PUBLIC CPL_OASIS_GRID
-  PUBLIC CPL_OASIS_DEFINE 
+  PUBLIC CPL_OASIS_DEFINE
   PUBLIC CPL_OASIS_SND
   PUBLIC CPL_OASIS_RCV
   PUBLIC CPL_OASIS_FINALIZE
@@ -133,7 +133,7 @@ CONTAINS
     !
     ! * Argument
     INTEGER, INTENT(OUT) :: ID_LCOMM                   ! Model local communicator
-    !   
+    !
     !----------------------------------------------------------------------
     ! * Executable part
     !
@@ -245,9 +245,9 @@ CONTAINS
           NXE=NX
           NYS=1
           NYN=NY
-          ! 
+          !
           ! lat/lon
-          ALLOCATE ( LON(NNODES,1), LAT(NNODES,1) ) 
+          ALLOCATE ( LON(NNODES,1), LAT(NNODES,1) )
           I = 0
           DO IY = NYS, NYN
              DO IX = NXW, NXE
@@ -296,11 +296,11 @@ CONTAINS
              ! ----------------------------------
              NNODES = NSEA
              !
-             ! Calculate the smallest grid cell increments depending on the number of SMC levels 
-             DLON = SX / MRFct 
-             DLAT = SY / MRFct 
-             ! 
-             ALLOCATE ( LON(NNODES,1), LAT(NNODES,1) ) 
+             ! Calculate the smallest grid cell increments depending on the number of SMC levels
+             DLON = SX / MRFct
+             DLAT = SY / MRFct
+             !
+             ALLOCATE ( LON(NNODES,1), LAT(NNODES,1) )
              ALLOCATE ( AREA(NNODES,1), CORLON(NNODES,1,4), CORLAT(NNODES,1,4) )
              ALLOCATE ( MASK(NNODES,1) )
              DO I=1, NNODES
@@ -317,7 +317,7 @@ CONTAINS
                 CORLAT(I,1,3) = Y0 + (IJKCel(2,I) + IJKCel(4,I))*DLAT
                 CORLAT(I,1,4)=CORLAT(I,1,3)
                 ! areas
-                AREA(I,1) = 0.25 * IJKCEL(3,I)*DLON * IJKCEL(4,I)*DLAT 
+                AREA(I,1) = 0.25 * IJKCEL(3,I)*DLON * IJKCEL(4,I)*DLAT
                 ! Model grid mask
                 MASK(I,1) = 1
              ENDDO
@@ -410,9 +410,9 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !
-    USE W3GDATMD, ONLY: NSEAL,NSEA, NX, NY, MAPSTA, MAPSF, GTYPE, &
-         & UNGTYPE, RLGTYPE, CLGTYPE, SMCTYPE
-    USE W3ODATMD, ONLY: NAPROC, IAPROC
+    USE W3GDATMD, ONLY : NSEAL,NSEA, NX, NY, MAPSTA, MAPSF, GTYPE
+    USE W3GDATMD, ONLY : UNGTYPE, RLGTYPE, CLGTYPE, SMCTYPE
+    USE W3ODATMD, ONLY : NAPROC, IAPROC
     USE W3PARALL, ONLY : INIT_GET_ISEA
     !
     !/ ------------------------------------------------------------------- /
@@ -437,7 +437,7 @@ CONTAINS
     !/ Executable part
     !/
     !
-    IF (GTYPE .EQ. RLGTYPE .OR. GTYPE .EQ. CLGTYPE) THEN 
+    IF (GTYPE .EQ. RLGTYPE .OR. GTYPE .EQ. CLGTYPE) THEN
        !
        ! 1.1. regular and curvilinear grids
        ! ----------------------------------
@@ -503,7 +503,7 @@ CONTAINS
     ENDIF
     !
     ! 3. Coupling fields declaration
-    ! ----------------------------------      
+    ! ----------------------------------
     ILA_SHAPE(:) = (/1, NSEAL, 1, 1 /)
     !
     ILA_VAR_NODIMS(1) = 2    ! rank of fields array
@@ -512,11 +512,11 @@ CONTAINS
     CALL GET_LIST_EXCH_FIELD(NDSO, RCV_FLD, SND_FLD, IL_NB_RCV, IL_NB_SND, RCV_STR, SND_STR)
     !
     ! 3.1 Send coupling fields
-    ! ---------------------------------- 
+    ! ----------------------------------
     DO IB_I = 1, IL_NB_SND
        CALL OASIS_DEF_VAR (SND_FLD(IB_I)%IL_FIELD_ID     &
             &            , SND_FLD(IB_I)%CL_FIELD_NAME   &
-            &            , IL_PART_ID                    & 
+            &            , IL_PART_ID                    &
             &            , ILA_VAR_NODIMS                &
             &            , OASIS_OUT                     &
             &            , ILA_SHAPE                     &
@@ -527,26 +527,26 @@ CONTAINS
           CALL OASIS_ABORT(IL_COMPID, 'CPL_OASIS_DEFINE', 'Problem during oasis_def_var')
        ENDIF
     ENDDO
-    !   
+    !
     ! 3.2 Received coupling fields
-    ! ---------------------------------- 
+    ! ----------------------------------
     DO IB_I = 1, IL_NB_RCV
        CALL OASIS_DEF_VAR (RCV_FLD(IB_I)%IL_FIELD_ID    &
             &            , RCV_FLD(IB_I)%CL_FIELD_NAME  &
-            &            , IL_PART_ID                   & 
+            &            , IL_PART_ID                   &
             &            , ILA_VAR_NODIMS               &
             &            , OASIS_IN                     &
             &            , ILA_SHAPE                    &
             &            , OASIS_REAL                   &
             &            , IL_ERR )
-       !      
+       !
        IF (IL_ERR /= 0) THEN
           CALL OASIS_ABORT(IL_COMPID, 'CPL_OASIS_DEFINE', 'Problem during oasis_def_var')
        ENDIF
     ENDDO
     !
     ! 4. End of definition phase
-    ! ---------------------------------- 
+    ! ----------------------------------
     CALL OASIS_ENDDEF(IL_ERR)
 
     IF (IL_ERR /= 0) THEN
@@ -691,7 +691,7 @@ CONTAINS
          &              , RDA_FIELD                  &
          &              , IL_INFO                    &
          &                )
-    !   
+    !
     LD_ACTION = IL_INFO == OASIS_RECVD   .OR. IL_INFO == OASIS_FROMREST .OR.   &
          &           IL_INFO == OASIS_RECVOUT .OR. IL_INFO == OASIS_FROMRESTOUT
     !
@@ -734,7 +734,7 @@ CONTAINS
     !/ Executable part
     !/
     CALL OASIS_TERMINATE(IL_ERR)
-    !   
+    !
     IF (IL_ERR /= 0) THEN
        CALL OASIS_ABORT(IL_COMPID, 'CPL_OASIS_FINALIZE', 'Problem during oasis_terminate')
     ENDIF
@@ -772,9 +772,9 @@ CONTAINS
     !     RCV          Type     I/O      Received variables
     !     SND          Type     I/O      Send variables
     !     ID_NB_RCV    Int.     I/O      Number of received variables
-    !     ID_NB_SND    Int.     I/O      Number of send variables 
+    !     ID_NB_SND    Int.     I/O      Number of send variables
     !     RCV_STR      Char.     I       Name of the received variables
-    !     SND_STR      Char      I       Name of the send variables 
+    !     SND_STR      Char      I       Name of the send variables
     !     ----------------------------------------------------------------
     !
     !  4. Subroutines used :
@@ -805,7 +805,7 @@ CONTAINS
     !/ Parameter list
     !/
     TYPE(CPL_FIELD), DIMENSION(IP_MAXFLD), INTENT (INOUT)   :: RCV, SND
-    INTEGER, INTENT(INOUT)                                  :: ID_NB_RCV, ID_NB_SND 
+    INTEGER, INTENT(INOUT)                                  :: ID_NB_RCV, ID_NB_SND
     INTEGER, INTENT(IN)                                     :: NDSO
     CHARACTER(LEN=1024), INTENT(IN)                         :: RCV_STR, SND_STR
     !/
@@ -845,7 +845,7 @@ CONTAINS
              ID_NB_RCV=ID_NB_RCV+1
              RCV(ID_NB_RCV)%CL_FIELD_NAME='WW3_OWDU'
           end if
-          !  
+          !
           if (w3_oasocm_flag) then
              ! wet-drying at v-location
              ID_NB_RCV=ID_NB_RCV+1
@@ -940,7 +940,7 @@ CONTAINS
     !
     ! 2. Coupling fields sent by WW3
     ! ----------------------------------
-    ID_NB_SND = 0   
+    ID_NB_SND = 0
     !
     OUT_NAMES(:)=''
     CALL STRSPLIT(SND_STR,OUT_NAMES)

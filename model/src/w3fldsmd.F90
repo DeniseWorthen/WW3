@@ -25,10 +25,10 @@ MODULE W3FLDSMD
   !/    06-Dec-2010 : Change from GLOBAL (logical) to ICLO (integer) to
   !/                  specify index closure for a grid.   ( version 3.14 )
   !/                  (T. J. Campbell, NRL)
-  !/    30-Oct-2012 : Implement tidal analysis            ( version 4.08 ) 
+  !/    30-Oct-2012 : Implement tidal analysis            ( version 4.08 )
   !/                  (F. Ardhuin)
   !/    26-Dec-2012 : Modified obsolete declarations.     ( version 4.OF )
-  !/     5-Mar-2012 : Cleanup of tidal analysis           ( version 4.09 ) 
+  !/     5-Mar-2012 : Cleanup of tidal analysis           ( version 4.09 )
   !/    24-Apr-2015 : Adding OASIS coupling calls         ( version 5.07 )
   !/                  (M. Accensi & F. Ardhuin, IFREMER)
   !/    20-Jan-2017 : Update to new W3GSRUMD APIs         ( version 6.02 )
@@ -37,7 +37,7 @@ MODULE W3FLDSMD
   !/
   !/    Copyright 2009-2012 National Weather Service (NWS),
   !/       National Oceanic and Atmospheric Administration.  All rights
-  !/       reserved.  WAVEWATCH III is a trademark of the NWS. 
+  !/       reserved.  WAVEWATCH III is a trademark of the NWS.
   !/       No unauthorized use without permission.
   !/
   !  1. Purpose :
@@ -110,7 +110,7 @@ CONTAINS
     !/    30-Oct-2009 : Implement curvilinear grid type.    ( version 3.14 )
     !/                  (W. E. Rogers & T. J. Campbell, NRL)
     !/    04-Apr-2010 : Adding iceberg field.               ( version 3.14 )
-    !/    09-Sep-2012 : Implement tidal cons. (F. Ardhuin ) ( version 4.09 ) 
+    !/    09-Sep-2012 : Implement tidal cons. (F. Ardhuin ) ( version 4.09 )
     !/    26-Dec-2012 : Modified obsolete declarations.     ( version 4.11 )
     !/    22-Mar-2021 : adds momentum and density input     ( version 7.13 )
     !/
@@ -210,15 +210,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)                 :: NDS, NDST, NDSE, NY
-    INTEGER, INTENT(INOUT)              :: NX
-    INTEGER, INTENT(OUT)                :: IERR
-    INTEGER, INTENT(INOUT)              :: GTYPE
-    CHARACTER(LEN=3), INTENT(INOUT)     :: IDFLD
-    CHARACTER, INTENT(IN)               :: INXOUT*(*)
-    CHARACTER, INTENT(IN), OPTIONAL     :: FEXT*(*), FPRE*(*)
-    LOGICAL, INTENT(IN), OPTIONAL       :: FHDR
-    INTEGER, INTENT(INOUT), OPTIONAL    :: TIDEFLAGIN
+    INTEGER          , INTENT(IN)              :: NDS, NDST, NDSE, NY
+    INTEGER          , INTENT(INOUT)           :: NX
+    INTEGER          , INTENT(OUT)             :: IERR
+    INTEGER          , INTENT(INOUT)           :: GTYPE
+    CHARACTER(LEN=3) , INTENT(INOUT)           :: IDFLD
+    CHARACTER        , INTENT(IN)              :: INXOUT*(*)
+    CHARACTER        , INTENT(IN), OPTIONAL    :: FEXT*(*), FPRE*(*)
+    LOGICAL          , INTENT(IN), OPTIONAL    :: FHDR
+    INTEGER          , INTENT(INOUT), OPTIONAL :: TIDEFLAGIN
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -257,7 +257,7 @@ CONTAINS
     FILLER(:)=0
     IF ( PRESENT(TIDEFLAGIN) ) THEN
        TIDEFLAG = TIDEFLAGIN
-    ELSE 
+    ELSE
        TIDEFLAG = 0
     END IF
 
@@ -365,7 +365,7 @@ CONTAINS
           if (w3_debugfls_flag) then
              WRITE(740+IAPROC,*) '2 : W3FLDSMD FNAME=', FNAME(:I)
           end if
-          OPEN (NDS,FILE=FNAME(:I),FORM=FORM,convert=file_endian, & 
+          OPEN (NDS,FILE=FNAME(:I),FORM=FORM,convert=file_endian, &
                ERR=803,IOSTAT=IERR)
        END IF
     ELSE
@@ -392,9 +392,9 @@ CONTAINS
     IF ( WRITE ) THEN
        IF ( FDHDR ) THEN
           IF ( FORM .EQ. 'UNFORMATTED' ) THEN
-             ! 
+             !
              ! The "filler" was added for compatibility with old binary forcing files
-             ! It is now also used for tidal info ... 
+             ! It is now also used for tidal info ...
              !
              WRITE (NDS,ERR=804,IOSTAT=IERR)                      &
                   IDSTR, IDFLD, NX, NY, GTYPE, FILLER(1:2), TIDEFLAG
@@ -425,7 +425,7 @@ CONTAINS
           end if
        END IF
        IF ((FILLER(1).NE.0.OR.FILLER(2).NE.0).AND.TIDEFLAG.GE.0) TIDEFLAG=0
-       IF (TIDEFLAG.NE.0.AND.(.NOT.TIDEOK)) THEN     
+       IF (TIDEFLAG.NE.0.AND.(.NOT.TIDEOK)) THEN
           GOTO 810
        END IF
        !
@@ -439,7 +439,7 @@ CONTAINS
        END IF
        IF ( IDFLD .NE. TSFLD ) GOTO 808
        IF ( IDFLD(1:2) .NE. 'DT' ) THEN
-          IF ( NX.NE.NXT .OR. NY.NE.NYT ) THEN 
+          IF ( NX.NE.NXT .OR. NY.NE.NYT ) THEN
              if (w3_debugfls_flag) then
                 WRITE(740+IAPROC,*) 'Dimension error'
                 WRITE(740+IAPROC,*) 'NX =', NX , ' NY =', NY
@@ -542,7 +542,7 @@ CONTAINS
          '                   SHOULD BE >',A,'<'/)
 1009 FORMAT (/' *** WAVEWATCH III ERROR IN W3FLDO : '/         &
          '     INCOMPATIBLE GRID DATA : ',3(1X,I10)/             &
-         '                  SHOULD BE : ',3(1X,I10)/)            
+         '                  SHOULD BE : ',3(1X,I10)/)
 1010 FORMAT (/' *** WAVEWATCH III ERROR IN W3FLDO : '/          &
          '     FILLER indicates use of tidal constituents',3I4, /&
          '     For this the code should be compiled with TIDE switch'/)
@@ -574,8 +574,8 @@ CONTAINS
     !/                  | Last update :         22-Mar-2021 |
     !/                  +-----------------------------------+
     !/
-    !/    24-Sep-2012 : Creation                            ( version 4.09 ) 
-    !/    30-Jun-2013 : Split in 2 subroutines              ( version 4.11 ) 
+    !/    24-Sep-2012 : Creation                            ( version 4.09 )
+    !/    30-Jun-2013 : Split in 2 subroutines              ( version 4.11 )
     !/    22-Mar-2021 : adds momentum and density input     ( version 7.13 )
     !/
     !  1. Purpose :
@@ -592,7 +592,7 @@ CONTAINS
     !       INXOUT  C*(*) I  Test string for read/write, valid are:
     !                        'READ' and 'WRITE'.
     !       IDFLD   C*3  I/O ID string for field type, valid are:
-    !                        'LEV', 'CUR', 'WND', 'WNS', 'ICE', 'ISI', 
+    !                        'LEV', 'CUR', 'WND', 'WNS', 'ICE', 'ISI',
     !                        'TAU', 'RHO', and 'DTn'.
     !       NDS     Int.  I  Dataset number for fields file.
     !       NDST    Int.  I  Dataset number for test output.
@@ -655,10 +655,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)                 :: NDS, NDST, NDSE, NX, NY
-    CHARACTER(LEN=3), INTENT(INOUT)     :: IDFLD
-    CHARACTER(LEN=*), INTENT(IN)           :: INXOUT
-    INTEGER, INTENT(OUT)                :: IERR
+    INTEGER          , INTENT(IN)    :: NDS, NDST, NDSE, NX, NY
+    CHARACTER(LEN=3) , INTENT(INOUT) :: IDFLD
+    CHARACTER(LEN=*) , INTENT(IN)    :: INXOUT
+    INTEGER          , INTENT(OUT)   :: IERR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -759,8 +759,8 @@ CONTAINS
     !/                  | Last update :         22-Mar-2021 |
     !/                  +-----------------------------------+
     !/
-    !/    24-Sep-2012 : Creation                            ( version 4.09 ) 
-    !/    30-Jun-2013 : Split in 2 subroutines              ( version 4.11 ) 
+    !/    24-Sep-2012 : Creation                            ( version 4.09 )
+    !/    30-Jun-2013 : Split in 2 subroutines              ( version 4.11 )
     !/    22-Mar-2021 : adds momentum and density input     ( version 7.13 )
     !/
     !  1. Purpose :
@@ -841,10 +841,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)                 :: NDS, NDST, NDSE, NX, NY, IDAT
-    CHARACTER(LEN=3), INTENT(INOUT)     :: IDFLD
-    CHARACTER(LEN=*), INTENT(IN)           :: INXOUT
-    INTEGER, INTENT(OUT)                :: IERR
+    INTEGER          , INTENT(IN)    :: NDS, NDST, NDSE, NX, NY, IDAT
+    CHARACTER(LEN=3) , INTENT(INOUT) :: IDFLD
+    CHARACTER(LEN=*) , INTENT(IN)    :: INXOUT
+    INTEGER          , INTENT(OUT)   :: IERR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -889,21 +889,21 @@ CONTAINS
           CALL TIDE_FIND_INDICES_ANALYSIS(LIST)
           IF (TIDE_MF1.NE.TIDE_MF) GOTO 807
           CALL TIDE_SET_INDICES
-          IF(IDFLD.EQ.'LEV') THEN 
+          IF(IDFLD.EQ.'LEV') THEN
              IF (IDAT.EQ.1) WLTIDE(:,:,:,:)=TIDAL_CONST(:,:,:,1,:)
-          ELSE 
+          ELSE
              IF (IDAT.EQ.1) CXTIDE(:,:,:,:)=TIDAL_CONST(:,:,:,1,:)
              IF (IDAT.EQ.1) CYTIDE(:,:,:,:)=TIDAL_CONST(:,:,:,2,:)
           END IF
        END IF
     end if
     if (w3_tidet_flag) then
-       DO I=1,NTIDE 
+       DO I=1,NTIDE
           WRITE(NDST,*) 'Tidal constituents for IX = 1:', &
                IDFLD,' ',TIDECON_NAME(I),TIDAL_CONST(1,1,I,1,1),TIDAL_CONST(1,1,I,1,2), &
                '##',TIDAL_CONST(1,1,I,2,1),TIDAL_CONST(1,1,I,2,2)
        END DO
-       DO I=1,NTIDE 
+       DO I=1,NTIDE
           WRITE(NDST,*) 'Tidal constituents for IX = 2:', &
                IDFLD,' ',TIDECON_NAME(I),TIDAL_CONST(2,1,I,1,1),TIDAL_CONST(2,1,I,1,2), &
                '##',TIDAL_CONST(2,1,I,2,1),TIDAL_CONST(2,1,I,2,2)
@@ -978,8 +978,7 @@ CONTAINS
   !/ ------------------------------------------------------------------- /
   SUBROUTINE W3FLDG (INXOUT, IDFLD, NDS, NDST, NDSE, MX, MY, &
        NX, NY, T0, TN, TF0, FX0, FY0, FA0,                   &
-       TFN, FXN, FYN, FAN, IERR, FLAGSC,                     &
-       COUPL_COMM)
+       TFN, FXN, FYN, FAN, IERR, FLAGSC, COUPL_COMM)
     !/
     !/                  +-----------------------------------+
     !/                  | WAVEWATCH III           NOAA/NCEP |
@@ -1013,10 +1012,10 @@ CONTAINS
     !
     !     Parameter list
     !     ----------------------------------------------------------------
-    !       INXOUT  C*(*)  I   Test string for read/write, valid are:
+    !       INXOUT  Char   I   Test string for read/write, valid are:
     !                          'READ' and 'WRITE'.
     !       IDFLD   C*3    I   ID string for field type, valid are: 'IC1',
-    !                          'IC2', 'IC3', 'IC4', 'IC5', 'MDN', 'MTH', 'MVS', 
+    !                          'IC2', 'IC3', 'IC4', 'IC5', 'MDN', 'MTH', 'MVS',
     !                          'LEV', 'CUR', 'WND', 'WNS', 'ICE', 'ISI',
     !                          'TAU', and 'RHO'.
     !       NDS     Int.   I   Dataset number for fields file.
@@ -1104,24 +1103,25 @@ CONTAINS
     USE W3IGCMMD, ONLY: RCV_FIELDS_FROM_ICE
 #endif
 #ifdef W3_OASIS
-    USE W3ODATMD, ONLY: DTOUT 
+    USE W3ODATMD, ONLY: DTOUT
 #endif
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER,          INTENT(IN)              :: NDS, NDST, NDSE, MX, MY
-    INTEGER,          INTENT(IN)              :: NX, NY, T0(2), TN(2)
-    INTEGER,          INTENT(INOUT)           :: TF0(2), TFN(2)
-    INTEGER,          INTENT(OUT)             :: IERR
-    REAL,             INTENT(INOUT)           :: FX0(MX,MY), FY0(MX,MY)
-    REAL,             INTENT(INOUT)           :: FXN(MX,MY), FYN(MX,MY)
-    REAL,             INTENT(INOUT)           :: FA0(MX,MY), FAN(MX,MY)
-    CHARACTER,        INTENT(IN)              :: INXOUT*(*)
-    CHARACTER(LEN=3), INTENT(IN)              :: IDFLD
-    LOGICAL,          INTENT(INOUT), OPTIONAL :: FLAGSC
-    INTEGER,          INTENT(IN)   , OPTIONAL :: COUPL_COMM
+    INTEGER          , INTENT(IN)              :: NDS, NDST, NDSE, MX, MY
+    INTEGER          , INTENT(IN)              :: NX, NY, T0(2), TN(2)
+    INTEGER          , INTENT(INOUT)           :: TF0(2), TFN(2)
+    INTEGER          , INTENT(OUT)             :: IERR
+    REAL             , INTENT(INOUT)           :: FX0(MX,MY), FY0(MX,MY)
+    REAL             , INTENT(INOUT)           :: FXN(MX,MY), FYN(MX,MY)
+    REAL             , INTENT(INOUT)           :: FA0(MX,MY), FAN(MX,MY)
+    CHARACTER(LEN=*) , INTENT(IN)              :: INXOUT
+    CHARACTER(LEN=3) , INTENT(IN)              :: IDFLD
+    LOGICAL          , INTENT(INOUT), OPTIONAL :: FLAGSC
+    INTEGER          , INTENT(IN), OPTIONAL    :: COUPL_COMM
+
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1149,7 +1149,7 @@ CONTAINS
     ! test input parameters ---------------------------------------------- *
     !
     IF (INXOUT.NE.'READ' .AND. INXOUT.NE.'WRITE') GOTO 801
-    IF ( IDFLD.NE.'IC1' .AND. IDFLD.NE.'IC2' .AND.                  & 
+    IF ( IDFLD.NE.'IC1' .AND. IDFLD.NE.'IC2' .AND.                  &
          IDFLD.NE.'IC3' .AND. IDFLD.NE.'IC4' .AND.                  &
          IDFLD.NE.'IC5' .AND. IDFLD.NE.'MDN' .AND.                  &
          IDFLD.NE.'MTH' .AND. IDFLD.NE.'MVS' .AND.                  &
@@ -1163,8 +1163,8 @@ CONTAINS
     WRITE  = INXOUT .EQ. 'WRITE'
     FL2D   = IDFLD.EQ.'CUR' .OR. IDFLD.EQ.'WND' .OR. IDFLD.EQ.'WNS' &
          .OR. IDFLD.EQ.'ISI' .OR. IDFLD.EQ.'TAU'
-    FLBE   = IDFLD.EQ.'ISI'       
-    FLST   = IDFLD.EQ.'WNS' 
+    FLBE   = IDFLD.EQ.'ISI'
+    FLST   = IDFLD.EQ.'WNS'
 
     IF ( .NOT. PRESENT(FLAGSC) ) THEN
        FLCOUPL=FLAGSC_DEFAULT
@@ -1201,7 +1201,7 @@ CONTAINS
           if (w3_t_flag) then
              WRITE (NDST,9020)
           end if
-          ! unless TFN has been changed in the do loop, the following line is essentally 
+          ! unless TFN has been changed in the do loop, the following line is essentally
           !       "if not.flfrst"
           IF ( TFN(1) .NE. -1 ) THEN
              DO IX=1, NX
@@ -1251,8 +1251,8 @@ CONTAINS
        ELSE
           !
 #ifdef W3_OASIS
-          IF (FLCOUPL) THEN 
-             ! Do not receive coupling fields at the end of the first integration time in case of  
+          IF (FLCOUPL) THEN
+             ! Do not receive coupling fields at the end of the first integration time in case of
              ! forcing with a non interpolated field (like lev, ice, ...)
              IF ( (ID_OASIS_TIME.EQ.0 .AND. ( FLFRST .OR. CPLT0 )) .OR. (ID_OASIS_TIME.GT.0)) THEN
 #ifdef W3_OASACM
@@ -1272,7 +1272,7 @@ CONTAINS
                 TFN(2)=T0(2)
                 CALL TICK21(TFN,DTOUT(7))
              END IF
-          ELSE 
+          ELSE
 #endif
              READ (NDS,END=800,ERR=805,IOSTAT=ISTAT) TFN
              if (w3_t_flag) then
@@ -1304,7 +1304,7 @@ CONTAINS
           !
           DTTST = DSEC21 ( T0 , TFN )
 
-          ! Exit if the time is the first time and the field is not interpolated in time 
+          ! Exit if the time is the first time and the field is not interpolated in time
 
           IF ( .NOT.FLINTERP .AND. FLFRST .AND. DTTST .EQ. 0. ) EXIT
 
@@ -1498,7 +1498,7 @@ CONTAINS
     !                           'WRITE'  Write a data field to file.
     !                           'SIZE'   Get the number of records of
     !                                    next data set.
-    !                           'READ'   Read the data set found by 
+    !                           'READ'   Read the data set found by
     !                                    'SIZE' after allocating proper
     !                                    data array.
     !       IDFLD   C*3    I   ID string for field type, valid are:
@@ -1570,12 +1570,12 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)          :: NDS, NDST, NDSE, TIME(2), NR, ND
-    INTEGER, INTENT(INOUT)       :: TD(2), NDOUT
-    INTEGER, INTENT(OUT)         :: IERR
-    REAL, INTENT(INOUT)          :: DATA(NR,ND)
-    CHARACTER, INTENT(IN)        :: INXOUT*(*)
-    CHARACTER(LEN=3), INTENT(IN) :: IDFLD
+    INTEGER          , INTENT(IN)    :: NDS, NDST, NDSE, TIME(2), NR, ND
+    INTEGER          , INTENT(INOUT) :: TD(2), NDOUT
+    INTEGER          , INTENT(OUT)   :: IERR
+    REAL             , INTENT(INOUT) :: DATA(NR,ND)
+    CHARACTER(LEN=*) , INTENT(IN)    :: INXOUT
+    CHARACTER(LEN=3) , INTENT(IN)    :: IDFLD
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1638,7 +1638,7 @@ CONTAINS
        !
        DTTST  = DSEC21 ( TIME , TD )
        IF ( DTTST.LT.0. .OR. NDOUT.EQ.0 ) THEN
-          IF (NDOUT.GT.0) READ (NDS,END=806,ERR=807,IOSTAT=ISTAT) 
+          IF (NDOUT.GT.0) READ (NDS,END=806,ERR=807,IOSTAT=ISTAT)
           GOTO 100
        END IF
        !
@@ -1847,7 +1847,7 @@ CONTAINS
     !     - The "CLOSED" variable comes from ww3_prep.inp and is associated
     !       with the input grid (e.g. grid that winds are provided on).
     !       It is a logical, not an integer, so it only allows two cases:
-    !       no closure, or simple closure. "ww3_prep" only supports these 
+    !       no closure, or simple closure. "ww3_prep" only supports these
     !       two (not tripole).
     !
     !  8. Structure :
@@ -2398,7 +2398,7 @@ CONTAINS
        ! exit if field time is later than run time
        IF ( DTTST .GT. 0. ) EXIT
        ! exit if field is ic* or md* or lev or ice
-       ! and first forcing field has been stored 
+       ! and first forcing field has been stored
        ! at start run time
        IF ( J.LE.(1).OR.(J.EQ.4).OR.(J.EQ.6) ) THEN
           IF (FLFRST .AND. DTTST.EQ.0. ) EXIT

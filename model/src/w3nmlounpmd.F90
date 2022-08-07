@@ -1,4 +1,4 @@
-#include "w3macros.h" 
+#include "w3macros.h"
 !/ ------------------------------------------------------------------- /
 MODULE W3NMLOUNPMD
   !/
@@ -151,15 +151,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                         :: NDSI
-    CHARACTER(LEN=*), INTENT(IN)                   :: INFILE
-    TYPE(NML_POINT_T), INTENT(INOUT)            :: NML_POINT
-    TYPE(NML_FILE_T), INTENT(INOUT)             :: NML_FILE
-    TYPE(NML_SPECTRA_T), INTENT(INOUT)          :: NML_SPECTRA
-    TYPE(NML_PARAM_T), INTENT(INOUT)            :: NML_PARAM
-    TYPE(NML_SOURCE_T), INTENT(INOUT)           :: NML_SOURCE
-    INTEGER, INTENT(OUT)                        :: IERR
-    INTEGER, SAVE                             :: IENT = 0 ! W3_S
+    INTEGER             , INTENT(IN)    :: NDSI
+    CHARACTER(LEN=*)    , INTENT(IN)    :: INFILE
+    TYPE(NML_POINT_T)   , INTENT(INOUT) :: NML_POINT
+    TYPE(NML_FILE_T)    , INTENT(INOUT) :: NML_FILE
+    TYPE(NML_SPECTRA_T) , INTENT(INOUT) :: NML_SPECTRA
+    TYPE(NML_PARAM_T)   , INTENT(INOUT) :: NML_PARAM
+    TYPE(NML_SOURCE_T)  , INTENT(INOUT) :: NML_SOURCE
+    INTEGER             , INTENT(OUT)   :: IERR
+    INTEGER, SAVE                       :: IENT = 0 ! W3_S
 
     IERR = 0
     if (w3_s_flag) then
@@ -1164,54 +1164,3 @@ CONTAINS
 END MODULE W3NMLOUNPMD
 
 !/ ------------------------------------------------------------------- /
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

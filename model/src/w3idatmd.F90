@@ -607,13 +607,13 @@ CONTAINS
           CHECK_ALLOC_STATUS ( ISTAT )
        END IF
        !
-       if (w3_wrst_flag) then
-          IF(.NOT.(INPUTS(IMOD)%WRSTIINIT)) THEN
-             ALLOCATE ( INPUTS(IMOD)%WXNwrst(NX,NY) ,              &
-                        INPUTS(IMOD)%WYNwrst(NX,NY) , STAT=ISTAT )
-             INPUTS(IMOD)%WRSTIINIT=.TRUE.
-          ENDIF
-       end if
+    end if
+    if (w3_wrst_flag) then
+       IF(.NOT.(INPUTS(IMOD)%WRSTIINIT)) THEN
+          ALLOCATE ( INPUTS(IMOD)%WXNwrst(NX,NY) ,              &
+                     INPUTS(IMOD)%WYNwrst(NX,NY) , STAT=ISTAT )
+          INPUTS(IMOD)%WRSTIINIT=.TRUE.
+       ENDIF
     end if
 
     IF ( FLWIND ) THEN
