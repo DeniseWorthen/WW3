@@ -144,7 +144,7 @@ CONTAINS
     !
     !     Parameter list
     !     ----------------------------------------------------------------
-    !       INXOUT  C*(*)  I   Test string for read/write, valid are:
+    !       INXOUT  Char   I   Test string for read/write, valid are:
     !                          'READ' Reading of a restart file.
     !                          'HOT'  Writing a full restart from the model.
     !                          'COLD' Writing a cold start file.
@@ -283,7 +283,7 @@ CONTAINS
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
     use w3timemd, only: set_user_timestring
-    use w3odatmd, only: use_user_restname, user_restfname, ndso, naplog
+    use w3odatmd, only: use_user_restname, user_restfname, ndso
 
     IMPLICIT NONE
     !
@@ -296,10 +296,10 @@ CONTAINS
     !/
     INTEGER                       :: NDSR
     !      INTEGER, INTENT(IN)           :: NDSR
-    INTEGER, INTENT(IN), OPTIONAL :: IMOD
-    REAL, INTENT(INOUT)           :: DUMFPI
-    CHARACTER, INTENT(IN)         :: INXOUT*(*)
-    LOGICAL, INTENT(IN),OPTIONAL  :: FLRSTRT
+    INTEGER          , INTENT(IN), OPTIONAL :: IMOD
+    REAL             , INTENT(INOUT)        :: DUMFPI
+    CHARACTER(len=*) , INTENT(IN)           :: INXOUT
+    LOGICAL          , INTENT(IN), OPTIONAL :: FLRSTRT
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -346,126 +346,125 @@ CONTAINS
     end if
 
     IOSFLG = IOSTYP .GT. 0
-    !
-    ! test parameter list input ------------------------------------------ *
-    !
-    IF ( PRESENT(IMOD) ) THEN
-       IGRD   = IMOD
-    ELSE
-       IGRD   = 1
-    END IF
-    !
-    CALL W3SETO ( IGRD, NDSE, NDST )
-    CALL W3SETG ( IGRD, NDSE, NDST )
-    CALL W3SETW ( IGRD, NDSE, NDST )
+!
+! test parameter list input ------------------------------------------ *
+!
+      IF ( PRESENT(IMOD) ) THEN
+          IGRD   = IMOD
+        ELSE
+          IGRD   = 1
+        END IF
+!
+      CALL W3SETO ( IGRD, NDSE, NDST )
+      CALL W3SETG ( IGRD, NDSE, NDST )
+      CALL W3SETW ( IGRD, NDSE, NDST )
     if (w3_wrst_flag) then
-       CALL W3SETI ( IGRD, NDSE, NDST )
+      CALL W3SETI ( IGRD, NDSE, NDST )
     end if
-    !
-    IF (INXOUT.NE.'READ' .AND. INXOUT.NE.'HOT'  .AND.               &
-        INXOUT.NE.'COLD' .AND. INXOUT.NE.'WIND' .AND.               &
-        INXOUT.NE.'CALM' ) THEN
-       IF ( IAPROC .EQ. NAPERR ) WRITE (NDSE,900) INXOUT
-       CALL EXTCDE ( 1 )
-    END IF
-    !
+!
+      IF (INXOUT.NE.'READ' .AND. INXOUT.NE.'HOT'  .AND.               &
+          INXOUT.NE.'COLD' .AND. INXOUT.NE.'WIND' .AND.               &
+          INXOUT.NE.'CALM' ) THEN
+          IF ( IAPROC .EQ. NAPERR ) WRITE (NDSE,900) INXOUT
+          CALL EXTCDE ( 1 )
+        END IF
+!
     write_flag = INXOUT .NE. 'READ'  ! TODO: make this write_file
-    IF ( INXOUT .EQ. 'HOT' ) THEN
-       TYPE   = 'FULL'
-    ELSE
-       TYPE   = INXOUT
-    END IF
-    !
+      IF ( INXOUT .EQ. 'HOT' ) THEN
+          TYPE   = 'FULL'
+        ELSE
+          TYPE   = INXOUT
+        END IF
+!
     if (w3_t_flag) then
        WRITE (NDST,9000) INXOUT, write_flag, NTPROC, NAPROC, IAPROC, NAPRST
     end if
-    !
-    ! initializations ---------------------------------------------------- *
-    !
+!
+! initializations ---------------------------------------------------- *
+!
     if (w3_debugio_flag) then
-       WRITE(740+IAPROC,*)  'W3IORS, step 2'
+        WRITE(740+IAPROC,*)  'W3IORS, step 2'
     end if
-    IF ( .NOT.DINIT ) THEN
-       IF ( IAPROC .LE. NAPROC ) THEN
-          CALL W3DIMW ( IMOD, NDSE, NDST )
-       ELSE
-          CALL W3DIMW ( IMOD, NDSE, NDST, .FALSE. )
-       END IF
-    END IF
+      IF ( .NOT.DINIT ) THEN
+          IF ( IAPROC .LE. NAPROC ) THEN
+              CALL W3DIMW ( IMOD, NDSE, NDST )
+            ELSE
+              CALL W3DIMW ( IMOD, NDSE, NDST, .FALSE. )
+            END IF
+        END IF
     if (w3_debugio_flag) then
-       WRITE(740+IAPROC,*)  'W3IORS, step 3'
+        WRITE(740+IAPROC,*)  'W3IORS, step 3'
     end if
-    !
-    IF ( IAPROC .LE. NAPROC ) VA(:,0) = 0.
-    !
-    LRECL  = MAX ( LRB*NSPEC ,                                      &
-         LRB*(6+(25/LRB)+(9/LRB)+(29/LRB)+(3/LRB)) )
-    NSIZE  = LRECL / LRB
+!
+      IF ( IAPROC .LE. NAPROC ) VA(:,0) = 0.
+!
+      LRECL  = MAX ( LRB*NSPEC ,                                      &
+                     LRB*(6+(25/LRB)+(9/LRB)+(29/LRB)+(3/LRB)) )
+      NSIZE  = LRECL / LRB
     if (w3_debugio_flag) then
-       WRITE(740+IAPROC,*)  'W3IORS, LRECL=', LRECL, ' NSIZE=', NSIZE
+        WRITE(740+IAPROC,*)  'W3IORS, LRECL=', LRECL, ' NSIZE=', NSIZE
     end if
-    !     --- Allocate buffer array with zeros (used to
-    !         fill bytes up to size LRECL). ---
-    ALLOCATE(WRITEBUFF(NSIZE))
-    WRITEBUFF(:) = 0.
-    !
-    !     Allocate memory to receive fields needed for coupling
-    IF (OARST) THEN
-       ALLOCATE(TMP(NSEA))
-       ALLOCATE(TMP2(NSEA))
-    ENDIF
-    !
-    ! open file ---------------------------------------------------------- *
-    !
-    if (use_user_restname) then
-       ierr = -99
+!     --- Allocate buffer array with zeros (used to
+!         fill bytes up to size LRECL). ---
+      ALLOCATE(WRITEBUFF(NSIZE))
+      WRITEBUFF(:) = 0.
+!
+!     Allocate memory to receive fields needed for coupling
+      IF (OARST) THEN
+        ALLOCATE(TMP(NSEA))
+        ALLOCATE(TMP2(NSEA))
+      ENDIF
+!
+! open file ---------------------------------------------------------- *
+!
+      if (use_user_restname) then
+         ierr = -99
        if (.not. write_flag) then
-          if (runtype == 'initial') then
-             if (len_trim(initfile) == 0) then       
-                ! no IC file, use startup option
-                goto 800
-             else
-                ! IC file exists - use it
-                fname = trim(initfile)
-             end if
-          else
-             call set_user_timestring(time, user_timestring)
-             fname = trim(user_restfname)//trim(user_timestring)
-             inquire( file=trim(fname), exist=exists)
-             if (.not. exists) then
-                call extcde (60, msg="required initial/restart file " // trim(fname) // " does not exist")
-             end if
-          end if
-       else
-          call set_user_timestring(time,user_timestring)
-          fname = trim(user_restfname)//trim(user_timestring)
-       end if
-
-       ! write out filename
-       if (iaproc == naplog) then
-          if (write_flag) then
-             write (ndso,'(a)') 'WW3: writing restart file '//trim(fname)
-          else
-             write (ndso,'(a)') 'WW3: reading initial/restart file '//trim(fname)
-          end if
-       end if
+            if (runtype == 'initial') then
+               if (len_trim(initfile) == 0) then
+                  ! no IC file, use startup option
+                  goto 800
+               else
+                  ! IC file exists - use it
+                  fname = trim(initfile)
+               end if
+            else
+               call set_user_timestring(time,user_timestring)
+               fname = trim(user_restfname)//trim(user_timestring)
+               inquire( file=trim(fname), exist=exists)
+               if (.not. exists) then
+                  call extcde (60, msg="required initial/restart file " // trim(fname) // " does not exist")
+               end if
+            end if
+         else
+            call set_user_timestring(time,user_timestring)
+            fname = trim(user_restfname)//trim(user_timestring)
+         end if
+         ! write out filename
+         if (iaproc == naprst) then
+            if (write_flag) then
+               write (ndso,'(a)') 'WW3: writing restart file '//trim(fname)
+            else
+               write (ndso,'(a)') 'WW3: reading initial/restart file '//trim(fname)
+            end if
+         end if
        IF ( write_flag ) THEN
-          IF ( .NOT.IOSFLG .OR. IAPROC.EQ.NAPRST )        &
-               OPEN (NDSR,FILE=trim(FNAME), form='UNFORMATTED', convert=file_endian,       &
-               ACCESS='STREAM',ERR=800,IOSTAT=IERR)
-       ELSE  ! READ
-          OPEN (NDSR, FILE=trim(FNAME), form='UNFORMATTED', convert=file_endian,       &
-               ACCESS='STREAM',ERR=800,IOSTAT=IERR,           &
-               STATUS='OLD',ACTION='READ')
-       END IF
-    else
-       I      = LEN_TRIM(FILEXT)
-       J      = LEN_TRIM(FNMPRE)
-       !
-       !CHECKPOINT RESTART FILE
-       ITMP=0
-       IF ( PRESENT(FLRSTRT) ) THEN
-          IF (FLRSTRT) THEN
+             if ( .not.iosflg .or. iaproc.eq.naprst )        &
+             open (ndsr,file=trim(fname), form='unformatted', convert=file_endian,       &
+                   access='stream',err=800,iostat=ierr)
+         else  ! read
+            open (ndsr, file=trim(fname), form='unformatted', convert=file_endian,       &
+                  access='stream',err=800,iostat=ierr,           &
+                  status='old',action='read')
+         end if
+      else
+         I      = LEN_TRIM(FILEXT)
+         J      = LEN_TRIM(FNMPRE)
+!
+!CHECKPOINT RESTART FILE
+         ITMP=0
+         IF ( PRESENT(FLRSTRT) ) THEN
+           IF (FLRSTRT) THEN
              WRITE(TIMETAG,"(i8.8,'.'i6.6)")TIME(1),TIME(2)
              FNAME=TIMETAG//'.restart.'//FILEXT(:I)
              ITMP=1
@@ -613,13 +612,13 @@ CONTAINS
           end if
        END IF
     END IF
-   !
+
     if (w3_t_flag) then
        IF (TYPE.EQ.'FULL') THEN
           WRITE (NDST,9003) TIME
        ELSE
           WRITE (NDST,9004)
-       end if
+       END IF
     end if
 
     !
@@ -869,7 +868,7 @@ CONTAINS
     IF ( write_flag ) THEN
        !
        IF (TYPE.EQ.'FULL') THEN
-          !
+         !
           IF ( IAPROC .EQ. NAPRST ) THEN
              !
 #ifdef W3_MPI
@@ -1121,7 +1120,7 @@ CONTAINS
           !
           ! Updates reflections maps:
           !
-          IF (GTYPE.EQ.UNGTYPE) THEN 
+          IF (GTYPE.EQ.UNGTYPE) THEN
              !AR: not needed since already initialized on w3iogr CALL SET_UG_IOBP
           ELSE
              if (w3_ref1_flag) then

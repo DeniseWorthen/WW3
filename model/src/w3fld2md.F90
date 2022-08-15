@@ -18,15 +18,15 @@ Module W3FLD2MD
   !/
   !/    Copyright 2009 National Weather Service (NWS),
   !/       National Oceanic and Atmospheric Administration.  All rights
-  !/       reserved.  WAVEWATCH III is a trademark of the NWS. 
+  !/       reserved.  WAVEWATCH III is a trademark of the NWS.
   !/       No unauthorized use without permission.
   !/
   !  1. Purpose :
   !
   !     This section of code has been designed to compute the wind
-  !     stress vector from the wave spectrum, the wind speed 
-  !     vector, and the lower atmosphere stability.  
-  !     This code is based on the 2012 JGR paper, "Modeling Waves 
+  !     stress vector from the wave spectrum, the wind speed
+  !     vector, and the lower atmosphere stability.
+  !     This code is based on the 2012 JGR paper, "Modeling Waves
   !     and Wind Stress" by Donelan, Curcic, Chen, and Magnusson.
   !
   !  2. Variables and types :
@@ -81,7 +81,7 @@ CONTAINS
     !/
     !  1. Purpose :
     !
-    !     Wind stress vector calculation from wave spectrum and 
+    !     Wind stress vector calculation from wave spectrum and
     !        n-meter wind speed vector.
     !
     !  2. Method :
@@ -104,7 +104,7 @@ CONTAINS
     !       UST     Real   O   Friction velocity.
     !       USTD    Real   O   Direction of friction velocity.
     !       Z0      Real   O   Surface roughness length
-    !       CHARN   Real   O,optional   Charnock parameter 
+    !       CHARN   Real   O,optional   Charnock parameter
     !     ----------------------------------------------------------------
     !
     !  4. Subroutines used :
@@ -116,7 +116,7 @@ CONTAINS
     !      SIG2WN     Subr. W3FLD1MD  Depth-dependent dispersion relation
     !      MFLUX      Subr. W3FLD1MD  MO stability correction
     !      WND2Z0M    Subr. W3FLD1MD  Bulk Z0 from wind
-    !      CALC_FPI   Subr. W3FLD1MD  Calculate peak frequency 
+    !      CALC_FPI   Subr. W3FLD1MD  Calculate peak frequency
     !     ----------------------------------------------------------------
     !
     !  5. Called by :
@@ -160,8 +160,8 @@ CONTAINS
     !/ Parameter list
     !/
     REAL, INTENT(IN)        :: ASPC(NSPEC), WNDX, WNDY, &
-         ZWND, DEPTH, RIB, DAIR, FPI 
-    REAL, INTENT(OUT)       :: UST, USTD, Z0 
+         ZWND, DEPTH, RIB, DAIR, FPI
+    REAL, INTENT(OUT)       :: UST, USTD, Z0
     REAL, INTENT(OUT),OPTIONAL :: CHARN
     REAL, INTENT(INOUT)     :: TAUNUX, TAUNUY
     !/
@@ -169,7 +169,7 @@ CONTAINS
     !/ Local parameters
     !/
     !-Parameters
-    REAL, PARAMETER  :: NU=0.105/10000.0 
+    REAL, PARAMETER  :: NU=0.105/10000.0
     !-Commonly used values
     REAL :: UREF, UREFD
     !-Tail
@@ -213,7 +213,7 @@ CONTAINS
     INTEGER, SAVE           :: IENT = 0 ! W3_S
     LOGICAL, SAVE           :: FIRST = .TRUE.
 #ifdef W3_OMPG
-    !$omp threadprivate( FIRST ) 
+    !$omp threadprivate( FIRST )
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -305,7 +305,7 @@ CONTAINS
     !|--------------------------------------------------------------------|
     DO K = 1, NK
        call sig2wn(sig(k),depth,wn(k))
-       CP(K) = sig(k) / WN(K) 
+       CP(K) = sig(k) / WN(K)
        sig2(k) = sig(k)
     ENDDO
     DO K = ( NK + 1 ), ( NKT)
@@ -501,7 +501,7 @@ CONTAINS
           !   !Approx as neutral inside 10 m (WBL) calculate z0
           !   wnd_ref_al=uref*cos(urefd-ustd)
           !   z0=10. / exp( wnd_10_mag * KAPPA / ustra )
-          !   ! Use that z0 to calculate stability 
+          !   ! Use that z0 to calculate stability
           !   ! Cd to ref height (based on input wind)
           ! Below is subroutine for computing stability effects
           !   call mflux(wnd_ref_al,zwnd,z0,rib,cd)
@@ -544,7 +544,7 @@ CONTAINS
 
        ! Check for wind convergence
        !   WND_IT_FLG = (((du**2+dv**2)/(wndx**2+wndy**2)).GT.0.001)
-       !   
+       !
        !   IF ( WND_IT_FLG .AND. WI_COUNT.LT.10 ) THEN
        !      ! New guesses
        !      wnd_10_x=wnd_10_x-apar*( FD_D * DU - FD_B * DV )
@@ -603,7 +603,7 @@ CONTAINS
     !/
     !  1. Purpose :
     !
-    !     Gives level of saturation spectrum to produce 
+    !     Gives level of saturation spectrum to produce
     !         equivalent Cd as in wnd2z0m (for neutral 10m wind)
     !         tuned for method of Donelan et al. 2012
     !
@@ -658,7 +658,7 @@ CONTAINS
        CALL STRACE (IENT, 'WND2SAT')
     end if
     !
-    ! ST2, previous HWRF relationship: 
+    ! ST2, previous HWRF relationship:
     !        SAT =0.000000000000349* WND10**6 +&
     !             -0.000000000250547* WND10**5 +&
     !             0.000000039543565* WND10**4 +&
@@ -666,19 +666,19 @@ CONTAINS
     !             0.000034922624204* WND10**2 +&
     !             0.000339117617027* WND10**1 +&
     !             0.003521314236550
-    !     SAT values based on 
+    !     SAT values based on
     !     HWRF 2016 CD curve, created with  fetch limited cases ST4 physics
-    IF (WND10<20) THEN 
+    IF (WND10<20) THEN
        SAT = -0.022919753482426e-3* WND10**2 &
-            +0.960758623686446e-3* WND10    & 
+            +0.960758623686446e-3* WND10    &
             -0.084461041915030e-3
-    ELSEIF (WND10<45) THEN 
+    ELSEIF (WND10<45) THEN
        SAT = -0.000000006585745* WND10**4 &
             +0.000001058147954* WND10**3 &
             -0.000065829151883* WND10**2 &
             +0.001587028483595* WND10    &
             -0.002857112191889
-    ELSE 
+    ELSE
        SAT = -0.000178498197241* WND10    &
             +0.012706067280674
     ENDIF

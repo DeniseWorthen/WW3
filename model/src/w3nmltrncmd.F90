@@ -1,4 +1,4 @@
-#include "w3macros.h" 
+#include "w3macros.h"
 !/ ------------------------------------------------------------------- /
 MODULE W3NMLTRNCMD
   !/
@@ -113,12 +113,12 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                         :: NDSI
-    CHARACTER*(*), INTENT(IN)                   :: INFILE
-    TYPE(NML_TRACK_T), INTENT(INOUT)            :: NML_TRACK
-    TYPE(NML_FILE_T), INTENT(INOUT)             :: NML_FILE
-    INTEGER, INTENT(OUT)                        :: IERR
-    INTEGER, SAVE                             :: IENT = 0 ! W3_S
+    INTEGER           , INTENT(IN)    :: NDSI
+    CHARACTER(LEN=*)  , INTENT(IN)    :: INFILE
+    TYPE(NML_TRACK_T) , INTENT(INOUT) :: NML_TRACK
+    TYPE(NML_FILE_T)  , INTENT(INOUT) :: NML_FILE
+    INTEGER           , INTENT(OUT)   :: IERR
+    INTEGER, SAVE                     :: IENT = 0 ! W3_S
 
     IERR = 0
     if (w3_s_flag) then
@@ -543,54 +543,3 @@ CONTAINS
 END MODULE W3NMLTRNCMD
 
 !/ ------------------------------------------------------------------- /
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

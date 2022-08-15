@@ -1,4 +1,4 @@
-#include "w3macros.h" 
+#include "w3macros.h"
 !/ ------------------------------------------------------------------- /
 MODULE W3NMLPRNCMD
   !/
@@ -145,12 +145,12 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                         :: NDSI
-    CHARACTER*(*), INTENT(IN)                   :: INFILE
-    TYPE(NML_FORCING_T), INTENT(INOUT)          :: NML_FORCING
-    TYPE(NML_FILE_T), INTENT(INOUT)             :: NML_FILE
-    INTEGER, INTENT(OUT)                        :: IERR
-    INTEGER, SAVE                             :: IENT = 0 ! W3_S
+    INTEGER             , INTENT(IN)    :: NDSI
+    CHARACTER(LEN=*)    , INTENT(IN)    :: INFILE
+    TYPE(NML_FORCING_T) , INTENT(INOUT) :: NML_FORCING
+    TYPE(NML_FILE_T)    , INTENT(INOUT) :: NML_FILE
+    INTEGER             , INTENT(OUT)   :: IERR
+    INTEGER, SAVE                       :: IENT = 0 ! W3_S
 
     IERR = 0
     if (w3_s_flag) then
@@ -637,21 +637,3 @@ CONTAINS
 END MODULE W3NMLPRNCMD
 
 !/ ------------------------------------------------------------------- /
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

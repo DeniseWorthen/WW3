@@ -1,4 +1,4 @@
-#include "w3macros.h" 
+#include "w3macros.h"
 !/ ------------------------------------------------------------------- /
 MODULE W3NMLBOUNDMD
   !/
@@ -17,6 +17,7 @@ MODULE W3NMLBOUNDMD
   !     Manages namelists from configuration file ww3_bound.nml for ww3_bound program
   !
   !/ ------------------------------------------------------------------- /
+  use wav_shr_flags
 
   ! module defaults
   IMPLICIT NONE
@@ -25,18 +26,18 @@ MODULE W3NMLBOUNDMD
 
   ! bound structure
   TYPE NML_BOUND_T
-     CHARACTER(5)                :: MODE      !< read/write mode
-     INTEGER                     :: INTERP    !< interpolation mode
-     INTEGER                     :: VERBOSE   !< verbose flag
-     CHARACTER(128)              :: FILE      !< listing spec file unit
+     CHARACTER(5)   :: MODE      !< read/write mode
+     INTEGER        :: INTERP    !< interpolation mode
+     INTEGER        :: VERBOSE   !< verbose flag
+     CHARACTER(128) :: FILE      !< listing spec file unit
   END TYPE NML_BOUND_T
 
-
   ! miscellaneous
-  CHARACTER(256)                :: MSG      !< report message
-  INTEGER                       :: NDSN     !< namelist file unit
+  CHARACTER(256)    :: MSG      !< report message
+  INTEGER           :: NDSN     !< namelist file unit
 
 CONTAINS
+
   !/ ------------------------------------------------------------------- /
   SUBROUTINE W3NMLBOUND (NDSI, INFILE, NML_BOUND, IERR)
     !/
@@ -99,18 +100,20 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
 
     USE W3ODATMD, ONLY: NDSE
-    !/S      USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD, ONLY: STRACE  ! W3_S
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                         :: NDSI       !< input file unit
-    CHARACTER*(*), INTENT(IN)                   :: INFILE     !< input file name
-    TYPE(NML_BOUND_T), INTENT(INOUT)            :: NML_BOUND  !< bound structure
-    INTEGER, INTENT(OUT)                        :: IERR       !< error code
-    !/S      INTEGER, SAVE                             :: IENT = 0   !< strace error code
+    INTEGER           , INTENT(IN)    :: NDSI       !< input file unit
+    CHARACTER(LEN=*)  , INTENT(IN)    :: INFILE     !< input file name
+    TYPE(NML_BOUND_T) , INTENT(INOUT) :: NML_BOUND  !< bound structure
+    INTEGER           , INTENT(OUT)   :: IERR       !< error code
+    INTEGER, SAVE                     :: IENT = 0   !< strace error code
 
     IERR = 0
-    !/S      CALL STRACE (IENT, 'W3NMLBOUND')
+    if (w3_s_flag) then
+       CALL STRACE (IENT, 'W3NMLBOUND')
+    end if
 
     ! open namelist log file
     NDSN = 3

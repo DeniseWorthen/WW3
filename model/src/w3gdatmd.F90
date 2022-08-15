@@ -2885,9 +2885,6 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE W3SERVMD, ONLY: EXTCDE
-#ifdef W3_MEMCHECK
-    USE MallocInfo_m
-#endif
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
     IMPLICIT NONE
@@ -2901,9 +2898,6 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-#ifdef W3_MEMCHECK
-    type(MallInfo_t)        :: mallinfos
-#endif
     INTEGER                 :: IAPROC = 1
     INTEGER, SAVE           :: IENT = 0 ! W3_S
     !/
@@ -2993,20 +2987,21 @@ CONTAINS
     !
     ! Formats
     !
-1001 FORMAT (/' *** ERROR W3DIMUG : GRIDS NOT INITIALIZED *** '/      &
-         '                    RUN W3NMOD FIRST '/)
-1002 FORMAT (/' *** ERROR W3DIMUG : ILLEGAL MODEL NUMBER *** '/       &
-         '                    IMOD   = ',I10/                   &
-         '                    NGRIDS = ',I10/)
-1004 FORMAT (/' *** ERROR W3DIMUG : ARRAY(S) ALREADY ALLOCATED *** ')
-9000 FORMAT (' TEST W3DIMUG: MODEL ',I4,' DIM. AT ',2I5,I7)
-9001 FORMAT (' TEST W3DIMUG : ARRAYS ALLOCATED')
-9002 FORMAT (' TEST W3DIMUG : POINTERS RESET')
-9003 FORMAT (' TEST W3DIMUG : DIMENSIONS STORED')
+1001 FORMAT (/ ' *** ERROR W3DIMUG : GRIDS NOT INITIALIZED *** '/      &
+               '                    RUN W3NMOD FIRST '/)
+1002 FORMAT (/ ' *** ERROR W3DIMUG : ILLEGAL MODEL NUMBER *** '/       &
+               '                    IMOD   = ',I10/                   &
+               '                    NGRIDS = ',I10/)
+1004 FORMAT (/ ' *** ERROR W3DIMUG : ARRAY(S) ALREADY ALLOCATED *** ')
+9000 FORMAT (  ' TEST W3DIMUG: MODEL ',I4,' DIM. AT ',2I5,I7)
+9001 FORMAT (  ' TEST W3DIMUG : ARRAYS ALLOCATED')
+9002 FORMAT (  ' TEST W3DIMUG : POINTERS RESET')
+9003 FORMAT (  ' TEST W3DIMUG : DIMENSIONS STORED')
     !/
     !/ End of W3DIMUG ----------------------------------------------------- /
     !/
   END SUBROUTINE W3DIMUG
+
   !/ ------------------------------------------------------------------- /
   SUBROUTINE W3SETREF
     !/

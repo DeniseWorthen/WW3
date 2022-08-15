@@ -651,11 +651,12 @@ MODULE W3GRIDMD
   REAL, ALLOCATABLE    :: XGRDIN(:,:), YGRDIN(:,:)
   REAL, ALLOCATABLE    :: ZBIN(:,:), OBSX(:,:), OBSY(:,:)
   REAL, ALLOCATABLE    :: REFD(:,:), REFD2(:,:), REFS(:,:)
+  !
   REAL, ALLOCATABLE    :: SED_D50FILE(:,:), SED_POROFILE(:,:)                      ! W3_BT4
+  LOGICAL              :: SEDMAPD50                                                ! W3_BT4 
   REAL                 :: SED_D50_UNIFORM, SED_DSTAR, RIPFAC1                      ! W3_BT4
   REAL                 :: RIPFAC2, RIPFAC3, RIPFAC4, SIGDEPTH                      ! W3_BT4
   REAL                 :: BOTROUGHMIN, BOTROUGHFAC                                 ! W3_BT4
-  logical              :: sedmapd50 ! new definition
   !
   LOGICAL :: FLLIN, FLINDS, FLNL, FLBT, FLDB
   LOGICAL :: FLTR, FLBS, FLPROP, FLREF
@@ -756,13 +757,14 @@ MODULE W3GRIDMD
   REAL      :: STABSH, STABOF, CNEG, CPOS, FNEG, FPOS                         ! W3_ST2
   REAL      :: SDSA0, SDSA1, SDSA2, SDSB0, SDSB1, SDSB2, SDSB3                ! W3_ST2, W3_ST6
                                                                               !
+ !REAL      :: SDSC1                                                          ! W3_ST3 PROBLEM (MV) this conflicts with use case from w3gdatmd
+  REAL      :: SDSDELTA1, SDSDELTA2                                           ! W3_ST3
+
   REAL      :: ALPHA0                                                         ! W3_ST3, W3_ST4
   REAL      :: Z0MAX, BETAMAX, SINTHP                                         ! W3_ST3, W3_ST4
   REAL      :: ZALP, FXPM3, FXFM3                                             ! W3_ST3, W3_ST4
   REAL      :: WNMEANPTAIL, WNMEANP, STXFTF, STXFTWN                          ! W3_ST3, W3_ST4
-  REAL      :: SCSC1                                                          ! W3_ST3 PROBLEM (MV) this conflicst with use case from w3gdatmd
   REAL      :: STXFTFTAIL                                                     ! W3_ST3, W3_ST4
-  REAL      :: SDSDELTA1, SDSDELTA2                                           ! W3_ST3
                                                                               !
   INTEGER   :: SWELLFPAR, SDSISO, SDSBRFDF                                    ! W3_ST4
   REAL 	    :: SDSBCHOICE                                                     ! W3_ST4
@@ -779,7 +781,6 @@ MODULE W3GRIDMD
   REAL      :: SDSBM0, SDSBM1, SDSBM2, SDSBM3                                 ! W3_ST4
   REAL      :: SDSBM4, SDSFACMTF, SDSCUMP,  SDSNUW                            ! W3_ST4
   REAL      :: SDSL, SDSMWD, SDSMWPOW, SPMSS, SDSNMTF                         ! W3_ST4
-                                                                              !
 
   REAL      :: SINA0, SINWS, SINFC, SWLB1                                     ! W3_ST6
   INTEGER   :: SDSP1, SDSP2                                                   ! W3_ST6
@@ -943,7 +944,6 @@ MODULE W3GRIDMD
   NAMELIST /SBT1/ GAMMA
 
   ! W3_BT4
-  ! PROBLEM (MV) SEDMAPD50 is not defined
   NAMELIST /SBT4/ SEDMAPD50, SED_D50_UNIFORM, RIPFAC1,            &
                   RIPFAC2, RIPFAC3, RIPFAC4, SIGDEPTH,            &
                   BOTROUGHMIN, BOTROUGHFAC
@@ -4839,10 +4839,8 @@ CONTAINS
     ELSE 
     END IF   ! GTYPE
     !      
-#ifdef W3_SMC
-    !!Li  Shelter MAPSTA LLG definition for SMC 
-    IF( GTYPE .NE. SMCTYPE ) THEN
-#endif
+    if ((w3_smc_flag .and. ( GTYPE .NE. SMCTYPE )) .or. (.not. w3_smc_flag)) then
+       !!Li  Shelter MAPSTA LLG definition for SMC 
        !
        MAPSTA = TMPSTA
        MAPFS  = 0
@@ -5151,9 +5149,7 @@ CONTAINS
           ENDIF  !! ARCTC section.
        end if
        !
-#ifdef W3_SMC
-    ENDIF  !! (GTYPE .NE. SMCTYPE) ELSE SMCTYPE block. 
-#endif
+    end if ! if ((w3_smc_flag .and. ( GTYPE .NE. SMCTYPE )) .or. (.not. w3_smc_flag))
     !
     if (w3_rtd_flag) then
        !Li   Assign rotated grid angle for all sea points.  JGLi01Feb2016

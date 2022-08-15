@@ -1,4 +1,4 @@
-#include "w3macros.h" 
+#include "w3macros.h"
 !/ ------------------------------------------------------------------- /
 MODULE W3NMLBOUNCMD
   !/
@@ -103,11 +103,11 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                         :: NDSI
-    CHARACTER*(*), INTENT(IN)                   :: INFILE
-    TYPE(NML_BOUND_T), INTENT(INOUT)            :: NML_BOUND
-    INTEGER, INTENT(OUT)                        :: IERR
-    INTEGER, SAVE                             :: IENT = 0 ! W3_S
+    INTEGER           , INTENT(IN)    :: NDSI
+    CHARACTER(LEN=*)  , INTENT(IN)    :: INFILE
+    TYPE(NML_BOUND_T) , INTENT(INOUT) :: NML_BOUND
+    INTEGER           , INTENT(OUT)   :: IERR
+    INTEGER, SAVE                     :: IENT = 0 ! W3_S
 
     IERR = 0
     if (w3_s_flag) then
@@ -342,54 +342,3 @@ CONTAINS
 END MODULE W3NMLBOUNCMD
 
 !/ ------------------------------------------------------------------- /
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

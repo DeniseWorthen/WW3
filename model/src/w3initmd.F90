@@ -123,6 +123,7 @@ CONTAINS
   SUBROUTINE W3INIT ( IMOD, IsMulti, FEXT, MDS, MTRACE, ODAT, FLGRD, &
        FLGR2, FLGD, FLG2, NPT, XPT, YPT, PNAMES,                     &
        IPRT, PRTFRM, MPI_COMM, FLAGSTIDEIN)
+
     !/
     !/                  +-----------------------------------+
     !/                  | WAVEWATCH III           NOAA/NCEP |
@@ -325,6 +326,7 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
+    !/ ------------------------------------------------------------------- /
     USE CONSTANTS
     !/
     USE W3GDATMD, ONLY: W3SETG, RSTYPE
@@ -479,14 +481,10 @@ CONTAINS
     call print_memcheck(10000+IAPROC, 'memcheck_____:'//' WW3_INIT SECTION 1d')
 
     CALL W3SETI ( IMOD, MDS(2), MDS(3) )
-#ifdef W3_UOST
-    CALL UOST_SETGRID(IMOD)
-#endif
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'Beginning of W3INIT'
        WRITE(740+IAPROC,*) '  FLGR2(10,1)=', FLGR2(10,1)
        WRITE(740+IAPROC,*) '  FLGR2(10,2)=', FLGR2(10,2)
-       FLUSH(740+IAPROC)
     end if
     if (w3_timings_flag) then
        CALL PRINT_MY_TIME("Case 2")
@@ -508,7 +506,7 @@ CONTAINS
        IAPROC = 1
        IOSTYP = 1
     end if
-    !
+
 #ifdef W3_MPI
     MPI_COMM_WAVE = MPI_COMM
     CALL MPI_COMM_SIZE ( MPI_COMM_WAVE, NTPROC, IERR_MPI )
@@ -517,7 +515,7 @@ CONTAINS
     IAPROC = IAPROC + 1
 #endif
     !
-    !!/DEBUGMPI  CALL TEST_MPI_STATUS("Case 3")
+    !!/DEBUGMPI     CALL TEST_MPI_STATUS("Case 3")
     IF ( IOSTYP .LE. 1 ) THEN
        !
        NAPFLD = MAX(1,NAPROC-1)
@@ -565,8 +563,7 @@ CONTAINS
     !
     !!/DEBUGMPI     CALL TEST_MPI_STATUS("Case 4")
     FRACOS = 100. * REAL(NTPROC-NAPROC) / REAL(NTPROC)
-    IF ( FRACOS.GT.CRITOS .AND. IAPROC.EQ.NAPERR )                  &
-         WRITE (NDSE,8002) FRACOS
+    IF ( FRACOS.GT.CRITOS .AND. IAPROC.EQ.NAPERR ) WRITE (NDSE,8002) FRACOS
     !
 #ifdef W3_MPI
     IF ( NAPROC .EQ. NTPROC ) THEN
@@ -588,12 +585,10 @@ CONTAINS
 #endif
     !/PDLIB    CALL W3SETG(IMOD, NDSE, NDST)
     !
-    if (w3_pdlib_flag) then
-       LPDLIB = .TRUE.
-    else
-       LPDLIB = .FALSE.
-    end if
-    !
+    LPDLIB = .FALSE.
+#ifdef W3_PDLIB
+    LPDLIB = .TRUE.
+#endif
     IF (FSTOTALIMP .and. .NOT. LPDLIB) THEN
        WRITE(NDSE,*) 'IMPTOTAL is selected'
        WRITE(NDSE,*) 'But PDLIB is not'
@@ -609,19 +604,22 @@ CONTAINS
     IE     = LEN_TRIM(FEXT)
     LFILE  = 'log.' // FEXT(:IE)
     IFL    = LEN_TRIM(LFILE)
-    !!/DEBUGMPI     CALL TEST_MPI_STATUS("Case 5")
+    !/DEBUGMPI     CALL TEST_MPI_STATUS("Case 5")
     if (w3_shrd_flag) then
        TFILE  = 'test.' // FEXT(:IE)
     end if
     if (w3_dist_flag) then
-       IW = 1 + INT ( LOG10 ( REAL(NAPROC) + 0.5 ) )
-       IW = MAX ( 3 , MIN ( 9 , IW ) )
-       WRITE (FORMAT,'(A5,I1.1,A1,I1.1,A4)') '(A4,I', IW, '.', IW, ',2A)'
-       WRITE (TFILE,FORMAT) 'test', OUTPTS(IMOD)%IAPROC, '.', FEXT(:IE)
+       IW     = 1 + INT ( LOG10 ( REAL(NAPROC) + 0.5 ) )
+       IW     = MAX ( 3 , MIN ( 9 , IW ) )
+       WRITE (FORMAT,'(A5,I1.1,A1,I1.1,A4)')                     &
+            '(A4,I', IW, '.', IW, ',2A)'
+       WRITE (TFILE,FORMAT) 'test',                             &
+            OUTPTS(IMOD)%IAPROC, '.', FEXT(:IE)
     end if
     IFT = LEN_TRIM(TFILE)
     J   = LEN_TRIM(FNMPRE)
     !
+
     if (.not. w3_cesmcoupled_flag) then
        if (w3_debuginit_flag) then
           IF ( OUTPTS(IMOD)%IAPROC .EQ. OUTPTS(IMOD)%NAPLOG ) then
@@ -669,7 +667,7 @@ CONTAINS
     END IF
 
     call print_memcheck(10000+IAPROC, 'memcheck_____:'//' WW3_INIT SECTION 2a')
-    !
+
     if (w3_s_flag) then
        CALL STRACE (IENT, 'W3INIT')
     end if
@@ -680,6 +678,7 @@ CONTAINS
        WRITE (NDST,9002) NDSO, NDSE, NDST, SCREEN
        WRITE (NDST,9003) LFILE(:IFL), TFILE(:IFT)
     end if
+    ! stop1
     !
     ! 2.  Model defintition ---------------------------------------------- /
     ! 2.a Read model defintition file
@@ -690,51 +689,55 @@ CONTAINS
        CALL SPATIAL_GRID
        CALL NVECTRI
        CALL COORDMAX
-       if (w3_pdlib_flag) then
-          CALL AREA_SI(1)
+       if (.not. w3_pdlib_flag) then
+          CALL AREA_SI(1)  ! MV: this was incorrect in my previous version
        end if
     ENDIF
     call print_memcheck(10000+IAPROC, 'memcheck_____:'//' WW3_INIT SECTION 2b')
 
+    if (w3_pdlib_flag) then
+       IF (GTYPE .ne. UNGTYPE) THEN
+#ifdef W3_SETUP
+          CALL PREPARATION_FD_SCHEME(IMOD)
+#endif
+       ELSE
+          if (w3_debuginit_flag) then
+             WRITE(740+IAPROC,*) 'Before PDLIB_INIT'
+          end if
 #ifdef W3_PDLIB
-    IF (GTYPE .ne. UNGTYPE) THEN
+          CALL PDLIB_INIT(IMOD)
+#endif
+          call print_memcheck(10000+IAPROC, 'memcheck_____:'//' WW3_INIT SECTION 2c')
+          if (w3_pdlib_flag) then
+             if (w3_debuginit_flag) then
+                WRITE(740+IAPROC,*) 'After set up of NSEAL, NSEALM=', NSEALM
+                WRITE(740+IAPROC,*) 'After PDLIB_INIT'
+                WRITE(740+IAPROC,*) 'allocated(ISEA_TO_JSEA)=', allocated(ISEA_TO_JSEA)
+             end if
+          end if
+          if (w3_timings_flag) then
+             CALL PRINT_MY_TIME("After PDLIB_INIT")
+          end if
+#ifdef W3_PDLIB
+          CALL SYNCHRONIZE_IPGL_ETC_ARRAY(IMOD, IsMulti)
+#endif
+          call print_memcheck(10000+IAPROC, 'memcheck_____:'//' WW3_INIT SECTION 2cc')
+       END IF
+    else
 #ifdef W3_SETUP
        CALL PREPARATION_FD_SCHEME(IMOD)
 #endif
-    ELSE
-       if (w3_debuginit_flag) then
-          WRITE(740+IAPROC,*) 'Before PDLIB_INIT'
-       end if
-       CALL PDLIB_INIT(IMOD)
-       call print_memcheck(10000+IAPROC, 'memcheck_____:'//' WW3_INIT SECTION 2c')
-       if (w3_debuginit_flag) then
-          WRITE(740+IAPROC,*) 'After set up of NSEAL, NSEALM=', NSEALM
-          WRITE(740+IAPROC,*) 'After PDLIB_INIT'
-          WRITE(740+IAPROC,*) 'allocated(ISEA_TO_JSEA)=', allocated(ISEA_TO_JSEA)
-          FLUSH(740+IAPROC)
-       end if
-       if (w3_timings_flag) then
-          CALL PRINT_MY_TIME("After PDLIB_INIT")
-       end if
-       CALL SYNCHRONIZE_IPGL_ETC_ARRAY(IMOD, IsMulti)
-       call print_memcheck(10000+IAPROC, 'memcheck_____:'//' WW3_INIT SECTION 2cc')
-    END IF
-#else
-#ifdef W3_SETUP
-    CALL PREPARATION_FD_SCHEME(IMOD)
-#endif
-#endif
+    end if ! if (w3_pdlib_flag)
     call print_memcheck(10000+IAPROC, 'memcheck_____:'//' WW3_INIT SECTION 2d')
-
     ! Update of output parameter flags based on mod_def parameters (for 3D arrays)
+
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'Before W3FLGRDUPDT'
-       FLUSH(740+IAPROC)
     end if
 
     CALL W3FLGRDUPDT ( NDSO, NDSE, FLGRD, FLGR2, FLGD, FLG2 )
 
-    !!/DEBUGMPI     CALL TEST_MPI_STATUS("Case 9")
+    !/DEBUGMPI     CALL TEST_MPI_STATUS("Case 9")
     if (w3_timings_flag) then
        CALL PRINT_MY_TIME("After W3FLGRDUPDT")
     end if
@@ -750,9 +753,8 @@ CONTAINS
     !
     ALLOCATE ( MAPTST(NY,NX) )
     MAPTST  = MAPSTA
-
     call print_memcheck(10000+IAPROC, 'memcheck_____:'//' WW3_INIT SECTION 2e')
-    !
+    !stop2
     !
     ! 2.c MPP preparation
     ! 2.c.1 Set simple counters and variables
@@ -768,7 +770,6 @@ CONTAINS
        WRITE(740+IAPROC,*) 'After set up of NSEAL, NSEAL=', NSEAL
        WRITE(740+IAPROC,*) 'After set up of NSEAL, NSEALM=', NSEALM
        WRITE(740+IAPROC,*) 'NSEA=', NSEA, ' NSPEC=', NSPEC
-       FLUSH(740+IAPROC)
     end if
 #ifdef W3_DEBUGMPI
     CALL TEST_MPI_STATUS("Case 11")
@@ -780,10 +781,8 @@ CONTAINS
           IF ( NSPEC .LT. NAPROC ) GOTO 821
        END IF
     end if
-
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'Before PDLIB related allocations'
-       FLUSH(740+IAPROC)
     end if
 
 #ifdef W3_PDLIB
@@ -794,16 +793,18 @@ CONTAINS
        end if
        CALL BLOCK_SOLVER_INIT(IMOD)
        CALL PDLIB_IOBP_INIT(IMOD)
+       CALL SET_IOBPA_PDLIB
        if (w3_debuginit_flag) then
           WRITE(740+IAPROC,*) 'After BLOCK_SOLVER_INIT'
        end if
     ELSE IF (FSTOTALEXP) THEN
        !AR: To do here the blocksolver ...
     ENDIF
-#endif
     if (w3_timings_flag) then
        CALL PRINT_MY_TIME("After BLOCK_SOLVER_INIT")
     end if
+#endif
+
     call print_memcheck(10000+IAPROC, 'memcheck_____:'//' WW3_INIT SECTION 2g')
 #ifdef W3_DEBUGMPI
     CALL TEST_MPI_STATUS("Case 12")
@@ -815,14 +816,12 @@ CONTAINS
     IF ( IAPROC .LE. NAPROC ) THEN
        if (w3_debuginit_flag) then
           WRITE(740+IAPROC,*) 'Calling W3DIMW at W3INIT, case 1'
-          FLUSH(740+IAPROC)
        end if
        CALL W3DIMW ( IMOD, NDSE, NDST )
        call print_memcheck(10000+IAPROC, 'memcheck_____:'//' WW3_INIT SECTION 2h')
     ELSE
        if (w3_debuginit_flag) then
           WRITE(740+IAPROC,*) 'Calling W3DIMW at W3INIT, case 2'
-          FLUSH(740+IAPROC)
        end if
        CALL W3DIMW ( IMOD, NDSE, NDST, .FALSE. )
        call print_memcheck(10000+IAPROC, 'memcheck_____:'//' WW3_INIT SECTION 2i')
@@ -830,7 +829,6 @@ CONTAINS
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) ' 1: NSEAL=', NSEAL
        WRITE(740+IAPROC,*) ' maxval(UST)=', maxval(UST)
-       FLUSH(740+IAPROC)
     end if
     if (w3_timings_flag) then
        CALL PRINT_MY_TIME("After W3DIMW")
@@ -838,7 +836,7 @@ CONTAINS
     CALL W3DIMA ( IMOD, NDSE, NDST )
     call print_memcheck(10000+IAPROC, 'memcheck_____:'//' WW3_INIT SECTION 2j')
     CALL W3DIMI ( IMOD, NDSE, NDST , FLAGSTIDEIN )
-    !!/DEBUGMPI     CALL TEST_MPI_STATUS("Case 13")
+    !/DEBUGMPI     CALL TEST_MPI_STATUS("Case 13")
     if (w3_timings_flag) then
        CALL PRINT_MY_TIME("After W3DIMI")
     end if
@@ -920,11 +918,12 @@ CONTAINS
        END DO
     END IF
 #endif
-    !
-    !!/DEBUGMPI     CALL TEST_MPI_STATUS("Case 14")
+
+    !/DEBUGMPI     CALL TEST_MPI_STATUS("Case 14")
     if (w3_timings_flag) then
        CALL PRINT_MY_TIME("After Case 14")
     end if
+    !
     ! 2.c.8 Test output
     !
     if (w3_t_flag) then
@@ -967,6 +966,7 @@ CONTAINS
        WRITE(740+IAPROC,*) ' 1: min/max/sum(VA)=', minval(VA), maxval(VA), sum(VA)
        WRITE(740+IAPROC,*) ' 1: NSEAL=', NSEAL
     end if
+
 #ifdef W3_PDLIB
     if (w3_debugcoh_flag) then
        CALL ALL_VA_INTEGRAL_PRINT(IMOD, "Before W3IORS call")
@@ -1010,7 +1010,6 @@ CONTAINS
     END IF
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3INIT, aft BLOCK_SOLVER_INIT, step 4.2'
-       FLUSH(740+IAPROC)
     end if
 #ifdef W3_PDLIB
     if (w3_debugcoh_flag) then
@@ -1020,7 +1019,6 @@ CONTAINS
     if (w3_timings_flag) then
        CALL PRINT_MY_TIME("After restart inits")
     end if
-
     !
     ! 3.b Compare MAPSTA from grid and restart
     !
@@ -1032,12 +1030,10 @@ CONTAINS
           END IF
        END DO
     END DO
-
     call print_memcheck(10000+IAPROC, 'memcheck_____:'//' WW3_INIT SECTION 3b')
     !
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3INIT, aft BLOCK_SOLVER_INIT, step 4.3'
-       FLUSH(740+IAPROC)
     end if
 #ifdef W3_PDLIB
     if (w3_debugcoh_flag) then
@@ -1052,6 +1048,7 @@ CONTAINS
        CALL PDLIB_MAPSTA_INIT(IMOD)
     END IF
 #endif
+    ! stop3
     !
     ! 3.c Initialization from wind fields
     !
@@ -1064,7 +1061,6 @@ CONTAINS
     !
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3INIT, aft BLOCK_SOLVER_INIT, step 5'
-       FLUSH(740+IAPROC)
     end if
 #ifdef W3_PDLIB
     if (w3_debugcoh_flag) then
@@ -1139,7 +1135,6 @@ CONTAINS
     END DO
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3INIT, aft BLOCK_SOLVER_INIT, step 6'
-       FLUSH(740+IAPROC)
     end if
 #ifdef W3_PDLIB
     if (w3_debugcoh_flag) then
@@ -1187,7 +1182,6 @@ CONTAINS
     !      NOTYPE=0 ! ONLY FOR DEBUGGING PURPOSE
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3INIT, aft BLOCK_SOLVER_INIT, step 7'
-       FLUSH(740+IAPROC)
     end if
 #ifdef W3_PDLIB
     if (w3_debugcoh_flag) then
@@ -1248,9 +1242,9 @@ CONTAINS
              END IF
           END IF
           !
-       END IF
+       END IF  ! IF (FLOUT(J))
        !
-    END DO
+    END DO ! DO J=1, NOTYPE
     !
     call print_memcheck(10000+IAPROC, 'memcheck_____:'//' WW3_INIT SECTION 5')
     !
@@ -1305,7 +1299,6 @@ CONTAINS
     ! END J=8
     !
     call print_memcheck(10000+IAPROC, 'memcheck_____:'//' WW3_INIT SECTION 5')
-
     if (w3_debuginit_flag) then
        WRITE(*,*) 'Ending the NOTYPE loop, takes time'
     end if
@@ -1314,7 +1307,6 @@ CONTAINS
     end if
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3INIT, aft BLOCK_SOLVER_INIT, step 8'
-       FLUSH(740+IAPROC)
     end if
 #ifdef W3_PDLIB
     if (w3_debugcoh_flag) then
@@ -1366,6 +1358,7 @@ CONTAINS
     if (w3_debugstp_flag) then
        WRITE(740+IAPROC,*) 'Debugging the SETUP / WLV'
     end if
+    !
     DO ISEA=1, NSEA
        if (w3_debugstp_flag) then
           WRITE(740+IAPROC,*) 'ISEA/WLV/ZB=', ISEA, WLV(ISEA), ZB(ISEA)
@@ -1392,11 +1385,11 @@ CONTAINS
           !!/DEBUGINIT     WRITE(740+IAPROC,*) 'ISEA=', ISEA, ' JSEA=', JSEA
           !!/DEBUGINIT     WRITE(740+IAPROC,*) 'NSEA=', NSEA, ' NSEAL=', NSEAL
           !!/DEBUGINIT     WRITE(740+IAPROC,*) 'IAPROC=', IAPROC, ' ISPROC=', ISPROC
-          !!/DEBUGINIT     FLUSH(740+IAPROC)
        END IF
        !Li     END IF
     END DO
     !Li   END DO
+
     DO JSEA=1, NSEAL
        CALL INIT_GET_ISEA(ISEA, JSEA)
        WLVeff=WLV(ISEA)
@@ -1410,7 +1403,6 @@ CONTAINS
           !!/DEBUGINIT     WRITE(740+IAPROC,*) 'ISEA=', ISEA, ' JSEA=', JSEA
           !!/DEBUGINIT     WRITE(740+IAPROC,*) 'NSEA=', NSEA, ' NSEAL=', NSEAL
           !!/DEBUGINIT     WRITE(740+IAPROC,*) 'IAPROC=', IAPROC, ' ISPROC=', ISPROC
-          !!/DEBUGINIT     FLUSH(740+IAPROC)
           VA(:,JSEA) = 0.
        END IF
     END DO
@@ -1421,19 +1413,14 @@ CONTAINS
     ENDIF
 #endif
     !
-    if (w3_debugstp_flag) then
-       FLUSH(740+IAPROC)
-    end if
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3INIT, aft BLOCK_SOLVER_INIT, step 9'
-       FLUSH(740+IAPROC)
     end if
 #ifdef W3_PDLIB
     if (w3_debugcoh_flag) then
        CALL ALL_VA_INTEGRAL_PRINT(IMOD, "W3INIT, step 8.2")
     end if
 #endif
-    !
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3INIT, aft BLOCK_SOLVER_INIT, step 9.1'
        WRITE(740+IAPROC,*) ' allocated(MAPTST)=', allocated(MAPTST)
@@ -1442,20 +1429,17 @@ CONTAINS
     MAPST2 = MAPST2 + 2*MAPTST
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3INIT, aft BLOCK_SOLVER_INIT, step 9.2'
-       FLUSH(740+IAPROC)
     end if
     !
     DEALLOCATE ( MAPTST )
+    !
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3INIT, aft BLOCK_SOLVER_INIT, step 9.3'
-       FLUSH(740+IAPROC)
     end if
-
     call print_memcheck(10000+IAPROC, 'memcheck_____:'//' WW3_INIT SECTION 6')
     !
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3INIT, aft BLOCK_SOLVER_INIT, step 9.4'
-       FLUSH(740+IAPROC)
     end if
     if (w3_t_flag) then
        WRITE (NDST,9050)
@@ -1480,12 +1464,10 @@ CONTAINS
     !
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3INIT, aft BLOCK_SOLVER_INIT, step 9.5'
-       FLUSH(740+IAPROC)
     end if
     DO IS=0, NSEA
        if (w3_debuginit_flag) then
           WRITE(740+IAPROC,*) 'IS=', IS
-          FLUSH(740+IAPROC)
        end if
        IF (IS.GT.0) THEN
           DEPTH  = MAX ( DMIN , DW(IS) )
@@ -1499,7 +1481,7 @@ CONTAINS
        !
        DO IK=0, NK+1
           !
-          !         Calculate wavenumbers and group velocities.
+          ! Calculate wavenumbers and group velocities.
           CALL WAVNU1(SIG(IK),DEPTH,WN(IK,IS),CG(IK,IS))
           !
           if (w3_t1_flag) then
@@ -1511,7 +1493,6 @@ CONTAINS
 
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3INIT, aft BLOCK_SOLVER_INIT, step 9.6'
-       FLUSH(740+IAPROC)
     end if
     !
     ! 6.  Initialize arrays ---------------------------------------------- /
@@ -1640,30 +1621,36 @@ CONTAINS
 #ifdef W3_PDLIB
     if (w3_debugcoh_flag) then
        CALL ALL_VA_INTEGRAL_PRINT(IMOD, "W3INIT, step 8.3")
-       !!/PDLIB         CALL VA_SETUP_IOBPD
+    end if
+    !/PDLIB         CALL VA_SETUP_IOBPD
+    if (w3_debugcoh_flag) then
        CALL ALL_VA_INTEGRAL_PRINT(IMOD, "W3INIT, step 8.4")
     end if
+#endif
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3INIT, aft BLOCK_SOLVER_INIT, step 9.10'
     end if
-#endif
     !
     ! 8.  Final MPI set up ----------------------------------------------- /
     !
 #ifdef W3_MPI
     CALL W3MPII ( IMOD )
+#endif
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'After W3MPII'
     end if
+#ifdef W3_MPI
     CALL W3MPIO ( IMOD )
+#endif
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'After W3MPIO'
     end if
+#ifdef W3_MPI
     IF ( FLOUT(2) ) CALL W3MPIP ( IMOD )
+#endif
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'After W3MPIP'
     end if
-#endif
     !
 #ifdef W3_PDLIB
     if (w3_debuginit_flag) then
@@ -1677,14 +1664,17 @@ CONTAINS
     !
     ! Escape locations read errors :
     !
+    ! W3_DIST
 820 CONTINUE
     IF ( IAPROC .EQ. NAPERR ) WRITE (NDSE,8020) NSEA, NAPROC
     CALL EXTCDE ( 820 )
     !
+    ! W3_DIST
 821 CONTINUE
     IF ( IAPROC .EQ. NAPERR ) WRITE (NDSE,8021) NSPEC, NAPROC
     CALL EXTCDE ( 821 )
     !
+    ! W3_DIST
 829 CONTINUE
     IF ( IAPROC .EQ. NAPERR ) WRITE (NDSE,8029)
     CALL EXTCDE ( 829 )
@@ -1700,116 +1690,119 @@ CONTAINS
     !
     ! Formats
     !
-900 FORMAT ( ' WAVEWATCH III log file            ',                 &
+900 FORMAT (        ' WAVEWATCH III log file            ',                 &
          '                     version ',A/                     &
          ' ==================================',                 &
          '==================================='/                 &
-         50X,'date : ',A10/50X,'time :  ',A8)
-920 FORMAT (/' Model definition file read.')
-930 FORMAT ( ' Restart file read; ',A)
+         50X,       'date : ',A10/50X,'time :  ',A8)
+920 FORMAT (/       ' Model definition file read.')
+930 FORMAT (        ' Restart file read; ',A)
     !
-970 FORMAT (/' Grid name : ',A)
-971 FORMAT (/' ',A,' water levels.')
-972 FORMAT ( ' ',A,' curents.')
-973 FORMAT ( ' ',A,' winds.')
-974 FORMAT ( ' ',A,' ice fields.')
-988 FORMAT ( ' ',A,' momentum')
-989 FORMAT ( ' ',A,' air density')
-9972 FORMAT( ' ',A,' mud density.')
-9971 FORMAT( ' ',A,' mud thickness.')
-9970 FORMAT( ' ',A,' mud viscosity.')
-9973 FORMAT( ' ',A,' ice parameter 1')
-9974 FORMAT( ' ',A,' ice parameter 2')
-9975 FORMAT( ' ',A,' ice parameter 3')
-9976 FORMAT( ' ',A,' ice parameter 4')
-9977 FORMAT( ' ',A,' ice parameter 5')
+970 FORMAT (/       ' Grid name : ',A)
+971 FORMAT (/       ' ',A,' water levels.')
+972 FORMAT (        ' ',A,' curents.')
+973 FORMAT (        ' ',A,' winds.')
+974 FORMAT (        ' ',A,' ice fields.')
+988 FORMAT (        ' ',A,' momentum')
+989 FORMAT (        ' ',A,' air density')
+9972 FORMAT(        ' ',A,' mud density.')
+9971 FORMAT(        ' ',A,' mud thickness.')
+9970 FORMAT(        ' ',A,' mud viscosity.')
+9973 FORMAT(        ' ',A,' ice parameter 1')
+9974 FORMAT(        ' ',A,' ice parameter 2')
+9975 FORMAT(        ' ',A,' ice parameter 3')
+9976 FORMAT(        ' ',A,' ice parameter 4')
+9977 FORMAT(        ' ',A,' ice parameter 5')
 
     !
-975 FORMAT (/' Gridded output fields : '/                           &
+975 FORMAT (/       ' Gridded output fields : '/                           &
          '--------------------------------------------------')
-976 FORMAT ( '     ',A)
+976 FORMAT (        '     ',A)
     !
-977 FORMAT (/' Point output requested for',I6,' points : '/         &
+977 FORMAT (/       ' Point output requested for',I6,' points : '/         &
          '------------------------------------------')
-978 FORMAT (/'      Point output disabled')
+978 FORMAT (/       '      Point output disabled')
 979 FORMAT                                                     &
-         (/'      point  |  longitude  |   latitude  |  name  '/  &
+         (/         '      point  |  longitude  |   latitude  |  name  '/  &
          '     --------|-------------|-------------|----------------')
 985 FORMAT                                                     &
-         (/'      point  |      X      |      Y      |  name  '/  &
+         (/         '      point  |      X      |      Y      |  name  '/  &
          '     --------|-------------|-------------|----------------')
-980 FORMAT ( 5X,I5,'   |',2(F10.2,'   |'),2X,A)
-986 FORMAT ( 5X,I5,'   |',2(F8.1,'E3   |'),2X,A)
+980 FORMAT ( 5X,I5, '   |',2(F10.2,'   |'),2X,A)
+986 FORMAT ( 5X,I5, '   |',2(F8.1,'E3   |'),2X,A)
     !
-981 FORMAT (/' Initial time     : ',A)
-982 FORMAT ( ' Water level time : ',A)
-983 FORMAT ( ' Ice field time   : ',A)
-990 FORMAT ( ' Air density time : ',A)
+981 FORMAT (/       ' Initial time     : ',A)
+982 FORMAT (        ' Water level time : ',A)
+983 FORMAT (        ' Ice field time   : ',A)
+990 FORMAT (        ' Air density time : ',A)
     !
 984 FORMAT (//                                                      &
-         37X,'  |         input         |      output      |'/         &
-         37X,'  |-----------------------|------------------|'/         &
-         2X,'   step | pass |    date      time   |',                 &
+         37X,       '  |         input         |      output      |'/         &
+         37X,       '  |-----------------------|------------------|'/         &
+         2X,        '   step | pass |    date      time   |',                 &
          ' b w l c t r i i1 i5 d | g p t r b f c r2 |'/          &
-         2X,'--------|------|---------------------|',                 &
+         2X,        '--------|------|---------------------|',                 &
          '-----------------------|------------------|'/            &
-         2X,'--------+------+---------------------+',                 &
+         2X,        '--------+------+---------------------+',                 &
          '---------------------------+--------------+')
-987 FORMAT (/' Coupling output fields : '/                          &
+987 FORMAT (/       ' Coupling output fields : '/                          &
          '--------------------------------------------------')
     !
-8000 FORMAT (/' *** WAVEWATCH III ERROR IN W3INIT : '/               &
+8000 FORMAT (/      ' *** WAVEWATCH III ERROR IN W3INIT : '/               &
          '     ERROR IN OPENING LOG FILE'/                      &
          '     IOSTAT =',I5/)
-8001 FORMAT (/' *** WAVEWATCH III ERROR IN W3INIT : '/               &
+8001 FORMAT (/      ' *** WAVEWATCH III ERROR IN W3INIT : '/               &
          '     ERROR IN OPENING TEST FILE'/                     &
          '     IOSTAT =',I5/)
-8002 FORMAT (/' *** WAVEWATCH III WARNING IN W3INIT : '/             &
+8002 FORMAT (/      ' *** WAVEWATCH III WARNING IN W3INIT : '/             &
          '     SIGNIFICANT PART OF RESOURCES RESERVED FOR',     &
          ' OUTPUT :',F6.1,'%'/)
-8020 FORMAT (/' *** WAVEWATCH III ERROR IN W3INIT : '/         &
+    ! W3_DIST
+8020 FORMAT (/      ' *** WAVEWATCH III ERROR IN W3INIT : '/         &
          '     NUMBER OF SEA POINTS LESS THAN NUMBER OF PROC.'/ &
          '     NSEA, NAPROC =',2I8/)
-8021 FORMAT (/' *** WAVEWATCH III ERROR IN W3INIT : '/         &
+8021 FORMAT (/      ' *** WAVEWATCH III ERROR IN W3INIT : '/         &
          '     NUMBER OF SPECTRAL POINTS LESS THAN NUMBER OF PROC.'/ &
          '     NSPEC, NAPROC =',2I8/)
-8028 FORMAT (/' *** WAVEWATCH III WARNING IN W3INIT : '/       &
+8028 FORMAT (/      ' *** WAVEWATCH III WARNING IN W3INIT : '/       &
          '     INCREASING TARGET IN MPP PROPAGATION MAP.'/      &
          '     IMBALANCE BETWEEN OVERALL AND CFL TIME STEPS'/)
-8029 FORMAT (/' *** WAVEWATCH III ERROR IN W3INIT : '/         &
+8029 FORMAT (/      ' *** WAVEWATCH III ERROR IN W3INIT : '/         &
          '     SOMETHING WRONG WITH MPP PROPAGATION MAP.'/      &
          '     CALL HENDRIK !!!'/)
     !
-9000 FORMAT ( 'TEST W3INIT: MOD. NR. AND FILE EXT.: ',I4,' [',A,']')
-9001 FORMAT ( '             NR. OF PROCESSORS     : ',3I4/        &
+    ! W3_T
+9000 FORMAT (       'TEST W3INIT: MOD. NR. AND FILE EXT.: ',I4,' [',A,']')
+9001 FORMAT (       '             NR. OF PROCESSORS     : ',3I4/        &
          '             ASSIGNED PROCESSORS     ',9I4)
-9002 FORMAT ( '             DATA SET NUMBERS      : ',4I4)
-9003 FORMAT ( '             LOG FILE              : [',A,']'/     &
+9002 FORMAT (       '             DATA SET NUMBERS      : ',4I4)
+9003 FORMAT (       '             LOG FILE              : [',A,']'/     &
          '             TEST FILE             : [',A,']')
     !
-9020 FORMAT (' TEST W3INIT : IP, NTTOT, NTTARG :')
-9021 FORMAT ( '         ',3I8)
-9025 FORMAT (' TEST W3INIT : MPP PROPAGATION MAP SPECTRAL COMP.')
+    ! W3_T
+9020 FORMAT (       ' TEST W3INIT : IP, NTTOT, NTTARG :')
+9021 FORMAT (       '         ',3I8)
+9025 FORMAT (       ' TEST W3INIT : MPP PROPAGATION MAP SPECTRAL COMP.')
 9026 FORMAT (4X,I4,2X,24I4)
 9027 FORMAT (10X,24I4)
-    !
-9030 FORMAT (' TEST W3INIT : INITIALIZATION USING WINDS, ',       &
+9030 FORMAT (       ' TEST W3INIT : INITIALIZATION USING WINDS, ',       &
          'PERFORMED IN W3WAVE')
-9031 FORMAT (' TEST W3INIT : STARTING FROM CALM CONDITIONS')
+9031 FORMAT (       ' TEST W3INIT : STARTING FROM CALM CONDITIONS')
     !
-9040 FORMAT (' TEST W3INIT : OUTPUT DATA, FIRST TIME, STEP, FLAG')
-9041 FORMAT ('              ',I9.8,I7.6,F8.1,3X,L1)
-9042 FORMAT (' TEST W3INIT : FIRST TIME :')
-9043 FORMAT ('              ',I9.8,I7.6)
-    !
-9050 FORMAT (' TEST W3INIT : INITIAL DEPTHS')
-9051 FORMAT (' TEST W3INIT : ISEA =',I6,'  DEPTH =',F7.1,         &
+    ! W3_T
+9040 FORMAT (       ' TEST W3INIT : OUTPUT DATA, FIRST TIME, STEP, FLAG')
+9041 FORMAT (       '              ',I9.8,I7.6,F8.1,3X,L1)
+9042 FORMAT (       ' TEST W3INIT : FIRST TIME :')
+9043 FORMAT (       '              ',I9.8,I7.6)
+9050 FORMAT (       ' TEST W3INIT : INITIAL DEPTHS')
+9051 FORMAT (       ' TEST W3INIT : ISEA =',I6,'  DEPTH =',F7.1,         &
          '  IK, T, K, CG :')
-9052 FORMAT ('               ',I3,F8.2,F8.4,F8.2)
+9052 FORMAT (       '               ',I3,F8.2,F8.4,F8.2)
     !/
     !/ End of W3INIT ----------------------------------------------------- /
     !/
   END SUBROUTINE W3INIT
+  ! stop5
 
   !/ ------------------------------------------------------------------- /
   SUBROUTINE W3MPII ( IMOD )
@@ -1901,19 +1894,19 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !
-    USE W3SERVMD, ONLY: STRACE  ! W3_S
-    USE W3GDATMD, ONLY: NSEA
-    USE W3ADATMD, ONLY: NSEALM
-    USE W3GDATMD, ONLY: GTYPE, UNGTYPE
+    USE W3SERVMD,  ONLY: STRACE                         ! W3_S
+    USE W3GDATMD,  ONLY: NSEA
+    USE W3ADATMD,  ONLY: NSEALM
+    USE W3GDATMD,  ONLY: GTYPE, UNGTYPE
     USE CONSTANTS, ONLY: LPDLIB
-    USE W3GDATMD, ONLY: NSPEC
-    USE W3WDATMD, ONLY: VA
-    USE W3ADATMD, ONLY: MPI_COMM_WAVE, WW3_FIELD_VEC,         &
-         WW3_SPEC_VEC, IAPPRO, WADATS,         &
-         NRQSG1, IRQSG1, NRQSG2, IRQSG2,       &
-         GSTORE, SSTORE, MPIBUF, BSTAT,        &
-         BISPL, ISPLOC, IBFLOC, NSPLOC
-    USE W3ODATMD, ONLY: NDST, NAPROC, IAPROC
+    USE W3GDATMD,  ONLY: NSPEC                          ! W3_MPI
+    USE W3WDATMD,  ONLY: VA                             ! W3_MPI
+    USE W3ADATMD,  ONLY: MPI_COMM_WAVE, WW3_FIELD_VEC   ! W3_MPI
+    USE W3ADATMD,  ONLY: WW3_SPEC_VEC, IAPPRO, WADATS   ! W3_MPI
+    USE W3ADATMD,  ONLY: NRQSG1, IRQSG1, NRQSG2, IRQSG2 ! W3_MPI
+    USE W3ADATMD,  ONLY: GSTORE, SSTORE, MPIBUF, BSTAT  ! W3_MPI
+    USE W3ADATMD,  ONLY: BISPL, ISPLOC, IBFLOC, NSPLOC  ! W3_MPI
+    USE W3ODATMD,  ONLY: NDST, NAPROC, IAPROC           ! W3_MPI
     !/
     IMPLICIT NONE
     !
@@ -1929,9 +1922,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER       :: NXXXX
-    INTEGER       :: IERR_MPI, ISP, IH, ITARG, IERR1, IERR2, IP ! W3_MPI
-    INTEGER, SAVE :: IENT = 0 ! W3_S
+    INTEGER :: NXXXX
+    INTEGER :: IERR_MPI, ISP, IH, ITARG, IERR1, IERR2, IP ! W3_MPI
+    INTEGER :: IENT = 0 ! W3_S
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -1947,7 +1940,7 @@ CONTAINS
     NXXXX  = NSEALM * NAPROC
     !
 #ifdef W3_MPI
-    CALL MPI_TYPE_VECTOR ( NSEALM, 1, NAPROC, MPI_REAL, WW3_FIELD_VEC, IERR_MPI )
+    CALL MPI_TYPE_VECTOR ( NSEALM, 1, NAPROC, MPI_REAL,  WW3_FIELD_VEC, IERR_MPI )
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3MPII, step 1'
     end if
@@ -1963,6 +1956,7 @@ CONTAINS
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3MPII, step 1'
     end if
+    !
     if (w3_mpit_flag) then
        WRITE (NDST,9010) WW3_FIELD_VEC, WW3_SPEC_VEC
     end if
@@ -1978,10 +1972,10 @@ CONTAINS
        end if
        RETURN
     END IF
+#endif
     if (w3_debuginit_flag) then
        WRITE(740+IAPROC,*) 'W3MPII, step 1'
     end if
-#endif
     !
     ! 2.  Set up scatters and gathers for W3WAVE ------------------------- /
     !     ( persistent communication calls )
@@ -2037,8 +2031,8 @@ CONTAINS
        !
        NRQSG2 = MAX( 1 , NAPROC-1 )
        ALLOCATE ( WADATS(IMOD)%IRQSG2(NRQSG2*NSPLOC,2),           &
-                  WADATS(IMOD)%GSTORE(NAPROC*NSEALM,MPIBUF),      &
-                  WADATS(IMOD)%SSTORE(NAPROC*NSEALM,MPIBUF) )
+            WADATS(IMOD)%GSTORE(NAPROC*NSEALM,MPIBUF),      &
+            WADATS(IMOD)%SSTORE(NAPROC*NSEALM,MPIBUF) )
        NRQSG2 = NAPROC - 1
        !
        IRQSG2 => WADATS(IMOD)%IRQSG2
@@ -2071,7 +2065,6 @@ CONTAINS
                    !
                    ITARG  = IP - 1
                    IH     = IH + 1
-                   !
                    CALL MPI_RECV_INIT                             &
                         ( WADATS(IMOD)%GSTORE(IP,IBFLOC), 1,        &
                         WW3_FIELD_VEC, ITARG, ISP, MPI_COMM_WAVE, &
@@ -2089,11 +2082,12 @@ CONTAINS
                    !
                 END IF
              END DO
-             !
           END IF
        END DO
+       !
        if (w3_mpit_flag) then
           WRITE (NDST,9033)
+          WRITE (NDST,9030) NSPLOC, NRQSG2, IH
        end if
        !
        ! 4.  Initialize buffer management ----------------------------------- /
@@ -2104,33 +2098,33 @@ CONTAINS
        IBFLOC = 0
 #endif
 #ifdef W3_DIST
-    END IF ! IF ((LPDLIB .eqv. .FALSE.).or.(GTYPE .NE. UNGTYPE))
+    END IF
 #endif
     RETURN
     !
     ! Format statements
     !
-9010 FORMAT ( ' TEST W3MPII: DATA TYPES DEFINED'/     &
+    ! W3_MPIT
+9010 FORMAT (  ' TEST W3MPII: DATA TYPES DEFINED'/     &
          '              WW3_FIELD_VEC : ',I10/   &
          '              WW3_SPEC_VEC  : ',I10)
-9011 FORMAT ( ' TEST W3MPII: NO COMPUTATIONS ON THIS NODE')
-    !
-9020 FORMAT ( ' TEST W3MPII: W3WAVE COMM. SET UP FINISHED'/    &
+9011 FORMAT (  ' TEST W3MPII: NO COMPUTATIONS ON THIS NODE')
+9020 FORMAT (  ' TEST W3MPII: W3WAVE COMM. SET UP FINISHED'/    &
          '              NRQSG1        : ',I10)
-9021 FORMAT (/' TEST W3MPII: COMMUNICATION CALLS FOR W3WAVE '/ &
+9021 FORMAT (/ ' TEST W3MPII: COMMUNICATION CALLS FOR W3WAVE '/ &
          ' +------+------+------+--------------+--------------+'/ &
          ' |  IH  |  ISP | TARG |    SCATTER   |    GATHER    |'/ &
          ' |      |      |      |   handle err |   handle err |'/ &
          ' +------+------+------+--------------+--------------+')
-9022 FORMAT ( ' |',3(I5,' |'),2(I9,I4,' |'))
+9022 FORMAT (  ' |',3(I5,' |'),2(I9,I4,' |'))
 9023 FORMAT (                                                  &
          ' +------+------+------+--------------+--------------+'/)
     !
-9030 FORMAT ( ' TEST W3MPII: GATH/SCAT COMM. SET UP FINISHED'/ &
+9030 FORMAT (  ' TEST W3MPII: GATH/SCAT COMM. SET UP FINISHED'/ &
          '              NSPLOC        : ',I10/            &
          '              NRQSG2        : ',I10/            &
          '              TOTAL REQ.    : ',I10/)
-9031 FORMAT (/' TEST W3MPII: COMM. CALLS FOR W3GATH/W3SCAT '/  &
+9031 FORMAT (/ ' TEST W3MPII: COMM. CALLS FOR W3GATH/W3SCAT '/  &
          ' +------+------+------+------+--------------+', &
          '--------------+'/                               &
          ' |  IH  |  ISP | TARG | IBFR |     GATHER   |', &
@@ -2139,13 +2133,14 @@ CONTAINS
          '   handle err |'/                               &
          ' +------+------+------+------+--------------+', &
          '--------------+')
-9032 FORMAT ( ' |',4(I5,' |'),2(I9,I4,' |'))
-9033 FORMAT ( ' +------+------+------+------+--------------+', &
+9032 FORMAT (  ' |',4(I5,' |'),2(I9,I4,' |'))
+9033 FORMAT (  ' +------+------+------+------+--------------+', &
          '--------------+'/)
     !/
     !/ End of W3MPII ----------------------------------------------------- /
     !/
   END SUBROUTINE W3MPII
+  ! stop6
 
   !/ ------------------------------------------------------------------- /
   SUBROUTINE W3MPIO ( IMOD )
@@ -2301,12 +2296,14 @@ CONTAINS
     INTEGER          :: ISEA, ISPROC, K, NRQMAX      ! W3_MPI
     LOGICAL          :: FLGRDALL(NOGRP,NGRPP)        ! W3_MPI
     LOGICAL          :: FLGRDARST(NOGRP,NGRPP)       ! W3_MPI
-    INTEGER, SAVE    :: IENT                         ! W3_S
+    INTEGER          :: IENT                         ! W3_S
     CHARACTER(LEN=5) :: STRING                       ! W3_MPIT
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    CALL STRACE (IENT, 'W3MPIO') ! W3_S
+    if (w3_s_flag) then
+       CALL STRACE (IENT, 'W3MPIO')
+    end if
     !
     ! 1.  Set-up for W3IOGO ---------------------------------------------- /
     !
@@ -2324,7 +2321,8 @@ CONTAINS
     IROOT  = NAPFLD - 1
     !
     !
-    IF ((FLOUT(1) .OR. FLOUT(7)).and.(.not. LPDLIB .or. (GTYPE .ne. UNGTYPE).or. .TRUE.)) THEN
+    IF ((FLOUT(1) .OR. FLOUT(7)).and.(.not. LPDLIB .or.       &
+         (GTYPE .ne. UNGTYPE).or. .TRUE.)) THEN
        !
        ! NRQMAX is the maximum number of output fields that require MPI communication,
        ! aimed to gather field values stored in each processor into one processor in
@@ -2339,27 +2337,25 @@ CONTAINS
        !
        ! Calculation of NRQMAX splitted by output groups and field type
        !       scalar                2-comp   3-comp
-       NRQMAX =   1                +    0  +    0  +         &  ! group 1
-                 18                +    0  +    0  +         &  ! group 2
-                  0                +    0  +    0  +         &  ! group 3 (extra contributions below)
-                  2+(NOGE(4)-2)*(NOSWLL+1) +    0  +    0  + &  ! group 4
-                 11                +    3  +    1  +         &  ! group 5
-                 12                +    7  +    1  +         &  ! group 6 (extra contributions below)
-                  5                +    4  +    1  +         &  ! group 7
-                  5                +    2  +    0  +         &  ! group 8
-                  5                +    0  +    0  +         &  ! group 9
-             NOEXTR                +    0  +    0               ! group 10
+       NRQMAX =   1                +    0  +    0  +  &  ! group 1
+                 18                +    0  +    0  +  &  ! group 2
+                  0                +    0  +    0  +  &  ! group 3 (extra contributions below)
+                  2+(NOGE(4)-2)*(NOSWLL+1) +    0  +    0  +  &  ! group 4
+                 11                +    3  +    1  +  &  ! group 5
+                 12                +    7  +    1  +  &  ! group 6 (extra contributions below)
+                  5                +    4  +    1  +  &  ! group 7
+                  5                +    2  +    0  +  &  ! group 8
+                  5                +    0  +    0  +  &  ! group 9
+             NOEXTR                +    0  +    0        ! group 10
 
        ! Extra contributions to NRQMAX from group 3
        DO IFJ=1,5
-          IF ( FLGRDALL( 3,IFJ)) then
-             NRQMAX = NRQMAX +  E3DF(3,IFJ) - E3DF(2,IFJ) + 1
-          end IF
+          IF ( FLGRDALL( 3,IFJ)) NRQMAX = NRQMAX +               &
+               E3DF(3,IFJ) - E3DF(2,IFJ) + 1
        END DO
        ! Extra contributions to NRQMAX from group 6
-       IF ( FLGRDALL( 6,9)) then
-          NRQMAX = NRQMAX + P2MSF(3) - P2MSF(2) + 1
-       end IF
+       IF ( FLGRDALL( 6,9)) NRQMAX = NRQMAX +               &
+            P2MSF(3) - P2MSF(2) + 1
        IF ( FLGRDALL( 6, 8) ) NRQMAX = NRQMAX + 2*NK
        IF ( FLGRDALL( 6,12) ) NRQMAX = NRQMAX + 2*NK
        !
@@ -2372,7 +2368,7 @@ CONTAINS
        !
        ! 1.a Sends of fields
        !
-       IH = 0
+       IH     = 0
        !
        IF ( IAPROC .LE. NAPROC ) THEN
           IT     = IT0
@@ -3161,7 +3157,8 @@ CONTAINS
                   IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
              if (w3_mpit_flag) then
                 WRITE (NDST,9011) IH, ' 6/13', IROOT, IT, IRQGO(IH), IERR
-
+             end if
+             if (w3_cesmcoupled_flag) then
                 IF ( FLGRDALL( 6, 14) ) THEN
                    IH     = IH + 1
                    IT     = IT + 1
@@ -3171,1035 +3168,1036 @@ CONTAINS
                 if (w3_mpit_flag) then
                    WRITE (NDST,9011) IH, ' 6/14', IROOT, IT, IRQGO(IH), IERR
                 end if
-
-             END IF
-             !
-             IF ( FLGRDALL( 7, 1) ) THEN
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (ABA   (1),NSEALM , MPI_REAL, IROOT,   &
-                     IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 7/01', IROOT, IT, IRQGO(IH), IERR
-                end if
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (ABD   (1),NSEALM , MPI_REAL, IROOT,   &
-                     IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 7/01', IROOT, IT, IRQGO(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLGRDALL( 7, 2) ) THEN
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (UBA   (1),NSEALM , MPI_REAL, IROOT,   &
-                     IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 7/02', IROOT, IT, IRQGO(IH), IERR
-                end if
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (UBD   (1),NSEALM , MPI_REAL, IROOT,   &
-                     IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 7/02', IROOT, IT, IRQGO(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLGRDALL( 7, 3) ) THEN
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (BEDFORMS(1,1),NSEALM , MPI_REAL,      &
-                     IROOT, IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 7/03', IROOT, IT, IRQGO(IH), IERR
-                end if
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (BEDFORMS(1,2),NSEALM , MPI_REAL,      &
-                     IROOT, IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 7/03', IROOT, IT, IRQGO(IH), IERR
-                end if
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (BEDFORMS(1,3),NSEALM , MPI_REAL,      &
-                     IROOT, IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 7/03', IROOT, IT, IRQGO(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLGRDALL( 7, 4) ) THEN
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (PHIBBL(1),NSEALM , MPI_REAL, IROOT,   &
-                     IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 7/04', IROOT, IT, IRQGO(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLGRDALL( 7, 5) ) THEN
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (TAUBBL(1,1),NSEALM , MPI_REAL,        &
-                     IROOT, IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 7/05', IROOT, IT, IRQGO(IH), IERR
-                end if
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (TAUBBL(1,2),NSEALM , MPI_REAL,        &
-                     IROOT, IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 7/05', IROOT, IT, IRQGO(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLGRDALL( 8, 1) ) THEN
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (MSSX  (1),NSEALM , MPI_REAL, IROOT,   &
-                     IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 8/01', IROOT, IT, IRQGO(IH), IERR
-                end if
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (MSSY  (1),NSEALM , MPI_REAL, IROOT,   &
-                     IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 8/01', IROOT, IT, IRQGO(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLGRDALL( 8, 2) ) THEN
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (MSCX  (1),NSEALM , MPI_REAL, IROOT,   &
-                     IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 8/02', IROOT, IT, IRQGO(IH), IERR
-                end if
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (MSCY  (1),NSEALM , MPI_REAL, IROOT,   &
-                     IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 8/02', IROOT, IT, IRQGO(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLGRDALL( 8, 3) ) THEN
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (MSSD  (1),NSEALM , MPI_REAL, IROOT,    &
-                     IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 8/03', IROOT, IT, IRQGO(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLGRDALL( 8, 4) ) THEN
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (MSCD  (1),NSEALM , MPI_REAL, IROOT,    &
-                     IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 8/04', IROOT, IT, IRQGO(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLGRDALL( 8, 5) ) THEN
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (QP    (1),NSEALM , MPI_REAL, IROOT,    &
-                     IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 8/05', IROOT, IT, IRQGO(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLGRDALL( 9, 1) ) THEN
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (DTDYN(1),NSEALM , MPI_REAL, IROOT,    &
-                     IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 9/01', IROOT, IT, IRQGO(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLGRDALL( 9, 2) ) THEN
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (FCUT (1),NSEALM , MPI_REAL, IROOT,    &
-                     IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 9/02', IROOT, IT, IRQGO(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLGRDALL( 9, 3) ) THEN
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (CFLXYMAX(1),NSEALM , MPI_REAL, IROOT, &
-                     IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 9/03', IROOT, IT, IRQGO(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLGRDALL( 9, 4) ) THEN
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (CFLTHMAX(1),NSEALM , MPI_REAL, IROOT, &
-                     IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 9/04', IROOT, IT, IRQGO(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLGRDALL( 9, 5) ) THEN
-                IH     = IH + 1
-                IT     = IT + 1
-                CALL MPI_SEND_INIT (CFLKMAX(1),NSEALM , MPI_REAL, IROOT,  &
-                     IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 9/05', IROOT, IT, IRQGO(IH), IERR
-                end if
-             END IF
-             !
-             DO I=1, NOEXTR
-                IF ( FLGRDALL(10, I) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_SEND_INIT (USERO(1,I),NSEALM , MPI_REAL, IROOT,  &
-                        IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                   if (w3_mpit_flag) then
-                      WRITE (STRING,'(A3,I2.2)') '10/', I
-                   end if
-                END IF
-             END DO
-             !
-             NRQGO  = IH
-             if (w3_mpit_flag) then
-                WRITE (NDST,9012)
              end if
-             !
           END IF
           !
-          IF ( NRQGO .GT. NRQMAX ) THEN
-             WRITE (NDSE,1010) NRQGO, NRQMAX
-             CALL EXTCDE (10)
+          IF ( FLGRDALL( 7, 1) ) THEN
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (ABA   (1),NSEALM , MPI_REAL, IROOT,   &
+                  IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 7/01', IROOT, IT, IRQGO(IH), IERR
+             end if
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (ABD   (1),NSEALM , MPI_REAL, IROOT,   &
+                  IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 7/01', IROOT, IT, IRQGO(IH), IERR
+             end if
           END IF
           !
-          IF ( IAPROC .EQ. NAPFLD ) THEN
-             !
-             ! 1.b Setting up expanded arrays
-             !
-             IF (NAPFLD .EQ. NAPRST) THEN
-                CALL W3XDMA ( IMOD, NDSE, NDST, FLGRDARST )
-             ELSE
-                CALL W3XDMA ( IMOD, NDSE, NDST, FLGRDALL )
-             ENDIF
-             !
-             ! 1.c Receives of fields
-             !
-             CALL W3XETA ( IMOD, NDSE, NDST )
+          IF ( FLGRDALL( 7, 2) ) THEN
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (UBA   (1),NSEALM , MPI_REAL, IROOT,   &
+                  IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
              if (w3_mpit_flag) then
-                WRITE (NDST,9010) '(RECV)'
+                WRITE (NDST,9011) IH, ' 7/02', IROOT, IT, IRQGO(IH), IERR
              end if
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (UBD   (1),NSEALM , MPI_REAL, IROOT,   &
+                  IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 7/02', IROOT, IT, IRQGO(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLGRDALL( 7, 3) ) THEN
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (BEDFORMS(1,1),NSEALM , MPI_REAL,      &
+                  IROOT, IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 7/03', IROOT, IT, IRQGO(IH), IERR
+             end if
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (BEDFORMS(1,2),NSEALM , MPI_REAL,      &
+                  IROOT, IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 7/03', IROOT, IT, IRQGO(IH), IERR
+             end if
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (BEDFORMS(1,3),NSEALM , MPI_REAL,      &
+                  IROOT, IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 7/03', IROOT, IT, IRQGO(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLGRDALL( 7, 4) ) THEN
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (PHIBBL(1),NSEALM , MPI_REAL, IROOT,   &
+                  IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 7/04', IROOT, IT, IRQGO(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLGRDALL( 7, 5) ) THEN
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (TAUBBL(1,1),NSEALM , MPI_REAL,        &
+                  IROOT, IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 7/05', IROOT, IT, IRQGO(IH), IERR
+             end if
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (TAUBBL(1,2),NSEALM , MPI_REAL,        &
+                  IROOT, IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 7/05', IROOT, IT, IRQGO(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLGRDALL( 8, 1) ) THEN
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (MSSX  (1),NSEALM , MPI_REAL, IROOT,   &
+                  IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 8/01', IROOT, IT, IRQGO(IH), IERR
+             end if
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (MSSY  (1),NSEALM , MPI_REAL, IROOT,   &
+                  IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 8/01', IROOT, IT, IRQGO(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLGRDALL( 8, 2) ) THEN
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (MSCX  (1),NSEALM , MPI_REAL, IROOT,   &
+                  IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 8/02', IROOT, IT, IRQGO(IH), IERR
+             end if
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (MSCY  (1),NSEALM , MPI_REAL, IROOT,   &
+                  IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 8/02', IROOT, IT, IRQGO(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLGRDALL( 8, 3) ) THEN
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (MSSD  (1),NSEALM , MPI_REAL, IROOT,    &
+                  IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 8/03', IROOT, IT, IRQGO(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLGRDALL( 8, 4) ) THEN
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (MSCD  (1),NSEALM , MPI_REAL, IROOT,    &
+                  IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 8/04', IROOT, IT, IRQGO(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLGRDALL( 8, 5) ) THEN
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (QP    (1),NSEALM , MPI_REAL, IROOT,    &
+                  IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 8/05', IROOT, IT, IRQGO(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLGRDALL( 9, 1) ) THEN
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (DTDYN(1),NSEALM , MPI_REAL, IROOT,    &
+                  IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 9/01', IROOT, IT, IRQGO(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLGRDALL( 9, 2) ) THEN
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (FCUT (1),NSEALM , MPI_REAL, IROOT,    &
+                  IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 9/02', IROOT, IT, IRQGO(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLGRDALL( 9, 3) ) THEN
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (CFLXYMAX(1),NSEALM , MPI_REAL, IROOT, &
+                  IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 9/03', IROOT, IT, IRQGO(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLGRDALL( 9, 4) ) THEN
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (CFLTHMAX(1),NSEALM , MPI_REAL, IROOT, &
+                  IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 9/04', IROOT, IT, IRQGO(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLGRDALL( 9, 5) ) THEN
+             IH     = IH + 1
+             IT     = IT + 1
+             CALL MPI_SEND_INIT (CFLKMAX(1),NSEALM , MPI_REAL, IROOT,  &
+                  IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 9/05', IROOT, IT, IRQGO(IH), IERR
+             end if
+          END IF
+          !
+          DO I=1, NOEXTR
+             IF ( FLGRDALL(10, I) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_SEND_INIT (USERO(1,I),NSEALM , MPI_REAL, IROOT,  &
+                     IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+                if (w3_mpit_flag) then
+                   WRITE (STRING,'(A3,I2.2)') '10/', I
+                   WRITE (NDST,9011) IH, STRING, IROOT, IT, IRQGO(IH), IERR
+                end if
+             END IF
+          END DO
+          !
+          NRQGO  = IH
+          if (w3_mpit_flag) then
+             WRITE (NDST,9012)
+             WRITE (NDST,9013) NRQGO, NRQMAX
+          end if
+          !
+       END IF
+       !
+       IF ( NRQGO .GT. NRQMAX ) THEN
+          WRITE (NDSE,1010) NRQGO, NRQMAX
+          CALL EXTCDE (10)
+       END IF
+       !
+       IF ( IAPROC .EQ. NAPFLD ) THEN
+          !
+          ! 1.b Setting up expanded arrays
+          !
+          IF (NAPFLD .EQ. NAPRST) THEN
+             CALL W3XDMA ( IMOD, NDSE, NDST, FLGRDARST )
+          ELSE
+             CALL W3XDMA ( IMOD, NDSE, NDST, FLGRDALL )
+          ENDIF
+          !
+          ! 1.c Receives of fields
+          !
+          CALL W3XETA ( IMOD, NDSE, NDST )
+          if (w3_mpit_flag) then
+             WRITE (NDST,9010) '(RECV)'
+          end if
+          !
+          IH     = 0
+          !
+          DO I0=1, NAPROC
+             IT     = IT0
+             IFROM  = I0 - 1
              !
-             IH     = 0
+             IF ( FLGRDALL( 1, 12) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (ICEF (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 1/09', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
              !
-             DO I0=1, NAPROC
-                IT     = IT0
-                IFROM  = I0 - 1
-                !
-                IF ( FLGRDALL( 1, 12) ) THEN
+             IF ( FLGRDALL( 2, 1) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (HS   (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 2/01', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 2, 2) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (WLM  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 2/02', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 2, 3) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (T02  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 2/03', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 2, 4) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (T0M1  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 2/04', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 2, 5) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (T01(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 2/05', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 2, 6) .OR. FLGRDALL( 2,18) ) THEN
+                ! TP output shares FP0 internal field with FP
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (FP0  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 2/06', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 2, 7) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (THM  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 2/07', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 2, 8) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (THS  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 2/08', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 2, 9) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (THP0 (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 2/09', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 2, 10) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (HSIG (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 2/10', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 2, 11) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (STMAXE (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 2/11', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 2, 12) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (STMAXD(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 2/12', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 2, 13) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (HMAXE (I0),1,WW3_FIELD_VEC, IFROM, IT, &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 2/13', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 2, 14) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (HCMAXE(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 2/14', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 2, 15) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (HMAXD (I0),1,WW3_FIELD_VEC, IFROM, IT, &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 2/15', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 2, 16) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (HCMAXD(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 2/16', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 2, 17) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (WBT(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 2/17', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 2, 19) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (WNMEAN(I0),1,WW3_FIELD_VEC, IFROM, IT, &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 2/19', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 3, 1) ) THEN
+                DO IK=E3DF(2,1),E3DF(3,1)
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (ICEF (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (EF(I0,IK),1,WW3_FIELD_VEC, IFROM, IT,&
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 1/09', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, 'EF', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 2, 1) ) THEN
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 3, 2) ) THEN
+                DO IK=E3DF(2,2),E3DF(3,2)
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (HS   (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (TH1M(I0,IK),1,WW3_FIELD_VEC, IFROM, IT,&
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 2/01', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, 'TH1M', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 2, 2) ) THEN
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 3, 3) ) THEN
+                DO IK=E3DF(2,3),E3DF(3,3)
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (WLM  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (STH1M(I0,IK),1,WW3_FIELD_VEC, IFROM, IT,&
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 2/02', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, 'STH1M', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 2, 3) ) THEN
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 3, 4) ) THEN
+                DO IK=E3DF(2,4),E3DF(3,4)
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (T02  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (TH2M(I0,IK),1,WW3_FIELD_VEC, IFROM, IT,&
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 2/03', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, 'TH2M', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 2, 4) ) THEN
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 3, 5) ) THEN
+                DO IK=E3DF(2,5),E3DF(3,5)
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (T0M1  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (STH2M(I0,IK),1,WW3_FIELD_VEC, IFROM, IT,&
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 2/04', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, 'STH2M', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 2, 5) ) THEN
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 4, 1) ) THEN
+                DO K=0, NOSWLL
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (T01(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (PHS(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 2/05', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, ' 4/01', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 2, 6) .OR. FLGRDALL( 2,18) ) THEN
-                   ! TP output shares FP0 internal field with FP
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 4, 2) ) THEN
+                DO K=0, NOSWLL
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (FP0  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (PTP(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 2/06', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, ' 4/02', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 2, 7) ) THEN
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 4, 3) ) THEN
+                DO K=0, NOSWLL
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (THM  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (PLP(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 2/07', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, ' 4/03', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 2, 8) ) THEN
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 4, 4) ) THEN
+                DO K=0, NOSWLL
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (THS  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (PDIR(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 2/08', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, ' 4/04', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 2, 9) ) THEN
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 4, 5) ) THEN
+                DO K=0, NOSWLL
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (THP0 (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (PSI(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 2/09', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, ' 4/05', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 2, 10) ) THEN
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 4, 6) ) THEN
+                DO K=0, NOSWLL
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (HSIG (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (PWS(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 2/10', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, ' 4/06', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 2, 11) ) THEN
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 4, 7) ) THEN
+                DO K=0, NOSWLL
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (STMAXE (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (PTHP0(I0,K),1,WW3_FIELD_VEC, IFROM, IT,&
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 2/11', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, ' 4/07', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 2, 12) ) THEN
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 4, 8) ) THEN
+                DO K=0, NOSWLL
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (STMAXD(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (PQP(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 2/12', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, ' 4/08', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 2, 13) ) THEN
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 4, 9) ) THEN
+                DO K=0, NOSWLL
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (HMAXE (I0),1,WW3_FIELD_VEC, IFROM, IT, &
+                   CALL MPI_RECV_INIT (PPE(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 2/13', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, ' 4/09', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 2, 14) ) THEN
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 4,10) ) THEN
+                DO K=0, NOSWLL
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (HCMAXE(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (PGW(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 2/14', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, ' 4/10', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 2, 15) ) THEN
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 4,11) ) THEN
+                DO K=0, NOSWLL
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (HMAXD (I0),1,WW3_FIELD_VEC, IFROM, IT, &
+                   CALL MPI_RECV_INIT (PSW(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 2/15', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, ' 4/11', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 2, 16) ) THEN
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 4,12) ) THEN
+                DO K=0, NOSWLL
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (HCMAXD(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (PTM1(I0,K),1,WW3_FIELD_VEC, IFROM, IT,&
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 2/16', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, ' 4/12', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 2, 17) ) THEN
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 4,13) ) THEN
+                DO K=0, NOSWLL
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (WBT(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (PT1(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 2/17', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, ' 4/13', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 2, 19) ) THEN
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 4,14) ) THEN
+                DO K=0, NOSWLL
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (WNMEAN(I0),1,WW3_FIELD_VEC, IFROM, IT, &
+                   CALL MPI_RECV_INIT (PT2(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 2/19', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, ' 4/14', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 3, 1) ) THEN
-                   DO IK=E3DF(2,1),E3DF(3,1)
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (EF(I0,IK),1,WW3_FIELD_VEC, IFROM, IT,&
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, 'EF', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 3, 2) ) THEN
-                   DO IK=E3DF(2,2),E3DF(3,2)
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (TH1M(I0,IK),1,WW3_FIELD_VEC, IFROM, IT,&
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, 'TH1M', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 3, 3) ) THEN
-                   DO IK=E3DF(2,3),E3DF(3,3)
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (STH1M(I0,IK),1,WW3_FIELD_VEC, IFROM, IT,&
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, 'STH1M', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 3, 4) ) THEN
-                   DO IK=E3DF(2,4),E3DF(3,4)
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (TH2M(I0,IK),1,WW3_FIELD_VEC, IFROM, IT,&
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, 'TH2M', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 3, 5) ) THEN
-                   DO IK=E3DF(2,5),E3DF(3,5)
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (STH2M(I0,IK),1,WW3_FIELD_VEC, IFROM, IT,&
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, 'STH2M', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 4, 1) ) THEN
-                   DO K=0, NOSWLL
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (PHS(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, ' 4/01', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 4, 2) ) THEN
-                   DO K=0, NOSWLL
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (PTP(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, ' 4/02', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 4, 3) ) THEN
-                   DO K=0, NOSWLL
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (PLP(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, ' 4/03', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 4, 4) ) THEN
-                   DO K=0, NOSWLL
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (PDIR(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, ' 4/04', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 4, 5) ) THEN
-                   DO K=0, NOSWLL
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (PSI(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, ' 4/05', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 4, 6) ) THEN
-                   DO K=0, NOSWLL
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (PWS(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, ' 4/06', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 4, 7) ) THEN
-                   DO K=0, NOSWLL
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (PTHP0(I0,K),1,WW3_FIELD_VEC, IFROM, IT,&
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, ' 4/07', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 4, 8) ) THEN
-                   DO K=0, NOSWLL
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (PQP(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, ' 4/08', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 4, 9) ) THEN
-                   DO K=0, NOSWLL
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (PPE(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, ' 4/09', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 4,10) ) THEN
-                   DO K=0, NOSWLL
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (PGW(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, ' 4/10', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 4,11) ) THEN
-                   DO K=0, NOSWLL
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (PSW(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, ' 4/11', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 4,12) ) THEN
-                   DO K=0, NOSWLL
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (PTM1(I0,K),1,WW3_FIELD_VEC, IFROM, IT,&
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, ' 4/12', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 4,13) ) THEN
-                   DO K=0, NOSWLL
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (PT1(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, ' 4/13', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 4,14) ) THEN
-                   DO K=0, NOSWLL
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (PT2(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, ' 4/14', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 4,15) ) THEN
-                   DO K=0, NOSWLL
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (PEP(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, ' 4/15', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 4,16) ) THEN
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 4,15) ) THEN
+                DO K=0, NOSWLL
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (PWST (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (PEP(I0,K),1,WW3_FIELD_VEC, IFROM, IT,  &
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 4/16', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, ' 4/15', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 4,17) ) THEN
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 4,16) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (PWST (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 4/16', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 4,17) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (PNR  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 4/17', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 5, 1) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (UST   (I0), 1, WW3_FIELD_VEC, IFROM,   &
+                     IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 5/01', IFROM, IT, IRQGO2(IH), IERR
+                end if
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (USTDIR(I0), 1, WW3_FIELD_VEC, IFROM,   &
+                     IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 5/01', IFROM, IT, IRQGO2(IH), IERR
+                end if
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (ASF   (I0), 1, WW3_FIELD_VEC, IFROM,   &
+                     IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 5/01', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 5, 2) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (CHARN(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 5/02', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 5, 3) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (CGE  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 5/03', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 5, 4) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (PHIAW(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 5/04', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 5, 5) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (TAUWIX(I0),1,WW3_FIELD_VEC, IFROM, IT, &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 5/05', IFROM, IT, IRQGO2(IH), IERR
+                end if
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (TAUWIY(I0),1,WW3_FIELD_VEC, IFROM, IT, &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 5/05', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 5, 6) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (TAUWNX(I0),1,WW3_FIELD_VEC, IFROM, IT, &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 5/06', IFROM, IT, IRQGO2(IH), IERR
+                end if
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (TAUWNY(I0),1,WW3_FIELD_VEC, IFROM, IT, &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 5/06', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 5, 7) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (WHITECAP(I0,1),1,WW3_FIELD_VEC, IFROM,  &
+                     IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 5/07', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 5, 8) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (WHITECAP(I0,2),1,WW3_FIELD_VEC, IFROM,  &
+                     IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 5/08', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 5, 9) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (WHITECAP(I0,3),1,WW3_FIELD_VEC, IFROM,  &
+                     IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 5/09', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 5,10) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (WHITECAP(I0,4),1,WW3_FIELD_VEC, IFROM,  &
+                     IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 5/10', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 5,11) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (TWS(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 5/11', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 6, 1) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (SXX   (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 6/01', IFROM, IT, IRQGO2(IH), IERR
+                end if
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (SYY   (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 6/01', IFROM, IT, IRQGO2(IH), IERR
+                end if
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (SXY   (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 6/01', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 6, 2) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (TAUOX (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 6/02', IFROM, IT, IRQGO2(IH), IERR
+                end if
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (TAUOY (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 6/02', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 6, 3) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (BHD(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 6/03', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 6, 4) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (PHIOC (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 6/04', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 6, 5) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (TUSX  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 6/05', IFROM, IT, IRQGO2(IH), IERR
+                end if
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (TUSY  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 6/05', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 6, 6) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (USSX  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 6/06', IFROM, IT, IRQGO2(IH), IERR
+                end if
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (USSY  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 6/06', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 6, 7) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (PRMS  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 6/07', IFROM, IT, IRQGO2(IH), IERR
+                end if
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (TPMS  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 6/07', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 6, 8) ) THEN
+                DO IK=1,2*NK
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (PNR  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (US3D(I0,IK),1,WW3_FIELD_VEC, IFROM, IT, &
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 4/17', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, 'US3D ', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 5, 1) ) THEN
+                END DO
+             END IF
+             !
+             IF (  FLGRDALL( 6, 9) ) THEN
+                DO K=P2MSF(2),P2MSF(3)
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (UST   (I0), 1, WW3_FIELD_VEC, IFROM,   &
-                        IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 5/01', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (USTDIR(I0), 1, WW3_FIELD_VEC, IFROM,   &
-                        IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 5/01', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (ASF   (I0), 1, WW3_FIELD_VEC, IFROM,   &
-                        IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 5/01', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 5, 2) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (CHARN(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (P2SMS(I0,K),1,WW3_FIELD_VEC, IFROM, IT, &
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 5/02', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, 'P3SMS', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 5, 3) ) THEN
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 6,10) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (TAUICE (I0,1),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 6/10', IFROM, IT, IRQGO2(IH), IERR
+                end if
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (TAUICE (I0,2),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 6/10', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 6,11) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (PHICE (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 6/11', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 6, 12) ) THEN
+                DO IK=1,2*NK
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (CGE  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (USSP(I0,IK),1,WW3_FIELD_VEC, IFROM, IT, &
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 5/03', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (NDST,9011) IH, 'USSP ', IFROM, IT, IRQGO2(IH), IERR
                    end if
-                END IF
-                !
-                IF ( FLGRDALL( 5, 4) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (PHIAW(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 5/04', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 5, 5) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (TAUWIX(I0),1,WW3_FIELD_VEC, IFROM, IT, &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 5/05', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (TAUWIY(I0),1,WW3_FIELD_VEC, IFROM, IT, &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 5/05', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 5, 6) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (TAUWNX(I0),1,WW3_FIELD_VEC, IFROM, IT, &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 5/06', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (TAUWNY(I0),1,WW3_FIELD_VEC, IFROM, IT, &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 5/06', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 5, 7) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (WHITECAP(I0,1),1,WW3_FIELD_VEC, IFROM,  &
-                        IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 5/07', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 5, 8) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (WHITECAP(I0,2),1,WW3_FIELD_VEC, IFROM,  &
-                        IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 5/08', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 5, 9) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (WHITECAP(I0,3),1,WW3_FIELD_VEC, IFROM,  &
-                        IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 5/09', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 5,10) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (WHITECAP(I0,4),1,WW3_FIELD_VEC, IFROM,  &
-                        IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 5/10', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 5,11) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (TWS(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 5/11', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 6, 1) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (SXX   (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 6/01', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (SYY   (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 6/01', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (SXY   (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 6/01', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 6, 2) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (TAUOX (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 6/02', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (TAUOY (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 6/02', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 6, 3) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (BHD(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 6/03', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 6, 4) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (PHIOC (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 6/04', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 6, 5) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (TUSX  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 6/05', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (TUSY  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 6/05', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 6, 6) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (USSX  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 6/06', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (USSY  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 6/06', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 6, 7) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (PRMS  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 6/07', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (TPMS  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 6/07', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 6, 8) ) THEN
-                   DO IK=1,2*NK
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (US3D(I0,IK),1,WW3_FIELD_VEC, IFROM, IT, &
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, 'US3D ', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF (  FLGRDALL( 6, 9) ) THEN
-                   DO K=P2MSF(2),P2MSF(3)
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (P2SMS(I0,K),1,WW3_FIELD_VEC, IFROM, IT, &
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, 'P3SMS', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 6,10) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (TAUICE (I0,1),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 6/10', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (TAUICE (I0,2),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 6/10', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 6,11) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (PHICE (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 6/11', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 6, 12) ) THEN
-                   DO IK=1,2*NK
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (USSP(I0,IK),1,WW3_FIELD_VEC, IFROM, IT, &
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9011) IH, 'USSP ', IFROM, IT, IRQGO2(IH), IERR
-                      end if
-                   END DO
-                END IF
-                !
-                IF ( FLGRDALL( 6, 13) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (TAUOCX(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 6/13', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (TAUOCY(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 6/13', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
+                END DO
+             END IF
+             !
+             IF ( FLGRDALL( 6, 13) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (TAUOCX(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 6/13', IFROM, IT, IRQGO2(IH), IERR
+                end if
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (TAUOCY(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 6/13', IFROM, IT, IRQGO2(IH), IERR
+                end if
                 if (w3_cesmcoupled_flag) then
                    IF ( FLGRDALL( 6, 14) ) THEN
                       IH     = IH + 1
@@ -4211,1170 +4209,1174 @@ CONTAINS
                       WRITE (NDST,9011) IH, ' 6/14', IROOT, IT, IRQGO(IH), IERR
                    end if
                 end if
-                !
-                IF ( FLGRDALL( 7, 1) ) THEN
+             END IF
+             !
+             IF ( FLGRDALL( 7, 1) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (ABA   (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 7/01', IFROM, IT, IRQGO2(IH), IERR
+                end if
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (ABD   (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 7/01', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 7, 2) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (UBA   (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 7/02', IFROM, IT, IRQGO2(IH), IERR
+                end if
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (UBD   (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 7/02', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 7, 3) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (BEDFORMS(I0,1),1,WW3_FIELD_VEC, IFROM,  &
+                     IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 7/03', IFROM, IT, IRQGO2(IH), IERR
+                end if
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (BEDFORMS(I0,2),1,WW3_FIELD_VEC, IFROM,  &
+                     IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 7/03', IFROM, IT, IRQGO2(IH), IERR
+                end if
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (BEDFORMS(I0,3),1,WW3_FIELD_VEC, IFROM,  &
+                     IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 7/03', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 7, 4) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (PHIBBL(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 7/04', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 7, 5) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (TAUBBL(I0,1),1,WW3_FIELD_VEC, IFROM,    &
+                     IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 7/05', IFROM, IT, IRQGO2(IH), IERR
+                end if
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (TAUBBL(I0,2),1,WW3_FIELD_VEC, IFROM,    &
+                     IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 7/05', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 8, 1) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (MSSX  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 8/01', IFROM, IT, IRQGO2(IH), IERR
+                end if
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (MSSY  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 8/01', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 8, 2) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (MSCX  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 8/02', IFROM, IT, IRQGO2(IH), IERR
+                end if
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (MSCY  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 8/02', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 8, 3) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (MSSD  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 8/03', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 8, 4) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (MSCD (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 8/04', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 8, 5) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (QP   (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 8/05', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 9, 1) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (DTDYN(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 9/01', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 9, 2) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (FCUT (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 9/02', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 9, 3) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (CFLXYMAX(I0),1,WW3_FIELD_VEC, IFROM, IT,&
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 9/03', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 9, 4) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (CFLTHMAX(I0),1,WW3_FIELD_VEC, IFROM, IT,&
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 9/04', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             IF ( FLGRDALL( 9, 5) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_RECV_INIT (CFLKMAX(I0),1,WW3_FIELD_VEC, IFROM, IT, &
+                     MPI_COMM_WAVE, IRQGO2(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9011) IH, ' 9/05', IFROM, IT, IRQGO2(IH), IERR
+                end if
+             END IF
+             !
+             DO I=1, NOEXTR
+                !WRITE(740+IAPROC,*) 'SECOND : I=', I, ' / ', NOEXTR, ' val=', FLGRDALL(10, I)
+                IF ( FLGRDALL(10, I) ) THEN
                    IH     = IH + 1
                    IT     = IT + 1
-                   CALL MPI_RECV_INIT (ABA   (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
+                   CALL MPI_RECV_INIT (USERO(I0,I),1,WW3_FIELD_VEC, IFROM, IT, &
                         MPI_COMM_WAVE, IRQGO2(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 7/01', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (ABD   (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 7/01', IFROM, IT, IRQGO2(IH), IERR
+                      WRITE (STRING,'(A3,I2.2)') '10/', I
+                      WRITE (NDST,9011) IH, STRING, IFROM, IT, IRQGO2(IH), IERR
                    end if
                 END IF
-                !
-                IF ( FLGRDALL( 7, 2) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (UBA   (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 7/02', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (UBD   (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 7/02', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 7, 3) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (BEDFORMS(I0,1),1,WW3_FIELD_VEC, IFROM,  &
-                        IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 7/03', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (BEDFORMS(I0,2),1,WW3_FIELD_VEC, IFROM,  &
-                        IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 7/03', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (BEDFORMS(I0,3),1,WW3_FIELD_VEC, IFROM,  &
-                        IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 7/03', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 7, 4) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (PHIBBL(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 7/04', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 7, 5) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (TAUBBL(I0,1),1,WW3_FIELD_VEC, IFROM,    &
-                        IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 7/05', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (TAUBBL(I0,2),1,WW3_FIELD_VEC, IFROM,    &
-                        IT, MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 7/05', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 8, 1) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (MSSX  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 8/01', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (MSSY  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 8/01', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 8, 2) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (MSCX  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 8/02', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (MSCY  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 8/02', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 8, 3) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (MSSD  (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 8/03', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 8, 4) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (MSCD (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 8/04', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 8, 5) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (QP   (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 8/05', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 9, 1) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (DTDYN(I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 9/01', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 9, 2) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (FCUT (I0),1,WW3_FIELD_VEC, IFROM, IT,  &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 9/02', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 9, 3) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (CFLXYMAX(I0),1,WW3_FIELD_VEC, IFROM, IT,&
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 9/03', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 9, 4) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (CFLTHMAX(I0),1,WW3_FIELD_VEC, IFROM, IT,&
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 9/04', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                IF ( FLGRDALL( 9, 5) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_RECV_INIT (CFLKMAX(I0),1,WW3_FIELD_VEC, IFROM, IT, &
-                        MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9011) IH, ' 9/05', IFROM, IT, IRQGO2(IH), IERR
-                   end if
-                END IF
-                !
-                DO I=1, NOEXTR
-                   !WRITE(740+IAPROC,*) 'SECOND : I=', I, ' / ', NOEXTR, ' val=', FLGRDALL(10, I)
-                   IF ( FLGRDALL(10, I) ) THEN
-                      IH     = IH + 1
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (USERO(I0,I),1,WW3_FIELD_VEC, IFROM, IT, &
-                           MPI_COMM_WAVE, IRQGO2(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (STRING,'(A3,I2.2)') '10/', I
-                      end if
-                   END IF
-                END DO
-                !
              END DO
              !
-             NRQGO2 = IH
-             if (w3_mpit_flag) then
-                WRITE (NDST,9012)
-             end if
-             !
-             CALL W3SETA ( IMOD, NDSE, NDST )
-             !
-          END IF
+          END DO
           !
-          IF ( NRQGO2 .GT. NRQMAX*NAPROC ) THEN
-             WRITE (NDSE,1011) NRQGO2, NRQMAX*NAPROC
-             CALL EXTCDE (11)
-          END IF
+          NRQGO2 = IH
+          if (w3_mpit_flag) then
+             WRITE (NDST,9012)
+             WRITE (NDST,9014) NRQGO2, NRQMAX*NAPROC
+          end if
+          !
+          CALL W3SETA ( IMOD, NDSE, NDST )
           !
        END IF
        !
-       ! 2.  Set-up for W3IORS ---------------------------------------------- /
-       ! 2.a General preparations
+       IF ( NRQGO2 .GT. NRQMAX*NAPROC ) THEN
+          WRITE (NDSE,1011) NRQGO2, NRQMAX*NAPROC
+          CALL EXTCDE (11)
+       END IF
        !
-       NRQRS  = 0
-       IH     = 0
-       IROOT  = NAPRST - 1
+    END IF
+    !
+    ! 2.  Set-up for W3IORS ---------------------------------------------- /
+    ! 2.a General preparations
+    !
+    NRQRS  = 0
+    IH     = 0
+    IROOT  = NAPRST - 1
+    !
+    IF ( FLOUT(4) .OR. FLOUT(8) ) THEN
+       IF (OARST) THEN
+          ALLOCATE ( OUTPTS(IMOD)%OUT4%IRQRS(34*NAPROC) )
+       ELSE
+          ALLOCATE ( OUTPTS(IMOD)%OUT4%IRQRS(3*NAPROC) )
+       ENDIF
+       IRQRS  => OUTPTS(IMOD)%OUT4%IRQRS
        !
-       IF ( FLOUT(4) .OR. FLOUT(8) ) THEN
-          IF (OARST) THEN
-             ALLOCATE ( OUTPTS(IMOD)%OUT4%IRQRS(34*NAPROC) )
-          ELSE
-             ALLOCATE ( OUTPTS(IMOD)%OUT4%IRQRS(3*NAPROC) )
-          ENDIF
-          IRQRS  => OUTPTS(IMOD)%OUT4%IRQRS
+       ! 2.b Fields at end of file (always)
+       !
+       if (w3_mpit_flag) then
+          WRITE (NDST,9020)
+       end if
+       !
+       IF ( IAPROC.NE.NAPRST .AND. IAPROC.LE.NAPROC ) THEN
           !
-          ! 2.b Fields at end of file (always)
-          !
+          IH     = IH + 1
+          IT     = IT0 + 1
+          CALL MPI_SEND_INIT (UST (IAPROC), 1, WW3_FIELD_VEC, &
+               IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
           if (w3_mpit_flag) then
-             WRITE (NDST,9020)
+             WRITE (NDST,9021) IH, 'S U*', IROOT, IT, IRQRS(IH), IERR
           end if
           !
-          IF ( IAPROC.NE.NAPRST .AND. IAPROC.LE.NAPROC ) THEN
-             !
+          IH     = IH + 1
+          IT     = IT0 + 2
+          CALL MPI_SEND_INIT (USTDIR(IAPROC), 1, WW3_FIELD_VEC, &
+               IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+          if (w3_mpit_flag) then
+             WRITE (NDST,9021) IH, 'S UD', IROOT, IT, IRQRS(IH), IERR
+          end if
+          !
+          IH     = IH + 1
+          IT     = IT0 + 3
+          CALL MPI_SEND_INIT (FPIS(IAPROC), 1, WW3_FIELD_VEC, &
+               IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+          if (w3_mpit_flag) then
+             WRITE (NDST,9021) IH, 'S FP', IROOT, IT, IRQRS(IH), IERR
+          end if
+          !
+       ELSE IF ( IAPROC .EQ. NAPRST ) THEN
+          DO I0=1, NAPROC
+             IFROM  = I0 - 1
+             IF ( I0 .NE. IAPROC ) THEN
+                !
+                IH     = IH + 1
+                IT     = IT0 + 1
+                CALL MPI_RECV_INIT (UST (I0),1,WW3_FIELD_VEC, &
+                     IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9021) IH, 'R U*', IFROM, IT, IRQRS(IH), IERR
+                end if
+                !
+                IH     = IH + 1
+                IT     = IT0 + 2
+                CALL MPI_RECV_INIT (USTDIR(I0),1,WW3_FIELD_VEC, &
+                     IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9021) IH, 'R UD', IFROM, IT, IRQRS(IH), IERR
+                end if
+                !
+                IH     = IH + 1
+                IT     = IT0 + 3
+                CALL MPI_RECV_INIT (FPIS(I0),1,WW3_FIELD_VEC, &
+                     IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9021) IH, 'R FP', IFROM, IT, IRQRS(IH), IERR
+                end if
+             END IF
+          END DO
+       END IF
+       !
+       IF (OARST) THEN
+          IF ( FLOGRR( 1, 2) ) THEN
              IH     = IH + 1
-             IT     = IT0 + 1
-             CALL MPI_SEND_INIT (UST (IAPROC), 1, WW3_FIELD_VEC, &
-                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+             IT     = IT0 + 4
+             CALL MPI_SEND_INIT (CX(IAPROC), 1, WW3_FIELD_VEC,   &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
              if (w3_mpit_flag) then
-                WRITE (NDST,9021) IH, 'S U*', IROOT, IT, IRQRS(IH), IERR
+                WRITE (NDST,9021) IH, 'S CX', IROOT, IT, IRQRS(IH), IERR
              end if
-             !
              IH     = IH + 1
-             IT     = IT0 + 2
-             CALL MPI_SEND_INIT (USTDIR(IAPROC), 1, WW3_FIELD_VEC, &
-                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+             IT     = IT0 + 5
+             CALL MPI_SEND_INIT (CY(IAPROC), 1, WW3_FIELD_VEC,   &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
              if (w3_mpit_flag) then
-                WRITE (NDST,9021) IH, 'S UD', IROOT, IT, IRQRS(IH), IERR
+                WRITE (NDST,9021) IH, 'S CY', IROOT, IT, IRQRS(IH), IERR
              end if
-             !
+          END IF
+          !
+          IF ( FLOGRR( 1, 12) ) THEN
              IH     = IH + 1
-             IT     = IT0 + 3
-             CALL MPI_SEND_INIT (FPIS(IAPROC), 1, WW3_FIELD_VEC, &
-                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+             IT     = IT0 + 6
+             CALL MPI_SEND_INIT (ICEF(IAPROC), 1, WW3_FIELD_VEC, &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S IF', IROOT, IT, IRQRS(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLOGRR( 2, 1) ) THEN
+             IH     = IH + 1
+             IT     = IT0 + 7
+             CALL MPI_SEND_INIT (HS   (1), NSEALM, MPI_REAL,     &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S HS', IROOT, IT, IRQRS(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLOGRR( 2, 2) ) THEN
+             IH     = IH + 1
+             IT     = IT0 + 8
+             CALL MPI_SEND_INIT (WLM  (1), NSEALM, MPI_REAL,     &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S WL', IROOT, IT, IRQRS(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLOGRR( 2, 4) ) THEN
+             IH     = IH + 1
+             IT     = IT0 + 9
+             CALL MPI_SEND_INIT (T0M1(1), NSEALM, MPI_REAL,      &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S T0', IROOT, IT, IRQRS(IH), IERR
+             end if
+          ENDIF
+          !
+          IF ( FLOGRR( 2, 5) ) THEN
+             IH     = IH + 1
+             IT     = IT0 + 10
+             CALL MPI_SEND_INIT (T01 (1), NSEALM, MPI_REAL,      &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S T1', IROOT, IT, IRQRS(IH), IERR
+             end if
+          ENDIF
+          !
+          IF ( FLOGRR( 2, 6) ) THEN
+             IH     = IH + 1
+             IT     = IT0 + 11
+             CALL MPI_SEND_INIT (FP0  (1), NSEALM, MPI_REAL,     &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
              if (w3_mpit_flag) then
                 WRITE (NDST,9021) IH, 'S FP', IROOT, IT, IRQRS(IH), IERR
              end if
+          END IF
+          !
+          IF ( FLOGRR( 2, 7) ) THEN
+             IH     = IH + 1
+             IT     = IT0 + 12
+             CALL MPI_SEND_INIT (THM  (1), NSEALM, MPI_REAL,     &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S TH', IROOT, IT, IRQRS(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLOGRR( 2, 19) ) THEN
+             IH     = IH + 1
+             IT     = IT0 + 13
+             CALL MPI_SEND_INIT (WNMEAN(1), NSEALM, MPI_REAL,    &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S WM', IROOT, IT, IRQRS(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLOGRR( 5, 2) ) THEN
+             IH     = IH + 1
+             IT     = IT0 + 14
+             CALL MPI_SEND_INIT (CHARN(1), NSEALM, MPI_REAL,     &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S CH', IROOT, IT, IRQRS(IH), IERR
+             end if
+          ENDIF
+          !
+          IF ( FLOGRR( 5, 5) ) THEN
+             IH     = IH + 1
+             IT     = IT0 + 15
+             CALL MPI_SEND_INIT (TAUWIX(1), NSEALM, MPI_REAL,    &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S WX', IROOT, IT, IRQRS(IH), IERR
+             end if
+             IH     = IH + 1
+             IT     = IT0 + 16
+             CALL MPI_SEND_INIT (TAUWIY(1), NSEALM, MPI_REAL,    &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S WY', IROOT, IT, IRQRS(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLOGRR( 5, 11) ) THEN
+             IH     = IH + 1
+             IT     = IT0 + 17
+             CALL MPI_SEND_INIT (TWS  (1), NSEALM, MPI_REAL,     &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S TS', IROOT, IT, IRQRS(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLOGRR( 6, 2) ) THEN
+             IH     = IH + 1
+             IT     = IT0 + 18
+             CALL MPI_SEND_INIT (TAUOX(1), NSEALM, MPI_REAL,     &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S OX', IROOT, IT, IRQRS(IH), IERR
+             end if
+             IH     = IH + 1
+             IT     = IT0 + 19
+             CALL MPI_SEND_INIT (TAUOY(1), NSEALM, MPI_REAL,     &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S OY', IROOT, IT, IRQRS(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLOGRR( 6, 3) ) THEN
+             IH     = IH + 1
+             IT     = IT0 + 20
+             CALL MPI_SEND_INIT (BHD  (1), NSEALM, MPI_REAL,     &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S BH', IROOT, IT, IRQRS(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLOGRR( 6, 4) ) THEN
+             IH     = IH + 1
+             IT     = IT0 + 21
+             CALL MPI_SEND_INIT (PHIOC(1), NSEALM, MPI_REAL,     &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S PH', IROOT, IT, IRQRS(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLOGRR( 6, 5) ) THEN
+             IH     = IH + 1
+             IT     = IT0 + 22
+             CALL MPI_SEND_INIT (TUSX (1), NSEALM, MPI_REAL,     &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S UX', IROOT, IT, IRQRS(IH), IERR
+             end if
+             IH     = IH + 1
+             IT     = IT0 + 23
+             CALL MPI_SEND_INIT (TUSY (1), NSEALM, MPI_REAL,     &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S UY', IROOT, IT, IRQRS(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLOGRR( 6, 6) ) THEN
+             IH     = IH + 1
+             IT     = IT0 + 24
+             CALL MPI_SEND_INIT (USSX (1), NSEALM, MPI_REAL,     &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S SX', IROOT, IT, IRQRS(IH), IERR
+             end if
+             IH     = IH + 1
+             IT     = IT0 + 25
+             CALL MPI_SEND_INIT (USSY (1), NSEALM, MPI_REAL,     &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S SY', IROOT, IT, IRQRS(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLOGRR( 6,10) ) THEN
+             IH     = IH + 1
+             IT     = IT0 + 26
+             CALL MPI_SEND_INIT (TAUICE(1,1), NSEALM, MPI_REAL,  &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S I1', IROOT, IT, IRQRS(IH), IERR
+             end if
+             IH     = IH + 1
+             IT     = IT0 + 27
+             CALL MPI_SEND_INIT (TAUICE(1,2), NSEALM, MPI_REAL,  &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S I2', IROOT, IT, IRQRS(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLOGRR( 6,13) ) THEN
+             IH     = IH + 1
+             IT     = IT0 + 28
+             CALL MPI_SEND_INIT (TAUOCX(1), NSEALM, MPI_REAL,    &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S TX', IROOT, IT, IRQRS(IH), IERR
+             end if
+             IH     = IH + 1
+             IT     = IT0 + 29
+             CALL MPI_SEND_INIT (TAUOCY(1), NSEALM, MPI_REAL,    &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S TY', IROOT, IT, IRQRS(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLOGRR( 7, 2) ) THEN
+             IH     = IH + 1
+             IT     = IT0 + 30
+             CALL MPI_SEND_INIT (UBA  (1), NSEALM, MPI_REAL,     &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S BA', IROOT, IT, IRQRS(IH), IERR
+             end if
+             IH     = IH + 1
+             IT     = IT0 + 31
+             CALL MPI_SEND_INIT (UBD  (1), NSEALM, MPI_REAL,     &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S BD', IROOT, IT, IRQRS(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLOGRR( 7, 4) ) THEN
+             IH     = IH + 1
+             IT     = IT0 + 32
+             CALL MPI_SEND_INIT (PHIBBL(1), NSEALM, MPI_REAL,    &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S PB', IROOT, IT, IRQRS(IH), IERR
+             end if
+          END IF
+          !
+          IF ( FLOGRR( 7, 5) ) THEN
+             IH     = IH + 1
+             IT     = IT0 + 33
+             CALL MPI_SEND_INIT (TAUBBL(1,1), NSEALM, MPI_REAL,  &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S T1', IROOT, IT, IRQRS(IH), IERR
+             end if
+             IH     = IH + 1
+             IT     = IT0 + 34
+             CALL MPI_SEND_INIT (TAUBBL(1,2), NSEALM, MPI_REAL,  &
+                  IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
+             if (w3_mpit_flag) then
+                WRITE (NDST,9021) IH, 'S T2', IROOT, IT, IRQRS(IH), IERR
+             end if
+          END IF
+          !
+          IF ( IAPROC .EQ. NAPRST ) THEN
+             IF (NAPRST .NE. NAPFLD) CALL W3XDMA ( IMOD, NDSE, NDST, FLOGRR )
+             CALL W3XETA ( IMOD, NDSE, NDST )
              !
-          ELSE IF ( IAPROC .EQ. NAPRST ) THEN
              DO I0=1, NAPROC
                 IFROM  = I0 - 1
-                IF ( I0 .NE. IAPROC ) THEN
-                   !
+                IF ( FLOGRR( 1, 2) ) THEN
                    IH     = IH + 1
-                   IT     = IT0 + 1
-                   CALL MPI_RECV_INIT (UST (I0),1,WW3_FIELD_VEC, &
+                   IT     = IT0 + 4
+                   CALL MPI_RECV_INIT (CX   (I0),1,WW3_FIELD_VEC, &
                         IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9021) IH, 'R U*', IFROM, IT, IRQRS(IH), IERR
+                      WRITE (NDST,9021) IH, 'R CX', IFROM, IT, IRQRS(IH), IERR
                    end if
-                   !
-                   IH     = IH + 1
-                   IT     = IT0 + 2
-                   CALL MPI_RECV_INIT (USTDIR(I0),1,WW3_FIELD_VEC, &
+                   IH     = IT0 + 5
+                   IT     = IT + 1
+                   CALL MPI_RECV_INIT (CY   (I0),1,WW3_FIELD_VEC, &
                         IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
                    if (w3_mpit_flag) then
-                      WRITE (NDST,9021) IH, 'R UD', IFROM, IT, IRQRS(IH), IERR
+                      WRITE (NDST,9021) IH, 'R CY', IFROM, IT, IRQRS(IH), IERR
                    end if
-                   !
+                END IF
+                !
+                IF ( FLOGRR( 1, 12) ) THEN
                    IH     = IH + 1
-                   IT     = IT0 + 3
-                   CALL MPI_RECV_INIT (FPIS(I0),1,WW3_FIELD_VEC, &
+                   IT     = IT0 + 6
+                   CALL MPI_RECV_INIT (ICEF (I0),1,WW3_FIELD_VEC, &
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R IF', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                END IF
+                !
+                IF ( FLOGRR( 2, 1) ) THEN
+                   IH     = IH + 1
+                   IT     = IT0 + 7
+                   CALL MPI_RECV_INIT (HS   (I0),1,WW3_FIELD_VEC, &
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R HS', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                END IF
+                !
+                IF ( FLOGRR( 2, 2) ) THEN
+                   IH     = IH + 1
+                   IT     = IT0 + 8
+                   CALL MPI_RECV_INIT (WLM  (I0),1,WW3_FIELD_VEC,  &
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R WL', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                END IF
+                !
+                IF ( FLOGRR( 2, 4) ) THEN
+                   IH     = IH + 1
+                   IT     = IT0 + 9
+                   CALL MPI_RECV_INIT (T0M1(I0),1,WW3_FIELD_VEC,  &
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R T0', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                ENDIF
+                !
+                IF ( FLOGRR( 2, 5) ) THEN
+                   IH     = IH + 1
+                   IT     = IT0 + 10
+                   CALL MPI_RECV_INIT (T01 (I0),1,WW3_FIELD_VEC,  &
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R T1', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                ENDIF
+                !
+                IF ( FLOGRR( 2, 6) ) THEN
+                   IH     = IH + 1
+                   IT     = IT0 + 11
+                   CALL MPI_RECV_INIT (FP0  (I0),1,WW3_FIELD_VEC, &
                         IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
                    if (w3_mpit_flag) then
                       WRITE (NDST,9021) IH, 'R FP', IFROM, IT, IRQRS(IH), IERR
                    end if
                 END IF
+                !
+                IF ( FLOGRR( 2, 7) ) THEN
+                   IH     = IH + 1
+                   IT     = IT0 + 12
+                   CALL MPI_RECV_INIT (THM  (I0),1,WW3_FIELD_VEC, &
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R TH', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                END IF
+                !
+                IF ( FLOGRR( 2, 19) ) THEN
+                   IH     = IH + 1
+                   IT     = IT0 + 13
+                   CALL MPI_RECV_INIT (WNMEAN(I0),1,WW3_FIELD_VEC, &
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R WM', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                END IF
+                !
+                IF ( FLOGRR( 5, 2) ) THEN
+                   IH     = IH + 1
+                   IT     = IT0 + 14
+                   CALL MPI_RECV_INIT (CHARN(I0),1,WW3_FIELD_VEC, &
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R CH', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                ENDIF
+                !
+                IF ( FLOGRR( 5, 5) ) THEN
+                   IH     = IH + 1
+                   IT     = IT0 + 15
+                   CALL MPI_RECV_INIT (TAUWIX(I0),1,WW3_FIELD_VEC,&
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R WX', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                   IH     = IH + 1
+                   IT     = IT0 + 16
+                   CALL MPI_RECV_INIT (TAUWIY(I0),1,WW3_FIELD_VEC,&
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R WY', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                END IF
+                !
+                IF ( FLOGRR( 5,11) ) THEN
+                   IH     = IH + 1
+                   IT     = IT0 + 17
+                   CALL MPI_RECV_INIT (TWS  (I0),1,WW3_FIELD_VEC, &
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R TS', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                END IF
+                !
+                IF ( FLOGRR( 6, 2) ) THEN
+                   IH     = IH + 1
+                   IT     = IT0 + 18
+                   CALL MPI_RECV_INIT (TAUOX(I0),1,WW3_FIELD_VEC, &
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R OX', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                   IH     = IH + 1
+                   IT     = IT0 + 19
+                   CALL MPI_RECV_INIT (TAUOY(I0),1,WW3_FIELD_VEC, &
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R OY', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                END IF
+                !
+                IF ( FLOGRR( 6, 3) ) THEN
+                   IH     = IH + 1
+                   IT     = IT0 + 20
+                   CALL MPI_RECV_INIT (BHD  (I0),1,WW3_FIELD_VEC, &
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R BH', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                END IF
+                !
+                IF ( FLOGRR( 6, 4) ) THEN
+                   IH     = IH + 1
+                   IT     = IT0 + 21
+                   CALL MPI_RECV_INIT (PHIOC(I0),1,WW3_FIELD_VEC, &
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R PH', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                END IF
+                !
+                IF ( FLOGRR( 6, 5) ) THEN
+                   IH     = IH + 1
+                   IT     = IT0 + 22
+                   CALL MPI_RECV_INIT (TUSX (I0),1,WW3_FIELD_VEC, &
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R UX', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                   IH     = IH + 1
+                   IT     = IT0 + 23
+                   CALL MPI_RECV_INIT (TUSY (I0),1,WW3_FIELD_VEC, &
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R UY', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                END IF
+                !
+                IF ( FLOGRR( 6, 6) ) THEN
+                   IH     = IH + 1
+                   IT     = IT0 + 24
+                   CALL MPI_RECV_INIT (USSX (I0),1,WW3_FIELD_VEC, &
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R SX', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                   IH     = IH + 1
+                   IT     = IT0 + 25
+                   CALL MPI_RECV_INIT (USSY (I0),1,WW3_FIELD_VEC, &
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R SY', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                END IF
+                !
+                IF ( FLOGRR( 6,10) ) THEN
+                   IH     = IH + 1
+                   IT     = IT0 + 26
+                   CALL MPI_RECV_INIT (TAUICE(I0,1),1,WW3_FIELD_VEC,&
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R I1', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                   IH     = IH + 1
+                   IT     = IT0 + 27
+                   CALL MPI_RECV_INIT (TAUICE(I0,2),1,WW3_FIELD_VEC,&
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R I2', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                END IF
+                !
+                IF ( FLOGRR( 6,13) ) THEN
+                   IH     = IH + 1
+                   IT     = IT0 + 28
+                   CALL MPI_RECV_INIT (TAUOCX(I0),1,WW3_FIELD_VEC,&
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R SX', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                   IH     = IH + 1
+                   IT     = IT0 + 29
+                   CALL MPI_RECV_INIT (TAUOCY(I0),1,WW3_FIELD_VEC,&
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R SY', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                END IF
+                !
+                IF ( FLOGRR( 7, 2) ) THEN
+                   IH     = IH + 1
+                   IT     = IT0 + 30
+                   CALL MPI_RECV_INIT (UBA  (I0),1,WW3_FIELD_VEC, &
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R BA', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                   IH     = IH + 1
+                   IT     = IT0 + 31
+                   CALL MPI_RECV_INIT (UBD  (I0),1,WW3_FIELD_VEC, &
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R BD', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                END IF
+                !
+                IF ( FLOGRR( 7, 4) ) THEN
+                   IH     = IH + 1
+                   IT     = IT0 + 32
+                   CALL MPI_RECV_INIT (PHIBBL(I0),1,WW3_FIELD_VEC,&
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R PB', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                END IF
+                !
+                IF ( FLOGRR( 7, 5) ) THEN
+                   IH     = IH + 1
+                   IT     = IT0 + 33
+                   CALL MPI_RECV_INIT (TAUBBL(I0,1),1,WW3_FIELD_VEC,&
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R T1', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                   IH     = IH + 1
+                   IT     = IT0 + 34
+                   CALL MPI_RECV_INIT (TAUBBL(I0,2),1,WW3_FIELD_VEC,&
+                        IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9021) IH, 'R T2', IFROM, IT, IRQRS(IH), IERR
+                   end if
+                END IF
              END DO
+             !
+             CALL W3SETA ( IMOD, NDSE, NDST )
           END IF
+       END IF
+       !
+       NRQRS  = IH
+       IF (OARST) THEN
+          IT0    = IT0 + 34
+       ELSE
+          IT0    = IT0 + 3
+       ENDIF
+       !
+       if (w3_mpit_flag) then
+          WRITE (NDST,9022)
+          WRITE (NDST,9023) NRQRS
+       end if
+       !
+       ! 2.c Data server mode
+       !
+       IF ( IOSTYP .GT. 0 ) THEN
           !
-          IF (OARST) THEN
-             IF ( FLOGRR( 1, 2) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 4
-                CALL MPI_SEND_INIT (CX(IAPROC), 1, WW3_FIELD_VEC,   &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S CX', IROOT, IT, IRQRS(IH), IERR
-                end if
-                IH     = IH + 1
-                IT     = IT0 + 5
-                CALL MPI_SEND_INIT (CY(IAPROC), 1, WW3_FIELD_VEC,   &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S CY', IROOT, IT, IRQRS(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLOGRR( 1, 12) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 6
-                CALL MPI_SEND_INIT (ICEF(IAPROC), 1, WW3_FIELD_VEC, &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S IF', IROOT, IT, IRQRS(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLOGRR( 2, 1) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 7
-                CALL MPI_SEND_INIT (HS   (1), NSEALM, MPI_REAL,     &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S HS', IROOT, IT, IRQRS(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLOGRR( 2, 2) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 8
-                CALL MPI_SEND_INIT (WLM  (1), NSEALM, MPI_REAL,     &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S WL', IROOT, IT, IRQRS(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLOGRR( 2, 4) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 9
-                CALL MPI_SEND_INIT (T0M1(1), NSEALM, MPI_REAL,      &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S T0', IROOT, IT, IRQRS(IH), IERR
-                end if
-             ENDIF
-             !
-             IF ( FLOGRR( 2, 5) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 10
-                CALL MPI_SEND_INIT (T01 (1), NSEALM, MPI_REAL,      &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S T1', IROOT, IT, IRQRS(IH), IERR
-                end if
-             ENDIF
-             !
-             IF ( FLOGRR( 2, 6) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 11
-                CALL MPI_SEND_INIT (FP0  (1), NSEALM, MPI_REAL,     &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S FP', IROOT, IT, IRQRS(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLOGRR( 2, 7) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 12
-                CALL MPI_SEND_INIT (THM  (1), NSEALM, MPI_REAL,     &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S TH', IROOT, IT, IRQRS(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLOGRR( 2, 19) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 13
-                CALL MPI_SEND_INIT (WNMEAN(1), NSEALM, MPI_REAL,    &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S WM', IROOT, IT, IRQRS(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLOGRR( 5, 2) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 14
-                CALL MPI_SEND_INIT (CHARN(1), NSEALM, MPI_REAL,     &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S CH', IROOT, IT, IRQRS(IH), IERR
-                end if
-             ENDIF
-             !
-             IF ( FLOGRR( 5, 5) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 15
-                CALL MPI_SEND_INIT (TAUWIX(1), NSEALM, MPI_REAL,    &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S WX', IROOT, IT, IRQRS(IH), IERR
-                end if
-                IH     = IH + 1
-                IT     = IT0 + 16
-                CALL MPI_SEND_INIT (TAUWIY(1), NSEALM, MPI_REAL,    &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S WY', IROOT, IT, IRQRS(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLOGRR( 5, 11) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 17
-                CALL MPI_SEND_INIT (TWS  (1), NSEALM, MPI_REAL,     &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S TS', IROOT, IT, IRQRS(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLOGRR( 6, 2) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 18
-                CALL MPI_SEND_INIT (TAUOX(1), NSEALM, MPI_REAL,     &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S OX', IROOT, IT, IRQRS(IH), IERR
-                end if
-                IH     = IH + 1
-                IT     = IT0 + 19
-                CALL MPI_SEND_INIT (TAUOY(1), NSEALM, MPI_REAL,     &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S OY', IROOT, IT, IRQRS(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLOGRR( 6, 3) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 20
-                CALL MPI_SEND_INIT (BHD  (1), NSEALM, MPI_REAL,     &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S BH', IROOT, IT, IRQRS(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLOGRR( 6, 4) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 21
-                CALL MPI_SEND_INIT (PHIOC(1), NSEALM, MPI_REAL,     &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S PH', IROOT, IT, IRQRS(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLOGRR( 6, 5) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 22
-                CALL MPI_SEND_INIT (TUSX (1), NSEALM, MPI_REAL,     &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S UX', IROOT, IT, IRQRS(IH), IERR
-                end if
-                IH     = IH + 1
-                IT     = IT0 + 23
-                CALL MPI_SEND_INIT (TUSY (1), NSEALM, MPI_REAL,     &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S UY', IROOT, IT, IRQRS(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLOGRR( 6, 6) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 24
-                CALL MPI_SEND_INIT (USSX (1), NSEALM, MPI_REAL,     &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S SX', IROOT, IT, IRQRS(IH), IERR
-                end if
-                IH     = IH + 1
-                IT     = IT0 + 25
-                CALL MPI_SEND_INIT (USSY (1), NSEALM, MPI_REAL,     &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S SY', IROOT, IT, IRQRS(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLOGRR( 6,10) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 26
-                CALL MPI_SEND_INIT (TAUICE(1,1), NSEALM, MPI_REAL,  &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S I1', IROOT, IT, IRQRS(IH), IERR
-                end if
-                IH     = IH + 1
-                IT     = IT0 + 27
-                CALL MPI_SEND_INIT (TAUICE(1,2), NSEALM, MPI_REAL,  &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S I2', IROOT, IT, IRQRS(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLOGRR( 6,13) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 28
-                CALL MPI_SEND_INIT (TAUOCX(1), NSEALM, MPI_REAL,    &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S TX', IROOT, IT, IRQRS(IH), IERR
-                end if
-                IH     = IH + 1
-                IT     = IT0 + 29
-                CALL MPI_SEND_INIT (TAUOCY(1), NSEALM, MPI_REAL,    &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S TY', IROOT, IT, IRQRS(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLOGRR( 7, 2) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 30
-                CALL MPI_SEND_INIT (UBA  (1), NSEALM, MPI_REAL,     &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S BA', IROOT, IT, IRQRS(IH), IERR
-                end if
-                IH     = IH + 1
-                IT     = IT0 + 31
-                CALL MPI_SEND_INIT (UBD  (1), NSEALM, MPI_REAL,     &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S BD', IROOT, IT, IRQRS(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLOGRR( 7, 4) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 32
-                CALL MPI_SEND_INIT (PHIBBL(1), NSEALM, MPI_REAL,    &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S PB', IROOT, IT, IRQRS(IH), IERR
-                end if
-             END IF
-             !
-             IF ( FLOGRR( 7, 5) ) THEN
-                IH     = IH + 1
-                IT     = IT0 + 33
-                CALL MPI_SEND_INIT (TAUBBL(1,1), NSEALM, MPI_REAL,  &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S T1', IROOT, IT, IRQRS(IH), IERR
-                end if
-                IH     = IH + 1
-                IT     = IT0 + 34
-                CALL MPI_SEND_INIT (TAUBBL(1,2), NSEALM, MPI_REAL,  &
-                     IROOT, IT, MPI_COMM_WAVE, IRQRS(IH), IERR)
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9021) IH, 'S T2', IROOT, IT, IRQRS(IH), IERR
-                end if
-             END IF
-             !
-             IF ( IAPROC .EQ. NAPRST ) THEN
-                IF (NAPRST .NE. NAPFLD) CALL W3XDMA ( IMOD, NDSE, NDST, FLOGRR )
-                CALL W3XETA ( IMOD, NDSE, NDST )
-                !
-                DO I0=1, NAPROC
-                   IFROM  = I0 - 1
-                   IF ( FLOGRR( 1, 2) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 4
-                      CALL MPI_RECV_INIT (CX   (I0),1,WW3_FIELD_VEC, &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R CX', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                      IH     = IT0 + 5
-                      IT     = IT + 1
-                      CALL MPI_RECV_INIT (CY   (I0),1,WW3_FIELD_VEC, &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R CY', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   END IF
-                   !
-                   IF ( FLOGRR( 1, 12) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 6
-                      CALL MPI_RECV_INIT (ICEF (I0),1,WW3_FIELD_VEC, &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R IF', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   END IF
-                   !
-                   IF ( FLOGRR( 2, 1) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 7
-                      CALL MPI_RECV_INIT (HS   (I0),1,WW3_FIELD_VEC, &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R HS', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   END IF
-                   !
-                   IF ( FLOGRR( 2, 2) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 8
-                      CALL MPI_RECV_INIT (WLM  (I0),1,WW3_FIELD_VEC,  &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R WL', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   END IF
-                   !
-                   IF ( FLOGRR( 2, 4) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 9
-                      CALL MPI_RECV_INIT (T0M1(I0),1,WW3_FIELD_VEC,  &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R T0', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   ENDIF
-                   !
-                   IF ( FLOGRR( 2, 5) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 10
-                      CALL MPI_RECV_INIT (T01 (I0),1,WW3_FIELD_VEC,  &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R T1', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   ENDIF
-                   !
-                   IF ( FLOGRR( 2, 6) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 11
-                      CALL MPI_RECV_INIT (FP0  (I0),1,WW3_FIELD_VEC, &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R FP', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   END IF
-                   !
-                   IF ( FLOGRR( 2, 7) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 12
-                      CALL MPI_RECV_INIT (THM  (I0),1,WW3_FIELD_VEC, &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R TH', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   END IF
-                   !
-                   IF ( FLOGRR( 2, 19) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 13
-                      CALL MPI_RECV_INIT (WNMEAN(I0),1,WW3_FIELD_VEC, &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R WM', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   END IF
-                   !
-                   IF ( FLOGRR( 5, 2) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 14
-                      CALL MPI_RECV_INIT (CHARN(I0),1,WW3_FIELD_VEC, &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R CH', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   ENDIF
-                   !
-                   IF ( FLOGRR( 5, 5) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 15
-                      CALL MPI_RECV_INIT (TAUWIX(I0),1,WW3_FIELD_VEC,&
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R WX', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                      IH     = IH + 1
-                      IT     = IT0 + 16
-                      CALL MPI_RECV_INIT (TAUWIY(I0),1,WW3_FIELD_VEC,&
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R WY', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   END IF
-                   !
-                   IF ( FLOGRR( 5,11) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 17
-                      CALL MPI_RECV_INIT (TWS  (I0),1,WW3_FIELD_VEC, &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R TS', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   END IF
-                   !
-                   IF ( FLOGRR( 6, 2) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 18
-                      CALL MPI_RECV_INIT (TAUOX(I0),1,WW3_FIELD_VEC, &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R OX', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                      IH     = IH + 1
-                      IT     = IT0 + 19
-                      CALL MPI_RECV_INIT (TAUOY(I0),1,WW3_FIELD_VEC, &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R OY', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   END IF
-                   !
-                   IF ( FLOGRR( 6, 3) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 20
-                      CALL MPI_RECV_INIT (BHD  (I0),1,WW3_FIELD_VEC, &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R BH', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   END IF
-                   !
-                   IF ( FLOGRR( 6, 4) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 21
-                      CALL MPI_RECV_INIT (PHIOC(I0),1,WW3_FIELD_VEC, &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R PH', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   END IF
-                   !
-                   IF ( FLOGRR( 6, 5) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 22
-                      CALL MPI_RECV_INIT (TUSX (I0),1,WW3_FIELD_VEC, &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R UX', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                      IH     = IH + 1
-                      IT     = IT0 + 23
-                      CALL MPI_RECV_INIT (TUSY (I0),1,WW3_FIELD_VEC, &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R UY', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   END IF
-                   !
-                   IF ( FLOGRR( 6, 6) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 24
-                      CALL MPI_RECV_INIT (USSX (I0),1,WW3_FIELD_VEC, &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R SX', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                      IH     = IH + 1
-                      IT     = IT0 + 25
-                      CALL MPI_RECV_INIT (USSY (I0),1,WW3_FIELD_VEC, &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R SY', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   END IF
-                   !
-                   IF ( FLOGRR( 6,10) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 26
-                      CALL MPI_RECV_INIT (TAUICE(I0,1),1,WW3_FIELD_VEC,&
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R I1', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                      IH     = IH + 1
-                      IT     = IT0 + 27
-                      CALL MPI_RECV_INIT (TAUICE(I0,2),1,WW3_FIELD_VEC,&
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R I2', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   END IF
-                   !
-                   IF ( FLOGRR( 6,13) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 28
-                      CALL MPI_RECV_INIT (TAUOCX(I0),1,WW3_FIELD_VEC,&
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R SX', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                      IH     = IH + 1
-                      IT     = IT0 + 29
-                      CALL MPI_RECV_INIT (TAUOCY(I0),1,WW3_FIELD_VEC,&
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R SY', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   END IF
-                   !
-                   IF ( FLOGRR( 7, 2) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 30
-                      CALL MPI_RECV_INIT (UBA  (I0),1,WW3_FIELD_VEC, &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R BA', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                      IH     = IH + 1
-                      IT     = IT0 + 31
-                      CALL MPI_RECV_INIT (UBD  (I0),1,WW3_FIELD_VEC, &
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R BD', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   END IF
-                   !
-                   IF ( FLOGRR( 7, 4) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 32
-                      CALL MPI_RECV_INIT (PHIBBL(I0),1,WW3_FIELD_VEC,&
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R PB', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   END IF
-                   !
-                   IF ( FLOGRR( 7, 5) ) THEN
-                      IH     = IH + 1
-                      IT     = IT0 + 33
-                      CALL MPI_RECV_INIT (TAUBBL(I0,1),1,WW3_FIELD_VEC,&
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R T1', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                      IH     = IH + 1
-                      IT     = IT0 + 34
-                      CALL MPI_RECV_INIT (TAUBBL(I0,2),1,WW3_FIELD_VEC,&
-                           IFROM, IT, MPI_COMM_WAVE, IRQRS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9021) IH, 'R T2', IFROM, IT, IRQRS(IH), IERR
-                      end if
-                   END IF
-                END DO
-                !
-                CALL W3SETA ( IMOD, NDSE, NDST )
-             END IF
-          END IF
-          !
-          NRQRS  = IH
-          IF (OARST) THEN
-             IT0    = IT0 + 34
-          ELSE
-             IT0    = IT0 + 3
-          ENDIF
+          NBLKRS = 10
+          RSBLKS = MAX ( 5 , NSEALM/NBLKRS )
+          IF ( NBLKRS*RSBLKS .LT. NSEALM ) RSBLKS = RSBLKS + 1
+          NBLKRS = 1 + (NSEALM-1)/RSBLKS
           !
           if (w3_mpit_flag) then
-             WRITE (NDST,9022)
+             WRITE (NDST,9025) RSBLKS, NBLKRS
           end if
+          IH     = 0
           !
-          ! 2.c Data server mode
-          !
-          IF ( IOSTYP .GT. 0 ) THEN
-             !
-             NBLKRS = 10
-             RSBLKS = MAX ( 5 , NSEALM/NBLKRS )
-             IF ( NBLKRS*RSBLKS .LT. NSEALM ) RSBLKS = RSBLKS + 1
-             NBLKRS = 1 + (NSEALM-1)/RSBLKS
-             !
-             if (w3_mpit_flag) then
-                WRITE (NDST,9025) RSBLKS, NBLKRS
-             end if
-             IH     = 0
-             !
-             IF ((.NOT. LPDLIB).OR.(GTYPE .NE. UNGTYPE)) THEN
-                IF ( IAPROC .NE. NAPRST ) THEN
-                   !
-                   ALLOCATE ( OUTPTS(IMOD)%OUT4%IRQRSS(NBLKRS) )
-                   IRQRSS => OUTPTS(IMOD)%OUT4%IRQRSS
-                   !
-                   DO IB=1, NBLKRS
-                      IH     = IH + 1
-                      IT     = IT0 + 3 + IB
-                      JSEA0  = 1 + (IB-1)*RSBLKS
-                      JSEAN  = MIN ( NSEALM , IB*RSBLKS )
-                      NSEAB  = 1 + JSEAN - JSEA0
-                      CALL MPI_SEND_INIT (VA(1,JSEA0), NSPEC*NSEAB,&
-                           MPI_REAL, IROOT, IT, MPI_COMM_WAVE,    &
-                           IRQRSS(IH), IERR )
-                      if (w3_mpit_flag) then
-                         WRITE (NDST,9026) IH, 'S', IB, IROOT, IT,   &
-                              IRQRSS(IH), IERR, NSEAB
-                      end if
+          IF ((.NOT. LPDLIB).OR.(GTYPE .NE. UNGTYPE)) THEN
+             IF ( IAPROC .NE. NAPRST ) THEN
+                !
+                ALLOCATE ( OUTPTS(IMOD)%OUT4%IRQRSS(NBLKRS) )
+                IRQRSS => OUTPTS(IMOD)%OUT4%IRQRSS
+                !
+                DO IB=1, NBLKRS
+                   IH     = IH + 1
+                   IT     = IT0 + 3 + IB
+                   JSEA0  = 1 + (IB-1)*RSBLKS
+                   JSEAN  = MIN ( NSEALM , IB*RSBLKS )
+                   NSEAB  = 1 + JSEAN - JSEA0
+                   CALL MPI_SEND_INIT (VA(1,JSEA0), NSPEC*NSEAB,&
+                        MPI_REAL, IROOT, IT, MPI_COMM_WAVE,    &
+                        IRQRSS(IH), IERR )
+                   if (w3_mpit_flag) then
+                      WRITE (NDST,9026) IH, 'S', IB, IROOT, IT,   &
+                           IRQRSS(IH), IERR, NSEAB
+                   end if
+                END DO
+                !
+             ELSE
+                !
+                ALLOCATE                                       &
+                     ( OUTPTS(IMOD)%OUT4%IRQRSS(NAPROC*NBLKRS) ,     &
+                     OUTPTS(IMOD)%OUT4%VAAUX(NSPEC,2*RSBLKS,NAPROC) )
+                !
+                IRQRSS => OUTPTS(IMOD)%OUT4%IRQRSS
+                VAAUX  => OUTPTS(IMOD)%OUT4%VAAUX
+                DO IB=1, NBLKRS
+                   IT     = IT0 + 3 + IB
+                   JSEA0  = 1 + (IB-1)*RSBLKS
+                   JSEAN  = MIN ( NSEALM , IB*RSBLKS )
+                   NSEAB  = 1 + JSEAN - JSEA0
+                   DO I0=1, NAPROC
+                      IF ( I0 .NE. NAPRST ) THEN
+                         IH     = IH + 1
+                         IFROM  = I0 - 1
+                         IBOFF  = MOD(IB-1,2)*RSBLKS
+                         CALL MPI_RECV_INIT (VAAUX(1,1+IBOFF,I0),&
+                              NSPEC*NSEAB, MPI_REAL, IFROM, IT,  &
+                              MPI_COMM_WAVE, IRQRSS(IH), IERR )
+                         if (w3_mpit_flag) then
+                            WRITE (NDST,9026) IH, 'R', IB, IFROM, &
+                                 IT, IRQRSS(IH), IERR, NSEAB
+                         end if
+                      END IF
                    END DO
-                   !
-                ELSE
-                   !
-                   ALLOCATE                                       &
-                        ( OUTPTS(IMOD)%OUT4%IRQRSS(NAPROC*NBLKRS) ,     &
-                        OUTPTS(IMOD)%OUT4%VAAUX(NSPEC,2*RSBLKS,NAPROC) )
-                   !
-                   IRQRSS => OUTPTS(IMOD)%OUT4%IRQRSS
-                   VAAUX  => OUTPTS(IMOD)%OUT4%VAAUX
-                   DO IB=1, NBLKRS
-                      IT     = IT0 + 3 + IB
-                      JSEA0  = 1 + (IB-1)*RSBLKS
-                      JSEAN  = MIN ( NSEALM , IB*RSBLKS )
-                      NSEAB  = 1 + JSEAN - JSEA0
-                      DO I0=1, NAPROC
-                         IF ( I0 .NE. NAPRST ) THEN
-                            IH     = IH + 1
-                            IFROM  = I0 - 1
-                            IBOFF  = MOD(IB-1,2)*RSBLKS
-                            CALL MPI_RECV_INIT (VAAUX(1,1+IBOFF,I0),&
-                                 NSPEC*NSEAB, MPI_REAL, IFROM, IT,  &
-                                 MPI_COMM_WAVE, IRQRSS(IH), IERR )
-                            if (w3_mpit_flag) then
-                               WRITE (NDST,9026) IH, 'R', IB, IFROM, &
-                                    IT, IRQRSS(IH), IERR, NSEAB
-                            end if
-                         END IF
-                      END DO
-                   END DO
-                   !
-                END IF
+                END DO
+                !
              END IF
-             !
-             if (w3_mpit_flag) then
-                WRITE (NDST,9027)
-                WRITE (NDST,9028) IH
-             end if
-             IT0    = IT0 + NBLKRS
-             !
           END IF
+          !
+          if (w3_mpit_flag) then
+             WRITE (NDST,9027)
+             WRITE (NDST,9028) IH
+          end if
+          IT0    = IT0 + NBLKRS
           !
        END IF
        !
-       ! 3.  Set-up for W3IOBC ( SENDs ) ------------------------------------ /
+    END IF
+    !
+    ! 3.  Set-up for W3IOBC ( SENDs ) ------------------------------------ /
+    !
+    NRQBP  = 0
+    NRQBP2 = 0
+    IH     = 0
+    IT     = IT0
+    IROOT  = NAPBPT - 1
+    !
+    IF ( FLOUT(5) ) THEN
+       ALLOCATE ( OUTPTS(IMOD)%OUT5%IRQBP1(NBO2(NFBPO)),      &
+            OUTPTS(IMOD)%OUT5%IRQBP2(NBO2(NFBPO)) )
+       IRQBP1 => OUTPTS(IMOD)%OUT5%IRQBP1
+       IRQBP2 => OUTPTS(IMOD)%OUT5%IRQBP2
        !
-       NRQBP  = 0
-       NRQBP2 = 0
-       IH     = 0
-       IT     = IT0
-       IROOT  = NAPBPT - 1
+       ! 3.a Loops over files and points
        !
-       IF ( FLOUT(5) ) THEN
-          ALLOCATE ( OUTPTS(IMOD)%OUT5%IRQBP1(NBO2(NFBPO)),      &
-               OUTPTS(IMOD)%OUT5%IRQBP2(NBO2(NFBPO)) )
-          IRQBP1 => OUTPTS(IMOD)%OUT5%IRQBP1
-          IRQBP2 => OUTPTS(IMOD)%OUT5%IRQBP2
+       if (w3_mpit_flag) then
+          WRITE (NDST,9030) 'MPI_SEND_INIT'
+       end if
+       !
+       DO J=1, NFBPO
+          DO I=NBO2(J-1)+1, NBO2(J)
+             !
+             IT     = IT + 1
+             !
+             ! 3.b Residence processor of point
+             !
+             ISEA   = ISBPO(I)
+             CALL INIT_GET_JSEA_ISPROC(ISEA, JSEA, ISPROC)
+             !
+             ! 3.c If stored locally, send data
+             !
+             IF ( IAPROC .EQ. ISPROC ) THEN
+                IH     = IH + 1
+                CALL MPI_SEND_INIT (VA(1,JSEA),NSPEC,MPI_REAL, &
+                     IROOT, IT, MPI_COMM_WAVE, IRQBP1(IH), IERR)
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9031) IH, I, J, IROOT, IT, IRQBP1(IH), IERR
+                end if
+             END IF
+             !
+          END DO
+       END DO
+       !
+       ! ... End of loops 4.a
+       !
+       NRQBP  = IH
+       !
+       if (w3_mpit_flag) then
+          WRITE (NDST,9032)
+          WRITE (NDST,9033) NRQBP
+       end if
+       !
+       ! 3.d Set-up for W3IOBC ( RECVs ) ------------------------------------ /
+       !
+       IF ( IAPROC .EQ. NAPBPT ) THEN
           !
-          ! 3.a Loops over files and points
+          IH     = 0
+          IT     = IT0
+          !
+          ! 3.e Loops over files and points
           !
           if (w3_mpit_flag) then
-             WRITE (NDST,9030) 'MPI_SEND_INIT'
+             WRITE (NDST,9030) 'MPI_RECV_INIT'
           end if
           !
           DO J=1, NFBPO
              DO I=NBO2(J-1)+1, NBO2(J)
                 !
-                IT = IT + 1
-                !
-                ! 3.b Residence processor of point
+                ! 3.f Residence processor of point
                 !
                 ISEA   = ISBPO(I)
                 CALL INIT_GET_JSEA_ISPROC(ISEA, JSEA, ISPROC)
                 !
-                ! 3.c If stored locally, send data
+                ! 3.g Receive in correct array
                 !
-                IF ( IAPROC .EQ. ISPROC ) THEN
-                   IH     = IH + 1
-                   CALL MPI_SEND_INIT (VA(1,JSEA),NSPEC,MPI_REAL, &
-                        IROOT, IT, MPI_COMM_WAVE, IRQBP1(IH), IERR)
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9031) IH, I, J, IROOT, IT, IRQBP1(IH), IERR
-                   end if
-                END IF
+                IH     = IH + 1
+                IT     = IT + 1
+                ITARG  = ISPROC - 1
+                CALL MPI_RECV_INIT (ABPOS(1,IH),NSPEC,MPI_REAL,&
+                     ITARG, IT, MPI_COMM_WAVE, IRQBP2(IH), IERR)
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9031) IH, I, J, ITARG, IT, IRQBP2(IH), IERR
+                end if
                 !
              END DO
           END DO
           !
-          ! ... End of loops 4.a
+          NRQBP2 = IH
           !
-          NRQBP  = IH
+          ! ... End of loops 4.e
           !
           if (w3_mpit_flag) then
              WRITE (NDST,9032)
-             WRITE (NDST,9033) NRQBP
+             WRITE (NDST,9033) NRQBP2
           end if
           !
-          ! 3.d Set-up for W3IOBC ( RECVs ) ------------------------------------ /
-          !
-          IF ( IAPROC .EQ. NAPBPT ) THEN
-             !
-             IH     = 0
-             IT     = IT0
-             !
-             ! 3.e Loops over files and points
-             !
-             if (w3_mpit_flag) then
-                WRITE (NDST,9030) 'MPI_RECV_INIT'
-             end if
-             !
-             DO J=1, NFBPO
-                DO I=NBO2(J-1)+1, NBO2(J)
-                   !
-                   ! 3.f Residence processor of point
-                   !
-                   ISEA   = ISBPO(I)
-                   CALL INIT_GET_JSEA_ISPROC(ISEA, JSEA, ISPROC)
-                   !
-                   ! 3.g Receive in correct array
-                   !
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   ITARG  = ISPROC - 1
-                   CALL MPI_RECV_INIT (ABPOS(1,IH),NSPEC,MPI_REAL,&
-                        ITARG, IT, MPI_COMM_WAVE, IRQBP2(IH), IERR)
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9031) IH, I, J, ITARG, IT, IRQBP2(IH), IERR
-                   end if
-                   !
-                END DO
-             END DO
-             !
-             NRQBP2 = IH
-             !
-             ! ... End of loops 4.e
-             !
-             if (w3_mpit_flag) then
-                WRITE (NDST,9032)
-                WRITE (NDST,9033) NRQBP2
-             end if
-             !
-          END IF
-          !
-          IT0    = IT0 + NBO2(NFBPO)
-          !
        END IF
+       !
+       IT0    = IT0 + NBO2(NFBPO)
+       !
+    END IF
+    !
+    if (w3_mpit_flag) then
+       WRITE (NDST,*)
+    end if
+    !
+    ! 4.  Set-up for W3IOTR ---------------------------------------------- /
+    !
+    IH     = 0
+    IROOT  = NAPTRK - 1
+    !
+    IF ( FLOUT(3) ) THEN
+       !
+       ! 4.a U*
        !
        if (w3_mpit_flag) then
-          WRITE (NDST,*)
+          WRITE (NDST,9040)
        end if
        !
-       ! 4.  Set-up for W3IOTR ---------------------------------------------- /
-       !
-       IH     = 0
-       IROOT  = NAPTRK - 1
-       !
-       IF ( FLOUT(3) ) THEN
-          !
-          ! 4.a U*
-          !
+       IF ( IAPROC .NE. NAPTRK ) THEN
+          ALLOCATE ( OUTPTS(IMOD)%OUT3%IRQTR(2) )
+          IRQTR  => OUTPTS(IMOD)%OUT3%IRQTR
+          IH     = IH + 1
+          IT     = IT0 + 1
+          CALL MPI_SEND_INIT (UST   (IAPROC),1,WW3_FIELD_VEC,&
+               IROOT, IT, MPI_COMM_WAVE, IRQTR(IH), IERR )
           if (w3_mpit_flag) then
-             WRITE (NDST,9040)
+             WRITE (NDST,9041) IH, 'S U*', IROOT, IT, IRQTR(IH), IERR
           end if
-          !
-          IF ( IAPROC .NE. NAPTRK ) THEN
-             ALLOCATE ( OUTPTS(IMOD)%OUT3%IRQTR(2) )
-             IRQTR  => OUTPTS(IMOD)%OUT3%IRQTR
-             IH     = IH + 1
-             IT     = IT0 + 1
-             CALL MPI_SEND_INIT (UST   (IAPROC),1,WW3_FIELD_VEC,&
-                  IROOT, IT, MPI_COMM_WAVE, IRQTR(IH), IERR )
-             if (w3_mpit_flag) then
-                WRITE (NDST,9041) IH, 'S U*', IROOT, IT, IRQTR(IH), IERR
-             end if
-             IH     = IH + 1
-             IT     = IT0 + 2
-             CALL MPI_SEND_INIT (USTDIR(IAPROC),1,WW3_FIELD_VEC,&
-                  IROOT, IT, MPI_COMM_WAVE, IRQTR(IH), IERR )
-             if (w3_mpit_flag) then
-                WRITE (NDST,9041) IH, 'S U*', IROOT, IT, IRQTR(IH), IERR
-             end if
-          ELSE
-             ALLOCATE ( OUTPTS(IMOD)%OUT3%IRQTR(2*NAPROC) )
-             IRQTR  => OUTPTS(IMOD)%OUT3%IRQTR
-             DO I0=1, NAPROC
-                IFROM  = I0 - 1
-                IF ( I0 .NE. IAPROC ) THEN
-                   IH     = IH + 1
-                   IT     = IT0 + 1
-                   CALL MPI_RECV_INIT(UST   (I0),1,WW3_FIELD_VEC,&
-                        IFROM,IT,MPI_COMM_WAVE, IRQTR(IH), IERR)
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9041) IH, 'R U*', IFROM, IT, IRQTR(IH), IERR
-                   end if
-                   IH     = IH + 1
-                   IT     = IT0 + 2
-                   CALL MPI_RECV_INIT(USTDIR(I0),1,WW3_FIELD_VEC,&
-                        IFROM,IT,MPI_COMM_WAVE, IRQTR(IH), IERR)
-                   if (w3_mpit_flag) then
-                      WRITE (NDST,9041) IH, 'R U*', IFROM, IT, IRQTR(IH), IERR
-                   end if
-                END IF
-             END DO
-          END IF
-          !
-          NRQTR  = IH
-          IT0    = IT0 + 2
-          !
+          IH     = IH + 1
+          IT     = IT0 + 2
+          CALL MPI_SEND_INIT (USTDIR(IAPROC),1,WW3_FIELD_VEC,&
+               IROOT, IT, MPI_COMM_WAVE, IRQTR(IH), IERR )
           if (w3_mpit_flag) then
-             WRITE (NDST,9042)
-             WRITE (NDST,9043) NRQTR
+             WRITE (NDST,9041) IH, 'S U*', IROOT, IT, IRQTR(IH), IERR
           end if
-          !
+       ELSE
+          ALLOCATE ( OUTPTS(IMOD)%OUT3%IRQTR(2*NAPROC) )
+          IRQTR  => OUTPTS(IMOD)%OUT3%IRQTR
+          DO I0=1, NAPROC
+             IFROM  = I0 - 1
+             IF ( I0 .NE. IAPROC ) THEN
+                IH     = IH + 1
+                IT     = IT0 + 1
+                CALL MPI_RECV_INIT(UST   (I0),1,WW3_FIELD_VEC,&
+                     IFROM,IT,MPI_COMM_WAVE, IRQTR(IH), IERR)
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9041) IH, 'R U*', IFROM, IT, IRQTR(IH), IERR
+                end if
+                IH     = IH + 1
+                IT     = IT0 + 2
+                CALL MPI_RECV_INIT(USTDIR(I0),1,WW3_FIELD_VEC,&
+                     IFROM,IT,MPI_COMM_WAVE, IRQTR(IH), IERR)
+                if (w3_mpit_flag) then
+                   WRITE (NDST,9041) IH, 'R U*', IFROM, IT, IRQTR(IH), IERR
+                end if
+             END IF
+          END DO
        END IF
        !
-       ! 5.  Set-up remaining counters -------------------------------------- /
+       NRQTR  = IH
+       IT0    = IT0 + 2
        !
-       IT0PRT = IT0
-       IT0PNT = IT0PRT + 2*NAPROC
-       IT0TRK = IT0PNT + 5000
-
-    end IF  ! IF ((FLOUT(1) .OR. FLOUT(7)).and.(.not. LPDLIB .or. (GTYPE .ne. UNGTYPE).or. .TRUE.)) THEN
+       if (w3_mpit_flag) then
+          WRITE (NDST,9042)
+          WRITE (NDST,9043) NRQTR
+       end if
+       !
+    END IF
+    !
+    ! 5.  Set-up remaining counters -------------------------------------- /
+    !
+    IT0PRT = IT0
+    IT0PNT = IT0PRT + 2*NAPROC
+    IT0TRK = IT0PNT + 5000
 #endif
-! End of #ifdef W3_MPI
+! end if W3_MPI ifdef
     !
     RETURN
     !
     !     Formats :
     !
+    ! W3_MPI
 1010 FORMAT (/' *** ERROR W3MPIO : ARRAY IRQGO TOO SMALL *** '/)
 1011 FORMAT (/' *** ERROR W3MPIO : ARRAY IRQGO2 TOO SMALL *** '/)
     !
+    ! W3_MPIT
 9010 FORMAT (/' TEST W3MPIO: COMMUNICATION CALLS FOR W3IOGO ',A/ &
          ' +------+-------+------+------+--------------+'/ &
          ' |  IH  |   ID  | TARG |  TAG |   handle err |'/ &
@@ -5384,6 +5386,7 @@ CONTAINS
 9013 FORMAT ( ' TEST W3MPIO: NRQGO :',2I10)
 9014 FORMAT ( ' TEST W3MPIO: NRQGO2:',2I10)
     !
+    ! W3_MPIT
 9020 FORMAT (/' TEST W3MPIO: COMM. CALLS FOR W3IORS (F)'/      &
          ' +------+------+------+------+--------------+'/       &
          ' |  IH  |  ID  | TARG |  TAG |   handle err |'/       &
@@ -5392,6 +5395,7 @@ CONTAINS
 9022 FORMAT ( ' +------+------+------+------+--------------+')
 9023 FORMAT ( ' TEST W3MPIO: NRQRS :',I10)
     !
+    ! W3_MPIT
 9025 FORMAT (/' TEST W3MPIO: COMM. CALLS FOR W3IORS (S)'/      &
          '              BLOCK SIZE / BLOCKS : ',2I6/      &
          ' +------+------+------+------+--------------+---------+'/ &
@@ -5403,6 +5407,7 @@ CONTAINS
          ' +------+------+------+------+--------------+---------+')
 9028 FORMAT ( ' TEST W3MPIO: IHMAX :',I10)
     !
+    ! W3_MPIT
 9030 FORMAT (/' TEST W3MPIO: ',A,' CALLS FOR W3IOBC'/          &
          ' +------+------+---+------+------+--------------+'/   &
          ' |  IH  | IPT  | F | TARG |  TAG |   handle err |'/   &
@@ -5413,6 +5418,7 @@ CONTAINS
 9033 FORMAT ( ' TEST W3MPIO: NRQBC :',I10)
 9034 FORMAT ( ' TEST W3MPIO: TOTAL :',I10)
     !
+    ! W3_MPIT
 9040 FORMAT (/' TEST W3MPIO: COMMUNICATION CALLS FOR W3IOTR'/  &
          ' +------+------+------+------+--------------+'/       &
          ' |  IH  |  ID  | TARG |  TAG |   handle err |'/       &
@@ -5494,7 +5500,6 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     USE W3SERVMD, ONLY: STRACE                                    ! W3_S
     USE W3SERVMD, ONLY: EXTCDE                                    ! W3_MPI 
-    !/
     USE W3GDATMD, ONLY: NX, NY, NSPEC, MAPFS                      ! W3_MPI
     USE W3WDATMD, ONLY: VA                                        ! W3_MPI
     USE W3ADATMD, ONLY: MPI_COMM_WAVE, SPPNT                      ! W3_MPI
@@ -5517,11 +5522,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER       :: IH, IROOT, I, J, IT, IT0, JSEA ! W3_MPI
-    INTEGER       :: IERR, ITARG, IX(4), IY(4)      ! W3_MPI
-    INTEGER       :: K, IS(4), IP(4)                ! W3_MPI
-    INTEGER       :: itout
-    INTEGER, SAVE :: IENT                           ! W3_S
+    INTEGER :: IH, IROOT, I, J, IT, IT0, JSEA ! W3_MPI
+    INTEGER :: IERR, ITARG, IX(4), IY(4)      ! W3_MPI
+    INTEGER :: K, IS(4), IP(4)                ! W3_MPI
+    INTEGER :: itout
+    INTEGER :: IENT                           ! W3_S
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -5544,7 +5549,7 @@ CONTAINS
     IROOT  = NAPPNT - 1
     !
     ALLOCATE ( OUTPTS(IMOD)%OUT2%IRQPO1(4*NOPTS),              &
-               OUTPTS(IMOD)%OUT2%IRQPO2(4*NOPTS) )
+         OUTPTS(IMOD)%OUT2%IRQPO2(4*NOPTS) )
     IRQPO1 => OUTPTS(IMOD)%OUT2%IRQPO1
     IRQPO2 => OUTPTS(IMOD)%OUT2%IRQPO2
     O2IRQI = .TRUE.
@@ -5662,13 +5667,16 @@ CONTAINS
     !
     IT0TRK = IT0
 #endif
+! endif W3_MPI ifdef
     !
     RETURN
     !
     !     Formats :
     !
+    ! W3_MPI
 1001 FORMAT (/' *** ERROR W3MPIP : ARRAYS ALREADY ALLOCATED *** '/)
     !
+    ! W3_MPIT
 9010 FORMAT (/' TEST W3MPIP: ',A,' CALLS FOR W3IOPO'/          &
          ' +------+------+---+------+------+--------------+'/   &
          ' |  IH  | IPT  | J | TARG |  TAG |   handle err |'/   &

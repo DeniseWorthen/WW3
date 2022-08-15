@@ -410,7 +410,7 @@ MODULE WMMDATMD
      ! W3_PDLIB
      INTEGER, POINTER :: SEA_IPGL(:)         !< SEA_IPGL
      INTEGER, POINTER :: SEA_IPGL_TO_PROC(:) !< SEA_IPGL_TO_PROC
-                                                  !
+     !
      LOGICAL          :: MINIT               !< MINIT
      LOGICAL          :: MSKINI              !< MSKINI
      LOGICAL          :: FLLSTL              !< FLLSTL
@@ -424,13 +424,13 @@ MODULE WMMDATMD
   END TYPE MDATA
   !
   TYPE BPST
-     INTEGER          :: NRQBPS   !< NRQBPS ! W3_MPI
-     INTEGER          :: STIME(2)   !< STIME
-     INTEGER          :: VTIME(2)   !< VTIME
+     INTEGER          :: NRQBPS      !< NRQBPS ! W3_MPI
+     INTEGER          :: STIME(2)    !< STIME
+     INTEGER          :: VTIME(2)    !< VTIME
      INTEGER, POINTER :: IRQBPS(:)   !< IRQBPS ! W3_MPI
      REAL, POINTER    :: SBPI(:,:)   !< SBPI
-     REAL, POINTER    :: TSTORE(:,:)   !< TSTORE ! W3_MPI
-     LOGICAL          :: INIT   !< INIT
+     REAL, POINTER    :: TSTORE(:,:) !< TSTORE ! W3_MPI
+     LOGICAL          :: INIT        !< INIT
   END TYPE BPST
   !
   TYPE HGST
@@ -528,6 +528,8 @@ MODULE WMMDATMD
   LOGICAL, POINTER :: FLDAT2              !< FLDAT2
 
   LOGICAL, POINTER :: FBCAST              !< FBCAST ! W3_MPI
+  !
+  logical          :: mpi_comm_grd_not_null  !< true if (MPI_COMM_GRD .NE. MPI_COMM_NULL)
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
@@ -633,18 +635,18 @@ CONTAINS
     ! 2.  Set variable and allocate arrays
     !
     ALLOCATE ( MDATAS(NGRIDS),        &
-               BPSTGE(NGRIDS,NGRIDS), &
-               HGSTGE(NGRIDS,NGRIDS), &
-               EQSTGE(NGRIDS,NGRIDS), &
-               BCDUMP(NRGRD),         &
-               IFLSTI(NRINP),         &
-               IFLSTL(NRINP),         &
-               IFLSTR(NRINP), STAT=ISTAT )
+         BPSTGE(NGRIDS,NGRIDS), &
+         HGSTGE(NGRIDS,NGRIDS), &
+         EQSTGE(NGRIDS,NGRIDS), &
+         BCDUMP(NRGRD),         &
+         IFLSTI(NRINP),         &
+         IFLSTL(NRINP),         &
+         IFLSTR(NRINP), STAT=ISTAT )
     CHECK_ALLOC_STATUS ( ISTAT )
     if (w3_mpi_flag) then
        ALLOCATE ( NBISTA(NGRIDS), &
-                  HGHSTA(NGRIDS), &
-                  EQLSTA(NGRIDS), STAT=ISTAT )
+            HGHSTA(NGRIDS), &
+            EQLSTA(NGRIDS), STAT=ISTAT )
        CHECK_ALLOC_STATUS ( ISTAT )
     end if
     NMDATA = NGRIDS
@@ -721,8 +723,8 @@ CONTAINS
     ! Formats
     !
 1001 FORMAT (/' *** ERROR WMNDAT : NGRIDS NOT YET SET *** '/         &
-              '                    NGRIDS = ',I10/                   &
-              '                    RUN W3NMOD FIRST'/)
+         '                    NGRIDS = ',I10/                   &
+         '                    RUN W3NMOD FIRST'/)
     !
 9000 FORMAT (' TEST WMNDAT : SETTING UP FOR ',I4,' GRIDS') ! W3_T
     !/

@@ -10,9 +10,9 @@ MODULE W3SERVMD
   !/                  +-----------------------------------+
   !/
   !/    For update log see individual subroutines.
-  !/    12-Jun-2012 : Add /RTD option or rotated grid option. 
+  !/    12-Jun-2012 : Add /RTD option or rotated grid option.
   !/                  (Jian-Guo Li)                       ( version 4.06 )
-  !/    11-Nov-2013 : SMC and rotated grid incorporated in the main 
+  !/    11-Nov-2013 : SMC and rotated grid incorporated in the main
   !/                  trunk                               ( version 4.13 )
   !/    18-Aug-2016 : Add dist_sphere: angular distance   ( version 5.11 )
   !/    01-Mar-2016 : Added W3THRTN and W3XYRTN for post  ( version 6.02 )
@@ -21,7 +21,7 @@ MODULE W3SERVMD
   !/
   !/    Copyright 2009-2012 National Weather Service (NWS),
   !/       National Oceanic and Atmospheric Administration.  All rights
-  !/       reserved.  WAVEWATCH III is a trademark of the NWS. 
+  !/       reserved.  WAVEWATCH III is a trademark of the NWS.
   !/       No unauthorized use without permission.
   !/
   !  1. Purpose :
@@ -45,17 +45,17 @@ MODULE W3SERVMD
   !     ----------------------------------------------------------------
   !      ITRACE    Subr. Public   (Re-) Initialization for STRACE.
   !      STRACE    Subr. Public   Enable subroutine tracing, usually
-  !                               activated with the !/S switch.   
+  !                               activated with the !/S switch.
   !      NEXTLN    Subr. Public   Get to next line in input command file.
   !      W3S2XY    Subr. Public   Grid conversion routine.
   !      EJ5P      R.F.  Public   Five parameter JONSWAP spectrum.
   !      WWDATE    Subr. Public   Get system date.
   !      WWTIME    Subr. Public   Get system time.
   !      EXTCDE    Subr. Public   Abort program with exit code.
-  !     Four subs for rotated grid are appended to this module.  As they 
-  !     are shared with SMC grid, they are not quoted by option /RTD but 
+  !     Four subs for rotated grid are appended to this module.  As they
+  !     are shared with SMC grid, they are not quoted by option /RTD but
   !     are available for general use.     JGLi12Jun2012
-  !     W3SPECTN       turns wave spectrum anti-clockwise by AnglD 
+  !     W3SPECTN       turns wave spectrum anti-clockwise by AnglD
   !     W3ACTURN       turns wave action(k,nth) anti-clockwise by AnglD.
   !     W3LLTOEQ       convert standard into rotated lat/lon, plus AnglD
   !     W3EQTOLL       revers of the LLTOEQ, but AnglD unchanged.
@@ -77,6 +77,8 @@ MODULE W3SERVMD
   !  7. Source code :
   !
   !/ ------------------------------------------------------------------- /
+  use wav_shr_flags
+  !/
   PUBLIC
   !
   INTEGER, PRIVATE        :: NDSTRC = 6, NTRACE = 0
@@ -191,8 +193,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(INOUT)  :: IENT
-    CHARACTER, INTENT(IN)   :: SNAME*(*)
+    INTEGER          , INTENT(INOUT) :: IENT
+    CHARACTER(LEN=*) , INTENT(IN)    :: SNAME
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -283,7 +285,9 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    CALL STRACE (IENT, 'NEXTLN')  ! W3_S
+    if (w3_s_flag) then
+       CALL STRACE (IENT, 'NEXTLN')  ! W3_S
+    end if
     !
 100 CONTINUE
     ! read line
@@ -570,7 +574,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: LO1, LA1, LO2, LA2 
+    REAL, INTENT(IN)        :: LO1, LA1, LO2, LA2
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -579,7 +583,7 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    DIST_SPHERE=acos(sin(la2*DERA)*sin(la1*DERA)+ &   
+    DIST_SPHERE=acos(sin(la2*DERA)*sin(la1*DERA)+ &
          cos(la2*DERA)*cos(la1*DERA)*cos((lo2-lo1)*DERA))*RADE
     !
     RETURN
@@ -753,10 +757,10 @@ CONTAINS
     !
     !     Perform a program stop with an exit code.
     !
-    !     If exit code IEXIT=0, then it is not an error, but 
+    !     If exit code IEXIT=0, then it is not an error, but
     !     a stop has been requested by the calling routine:
     !     wait for other processes in communicator to catch up.
-    !     
+    !
     !     If exit code IEXIT.ne.0, then abort program w/out
     !     waiting for other processes to catch up (important for example
     !     when not all processes are used by WW3).
@@ -884,7 +888,7 @@ CONTAINS
   !  Last modified:   21 Feb 2008   Jian-Guo Li
   !
   ! Subroutine Interface:
-  
+
   Subroutine W3SPECTN( NFreq, NDirc, Alpha, Spectr )
 
     ! Description:
@@ -955,15 +959,15 @@ CONTAINS
        ! Negative or clockwise case, larger bin upstream
        Tmpfrq=Wrkspc(:,1)*frac
        DO kk=NDirc, 1, -1
-          Wrkfrq=Wrkspc(:,kk)*frac 
-          Spectr(:,kk)=Wrkspc(:,kk) + Wrkfrq - Tmpfrq 
+          Wrkfrq=Wrkspc(:,kk)*frac
+          Spectr(:,kk)=Wrkspc(:,kk) + Wrkfrq - Tmpfrq
           Tmpfrq=Wrkfrq
        ENDDO
     ENDIF
 
     ! Spectral turning completed
 
-    RETURN 
+    RETURN
   END SUBROUTINE W3SPECTN
   !
   !  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1044,15 +1048,15 @@ CONTAINS
        ! Negative or clockwise case, larger bin upstream
        Tmpfrq=Wrkspc(1,:)*frac
        DO kk=NDirc, 1, -1
-          Wrkfrq=Wrkspc(kk,:)*frac 
-          Spectr(kk,:)=Wrkspc(kk,:) + Wrkfrq - Tmpfrq 
+          Wrkfrq=Wrkspc(kk,:)*frac
+          Spectr(kk,:)=Wrkspc(kk,:) + Wrkfrq - Tmpfrq
           Tmpfrq=Wrkfrq
        ENDDO
     ENDIF
 
     ! Spectral turning completed
 
-    RETURN 
+    RETURN
   END SUBROUTINE W3ACTURN
   !
   !Li  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1065,28 +1069,28 @@ CONTAINS
   !Li         Jian-Guo Li     26 May 2005
   !Li
   !Li  The WCOEFF1A subroutine is merged into LLTOEQ to reduce repetition
-  !Li  of the same calculations. Subroutine interface changed to 
+  !Li  of the same calculations. Subroutine interface changed to
   !Li  LLTOEQANGLE
   !Li         Jian-GUo Li     23 Aug 2005
   !Li
-  !Li  Subroutine W3LLTOEQ   --------------------------------------------    
-  !Li                                                                        
-  !Li  Purpose:  Calculates latitude and longitude on equatorial             
-  !Li            latitude-longitude (eq) grid used in regional               
-  !Li            models from input arrays of latitude and                    
-  !Li            longitude on standard grid. Both input and output           
-  !Li            latitudes and longitudes are in degrees.                    
+  !Li  Subroutine W3LLTOEQ   --------------------------------------------
+  !Li
+  !Li  Purpose:  Calculates latitude and longitude on equatorial
+  !Li            latitude-longitude (eq) grid used in regional
+  !Li            models from input arrays of latitude and
+  !Li            longitude on standard grid. Both input and output
+  !Li            latitudes and longitudes are in degrees.
   !Li            Also calculate rotation angle in degree to tranform
   !Li            standard wind velocity into equatorial wind.
   !Li            Valid for 0<PHI_POLE<90 or new pole in N. hemisphere.
-  !Li                                                                        
-  !* Arguments:--------------------------------------------------------    
-  SUBROUTINE W3LLTOEQ ( PHI, LAMBDA, PHI_EQ, LAMBDA_EQ,     &              
-       &                 ANGLED, PHI_POLE, LAMBDA_POLE, POINTS )             
+  !Li
+  !* Arguments:--------------------------------------------------------
+  SUBROUTINE W3LLTOEQ ( PHI, LAMBDA, PHI_EQ, LAMBDA_EQ,     &
+       &                 ANGLED, PHI_POLE, LAMBDA_POLE, POINTS )
 
-    IMPLICIT NONE                                                        
+    IMPLICIT NONE
 
-    INTEGER:: POINTS    !IN  Number of points to be processed             
+    INTEGER:: POINTS    !IN  Number of points to be processed
 
     REAL :: PHI_POLE,  & !IN  Latitude of equatorial lat-lon pole
          &        LAMBDA_POLE  !INOUT  Longitude of equatorial lat-lon pole
@@ -1102,16 +1106,16 @@ CONTAINS
     REAL(KIND=8) :: A_LAMBDA, A_PHI, E_LAMBDA, E_PHI,                 &
          SIN_PHI_POLE, COS_PHI_POLE,                       &
          TERM1, TERM2, ARG, LAMBDA_ZERO, LAMBDA_POLE_KEEP
-    INTEGER      :: I 
+    INTEGER      :: I
 
     REAL(KIND=8), PARAMETER :: SMALL=1.0E-6
 
     ! Double precision versions of values in constants.ftn:
-    REAL(KIND=8), PARAMETER         :: PI = 3.141592653589793 
+    REAL(KIND=8), PARAMETER         :: PI = 3.141592653589793
     REAL(KIND=8), PARAMETER         :: RECIP_PI_OVER_180 = 180. / PI
     REAL(KIND=8), PARAMETER         :: PI_OVER_180   = PI / 180.
 
-    !*----------------------------------------------------------------------   
+    !*----------------------------------------------------------------------
 
     ! 1. Initialise local constants
     ! Scale lambda pole to range -180 to 180 degs
@@ -1197,7 +1201,7 @@ CONTAINS
 
     RETURN
   END SUBROUTINE W3LLTOEQ
-  ! 
+  !
   !Li  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   !Li
   !Li  Merged UM source code for rotated grid, consiting the following
@@ -1208,7 +1212,7 @@ CONTAINS
   !Li         Jian-Guo Li     26 May 2005
   !Li
   !Li  The WCOEFF1A subroutine is merged into EQTOLL to reduce repetition
-  !Li  of the same calculations. Subroutine interface changed to 
+  !Li  of the same calculations. Subroutine interface changed to
   !Li  EQTOLLANGLE
   !Li  First created:   Jian-GUo Li     23 Aug 2005
   !Li  Last modified:   Jian-GUo Li     25 Feb 2008
@@ -1252,7 +1256,7 @@ CONTAINS
     REAL(KIND=8), PARAMETER :: SMALL=1.0E-6
 
     ! Double precision versions of values in constants.ftn:
-    REAL(KIND=8), PARAMETER         :: PI = 3.141592653589793 
+    REAL(KIND=8), PARAMETER         :: PI = 3.141592653589793
     REAL(KIND=8), PARAMETER         :: RECIP_PI_OVER_180 = 180. / PI
     REAL(KIND=8), PARAMETER         :: PI_OVER_180   = PI / 180.
 
@@ -1390,7 +1394,7 @@ CONTAINS
        ENDIF
     END DO
 
-    RETURN 
+    RETURN
   END SUBROUTINE W3THRTN
   !
   !/ ------------------------------------------------------------------- /
@@ -1445,7 +1449,7 @@ CONTAINS
        END IF
     END DO
 
-    RETURN 
+    RETURN
   END SUBROUTINE W3XYRTN
   !
   !/ ------------------------------------------------------------------- /
@@ -1951,7 +1955,7 @@ CONTAINS
     !     Converts seapoint arrays formulated as U/V vectors into magnitude
     !     and direction arrays.
     !
-    !     If MAG and DIR input parameters are not specificed then the 
+    !     If MAG and DIR input parameters are not specificed then the
     !     conversion is performed in-place (U => MAG, v => DIR).
     !
     !  2. Parameters
