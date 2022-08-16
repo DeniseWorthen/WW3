@@ -51,8 +51,10 @@ MODULE W3IORSMD
   !  7. Source code :
   !
   !/ ------------------------------------------------------------------- /
-  use wav_shr_flags
-  !/
+
+  !module default
+  IMPLICIT NONE
+
   PUBLIC
   !/
   ! Add fields needed for OASIS coupling in restart
@@ -284,8 +286,6 @@ CONTAINS
     !
     use w3timemd, only: set_user_timestring
     use w3odatmd, only: use_user_restname, user_restfname, ndso
-
-    IMPLICIT NONE
     !
 #ifdef W3_MPI
     INCLUDE "mpif.h"

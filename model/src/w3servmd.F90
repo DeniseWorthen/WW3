@@ -78,7 +78,9 @@ MODULE W3SERVMD
   !
   !/ ------------------------------------------------------------------- /
   use wav_shr_flags
-  !/
+
+  ! module default
+  IMPLICIT NONE
   PUBLIC
   !
   INTEGER, PRIVATE        :: NDSTRC = 6, NTRACE = 0
@@ -125,7 +127,6 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -188,7 +189,6 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -267,7 +267,6 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -378,7 +377,6 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -471,7 +469,6 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -569,7 +566,6 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -634,7 +630,6 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -707,7 +702,6 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -757,9 +751,9 @@ CONTAINS
     !
     !     Perform a program stop with an exit code.
     !
-    !     If exit code IEXIT=0, then it is not an error, but
-    !     a stop has been requested by the calling routine:
-    !     wait for other processes in communicator to catch up.
+    !     If exit code IEXIT=0, then it is not an error, but a stop
+    !     has been requested by the calling routine: wait for other
+    !     processes in communicator to catch up.
     !
     !     If exit code IEXIT.ne.0, then abort program w/out
     !     waiting for other processes to catch up (important for example
@@ -794,7 +788,6 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    IMPLICIT NONE
     !
 #ifdef W3_MPI
     INCLUDE "mpif.h"
@@ -896,7 +889,7 @@ CONTAINS
     !   This routine is distinct from W3ACTURN since orders spectrum as freq, dirn
     !
     ! Subroutine arguments
-    IMPLICIT NONE
+
     INTEGER, INTENT(IN) :: NFreq, NDirc         ! No. freq and dirn bins
     REAL,    INTENT(IN) :: Alpha                ! Turning angle (degrees)
     REAL, INTENT(INOUT) :: Spectr(NFreq,NDirc)  ! Wave spectrum in/out
@@ -985,7 +978,7 @@ CONTAINS
     !   Routine is distinct from W3SPECTN since orders spectrum as dirn, freq
     !
     ! Subroutine arguments
-    IMPLICIT NONE
+
     INTEGER, INTENT(IN) :: NFreq, NDirc          ! No. freq and dirn bins
     REAL,    INTENT(IN) :: Alpha                 ! Turning angle (degrees)
     REAL, INTENT(INOUT) :: Spectr(NDirc, NFreq)  ! Wave action in/out
@@ -1088,7 +1081,6 @@ CONTAINS
   SUBROUTINE W3LLTOEQ ( PHI, LAMBDA, PHI_EQ, LAMBDA_EQ,     &
        &                 ANGLED, PHI_POLE, LAMBDA_POLE, POINTS )
 
-    IMPLICIT NONE
 
     INTEGER:: POINTS    !IN  Number of points to be processed
 
@@ -1233,7 +1225,6 @@ CONTAINS
   SUBROUTINE W3EQTOLL( PHI_EQ, LAMBDA_EQ, PHI, LAMBDA,   &
        &                 ANGLED, PHI_POLE, LAMBDA_POLE, POINTS )
 
-    IMPLICIT NONE
 
     INTEGER:: POINTS      !IN  Number of points to be processed
 
@@ -1364,7 +1355,6 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS, ONLY : DERA, TPI, UNDEF
-    IMPLICIT NONE
     !
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -1419,7 +1409,6 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS, ONLY : DERA, TPI, UNDEF
-    IMPLICIT NONE
     !
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -1483,7 +1472,6 @@ CONTAINS
     !     ----------------------------------------------------------------
     !
 
-    IMPLICIT NONE
 
 
 
@@ -1858,7 +1846,7 @@ CONTAINS
   !*********************************************************************
   SUBROUTINE DIAGONALIZE(a1,d,v,nrot)
   !*********************************************************************
-    IMPLICIT NONE
+
     INTEGER,                          INTENT(out)   :: nrot
     DOUBLE PRECISION, DIMENSION(:)  , INTENT(OUT)   ::d
     DOUBLE PRECISION, DIMENSION(:,:), INTENT(IN)    ::a1  ! Modified from INOUT to IN by F.A. on 2018/01/21
@@ -1979,7 +1967,6 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS, ONLY: RADE, UNDEF
-    IMPLICIT NONE
 
     REAL, INTENT(INOUT)             :: U(NSEA), V(NSEA)
     INTEGER, INTENT(IN)             :: NSEA

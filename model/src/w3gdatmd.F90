@@ -590,6 +590,9 @@ MODULE W3GDATMD
   !/
   USE W3GSRUMD
   USE WAV_SHR_FLAGS
+
+  ! module default
+  IMPLICIT NONE
   !/
   !/ Specify default accessibility
   !/
@@ -634,6 +637,10 @@ MODULE W3GDATMD
      INTEGER          , POINTER :: NLvCel(:), NLvUFc(:), NLvVFc(:)                    ! only if W3_SMC
      INTEGER          , POINTER :: IJKCel(:,:), IJKUFc(:,:), IJKVFc(:,:)              ! only if W3_SMC
      INTEGER          , POINTER :: ISMCBP(:),   ICLBAC(:)                             ! only if W3_SMC
+     !/ Data duplicated for better performance
+     INTEGER, POINTER           :: IJKCel3(:), IJKCel4(:)
+     INTEGER, POINTER           :: IJKVFc5(:), IJKVFc6(:)
+     INTEGER, POINTER           :: IJKUFc5(:), IJKUFc6(:)
      REAL                       :: SX, SY, X0, Y0, DTCFL, DTCFLI, DTMAX
      REAL                       :: DTMIN, DMIN, CTMAX, FICE0, FICEN, FICEL
      REAL                       :: PFMOVE, STEXU, STEYU, STEDU, IICEHMIN
@@ -979,6 +986,10 @@ MODULE W3GDATMD
   INTEGER,           POINTER :: NLvCel(:), NLvUFc(:), NLvVFc(:)       ! W3_SMC
   INTEGER,           POINTER :: IJKCel(:,:), IJKUFc(:,:), IJKVFc(:,:) ! W3_SMC
   INTEGER,           POINTER :: ISMCBP(:),   ICLBAC(:)                ! W3_SMC
+  !/ Data duplicated for better performance
+  INTEGER,          POINTER  :: IJKCel3(:), IJKCel4(:)
+  INTEGER,          POINTER  :: IJKVFc5(:), IJKVFc6(:)
+  INTEGER,          POINTER  :: IJKUFc5(:), IJKUFc6(:)
                                                                       !
   INTEGER,           POINTER :: NITERSEC1                             ! W3_SEC1
   REAL,              POINTER :: SX, SY, X0, Y0, DTCFL, DTCFLI, DTMAX
@@ -1225,7 +1236,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -1392,7 +1402,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !
     !/
     !/ ------------------------------------------------------------------- /
@@ -1526,6 +1535,18 @@ CONTAINS
        ALLOCATE ( GRIDS(IMOD)%CTRNY(-9:MCel),     STAT=ISTAT)
        CHECK_ALLOC_STATUS ( ISTAT )
        ALLOCATE ( GRIDS(IMOD)%CLATF(MVFc),        STAT=ISTAT)
+       CHECK_ALLOC_STATUS ( ISTAT )
+       ALLOCATE ( GRIDS(IMOD)%IJKCel3(-9:MCel),   STAT=ISTAT)
+       CHECK_ALLOC_STATUS ( ISTAT )
+       ALLOCATE ( GRIDS(IMOD)%IJKCel4(-9:MCel),   STAT=ISTAT)
+       CHECK_ALLOC_STATUS ( ISTAT )
+       ALLOCATE ( GRIDS(IMOD)%IJKVFc5(MVFc),   STAT=ISTAT)
+       CHECK_ALLOC_STATUS ( ISTAT )
+       ALLOCATE ( GRIDS(IMOD)%IJKVFc6(MVFc),   STAT=ISTAT)
+       CHECK_ALLOC_STATUS ( ISTAT )
+       ALLOCATE ( GRIDS(IMOD)%IJKUFc5(MUFc),   STAT=ISTAT)
+       CHECK_ALLOC_STATUS ( ISTAT )
+       ALLOCATE ( GRIDS(IMOD)%IJKUFc6(MUFc),   STAT=ISTAT)
        CHECK_ALLOC_STATUS ( ISTAT )
        !
        !! Arctic part related variables, declare minimum 1 element.
@@ -1742,7 +1763,6 @@ CONTAINS
     USE CONSTANTS, ONLY: RADE  ! only for W3_ST4
     USE W3SERVMD, ONLY: STRACE ! only for W3_S
     !
-    IMPLICIT NONE
     !
     !/
     !/ ------------------------------------------------------------------- /
@@ -1968,7 +1988,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE  ! W3_S
     !
-    IMPLICIT NONE
     !
     !/
     !/ ------------------------------------------------------------------- /
@@ -2195,16 +2214,22 @@ CONTAINS
        end if
        !
        if (w3_smc_flag) then
-          NLvCel => GRIDS(IMOD)%NLvCel
-          NLvUFc => GRIDS(IMOD)%NLvUFc
-          NLvVFc => GRIDS(IMOD)%NLvVFc
-          IJKCel => GRIDS(IMOD)%IJKCel
-          IJKUFc => GRIDS(IMOD)%IJKUFc
-          IJKVFc => GRIDS(IMOD)%IJKVFc
-          ISMCBP => GRIDS(IMOD)%ISMCBP
-          CTRNX  => GRIDS(IMOD)%CTRNX
-          CTRNY  => GRIDS(IMOD)%CTRNY
-          CLATF  => GRIDS(IMOD)%CLATF
+          NLvCel  => GRIDS(IMOD)%NLvCel
+          NLvUFc  => GRIDS(IMOD)%NLvUFc
+          NLvVFc  => GRIDS(IMOD)%NLvVFc
+          IJKCel  => GRIDS(IMOD)%IJKCel
+          IJKUFc  => GRIDS(IMOD)%IJKUFc
+          IJKVFc  => GRIDS(IMOD)%IJKVFc
+          ISMCBP  => GRIDS(IMOD)%ISMCBP
+          CTRNX   => GRIDS(IMOD)%CTRNX
+          CTRNY   => GRIDS(IMOD)%CTRNY
+          CLATF   => GRIDS(IMOD)%CLATF
+          IJKCel3 => GRIDS(IMOD)%IJKCel3
+          IJKCel4 => GRIDS(IMOD)%IJKCel4
+          IJKVFc5 => GRIDS(IMOD)%IJKVFc5
+          IJKVFc6 => GRIDS(IMOD)%IJKVFc6
+          IJKUFc5 => GRIDS(IMOD)%IJKUFc5
+          IJKUFc6 => GRIDS(IMOD)%IJKUFc6
        end if
        !
        if (w3_smc_flag) then
@@ -2662,7 +2687,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -2887,7 +2911,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !
     !/
     !/ ------------------------------------------------------------------- /
@@ -3060,7 +3083,6 @@ CONTAINS
     USE CONSTANTS
     USE W3SERVMD, ONLY : STRACE ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/
