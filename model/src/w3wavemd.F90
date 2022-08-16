@@ -580,6 +580,7 @@ CONTAINS
     REAL, ALLOCATABLE    :: BACSPEC(:) ! only for  W3_SMC
     REAL                 :: BACANGL    ! only for  W3_SMC
     integer              :: loop_count
+    integer              :: memunit
     !
     logical :: do_gridded_output
     logical :: do_point_output

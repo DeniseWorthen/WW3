@@ -77,13 +77,19 @@ MODULE W3SERVMD
   !  7. Source code :
   !
   !/ ------------------------------------------------------------------- /
-  use wav_shr_flags
-
   ! module default
   IMPLICIT NONE
   PUBLIC
   !
   INTEGER, PRIVATE        :: NDSTRC = 6, NTRACE = 0
+
+  ! Note - w3servmd cannot use wav_shr_flags or you run into a circular dependency,
+  ! So explicitly set the logical variables here
+#ifdef W3_S
+   logical ::  w3_s_flag = .true.               !< @public a flag for "W3_S"
+#else
+   logical ::  w3_s_flag = .false.              !< @public a flag for "W3_S"
+#endif
   !
 CONTAINS
   !/ ------------------------------------------------------------------- /
@@ -143,6 +149,7 @@ CONTAINS
     !/ End of ITRACE ----------------------------------------------------- /
     !/
   END SUBROUTINE ITRACE
+
   !/ ------------------------------------------------------------------- /
   SUBROUTINE STRACE (IENT, SNAME)
     !/
@@ -271,16 +278,16 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDSI, NDSE
-    CHARACTER, INTENT(IN)   :: CHCKC*1
+    INTEGER         , INTENT(IN) :: NDSI, NDSE
+    CHARACTER(len=*), INTENT(IN) :: CHCKC
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER, SAVE           :: IENT = 0  ! W3_S
-    INTEGER                 :: IERR
-    CHARACTER(128)          :: MSG
-    CHARACTER(256)          :: LINE, TEST
+    INTEGER        :: IENT = 0  ! W3_S
+    INTEGER        :: IERR
+    CHARACTER(128) :: MSG
+    CHARACTER(256) :: LINE, TEST
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -331,6 +338,7 @@ CONTAINS
     !/ End of NEXTLN ----------------------------------------------------- /
     !/
   END SUBROUTINE NEXTLN
+
   !/ ------------------------------------------------------------------- /
   SUBROUTINE W3S2XY ( NSEA, MSEA, MX, MY, S, MAPSF, XY )
     !/

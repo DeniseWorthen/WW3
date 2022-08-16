@@ -51,6 +51,7 @@ MODULE W3IORSMD
   !  7. Source code :
   !
   !/ ------------------------------------------------------------------- /
+  use wav_shr_flags
 
   !module default
   IMPLICIT NONE
