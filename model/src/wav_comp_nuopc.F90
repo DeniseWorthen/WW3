@@ -48,14 +48,15 @@ module wav_comp_nuopc
   use w3odatmd              , only : user_netcdf_grdout
   use w3odatmd              , only : time_origin, calendar_name, elapsed_secs
   use wav_shr_mod           , only : casename, multigrid, inst_suffix, inst_index
+#ifndef W3_CESMCOUPLED
   use wmwavemd              , only : wmwave
   use wmupdtmd              , only : wmupd2
   use wmmdatmd              , only : mdse, mdst, nrgrd, improc, nmproc, wmsetm, stime, etime
   use wmmdatmd              , only : nmpscr
   use w3updtmd              , only : w3uini
   use w3adatmd              , only : flcold, fliwnd
+#endif
   use constants             , only : is_esmf_component
-  use wav_shr_flags         , only : w3_cesmcoupled_flag
 
   implicit none
   private ! except
@@ -80,23 +81,21 @@ module wav_comp_nuopc
   integer                 :: flds_scalar_index_nx = 0      !< the default size of the scalar field nx
   integer                 :: flds_scalar_index_ny = 0      !< the default size of the scalar field ny
   logical                 :: profile_memory = .false.      !< default logical to control use of ESMF
-                                                           !! memory profiling
-  logical                 :: user_histalarm = .false.      !< logical flag to set history alarms using ESMF.
-                                                           !! If history_option is present as config option
-                                                           !! user_histalarm will be true and will be set
-                                                           !! using history_option, history_n and history_ymd.
-                                                           !! DTOUT(j=1) will be set to the history alarm interval
-                                                           !! in seconds
-  logical                 :: user_restalarm = .false.      !< logical flag to set restart alarms using ESMF.
-                                                           !! If restart_option is present as config option,
-                                                           !! user_restalarm will be true and will be set
-                                                           !! using restart_option, restart_n and restart_ymd.
-                                                           !! DTOUT(j=4 or j=8) will be set to the restart alarm
-                                                           !! interval in seconds
   logical                 :: root_task = .false.           !< logical to indicate root task
+#ifdef W3_CESMCOUPLED
+  logical :: cesmcoupled = .true.                          !< logical to indicate CESM use case
+#else
+  logical :: cesmcoupled = .false.                         !< logical to indicate non-CESM use case
+#endif
   integer, allocatable    :: tend(:,:)                     !< the ending time of ModelAdvance when
                                                            !! run with multigrid=true
-
+  logical                 :: user_histalarm = .false.      !< logical flag for user to set history alarms                                                                                       !! using ESMF. If history_option is present as config
+                                                           !! option, user_histalarm will be true and will be
+                                                           !! set using history_option, history_n and history_ym  d
+  logical                 :: user_restalarm = .false.      !< logical flag for user to set restart alarms
+                                                           !! using ESMF. If restart_option is present as config
+                                                           !! option, user_restalarm will be true and will be
+                                                           !! set using restart_option, restart_n and restart_ymd
   integer :: time0(2)
   integer :: timen(2)
 
@@ -396,8 +395,10 @@ contains
     use w3idatmd     , only : w3seti, w3ninp
     use w3gdatmd     , only : nseal, nsea, nx, ny, mapsf, w3nmod, w3setg
     use w3wdatmd     , only : va, time, w3ndat, w3dimw, w3setw
+#ifndef W3_CESMCOUPLED
     use wminitmd     , only : wminit, wminitnml
     use wmunitmd     , only : wmuget, wmuset
+#endif
     use wav_shel_inp , only : set_shel_io
     use wav_grdout   , only : wavinit_grdout
 
@@ -486,16 +487,14 @@ contains
 
     call ESMF_VMGet(vm, mpiCommunicator=mpi_comm, peCount=petcount, localPet=iam, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
-
-    if (w3_cesmcoupled_flag) then
+#ifndef W3_CESMCOUPLED
+    nmproc = petcount
+#else
        naproc = petcount
-       iaproc = iam + 1
-       napout = 1
-       naperr = 1
-       if (iaproc == napout) root_task = .true.
-    else
+#endif
+
        ! naproc,iproc, napout, naperr are not available until after wminit
-       nmproc = petcount
+#ifndef W3_CESMCOUPLED
        improc = iam + 1
        if (multigrid) then
           nmpscr = 1
@@ -507,13 +506,18 @@ contains
           naperr = 1
        end if
        if (improc == 1) root_task = .true.
-    end if
+#else
+    iaproc = iam + 1
+    napout = 1
+    naperr = 1
+    if (iaproc == napout) root_task = .true.
+#endif
 
     !--------------------------------------------------------------------
     ! IO set-up
     !--------------------------------------------------------------------
 
-    if (w3_cesmcoupled_flag) then
+    if (cesmcoupled) then
        shrlogunit = 6
        if ( root_task ) then
           call NUOPC_CompAttributeGet(gcomp, name="diro", value=diro, rc=rc)
@@ -612,22 +616,16 @@ contains
        write (stdout,'(a)')' Starting time : '//trim(dtme21)
        write (stdout,'(a,i8,2x,i8)') 'start_ymd, stop_ymd = ',start_ymd, stop_ymd
     end if
-    if (.not. w3_cesmcoupled_flag) then
+#ifndef W3_CESMCOUPLED
        stime = time0
        etime = timen
-    end if
+#endif
 
     !--------------------------------------------------------------------
     ! Wave model initialization
     !--------------------------------------------------------------------
 
-    if (w3_cesmcoupled_flag) then
-       time = time0
-       call ESMF_ClockGet( clock, timeStep=timeStep, rc=rc)
-       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-       call waveinit_cesm(gcomp, ntrace, mpi_comm, mds, rc)
-       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    else
+#ifndef W3_CESMCOUPLED
        if (multigrid) then
           call ESMF_UtilIOUnitGet(idsi); open(unit=idsi, status='scratch')
           call ESMF_UtilIOUnitGet(idso); open(unit=idso, status='scratch')
@@ -654,7 +652,13 @@ contains
           call waveinit_ufs(gcomp, ntrace, mpi_comm, mds, rc)
           if (ChkErr(rc,__LINE__,u_FILE_u)) return
        end if
-    end if
+#else
+    time = time0
+    call ESMF_ClockGet( clock, timeStep=timeStep, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    call waveinit_cesm(gcomp, ntrace, mpi_comm, mds, rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+#endif
     ! call mpi_barrier ( mpi_comm, ierr )
     if ( root_task ) then
        inquire(unit=nds(1), name=logfile)
@@ -786,7 +790,7 @@ contains
          flds_scalar_num=flds_scalar_num, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
-    if (.not. w3_cesmcoupled_flag) then
+#ifndef W3_CESMCOUPLED
        !TODO: when is this required?
        if (multigrid) then
           do imod = 1,nrgrd
@@ -800,7 +804,7 @@ contains
              if ( local .and. flcold .and. fliwnd ) call w3uini( va )
           enddo
        end if
-    end if
+#endif
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
 
@@ -992,14 +996,14 @@ contains
     timen(2) = hh*10000 + mm*100 + ss
 
     time = time0
-    if (.not. w3_cesmcoupled_flag) then
+#ifndef W3_CESMCOUPLED
        if (multigrid) then
           do imod = 1,nrgrd
              tend(1,imod) = timen(1)
              tend(2,imod) = timen(2)
           end do
        end if
-    end if
+#endif
 
     !------------
     ! Obtain import data from import state
@@ -1012,8 +1016,8 @@ contains
     !------------
     if(profile_memory) call ESMF_VMLogMemInfo("Entering WW3 Run : ")
 
-    ! Determine if time to write ww3 restart files
     if (user_restalarm) then
+       ! Determine if time to write ww3 restart files
        call ESMF_ClockGetAlarm(clock, alarmname='alarm_restart', alarm=alarm, rc=rc)
        if (ChkErr(rc,__LINE__,u_FILE_u)) return
        if (ESMF_AlarmIsRinging(alarm, rc=rc)) then
@@ -1024,10 +1028,12 @@ contains
        else
           rstwr = .false.
        endif
+    else
+       rstwr = .false.
     endif
 
-    ! Determine if time to write ww3 history files
     if (user_histalarm) then
+       ! Determine if time to write ww3 history files
        call ESMF_ClockGetAlarm(clock, alarmname='alarm_history', alarm=alarm, rc=rc)
        if (ChkErr(rc,__LINE__,u_FILE_u)) return
        if (ESMF_AlarmIsRinging(alarm, rc=rc)) then
@@ -1038,6 +1044,8 @@ contains
        else
           histwr = .false.
        endif
+    else
+       histwr = .false.
     end if
 
     if ( root_task ) then
@@ -1046,15 +1054,15 @@ contains
     end if
 
     ! Advance the wave model
-    if (w3_cesmcoupled_flag) then
-       call w3wave ( 1, odat, timen )
-    else
+#ifndef W3_CESMCOUPLED
        if (multigrid) then
           call wmwave ( tend )
        else
           call w3wave ( 1, odat, timen )
        end if
-    end if
+#else
+    call w3wave ( 1, odat, timen )
+#endif
 
     if(profile_memory) call ESMF_VMLogMemInfo("Exiting  WW3 Run : ")
 
@@ -1079,7 +1087,6 @@ contains
 !> @date 01-05-2022
   subroutine ModelSetRunClock(gcomp, rc)
 
-    use w3odatmd     , only : dtout, flout
 
     ! input/output variables
     type(ESMF_GridComp)        :: gcomp
@@ -1091,7 +1098,6 @@ contains
     type(ESMF_Time)            :: mstoptime
     type(ESMF_Time)            :: mstarttime
     type(ESMF_TimeInterval)    :: mtimestep, dtimestep
-    type(ESMF_TimeInterval)    :: ringinterval
     logical                    :: isPresent
     logical                    :: isSet
     character(len=256)         :: cvalue
@@ -1108,9 +1114,7 @@ contains
     integer                    :: history_ymd    ! History date (YYYYMMDD)
     type(ESMF_ALARM)           :: history_alarm
     character(len=128)         :: name
-    character(ESMF_MAXSTR)     :: msgString
     integer                    :: alarmcount
-    integer(i8)                :: isec
     character(len=*),parameter :: subname=trim(modName)//':(ModelSetRunClock) '
 
     !-------------------------------------------------------------------------------
@@ -1180,24 +1184,9 @@ contains
           if (ChkErr(rc,__LINE__,u_FILE_u)) return
           user_restalarm = .true.
 
-          ! Overwrite the internal WW3 restart write frequency (set via inp or nml)
-          ! with the alarm frequency which is set via config attributes
-          call ESMF_AlarmGet(restart_alarm, ringInterval=ringinterval, rc=rc)
-          if (ChkErr(rc,__LINE__,u_FILE_u)) return
-          call ESMF_TimeIntervalGet(ringinterval, s_i8=isec, rc=rc)
-          if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
-          if (flout(4)) then
-             write(msgString,'(A,i10)')'Setting dtout(4) in seconds to ',isec
-             call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
-             dtout(4) = real(isec)
-          end if
-          if (flout(8)) then
-             write(msgString,'(A,i10)')'Setting dtout(8) in seconds to ',isec
-             call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
-             dtout(8) = real(isec)
-          end if
        else
+          ! If attribute is not present - write restarts at native WW3 freq
           restart_option = 'none'
           restart_n = -999
           user_restalarm = .false.
@@ -1255,20 +1244,9 @@ contains
           if (ChkErr(rc,__LINE__,u_FILE_u)) return
           user_histalarm = .true.
 
-          ! Overwrite the internal WW3 history write frequency (set from inp or nml)
-          ! with the alarm frequency set from config attributes if ww3 history output
-          ! is desired.  This ensures that w3outg is called at required frequency only
-          call ESMF_AlarmGet(history_alarm, ringInterval=ringinterval, rc=rc)
-          if (ChkErr(rc,__LINE__,u_FILE_u)) return
-          call ESMF_TimeIntervalGet(ringinterval, s_i8=isec, rc=rc)
-          if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
-          if (flout(1)) then
-             write(msgString,'(A,i10)')'Setting dtout(1) in seconds to ',isec
-             call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
-             dtout(1) = real(isec)
-          end if
        else
+          ! If attribute is not present - write history output at native WW3 frequency
           history_option = 'none'
           history_n = -999
           user_histalarm = .false.

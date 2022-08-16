@@ -339,6 +339,9 @@ MODULE W3ADATMD
   !/ ------------------------------------------------------------------- /
   use wav_shr_flags
 
+  !module default
+  IMPLICIT NONE
+
   PUBLIC
   !/
   !/ Module private variable for checking error returns
@@ -361,32 +364,24 @@ MODULE W3ADATMD
      !
      ! Arrays for processing model input
      !
-     REAL, POINTER :: CA0(:), CAI(:), CD0(:), CDI(:),      &
-          UA0(:), UAI(:), UD0(:), UDI(:),      &
-          MA0(:), MAI(:), RA0(:), RAI(:),      &
-          MD0(:), MDI(:), AS0(:), ASI(:),      &
-          ATRNX(:,:), ATRNY(:,:)
+     REAL, POINTER         :: CA0(:), CAI(:), CD0(:), CDI(:), UA0(:), UAI(:), UD0(:), UDI(:)
+     REAL, POINTER         :: MA0(:), MAI(:), RA0(:), RAI(:), MD0(:), MDI(:), AS0(:), ASI(:)
+     REAL, POINTER         :: ATRNX(:,:), ATRNY(:,:)
      !
      ! Output fields group 1)
      !
-     REAL, POINTER :: DW(:), UA(:), UD(:), U10(:), U10D(:),&
-          AS(:), CX(:), CY(:), TAUA(:), TAUADIR(:)
+     REAL, POINTER         :: DW(:), UA(:), UD(:), U10(:), U10D(:), AS(:), CX(:), CY(:)
+     REAL, POINTER         :: TAUA(:), TAUADIR(:)
      !
      ! Output fields group 2)
      !
-     REAL, POINTER :: HS(:),  WLM(:),  T02(:), T0M1(:),   &
-          T01 (:),  FP0(:),  THM(:),          &
-          THS(:),  THP0(:),  FP1(:), THP1(:), &
-          HSIG(:), STMAXE(:), STMAXD(:),      &
-          HMAXE(:), HCMAXE(:), HMAXD(:),      &
-          HCMAXD(:), QP(:), WBT(:), WNMEAN(:)
-     REAL, POINTER :: XHS(:), XWLM(:), XT02(:), XT0M1(:),  &
-          XT01 (:), XFP0(:), XTHM(:),          &
-          XTHS(:), XTHP0(:), XFP1(:), XTHP1(:),&
-          XHSIG(:), XSTMAXE(:), XSTMAXD(:),    &
-          XHMAXE(:), XHCMAXE(:), XHMAXD(:),    &
-          XHCMAXD(:), XQP(:), XWBT(:),         &
-          XWNMEAN(:)
+     REAL, POINTER         :: HS(:),  WLM(:),  T02(:), T0M1(:), T01 (:),  FP0(:),  THM(:)
+     REAL, POINTER         :: THS(:),  THP0(:),  FP1(:), THP1(:), HSIG(:), STMAXE(:), STMAXD(:)
+     REAL, POINTER         :: HMAXE(:), HCMAXE(:), HMAXD(:), HCMAXD(:), QP(:), WBT(:), WNMEAN(:)
+
+     REAL, POINTER         :: XHS(:), XWLM(:), XT02(:), XT0M1(:), XT01 (:), XFP0(:), XTHM(:)
+     REAL, POINTER         :: XTHS(:), XTHP0(:), XFP1(:), XTHP1(:), XHSIG(:), XSTMAXE(:), XSTMAXD(:)
+     REAL, POINTER         :: XHMAXE(:), XHCMAXE(:), XHMAXD(:), XHCMAXD(:), XQP(:), XWBT(:), XWNMEAN(:)
      !
      ! Output fields group 3)
      !
@@ -395,18 +390,13 @@ MODULE W3ADATMD
      !
      ! Output fields group 4)
      !
-     REAL, POINTER :: PHS(:,:),  PTP(:,:),  PLP(:,:),      &
-          PDIR(:,:),  PSI(:,:),  PWS(:,:),     &
-          PWST(:),  PNR(:), PGW(:,:),          &
-          PTHP0(:,:), PQP(:,:), PPE(:,:),      &
-          PSW(:,:), PTM1(:,:), PT1(:,:),       &
-          PT2(:,:), PEP(:,:)
-     REAL, POINTER :: XPHS(:,:), XPTP(:,:), XPLP(:,:),     &
-          XPDIR(:,:), XPSI(:,:), XPWS(:,:),    &
-          XPWST(:), XPNR(:), XPGW(:,:),        &
-          XPTHP0(:,:), XPQP(:,:), XPPE(:,:),   &
-          XPSW(:,:), XPTM1(:,:), XPT1(:,:),    &
-          XPT2(:,:), XPEP(:,:)
+     REAL, POINTER         :: PHS(:,:),  PTP(:,:),  PLP(:,:), PDIR(:,:),  PSI(:,:),  PWS(:,:)
+     REAL, POINTER         :: PWST(:),  PNR(:), PGW(:,:), PTHP0(:,:), PQP(:,:), PPE(:,:)
+     REAL, POINTER         :: PSW(:,:), PTM1(:,:), PT1(:,:), PT2(:,:), PEP(:,:)
+
+     REAL, POINTER         :: XPHS(:,:), XPTP(:,:), XPLP(:,:), XPDIR(:,:), XPSI(:,:), XPWS(:,:)
+     REAL, POINTER         :: XPWST(:), XPNR(:), XPGW(:,:), XPTHP0(:,:), XPQP(:,:), XPPE(:,:), XPSW(:,:)
+     REAL, POINTER         :: XPTM1(:,:), XPT1(:,:), XPT2(:,:), XPEP(:,:)
      !
      ! Output fields group 5)
      !
@@ -545,31 +535,23 @@ MODULE W3ADATMD
   REAL, POINTER :: EF(:,:), TH1M(:,:), STH1M(:,:)
   REAL, POINTER :: TH2M(:,:), STH2M(:,:)
   !
-  REAL, POINTER       :: PHS(:,:), PTP(:,:), PLP(:,:),        &
-       PDIR(:,:), PSI(:,:), PWS(:,:),       &
-       PWST(:), PNR(:), PGW(:,:), PSW(:,:), &
-       PTHP0(:,:), PQP(:,:), PPE(:,:),      &
-       PTM1(:,:), PT1(:,:), PT2(:,:),PEP(:,:)
+  REAL,    POINTER :: PHS(:,:), PTP(:,:), PLP(:,:), PDIR(:,:), PSI(:,:), PWS(:,:)
+  REAL,    POINTER :: PWST(:), PNR(:), PGW(:,:), PSW(:,:), PTHP0(:,:), PQP(:,:), PPE(:,:)
+  REAL,    POINTER :: PTM1(:,:), PT1(:,:), PT2(:,:),PEP(:,:)
   !
-  REAL, POINTER       :: CHARN(:), CGE(:), PHIAW(:),          &
-       TAUWIX(:), TAUWIY(:), TAUWNX(:),     &
-       TAUWNY(:), WHITECAP(:,:), TWS(:)
+  REAL,    POINTER :: CHARN(:), CGE(:), PHIAW(:), TAUWIX(:), TAUWIY(:), TAUWNX(:)
+  REAL,    POINTER :: TAUWNY(:), WHITECAP(:,:), TWS(:)
   !
-  REAL, POINTER       :: SXX(:), SYY(:), SXY(:), TAUOX(:),    &
-       TAUOY(:), BHD(:), PHIOC(:),          &
-       TUSX(:), TUSY(:), USSX(:), USSY(:),  &
-       TAUOCX(:), TAUOCY(:), PRMS(:),       &
-       TPMS(:), PHICE(:), TAUICE(:,:)
+  REAL,    POINTER :: SXX(:), SYY(:), SXY(:), TAUOX(:), TAUOY(:), BHD(:), PHIOC(:)
+  REAL,    POINTER :: TUSX(:), TUSY(:), USSX(:), USSY(:), TAUOCX(:), TAUOCY(:), PRMS(:)
+  REAL,    POINTER :: TPMS(:), PHICE(:), TAUICE(:,:)
   REAL, POINTER       :: P2SMS(:,:), US3D(:,:), USSP(:,:)
   !
-  REAL, POINTER       :: ABA(:), ABD(:), UBA(:), UBD(:),      &
-       BEDFORMS(:,:), PHIBBL(:), TAUBBL(:,:)
+  REAL,    POINTER :: ABA(:), ABD(:), UBA(:), UBD(:), BEDFORMS(:,:), PHIBBL(:), TAUBBL(:,:)
   !
-  REAL, POINTER       :: MSSX(:), MSSY(:), MSSD(:),           &
-       MSCX(:), MSCY(:), MSCD(:)
+  REAL,    POINTER :: MSSX(:), MSSY(:), MSSD(:), MSCX(:), MSCY(:), MSCD(:)
   !
-  REAL, POINTER       :: DTDYN(:), FCUT(:), CFLXYMAX(:),      &
-       CFLTHMAX(:), CFLKMAX(:)
+  REAL,    POINTER :: DTDYN(:), FCUT(:), CFLXYMAX(:), CFLTHMAX(:), CFLKMAX(:)
   !
   REAL, POINTER       :: USERO(:,:)
   !
@@ -682,8 +664,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3ODATMD, ONLY: IAPROC
     USE W3SERVMD, ONLY: STRACE ! W3_S
-    !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -841,7 +821,6 @@ CONTAINS
     USE W3SERVMD  , ONLY: EXTCDE
     USE W3SERVMD  , ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -1016,9 +995,6 @@ CONTAINS
             STAT=ISTAT )
        CHECK_ALLOC_STATUS ( ISTAT )
     END IF
-    if (w3_debuginit_flag) then
-       FLUSH(740+IAPROC)
-    end if
     IF (  E3DF(1,2).GT.0 ) THEN
        ALLOCATE(WADATS(IMOD)%TH1M(NSEALM,E3DF(2,2):E3DF(3,2)),  &
             STAT=ISTAT )
@@ -1460,16 +1436,14 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD, ONLY: NGRIDS, IGRID, W3SETG, NK, NX, NY, NSEA,    &
-         NSEAL, NSPEC, NTH, E3DF, P2MSF, US3DF,      &
-         USSPF, GTYPE, UNGTYPE
-    USE W3ODATMD, ONLY: IAPROC, NAPROC, NTPROC, NAPFLD,             &
-         NOSWLL, NOEXTR, UNDEF, FLOGRD, FLOGR2,      &
-         NOGRP, NGRPP
+    USE W3GDATMD, ONLY: NGRIDS, IGRID, W3SETG, NK, NX, NY, NSEA
+    USE W3GDATMD, ONLY: NSEAL, NSPEC, NTH, E3DF, P2MSF, US3DF
+    USE W3GDATMD, ONLY: USSPF, GTYPE, UNGTYPE
+    USE W3ODATMD, ONLY: IAPROC, NAPROC, NTPROC, NAPFLD
+    USE W3ODATMD, ONLY: NOSWLL, NOEXTR, UNDEF, FLOGRD, FLOGR2, NOGRP, NGRPP
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -2402,7 +2376,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -2600,7 +2573,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -3028,7 +3000,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list

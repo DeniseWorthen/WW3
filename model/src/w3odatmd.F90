@@ -312,6 +312,9 @@ MODULE W3ODATMD
   USE CONSTANTS, ONLY : UNDEF
   use wav_shr_flags
 
+  !module default
+  IMPLICIT NONE
+  
   PUBLIC
   !/
   !/ Module private variable for checking error returns
@@ -523,12 +526,12 @@ MODULE W3ODATMD
                                                      !! YYYY-MM-DD-SSSSS will be appended
   character(len=512) :: user_restfname = ''          !<@public user restart filename prefix, timestring
                                                      !! YYYY-MM-DD-SSSSS will be appended
-  logical            :: user_netcdf_grdout = .false. !<@public logical flag to use netCDF for gridded
-                                                     !! field output
   logical            :: histwr = .false.             !<@public logical to trigger history write
                                                      !! if true => write history file (snapshot)
   logical            :: rstwr = .false.              !<@public logical to trigger restart write
                                                      !! if true => write restart
+  logical            :: user_netcdf_grdout = .false. !<@public logical flag to use netCDF for gridded
+                                                     !! field output
   character(len= 36) :: time_origin = ''             !< @public the time_origin used for netCDF output
   character(len= 36) :: calendar_name = ''           !< @public the calendar used for netCDF output
   integer(kind=8)    :: elapsed_secs = 0             !< @public the time in seconds from the time_origin
@@ -600,7 +603,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE  ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -993,7 +995,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -1194,7 +1195,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -1360,7 +1360,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -1559,7 +1558,6 @@ CONTAINS
     USE W3SERVMD, ONLY: EXTCDE
     USE W3SERVMD, ONLY: STRACE ! W3_S
     !
-    IMPLICIT NONE
     !
     !/
     !/ ------------------------------------------------------------------- /

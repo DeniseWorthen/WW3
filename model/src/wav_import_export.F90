@@ -21,7 +21,6 @@ module wav_import_export
   use wav_shr_mod  , only : state_diagnose, state_reset, state_getfldptr, state_fldchk
   use wav_shr_mod  , only : wav_coupling_to_cice, merge_import, dbug_flag, multigrid
   use constants    , only : grav, tpi, dwat
-  use wav_shr_flags, only : w3_cesmcoupled_flag
 
   implicit none
   private ! except
@@ -57,6 +56,11 @@ module wav_import_export
 
   real(r4), allocatable  :: import_mask(:)          !< the mask for valid import data
   real(r8), parameter    :: zero  = 0.0_r8          !< a named constant
+#ifdef W3_CESMCOUPLED
+  logical :: cesmcoupled = .true.                   !< logical defining a CESM use case
+#else
+  logical :: cesmcoupled = .false.                  !< logical defining a non-CESM use case (UWM)
+#endif
 
   integer, parameter :: nwav_elev_spectrum = 25     !< the size of the wave spectrum exported if coupling
                                                     !! waves to cice6
@@ -107,7 +111,7 @@ contains
     call fldlist_add(fldsToWav_num, fldsToWav, 'So_v'       )
     call fldlist_add(fldsToWav_num, fldsToWav, 'So_t'       )
     call fldlist_add(fldsToWav_num, fldsToWav, 'Sa_tbot'    )
-    if (w3_cesmcoupled_flag) then
+    if (cesmcoupled) then
        call fldlist_add(fldsToWav_num, fldsToWav, 'Sa_u'       )
        call fldlist_add(fldsToWav_num, fldsToWav, 'Sa_v'       )
        call fldlist_add(fldsToWav_num, fldsToWav, 'So_bldepth' )
@@ -132,7 +136,7 @@ contains
     !--------------------------------
 
     call fldlist_add(fldsFrWav_num, fldsFrWav, trim(flds_scalar_name))
-    if (w3_cesmcoupled_flag) then
+    if (cesmcoupled) then
        call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_lamult' )
        call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_ustokes')
        call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_vstokes')
@@ -267,11 +271,16 @@ contains
     use w3idatmd    , only: tfn, w3seti
     use w3odatmd    , only: w3seto
     use w3wdatmd    , only: time, w3setw
+#ifdef W3_CESMCOUPLED
     use w3idatmd    , only: HML
+#else
     use wmupdtmd    , only: wmupd2
-    use wmmdatmd    , only: wmsetm, mpi_comm_grd_not_null
+    use wmmdatmd    , only: wmsetm
     use wmmdatmd    , only: mdse, mdst, nrgrd, inpmap
+#ifdef W3_MPI
     use wmmdatmd    , only: mpi_comm_grd
+#endif
+#endif
 
     ! input/output variables
     type(ESMF_GridComp) , intent(inout) :: gcomp
@@ -298,7 +307,7 @@ contains
     rc = ESMF_SUCCESS
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
 
-    if (w3_cesmcoupled_flag) then
+    if (cesmcoupled) then
        uwnd = 'Sa_u'
        vwnd = 'Sa_v'
     else
@@ -322,10 +331,10 @@ contains
 
     def_value = 0.0_r4
 
-    if (.not. w3_cesmcoupled_flag) then
+#ifndef W3_CESMCOUPLED
        call w3setg ( 1, mdse, mdst )
        call w3seti ( 1, mdse, mdst )
-    end if
+#endif
 
     ! ---------------
     ! INFLAGS1(1)
@@ -468,8 +477,7 @@ contains
           call FillGlobalInput(global_data, ICEI)
        end if
     end if
-
-    if (w3_cesmcoupled_flag) then
+#ifdef W3_CESMCOUPLED
        ! ---------------
        ! ocean boundary layer depth - always assume that this is being imported for CESM
        ! ---------------
@@ -479,7 +487,7 @@ contains
        ! ocn mixing layer depth
        global_data = max(global_data, 5.)
        call FillGlobalInput(global_data, HML)
-    end if
+#endif
 
     ! ---------------
     ! INFLAGS1(5) - atm momentum fields
@@ -532,7 +540,7 @@ contains
        end if
     end if
 
-    if (.not. w3_cesmcoupled_flag) then
+#ifndef W3_CESMCOUPLED
        if (multigrid) then
           do j = lbound(inflags1,1),ubound(inflags1,1)
              if (inflags1(j)) then
@@ -543,9 +551,9 @@ contains
                    call w3seti ( imod, mdse, mdst )
                    call w3seto ( imod, mdse, mdst )
                    call wmsetm ( imod, mdse, mdst )
-                   if (w3_mpi_flag) then
-                      if ( .not. mpi_comm_grd_not_null ) cycle
-                   end if
+#ifdef W3_MPI
+                if ( mpi_comm_grd .eq. mpi_comm_null ) cycle
+#endif
                    !TODO: when is this active? jmod = -999
                    jmod = inpmap(imod,j)
                    if ( jmod.lt.0 .and. jmod.ne.-999 ) then
@@ -556,7 +564,7 @@ contains
              end if
           end do
        end if
-    end if
+#endif
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
 
@@ -586,8 +594,11 @@ contains
     use w3odatmd      , only : w3seto, naproc, iaproc
     use w3gdatmd      , only : nseal, mapsf, MAPSTA, USSPF, NK, w3setg
     use w3iogomd      , only : CALC_U3STOKES
+#ifdef W3_CESMCOUPLED
     use w3adatmd      , only : LAMULT
+#else
     use wmmdatmd      , only : mdse, mdst, wmsetm
+#endif
 
     ! input/output/variables
     type(ESMF_GridComp)            :: gcomp
@@ -635,7 +646,7 @@ contains
     call NUOPC_ModelGet(gcomp, exportState=exportState, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
-    if (.not. w3_cesmcoupled_flag) then
+#ifndef W3_CESMCOUPLED
        call w3setg ( 1, mdse, mdst )
        call w3setw ( 1, mdse, mdst )
        call w3seta ( 1, mdse, mdst )
@@ -644,9 +655,7 @@ contains
        if (multigrid) then
           call wmsetm ( 1, mdse, mdst )
        end if
-    end if
-
-    if (w3_cesmcoupled_flag) then
+#else
        if (state_fldchk(exportState, 'Sw_lamult')) then
           call state_getfldptr(exportState, 'Sw_lamult', sw_lamult, rc=rc)
           if (ChkErr(rc,__LINE__,u_FILE_u)) return
@@ -662,7 +671,7 @@ contains
              endif
           enddo
        end if
-    end if
+#endif
 
     ! surface stokes drift
     if (state_fldchk(exportState, 'Sw_ustokes')) then

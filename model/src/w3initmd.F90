@@ -110,6 +110,9 @@ MODULE W3INITMD
   !
   !/ ------------------------------------------------------------------- /
   use wav_shr_flags
+  
+  ! module default
+  IMPLICIT NONE
   !
   PUBLIC
   !/
@@ -404,7 +407,6 @@ CONTAINS
     USE W3UOSTMD, ONLY: UOST_SETGRID
 #endif
     !/
-    IMPLICIT NONE
     !
 #ifdef W3_MPI
     INCLUDE "mpif.h"
@@ -421,7 +423,7 @@ CONTAINS
     LOGICAL,           INTENT(INOUT)        :: FLGRD(NOGRP,NGRPP), FLGD(NOGRP)
     LOGICAL,           INTENT(INOUT)        :: FLGR2(NOGRP,NGRPP), FLG2(NOGRP)
     LOGICAL,           INTENT(INOUT)        :: PRTFRM
-    CHARACTER,         INTENT(IN)           :: FEXT*(*)
+    CHARACTER(LEN=*)  , INTENT(IN)           :: FEXT
     CHARACTER(LEN=40), INTENT(IN)           :: PNAMES(NPT)
     LOGICAL,           INTENT(IN), OPTIONAL :: FLAGSTIDEIN(4)
     !/
@@ -1908,7 +1910,6 @@ CONTAINS
     USE W3ADATMD,  ONLY: BISPL, ISPLOC, IBFLOC, NSPLOC  ! W3_MPI
     USE W3ODATMD,  ONLY: NDST, NAPROC, IAPROC           ! W3_MPI
     !/
-    IMPLICIT NONE
     !
 #ifdef W3_MPI
     INCLUDE "mpif.h"
@@ -2274,7 +2275,6 @@ CONTAINS
     USE W3GDATMD, ONLY: GTYPE, UNGTYPE
     USE CONSTANTS, ONLY: LPDLIB
     !/
-    IMPLICIT NONE
     !
 #ifdef W3_MPI
     INCLUDE "mpif.h"
@@ -3158,18 +3158,18 @@ CONTAINS
              if (w3_mpit_flag) then
                 WRITE (NDST,9011) IH, ' 6/13', IROOT, IT, IRQGO(IH), IERR
              end if
-             if (w3_cesmcoupled_flag) then
-                IF ( FLGRDALL( 6, 14) ) THEN
-                   IH     = IH + 1
-                   IT     = IT + 1
-                   CALL MPI_SEND_INIT (LANGMT  (1),NSEALM , MPI_REAL, IROOT,   &
-                        IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
-                END IF
-                if (w3_mpit_flag) then
-                   WRITE (NDST,9011) IH, ' 6/14', IROOT, IT, IRQGO(IH), IERR
-                end if
-             end if
           END IF
+          if (w3_cesmcoupled_flag) then
+             IF ( FLGRDALL( 6, 14) ) THEN
+                IH     = IH + 1
+                IT     = IT + 1
+                CALL MPI_SEND_INIT (LANGMT  (1),NSEALM , MPI_REAL, IROOT,   &
+                     IT, MPI_COMM_WAVE, IRQGO(IH), IERR)
+             END IF
+             if (w3_mpit_flag) then
+                WRITE (NDST,9011) IH, ' 6/14', IROOT, IT, IRQGO(IH), IERR
+             end if
+          end if
           !
           IF ( FLGRDALL( 7, 1) ) THEN
              IH     = IH + 1
@@ -5508,7 +5508,6 @@ CONTAINS
     USE W3ODATMD, ONLY: NOPTS, IPTINT, IT0PNT, IT0TRK, O2IRQI     ! W3_MPI
     USE W3PARALL, ONLY: INIT_GET_JSEA_ISPROC                      ! W3_MPI
     !/
-    IMPLICIT NONE
     !
 #ifdef W3_MPI
     INCLUDE "mpif.h"

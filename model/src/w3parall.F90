@@ -46,6 +46,8 @@ MODULE W3PARALL
   USE W3SERVMD  , ONLY: STRACE ! W3_S
   USE CONSTANTS , ONLY : LPDLIB
   use wav_shr_flags
+  ! module default
+  IMPLICIT NONE
   !
   INTEGER              :: PDLIB_NSEAL, PDLIB_NSEALM      ! W3_PDLIB
   INTEGER, ALLOCATABLE :: JX_TO_JSEA(:), ISEA_TO_JSEA(:) ! W3_PDLIB
@@ -109,7 +111,6 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !/
-    IMPLICIT NONE
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
@@ -134,8 +135,6 @@ CONTAINS
     IF (mpimode .eq. 0) THEN
        CALL CPU_TIME(eTime)
     END IF
-    !/
-    !/ End of JACOBI_INIT ------------------------------------------------ /
     !/
   END SUBROUTINE WAV_MY_WTIME
 
@@ -186,8 +185,6 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE W3ODATMD, ONLY : IAPROC
-
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -205,8 +202,6 @@ CONTAINS
     end if
     CALL WAV_MY_WTIME(eTime)
     WRITE(740+IAPROC,*) 'TIMING time=', eTime, ' at step ', string
-    !/
-    !/ End of JACOBI_INIT ------------------------------------------------ /
     !/
   END SUBROUTINE PRINT_MY_TIME
 
@@ -264,8 +259,6 @@ CONTAINS
     USE W3ADATMD, ONLY: DCDX, DCDY ! W3_REFRX
     USE W3IDATMD, ONLY: FLCUR
     USE W3ODATMD, ONLY: IAPROC
-
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -364,8 +357,6 @@ CONTAINS
        CAD(ISP)=DBLE(VCFLT(ISP))
     END DO
     !/
-    !/ End of JACOBI_INIT ------------------------------------------------ /
-    !/
   END SUBROUTINE PROP_REFRACTION_PR1
 
   !/ ------------------------------------------------------------------- /
@@ -422,7 +413,6 @@ CONTAINS
     USE W3IDATMD, ONLY : FLCUR
     USE W3ODATMD, only : IAPROC
     !/
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -509,8 +499,6 @@ CONTAINS
        CAD(ISP)=DBLE(VCFLT(ISP))
     END DO
     !/
-    !/ End of JACOBI_INIT ------------------------------------------------ /
-    !/
   END SUBROUTINE PROP_REFRACTION_PR3
 
   !/ ------------------------------------------------------------------- /
@@ -565,7 +553,6 @@ CONTAINS
     USE W3ADATMD, ONLY: CG, WN, DCXDX, DCXDY, DCYDX, DCYDY, CX, CY, DDDX, DDDY, DW
     USE W3ODATMD, only : IAPROC
     !
-    IMPLICIT NONE
     !
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -664,8 +651,6 @@ CONTAINS
        WRITE(740+IAPROC,*) 'sum(abs(CAS))=', sum(abs(CAS))
     end if
     !/
-    !/ End of JACOBI_INIT ------------------------------------------------ /
-    !/
   END SUBROUTINE PROP_FREQ_SHIFT
 
   !/ ------------------------------------------------------------------- /
@@ -720,9 +705,6 @@ CONTAINS
                         CTMAX, DMIN, DTH, MAPSF
     USE W3ADATMD, ONLY: CG, WN, DCXDX, DCXDY, DCYDX, DCYDY, CX, CY, DDDX, DDDY, DW
     USE W3ODATMD, only : IAPROC
-
-    IMPLICIT NONE
-
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
@@ -855,8 +837,6 @@ CONTAINS
        DWNI_M2(IK) = DBLE( CG(IK,ISEA) / DSIP(IK) )
     END DO
     !/
-    !/ End of JACOBI_INIT ------------------------------------------------ /
-    !/
   END SUBROUTINE PROP_FREQ_SHIFT_M2
 
   !/ ------------------------------------------------------------------- /
@@ -917,8 +897,7 @@ CONTAINS
     USE yowNodepool   , only: np_global
     USE yowRankModule , only: IPGL_TO_PROC, IPGL_tot
     USE WMMDATMD      , ONLY: MDATAS
-#endif
-    IMPLICIT NONE 
+#endif 
 #ifdef W3_MPI
     INCLUDE "mpif.h"
 #endif
@@ -972,8 +951,6 @@ CONTAINS
        END DO
     END IF
 #endif
-    !/
-    !/ End of JACOBI_INIT ------------------------------------------------ /
     !/
   END SUBROUTINE SYNCHRONIZE_IPGL_ETC_ARRAY
 
@@ -1029,9 +1006,7 @@ CONTAINS
     USE W3ODATMD,      ONLY : NTPROC, NAPROC, IAPROC
     !/
     !/ ------------------------------------------------------------------- /
-
-    IMPLICIT NONE
-
+    
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     INTEGER, intent(out) :: NSEALout, NSEALMout
@@ -1080,8 +1055,6 @@ CONTAINS
           end if
        ENDIF
     end if
-    !/
-    !/ End of JACOBI_INIT ------------------------------------------------ /
     !/
   END SUBROUTINE SET_UP_NSEAL_NSEALM
 
@@ -1138,7 +1111,6 @@ CONTAINS
     USE yowRankModule, only : IPGL_TO_PROC, IPGL_tot
     use yowNodepool,   only : ipgl, iplg
 #endif
-    IMPLICIT NONE
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
@@ -1176,8 +1148,6 @@ CONTAINS
        ISPROC = ISEA - (JSEA-1)*NAPROC
 #endif
 
-    !/
-    !/ End of JACOBI_INIT ------------------------------------------------ /
     !/
   END SUBROUTINE INIT_GET_JSEA_ISPROC
 
@@ -1235,7 +1205,6 @@ CONTAINS
     use yowNodepool,   only  : ipgl, iplg
 #endif
     !/
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -1345,7 +1314,6 @@ CONTAINS
     USE YOWNODEPOOL , ONLY : iplg
 #endif
     !/
-    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -1442,7 +1410,6 @@ CONTAINS
     use yowNodepool , only : iplg
 #endif
     !
-    IMPLICIT NONE
 #ifdef W3_MPI
     INCLUDE "mpif.h"
 #endif
@@ -1489,8 +1456,6 @@ CONTAINS
        CALL MPI_RECV(TheVar,NX,rtype, 0, 29, MPI_COMM_WCMP, istatus, ierr)
     END IF
 #endif
-    !/
-    !/ End of JACOBI_INIT ------------------------------------------------ /
     !/
   END SUBROUTINE SYNCHRONIZE_GLOBAL_ARRAY
   !/ ------------------------------------------------------------------- /
