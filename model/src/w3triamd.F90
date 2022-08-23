@@ -428,7 +428,7 @@ CONTAINS
 !/ ------------------------------------------------------------------- /
 !/
 !
-      integer, intent(out) :: STATUS(NX)
+      integer*2, intent(out) :: STATUS(NX)
       INTEGER :: COLLECTED(NX), NEXTVERT(NX), PREVVERT(NX)
       INTEGER :: ISFINISHED, INEXT, IPREV
       INTEGER :: IPNEXT, IPPREV, ZNEXT, IP, I, IE
@@ -678,7 +678,8 @@ CONTAINS
 !/ Local parameters
 !/
       INTEGER                 ::  IBC, IX
-      INTEGER                 ::  MASK(NX), STATUS(NX)
+      INTEGER                 ::  MASK(NX)
+      INTEGER*2               ::  STATUS(NX)
 !
       MASK(:)=1
       CALL SET_IOBP (MASK, STATUS)
@@ -2082,7 +2083,7 @@ END SUBROUTINE
 !/ Parameter list
 !/
       INTEGER, INTENT(IN)   :: MASK(NX)
-      INTEGER, INTENT(OUT)  :: STATUS(NX)
+      INTEGER*2, INTENT(OUT)  :: STATUS(NX)
 !
       INTEGER :: COLLECTED(NX), NEXTVERT(NX), PREVVERT(NX)
       INTEGER          :: ISFINISHED !, INEXT, IPREV
@@ -2255,7 +2256,7 @@ END SUBROUTINE
 #endif
 
         INTEGER, INTENT(IN)             :: MNP, MNE, TRIGP(MNE,3)
-        INTEGER, INTENT(INOUT)          :: IOBP(MNP)
+        INTEGER*2, INTENT(INOUT)        :: IOBP(MNP)
         INTEGER, INTENT(INOUT)          :: NEIGHBOR_PREV(MNP)
         INTEGER, INTENT(INOUT)          :: NEIGHBOR_NEXT(MNP)
 
