@@ -49,9 +49,10 @@
 !/
       CONTAINS
 !/ ------------------------------------------------------------------- /
-      SUBROUTINE W3SRCE ( srce_call, IT, JSEA, IX, IY, IMOD,          &
+      SUBROUTINE W3SRCE ( srce_call, IT, ISEA, JSEA, IX, IY, IMOD,    &
                           SPECOLD, SPEC, VSIO, VDIO, SHAVEIO,         &
-                          ALPHA, WN1, CG1, D_INP, U10ABS, U10DIR,     &
+                          ALPHA, WN1, CG1, CLATSL, D_INP, U10ABS,     &
+                          U10DIR,     &
 #ifdef W3_FLX5
                           TAUA, TAUADIR,                              &
 #endif
@@ -124,7 +125,7 @@
 !/    18-Aug-2018 : S_{ice} IC5 (Q. Liu)                ( version  6.06)
 !/    26-Aug-2018 : UOST (Mentaschi et al. 2015, 2018)  ( version 6.06 )
 !/    22-Mar-2021 : Add extra fields used in coupling   ( version 7.13 )
-!/    07-Jun-2021 : S_{nl5} GKE NL5 (Q. Liu)            ( version 7.13 ) 
+!/    07-Jun-2021 : S_{nl5} GKE NL5 (Q. Liu)            ( version 7.13 )
 !/    19-Jul-2021 : Momentum and air density support    ( version 7.14 )
 !/
 !/    Copyright 2009-2013 National Weather Service (NWS),
@@ -512,8 +513,8 @@
 !/ ------------------------------------------------------------------- /
 !/ Parameter list
 !/
-      INTEGER, INTENT(IN)     :: srce_call, IT, JSEA, IX, IY, IMOD
-      REAL, intent(in)        :: SPECOLD(NSPEC)
+      INTEGER, INTENT(IN)     :: srce_call, IT, ISEA, JSEA, IX, IY, IMOD
+      REAL, intent(in)        :: SPECOLD(NSPEC), CLATSL
       REAL, INTENT(OUT)       :: VSIO(NSPEC), VDIO(NSPEC)
       LOGICAL, INTENT(OUT)    :: SHAVEIO
       REAL, INTENT(IN)        :: D_INP, U10ABS,     &
@@ -662,7 +663,7 @@
       LOGICAL                 :: LBREAK
       LOGICAL, SAVE           :: FIRST = .TRUE.
 #ifdef W3_OMPG
-!$omp threadprivate( FIRST ) 
+!$omp threadprivate( FIRST )
 #endif
       LOGICAL                 :: PrintDeltaSmDA
       REAL                    :: eInc1, eInc2
@@ -1973,7 +1974,7 @@
                     COEF*U10ABS*Sin(U10DIR), ZWND, DEPTH, 0.0, &
                     DAIR, USTAR, USTDIR, Z0,TAUNUX,TAUNUY,CHARN)
       ELSE
-          CHARN = AALPHA 
+          CHARN = AALPHA
       ENDIF
 #endif
 #ifdef W3_FLD2

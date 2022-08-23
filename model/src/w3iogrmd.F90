@@ -120,11 +120,11 @@
 !/                  (W. E. Rogers & T. J. Campbell, NRL)
 !/    23-Dec-2009 : Addition of COU namelists           ( version 3.14 )
 !/    31-Oct-2010 : Implement unstructured grids        ( version 3.14 )
-!/                  (A. Roland and F. Ardhuin) 
+!/                  (A. Roland and F. Ardhuin)
 !/    06-Dec-2010 : Change from GLOBAL (logical) to ICLOSE (integer) to
 !/                  specify index closure for a grid.   ( version 3.14 )
 !/                  (T. J. Campbell, NRL)
-!/    12-Jun-2012 : Add /RTD option or rotated grid option. 
+!/    12-Jun-2012 : Add /RTD option or rotated grid option.
 !/                  (Jian-Guo Li)                       ( version 4.06 )
 !/    13-Jul-2012 : Move GMD (SNL3) and nonlinear filter (SNLS)
 !/                  from 3.15 (HLT).                    ( version 4.08 )
@@ -153,7 +153,7 @@
 !/
 !/    Copyright 2009-2013 National Weather Service (NWS),
 !/       National Oceanic and Atmospheric Administration.  All rights
-!/       reserved.  WAVEWATCH III is a trademark of the NWS. 
+!/       reserved.  WAVEWATCH III is a trademark of the NWS.
 !/       No unauthorized use without permission.
 !/
 !  1. Purpose :
@@ -187,7 +187,7 @@
 !     ----------------------------------------------------------------
 !      W3INIT    Subr. W3INITMD Wave model initialization routine.
 !      ......    Prog.   N/A    All WAVEWATCH III aux programs and
-!                               drivers.                
+!                               drivers.
 !     ----------------------------------------------------------------
 !
 !  6. Error messages :
@@ -238,7 +238,7 @@
       USE W3SRC4MD, ONLY: INSIN4, TAUT, TAUHFT, TAUHFT2, &
                           DELU, DELTAUW, DELUST, &
                           DELALP, DELTAIL, &
-                          DIKCUMUL 
+                          DIKCUMUL
 #endif
 #ifdef W3_NL1
       USE W3SNL1MD, ONLY: INSNL1
@@ -306,7 +306,7 @@
       LOGICAL                 :: WRITE, FLTEST = .FALSE., TESTLL,     &
                                  FLSNL2 = .FALSE.
       LOGICAL, SAVE           :: FLINP = .FALSE. , FLDISP = .FALSE.,  &
-                                 FLIS  = .FALSE. 
+                                 FLIS  = .FALSE.
       CHARACTER(LEN=10)       :: VERTST
       CHARACTER(LEN=13)       :: TEMPXT
       CHARACTER(LEN=30)       :: TNAME0, TNAME1, TNAME2, TNAME3,      &
@@ -319,7 +319,7 @@
       CHARACTER(LEN=60)      :: MESSAGE(5)
       LOGICAL                 :: GLOBAL
 
-      REAL, ALLOCATABLE       :: XGRD4(:,:), YGRD4(:,:) 
+      REAL, ALLOCATABLE       :: XGRD4(:,:), YGRD4(:,:)
 !/
 !/ ------------------------------------------------------------------- /
 !/
@@ -734,7 +734,7 @@
             CASE ( CLGTYPE )
               WRITE (NDSM)                                            &
                    REAL(XGRD), REAL(YGRD)
-            CASE (UNGTYPE) 
+            CASE (UNGTYPE)
               WRITE (NDSM)                                            &
                 FSN, FSPSI,FSFCT,FSNIMP,FSTOTALIMP,FSTOTALEXP,        &
                 FSBCCFL, FSREFRACTION, FSFREQSHIFT, FSSOURCE,         &
@@ -769,17 +769,17 @@
         IF( GTYPE .EQ. SMCTYPE ) THEN
           WRITE (NDSM)  NLvCel, NLvUFc, NLvVFc
           WRITE (NDSM)  IJKCel, IJKUFc, IJKVFc, ISMCBP
-          WRITE (NDSM)  ICLBAC 
-          WRITE (NDSM)  ANGARC 
+          WRITE (NDSM)  ICLBAC
+          WRITE (NDSM)  ANGARC
           WRITE (NDSM)  CTRNX,  CTRNY,  CLATF
           IF ( FLTEST ) THEN
             WRITE (NDSE,"('  NRLv, MRFct and NBSMC values are',3I9)") NRLv, MRFct, NBSMC
-            WRITE (NDSE,"('  IJKCel, IJKUFc, IJKVFc Write for',3I9)") NCel, NUFc, NVFc 
+            WRITE (NDSE,"('  IJKCel, IJKUFc, IJKVFc Write for',3I9)") NCel, NUFc, NVFc
             WRITE (NDSE,"('  CTRNXY transparency write for 2x', I9)") NCel
           ENDIF
         ENDIF
 #endif
-! 
+!
           IF ( TRFLAG .NE. 0 ) WRITE (NDSM) TRNX, TRNY
           WRITE (NDSM)                     &
                DTCFL, DTCFLI, DTMAX, DTMIN, DMIN, CTMAX,              &
@@ -833,7 +833,7 @@
 ! Reads different kind of information depending on grid type
 !
           SELECT CASE ( GTYPE )
-!!Li  SMCTYPE shares info with RLGTYPE.   JGLi12Oct2020 
+!!Li  SMCTYPE shares info with RLGTYPE.   JGLi12Oct2020
             CASE ( RLGTYPE, SMCTYPE )
               READ (NDSM,END=801,ERR=802,IOSTAT=IERR)                 &
                    SX, SY, X0, Y0
@@ -844,7 +844,7 @@
                 YGRD(IY,:) = REAL(Y0 + REAL(IY-1)*SY)
                 END DO
             CASE ( CLGTYPE )
-              ALLOCATE(XGRD4(NY,NX),YGRD4(NY,NX)); XGRD4 = 0.; YGRD4 = 0. 
+              ALLOCATE(XGRD4(NY,NX),YGRD4(NY,NX)); XGRD4 = 0.; YGRD4 = 0.
               READ (NDSM,END=801,ERR=802,IOSTAT=IERR)                 &
                    XGRD4, YGRD4
               XGRD = XGRD4
@@ -853,12 +853,12 @@
               !Set SX, SY, X0, Y0 to large values if curvilinear grid
               X0 = HUGE(X0); Y0 = HUGE(Y0)
               SX = HUGE(SX); SY = HUGE(SY)
-            CASE (UNGTYPE) 
+            CASE (UNGTYPE)
 #ifdef W3_DEBUGIOGR
      WRITE(740+IAPROC,*) 'W3IOGR, step 7.4'
      FLUSH(740+IAPROC)
 #endif
-              READ (NDSM,END=801,ERR=802,IOSTAT=IERR)                 & 
+              READ (NDSM,END=801,ERR=802,IOSTAT=IERR)                 &
                 FSN, FSPSI,FSFCT,FSNIMP,FSTOTALIMP,FSTOTALEXP,        &
                 FSBCCFL, FSREFRACTION, FSFREQSHIFT, FSSOURCE,         &
                 DO_CHANGE_WLV, SOLVERTHR_STP, CRIT_DEP_STP,           &
@@ -922,7 +922,7 @@
      WRITE(740+IAPROC,*) 'W3IOGR, step 7.8'
      FLUSH(740+IAPROC)
 #endif
-          IF (GTYPE.NE.UNGTYPE) CALL W3GNTX ( IGRD, NDSE, NDST ) 
+          IF (GTYPE.NE.UNGTYPE) CALL W3GNTX ( IGRD, NDSE, NDST )
 #ifdef W3_DEBUGIOGR
      WRITE(740+IAPROC,*) 'W3IOGR, step 7.9'
      FLUSH(740+IAPROC)
@@ -939,11 +939,11 @@
           READ (NDSM,END=801,ERR=802,IOSTAT=IERR)                &
                      NLvCel, NLvUFc, NLvVFc
           READ (NDSM,END=801,ERR=802,IOSTAT=IERR)                &
-                     IJKCel, IJKUFc, IJKVFc, ISMCBP 
+                     IJKCel, IJKUFc, IJKVFc, ISMCBP
           READ (NDSM,END=801,ERR=802,IOSTAT=IERR)                &
-                     ICLBAC 
+                     ICLBAC
           READ (NDSM,END=801,ERR=802,IOSTAT=IERR)                &
-                     ANGARC 
+                     ANGARC
           READ (NDSM,END=801,ERR=802,IOSTAT=IERR)                &
                      CTRNX,  CTRNY,  CLATF
         ENDIF
@@ -1096,7 +1096,7 @@
 !
 !
 ! Output flags for 3D parameters ------------------------------------- *
-!                                                 Module W3GDATMD 
+!                                                 Module W3GDATMD
       IF ( WRITE ) THEN
           WRITE (NDSM)                                                &
                 E3DF, P2MSF, US3DF,USSPF, USSP_WN
@@ -1294,7 +1294,7 @@
         END IF
 #endif
 !
-! 
+!
 #ifdef W3_LN1
       IF ( WRITE ) THEN
           WRITE (NDSM)                            SLNC1, FSPM, FSHF
