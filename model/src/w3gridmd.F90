@@ -3777,11 +3777,11 @@
             IF ( IDFM .EQ. 3 ) THEN
               IF (FROM.EQ.'NAME') THEN
                 OPEN (NDSG,FILE=TRIM(FNMPRE)//TRIM(FNAME),&
-                      FORM='UNFORMATTED',                 &
+                      form='UNFORMATTED', convert=file_endian,                 &
                       STATUS='OLD',ERR=2000,IOSTAT=IERR)
               ELSE
                 OPEN (NDSG,                               &
-                      FORM='UNFORMATTED',                 &
+                      form='UNFORMATTED', convert=file_endian,                 &
                       STATUS='OLD',ERR=2000,IOSTAT=IERR)
               END IF
             ELSE
@@ -3836,11 +3836,11 @@
             IF ( IDFM .EQ. 3 ) THEN
               IF (FROM.EQ.'NAME') THEN
                 OPEN (NDSG,FILE=TRIM(FNMPRE)//TRIM(FNAME),&
-                      FORM='UNFORMATTED',                 &
+                      form='UNFORMATTED', convert=file_endian,                 &
                       STATUS='OLD',ERR=2000,IOSTAT=IERR)
               ELSE
                 OPEN (NDSG,                               &
-                      FORM='UNFORMATTED',                 &
+                      form='UNFORMATTED', convert=file_endian,                 &
                       STATUS='OLD',ERR=2000,IOSTAT=IERR)
               END IF
             ELSE
@@ -3955,10 +3955,10 @@
               IF ( IDFM .EQ. 3 ) THEN
                   IF (FROM.EQ.'NAME') THEN
                       OPEN (NDSG,FILE=TRIM(FNMPRE)//TRIM(FNAME), &
-                            FORM='UNFORMATTED',&
+                            form='UNFORMATTED', convert=file_endian,&
                             STATUS='OLD',ERR=2000,IOSTAT=IERR)
                     ELSE
-                      OPEN (NDSG, FORM='UNFORMATTED',                &
+                      OPEN (NDSG, form='UNFORMATTED', convert=file_endian,                &
                             STATUS='OLD',ERR=2000,IOSTAT=IERR)
                     END IF
                 ELSE
@@ -4082,10 +4082,10 @@
           IF ( IDFT .EQ. 3 ) THEN
             IF (FROM.EQ.'NAME') THEN
               OPEN (NDSTR,FILE=TRIM(FNMPRE)//TNAME,             &
-                    FORM='UNFORMATTED',STATUS='OLD',ERR=2000, &
+                    form='UNFORMATTED', convert=file_endian,STATUS='OLD',ERR=2000, &
                     IOSTAT=IERR)
             ELSE
-              OPEN (NDSTR,           FORM='UNFORMATTED',      &
+              OPEN (NDSTR,           form='UNFORMATTED', convert=file_endian,      &
                     STATUS='OLD',ERR=2000,IOSTAT=IERR)
             END IF
           ELSE
@@ -4786,10 +4786,10 @@
               IF ( IDFT .EQ. 3 ) THEN
                   IF (FROM.EQ.'NAME') THEN
                       OPEN (NDSTR,FILE=TRIM(FNMPRE)//TNAME,             &
-                            FORM='UNFORMATTED',STATUS='OLD',ERR=2000, &
+                            form='UNFORMATTED', convert=file_endian,STATUS='OLD',ERR=2000, &
                             IOSTAT=IERR)
                     ELSE
-                      OPEN (NDSTR,           FORM='UNFORMATTED',      &
+                      OPEN (NDSTR,           form='UNFORMATTED', convert=file_endian,      &
                             STATUS='OLD',ERR=2000,IOSTAT=IERR)
                     END IF
                 ELSE
@@ -5464,7 +5464,7 @@
 ! AR: this is not anymore needed and will be deleted ...
 !
       IF (GTYPE.EQ.UNGTYPE) THEN 
-        CALL SETUGIOBP 
+        CALL SET_UG_IOBP 
 #ifdef W3_REF1
       ELSE
         CALL W3SETREF
@@ -5522,10 +5522,10 @@
             IF ( IDFT .EQ. 3 ) THEN
               IF (FROM.EQ.'NAME') THEN
                 OPEN (NDSTR,FILE=TRIM(FNMPRE)//TNAME,                 &
-                        FORM='UNFORMATTED',STATUS='OLD',ERR=2000, &
+                        form='UNFORMATTED', convert=file_endian,STATUS='OLD',ERR=2000, &
                         IOSTAT=IERR)
               ELSE
-                OPEN (NDSTR,           FORM='UNFORMATTED',      &
+                OPEN (NDSTR,           form='UNFORMATTED', convert=file_endian,      &
                     STATUS='OLD',ERR=2000,IOSTAT=IERR)
                 END IF
             ELSE
@@ -5648,10 +5648,10 @@
               IF ( IDFT .EQ. 3 ) THEN
                   IF (FROM.EQ.'NAME') THEN
                       OPEN (NDSTR,FILE=TRIM(FNMPRE)//TNAME,             &
-                            FORM='UNFORMATTED',STATUS='OLD',ERR=2000, &
+                            form='UNFORMATTED', convert=file_endian,STATUS='OLD',ERR=2000, &
                             IOSTAT=IERR)
                     ELSE
-                      OPEN (NDSTR,           FORM='UNFORMATTED',      &
+                      OPEN (NDSTR,           form='UNFORMATTED', convert=file_endian,      &
                             STATUS='OLD',ERR=2000,IOSTAT=IERR)
                     END IF
                 ELSE
