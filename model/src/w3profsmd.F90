@@ -1658,7 +1658,7 @@
         !WRITE(*,*) ip, ip_glob, MAPSTA(1,IP_glob), IOBP(IP_glob), DW(ISEA), DMIN
       END DO
 
-     END SUBROUTINE
+  END SUBROUTINE SETDEPTH
 
 !/ ------------------------------------------------------------------- /
         
@@ -2333,7 +2333,7 @@ END MODULE W3PROFSMD
 !
       return
 !-----end-of-bcgstab
-      end
+end subroutine bcgstab
 !-----------------------------------------------------------------------
       subroutine implu(np,umm,beta,ypiv,u,permut,full)
       real*8 umm,beta,ypiv(*),u(*),x, xpiv
@@ -2375,7 +2375,7 @@ END MODULE W3PROFSMD
   end do
       return
 !-----end-of-implu
-      end
+end subroutine implu
 !-----------------------------------------------------------------------
       subroutine uppdir(n,p,np,lbp,indp,y,u,usav,flops)
       implicit none
@@ -2414,7 +2414,7 @@ END MODULE W3PROFSMD
       return
 !-----------------------------------------------------------------------
 !-------end-of-uppdir---------------------------------------------------
-      end
+end subroutine uppdir
 
       subroutine givens(x,y,c,s)
        implicit none
@@ -2455,7 +2455,7 @@ END MODULE W3PROFSMD
 !     end of givens
 !
       return
-      end
+end subroutine givens
 !-----end-of-givens
 !-----------------------------------------------------------------------
       logical function stopbis(n,ipar,mvpi,fpar,r,delx,sx)
@@ -2513,7 +2513,7 @@ END MODULE W3PROFSMD
       endif
 !
       return
-      end
+end function stopbis
 !-----end-of-stopbis
 !-----------------------------------------------------------------------
       subroutine tidycg(n,ipar,fpar,sol,delx)
@@ -2547,7 +2547,7 @@ END MODULE W3PROFSMD
          sol(i) = sol(i) + delx(i)
       enddo
       return
-      end
+end subroutine tidycg
 !-----end-of-tidycg
 !-----------------------------------------------------------------------
       logical function brkdn(alpha, ipar)
@@ -2583,7 +2583,7 @@ END MODULE W3PROFSMD
          ipar(1) = -9
       endif
       return
-      end
+end function brkdn
 !-----end-of-brkdn
 !-----------------------------------------------------------------------
       subroutine bisinit(ipar,fpar,wksize,dsc,lp,rp,wk)
@@ -2655,7 +2655,7 @@ END MODULE W3PROFSMD
 !
       return
 !-----end-of-bisinit
-      end
+end subroutine bisinit
 !-----------------------------------------------------------------------
       subroutine mgsro(full,lda,n,m,ind,ops,vec,hh,ierr)
       implicit none
@@ -2857,7 +2857,7 @@ end subroutine mgsro
       return
 !---------end-of-amux---------------------------------------------------
 !-----------------------------------------------------------------------
-      end
+end subroutine amux
 !-----------------------------------------------------------------------
       subroutine amuxms (n, x, y, a,ja)
       real*8  x(*), y(*), a(*)
@@ -2899,7 +2899,7 @@ end subroutine mgsro
       return
 !---------end-of-amuxm--------------------------------------------------
 !-----------------------------------------------------------------------
-      end
+end subroutine amuxms
 !-----------------------------------------------------------------------
       subroutine atmux (n, x, y, a, ja, ia)
       real*8 x(*), y(*), a(*) 
@@ -2948,7 +2948,7 @@ end subroutine mgsro
       return
 !-------------end-of-atmux---------------------------------------------- 
 !-----------------------------------------------------------------------
-      end
+end subroutine atmux
 !----------------------------------------------------------------------- 
       subroutine atmuxr (m, n, x, y, a, ja, ia)
       real*8 x(*), y(*), a(*) 
@@ -2997,7 +2997,7 @@ end subroutine mgsro
       return
 !-------------end-of-atmuxr--------------------------------------------- 
 !-----------------------------------------------------------------------
-      end
+end subroutine atmuxr
 !----------------------------------------------------------------------- 
       subroutine amuxe (n,x,y,na,ncol,a,ja)
         implicit none
@@ -3046,7 +3046,7 @@ end subroutine mgsro
       return
 !--------end-of-amuxe--------------------------------------------------- 
 !-----------------------------------------------------------------------
-      end
+end subroutine amuxe
 !-----------------------------------------------------------------------
       subroutine amuxd (n,x,y,diag,ndiag,idiag,ioff) 
       integer n, ndiag, idiag, ioff(idiag) 
@@ -3098,7 +3098,7 @@ end subroutine mgsro
       return
 !----------end-of-amuxd-------------------------------------------------
 !-----------------------------------------------------------------------
-      end
+end subroutine amuxd
 !-----------------------------------------------------------------------
       subroutine amuxj (n, x, y, jdiag, a, ja, ia)
       integer n, jdiag, ja(*), ia(*)
@@ -3152,7 +3152,7 @@ end subroutine mgsro
       return
 !----------end-of-amuxj------------------------------------------------- 
 !-----------------------------------------------------------------------
-      end
+end subroutine amuxj
 !-----------------------------------------------------------------------
       subroutine vbrmv(nr, nc, ia, ja, ka, a, kvstr, kvstc, x, b)
 !-----------------------------------------------------------------------
@@ -3201,7 +3201,7 @@ end subroutine mgsro
       enddo
 !---------------------------------
       return
-      end
+end subroutine vbrmv
 !-----------------------------------------------------------------------
 !----------------------end-of-vbrmv-------------------------------------
 !-----------------------------------------------------------------------
@@ -3249,7 +3249,7 @@ end subroutine mgsro
       return
 !----------end-of-lsol-------------------------------------------------- 
 !-----------------------------------------------------------------------
-      end
+end subroutine lsol
 !----------------------------------------------------------------------- 
       subroutine ldsol (n,x,y,al,jal) 
       integer n, jal(*) 
@@ -3292,7 +3292,7 @@ end subroutine mgsro
       return
 !----------end-of-ldsol-------------------------------------------------
 !-----------------------------------------------------------------------
-      end
+end subroutine ldsol
 !-----------------------------------------------------------------------
       subroutine lsolc (n,x,y,al,jal,ial)
       integer n, jal(*),ial(*) 
@@ -3336,7 +3336,7 @@ end subroutine mgsro
       return
 !----------end-of-lsolc------------------------------------------------- 
 !-----------------------------------------------------------------------
-      end
+end subroutine lsolc
 !-----------------------------------------------------------------------
       subroutine ldsolc (n,x,y,al,jal) 
       integer n, jal(*)
@@ -3383,7 +3383,7 @@ end subroutine mgsro
       return
 !----------end-of-lsolc------------------------------------------------ 
 !-----------------------------------------------------------------------
-      end
+end subroutine ldsolc
 !-----------------------------------------------------------------------  
       subroutine ldsoll (n,x,y,al,jal,nlev,lev,ilev) 
       integer n, nlev, jal(*), ilev(nlev+1), lev(n)
@@ -3435,7 +3435,7 @@ end subroutine mgsro
   end do
       return
 !-----------------------------------------------------------------------
-      end
+end subroutine ldsoll
 !-----------------------------------------------------------------------
       subroutine usol (n,x,y,au,jau,iau)
       integer n, jau(*),iau(n+1) 
@@ -3478,7 +3478,7 @@ end subroutine mgsro
       return
 !----------end-of-usol-------------------------------------------------- 
 !-----------------------------------------------------------------------
-      end
+end subroutine usol
 !----------------------------------------------------------------------- 
       subroutine udsol (n,x,y,au,jau) 
       integer n, jau(*) 
@@ -3522,7 +3522,7 @@ end subroutine mgsro
       return
 !----------end-of-udsol-------------------------------------------------
 !-----------------------------------------------------------------------
-      end
+end subroutine udsol
 !----------------------------------------------------------------------- 
       subroutine usolc (n,x,y,au,jau,iau)
       real*8  x(*), y(*), au(*) 
@@ -3566,7 +3566,7 @@ end subroutine mgsro
       return
 !----------end-of-usolc------------------------------------------------- 
 !-----------------------------------------------------------------------
-      end
+end subroutine usolc
 !-----------------------------------------------------------------------
       subroutine udsolc (n,x,y,au,jau)   
       integer n, jau(*) 
@@ -3612,7 +3612,7 @@ end subroutine mgsro
       return
 !----------end-of-udsolc------------------------------------------------ 
 !-----------------------------------------------------------------------
-      end
+end subroutine udsolc
 !-----------------------------------------------------------------------
         subroutine lusol(n, y, x, alu, jlu, ju)
           implicit none
@@ -3640,7 +3640,7 @@ end subroutine mgsro
 !
         return
 !----------------end of lusol ------------------------------------------
-        end
+end subroutine lusol
 !-----------------------------------------------------------------------
         subroutine lutsol(n, y, x, alu, jlu, ju) 
           implicit none
@@ -3677,7 +3677,7 @@ end subroutine mgsro
         return
 !----------------end of lutsol -----------------------------------------
 !-----------------------------------------------------------------------
-         end
+end subroutine lutsol
 !----------------------------------------------------------------------- 
         subroutine qsplit(a,ind,n,ncut)
           implicit none
@@ -3740,7 +3740,7 @@ end subroutine mgsro
         goto 1
 !----------------end-of-qsplit------------------------------------------
 !-----------------------------------------------------------------------
-        end
+end subroutine qsplit
       subroutine runrc(n,rhs,sol,ipar,fpar,wk,guess,a,ja,ia,au,jau,ju,solver)
       implicit none
       integer n,ipar(16),ia(n+1),ja(*),ju(*),jau(*)
@@ -3809,7 +3809,7 @@ end subroutine mgsro
             WRITE(*,*) 'Iterative solver terminated. code =', ipar(1)
          endif
       endif
-      end
+end subroutine runrc
 !-----end-of-runrc
 !----------------------------------------------------------------------c
 !                          S P A R S K I T                             c
@@ -4137,7 +4137,7 @@ end subroutine mgsro
 !-----------------------------------------------------------------------
 !     end main loop
 !-----------------------------------------------------------------------
- 500  continue
+  end do
       ierr = 0
       return
 !
@@ -4167,12 +4167,12 @@ end subroutine mgsro
       return
 !----------------end-of-ilut--------------------------------------------
 !-----------------------------------------------------------------------
-      end
+end subroutine ilut
 !----------------------------------------------------------------------
 !       subroutine ilu0(n, a, ja, ia, alu, jlu, ju, iw, ipoint1, ipoint2, ierr)
         subroutine ilu0(n, a, ja, ia, alu, jlu, ju, iw, ierr)
 
-        implicit real*8 (a-h,o-z)
+        !implicit real*8 (a-h,o-z)
         real*8 a(*), alu(*), tl
         integer n, ju0, ii, jj, i, j, jcol, js, jf, jm, jrow, jw, ierr
         integer ja(*), ia(*), ju(*), jlu(*), iw(n)
@@ -4229,7 +4229,7 @@ end subroutine mgsro
 !     zero pivot :
  600    ierr = ii
       return
-      end
+end subroutine ilu0
 !-----------------------------------------------------------------------
 !       subroutine pgmres(n, im, rhs, sol, eps, maxits, ierr)
 !        subroutine pgmres(n, im, rhs, sol, eps, maxits, aspar, ierr)
@@ -4485,7 +4485,7 @@ end subroutine mgsro
        ierr = -1
        return
 !--------------------------------------------------------------------- 
-       end
+end subroutine pgmres
 !-----------------------------------------------------------------------
 
 !-----------------------------------------------------------------------
@@ -4558,7 +4558,7 @@ end subroutine mgsro
 !
 !     End of DNRM2.
 !
-      END
+END function dnrm2
 
 !-----------------------------------------------------------------------
  SUBROUTINE DLASSQ( N, X, SCALE, SUMSQ )
@@ -4603,7 +4603,7 @@ DOUBLE PRECISION X( * )
         END DO
         END IF
         RETURN
-        END
+END SUBROUTINE DLASSQ
 
 !-------------------------------------------------------------------------
       double precision function ddot(n,dx,dy)
@@ -4632,7 +4632,7 @@ DOUBLE PRECISION X( * )
   end do
    60 ddot = dtemp
       return
-      end
+end function ddot
 !----------------------------------------------------------------------
       subroutine daxpy(n,da,dx,incx,dy,incy)
 !
@@ -4680,4 +4680,4 @@ DOUBLE PRECISION X( * )
         dy(i + 3) = dy(i + 3) + da*dx(i + 3)
   end do
       return
-      end
+end subroutine daxpy
