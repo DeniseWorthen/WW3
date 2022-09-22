@@ -2348,13 +2348,13 @@ END MODULE W3PROFSMD
 !
 !     -- perform  previous step of the factorization-
 !
-      do 6 k=1,npm1
+  do k=1,npm1
          if (.not. permut(k)) goto 5
          x=u(k)
          u(k) = u(k+1)
          u(k+1) = x
  5       u(k+1) = u(k+1) - ypiv(k)*u(k)
- 6    continue
+  end do
 !-----------------------------------------------------------------------
 !     now determine pivotal information to be used in the next call
 !-----------------------------------------------------------------------
@@ -2369,10 +2369,10 @@ END MODULE W3PROFSMD
       ypiv(np) = xpiv
       if (.not. full) return
 !     shift everything up if full...
-      do 7 k=1,npm1
+  do k=1,npm1
          ypiv(k) = ypiv(k+1)
          permut(k) = permut(k+1)
- 7    continue
+  end do
       return
 !-----end-of-implu
       end
@@ -2398,9 +2398,9 @@ END MODULE W3PROFSMD
  10   if (j .le. 0) j=lbp
       x = u(ju) /usav(j)
       if (x .eq. zero) goto 115
-      do 11 k=1,n
+  do k=1,n
          y(k) = y(k) - x*p(k,j)
- 11   continue
+  end do
       flops = flops + 2*n
  115  j = j-1
       ju = ju -1
@@ -2408,9 +2408,9 @@ END MODULE W3PROFSMD
  12   indp = indp + 1
       if (indp .gt. lbp) indp = 1
       usav(indp) = u(np)
-      do 13 k=1,n
+  do  k=1,n
          p(k,indp) = y(k)
- 13   continue
+  end do
       return
 !-----------------------------------------------------------------------
 !-------end-of-uppdir---------------------------------------------------
@@ -2715,46 +2715,46 @@ END MODULE W3PROFSMD
 !     Modified Gram-Schmidt loop
 !
       if (full) then
-         do 40 i = ind+1, m
+     do i = ind+1, m
             fct = ddot(n,vec(1,ind),vec(1,i))
             hh(i) = fct
-            do 20 k = 1, n
+        do k = 1, n
                vec(k,ind) = vec(k,ind) - fct * vec(k,i)
- 20         continue
+        end do
             ops = ops + 4 * n + 2
             if (fct*fct.gt.thr) then
                fct = ddot(n,vec(1,ind),vec(1,i))
                hh(i) = hh(i) + fct
-               do 30 k = 1, n
+           do k = 1, n
                   vec(k,ind) = vec(k,ind) - fct * vec(k,i)
- 30            continue
+           end do
                ops = ops + 4*n + 1
             endif
             nrm0 = nrm0 - hh(i) * hh(i)
             if (nrm0.lt.zero) nrm0 = zero
             thr = nrm0 * reorth
- 40      continue
+     end do
       endif
 !
-      do 70 i = 1, ind-1
+  do i = 1, ind-1
          fct = ddot(n,vec(1,ind),vec(1,i))
          hh(i) = fct
-         do 50 k = 1, n
+     do k = 1, n
             vec(k,ind) = vec(k,ind) - fct * vec(k,i)
- 50      continue
+     end do
          ops = ops + 4 * n + 2
          if (fct*fct.gt.thr) then
             fct = ddot(n,vec(1,ind),vec(1,i))
             hh(i) = hh(i) + fct
-            do 60 k = 1, n
+        do k = 1, n
                vec(k,ind) = vec(k,ind) - fct * vec(k,i)
- 60         continue
+        end do
             ops = ops + 4*n + 1
          endif
          nrm0 = nrm0 - hh(i) * hh(i)
          if (nrm0.lt.zero) nrm0 = zero
          thr = nrm0 * reorth
- 70   continue
+  end do
 !
 !     test the resulting vector
 !
@@ -2769,17 +2769,17 @@ END MODULE W3PROFSMD
 !     scale the resulting vector
 !
       fct = one / nrm1
-      do 80 k = 1, n
+  do k = 1, n
          vec(k,ind) = vec(k,ind) * fct
- 80   continue
+  end do
       ops = ops + n + 1
 !
 !     normal return
 !
       ierr = 0
       return
-!     end surbotine mgsro
-      end
+  !     end subroutine mgsro
+end subroutine mgsro
 !----------------------------------------------------------------------c
 !                          S P A R S K I T                             c
 !----------------------------------------------------------------------c
@@ -2840,19 +2840,19 @@ END MODULE W3PROFSMD
       real*8 t
       integer i, k
 !-----------------------------------------------------------------------
-      do 100 i = 1,n
+  do i = 1,n
 !
 !     compute the inner product of row i with vector x
 ! 
          t = 0.0d0
-         do 99 k=ia(i), ia(i+1)-1
+     do k=ia(i), ia(i+1)-1
             t = t + a(k)*x(ja(k))
- 99      continue
+     end do
 !
 !     store result in y(i) 
 !
          y(i) = t
- 100  continue
+  end do
 !
       return
 !---------end-of-amux---------------------------------------------------
@@ -2884,17 +2884,17 @@ END MODULE W3PROFSMD
 !
       integer i, k
 !-----------------------------------------------------------------------
-        do 10 i=1, n
+  do i=1, n
         y(i) = a(i)*x(i)
- 10     continue
-      do 100 i = 1,n
+  end do
+  do i = 1,n
 !
 !     compute the inner product of row i with vector x
 !
-         do 99 k=ja(i), ja(i+1)-1
+     do k=ja(i), ja(i+1)-1
             y(i) = y(i) + a(k) *x(ja(k))
- 99      continue
- 100  continue
+     end do
+  end do
 !
       return
 !---------end-of-amuxm--------------------------------------------------
@@ -2933,17 +2933,17 @@ END MODULE W3PROFSMD
 !
 !     zero out output vector
 ! 
-      do 1 i=1,n
+  do i=1,n
          y(i) = 0.0
- 1    continue
+  end do
 !
 ! loop over the rows
 !
-      do 100 i = 1,n
-         do 99 k=ia(i), ia(i+1)-1 
+  do i = 1,n
+     do  k=ia(i), ia(i+1)-1 
             y(ja(k)) = y(ja(k)) + x(i)*a(k)
- 99      continue
- 100  continue
+     end do
+  end do
 !
       return
 !-------------end-of-atmux---------------------------------------------- 
@@ -2982,17 +2982,17 @@ END MODULE W3PROFSMD
 !
 !     zero out output vector
 ! 
-      do 1 i=1,m
+  do i=1,m
          y(i) = 0.0
- 1    continue
+  end do
 !
 ! loop over the rows
 !
-      do 100 i = 1,n
-         do 99 k=ia(i), ia(i+1)-1 
+  do i = 1,n
+     do k=ia(i), ia(i+1)-1 
             y(ja(k)) = y(ja(k)) + x(i)*a(k)
- 99      continue
- 100  continue
+     end do
+  end do
 !
       return
 !-------------end-of-atmuxr--------------------------------------------- 
@@ -3034,14 +3034,14 @@ END MODULE W3PROFSMD
 !
       integer i, j 
 !-----------------------------------------------------------------------
-      do 1 i=1, n
+  do i=1, n
          y(i) = 0.0 
- 1    continue
-      do 10 j=1,ncol
-         do 25 i = 1,n
+  end do
+  do j=1,ncol
+     do i = 1,n
             y(i) = y(i)+a(i,j)*x(ja(i,j))
- 25      continue
- 10   continue
+     end do
+  end do
 !
       return
 !--------end-of-amuxe--------------------------------------------------- 
@@ -3083,17 +3083,17 @@ END MODULE W3PROFSMD
 !
       integer j, k, io, i1, i2 
 !-----------------------------------------------------------------------
-      do 1 j=1, n
+  do j=1, n
          y(j) = 0.0d0
- 1    continue
-      do 10 j=1, idiag
+  end do
+  do j=1, idiag
          io = ioff(j)
          i1 = max0(1,1-io)
          i2 = min0(n,n-io)
-         do 9 k=i1, i2  
+     do k=i1, i2  
             y(k) = y(k)+diag(k,j)*x(k+io)
- 9       continue
- 10   continue
+     end do
+  end do
 ! 
       return
 !----------end-of-amuxd-------------------------------------------------
@@ -3138,16 +3138,16 @@ END MODULE W3PROFSMD
 !
       integer i, ii, k1, ilen, j 
 !-----------------------------------------------------------------------
-      do 1 i=1, n
+  do i=1, n
          y(i) = 0.0d0
- 1    continue
-      do 70 ii=1, jdiag
+  end do
+  do  ii=1, jdiag
          k1 = ia(ii)-1
          ilen = ia(ii+1)-k1-1
-         do 60 j=1,ilen
+     do  j=1,ilen
             y(j)= y(j)+a(k1+j)*x(ja(k1+j)) 
- 60      continue
- 70   continue
+     end do
+  end do
 !
       return
 !----------end-of-amuxj------------------------------------------------- 
@@ -3238,13 +3238,13 @@ END MODULE W3PROFSMD
       real*8  t
 !-----------------------------------------------------------------------
       x(1) = y(1) 
-      do 150 k = 2, n
+  do  k = 2, n
          t = y(k) 
-         do 100 j = ial(k), ial(k+1)-1
+     do j = ial(k), ial(k+1)-1
             t = t-al(j)*x(jal(j))
- 100     continue
+     end do
          x(k) = t 
- 150  continue
+  end do
 !
       return
 !----------end-of-lsol-------------------------------------------------- 
@@ -3282,13 +3282,13 @@ END MODULE W3PROFSMD
       real*8 t 
 !-----------------------------------------------------------------------
       x(1) = y(1)*al(1) 
-      do 150 k = 2, n
+  do  k = 2, n
          t = y(k) 
-         do 100 j = jal(k), jal(k+1)-1
+     do  j = jal(k), jal(k+1)-1
             t = t - al(j)*x(jal(j))
- 100     continue
+     end do
          x(k) = al(k)*t 
- 150  continue
+  end do
       return
 !----------end-of-ldsol-------------------------------------------------
 !-----------------------------------------------------------------------
@@ -3323,15 +3323,15 @@ END MODULE W3PROFSMD
       integer k, j
       real*8 t
 !-----------------------------------------------------------------------
-      do 140 k=1,n
+  do k=1,n
          x(k) = y(k) 
- 140  continue
-      do 150 k = 1, n-1
+  end do
+  do k = 1, n-1
          t = x(k) 
-         do 100 j = ial(k), ial(k+1)-1
+     do j = ial(k), ial(k+1)-1
             x(jal(j)) = x(jal(j)) - t*al(j) 
- 100     continue
- 150  continue
+     end do
+  end do
 !
       return
 !----------end-of-lsolc------------------------------------------------- 
@@ -3369,16 +3369,16 @@ END MODULE W3PROFSMD
       integer k, j
       real*8 t 
 !-----------------------------------------------------------------------
-      do 140 k=1,n
+  do k=1,n
          x(k) = y(k) 
- 140  continue
-      do 150 k = 1, n 
+  end do
+  do k = 1, n 
          x(k) = x(k)*al(k) 
          t = x(k) 
-         do 100 j = jal(k), jal(k+1)-1
+     do j = jal(k), jal(k+1)-1
             x(jal(j)) = x(jal(j)) - t*al(j) 
- 100     continue
- 150  continue
+     end do
+  end do
 !
       return
 !----------end-of-lsolc------------------------------------------------ 
@@ -3417,22 +3417,22 @@ END MODULE W3PROFSMD
 !     
 !     outer loop goes through the levels. (SEQUENTIAL loop)
 !     
-      do 150 ii=1, nlev
+  do ii=1, nlev
 !     
 !     next loop executes within the same level. PARALLEL loop
 !     
-         do 100 i=ilev(ii), ilev(ii+1)-1 
+     do i=ilev(ii), ilev(ii+1)-1 
             jrow = lev(i)
 !
 ! compute inner product of row jrow with x
 ! 
             t = y(jrow) 
-            do 130 k=jal(jrow), jal(jrow+1)-1 
+        do k=jal(jrow), jal(jrow+1)-1 
                t = t - al(k)*x(jal(k))
- 130        continue
+        end do
             x(jrow) = t*al(jrow) 
- 100     continue
- 150  continue
+     end do
+  end do
       return
 !-----------------------------------------------------------------------
       end
@@ -3467,13 +3467,13 @@ END MODULE W3PROFSMD
       real*8  t
 !-----------------------------------------------------------------------
       x(n) = y(n) 
-      do 150 k = n-1,1,-1 
+  do  k = n-1,1,-1 
          t = y(k) 
-         do 100 j = iau(k), iau(k+1)-1
+     do j = iau(k), iau(k+1)-1
             t = t - au(j)*x(jau(j))
- 100     continue
+     end do
          x(k) = t 
- 150  continue
+  end do
 !
       return
 !----------end-of-usol-------------------------------------------------- 
@@ -3511,13 +3511,13 @@ END MODULE W3PROFSMD
       real*8 t
 !-----------------------------------------------------------------------
       x(n) = y(n)*au(n)
-      do 150 k = n-1,1,-1
+  do k = n-1,1,-1
          t = y(k) 
-         do 100 j = jau(k), jau(k+1)-1
+     do j = jau(k), jau(k+1)-1
             t = t - au(j)*x(jau(j))
- 100     continue
+     end do
          x(k) = au(k)*t 
- 150  continue
+  end do
 !
       return
 !----------end-of-udsol-------------------------------------------------
@@ -3553,15 +3553,15 @@ END MODULE W3PROFSMD
       integer k, j
       real*8 t
 !-----------------------------------------------------------------------
-      do 140 k=1,n
+  do k=1,n
          x(k) = y(k) 
- 140  continue
-      do 150 k = n,1,-1
+  end do
+  do  k = n,1,-1
          t = x(k) 
-         do 100 j = iau(k), iau(k+1)-1
+     do j = iau(k), iau(k+1)-1
             x(jau(j)) = x(jau(j)) - t*au(j) 
- 100     continue
- 150  continue
+     end do
+  end do
 !
       return
 !----------end-of-usolc------------------------------------------------- 
@@ -3598,16 +3598,16 @@ END MODULE W3PROFSMD
       integer k, j
       real*8 t
 !----------------------------------------------------------------------- 
-      do 140 k=1,n
+  do k=1,n
          x(k) = y(k) 
- 140  continue
-      do 150 k = n,1,-1
+  end do
+  do  k = n,1,-1
          x(k) = x(k)*au(k) 
          t = x(k) 
-         do 100 j = jau(k), jau(k+1)-1
+     do j = jau(k), jau(k+1)-1
             x(jau(j)) = x(jau(j)) - t*au(j) 
- 100     continue
- 150  continue
+     end do
+  end do
 !
       return
 !----------end-of-udsolc------------------------------------------------ 
@@ -3625,18 +3625,18 @@ END MODULE W3PROFSMD
 !
 ! forward solve
 !
-        do 40 i = 1, n
+  do i = 1, n
            x(i) = y(i)
-           do 41 k=jlu(i),ju(i)-1
+     do k=jlu(i),ju(i)-1
               x(i) = x(i) - alu(k)* x(jlu(k))
- 41        continue
- 40     continue
-        do 90 i = n, 1, -1
-           do 91 k=ju(i),jlu(i+1)-1
+     end do
+  end do
+  do i = n, 1, -1
+     do k=ju(i),jlu(i+1)-1
               x(i) = x(i) - alu(k)*x(jlu(k))
- 91        continue
+     end do
            x(i) = alu(i)*x(i)
- 90     continue
+  end do
 !
         return
 !----------------end of lusol ------------------------------------------
@@ -3653,26 +3653,26 @@ END MODULE W3PROFSMD
 !
         integer      :: i,k
 !
-        do 10 i = 1, n
+  do i = 1, n
            x(i) = y(i)
- 10     continue
+  end do
 !
 ! forward solve (with U^T)
 !
-        do 20 i = 1, n
+  do i = 1, n
            x(i) = x(i) * alu(i)
-           do 30 k=ju(i),jlu(i+1)-1
+     do k=ju(i),jlu(i+1)-1
               x(jlu(k)) = x(jlu(k)) - alu(k)* x(i)
- 30        continue
- 20     continue
+     end do
+  end do
 !     
 !     backward solve (with L^T)
 !     
-        do 40 i = n, 1, -1 
-           do 50 k=jlu(i),ju(i)-1
+  do i = n, 1, -1 
+     do k=jlu(i),ju(i)-1
               x(jlu(k)) = x(jlu(k)) - alu(k)*x(i)
- 50        continue
- 40     continue
+     end do
+  end do
 !
         return
 !----------------end of lutsol -----------------------------------------
@@ -3706,7 +3706,7 @@ END MODULE W3PROFSMD
 !
  1      mid = first
         abskey = abs(a(mid))
-        do 2 j=first+1, last
+  do j=first+1, last
            if (abs(a(j)) .gt. abskey) then
               mid = mid+1
 !     interchange
@@ -3717,7 +3717,7 @@ END MODULE W3PROFSMD
               a(j)  = tmp
               ind(j) = itmp
            endif
- 2      continue
+  end do
 !
 !     interchange
 !
@@ -3921,21 +3921,21 @@ END MODULE W3PROFSMD
 !
 !     initialize nonzero indicator array. 
 !
-      do 1 j=1,n
+  do  j=1,n
          jw(n+j)  = 0
- 1    continue
+  end do
 !-----------------------------------------------------------------------
 !     beginning of main loop.
 !-----------------------------------------------------------------------
-      do 500 ii = 1, n
+  do ii = 1, n
 
          j1 = ia(ii)
          j2 = ia(ii+1) - 1
 
          tnorm = 0.0d0
-         do 501 k=j1,j2
+     do k=j1,j2
             tnorm = tnorm+abs(a(k))
- 501     continue
+     end do
          if (abs(tnorm) .lt. tiny(1.)) goto 999
 
          tnorm = tnorm/real(j2-j1+1)
@@ -3948,7 +3948,7 @@ END MODULE W3PROFSMD
          w(ii) = 0.0
          jw(n+ii) = ii
 !
-         do 170  j = j1, j2
+     do j = j1, j2
             k = ja(j)
             t = a(j)
             if (k .lt. ii) then
@@ -3965,7 +3965,7 @@ END MODULE W3PROFSMD
                w(jpos) = t
                jw(n+k) = jpos
             endif
- 170     continue
+     end do
          jj = 0
          lenn = 0 
 !     
@@ -3982,12 +3982,12 @@ END MODULE W3PROFSMD
 !     
 !     determine smallest column index
 !     
-         do 151 j=jj+1,lenl
+  do j=jj+1,lenl
             if (jw(j) .lt. jrow) then
                jrow = jw(j)
                k = j
             endif
- 151     continue
+  end do
 !
          if (k .ne. jj) then
 !     exchange in jw
@@ -4014,7 +4014,7 @@ END MODULE W3PROFSMD
 !     
 !     combine current row and row jrow
 !
-         do 203 k = ju(jrow), jlu(jrow+1)-1
+  do  k = ju(jrow), jlu(jrow+1)-1
             s = fact*alu(k)
             j = jlu(k)
             jpos = jw(n+j)
@@ -4059,7 +4059,7 @@ END MODULE W3PROFSMD
                   w(jpos) = w(jpos) - s
                endif
             endif
- 203     continue
+  end do
 !     
 !     store this pivot element -- (from left to right -- no danger of
 !     overlap with the working elements in L (pivots). 
@@ -4072,9 +4072,9 @@ END MODULE W3PROFSMD
 !     
 !     reset double-pointer to zero (U-part)
 !     
-         do 308 k=1, lenu
+  do k=1, lenu
             jw(n+jw(ii+k-1)) = 0
- 308     continue
+  end do
 !     
 !     update L-matrix
 !     
@@ -4087,12 +4087,12 @@ END MODULE W3PROFSMD
 !
 !     store L-part
 ! 
-         do 204 k=1, lenn 
+  do k=1, lenn 
             if (ju0 .gt. iwk) goto 996
             alu(ju0) =  w(k)
             jlu(ju0) =  jw(k)
             ju0 = ju0+1
- 204     continue
+  end do
 !     
 !     save pointer to beginning of row ii of U
 !     
@@ -4117,12 +4117,12 @@ END MODULE W3PROFSMD
 ! 
          t = abs(w(ii))
          if (lenn + ju0 .gt. iwk) goto 997
-         do 302 k=ii+1,ii+lenn-1 
+  do k=ii+1,ii+lenn-1 
             jlu(ju0) = jw(k)
             alu(ju0) = w(k)
             t = t + abs(w(k) )
             ju0 = ju0+1
- 302     continue
+  end do
 !     
 !     store inverse of diagonal element of u
 !     
@@ -4539,7 +4539,7 @@ END MODULE W3PROFSMD
 !        auxiliary routine:
 !        CALL DLASSQ( N, X, SCALE, SSQ )
 !
-          DO 10 IX = 1,1 + (N-1)
+     DO IX = 1,1 + (N-1)
               IF (X(IX).NE.ZERO) THEN
                   ABSXI = ABS(X(IX))
                   IF (SCALE.LT.ABSXI) THEN
@@ -4549,7 +4549,7 @@ END MODULE W3PROFSMD
                       SSQ = SSQ + (ABSXI/SCALE)**2
                   END IF
               END IF
-   10     CONTINUE
+     end do
           NORM = SCALE*SQRT(SSQ)
       END IF
 !
@@ -4621,15 +4621,15 @@ DOUBLE PRECISION X( * )
 
    20 m = mod(n,5)
       if( m .eq. 0 ) go to 40
-      do 30 i = 1,m
+  do i = 1,m
         dtemp = dtemp + dx(i)*dy(i)
-   30 continue
+  end do
       if( n .lt. 5 ) go to 60
    40 mp1 = m + 1
-      do 50 i = mp1,n,5
+  do i = mp1,n,5
         dtemp = dtemp + dx(i)*dy(i) + dx(i + 1)*dy(i + 1) + &
      &   dx(i + 2)*dy(i + 2) + dx(i + 3)*dy(i + 3) + dx(i + 4)*dy(i + 4)
-   50 continue
+  end do
    60 ddot = dtemp
       return
       end
@@ -4654,11 +4654,11 @@ DOUBLE PRECISION X( * )
       iy = 1
       if(incx.lt.0)ix = (-n+1)*incx + 1
       if(incy.lt.0)iy = (-n+1)*incy + 1
-      do 10 i = 1,n
+  do  i = 1,n
         dy(iy) = dy(iy) + da*dx(ix)
         ix = ix + incx
         iy = iy + incy
-   10 continue
+  end do
       return
 !
 !        code for both increments equal to 1
@@ -4668,16 +4668,16 @@ DOUBLE PRECISION X( * )
 !
    20 m = mod(n,4)
       if( m .eq. 0 ) go to 40
-      do 30 i = 1,m
+  do i = 1,m
         dy(i) = dy(i) + da*dx(i)
-   30 continue
+  end do
       if( n .lt. 4 ) return
    40 mp1 = m + 1
-      do 50 i = mp1,n,4
+  do i = mp1,n,4
         dy(i) = dy(i) + da*dx(i)
         dy(i + 1) = dy(i + 1) + da*dx(i + 1)
         dy(i + 2) = dy(i + 2) + da*dx(i + 2)
         dy(i + 3) = dy(i + 3) + da*dx(i + 3)
-   50 continue
+  end do
       return
       end
