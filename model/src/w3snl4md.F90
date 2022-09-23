@@ -3231,7 +3231,7 @@
 !eq       sum1 = sum1 + fknrm(irng)
 !eq       neq  = neq + 1
 !eq     endif
-    ! 26  end do
+! 26  end do
 !eq   beta = sum1 / neq
 !eq   gam  = fknrm(npk) / beta
 !!eq---
@@ -3256,15 +3256,15 @@
 !!    Note: n1, n2 spans half circle (from -pi/2 to +pi/2 going through 0.)
 !p2   n1 = -nang/4 + 1
 !p2   n2 =  nang/4 + 1
-    !p2   do m=1,16
+!p2   do m=1,16
 !p2     sum1 = 0.
-    !p2     do iang=n1,n2
+!p2     do iang=n1,n2
 !p2       ii = iang
 !p2       if ( iang .lt. 1 ) ii = iang + nang
 !p2       sum1 = sum1 + cosan(ii)**m
-    !       end do
+!       end do
 !p2     q(m) = 1./(sum1*ainc)
-    !     end do
+!     end do
 !!    -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !!
 !!    Find peak direction "maxang" in ef2() at "npk" the peak in ef1()
@@ -3273,36 +3273,36 @@
 !!          in "maxang" location causing the 2D Snl to lose symmetry
 !p2   emax   = 0.
 !p2   maxang = 0
-    !p2   do iang=1,nang
+!p2   do iang=1,nang
 !p2     if ( ef2(npk,iang).gt.emax ) then
 !p2       emax   = ef2(npk,iang)
 !p2       maxang = iang                          !* in [1,nang]
 !p2     endif
-    !     end do
+!     end do
 !p2   y  = ef2(npk,maxang)/ef1(npk)              !* Bash; Energy Spread
 !!    -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !!
 !!    Compare value of peak with q-array for closest fit to cos()**m at peak
 !p2   mm   = 1
 !p2   qmin = abs(q(1)-y)
-    !p2   do m=2,16
+!p2   do m=2,16
 !p2     adif = abs(q(m)-y)
 !p2     if ( adif.lt.qmin ) then
 !p2       qmin = adif
 !p2       mm   = m
 !p2     endif
-    !     end do
+!     end do
 !!    -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !!
 !p2   nn1 = maxang - nang/4           !* nn1 in [-8, 27], -ve/+ve (incl. 0)
 !p2   nn2 = maxang + nang/4           !* nn2 in [10, 45], all +ve  (no  0)
-    !p2   do iang=nn1,nn2              !* Bash; nn1 -> nn2 covers half circle
+!p2   do iang=nn1,nn2              !* Bash; nn1 -> nn2 covers half circle
 !p2     ii = iang                                !* ii always in range [1,nang]
 !p2     if ( ii .lt.    1 ) ii = ii + nang       !* ""
 !p2     if ( ii .gt. nang ) ii = ii - nang       !* ""
 !p2     idif = iabs(maxang-iang) + 1             !* =10,9,..,2,1,2,..,9,10
 !p2     psi2(ii) = q(mm) * cos(angl(idif))**mm   !* Normalized psi2 distr.
-    !     end do
+!     end do
 !!p2---
 !!    ==================================================================
 !!
@@ -3317,13 +3317,13 @@
 !!    Note: n1, n2 spans half circle (from 0 to +pi)
 !p3   n1 =  1
 !p3   n2 =  nang/2 + 1
-    !p3   do m=1,16
+!p3   do m=1,16
 !p3     sum1 = 0.
-    !p3     do iang=n1,n2
+!p3     do iang=n1,n2
 !p3       sum1 = sum1 + sinan(iang)**m
-    !       end do
+!       end do
 !p3     q(m) = 1./(sum1*ainc)
-    !     end do
+!     end do
 !!p3---
 !!    -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !!
@@ -3376,13 +3376,13 @@
 !!          the 2D Snl, now with better symmetry, didn't always have the side lobes.
 !p3   mm   = 1
 !p3   qmin = abs(q(1)-y)
-    !p3   do m=2,16
+!p3   do m=2,16
 !p3     adif = abs(q(m)-y)
 !p3     if ( adif.lt.qmin ) then
 !p3       qmin = adif
 !p3       mm   = m
 !p3     endif
-    !     end do
+!     end do
 !!    -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !!
 !!    Final step, use 'mm' for sin()**mm
@@ -3406,9 +3406,9 @@
       n1 =  1
       n2 =  nang/2 + 1
 !p4   sum1 = 0.
-    !p4   do iang=n1,n2
+!p4   do iang=n1,n2
 !p4     sum1 = sum1 + sinan(iang)**4
-    !     end do
+!     end do
 !p4   q4 = 1.0/(sum1*ainc)
 !!    -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !!

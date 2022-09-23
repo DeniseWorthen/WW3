@@ -2093,8 +2093,6 @@
 !  TING THE LUNAR TIME TAU.
 !
 #endif
-    !TODO: the branching IF-ELSE-ENDIF imposed by the tide ifdef in the following loop
-    ! is troublesome
       DO ISEA=1, NSEA
         IX     = MAPSF(ISEA,1)
         IY     = MAPSF(ISEA,2)
@@ -2145,22 +2143,13 @@
        WLVeff=WLVeff + ZETA_SETUP(ISEA)
      END IF
 #endif
-       ENDIF ! IF (FLLEVTIDE)
-#else  !NOT W3_TIDE
-       WLV(ISEA) = WLEV(IX,IY)
-       WLVeff    = WLV(ISEA)
-#ifdef W3_SETUP
-       IF (DO_CHANGE_WLV) THEN
-          WLVeff=WLVeff + ZETA_SETUP(ISEA)
+#ifdef W3_TIDE
           ENDIF
 #endif
-#endif !W3_TIDE
         DW (ISEA) = MAX ( 0. , WLVeff-ZB(ISEA) )
 
       END DO ! NSEA 
-    DW (ISEA) = MAX ( 0. , WLVeff-ZB(ISEA) )
 
- END DO ! NSEA 
 !
 ! 2.  Loop over all sea points --------------------------------------- *
 !
@@ -2304,7 +2293,7 @@
                 I2     = 2
               END IF
 !
-            DO 250, IK=IK0, NK
+          DO IK=IK0, NK
 !
   230         CONTINUE
               IF ( WNO(IK) .GT. WN(I2,ISEA) ) THEN
@@ -2336,6 +2325,7 @@
                   END IF
 !
   250         CONTINUE
+          END DO
   251       CONTINUE
 !
 ! 2.f Convert discrete action densities to spectrum
