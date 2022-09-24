@@ -496,10 +496,10 @@
                   END IF
 !
 #ifdef W3_MPI
-                END IF ! IF ( GRSTAT(I).EQ.0 .AND. .NOT.FLSYNC(I) )
+                END IF ! IF ( GRSTAT(I).EQ.0 .AND. .NOT.FLSYNC(I)
 #endif
 #ifdef W3_SHRD
-             END IF ! IF ( GRSTAT(I) .EQ. 0 ) THEN
+             END IF ! IF ( GRSTAT(I) .EQ. 0 )
 #endif
 !
 ! 2.b Update input and TDATA
@@ -542,7 +542,7 @@
 #ifdef W3_MPI
                     GRSTAT(I) = 1
                     DONE      = .TRUE.
-                  END IF
+                   END IF ! IF ( .NOT. GRSYNC(J) )
 #endif
 !
 #ifdef W3_MPRF
@@ -556,7 +556,7 @@
 #endif
 #ifdef W3_SHRD
              END IF ! IF ( GRSTAT(I) .EQ. 0 )
-#endif 
+#endif
 !
 ! 2.d Synchronize in parts ( !/MPI )
 !
@@ -601,7 +601,10 @@
                     FLSYNC(I) = .TRUE.
                     CYCLE LOOP_JJ
                 END IF ! IF ( FLSYNC(I) )
-             END IF ! IF ( GRSTAT(I).EQ.0 .AND. GRSYNC(J) )
+#endif
+!
+#ifdef W3_MPI
+             END IF ! IF ( GRSTAT(I).EQ.0 .AND. GRSYNC(J)
 #endif
 !
 ! 3.  Update data from lower ranked grids ---------------------------- /
@@ -672,14 +675,14 @@
 #endif
                     GRSTAT(I) = 2
                     DONE      = .TRUE.
-                  END IF
+                END IF ! IF ( FLAGOK )
 !
 #ifdef W3_MPRF
                 CALL PRTIME ( PRFTN )
                 WRITE (MDSP,991) PRFT0, PRFTN, get_memory(),    &
                                  'ST01', I
 #endif
-              END IF
+             END IF ! IF ( GRSTAT(I) .EQ. 1 )
 !
 ! 4.  Update model time step ----------------------------------------- /
 !     ( GRSTAT = 2 )
@@ -732,7 +735,7 @@
                   ELSE
                     WRITE (MDST,9041) TMAX(:,I)
 #endif
-                  END IF
+                END IF ! IF ( DTTST .LE. 0 )
 !
 ! 4.b Lowest ranked grids, minimum of all TMAXes
 !
@@ -761,10 +764,10 @@
                               EXIT
                             END IF
 #ifdef W3_MPI
-                        END IF
+                         END IF ! IF ( TIME(1).NE.-1 .AND. MPI_COMM_GRD.NE.MPI_COMM_NULL )
 #endif
 #ifdef W3_SHRD
-                      END IF
+                      END IF ! IF ( TIME(1) .NE. -1 ) THEN
 #endif
                       END DO
 !
@@ -829,7 +832,7 @@
 #endif
                         IF ( INGRP(J,0) .GT. 1 ) GOTO 1111
 !
-                      END IF
+                   END IF ! IF ( FLAGOK )
 !
 ! 4.c Other grids, logical from relations and TMAXes
 !
@@ -908,11 +911,11 @@
 #endif
                         IF ( INGRP(J,0) .GT. 1 ) GOTO 1111
 !
-                   END IF ! IF(FLAGOK)
+                   END IF ! IF ( FLAGOK )
 !
-                END IF ! IF ( GRANK(I) .EQ. 1 )
+                END IF ! 4.b IF ( GRANK(I) .EQ. 1 )
 !
-             END IF ! IF ( GRSTAT(I) .EQ. 2 )
+             END IF ! 4. IF ( GRSTAT(I) .EQ. 2 )
 !
 ! 5.  Run the wave model --------------------------------------------- /
 !     ( GRSTAT = 3 ) w3xdatmd data structures set in W3WAVE
@@ -966,7 +969,7 @@
 #endif
 !
 #ifdef W3_MPI
-                END IF ! IF ( GRSTAT(I).EQ.3 AND. MPI_COMM_GRD .NE. MPI_COMM_NULL )
+                END IF ! IF ( GRSTAT(I).EQ.3 .AND. MPI_COMM_GRD .EQ. MPI_COMM_NULL )
 #endif
 #ifdef W3_SHRD
              END IF ! IF ( GRSTAT(I) .EQ. 3 )
@@ -1030,9 +1033,9 @@
                         IF ( INGRP(J,0) .GT. 1 ) WRITE (MDST,9006)
 #endif
                         IF ( INGRP(J,0) .GT. 1 ) GOTO 1111
-                      END IF
+                   END IF ! IF ( FLAGOK )
 !
-                  END IF
+                END IF !  IF ( .NOT. FLEQOK(I) )
 !
 ! 6.b Call gathering routine, reset FLEQOK and cycle
 !
@@ -1056,7 +1059,7 @@
                     GRSTAT(I) = 5
                     FLEQOK(I) = .FALSE.
                     DONE      = .TRUE.
-                END IF ! IF ( FLEQOK(I) )
+                  END IF
 !
 ! 6.c Stage data
 !
@@ -1092,7 +1095,7 @@
                        get_memory(),  'ST04', I
 #endif
 !
-             END IF ! IF ( GRSTAT(I) .EQ. 4 )
+             END IF ! 6. IF ( GRSTAT(I) .EQ. 4 )
 !
 ! 7.  Reconcile with higher ranked grids ----------------------------- /
 !     ( GRSTAT = 5 )
@@ -1181,7 +1184,7 @@
                 WRITE (MDSP,991) PRFT0, PRFTN, get_memory(),     &
                                  'ST05', I
 #endif
-             END IF ! IF ( GRSTAT(I) .EQ. 5 )
+             END IF ! 7. IF ( GRSTAT(I) .EQ. 5 )
 !
 ! 8.  Perform data assimmilation ------------------------------------- /
 !     ( GRSTAT = 6 ) Placeholder only .....
@@ -1200,7 +1203,7 @@
                                  'ST06', I
 #endif
                 DONE      = .TRUE.
-              END IF
+             END IF ! IF ( GRSTAT(I) .EQ. 6 )
 !
 ! 9.  Perform output ------------------------------------------------- /
 !     ( GRSTAT = 7 ) w3xdatmd data structures set in W3WAVE
@@ -1367,9 +1370,9 @@
                     WRITE (MDST,9092) NOPTS
 #endif
 !
-                               END IF ! IF ( FLG_O2 )
+                      END IF ! IF ( FLG_O2 )
 !
-                            END IF ! IF ( UNIPTS )
+                   END IF ! IF ( UNIPTS )
 !
 #ifdef W3_MPRF
                 CALL PRTIME ( PRFTN )
@@ -1377,9 +1380,8 @@
                                  'ST07', I
 #endif
 !
-! 9.e Update TOUTP outside communicator
+! 9.e Update TOUPT outside communicator
 !
-! TODO: The following ELSE IF breaks auto-formatting
 #ifdef W3_MPI
               ELSE IF ( FLG_O1 ) THEN
 #endif
@@ -1414,7 +1416,7 @@
                             EXIT
                           END IF
                         END DO
-                    END IF
+                      END IF ! IF ( FLOUT(JO) )
 #endif
 !
 #ifdef W3_MPI
@@ -1452,7 +1454,7 @@
                             EXIT
                           END IF
                         END DO
-                    END IF
+                   END IF ! IF ( FLOUT(JO) )
 #endif
 !
 #ifdef W3_MPI
@@ -1471,7 +1473,7 @@
                 WRITE (MDST,9991) TOUTP(:,I)
 #endif
 #ifdef W3_MPI
-                END IF ! IF ( MPI_COMM_GRD .NE. MPI_COMM_NULL )
+                END IF ! 9.b IF ( MPI_COMM_GRD .NE. MPI_COMM_NULL )
 #endif
 !
 ! 9.f Finish up
@@ -1479,7 +1481,7 @@
                 GRSTAT(I) = 8
                 DONE      = .TRUE.
 !
-             END IF ! IF ( GRSTAT(I) .EQ. 7 )
+             END IF ! 9.b IF ( GRSTAT(I) .EQ. 7 )
 !
 ! 10. Go to next time step ------------------------------------------- /
 !     ( GRSTAT = 8 ) ( 9 added for diagnostic output only ... )
@@ -1582,7 +1584,7 @@
                     TSYNC(2,I) =  0
                   END IF
 !
-             END IF ! IF ( GRSTAT(I) .EQ. 8 )
+             END IF ! 10. IF ( GRSTAT(I) .EQ. 8 )
 !
 ! ... End of loops started in 1. ------------------------------------- /
 !
