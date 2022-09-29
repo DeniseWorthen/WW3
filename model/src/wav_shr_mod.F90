@@ -29,6 +29,7 @@ module wav_shr_mod
   use NUOPC           , only : NUOPC_CompAttributeGet
   use NUOPC_Model     , only : NUOPC_ModelGet
   use wav_kind_mod    , only : r8 => shr_kind_r8, i8 => shr_kind_i8, cl=>shr_kind_cl, cs=>shr_kind_cs
+  use wav_kind_mod    , only : i4 => shr_kind_i4
 
   implicit none
   private
@@ -44,6 +45,8 @@ module wav_shr_mod
   public  :: ymd2date          !< @public convert  year,month,day to integer
   private :: timeInit          !< @public create an ESMF_Time object
   private :: field_getfldptr   !< @private obtain a pointer to a field
+  public  :: diagnose_mesh     !< @public write out info about mesh
+  public  :: eelem_unstr_mesh  !< @public create an unstructured mesh via the easy element
 
   interface state_getfldptr
      module procedure state_getfldptr_1d
@@ -54,6 +57,7 @@ module wav_shr_mod
   logical            , public :: wav_coupling_to_cice = .false. !< @public flag to specify additional wave export
                                                                 !! fields for coupling to CICE (TODO: generalize)
   integer            , public :: dbug_flag = 0                  !< @public flag used to produce additional output
+  logical            , public :: unstr_mesh = .false.           !< @public flag go specify use of unstructured mesh
   character(len=256) , public :: casename = ''                  !< @public the name pre-prended to an output file
 
   ! Only used by cesm and optionally by uwm
@@ -105,6 +109,160 @@ module wav_shr_mod
 !===============================================================================
 contains
 !===============================================================================
+!> Get properties of a mesh
+!!
+!! @param[in]    Mesh             an ESMF Mesh
+!! @param[in]    gindex_size      the length of the gindex
+!! @param[out]   rc               a return code
+!!
+!> @author mvertens@ucar.edu, Denise.Worthen@noaa.gov
+!> @date 09-12-2022
+  subroutine diagnose_mesh(EMeshIn, gindex_size, mesh_name, rc)
+
+    use ESMF          , only : ESMF_Mesh, ESMF_MESHELEMTYPE_TRI, ESMF_MeshCreate, ESMF_LOGMSG_Info
+    use ESMF          , only : ESMF_Distgrid
+
+    ! input/output variables
+    type(ESMF_Mesh) , intent(in)  :: EMeshIn
+    integer         , intent(in)  :: gindex_size
+    character(len=*), intent(in)  :: mesh_name
+    integer         , intent(out) :: rc
+
+    !local variables
+    type(ESMF_DistGrid)    :: eDistGrid, nDistGrid
+    logical                :: elementCoordsIsPresent
+    logical                :: elementDistGridIsPresent
+    logical                :: nodalDistGridIsPresent
+    logical                :: elementMaskIsPresent
+    character(ESMF_MAXSTR) :: msgString
+
+    integer                :: ncnt, ecnt,lb,ub
+    integer                :: nowndn, nownde
+    integer, allocatable   :: nids(:), nowners(:), nowned(:)
+    integer, allocatable   :: eids(:)
+    character(len=*),parameter :: subname = '(wav_shr_mod:mesh_diagnose) '
+    !-------------------------------------------------------
+
+    rc = ESMF_SUCCESS
+    if (dbug_flag  > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
+
+    call ESMF_MeshGet(EMeshIn, nodeCount=ncnt, elementCount=ecnt, &
+         numOwnedElements=nownde, numOwnedNodes=nowndn, &
+         elementCoordsIsPresent=elementCoordsIsPresent, &
+         elementDistGridIsPresent=elementDistGridIsPresent,&
+         nodalDistGridIsPresent=nodalDistGridIsPresent, &
+         elementMaskIsPresent=elementMaskIsPresent, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    write(msgString,'(5(a,i6))')trim(mesh_name)//' Info: Node Cnt = ',ncnt,' Elem Cnt = ',ecnt, &
+         ' num Owned Elms = ',nownde,' num Owned Nodes = ',nowndn,' Gindex size = ',gindex_size
+    call ESMF_LogWrite(trim(msgString), rc=rc)
+
+    allocate(nids(ncnt))
+    allocate(nowners(ncnt))
+    allocate(eids(ecnt))
+
+    if (elementDistGridIsPresent) call ESMF_LogWrite('element Distgrid is Present', rc=rc)
+    if (nodalDistGridIsPresent) call ESMF_LogWrite('nodal Distgrid is Present', rc=rc)
+    if (elementMaskIsPresent) call ESMF_LogWrite('element Mask is Present', rc=rc)
+    if (elementCoordsIsPresent) call ESMF_LogWrite('element Coords is Present', rc=rc)
+
+    call ESMF_MeshGet(EMeshIn, nodeIds=nids, elementIds=eids, nodeOwners=nowners, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    lb = lbound(nids,1); ub = ubound(nids,1)
+    write(msgString,'(a,12i8)')trim(mesh_name)//' : NodeIds(lb:lb+9) = ',lb,ub,nids(lb:lb+9)
+    call ESMF_LogWrite(trim(msgString), rc=rc)
+    write(msgString,'(a,12i8)')trim(mesh_name)//' : NodeOwners(lb:lb+9) = ',lb,ub,nowners(lb:lb+9)
+    call ESMF_LogWrite(trim(msgString), rc=rc)
+    write(msgString,'(a,12i8)')trim(mesh_name)//' : NodeIds(ub-9:ub) = ',lb,ub,nids(ub-9:ub)
+    call ESMF_LogWrite(trim(msgString), rc=rc)
+    write(msgString,'(a,12i8)')trim(mesh_name)//' : NodeOwners(ub-9:ub) = ',lb,ub,nowners(ub-9:ub)
+    call ESMF_LogWrite(trim(msgString), rc=rc)
+    lb = lbound(eids,1); ub = ubound(eids,1)
+    write(msgString,'(a,12i8)')trim(mesh_name)//' : ElemIds(lb:lb+9) = ',lb,ub,eids(lb:lb+9)
+    call ESMF_LogWrite(trim(msgString), rc=rc)
+    write(msgString,'(a,12i8)')trim(mesh_name)//' : ElemIds(ub-9:ub) = ',lb,ub,eids(ub-9:ub)
+    call ESMF_LogWrite(trim(msgString), rc=rc)
+    write(msgString,'(a,12i8)')trim(mesh_name)//' : NodeOwners min,max = ',minval(nowners),maxval(nowners)
+    call ESMF_LogWrite(trim(msgString), rc=rc)
+
+    if (dbug_flag  > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
+
+  end subroutine diagnose_mesh
+
+!===============================================================================
+!> Create an unstructured mesh via easy element method
+!!
+!! @param[out]   Mesh             an ESMF Mesh
+!! @param[out]   rc               a return code
+!!
+!> @author mvertens@ucar.edu, Denise.Worthen@noaa.gov
+!> @date 09-12-2022
+  subroutine eelem_unstr_mesh(EEMesh, nelems, rc)
+
+    use ESMF          , only : ESMF_Mesh, ESMF_MESHELEMTYPE_TRI, ESMF_MeshCreate, ESMF_LOGMSG_Info
+    use w3odatmd      , only : iaproc, naproc
+    use w3gdatmd      , only : nx, ny, nsea
+    use w3gdatmd      , only : ntri, trigp, xgrd, ygrd
+    use wav_shr_flags , only : w3_pdlib_flag
+#ifdef W3_PDLIB
+    use yowNodepool   , only : npa, iplg, nodes_global
+    use yowElementpool, only : ne, ielg, INE
+#endif
+    ! input/output variables
+    type(ESMF_Mesh), intent(out) :: EEMesh
+    integer        , intent( in) :: nelems
+    integer        , intent(out) :: rc
+
+    ! local variables
+    real(r8) , allocatable :: elementCornerCoords(:,:,:)
+    integer  , allocatable :: elementIds(:)
+    integer  , allocatable :: nodeOwners(:)
+    integer  , allocatable :: el_gindex(:)
+    integer  :: isea,jsea,myproc, nloc_elements
+    integer  :: ie,in,inode(3)
+    real(r8) :: xlocs(3), ylocs(3)
+    integer(i4) , pointer     :: meshmask(:)
+    real(r8)    , pointer     :: ecoords(:)
+    character(ESMF_MAXSTR)    :: msgString
+    character(len=*),parameter :: subname = '(wav_shr_mod:eelem_unstr_mesh) '
+    !-------------------------------------------------------
+
+    rc = ESMF_SUCCESS
+    if (dbug_flag  > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
+
+!!$    ! this will create a global mesh on each PE !
+!!$    ! easy element unstruc mesh creation
+!!$    allocate(elementCornerCoords(2,3,nelems))
+!!$    allocate(meshmask(nelems))
+!!$    allocate(nodeOwners(3*nelems))
+!!$    !allocate(el_gindex(nelems))
+!!$    meshmask = 1
+!!$    do ie = 1,nelems
+!!$       inode(:) = trigp(:,ie)
+!!$       xlocs(:) = xgrd(1,inode(:))
+!!$       ylocs(:) = ygrd(1,inode(:))
+!!$       do in = 1,3
+!!$          isea = inode(in)
+!!$          jsea = 1 + (isea-1)/naproc
+!!$          nodeOwners(isea) = isea - (jsea-1)*naproc
+!!$       end do
+!!$       elementCornerCoords(1,:,ie) = xlocs(:)
+!!$       elementCornerCoords(2,:,ie) = ylocs(:)
+!!$       print *,'XYXY ',ie,inode,iaproc + (ie-1)*naproc
+!!$    end do
+!!$
+!!$    ! Create the mesh with room for a mask
+!!$    EEMesh = ESMF_MeshCreate(parametricDim=2,elementType=ESMF_MESHELEMTYPE_TRI,&
+!!$         elementCornerCoords=elementCornerCoords, &
+!!$         elementMask=meshmask, rc=rc)
+!!$    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+!!$
+!!$    deallocate(elementCornerCoords)
+!!$    deallocate(meshmask)
+
+  end subroutine eelem_unstr_mesh
+
+!===============================================================================
 !> Get scalar data from a state
 !!
 !> @details Obtain the field flds_scalar_name from a State and broadcast and
@@ -116,7 +274,7 @@ contains
 !! @param[in]    flds_scalar_name the name of the scalar
 !! @param[in]    flds_scalar_num  the number of scalars
 !! @param[out]   rc               a return code
-!!
+!!q
 !> @author mvertens@ucar.edu, Denise.Worthen@noaa.gov
 !> @date 01-05-2022
   subroutine state_getscalar(state, scalar_id, scalar_value, flds_scalar_name, flds_scalar_num, rc)
