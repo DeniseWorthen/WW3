@@ -134,6 +134,7 @@ contains
     logical                :: elementDistGridIsPresent
     logical                :: nodalDistGridIsPresent
     logical                :: elementMaskIsPresent
+    logical                :: nodeMaskIsPresent
     character(ESMF_MAXSTR) :: msgString
 
     integer                :: ncnt, ecnt,lb,ub
@@ -151,7 +152,8 @@ contains
          elementCoordsIsPresent=elementCoordsIsPresent, &
          elementDistGridIsPresent=elementDistGridIsPresent,&
          nodalDistGridIsPresent=nodalDistGridIsPresent, &
-         elementMaskIsPresent=elementMaskIsPresent, rc=rc)
+         elementMaskIsPresent=elementMaskIsPresent, &
+         nodeMaskIsPresent=nodeMaskIsPresent, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
     write(msgString,'(5(a,i6))')trim(mesh_name)//' Info: Node Cnt = ',ncnt,' Elem Cnt = ',ecnt, &
          ' num Owned Elms = ',nownde,' num Owned Nodes = ',nowndn,' Gindex size = ',gindex_size
@@ -164,6 +166,7 @@ contains
     if (elementDistGridIsPresent) call ESMF_LogWrite('element Distgrid is Present', rc=rc)
     if (nodalDistGridIsPresent) call ESMF_LogWrite('nodal Distgrid is Present', rc=rc)
     if (elementMaskIsPresent) call ESMF_LogWrite('element Mask is Present', rc=rc)
+    if (nodeMaskIsPresent) call ESMF_LogWrite('node Mask is Present', rc=rc)
     if (elementCoordsIsPresent) call ESMF_LogWrite('element Coords is Present', rc=rc)
 
     call ESMF_MeshGet(EMeshIn, nodeIds=nids, elementIds=eids, nodeOwners=nowners, rc=rc)

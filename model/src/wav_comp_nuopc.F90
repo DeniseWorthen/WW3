@@ -867,10 +867,9 @@ contains
     deallocate(gindex)
 
 
-    ! DEBUG: dump mesh coordinates use EMeshTemp for read-in mesh; EMesh is the
-    ! EMeshTemp w/ gindex distgrid
+    ! DEBUG: dump mesh coordinates and field
+    ! EMesh is after distgrid transfer
     call ESMF_MeshGet(EMesh, spatialDim=ndims, numOwnedElements=nelements, rc=rc)
-    !call ESMF_MeshGet(EMeshTemp, spatialDim=ndims, numOwnedElements=nelements, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
     write(msgString,*)trim(subname)//'ndims, nelements = ', ndims, nelements
     call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
@@ -880,27 +879,23 @@ contains
     allocate(ownedElemCoords_x(ndims*nelements/2))
     allocate(ownedElemCoords_y(ndims*nelements/2))
     call ESMF_MeshGet(Emesh, ownedElemCoords=ownedElemCoords, rc=rc)
-    !call ESMF_MeshGet(EmeshTemp, ownedElemCoords=ownedElemCoords, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
     ownedElemCoords_x(1:nelements) = ownedElemCoords(1::2)
     ownedElemCoords_y(1:nelements) = ownedElemCoords(2::2)
-    !lb = lbound(ownedElemCoords_x,1); ub=ubound(ownedElemCoords_x,1)
-    !lb = lbound(ownedElemCoords_y,1); ub=ubound(ownedElemCoords_y,1)
 
     ! a field for the mesh coords
     fcoord = ESMF_FieldCreate(EMesh, ESMF_TYPEKIND_R8, meshloc=ESMF_MESHLOC_ELEMENT, rc=rc)
-    !fcoord = ESMF_FieldCreate(EMeshTemp, ESMF_TYPEKIND_R8, meshloc=ESMF_MESHLOC_ELEMENT, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
     call ESMF_FieldGet(fcoord, farrayPtr=fldptr1d, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
 
     fldptr1d(:) = ownedElemCoords_x(:)
-    call ESMF_FieldWrite(fcoord, fileName='testx.nc', variableName='coordx', &
+    call ESMF_FieldWrite(fcoord, fileName='emesh.x.nc', variableName='coordx', &
          overwrite=.true., rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
 
     fldptr1d(:) = ownedElemCoords_y(:)
-    call ESMF_FieldWrite(fcoord, fileName='testy.nc', variableName='coordy', &
+    call ESMF_FieldWrite(fcoord, fileName='emesh.y.nc', variableName='coordy', &
          overwrite=.true., rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
 
@@ -911,7 +906,53 @@ contains
           fldptr1d(i) = -99.0
        end if
     end do
-    call ESMF_FieldWrite(fcoord, fileName='testfield.nc', variableName='dummy', &
+    call ESMF_FieldWrite(fcoord, fileName='emesh.fld.nc', variableName='dummy', &
+         overwrite=.true., rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    deallocate(ownedElemCoords)
+    deallocate(ownedElemCoords_x)
+    deallocate(ownedElemCoords_y)
+
+    ! DEBUG: dump mesh coordinates and field
+    ! use EMeshTemp for read-in mesh
+    call ESMF_MeshGet(EMeshTemp, spatialDim=ndims, numOwnedElements=nelements, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    write(msgString,*)trim(subname)//'ndims, nelements = ', ndims, nelements
+    call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
+
+    ! Set element coordinates
+    allocate(ownedElemCoords(ndims*nelements))
+    allocate(ownedElemCoords_x(ndims*nelements/2))
+    allocate(ownedElemCoords_y(ndims*nelements/2))
+    call ESMF_MeshGet(EmeshTemp, ownedElemCoords=ownedElemCoords, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ownedElemCoords_x(1:nelements) = ownedElemCoords(1::2)
+    ownedElemCoords_y(1:nelements) = ownedElemCoords(2::2)
+
+    ! a field for the mesh coords
+    fcoord = ESMF_FieldCreate(EMeshTemp, ESMF_TYPEKIND_R8, meshloc=ESMF_MESHLOC_ELEMENT, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    call ESMF_FieldGet(fcoord, farrayPtr=fldptr1d, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+
+    fldptr1d(:) = ownedElemCoords_x(:)
+    call ESMF_FieldWrite(fcoord, fileName='emeshtemp.x.nc', variableName='coordx', &
+         overwrite=.true., rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+
+    fldptr1d(:) = ownedElemCoords_y(:)
+    call ESMF_FieldWrite(fcoord, fileName='emeshtemp.y.nc', variableName='coordy', &
+         overwrite=.true., rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+
+    do i = 1,ndims*nelements/2
+       if ( ownedElemCoords_y(i) .ge. 40.0 .and. ownedElemCoords_y(i) .le. 45.0) then
+          fldptr1d(i) = ownedElemCoords_y(i)
+       else
+          fldptr1d(i) = -99.0
+       end if
+    end do
+    call ESMF_FieldWrite(fcoord, fileName='emeshtemp.fld.nc', variableName='dummy', &
          overwrite=.true., rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
 
