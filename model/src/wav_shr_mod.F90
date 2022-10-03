@@ -46,7 +46,6 @@ module wav_shr_mod
   private :: timeInit          !< @public create an ESMF_Time object
   private :: field_getfldptr   !< @private obtain a pointer to a field
   public  :: diagnose_mesh     !< @public write out info about mesh
-  public  :: eelem_unstr_mesh  !< @public create an unstructured mesh via the easy element
 
   interface state_getfldptr
      module procedure state_getfldptr_1d
@@ -57,7 +56,7 @@ module wav_shr_mod
   logical            , public :: wav_coupling_to_cice = .false. !< @public flag to specify additional wave export
                                                                 !! fields for coupling to CICE (TODO: generalize)
   integer            , public :: dbug_flag = 0                  !< @public flag used to produce additional output
-  logical            , public :: unstr_mesh = .false.           !< @public flag go specify use of unstructured mesh
+  logical            , public :: unstr_mesh = .false.           !< @public flag to specify use of unstructured mesh
   character(len=256) , public :: casename = ''                  !< @public the name pre-prended to an output file
 
   ! Only used by cesm and optionally by uwm
@@ -134,10 +133,11 @@ contains
     logical                :: elementDistGridIsPresent
     logical                :: nodalDistGridIsPresent
     logical                :: elementMaskIsPresent
+    logical                :: nodeMaskIsPresent
     character(ESMF_MAXSTR) :: msgString
 
     integer                :: ncnt, ecnt,lb,ub
-    integer                :: nowndn, nownde
+    integer                :: nowndn, nownde, econcnt
     integer, allocatable   :: nids(:), nowners(:), nowned(:)
     integer, allocatable   :: eids(:)
     character(len=*),parameter :: subname = '(wav_shr_mod:mesh_diagnose) '
@@ -146,15 +146,37 @@ contains
     rc = ESMF_SUCCESS
     if (dbug_flag  > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
 
+    !The Mesh class is distributed by elements. This means that a node must be present on any PET that
+    !contains an element associated with that node, but not on any other PET (a node can't be on a PET
+    !without an element "home"). Since a node may be used by two or more elements located on different
+    !PETS, a node may be duplicated on multiple PETs. When a node is duplicated in this manner, one and
+    !only one of the PETs that contain the node must "own" the node. The user sets this ownership when they
+    !define the nodes during Mesh creation. When a Field is created on a Mesh (i.e. on the Mesh nodes),
+    !on each PET the Field is only created on the nodes which are owned by that PET. This means that the
+    !size of the Field memory on the PET can be smaller than the number of nodes used to create the Mesh
+    !on that PET.
+
+    !The node id is a unique (across all PETs) integer attached to the particular node. It is used to
+    !indicate which nodes are the same when connecting together pieces of the Mesh on different processors.
+    !The node owner indicates which PET is in charge of the node
+
+    !The element id is a unique (across all PETs) integer attached to the particular element. The element
+    !connectivity indicates which nodes are to be connected together to form the element. The entries
+    !in this list are NOT the global ids of the nodes, but are indices into the PET local lists of node info used
+    !in the Mesh Create.
+
     call ESMF_MeshGet(EMeshIn, nodeCount=ncnt, elementCount=ecnt, &
          numOwnedElements=nownde, numOwnedNodes=nowndn, &
+         elementConnCount=econcnt, &
          elementCoordsIsPresent=elementCoordsIsPresent, &
          elementDistGridIsPresent=elementDistGridIsPresent,&
          nodalDistGridIsPresent=nodalDistGridIsPresent, &
-         elementMaskIsPresent=elementMaskIsPresent, rc=rc)
+         elementMaskIsPresent=elementMaskIsPresent, &
+         nodeMaskIsPresent=nodeMaskIsPresent, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
-    write(msgString,'(5(a,i6))')trim(mesh_name)//' Info: Node Cnt = ',ncnt,' Elem Cnt = ',ecnt, &
-         ' num Owned Elms = ',nownde,' num Owned Nodes = ',nowndn,' Gindex size = ',gindex_size
+    write(msgString,'(6(a,i6))')trim(mesh_name)//' Info: Node Cnt = ',ncnt,' Elem Cnt = ',ecnt, &
+         ' element Conn Count = ',econcnt,' num Owned Elms = ',nownde,' num Owned Nodes = ',nowndn,&
+         ' Gindex size = ',gindex_size
     call ESMF_LogWrite(trim(msgString), rc=rc)
 
     allocate(nids(ncnt))
@@ -164,9 +186,10 @@ contains
     if (elementDistGridIsPresent) call ESMF_LogWrite('element Distgrid is Present', rc=rc)
     if (nodalDistGridIsPresent) call ESMF_LogWrite('nodal Distgrid is Present', rc=rc)
     if (elementMaskIsPresent) call ESMF_LogWrite('element Mask is Present', rc=rc)
+    if (nodeMaskIsPresent) call ESMF_LogWrite('node Mask is Present', rc=rc)
     if (elementCoordsIsPresent) call ESMF_LogWrite('element Coords is Present', rc=rc)
 
-    call ESMF_MeshGet(EMeshIn, nodeIds=nids, elementIds=eids, nodeOwners=nowners, rc=rc)
+    call ESMF_MeshGet(EMeshIn, nodeIds=nids, nodeOwners=nowners, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
     lb = lbound(nids,1); ub = ubound(nids,1)
     write(msgString,'(a,12i8)')trim(mesh_name)//' : NodeIds(lb:lb+9) = ',lb,ub,nids(lb:lb+9)
@@ -177,6 +200,8 @@ contains
     call ESMF_LogWrite(trim(msgString), rc=rc)
     write(msgString,'(a,12i8)')trim(mesh_name)//' : NodeOwners(ub-9:ub) = ',lb,ub,nowners(ub-9:ub)
     call ESMF_LogWrite(trim(msgString), rc=rc)
+
+    call ESMF_MeshGet(EMeshIn, elementIds=eids, rc=rc)
     lb = lbound(eids,1); ub = ubound(eids,1)
     write(msgString,'(a,12i8)')trim(mesh_name)//' : ElemIds(lb:lb+9) = ',lb,ub,eids(lb:lb+9)
     call ESMF_LogWrite(trim(msgString), rc=rc)
@@ -188,79 +213,6 @@ contains
     if (dbug_flag  > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
 
   end subroutine diagnose_mesh
-
-!===============================================================================
-!> Create an unstructured mesh via easy element method
-!!
-!! @param[out]   Mesh             an ESMF Mesh
-!! @param[out]   rc               a return code
-!!
-!> @author mvertens@ucar.edu, Denise.Worthen@noaa.gov
-!> @date 09-12-2022
-  subroutine eelem_unstr_mesh(EEMesh, nelems, rc)
-
-    use ESMF          , only : ESMF_Mesh, ESMF_MESHELEMTYPE_TRI, ESMF_MeshCreate, ESMF_LOGMSG_Info
-    use w3odatmd      , only : iaproc, naproc
-    use w3gdatmd      , only : nx, ny, nsea
-    use w3gdatmd      , only : ntri, trigp, xgrd, ygrd
-    use wav_shr_flags , only : w3_pdlib_flag
-#ifdef W3_PDLIB
-    use yowNodepool   , only : npa, iplg, nodes_global
-    use yowElementpool, only : ne, ielg, INE
-#endif
-    ! input/output variables
-    type(ESMF_Mesh), intent(out) :: EEMesh
-    integer        , intent( in) :: nelems
-    integer        , intent(out) :: rc
-
-    ! local variables
-    real(r8) , allocatable :: elementCornerCoords(:,:,:)
-    integer  , allocatable :: elementIds(:)
-    integer  , allocatable :: nodeOwners(:)
-    integer  , allocatable :: el_gindex(:)
-    integer  :: isea,jsea,myproc, nloc_elements
-    integer  :: ie,in,inode(3)
-    real(r8) :: xlocs(3), ylocs(3)
-    integer(i4) , pointer     :: meshmask(:)
-    real(r8)    , pointer     :: ecoords(:)
-    character(ESMF_MAXSTR)    :: msgString
-    character(len=*),parameter :: subname = '(wav_shr_mod:eelem_unstr_mesh) '
-    !-------------------------------------------------------
-
-    rc = ESMF_SUCCESS
-    if (dbug_flag  > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
-
-!!$    ! this will create a global mesh on each PE !
-!!$    ! easy element unstruc mesh creation
-!!$    allocate(elementCornerCoords(2,3,nelems))
-!!$    allocate(meshmask(nelems))
-!!$    allocate(nodeOwners(3*nelems))
-!!$    !allocate(el_gindex(nelems))
-!!$    meshmask = 1
-!!$    do ie = 1,nelems
-!!$       inode(:) = trigp(:,ie)
-!!$       xlocs(:) = xgrd(1,inode(:))
-!!$       ylocs(:) = ygrd(1,inode(:))
-!!$       do in = 1,3
-!!$          isea = inode(in)
-!!$          jsea = 1 + (isea-1)/naproc
-!!$          nodeOwners(isea) = isea - (jsea-1)*naproc
-!!$       end do
-!!$       elementCornerCoords(1,:,ie) = xlocs(:)
-!!$       elementCornerCoords(2,:,ie) = ylocs(:)
-!!$       print *,'XYXY ',ie,inode,iaproc + (ie-1)*naproc
-!!$    end do
-!!$
-!!$    ! Create the mesh with room for a mask
-!!$    EEMesh = ESMF_MeshCreate(parametricDim=2,elementType=ESMF_MESHELEMTYPE_TRI,&
-!!$         elementCornerCoords=elementCornerCoords, &
-!!$         elementMask=meshmask, rc=rc)
-!!$    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-!!$
-!!$    deallocate(elementCornerCoords)
-!!$    deallocate(meshmask)
-
-  end subroutine eelem_unstr_mesh
 
 !===============================================================================
 !> Get scalar data from a state

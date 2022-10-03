@@ -47,7 +47,7 @@ module wav_comp_nuopc
   use w3odatmd              , only : runtype, use_user_histname, user_histfname, use_user_restname, user_restfname
   use w3odatmd              , only : user_netcdf_grdout
   use w3odatmd              , only : time_origin, calendar_name, elapsed_secs
-  use wav_shr_mod           , only : casename, multigrid, inst_suffix, inst_index
+  use wav_shr_mod           , only : casename, multigrid, inst_suffix, inst_index, unstr_mesh
 #ifndef W3_CESMCOUPLED
   use wmwavemd              , only : wmwave
   use wmupdtmd              , only : wmupd2
@@ -407,7 +407,7 @@ contains
     use wav_grdout   , only : wavinit_grdout
     !unstr
     use w3gdatmd     , only : ntri
-    use wav_shr_mod  , only : unstr_mesh, diagnose_mesh, eelem_unstr_mesh
+    use wav_shr_mod  , only : diagnose_mesh
     ! debug
     use w3gdatmd     , only :  xgrd, ygrd, trigp, mapsta
     use w3adatmd     , only : nsealm
@@ -421,7 +421,7 @@ contains
 
     ! local variables
     type(ESMF_DistGrid)            :: distGrid
-    type(ESMF_Mesh)                :: Emesh, EmeshTemp, EEMesh
+    type(ESMF_Mesh)                :: Emesh, EmeshTemp
     type(ESMF_Array)               :: elemMaskArray
     type(ESMF_VM)                  :: vm
     type(ESMF_Time)                :: esmfTime, stopTime
@@ -467,6 +467,7 @@ contains
     character(len=*), parameter    :: subname = '(wav_comp_nuopc:InitializeRealize)'
     ! DEBUG
     integer :: isproc, ndims, nelements
+    integer, allocatable           :: nowner(:)
     type(ESMF_Field)               :: fcoord
     real(r8), pointer              :: fldptr1d(:)
     real(r8), pointer              :: ownedElemCoords(:), ownedElemCoords_x(:), ownedElemCoords_y(:)
@@ -706,25 +707,18 @@ contains
        domainsize = nx*ny
        unstr_mesh = .false.
     else
-       ! unstructured domain, size=number of elements
-       domainsize = ntri
+       ! unstructured domain
+       domainsize = nx
+       !domainsize=ntri
        unstr_mesh = .true.
     end if
+    allocate(nowner(nsea))
     do isea=1,nsea
        jsea = 1 + (isea-1)/naproc
        isproc = isea - (jsea-1)*naproc
-       print *,'DEBUG00: ',isea,jsea,isproc
+       nowner(isea) = isproc-1
+       !print *,'DEBUG00: ',isea,jsea,isproc
     end do
-!!$
-!!$    if (unstr_mesh) then
-!!$       call eelem_unstr_mesh(EEMesh,ntri,rc=rc)
-!!$       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-!!$       if (dbug_flag > 5) then
-!!$          call diagnose_mesh(EEMesh, size(gindex), 'EEMesh', rc=rc)
-!!$          if (ChkErr(rc,__LINE__,u_FILE_u)) return
-!!$       end if
-!!$    end if
-!!$    call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     ! create a  global index array for sea points
     allocate(gindex_sea(nseal))
@@ -735,15 +729,14 @@ contains
        gindex_sea(jsea) = ix + (iy-1)*nx
        !DEBUG
        if (unstr_mesh) then
-          ! ix = isea
-          print '(a,6i8,2f8.2)','XX:',jsea,isea,ix,iy,gindex_sea(jsea),mapsta(1,gindex_sea(jsea)), &
+          ! ix = isea; jsea gives the local index of sea point; isea gives the global index of sea point
+          print '(a,7i8,2f8.2)','XX:',jsea,isea,ix,iy,gindex_sea(jsea),nowner(isea),mapsta(1,gindex_sea(jsea)), &
                xgrd(1,gindex_sea(jsea)),ygrd(1,gindex_sea(jsea))
        else
           print '(a,6i8,2f8.2)','XX:',jsea,isea,ix,iy,gindex_sea(jsea),mapsta(iy,ix), &
                xgrd(iy,ix),ygrd(iy,ix)
        end if
     end do
-    !call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     ! create a global index array for non-sea (i.e. land points)
     allocate(mask_global(domainsize), mask_local(domainsize))
@@ -758,6 +751,7 @@ contains
     call ESMF_VMAllReduce(vm, sendData=mask_local, recvData=mask_global, count=domainsize, &
          reduceflag=ESMF_REDUCE_MAX, rc=rc)
 
+    ! In unstr case, domainsize=nsea=nx so nlnd_global=0 but this lets me use gindex array to create nDG
     nlnd_global = domainsize - nsea
     nlnd_local = nlnd_global / naproc
     my_lnd_start = nlnd_local*iam + min(iam, mod(nlnd_global, naproc)) + 1
@@ -809,68 +803,88 @@ contains
     call NUOPC_CompAttributeGet(gcomp, name='mesh_wav', value=cvalue, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
     call ESMF_LogWrite(trim('mesh file = '//trim(cvalue)), ESMF_LOGMSG_INFO)
-
-    ! read in the mesh with an auto-generated distGrid
-    EMeshTemp = ESMF_MeshCreate(filename=trim(cvalue), fileformat=ESMF_FILEFORMAT_ESMFMESH, rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
     if ( root_task ) then
        write(nds(1),*)'mesh file for domain is ',trim(cvalue)
     end if
-    call ESMF_LogWrite(trim('mesh read OK '//trim(cvalue)), ESMF_LOGMSG_INFO)
 
-    call diagnose_mesh(EMeshTemp, size(gindex), 'EMeshTemp', rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-
-    ! recreate mesh using the above distGrid
-    EMesh = ESMF_MeshCreate(EMeshTemp, elementDistgrid=Distgrid, rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    call ESMF_LogWrite(trim('distgrid transferred '), ESMF_LOGMSG_INFO)
-
-    call diagnose_mesh(EMesh, size(gindex), 'EMesh', rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    !call ESMF_Finalize(endflag=ESMF_END_ABORT)
-
-    ! obtain the mesh mask and find the minimum value across all PEs
-    call ESMF_MeshGet(EMesh, elementDistgrid=Distgrid, rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    call ESMF_DistGridGet(Distgrid, localDe=0, elementCount=ncnt, rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    allocate(meshmask(ncnt))
-    elemMaskArray = ESMF_ArrayCreate(Distgrid, farrayPtr=meshmask, rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-    write(msgString,'(a,i8)')'MaskArray created, size = ',ncnt
-    call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
-
-    call ESMF_MeshGet(Emesh, elemMaskArray=elemMaskArray, rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    call ESMF_LogWrite(trim('MaskArray retrieved from mesh'), ESMF_LOGMSG_INFO)
-    call ESMF_VMAllFullReduce(vm, sendData=meshmask, recvData=maskmin, count=ncnt, &
-         reduceflag=ESMF_REDUCE_MIN, rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    call ESMF_LogWrite(trim('maskmin found'), ESMF_LOGMSG_INFO)
-
-    if (maskmin == 1) then
-       ! replace mesh mask with internal mask
-       meshmask(:) = 0
-       meshmask(1:nseal) = 1
-       call ESMF_MeshSet(mesh=EMesh, elementMask=meshmask, rc=rc)
-       if (chkerr(rc,__LINE__,u_FILE_u)) return
-       call ESMF_LogWrite(trim('maskmesh set'), ESMF_LOGMSG_INFO)
-    end if
-
-    if (dbug_flag > 5) then
-       call ESMF_ArrayWrite(elemMaskArray, 'meshmask.nc', variableName = 'mask', &
-            overwrite=.true., rc=rc)
+    ! I don't think we need the intermediate EmeshTemp. We can read it and apply the Distgrid
+    ! at the same time
+    if (unstr_mesh) then
+       ! read in the mesh using a nodalDistgrid
+       EMesh = ESMF_MeshCreate(filename=trim(cvalue), fileformat=ESMF_FILEFORMAT_ESMFMESH, &
+            nodalDistgrid=Distgrid,rc=rc)
+       if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    else
+       ! read in the mesh using a nodalDistgrid
+       EMesh = ESMF_MeshCreate(filename=trim(cvalue), fileformat=ESMF_FILEFORMAT_ESMFMESH, &
+            elementDistgrid=Distgrid,rc=rc)
        if (ChkErr(rc,__LINE__,u_FILE_u)) return
     end if
-    deallocate(meshmask)
-    deallocate(gindex)
+    call ESMF_LogWrite(trim('mesh read OK '//trim(cvalue)), ESMF_LOGMSG_INFO)
+    if (dbug_flag > 5) then
+       call diagnose_mesh(EMeshTemp, size(gindex), 'EMesh', rc=rc)
+       if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    end if
 
+!!$    ! recreate mesh using the above distGrid
+!!$    if (unstr_mesh) then
+!!$       EMesh = ESMF_MeshCreate(EMeshTemp, nodalDistgrid=Distgrid, rc=rc)
+!!$       if (ChkErr(rc,__LINE__,u_FILE_u)) return
+!!$       call ESMF_LogWrite(trim('Nodal DistGrid transferred '), ESMF_LOGMSG_INFO)
+!!$    else
+!!$       EMesh = ESMF_MeshCreate(EMeshTemp, elementDistgrid=Distgrid, rc=rc)
+!!$       if (ChkErr(rc,__LINE__,u_FILE_u)) return
+!!$       call ESMF_LogWrite(trim('Element DistGrid transferred '), ESMF_LOGMSG_INFO)
+!!$    end if
+!!$    if (dbug_flag > 5) then
+!!$       call diagnose_mesh(EMesh, size(gindex), 'EMesh', rc=rc)
+!!$       if (ChkErr(rc,__LINE__,u_FILE_u)) return
+!!$    end if
+    !call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-    ! DEBUG: dump mesh coordinates use EMeshTemp for read-in mesh; EMesh is the
-    ! EMeshTemp w/ gindex distgrid
+    ! is there a way or need to do this for unstr?
+    if (.not. unstr_mesh) then
+       ! obtain the mesh mask and find the minimum value across all PEs
+       call ESMF_MeshGet(EMesh, elementDistgrid=Distgrid, rc=rc)
+       if (ChkErr(rc,__LINE__,u_FILE_u)) return
+       call ESMF_DistGridGet(Distgrid, localDe=0, elementCount=ncnt, rc=rc)
+       if (ChkErr(rc,__LINE__,u_FILE_u)) return
+       allocate(meshmask(ncnt))
+       elemMaskArray = ESMF_ArrayCreate(Distgrid, farrayPtr=meshmask, rc=rc)
+       if (chkerr(rc,__LINE__,u_FILE_u)) return
+       write(msgString,'(a,i8)')'MaskArray created, size = ',ncnt
+       call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
+
+       call ESMF_MeshGet(Emesh, elemMaskArray=elemMaskArray, rc=rc)
+       if (ChkErr(rc,__LINE__,u_FILE_u)) return
+       call ESMF_LogWrite(trim('MaskArray retrieved from mesh'), ESMF_LOGMSG_INFO)
+       call ESMF_VMAllFullReduce(vm, sendData=meshmask, recvData=maskmin, count=ncnt, &
+            reduceflag=ESMF_REDUCE_MIN, rc=rc)
+       if (ChkErr(rc,__LINE__,u_FILE_u)) return
+       call ESMF_LogWrite(trim('maskmin found'), ESMF_LOGMSG_INFO)
+
+       if (maskmin == 1) then
+          ! replace mesh mask with internal mask
+          meshmask(:) = 0
+          meshmask(1:nseal) = 1
+          call ESMF_MeshSet(mesh=EMesh, elementMask=meshmask, rc=rc)
+          if (chkerr(rc,__LINE__,u_FILE_u)) return
+          call ESMF_LogWrite(trim('maskmesh set'), ESMF_LOGMSG_INFO)
+       end if
+
+       if (dbug_flag > 5) then
+          call ESMF_ArrayWrite(elemMaskArray, 'meshmask.nc', variableName = 'mask', &
+               overwrite=.true., rc=rc)
+          if (ChkErr(rc,__LINE__,u_FILE_u)) return
+       end if
+       deallocate(meshmask)
+    end if
+   deallocate(gindex)
+
+    !--------------------------------------------------------------- ! DEBUG
+    ! dump mesh coordinates and field
+    ! EMesh is after distgrid transfer
     call ESMF_MeshGet(EMesh, spatialDim=ndims, numOwnedElements=nelements, rc=rc)
-    !call ESMF_MeshGet(EMeshTemp, spatialDim=ndims, numOwnedElements=nelements, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
     write(msgString,*)trim(subname)//'ndims, nelements = ', ndims, nelements
     call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
@@ -880,27 +894,23 @@ contains
     allocate(ownedElemCoords_x(ndims*nelements/2))
     allocate(ownedElemCoords_y(ndims*nelements/2))
     call ESMF_MeshGet(Emesh, ownedElemCoords=ownedElemCoords, rc=rc)
-    !call ESMF_MeshGet(EmeshTemp, ownedElemCoords=ownedElemCoords, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
     ownedElemCoords_x(1:nelements) = ownedElemCoords(1::2)
     ownedElemCoords_y(1:nelements) = ownedElemCoords(2::2)
-    !lb = lbound(ownedElemCoords_x,1); ub=ubound(ownedElemCoords_x,1)
-    !lb = lbound(ownedElemCoords_y,1); ub=ubound(ownedElemCoords_y,1)
 
     ! a field for the mesh coords
     fcoord = ESMF_FieldCreate(EMesh, ESMF_TYPEKIND_R8, meshloc=ESMF_MESHLOC_ELEMENT, rc=rc)
-    !fcoord = ESMF_FieldCreate(EMeshTemp, ESMF_TYPEKIND_R8, meshloc=ESMF_MESHLOC_ELEMENT, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
     call ESMF_FieldGet(fcoord, farrayPtr=fldptr1d, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
 
     fldptr1d(:) = ownedElemCoords_x(:)
-    call ESMF_FieldWrite(fcoord, fileName='testx.nc', variableName='coordx', &
+    call ESMF_FieldWrite(fcoord, fileName='emesh.x.nc', variableName='coordx', &
          overwrite=.true., rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
 
     fldptr1d(:) = ownedElemCoords_y(:)
-    call ESMF_FieldWrite(fcoord, fileName='testy.nc', variableName='coordy', &
+    call ESMF_FieldWrite(fcoord, fileName='emesh.y.nc', variableName='coordy', &
          overwrite=.true., rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
 
@@ -911,9 +921,56 @@ contains
           fldptr1d(i) = -99.0
        end if
     end do
-    call ESMF_FieldWrite(fcoord, fileName='testfield.nc', variableName='dummy', &
+    call ESMF_FieldWrite(fcoord, fileName='emesh.fld.nc', variableName='dummy', &
          overwrite=.true., rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
+    deallocate(ownedElemCoords)
+    deallocate(ownedElemCoords_x)
+    deallocate(ownedElemCoords_y)
+
+    ! dump mesh coordinates and field
+    ! use EMeshTemp for read-in mesh
+    call ESMF_MeshGet(EMeshTemp, spatialDim=ndims, numOwnedElements=nelements, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    write(msgString,*)trim(subname)//'ndims, nelements = ', ndims, nelements
+    call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
+
+    ! Set element coordinates
+    allocate(ownedElemCoords(ndims*nelements))
+    allocate(ownedElemCoords_x(ndims*nelements/2))
+    allocate(ownedElemCoords_y(ndims*nelements/2))
+    call ESMF_MeshGet(EmeshTemp, ownedElemCoords=ownedElemCoords, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ownedElemCoords_x(1:nelements) = ownedElemCoords(1::2)
+    ownedElemCoords_y(1:nelements) = ownedElemCoords(2::2)
+
+    ! a field for the mesh coords
+    fcoord = ESMF_FieldCreate(EMeshTemp, ESMF_TYPEKIND_R8, meshloc=ESMF_MESHLOC_ELEMENT, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    call ESMF_FieldGet(fcoord, farrayPtr=fldptr1d, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+
+    fldptr1d(:) = ownedElemCoords_x(:)
+    call ESMF_FieldWrite(fcoord, fileName='emeshtemp.x.nc', variableName='coordx', &
+         overwrite=.true., rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+
+    fldptr1d(:) = ownedElemCoords_y(:)
+    call ESMF_FieldWrite(fcoord, fileName='emeshtemp.y.nc', variableName='coordy', &
+         overwrite=.true., rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+
+    do i = 1,ndims*nelements/2
+       if ( ownedElemCoords_y(i) .ge. 40.0 .and. ownedElemCoords_y(i) .le. 45.0) then
+          fldptr1d(i) = ownedElemCoords_y(i)
+       else
+          fldptr1d(i) = -99.0
+       end if
+    end do
+    call ESMF_FieldWrite(fcoord, fileName='emeshtemp.fld.nc', variableName='dummy', &
+         overwrite=.true., rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    !--------------------------------------------------------------- !DEBUG
 
     call ESMF_Finalize(endflag=ESMF_END_ABORT)
     !--------------------------------------------------------------------
@@ -1011,11 +1068,13 @@ contains
        wave_elevation_spectrum(:,:) = 0.
     endif
 
-    ! Set global grid size scalars in export state
-    call State_SetScalar(dble(nx), flds_scalar_index_nx, exportState, flds_scalar_name, flds_scalar_num, rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    call State_SetScalar(dble(ny), flds_scalar_index_ny, exportState, flds_scalar_name, flds_scalar_num, rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    if (.not. unstr_mesh) then
+       ! Set global grid size scalars in export state
+       call State_SetScalar(dble(nx), flds_scalar_index_nx, exportState, flds_scalar_name, flds_scalar_num, rc)
+       if (ChkErr(rc,__LINE__,u_FILE_u)) return
+       call State_SetScalar(dble(ny), flds_scalar_index_ny, exportState, flds_scalar_name, flds_scalar_num, rc)
+       if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    end if
 
     if ( dbug_flag > 5) then
        call state_diagnose(exportState, 'at DataInitialize ', rc=rc)
@@ -1200,7 +1259,7 @@ contains
     ! Create export state
     !------------
 
-    call export_fields(gcomp, rc)
+    !call export_fields(gcomp, rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)

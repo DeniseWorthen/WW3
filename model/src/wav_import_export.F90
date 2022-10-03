@@ -19,7 +19,7 @@ module wav_import_export
   use wav_shr_mod  , only : ymd2date
   use wav_shr_mod  , only : chkerr
   use wav_shr_mod  , only : state_diagnose, state_reset, state_getfldptr, state_fldchk
-  use wav_shr_mod  , only : wav_coupling_to_cice, merge_import, dbug_flag, multigrid
+  use wav_shr_mod  , only : wav_coupling_to_cice, merge_import, dbug_flag, multigrid, unstr_mesh
   use constants    , only : grav, tpi, dwat
 
   implicit none
@@ -135,7 +135,9 @@ contains
     ! Advertise export fields
     !--------------------------------
 
-    call fldlist_add(fldsFrWav_num, fldsFrWav, trim(flds_scalar_name))
+    if (.not. unstr_mesh) then
+       call fldlist_add(fldsFrWav_num, fldsFrWav, trim(flds_scalar_name))
+    end if
     if (cesmcoupled) then
        call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_lamult' )
        call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_ustokes')
@@ -893,6 +895,8 @@ contains
 !> @date 01-05-2022
   subroutine fldlist_realize(state, fldList, numflds, flds_scalar_name, flds_scalar_num, mesh, tag, rc)
 
+    use wav_shr_mod  , only : unstr_mesh
+
     ! input/output variables
     type(ESMF_State)          , intent(inout) :: state
     type(fld_list_type)       , intent(in)    :: fldList(:)
@@ -906,12 +910,19 @@ contains
     ! local variables
     integer                :: n
     type(ESMF_Field)       :: field
+    type(ESMF_MeshLoc)     :: meshloc
     character(len=80)      :: stdname
     character(len=*),parameter  :: subname='(wav_import_export:fldlist_realize)'
     ! ----------------------------------------------
 
     rc = ESMF_SUCCESS
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
+
+    !if (unstr_mesh) then
+       meshloc = ESMF_MESHLOC_NODE
+    else
+       meshloc = ESMF_MESHLOC_ELEMENT
+    end if
 
     do n = 1, numflds
        stdname = fldList(n)%stdname
@@ -929,13 +940,13 @@ contains
              if (fldlist(n)%ungridded_lbound > 0 .and. fldlist(n)%ungridded_ubound > 0) then
                 call ESMF_LogWrite(trim(subname)//trim(tag)//" Field = "//trim(stdname)//" has ungridded dimension", &
                      ESMF_LOGMSG_INFO)
-                field = ESMF_FieldCreate(mesh, ESMF_TYPEKIND_R8, name=stdname, meshloc=ESMF_MESHLOC_ELEMENT, &
+                field = ESMF_FieldCreate(mesh, ESMF_TYPEKIND_R8, name=stdname, meshloc=meshloc, &
                      ungriddedLbound=(/fldlist(n)%ungridded_lbound/), &
                      ungriddedUbound=(/fldlist(n)%ungridded_ubound/), &
                      gridToFieldMap=(/2/), rc=rc)
                 if (ChkErr(rc,__LINE__,u_FILE_u)) return
              else
-                field = ESMF_FieldCreate(mesh, ESMF_TYPEKIND_R8, name=stdname, meshloc=ESMF_MESHLOC_ELEMENT, rc=rc)
+                field = ESMF_FieldCreate(mesh, ESMF_TYPEKIND_R8, name=stdname, meshloc=meshloc, rc=rc)
                 if (ChkErr(rc,__LINE__,u_FILE_u)) return
              end if
           end if ! if not scalar field
@@ -1125,9 +1136,9 @@ contains
 #endif
           end if
        endif !firstCall
-       wrln(jsea) = charn(jsea)*ust(isea)**2/grav
+       !wrln(jsea) = charn(jsea)*ust(isea)**2/grav
+       wrln(jsea) = iaproc*1.0e-2
     enddo jsea_loop
-
     firstCall = .false.
 
   end subroutine CalcRoughl
@@ -1333,7 +1344,6 @@ contains
     end do
     call ESMF_VMAllReduce(vm, sendData=global_input, recvData=global_output, count=nsea, reduceflag=ESMF_REDUCE_SUM, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
-
   end subroutine SetGlobalInput
 
   !====================================================================================
@@ -1516,8 +1526,9 @@ contains
 !> @date 01-05-2022
   subroutine check_globaldata(gcomp, fldname, global_data, nvals, rc)
 
-    use w3gdatmd, only: nseal, nsea, mapsf, nx, ny
-    use w3odatmd, only: naproc, iaproc
+    use w3gdatmd   , only : nseal, nsea, mapsf, nx, ny
+    use w3odatmd   , only : naproc, iaproc
+    use wav_shr_mod, only : unstr_mesh
 
     ! input/output variables
     type(ESMF_GridComp) , intent(inout) :: gcomp
