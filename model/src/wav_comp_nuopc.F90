@@ -707,11 +707,11 @@ contains
        domainsize = nx*ny
        unstr_mesh = .false.
     else
-       ! unstructured domain
+       ! unstructured domain, domainsize=nx
        domainsize = nx
-       !domainsize=ntri
        unstr_mesh = .true.
     end if
+
     allocate(nowner(nsea))
     do isea=1,nsea
        jsea = 1 + (isea-1)/naproc
@@ -720,7 +720,9 @@ contains
        !print *,'DEBUG00: ',isea,jsea,isproc
     end do
 
-    ! create a  global index array for sea points
+    ! create a  global index array for sea points. For the unstr mesh, the nsea points are on mesh nodes. We will
+    ! use this gindex to set the element distgrid of a dual mesh. A dual mesh contains the mesh nodes at the center
+    ! of each element (for a triangular mesh, this element has 6 vertices).
     allocate(gindex_sea(nseal))
     do jsea=1, nseal
        isea = iaproc + (jsea-1)*naproc
@@ -782,9 +784,6 @@ contains
        else
           gindex(ncnt) = gindex_lnd(ncnt-nseal)
        end if
-       if (unstr_mesh) then
-          print '(a,2i8)','YY:',ncnt,gindex(ncnt)
-       end if
     end do
     write(msgString,'(5(a,i8))')'size gindex= ',size(gindex),' gindex_sea= ',size(gindex_sea), &
          ' gindex_lnd= ',size(gindex_lnd),' gindex min= ',minval(gindex),' gindex max= ',maxval(gindex)
@@ -807,40 +806,15 @@ contains
        write(nds(1),*)'mesh file for domain is ',trim(cvalue)
     end if
 
-    ! I don't think we need the intermediate EmeshTemp. We can read it and apply the Distgrid
+    ! I don't think we need the intermediate EmeshTemp. We can read the mesh and apply the Distgrid
     ! at the same time
-    if (unstr_mesh) then
-       ! read in the mesh using a nodalDistgrid
-       EMesh = ESMF_MeshCreate(filename=trim(cvalue), fileformat=ESMF_FILEFORMAT_ESMFMESH, &
-            nodalDistgrid=Distgrid,rc=rc)
-       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    else
-       ! read in the mesh using a nodalDistgrid
-       EMesh = ESMF_MeshCreate(filename=trim(cvalue), fileformat=ESMF_FILEFORMAT_ESMFMESH, &
-            elementDistgrid=Distgrid,rc=rc)
-       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    end if
-    call ESMF_LogWrite(trim('mesh read OK '//trim(cvalue)), ESMF_LOGMSG_INFO)
+    EMesh = ESMF_MeshCreate(filename=trim(cvalue), fileformat=ESMF_FILEFORMAT_ESMFMESH, &
+         elementDistgrid=Distgrid,rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
     if (dbug_flag > 5) then
-       call diagnose_mesh(EMeshTemp, size(gindex), 'EMesh', rc=rc)
+       call diagnose_mesh(EMesh, size(gindex), 'EMesh', rc=rc)
        if (ChkErr(rc,__LINE__,u_FILE_u)) return
     end if
-
-!!$    ! recreate mesh using the above distGrid
-!!$    if (unstr_mesh) then
-!!$       EMesh = ESMF_MeshCreate(EMeshTemp, nodalDistgrid=Distgrid, rc=rc)
-!!$       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-!!$       call ESMF_LogWrite(trim('Nodal DistGrid transferred '), ESMF_LOGMSG_INFO)
-!!$    else
-!!$       EMesh = ESMF_MeshCreate(EMeshTemp, elementDistgrid=Distgrid, rc=rc)
-!!$       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-!!$       call ESMF_LogWrite(trim('Element DistGrid transferred '), ESMF_LOGMSG_INFO)
-!!$    end if
-!!$    if (dbug_flag > 5) then
-!!$       call diagnose_mesh(EMesh, size(gindex), 'EMesh', rc=rc)
-!!$       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-!!$    end if
-    !call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     ! is there a way or need to do this for unstr?
     if (.not. unstr_mesh) then
@@ -927,52 +901,52 @@ contains
     deallocate(ownedElemCoords)
     deallocate(ownedElemCoords_x)
     deallocate(ownedElemCoords_y)
-
-    ! dump mesh coordinates and field
-    ! use EMeshTemp for read-in mesh
-    call ESMF_MeshGet(EMeshTemp, spatialDim=ndims, numOwnedElements=nelements, rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-    write(msgString,*)trim(subname)//'ndims, nelements = ', ndims, nelements
-    call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
-
-    ! Set element coordinates
-    allocate(ownedElemCoords(ndims*nelements))
-    allocate(ownedElemCoords_x(ndims*nelements/2))
-    allocate(ownedElemCoords_y(ndims*nelements/2))
-    call ESMF_MeshGet(EmeshTemp, ownedElemCoords=ownedElemCoords, rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-    ownedElemCoords_x(1:nelements) = ownedElemCoords(1::2)
-    ownedElemCoords_y(1:nelements) = ownedElemCoords(2::2)
-
-    ! a field for the mesh coords
-    fcoord = ESMF_FieldCreate(EMeshTemp, ESMF_TYPEKIND_R8, meshloc=ESMF_MESHLOC_ELEMENT, rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-    call ESMF_FieldGet(fcoord, farrayPtr=fldptr1d, rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-
-    fldptr1d(:) = ownedElemCoords_x(:)
-    call ESMF_FieldWrite(fcoord, fileName='emeshtemp.x.nc', variableName='coordx', &
-         overwrite=.true., rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-
-    fldptr1d(:) = ownedElemCoords_y(:)
-    call ESMF_FieldWrite(fcoord, fileName='emeshtemp.y.nc', variableName='coordy', &
-         overwrite=.true., rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-
-    do i = 1,ndims*nelements/2
-       if ( ownedElemCoords_y(i) .ge. 40.0 .and. ownedElemCoords_y(i) .le. 45.0) then
-          fldptr1d(i) = ownedElemCoords_y(i)
-       else
-          fldptr1d(i) = -99.0
-       end if
-    end do
-    call ESMF_FieldWrite(fcoord, fileName='emeshtemp.fld.nc', variableName='dummy', &
-         overwrite=.true., rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
+!!$    ! without emeshtemp, we can't do this part
+!!$    ! dump mesh coordinates and field
+!!$    ! use EMeshTemp for read-in mesh
+!!$    call ESMF_MeshGet(EMeshTemp, spatialDim=ndims, numOwnedElements=nelements, rc=rc)
+!!$    if (chkerr(rc,__LINE__,u_FILE_u)) return
+!!$    write(msgString,*)trim(subname)//'ndims, nelements = ', ndims, nelements
+!!$    call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
+!!$
+!!$    ! Set element coordinates
+!!$    allocate(ownedElemCoords(ndims*nelements))
+!!$    allocate(ownedElemCoords_x(ndims*nelements/2))
+!!$    allocate(ownedElemCoords_y(ndims*nelements/2))
+!!$    call ESMF_MeshGet(EmeshTemp, ownedElemCoords=ownedElemCoords, rc=rc)
+!!$    if (chkerr(rc,__LINE__,u_FILE_u)) return
+!!$    ownedElemCoords_x(1:nelements) = ownedElemCoords(1::2)
+!!$    ownedElemCoords_y(1:nelements) = ownedElemCoords(2::2)
+!!$
+!!$    ! a field for the mesh coords
+!!$    fcoord = ESMF_FieldCreate(EMeshTemp, ESMF_TYPEKIND_R8, meshloc=ESMF_MESHLOC_ELEMENT, rc=rc)
+!!$    if (chkerr(rc,__LINE__,u_FILE_u)) return
+!!$    call ESMF_FieldGet(fcoord, farrayPtr=fldptr1d, rc=rc)
+!!$    if (chkerr(rc,__LINE__,u_FILE_u)) return
+!!$
+!!$    fldptr1d(:) = ownedElemCoords_x(:)
+!!$    call ESMF_FieldWrite(fcoord, fileName='emeshtemp.x.nc', variableName='coordx', &
+!!$         overwrite=.true., rc=rc)
+!!$    if (chkerr(rc,__LINE__,u_FILE_u)) return
+!!$
+!!$    fldptr1d(:) = ownedElemCoords_y(:)
+!!$    call ESMF_FieldWrite(fcoord, fileName='emeshtemp.y.nc', variableName='coordy', &
+!!$         overwrite=.true., rc=rc)
+!!$    if (chkerr(rc,__LINE__,u_FILE_u)) return
+!!$
+!!$    do i = 1,ndims*nelements/2
+!!$       if ( ownedElemCoords_y(i) .ge. 40.0 .and. ownedElemCoords_y(i) .le. 45.0) then
+!!$          fldptr1d(i) = ownedElemCoords_y(i)
+!!$       else
+!!$          fldptr1d(i) = -99.0
+!!$       end if
+!!$    end do
+!!$    call ESMF_FieldWrite(fcoord, fileName='emeshtemp.fld.nc', variableName='dummy', &
+!!$         overwrite=.true., rc=rc)
+!!$    if (chkerr(rc,__LINE__,u_FILE_u)) return
     !--------------------------------------------------------------- !DEBUG
 
-    call ESMF_Finalize(endflag=ESMF_END_ABORT)
+    !call ESMF_Finalize(endflag=ESMF_END_ABORT)
     !--------------------------------------------------------------------
     ! Realize the actively coupled fields
     !--------------------------------------------------------------------
@@ -1259,7 +1233,7 @@ contains
     ! Create export state
     !------------
 
-    !call export_fields(gcomp, rc)
+    call export_fields(gcomp, rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)

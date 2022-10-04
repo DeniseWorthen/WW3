@@ -303,6 +303,8 @@ contains
     real(r4), allocatable   :: wydata(:)      ! only needed if merge_import
     character(len=CL)       :: msgString
     character(len=*), parameter :: subname='(wav_import_export:import_fields)'
+    !DEBUG
+    type(ESMF_Field)        :: lfield
     !---------------------------------------------------------------------------
 
     rc = ESMF_SUCCESS
@@ -403,6 +405,7 @@ contains
              if (ChkErr(rc,__LINE__,u_FILE_u)) return
           end if
        end if
+
 
        ! atm u wind
        WX0(:,:) = def_value
@@ -895,8 +898,6 @@ contains
 !> @date 01-05-2022
   subroutine fldlist_realize(state, fldList, numflds, flds_scalar_name, flds_scalar_num, mesh, tag, rc)
 
-    use wav_shr_mod  , only : unstr_mesh
-
     ! input/output variables
     type(ESMF_State)          , intent(inout) :: state
     type(fld_list_type)       , intent(in)    :: fldList(:)
@@ -910,19 +911,12 @@ contains
     ! local variables
     integer                :: n
     type(ESMF_Field)       :: field
-    type(ESMF_MeshLoc)     :: meshloc
     character(len=80)      :: stdname
     character(len=*),parameter  :: subname='(wav_import_export:fldlist_realize)'
     ! ----------------------------------------------
 
     rc = ESMF_SUCCESS
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
-
-    !if (unstr_mesh) then
-       meshloc = ESMF_MESHLOC_NODE
-    else
-       meshloc = ESMF_MESHLOC_ELEMENT
-    end if
 
     do n = 1, numflds
        stdname = fldList(n)%stdname
@@ -940,13 +934,13 @@ contains
              if (fldlist(n)%ungridded_lbound > 0 .and. fldlist(n)%ungridded_ubound > 0) then
                 call ESMF_LogWrite(trim(subname)//trim(tag)//" Field = "//trim(stdname)//" has ungridded dimension", &
                      ESMF_LOGMSG_INFO)
-                field = ESMF_FieldCreate(mesh, ESMF_TYPEKIND_R8, name=stdname, meshloc=meshloc, &
+                field = ESMF_FieldCreate(mesh, ESMF_TYPEKIND_R8, name=stdname, meshloc=ESMF_MESHLOC_ELEMENT, &
                      ungriddedLbound=(/fldlist(n)%ungridded_lbound/), &
                      ungriddedUbound=(/fldlist(n)%ungridded_ubound/), &
                      gridToFieldMap=(/2/), rc=rc)
                 if (ChkErr(rc,__LINE__,u_FILE_u)) return
              else
-                field = ESMF_FieldCreate(mesh, ESMF_TYPEKIND_R8, name=stdname, meshloc=meshloc, rc=rc)
+                field = ESMF_FieldCreate(mesh, ESMF_TYPEKIND_R8, name=stdname, meshloc=ESMF_MESHLOC_ELEMENT, rc=rc)
                 if (ChkErr(rc,__LINE__,u_FILE_u)) return
              end if
           end if ! if not scalar field
@@ -1136,8 +1130,7 @@ contains
 #endif
           end if
        endif !firstCall
-       !wrln(jsea) = charn(jsea)*ust(isea)**2/grav
-       wrln(jsea) = iaproc*1.0e-2
+       wrln(jsea) = charn(jsea)*ust(isea)**2/grav
     enddo jsea_loop
     firstCall = .false.
 
@@ -1315,7 +1308,8 @@ contains
 
     use w3gdatmd, only: nsea, nseal, nx, ny
     use w3odatmd, only: naproc, iaproc
-
+    ! debug
+    use w3gdatmd     , only :  xgrd, ygrd
     ! input/output variables
     type(ESMF_State) , intent(in)  :: importState
     character(len=*) , intent(in)  :: fldname
@@ -1335,12 +1329,15 @@ contains
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
 
     call state_getfldptr(importState, trim(fldname), dataptr, rc=rc)
+    if(trim(fldname) .eq. 'Sa_u10m')print *,trim(fldname)//':  ',lbound(dataptr,1),ubound(dataptr,1),size(dataptr)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
     global_output(:) = 0._r4
     global_input(:) = 0._r4
     do jsea = 1, nseal
        isea = iaproc + (jsea-1)*naproc
        global_input(isea) = real(dataptr(jsea),4)
+       if(trim(fldname) .eq. 'Sa_u10m')print '(a,2i6,3f8.2)',trim(fldname)//': ',jsea,isea, &
+           real(dataptr(jsea),4),xgrd(1,isea),ygrd(1,isea)
     end do
     call ESMF_VMAllReduce(vm, sendData=global_input, recvData=global_output, count=nsea, reduceflag=ESMF_REDUCE_SUM, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return

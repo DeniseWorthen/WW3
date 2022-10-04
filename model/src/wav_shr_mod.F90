@@ -128,7 +128,6 @@ contains
     integer         , intent(out) :: rc
 
     !local variables
-    type(ESMF_DistGrid)    :: eDistGrid, nDistGrid
     logical                :: elementCoordsIsPresent
     logical                :: elementDistGridIsPresent
     logical                :: nodalDistGridIsPresent
@@ -167,15 +166,14 @@ contains
 
     call ESMF_MeshGet(EMeshIn, nodeCount=ncnt, elementCount=ecnt, &
          numOwnedElements=nownde, numOwnedNodes=nowndn, &
-         elementConnCount=econcnt, &
          elementCoordsIsPresent=elementCoordsIsPresent, &
          elementDistGridIsPresent=elementDistGridIsPresent,&
          nodalDistGridIsPresent=nodalDistGridIsPresent, &
          elementMaskIsPresent=elementMaskIsPresent, &
          nodeMaskIsPresent=nodeMaskIsPresent, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
-    write(msgString,'(6(a,i6))')trim(mesh_name)//' Info: Node Cnt = ',ncnt,' Elem Cnt = ',ecnt, &
-         ' element Conn Count = ',econcnt,' num Owned Elms = ',nownde,' num Owned Nodes = ',nowndn,&
+    write(msgString,'(5(a,i6))')trim(mesh_name)//' Info: Node Cnt = ',ncnt,' Elem Cnt = ',ecnt, &
+         ' num Owned Elms = ',nownde,' num Owned Nodes = ',nowndn,&
          ' Gindex size = ',gindex_size
     call ESMF_LogWrite(trim(msgString), rc=rc)
 
@@ -200,15 +198,18 @@ contains
     call ESMF_LogWrite(trim(msgString), rc=rc)
     write(msgString,'(a,12i8)')trim(mesh_name)//' : NodeOwners(ub-9:ub) = ',lb,ub,nowners(ub-9:ub)
     call ESMF_LogWrite(trim(msgString), rc=rc)
-
-    call ESMF_MeshGet(EMeshIn, elementIds=eids, rc=rc)
-    lb = lbound(eids,1); ub = ubound(eids,1)
-    write(msgString,'(a,12i8)')trim(mesh_name)//' : ElemIds(lb:lb+9) = ',lb,ub,eids(lb:lb+9)
-    call ESMF_LogWrite(trim(msgString), rc=rc)
-    write(msgString,'(a,12i8)')trim(mesh_name)//' : ElemIds(ub-9:ub) = ',lb,ub,eids(ub-9:ub)
-    call ESMF_LogWrite(trim(msgString), rc=rc)
     write(msgString,'(a,12i8)')trim(mesh_name)//' : NodeOwners min,max = ',minval(nowners),maxval(nowners)
     call ESMF_LogWrite(trim(msgString), rc=rc)
+
+    ! some methods not avail when using a dual mesh
+    if (.not. unstr_mesh) then
+       call ESMF_MeshGet(EMeshIn, elementIds=eids, rc=rc)
+       lb = lbound(eids,1); ub = ubound(eids,1)
+       write(msgString,'(a,12i8)')trim(mesh_name)//' : ElemIds(lb:lb+9) = ',lb,ub,eids(lb:lb+9)
+       call ESMF_LogWrite(trim(msgString), rc=rc)
+       write(msgString,'(a,12i8)')trim(mesh_name)//' : ElemIds(ub-9:ub) = ',lb,ub,eids(ub-9:ub)
+       call ESMF_LogWrite(trim(msgString), rc=rc)
+    end if
 
     if (dbug_flag  > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
 
