@@ -14,13 +14,16 @@ module wav_import_export
   use NUOPC
   use NUOPC_Model
   use wav_shr_flags
-  use wav_kind_mod , only : r8 => shr_kind_r8, r4 => shr_kind_r4, i4 => shr_kind_i4
-  use wav_kind_mod , only : CL => shr_kind_cl, CS => shr_kind_cs
-  use wav_shr_mod  , only : ymd2date
-  use wav_shr_mod  , only : chkerr
-  use wav_shr_mod  , only : state_diagnose, state_reset, state_getfldptr, state_fldchk
-  use wav_shr_mod  , only : wav_coupling_to_cice, merge_import, dbug_flag, multigrid, unstr_mesh
-  use constants    , only : grav, tpi, dwat
+  use wav_kind_mod  , only : r8 => shr_kind_r8, r4 => shr_kind_r4, i4 => shr_kind_i4
+  use wav_kind_mod  , only : CL => shr_kind_cl, CS => shr_kind_cs
+  use wav_shr_mod   , only : ymd2date
+  use wav_shr_mod   , only : chkerr
+  use wav_shr_mod   , only : state_diagnose, state_reset, state_getfldptr, state_fldchk
+  use wav_shr_mod   , only : wav_coupling_to_cice, merge_import, dbug_flag, multigrid, unstr_mesh
+  use constants     , only : grav, tpi, dwat
+#ifdef W3_PDLIB
+  use yowNodepool   , only : iplg
+#endif
 
   implicit none
   private ! except
@@ -65,6 +68,7 @@ module wav_import_export
 
   integer, parameter :: nwav_elev_spectrum = 25     !< the size of the wave spectrum exported if coupling
                                                     !! waves to cice6
+  integer, public    :: nseal_local                 !< nseal - ng
   character(*),parameter :: u_FILE_u = &            !< a character string for an ESMF log message
        __FILE__
 
@@ -303,8 +307,6 @@ contains
     real(r4), allocatable   :: wydata(:)      ! only needed if merge_import
     character(len=CL)       :: msgString
     character(len=*), parameter :: subname='(wav_import_export:import_fields)'
-    !DEBUG
-    type(ESMF_Field)        :: lfield
     !---------------------------------------------------------------------------
 
     rc = ESMF_SUCCESS
@@ -1102,8 +1104,12 @@ contains
 
     !----------------------------------------------------------------------
 
-    jsea_loop: do jsea = 1,nseal
-       isea = iaproc + (jsea-1)*naproc
+    jsea_loop: do jsea = 1,nseal_local
+       if (w3_pdlib_flag) then
+          isea = iplg(jsea)
+       else
+          isea = iaproc + (jsea-1)*naproc
+       end if
        ix = mapsf(isea,1)
        iy = mapsf(isea,2)
        if ( firstCall ) then
@@ -1329,15 +1335,16 @@ contains
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
 
     call state_getfldptr(importState, trim(fldname), dataptr, rc=rc)
-    if(trim(fldname) .eq. 'Sa_u10m')print *,trim(fldname)//':  ',lbound(dataptr,1),ubound(dataptr,1),size(dataptr)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
     global_output(:) = 0._r4
     global_input(:) = 0._r4
-    do jsea = 1, nseal
-       isea = iaproc + (jsea-1)*naproc
+    do jsea = 1, nseal_local
+       if (w3_pdlib_flag) then
+          isea = iplg(jsea)
+       else
+          isea = iaproc + (jsea-1)*naproc
+       end if
        global_input(isea) = real(dataptr(jsea),4)
-       if(trim(fldname) .eq. 'Sa_u10m')print '(a,2i6,3f8.2)',trim(fldname)//': ',jsea,isea, &
-           real(dataptr(jsea),4),xgrd(1,isea),ygrd(1,isea)
     end do
     call ESMF_VMAllReduce(vm, sendData=global_input, recvData=global_output, count=nsea, reduceflag=ESMF_REDUCE_SUM, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
@@ -1525,7 +1532,6 @@ contains
 
     use w3gdatmd   , only : nseal, nsea, mapsf, nx, ny
     use w3odatmd   , only : naproc, iaproc
-    use wav_shr_mod, only : unstr_mesh
 
     ! input/output variables
     type(ESMF_GridComp) , intent(inout) :: gcomp
