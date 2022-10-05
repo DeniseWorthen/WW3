@@ -36,7 +36,7 @@ module wav_comp_nuopc
   use NUOPC_Model           , only : model_label_SetRunClock    => label_SetRunClock
   use NUOPC_Model           , only : model_label_Finalize       => label_Finalize
   use NUOPC_Model           , only : NUOPC_ModelGet, SetVM
-  use wav_shr_flags         , only : w3_pdlib_flag 
+  use wav_shr_flags         , only : w3_pdlib_flag
   use wav_kind_mod          , only : r8=>shr_kind_r8, i8=>shr_kind_i8, i4=>shr_kind_i4
   use wav_kind_mod          , only : cl=>shr_kind_cl, cs=>shr_kind_cs
   use wav_import_export     , only : advertise_fields, realize_fields, nseal_local
@@ -303,7 +303,7 @@ contains
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
     if (isPresent .and. isSet) then
        read(cvalue,*) profile_memory
-       call ESMF_LogWrite(trim(subname)//': profile_memory = '//trim(cvalue), ESMF_LOGMSG_INFO, rc=rc)
+       call ESMF_LogWrite(trim(subname)//': profile_memory = '//trim(cvalue), ESMF_LOGMSG_INFO)
     end if
 
     call NUOPC_CompAttributeGet(gcomp, name="merge_import", value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
@@ -311,6 +311,12 @@ contains
     if (isPresent .and. isSet) then
        if (trim(cvalue) == '.true.') then
           merge_import = .true.
+       end if
+    end if
+    if (merge_import) then
+       if (w3_pdlib_flag) then
+          call ESMF_LogWrite('Merge_import is not valid with PDLIB', ESMF_LOGMSG_INFO)
+          call ESMF_Finalize(endflag=ESMF_END_ABORT)
        end if
     end if
 
@@ -410,7 +416,7 @@ contains
     use w3gdatmd     , only : ntri
     use wav_shr_mod  , only : diagnose_mesh
 #ifdef W3_PDLIB
-    use yowNodepool   , only : npa, iplg, nodes_global, np, ng
+    use yowNodepool   , only : npa, iplg, np, ng
 #endif
     ! debug
     use w3gdatmd     , only :  xgrd, ygrd, trigp, mapsta
@@ -703,7 +709,7 @@ contains
     print '(a,14i8)','DEBUG0:',nx,ny,ntri,nsea,nseal,nsealm,lbound(mapsf,1),ubound(mapsf,1),size(xgrd,2),size(ygrd,2), &
          lbound(mapsta,1),ubound(mapsta,1),lbound(mapsta,2),ubound(mapsta,2)
 
-    print '(a,9i8)','DEBUG1:',nx,ny,nsea,nseal,npa,np,ng,lbound(iplg,1),ubound(iplg,1)
+    !print '(a,9i8)','DEBUG1:',nx,ny,nsea,nseal,npa,np,ng,lbound(iplg,1),ubound(iplg,1)
     !do i = 1,nseal
     !   print '(a,2i8,2f8.2)','YY:',i,iplg(i),xgrd(1,iplg(i)),ygrd(1,iplg(i))
     !end do
@@ -713,34 +719,31 @@ contains
     if (ntri == 0) then
        domainsize = nx*ny
        unstr_mesh = .false.
-       nseal_local = nseal
     else
        ! unstructured domain, domainsize=nx
        domainsize = nx
        unstr_mesh = .true.
-       if (w3_pdlib_flag) then
-          nseal_local = nseal - ng
-       else
-          nseal_local = nseal
-       end if
     end if
 
+    ! set a value of the local sea points on this processor minus the ghost points (pdlib only)
+#ifdef W3_PDLIB
+    nseal_local = nseal - ng
+#else
+    nseal_local = nseal
+#endif
     ! create a  global index array for sea points. For the unstr mesh, the nsea points are on mesh nodes. We will
     ! use this gindex to set the element distgrid of a dual mesh. A dual mesh contains the mesh nodes at the center
     ! of each element (for a triangular mesh, this element is composed of 2 overlapping triangles (6 vertices)).
     allocate(gindex_sea(nseal_local))
     do jsea=1, nseal_local
-       if (w3_pdlib_flag) then
+#ifdef W3_PDLIB
           isea = iplg(jsea)
-          gindex_sea(jsea) = isea
-          ! debug ---just for the print message below
-          ix = 1; iy = 1
-       else
+#else
           isea = iaproc + (jsea-1)*naproc
+#endif
           ix = mapsf(isea,1)
           iy = mapsf(isea,2)
           gindex_sea(jsea) = ix + (iy-1)*nx
-       end if
        !DEBUG
        if (unstr_mesh) then
           ! ix = isea; jsea gives the local index of sea point; isea gives the global index of sea point
@@ -758,15 +761,14 @@ contains
     mask_local(:) = 0
     mask_global(:) = 0
     do jsea=1, nseal_local
-       if (w3_pdlib_flag) then
-          isea = iplg(jsea)
-          mask_local(isea) = 1
-       else
-          isea = iaproc + (jsea-1)*naproc
-          ix = mapsf(isea,1)
-          iy = mapsf(isea,2)
-          mask_local(ix + (iy-1)*nx) = 1
-       end if
+#ifdef W3_PDLIB
+       isea = iplg(jsea)
+#else
+       isea = iaproc + (jsea-1)*naproc
+#endif
+       ix = mapsf(isea,1)
+       iy = mapsf(isea,2)
+       mask_local(ix + (iy-1)*nx) = 1
     end do
     call ESMF_VMAllReduce(vm, sendData=mask_local, recvData=mask_global, count=domainsize, &
          reduceflag=ESMF_REDUCE_MAX, rc=rc)

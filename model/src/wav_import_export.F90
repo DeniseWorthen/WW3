@@ -1105,11 +1105,11 @@ contains
     !----------------------------------------------------------------------
 
     jsea_loop: do jsea = 1,nseal_local
-       if (w3_pdlib_flag) then
-          isea = iplg(jsea)
-       else
-          isea = iaproc + (jsea-1)*naproc
-       end if
+#ifdef W3_PDLIB
+       isea = iplg(jsea)
+#else
+       isea = iaproc + (jsea-1)*naproc
+#endif
        ix = mapsf(isea,1)
        iy = mapsf(isea,2)
        if ( firstCall ) then
@@ -1339,11 +1339,11 @@ contains
     global_output(:) = 0._r4
     global_input(:) = 0._r4
     do jsea = 1, nseal_local
-       if (w3_pdlib_flag) then
-          isea = iplg(jsea)
-       else
-          isea = iaproc + (jsea-1)*naproc
-       end if
+#ifdef W3_PDLIB
+       isea = iplg(jsea)
+#else
+       isea = iaproc + (jsea-1)*naproc
+#endif
        global_input(isea) = real(dataptr(jsea),4)
     end do
     call ESMF_VMAllReduce(vm, sendData=global_input, recvData=global_output, count=nsea, reduceflag=ESMF_REDUCE_SUM, rc=rc)
