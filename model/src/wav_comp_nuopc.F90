@@ -36,9 +36,10 @@ module wav_comp_nuopc
   use NUOPC_Model           , only : model_label_SetRunClock    => label_SetRunClock
   use NUOPC_Model           , only : model_label_Finalize       => label_Finalize
   use NUOPC_Model           , only : NUOPC_ModelGet, SetVM
+  use wav_shr_flags         , only : w3_pdlib_flag
   use wav_kind_mod          , only : r8=>shr_kind_r8, i8=>shr_kind_i8, i4=>shr_kind_i4
   use wav_kind_mod          , only : cl=>shr_kind_cl, cs=>shr_kind_cs
-  use wav_import_export     , only : advertise_fields, realize_fields
+  use wav_import_export     , only : advertise_fields, realize_fields, nseal_local
   use wav_shr_mod           , only : state_diagnose, state_getfldptr, state_fldchk
   use wav_shr_mod           , only : chkerr, state_setscalar, state_getscalar, alarmInit, ymd2date
   use wav_shr_mod           , only : wav_coupling_to_cice
@@ -302,7 +303,7 @@ contains
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
     if (isPresent .and. isSet) then
        read(cvalue,*) profile_memory
-       call ESMF_LogWrite(trim(subname)//': profile_memory = '//trim(cvalue), ESMF_LOGMSG_INFO, rc=rc)
+       call ESMF_LogWrite(trim(subname)//': profile_memory = '//trim(cvalue), ESMF_LOGMSG_INFO)
     end if
 
     call NUOPC_CompAttributeGet(gcomp, name="merge_import", value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
@@ -310,6 +311,12 @@ contains
     if (isPresent .and. isSet) then
        if (trim(cvalue) == '.true.') then
           merge_import = .true.
+       end if
+    end if
+    if (merge_import) then
+       if (w3_pdlib_flag) then
+          call ESMF_LogWrite('Merge_import is not valid with PDLIB', ESMF_LOGMSG_INFO)
+          call ESMF_Finalize(endflag=ESMF_END_ABORT)
        end if
     end if
 
@@ -408,6 +415,10 @@ contains
     use wav_shr_mod  , only : diagnose_mesh
     !unstr
     use w3gdatmd     , only : ntri
+    use wav_shr_mod  , only : diagnose_mesh
+#ifdef W3_PDLIB
+    use yowNodepool   , only : npa, iplg, np, ng
+#endif
     ! debug
     use w3gdatmd     , only :  xgrd, ygrd, trigp, mapsta
     use w3adatmd     , only : nsealm
@@ -443,6 +454,7 @@ contains
     integer                        :: ntotal, nlnd
     integer                        :: nlnd_global, nlnd_local
     integer                        :: my_lnd_start, my_lnd_end
+    integer                        :: domainsize
     integer, allocatable, target   :: mask_global(:)
     integer, allocatable, target   :: mask_local(:)
     integer, allocatable           :: gindex_lnd(:)
@@ -471,9 +483,6 @@ contains
     real(r8), pointer              :: fldptr1d(:)
     real(r8), pointer              :: ownedElemCoords(:), ownedElemCoords_x(:), ownedElemCoords_y(:)
     !--------------------------------------------------------------------
-
-    !unstr
-    integer :: domainsize
 
     rc = ESMF_SUCCESS
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
@@ -701,6 +710,12 @@ contains
     print '(a,14i8)','DEBUG0:',nx,ny,ntri,nsea,nseal,nsealm,lbound(mapsf,1),ubound(mapsf,1),size(xgrd,2),size(ygrd,2), &
          lbound(mapsta,1),ubound(mapsta,1),lbound(mapsta,2),ubound(mapsta,2)
 
+    !print '(a,9i8)','DEBUG1:',nx,ny,nsea,nseal,npa,np,ng,lbound(iplg,1),ubound(iplg,1)
+    !do i = 1,nseal
+    !   print '(a,2i8,2f8.2)','YY:',i,iplg(i),xgrd(1,iplg(i)),ygrd(1,iplg(i))
+    !end do
+    !call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
     ! structured domain, size=global dimensions
     if (ntri == 0) then
        domainsize = nx*ny
@@ -711,15 +726,25 @@ contains
        unstr_mesh = .true.
     end if
 
+    ! set a value of the local sea points on this processor minus the ghost points (pdlib only)
+#ifdef W3_PDLIB
+    nseal_local = nseal - ng
+#else
+    nseal_local = nseal
+#endif
     ! create a  global index array for sea points. For the unstr mesh, the nsea points are on mesh nodes. We will
     ! use this gindex to set the element distgrid of a dual mesh. A dual mesh contains the mesh nodes at the center
     ! of each element (for a triangular mesh, this element is composed of 2 overlapping triangles (6 vertices)).
-    allocate(gindex_sea(nseal))
-    do jsea=1, nseal
-       isea = iaproc + (jsea-1)*naproc
-       ix = mapsf(isea,1)
-       iy = mapsf(isea,2)
-       gindex_sea(jsea) = ix + (iy-1)*nx
+    allocate(gindex_sea(nseal_local))
+    do jsea=1, nseal_local
+#ifdef W3_PDLIB
+          isea = iplg(jsea)
+#else
+          isea = iaproc + (jsea-1)*naproc
+#endif
+          ix = mapsf(isea,1)
+          iy = mapsf(isea,2)
+          gindex_sea(jsea) = ix + (iy-1)*nx
        !DEBUG
        if (unstr_mesh) then
           ! ix = isea; jsea gives the local index of sea point; isea gives the global index of sea point
@@ -730,13 +755,18 @@ contains
                xgrd(iy,ix),ygrd(iy,ix)
        end if
     end do
+    !call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     ! create a global index array for non-sea (i.e. land points)
     allocate(mask_global(domainsize), mask_local(domainsize))
     mask_local(:) = 0
     mask_global(:) = 0
-    do jsea=1, nseal
+    do jsea=1, nseal_local
+#ifdef W3_PDLIB
+       isea = iplg(jsea)
+#else
        isea = iaproc + (jsea-1)*naproc
+#endif
        ix = mapsf(isea,1)
        iy = mapsf(isea,2)
        mask_local(ix + (iy-1)*nx) = 1
@@ -768,17 +798,18 @@ contains
 
     ! create a global index that includes both sea and land - but put land at the end
     nlnd = (my_lnd_end - my_lnd_start + 1)
-    allocate(gindex(nlnd + nseal))
-    do ncnt = 1,nlnd + nseal
-       if (ncnt <= nseal) then
+    allocate(gindex(nlnd + nseal_local))
+    do ncnt = 1,nlnd + nseal_local
+       if (ncnt <= nseal_local) then
           gindex(ncnt) = gindex_sea(ncnt)
        else
-          gindex(ncnt) = gindex_lnd(ncnt-nseal)
+          gindex(ncnt) = gindex_lnd(ncnt-nseal_local)
        end if
     end do
     write(msgString,'(5(a,i8))')'size gindex= ',size(gindex),' gindex_sea= ',size(gindex_sea), &
          ' gindex_lnd= ',size(gindex_lnd),' gindex min= ',minval(gindex),' gindex max= ',maxval(gindex)
     call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
+    print *,trim(msgString)
     write(msgString,'(a,5i8)')'gindex(1:5)= ',gindex(1:5)
     call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
     deallocate(gindex_sea)
@@ -831,7 +862,7 @@ contains
        if (maskmin == 1) then
           ! replace mesh mask with internal mask
           meshmask(:) = 0
-          meshmask(1:nseal) = 1
+          meshmask(1:nseal_local) = 1
           call ESMF_MeshSet(mesh=EMesh, elementMask=meshmask, rc=rc)
           if (chkerr(rc,__LINE__,u_FILE_u)) return
           call ESMF_LogWrite(trim('maskmesh set'), ESMF_LOGMSG_INFO)
@@ -1496,7 +1527,6 @@ contains
     real(r8)          :: dtcfl_in  ! Maximum CFL time step X-Y propagation.
     real(r8)          :: dtcfli_in ! Maximum CFL time step X-Y propagation intra-spectral
     integer           :: stdout
-    character(len=CL) :: cvalue
     character(len=*), parameter    :: subname = '(wav_comp_nuopc:wavinit_cesm)'
     ! -------------------------------------------------------------------
 
