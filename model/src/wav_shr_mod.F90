@@ -110,16 +110,16 @@ contains
 !===============================================================================
 !> Get properties of a mesh
 !!
-!! @param[in]    Mesh             an ESMF Mesh
+!! @param[in]    EMeshIn          an ESMF Mesh
 !! @param[in]    gindex_size      the length of the gindex
+!! @param[in]    mesh_name        a name to identify the mesh in the PET log
 !! @param[out]   rc               a return code
 !!
 !> @author mvertens@ucar.edu, Denise.Worthen@noaa.gov
 !> @date 09-12-2022
   subroutine diagnose_mesh(EMeshIn, gindex_size, mesh_name, rc)
 
-    use ESMF          , only : ESMF_Mesh, ESMF_MESHELEMTYPE_TRI, ESMF_MeshCreate, ESMF_LOGMSG_Info
-    use ESMF          , only : ESMF_Distgrid
+    use ESMF          , only : ESMF_Mesh, ESMF_LOGMSG_Info
 
     ! input/output variables
     type(ESMF_Mesh) , intent(in)  :: EMeshIn
@@ -227,7 +227,7 @@ contains
 !! @param[in]    flds_scalar_name the name of the scalar
 !! @param[in]    flds_scalar_num  the number of scalars
 !! @param[out]   rc               a return code
-!!q
+!!
 !> @author mvertens@ucar.edu, Denise.Worthen@noaa.gov
 !> @date 01-05-2022
   subroutine state_getscalar(state, scalar_id, scalar_value, flds_scalar_name, flds_scalar_num, rc)

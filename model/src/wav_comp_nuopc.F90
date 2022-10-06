@@ -405,9 +405,9 @@ contains
 #endif
     use wav_shel_inp , only : set_shel_io
     use wav_grdout   , only : wavinit_grdout
+    use wav_shr_mod  , only : diagnose_mesh
     !unstr
     use w3gdatmd     , only : ntri
-    use wav_shr_mod  , only : diagnose_mesh
     ! debug
     use w3gdatmd     , only :  xgrd, ygrd, trigp, mapsta
     use w3adatmd     , only : nsealm
@@ -467,7 +467,6 @@ contains
     character(len=*), parameter    :: subname = '(wav_comp_nuopc:InitializeRealize)'
     ! DEBUG
     integer :: isproc, ndims, nelements
-    integer, allocatable           :: nowner(:)
     type(ESMF_Field)               :: fcoord
     real(r8), pointer              :: fldptr1d(:)
     real(r8), pointer              :: ownedElemCoords(:), ownedElemCoords_x(:), ownedElemCoords_y(:)
@@ -712,17 +711,9 @@ contains
        unstr_mesh = .true.
     end if
 
-    allocate(nowner(nsea))
-    do isea=1,nsea
-       jsea = 1 + (isea-1)/naproc
-       isproc = isea - (jsea-1)*naproc
-       nowner(isea) = isproc-1
-       !print *,'DEBUG00: ',isea,jsea,isproc
-    end do
-
     ! create a  global index array for sea points. For the unstr mesh, the nsea points are on mesh nodes. We will
     ! use this gindex to set the element distgrid of a dual mesh. A dual mesh contains the mesh nodes at the center
-    ! of each element (for a triangular mesh, this element has 6 vertices).
+    ! of each element (for a triangular mesh, this element is composed of 2 overlapping triangles (6 vertices)).
     allocate(gindex_sea(nseal))
     do jsea=1, nseal
        isea = iaproc + (jsea-1)*naproc
@@ -732,7 +723,7 @@ contains
        !DEBUG
        if (unstr_mesh) then
           ! ix = isea; jsea gives the local index of sea point; isea gives the global index of sea point
-          print '(a,7i8,2f8.2)','XX:',jsea,isea,ix,iy,gindex_sea(jsea),nowner(isea),mapsta(1,gindex_sea(jsea)), &
+          print '(a,6i8,2f8.2)','XX:',jsea,isea,ix,iy,gindex_sea(jsea),mapsta(1,gindex_sea(jsea)), &
                xgrd(1,gindex_sea(jsea)),ygrd(1,gindex_sea(jsea))
        else
           print '(a,6i8,2f8.2)','XX:',jsea,isea,ix,iy,gindex_sea(jsea),mapsta(iy,ix), &

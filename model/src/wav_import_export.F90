@@ -303,8 +303,6 @@ contains
     real(r4), allocatable   :: wydata(:)      ! only needed if merge_import
     character(len=CL)       :: msgString
     character(len=*), parameter :: subname='(wav_import_export:import_fields)'
-    !DEBUG
-    type(ESMF_Field)        :: lfield
     !---------------------------------------------------------------------------
 
     rc = ESMF_SUCCESS
@@ -1525,7 +1523,6 @@ contains
 
     use w3gdatmd   , only : nseal, nsea, mapsf, nx, ny
     use w3odatmd   , only : naproc, iaproc
-    use wav_shr_mod, only : unstr_mesh
 
     ! input/output variables
     type(ESMF_GridComp) , intent(inout) :: gcomp
