@@ -36,7 +36,7 @@ module wav_comp_nuopc
   use NUOPC_Model           , only : model_label_SetRunClock    => label_SetRunClock
   use NUOPC_Model           , only : model_label_Finalize       => label_Finalize
   use NUOPC_Model           , only : NUOPC_ModelGet, SetVM
-  use wav_shr_flags         , only : w3_pdlib_flag
+
   use wav_kind_mod          , only : r8=>shr_kind_r8, i8=>shr_kind_i8, i4=>shr_kind_i4
   use wav_kind_mod          , only : cl=>shr_kind_cl, cs=>shr_kind_cs
   use wav_import_export     , only : advertise_fields, realize_fields, nseal_local
@@ -224,6 +224,8 @@ contains
   !> @date 01-05-2022
   subroutine InitializeAdvertise(gcomp, importState, exportState, clock, rc)
 
+    use wav_shr_flags         , only : w3_pdlib_flag
+
     ! input/output arguments
     type(ESMF_GridComp)  :: gcomp
     type(ESMF_State)     :: importState, exportState
@@ -405,7 +407,9 @@ contains
     use w3adatmd     , only : w3naux, w3seta
     use w3idatmd     , only : w3seti, w3ninp
     use w3gdatmd     , only : nseal, nsea, nx, ny, mapsf, w3nmod, w3setg
+    use w3gdatmd     , only : rlgtype, ungtype, gtype
     use w3wdatmd     , only : va, time, w3ndat, w3dimw, w3setw
+    use w3parall     , only : init_get_isea
 #ifndef W3_CESMCOUPLED
     use wminitmd     , only : wminit, wminitnml
     use wmunitmd     , only : wmuget, wmuset
@@ -413,14 +417,17 @@ contains
     use wav_shel_inp , only : set_shel_io
     use wav_grdout   , only : wavinit_grdout
     !unstr
-    use w3gdatmd     , only : ntri
     use wav_shr_mod  , only : diagnose_mesh
 #ifdef W3_PDLIB
-    use yowNodepool   , only : npa, iplg, np, ng
+    use yowNodepool   , only : ng, npa
 #endif
     ! debug
-    use w3gdatmd     , only :  xgrd, ygrd, trigp, mapsta
+    use w3gdatmd     , only : ntri, xgrd, ygrd, trigp, mapsta
     use w3adatmd     , only : nsealm
+#ifdef W3_PDLIB
+    ! only for debug now
+    use yowNodepool  , only : iplg, np
+#endif
 
     ! input/output variables
     type(ESMF_GridComp)  :: gcomp
@@ -453,7 +460,6 @@ contains
     integer                        :: ntotal, nlnd
     integer                        :: nlnd_global, nlnd_local
     integer                        :: my_lnd_start, my_lnd_end
-    integer                        :: domainsize
     integer, allocatable, target   :: mask_global(:)
     integer, allocatable, target   :: mask_local(:)
     integer, allocatable           :: gindex_lnd(:)
@@ -715,35 +721,27 @@ contains
     !end do
     !call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-    ! structured domain, size=global dimensions
-    if (ntri == 0) then
-       domainsize = nx*ny
-       unstr_mesh = .false.
-    else
-       ! unstructured domain, domainsize=nx
-       domainsize = nx
+    if (gtype .eq. ungtype) then
        unstr_mesh = .true.
+    else
+       unstr_mesh = .false.
     end if
-
     ! set a value of the local sea points on this processor minus the ghost points (pdlib only)
 #ifdef W3_PDLIB
     nseal_local = nseal - ng
 #else
     nseal_local = nseal
 #endif
+
     ! create a  global index array for sea points. For the unstr mesh, the nsea points are on mesh nodes. We will
     ! use this gindex to set the element distgrid of a dual mesh. A dual mesh contains the mesh nodes at the center
     ! of each element (for a triangular mesh, this element is composed of 2 overlapping triangles (6 vertices)).
     allocate(gindex_sea(nseal_local))
     do jsea=1, nseal_local
-#ifdef W3_PDLIB
-          isea = iplg(jsea)
-#else
-          isea = iaproc + (jsea-1)*naproc
-#endif
-          ix = mapsf(isea,1)
-          iy = mapsf(isea,2)
-          gindex_sea(jsea) = ix + (iy-1)*nx
+       call init_get_isea(isea, jsea)
+       ix = mapsf(isea,1)
+       iy = mapsf(isea,2)
+       gindex_sea(jsea) = ix + (iy-1)*nx
        !DEBUG
        if (unstr_mesh) then
           ! ix = isea; jsea gives the local index of sea point; isea gives the global index of sea point
@@ -756,68 +754,77 @@ contains
     end do
     !call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-    ! create a global index array for non-sea (i.e. land points)
-    allocate(mask_global(domainsize), mask_local(domainsize))
-    mask_local(:) = 0
-    mask_global(:) = 0
-    do jsea=1, nseal_local
-#ifdef W3_PDLIB
-       isea = iplg(jsea)
-#else
-       isea = iaproc + (jsea-1)*naproc
-#endif
-       ix = mapsf(isea,1)
-       iy = mapsf(isea,2)
-       mask_local(ix + (iy-1)*nx) = 1
-    end do
-    call ESMF_VMAllReduce(vm, sendData=mask_local, recvData=mask_global, count=domainsize, &
-         reduceflag=ESMF_REDUCE_MAX, rc=rc)
+    if (unstr_mesh) then
+       ! create distGrid from global index array of sea points with no ghost points
+       DistGrid = ESMF_DistGridCreate(arbSeqIndexList=gindex_sea, rc=rc)
+       if (ChkErr(rc,__LINE__,u_FILE_u)) return
+       !DEBUG
+       write(msgString,'(3(a,i8))')' gindex_sea= ',size(gindex_sea), &
+            ' gindex_sea min= ',minval(gindex_sea),' gindex_sea max= ',maxval(gindex_sea)
+       call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
+       print *,trim(msgString)
+       write(msgString,'(a,5i8)')'gindex_sea(1:5)= ',gindex_sea(1:5)
+       call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
+       deallocate(gindex_sea)
+    else
+       ! create a global index array for non-sea (i.e. land points)
+       allocate(mask_global(nx*ny), mask_local(nx*ny))
+       mask_local(:) = 0
+       mask_global(:) = 0
+       do jsea=1, nseal_local
+          call init_get_isea(isea, jsea)
+          ix = mapsf(isea,1)
+          iy = mapsf(isea,2)
+          mask_local(ix + (iy-1)*nx) = 1
+       end do
+       call ESMF_VMAllReduce(vm, sendData=mask_local, recvData=mask_global, count=nx*ny, &
+            reduceflag=ESMF_REDUCE_MAX, rc=rc)
 
-    ! In unstr case, domainsize=nsea=nx so nlnd_global=0 but this lets me use gindex array to create nDG
-    nlnd_global = domainsize - nsea
-    nlnd_local = nlnd_global / naproc
-    my_lnd_start = nlnd_local*iam + min(iam, mod(nlnd_global, naproc)) + 1
-    if (iam < mod(nlnd_global, naproc)) then
-       nlnd_local = nlnd_local + 1
-    end if
-    my_lnd_end = my_lnd_start + nlnd_local - 1
+       nlnd_global = nx*ny - nsea
+       nlnd_local = nlnd_global / naproc
+       my_lnd_start = nlnd_local*iam + min(iam, mod(nlnd_global, naproc)) + 1
+       if (iam < mod(nlnd_global, naproc)) then
+          nlnd_local = nlnd_local + 1
+       end if
+       my_lnd_end = my_lnd_start + nlnd_local - 1
 
-    allocate(gindex_lnd(my_lnd_end - my_lnd_start + 1))
-    ncnt = 0
-    do n = 1,domainsize
-       if (mask_global(n) == 0) then ! this is a land point
-          ncnt = ncnt + 1
-          if (ncnt >= my_lnd_start .and. ncnt <= my_lnd_end) then
-             gindex_lnd(ncnt - my_lnd_start + 1) = n
+       allocate(gindex_lnd(my_lnd_end - my_lnd_start + 1))
+       ncnt = 0
+       do n = 1,nx*ny
+          if (mask_global(n) == 0) then ! this is a land point
+             ncnt = ncnt + 1
+             if (ncnt >= my_lnd_start .and. ncnt <= my_lnd_end) then
+                gindex_lnd(ncnt - my_lnd_start + 1) = n
+             end if
           end if
-       end if
-    end do
-    deallocate(mask_global)
-    deallocate(mask_local)
+       end do
+       deallocate(mask_global)
+       deallocate(mask_local)
 
-    ! create a global index that includes both sea and land - but put land at the end
-    nlnd = (my_lnd_end - my_lnd_start + 1)
-    allocate(gindex(nlnd + nseal_local))
-    do ncnt = 1,nlnd + nseal_local
-       if (ncnt <= nseal_local) then
-          gindex(ncnt) = gindex_sea(ncnt)
-       else
-          gindex(ncnt) = gindex_lnd(ncnt-nseal_local)
-       end if
-    end do
-    write(msgString,'(5(a,i8))')'size gindex= ',size(gindex),' gindex_sea= ',size(gindex_sea), &
-         ' gindex_lnd= ',size(gindex_lnd),' gindex min= ',minval(gindex),' gindex max= ',maxval(gindex)
-    call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
-    print *,trim(msgString)
-    write(msgString,'(a,5i8)')'gindex(1:5)= ',gindex(1:5)
-    call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
-    deallocate(gindex_sea)
-    deallocate(gindex_lnd)
-    !call ESMF_Finalize(endflag=ESMF_END_ABORT)
+       ! create a global index that includes both sea and land - but put land at the end
+       nlnd = (my_lnd_end - my_lnd_start + 1)
+       allocate(gindex(nlnd + nseal_local))
+       do ncnt = 1,nlnd + nseal
+          if (ncnt <= nseal_local) then
+             gindex(ncnt) = gindex_sea(ncnt)
+          else
+             gindex(ncnt) = gindex_lnd(ncnt-nseal_local)
+          end if
+       end do
+       write(msgString,'(5(a,i8))')'size gindex= ',size(gindex),' gindex_sea= ',size(gindex_sea), &
+            ' gindex_lnd= ',size(gindex_lnd),' gindex min= ',minval(gindex),' gindex max= ',maxval(gindex)
+       call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
+       print *,trim(msgString)
+       write(msgString,'(a,5i8)')'gindex(1:5)= ',gindex(1:5)
+       call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
+       deallocate(gindex_sea)
+       deallocate(gindex_lnd)
+       !call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-    ! create distGrid from global index array
-    DistGrid = ESMF_DistGridCreate(arbSeqIndexList=gindex, rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+       ! create distGrid from global index array
+       DistGrid = ESMF_DistGridCreate(arbSeqIndexList=gindex, rc=rc)
+       if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    end if
 
     ! get the mesh file name
     call NUOPC_CompAttributeGet(gcomp, name='mesh_wav', value=cvalue, rc=rc)
@@ -827,8 +834,7 @@ contains
        write(nds(1),*)'mesh file for domain is ',trim(cvalue)
     end if
 
-    ! I don't think we need the intermediate EmeshTemp. We can read the mesh and apply the Distgrid
-    ! at the same time
+    ! read in the mesh with the above DistGrid
     EMesh = ESMF_MeshCreate(filename=trim(cvalue), fileformat=ESMF_FILEFORMAT_ESMFMESH, &
          elementDistgrid=Distgrid,rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
@@ -837,7 +843,6 @@ contains
        if (ChkErr(rc,__LINE__,u_FILE_u)) return
     end if
 
-    ! is there a way or need to do this for unstr?
     if (.not. unstr_mesh) then
        ! obtain the mesh mask and find the minimum value across all PEs
        call ESMF_MeshGet(EMesh, elementDistgrid=Distgrid, rc=rc)
@@ -873,8 +878,8 @@ contains
           if (ChkErr(rc,__LINE__,u_FILE_u)) return
        end if
        deallocate(meshmask)
+       deallocate(gindex)
     end if
-   deallocate(gindex)
 
     !--------------------------------------------------------------- ! DEBUG
     ! dump mesh coordinates and field
@@ -922,49 +927,6 @@ contains
     deallocate(ownedElemCoords)
     deallocate(ownedElemCoords_x)
     deallocate(ownedElemCoords_y)
-!!$    ! without emeshtemp, we can't do this part
-!!$    ! dump mesh coordinates and field
-!!$    ! use EMeshTemp for read-in mesh
-!!$    call ESMF_MeshGet(EMeshTemp, spatialDim=ndims, numOwnedElements=nelements, rc=rc)
-!!$    if (chkerr(rc,__LINE__,u_FILE_u)) return
-!!$    write(msgString,*)trim(subname)//'ndims, nelements = ', ndims, nelements
-!!$    call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
-!!$
-!!$    ! Set element coordinates
-!!$    allocate(ownedElemCoords(ndims*nelements))
-!!$    allocate(ownedElemCoords_x(ndims*nelements/2))
-!!$    allocate(ownedElemCoords_y(ndims*nelements/2))
-!!$    call ESMF_MeshGet(EmeshTemp, ownedElemCoords=ownedElemCoords, rc=rc)
-!!$    if (chkerr(rc,__LINE__,u_FILE_u)) return
-!!$    ownedElemCoords_x(1:nelements) = ownedElemCoords(1::2)
-!!$    ownedElemCoords_y(1:nelements) = ownedElemCoords(2::2)
-!!$
-!!$    ! a field for the mesh coords
-!!$    fcoord = ESMF_FieldCreate(EMeshTemp, ESMF_TYPEKIND_R8, meshloc=ESMF_MESHLOC_ELEMENT, rc=rc)
-!!$    if (chkerr(rc,__LINE__,u_FILE_u)) return
-!!$    call ESMF_FieldGet(fcoord, farrayPtr=fldptr1d, rc=rc)
-!!$    if (chkerr(rc,__LINE__,u_FILE_u)) return
-!!$
-!!$    fldptr1d(:) = ownedElemCoords_x(:)
-!!$    call ESMF_FieldWrite(fcoord, fileName='emeshtemp.x.nc', variableName='coordx', &
-!!$         overwrite=.true., rc=rc)
-!!$    if (chkerr(rc,__LINE__,u_FILE_u)) return
-!!$
-!!$    fldptr1d(:) = ownedElemCoords_y(:)
-!!$    call ESMF_FieldWrite(fcoord, fileName='emeshtemp.y.nc', variableName='coordy', &
-!!$         overwrite=.true., rc=rc)
-!!$    if (chkerr(rc,__LINE__,u_FILE_u)) return
-!!$
-!!$    do i = 1,ndims*nelements/2
-!!$       if ( ownedElemCoords_y(i) .ge. 40.0 .and. ownedElemCoords_y(i) .le. 45.0) then
-!!$          fldptr1d(i) = ownedElemCoords_y(i)
-!!$       else
-!!$          fldptr1d(i) = -99.0
-!!$       end if
-!!$    end do
-!!$    call ESMF_FieldWrite(fcoord, fileName='emeshtemp.fld.nc', variableName='dummy', &
-!!$         overwrite=.true., rc=rc)
-!!$    if (chkerr(rc,__LINE__,u_FILE_u)) return
     !--------------------------------------------------------------- !DEBUG
 
     !call ESMF_Finalize(endflag=ESMF_END_ABORT)

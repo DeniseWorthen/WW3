@@ -21,9 +21,7 @@ module wav_import_export
   use wav_shr_mod   , only : state_diagnose, state_reset, state_getfldptr, state_fldchk
   use wav_shr_mod   , only : wav_coupling_to_cice, merge_import, dbug_flag, multigrid, unstr_mesh
   use constants     , only : grav, tpi, dwat
-#ifdef W3_PDLIB
-  use yowNodepool   , only : iplg
-#endif
+  use w3parall      , only : init_get_isea
 
   implicit none
   private ! except
@@ -664,8 +662,8 @@ contains
        call state_getfldptr(exportState, 'Sw_lamult', sw_lamult, rc=rc)
        if (ChkErr(rc,__LINE__,u_FILE_u)) return
        sw_lamult(:) = fillvalue
-       do jsea=1, nseal
-          isea = iaproc + (jsea-1)*naproc
+       do jsea=1, nseal_local
+          call init_get_isea(isea, jsea)
           ix  = mapsf(isea,1)
           iy  = mapsf(isea,2)
           if (mapsta(iy,ix) == 1) then
@@ -682,8 +680,8 @@ contains
        call state_getfldptr(exportState, 'Sw_ustokes', sw_ustokes, rc=rc)
        if (ChkErr(rc,__LINE__,u_FILE_u)) return
        sw_ustokes(:) = fillvalue
-       do jsea=1, nseal
-          isea = iaproc + (jsea-1)*naproc
+       do jsea=1, nseal_local
+          call init_get_isea(isea, jsea)
           ix  = mapsf(isea,1)
           iy  = mapsf(isea,2)
           if (mapsta(iy,ix) == 1) then
@@ -697,8 +695,8 @@ contains
        call state_getfldptr(exportState, 'Sw_vstokes', sw_vstokes, rc=rc)
        if (ChkErr(rc,__LINE__,u_FILE_u)) return
        sw_vstokes(:) = fillvalue
-       do jsea=1, nseal
-          isea = iaproc + (jsea-1)*naproc
+       do jsea=1, nseal_local
+          call init_get_isea(isea, jsea)
           ix  = mapsf(isea,1)
           iy  = mapsf(isea,2)
           if (mapsta(iy,ix) == 1) then
@@ -764,8 +762,8 @@ contains
        ! Initialize wave elevation spectrum
        wave_elevation_spectrum(:,:) = fillvalue
 
-       do jsea=1, nseal                         ! jsea is local
-          isea = iaproc + (jsea-1)*naproc       ! isea is global
+       do jsea=1, nseal_local                   ! jsea is local
+          call init_get_isea(isea, jsea)        ! isea is global
           ix  = mapsf(isea,1)                   ! global ix
           iy  = mapsf(isea,2)                   ! global iy
           if (mapsta(iy,ix) .eq. 1) then        ! active sea point
@@ -1040,8 +1038,8 @@ contains
     !----------------------------------------------------------------------
 
     !TODO: fix firstCall like for Roughl
-    jsea_loop: do jsea = 1,nseal
-       isea = iaproc + (jsea-1)*naproc
+    jsea_loop: do jsea = 1,nseal_local
+       call init_get_isea(isea, jsea)
        if ( firstCall ) then
           charn(jsea) = zero
           llws(:) = .true.
@@ -1105,11 +1103,7 @@ contains
     !----------------------------------------------------------------------
 
     jsea_loop: do jsea = 1,nseal_local
-#ifdef W3_PDLIB
-       isea = iplg(jsea)
-#else
-       isea = iaproc + (jsea-1)*naproc
-#endif
+       call init_get_isea(isea, jsea)
        ix = mapsf(isea,1)
        iy = mapsf(isea,2)
        if ( firstCall ) then
@@ -1187,8 +1181,8 @@ contains
     wbyn(:) = zero
     wbpn(:) = zero
 
-    jsea_loop: do jsea = 1,nseal
-       isea = iaproc + (jsea-1)*naproc
+    jsea_loop: do jsea = 1,nseal_local
+       call init_get_isea(isea, jsea)
        if ( dw(isea).le.zero ) cycle jsea_loop
        depth = max(dmin,dw(isea))
        abr = zero
@@ -1244,9 +1238,6 @@ contains
     use w3gdatmd,   only : nseal, nk, nth, sig, es2, esc, ec2, fte, dden
     use w3adatmd,   only : dw, cg, wn
     use w3odatmd,   only : naproc, iaproc
-#ifdef W3_PDLIB
-    use yowNodepool, only: np, iplg
-#endif
 
     ! input/output variables
     real, intent(in)               :: a(nth,nk,0:nseal) ! Input spectra (in par list to change shape)
@@ -1266,8 +1257,8 @@ contains
     !----------------------------------------------------------------------
 
     facd = dwat*grav
-    jsea_loop: do jsea = 1,nseal
-       isea = iaproc + (jsea-1)*naproc
+    jsea_loop: do jsea = 1,nseal_local
+       call init_get_isea(isea, jsea)
        if ( dw(isea).le.zero ) cycle jsea_loop
        sxxs = zero
        sxys = zero
@@ -1314,8 +1305,7 @@ contains
 
     use w3gdatmd, only: nsea, nseal, nx, ny
     use w3odatmd, only: naproc, iaproc
-    ! debug
-    use w3gdatmd     , only :  xgrd, ygrd
+
     ! input/output variables
     type(ESMF_State) , intent(in)  :: importState
     character(len=*) , intent(in)  :: fldname
@@ -1339,11 +1329,7 @@ contains
     global_output(:) = 0._r4
     global_input(:) = 0._r4
     do jsea = 1, nseal_local
-#ifdef W3_PDLIB
-       isea = iplg(jsea)
-#else
-       isea = iaproc + (jsea-1)*naproc
-#endif
+       call init_get_isea(isea, jsea)
        global_input(isea) = real(dataptr(jsea),4)
     end do
     call ESMF_VMAllReduce(vm, sendData=global_input, recvData=global_output, count=nsea, reduceflag=ESMF_REDUCE_SUM, rc=rc)
@@ -1591,6 +1577,7 @@ contains
     if (chkerr(rc,__LINE__,u_FILE_u)) return
     dataptr1d(:) = fillValue
 
+    !TODO: get working for unstr
     if (nvals .eq. nx*ny) then
        do jsea = 1, nseal
           isea = iaproc + (jsea-1)*naproc
