@@ -119,8 +119,7 @@ contains
 !> @date 09-12-2022
   subroutine diagnose_mesh(EMeshIn, gindex_size, mesh_name, rc)
 
-    use ESMF          , only : ESMF_Mesh, ESMF_MESHELEMTYPE_TRI, ESMF_MeshCreate, ESMF_LOGMSG_Info
-    use ESMF          , only : ESMF_Distgrid
+    use ESMF          , only : ESMF_Mesh, ESMF_LOGMSG_Info
 
     ! input/output variables
     type(ESMF_Mesh) , intent(in)  :: EMeshIn

@@ -416,6 +416,7 @@ contains
 #endif
     use wav_shel_inp , only : set_shel_io
     use wav_grdout   , only : wavinit_grdout
+    use wav_shr_mod  , only : diagnose_mesh
     !unstr
     use wav_shr_mod  , only : diagnose_mesh
 #ifdef W3_PDLIB
