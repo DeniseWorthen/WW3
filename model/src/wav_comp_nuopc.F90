@@ -81,7 +81,7 @@ module wav_comp_nuopc
   integer                 :: flds_scalar_index_nx = 0      !< the default size of the scalar field nx
   integer                 :: flds_scalar_index_ny = 0      !< the default size of the scalar field ny
   logical                 :: profile_memory = .false.      !< default logical to control use of ESMF
-  !! memory profiling
+                                                           !! memory profiling
 
   logical                 :: root_task = .false.           !< logical to indicate root task
 #ifdef W3_CESMCOUPLED
@@ -401,24 +401,27 @@ contains
   !> @date 01-05-2022
   subroutine InitializeRealize(gcomp, importState, exportState, clock, rc)
 
-    use w3odatmd     , only : w3nout, w3seto, naproc, iaproc, naperr, napout
-    use w3timemd     , only : stme21
-    use w3adatmd     , only : w3naux, w3seta
-    use w3idatmd     , only : w3seti, w3ninp
-    use w3gdatmd     , only : nseal, nsea, nx, ny, mapsf, w3nmod, w3setg
-    use w3gdatmd     , only : rlgtype, ungtype, gtype
-    use w3wdatmd     , only : va, time, w3ndat, w3dimw, w3setw
-    use w3parall     , only : init_get_isea
+    use w3odatmd          , only : w3nout, w3seto, naproc, iaproc, naperr, napout
+    use w3timemd          , only : stme21
+    use w3adatmd          , only : w3naux, w3seta
+    use w3idatmd          , only : w3seti, w3ninp
+    use w3gdatmd          , only : nseal, nsea, nx, ny, mapsf, w3nmod, w3setg
+    use w3gdatmd          , only : rlgtype, ungtype, gtype
+    use w3wdatmd          , only : va, time, w3ndat, w3dimw, w3setw
+    use w3parall          , only : init_get_isea
 #ifndef W3_CESMCOUPLED
-    use wminitmd     , only : wminit, wminitnml
-    use wmunitmd     , only : wmuget, wmuset
+    use wminitmd          , only : wminit, wminitnml
+    use wmunitmd          , only : wmuget, wmuset
 #endif
-    use wav_shel_inp , only : set_shel_io
-    use wav_grdout   , only : wavinit_grdout
-    use wav_shr_mod  , only : diagnose_mesh
+    use wav_shel_inp      , only : set_shel_io
+    use wav_grdout        , only : wavinit_grdout
+    use wav_shr_mod       , only : diagnose_mesh
+    use wav_shr_mod       , only : haloRH
 #ifdef W3_PDLIB
-    use yowNodepool  , only : ng
+    use yowNodepool       , only : ng, npa, iplg, np, ghostlg
 #endif
+    ! debug
+    use w3gdatmd          , only : xgrd, ygrd
 
     ! input/output variables
     type(ESMF_GridComp)  :: gcomp
@@ -431,6 +434,8 @@ contains
     type(ESMF_DistGrid)            :: distGrid
     type(ESMF_Mesh)                :: Emesh
     type(ESMF_Array)               :: elemMaskArray
+    type(ESMF_Array)               :: larray
+    type(ESMF_Field)               :: lfield
     type(ESMF_VM)                  :: vm
     type(ESMF_Time)                :: esmfTime, stopTime
     type(ESMF_TimeInterval)        :: TimeStep
@@ -453,6 +458,7 @@ contains
     integer, allocatable           :: gindex_lnd(:)
     integer, allocatable           :: gindex_sea(:)
     integer, allocatable           :: gindex(:)
+    integer, allocatable           :: gindex_halo(:)
     integer(i4)                    :: maskmin
     integer(i4), pointer           :: meshmask(:)
     character(23)                  :: dtme21
@@ -468,6 +474,11 @@ contains
     character(ESMF_MAXSTR)         :: preamb = './'
     character(ESMF_MAXSTR)         :: ifname = 'ww3_multi.inp'
     character(len=*), parameter    :: subname = '(wav_comp_nuopc:InitializeRealize)'
+    !DEBUG
+    integer                        :: i,ndims,nelements
+    type(ESMF_Field)               :: fcoord
+    real(r8), pointer              :: fldptr1d(:)
+    real(r8), pointer              :: ownedElemCoords(:), ownedElemCoords_x(:), ownedElemCoords_y(:)
     ! -------------------------------------------------------------------
 
     rc = ESMF_SUCCESS
@@ -697,6 +708,30 @@ contains
        unstr_mesh = .false.
     end if
 
+    !np=number of nodes, local; ng=number of ghost nodes; npa=number of ghost + resident nodes
+    !> ng long. give the global node id of nodes, which belong to adjacent domains
+    print '(a,9i8)','DEBUG1:',nx,ny,nsea,nseal,npa,np,ng,lbound(iplg,1),ubound(iplg,1),lbound(ghostlg,1),ubound(ghostlg,1)
+!!$    do i = 1,nseal
+!!$       print '(a,2i8,2f8.2)','XX:',i,iplg(i),xgrd(1,iplg(i)),ygrd(1,iplg(i))
+!!$    end do
+!!$    do i = 1,nseal-ng
+!!$       print '(a,2i8,2f8.2)','YY:',i,iplg(i),xgrd(1,iplg(i)),ygrd(1,iplg(i))
+!!$    end do
+!!$    do i = 1,ng
+!!$       print '(a,2i8,2f8.2)','ZZ:',i,ghostlg(i),xgrd(1,ghostlg(i)),ygrd(1,ghostlg(i))
+!!$    end do
+!!$    !call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  !> Ghost local to global mapping
+  !> ng long. give the global node id of nodes, which
+  !> belong to adjacent domains
+  !integer, public, allocatable :: ghostlg(:)
+
+  !> Ghost global to local mapping
+  !> np_global long. give the local ghost node id. local ghost node ids for other ranks are set to 0!
+  !integer, public, allocatable :: ghostgl(:)
+
+
     ! Note that nsea is the global number of sea points - and nseal is the local number
     ! of sea points
 
@@ -705,7 +740,10 @@ contains
     ! dual mesh contains the mesh nodes at the center of each element. For a triangular mesh,
     ! this element is composed of 2 overlapping triangles (6 vertices)).
 
-    ! set a value of the local sea points on this processor minus the ghost points (pdlib only)
+    ! when using domain decomposition, the import and export fields will be built only on the
+    ! non-haloed sea points so set a value of the local sea points on this processor minus the
+    ! ghost points (if any). a halo routehandle will be constructed to fill the halo points for
+    ! all nseal local points (npa=np+ng) below
 #ifdef W3_PDLIB
     nseal_local = nseal - ng
 #else
@@ -723,6 +761,7 @@ contains
        ! create distGrid from global index array of sea points with no ghost points
        DistGrid = ESMF_DistGridCreate(arbSeqIndexList=gindex_sea, rc=rc)
        if (ChkErr(rc,__LINE__,u_FILE_u)) return
+       deallocate(gindex_sea)
     else
        ! create a global index array for non-sea (i.e. land points)
        allocate(mask_global(nx*ny), mask_local(nx*ny))
@@ -820,6 +859,79 @@ contains
        deallocate(meshmask)
        deallocate(gindex)
     end if
+
+    !--------------------------------------------------------------- ! DEBUG
+    ! dump mesh coordinates and field
+    ! EMesh is after distgrid transfer
+    call ESMF_MeshGet(EMesh, spatialDim=ndims, numOwnedElements=nelements, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    write(msgString,*)trim(subname)//'ndims, nelements = ', ndims, nelements
+    call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
+
+    ! Set element coordinates
+    allocate(ownedElemCoords(ndims*nelements))
+    allocate(ownedElemCoords_x(ndims*nelements/2))
+    allocate(ownedElemCoords_y(ndims*nelements/2))
+    call ESMF_MeshGet(Emesh, ownedElemCoords=ownedElemCoords, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ownedElemCoords_x(1:nelements) = ownedElemCoords(1::2)
+    ownedElemCoords_y(1:nelements) = ownedElemCoords(2::2)
+
+    ! a field for the mesh coords
+    fcoord = ESMF_FieldCreate(EMesh, ESMF_TYPEKIND_R8, meshloc=ESMF_MESHLOC_ELEMENT, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    call ESMF_FieldGet(fcoord, farrayPtr=fldptr1d, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+
+    fldptr1d(:) = ownedElemCoords_x(:)
+    call ESMF_FieldWrite(fcoord, fileName='emesh.x.nc', variableName='coordx', &
+         overwrite=.true., rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+
+    fldptr1d(:) = ownedElemCoords_y(:)
+    call ESMF_FieldWrite(fcoord, fileName='emesh.y.nc', variableName='coordy', &
+         overwrite=.true., rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+
+    do i = 1,ndims*nelements/2
+       fldptr1d(i) = iaproc
+    end do
+    call ESMF_FieldWrite(fcoord, fileName='emesh.fld.nc', variableName='dummy', &
+         overwrite=.true., rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    deallocate(ownedElemCoords)
+    deallocate(ownedElemCoords_x)
+    deallocate(ownedElemCoords_y)
+    !--------------------------------------------------------------- !DEBUG
+!!$
+!!$    !if (lpdlib) then
+!!$       allocate(gindex_halo(1:ng))
+!!$       do jsea = 1,ng
+!!$          gindex_halo(jsea) = ghostlg(jsea)
+!!$       end do
+!!$       call ESMF_MeshGet(EMesh, elementDistgrid=Distgrid, rc=rc)
+!!$       if (ChkErr(rc,__LINE__,u_FILE_u)) return
+!!$       call ESMF_LogWrite('element distgrid got', ESMF_LOGMSG_INFO)
+!!$
+!!$       larray = ESMF_ArrayCreate(Distgrid, typekind=ESMF_TYPEKIND_R8, &
+!!$            haloSeqIndexList=gindex_halo, rc=rc)
+!!$       if (ChkErr(rc,__LINE__,u_FILE_u)) return
+!!$       call ESMF_LogWrite('larray created', ESMF_LOGMSG_INFO)
+!!$
+!!$       lfield = ESMF_FieldCreate(EMesh, array=larray, meshloc=ESMF_MESHLOC_ELEMENT, rc=rc)
+!!$       if (ChkErr(rc,__LINE__,u_FILE_u)) return
+!!$       call ESMF_LogWrite('lfield created', ESMF_LOGMSG_INFO)
+!!$
+!!$       call ESMF_FieldGet(lfield, farrayptr=fldptr1d, rc=rc)
+!!$       if (ChkErr(rc,__LINE__,u_FILE_u)) return
+!!$       print *,'XXYY ',lbound(fldptr1d,1),ubound(fldptr1d,1)
+!!$
+!!$       call ESMF_FieldHaloStore(lfield, routehandle=haloRH, rc=rc)
+!!$       if (ChkErr(rc,__LINE__,u_FILE_u)) return
+!!$       call ESMF_LogWrite('haloRH created', ESMF_LOGMSG_INFO)
+!!$       deallocate(gindex_halo)
+!!$    !end if
+!!$    !call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     !--------------------------------------------------------------------
     ! Realize the actively coupled fields
@@ -1046,6 +1158,7 @@ contains
     !------------
     ! Obtain import data from import state
     !------------
+    call ESMF_LogWrite('calling import_fields', ESMF_LOGMSG_INFO)
     call import_fields(gcomp, time0, timen, rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
