@@ -416,12 +416,12 @@ contains
     use wav_shel_inp      , only : set_shel_io
     use wav_grdout        , only : wavinit_grdout
     use wav_shr_mod       , only : diagnose_mesh
-    use wav_shr_mod       , only : haloRH
 #ifdef W3_PDLIB
     use yowNodepool       , only : ng, npa, iplg, np, ghostlg
 #endif
     ! debug
-    use w3gdatmd          , only : xgrd, ygrd
+    use w3gdatmd , only : xgrd, ygrd
+    use w3wdatmd , only : ust
 
     ! input/output variables
     type(ESMF_GridComp)  :: gcomp
@@ -434,8 +434,6 @@ contains
     type(ESMF_DistGrid)            :: distGrid
     type(ESMF_Mesh)                :: Emesh
     type(ESMF_Array)               :: elemMaskArray
-    type(ESMF_Array)               :: larray
-    type(ESMF_Field)               :: lfield
     type(ESMF_VM)                  :: vm
     type(ESMF_Time)                :: esmfTime, stopTime
     type(ESMF_TimeInterval)        :: TimeStep
@@ -458,7 +456,6 @@ contains
     integer, allocatable           :: gindex_lnd(:)
     integer, allocatable           :: gindex_sea(:)
     integer, allocatable           :: gindex(:)
-    integer, allocatable           :: gindex_halo(:)
     integer(i4)                    :: maskmin
     integer(i4), pointer           :: meshmask(:)
     character(23)                  :: dtme21
@@ -707,30 +704,21 @@ contains
     else
        unstr_mesh = .false.
     end if
-
+!!$
     !np=number of nodes, local; ng=number of ghost nodes; npa=number of ghost + resident nodes
     !> ng long. give the global node id of nodes, which belong to adjacent domains
-    print '(a,9i8)','DEBUG1:',nx,ny,nsea,nseal,npa,np,ng,lbound(iplg,1),ubound(iplg,1),lbound(ghostlg,1),ubound(ghostlg,1)
-!!$    do i = 1,nseal
-!!$       print '(a,2i8,2f8.2)','XX:',i,iplg(i),xgrd(1,iplg(i)),ygrd(1,iplg(i))
-!!$    end do
-!!$    do i = 1,nseal-ng
-!!$       print '(a,2i8,2f8.2)','YY:',i,iplg(i),xgrd(1,iplg(i)),ygrd(1,iplg(i))
-!!$    end do
-!!$    do i = 1,ng
-!!$       print '(a,2i8,2f8.2)','ZZ:',i,ghostlg(i),xgrd(1,ghostlg(i)),ygrd(1,ghostlg(i))
-!!$    end do
-!!$    !call ESMF_Finalize(endflag=ESMF_END_ABORT)
-
-  !> Ghost local to global mapping
-  !> ng long. give the global node id of nodes, which
-  !> belong to adjacent domains
-  !integer, public, allocatable :: ghostlg(:)
-
-  !> Ghost global to local mapping
-  !> np_global long. give the local ghost node id. local ghost node ids for other ranks are set to 0!
-  !integer, public, allocatable :: ghostgl(:)
-
+    print '(a,12i8)','DEBUG1:',nx,ny,nsea,nseal,npa,np,ng,lbound(iplg,1),ubound(iplg,1),lbound(ghostlg,1),ubound(ghostlg,1),&
+         size(ust,1)
+    do i = 1,nseal
+       print '(a,2i8,2f8.2)','XX:',i,iplg(i),xgrd(1,iplg(i)),ygrd(1,iplg(i))
+    end do
+    do i = 1,nseal-ng
+       print '(a,2i8,2f8.2)','YY:',i,iplg(i),xgrd(1,iplg(i)),ygrd(1,iplg(i))
+    end do
+    do i = 1,ng
+       print '(a,2i8,2f8.2)','ZZ:',i,ghostlg(i),xgrd(1,ghostlg(i)),ygrd(1,ghostlg(i))
+    end do
+    !call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     ! Note that nsea is the global number of sea points - and nseal is the local number
     ! of sea points
@@ -740,10 +728,7 @@ contains
     ! dual mesh contains the mesh nodes at the center of each element. For a triangular mesh,
     ! this element is composed of 2 overlapping triangles (6 vertices)).
 
-    ! when using domain decomposition, the import and export fields will be built only on the
-    ! non-haloed sea points so set a value of the local sea points on this processor minus the
-    ! ghost points (if any). a halo routehandle will be constructed to fill the halo points for
-    ! all nseal local points (npa=np+ng) below
+    ! set a value of the local sea points on this processor minus the ghost points (pdlib only)
 #ifdef W3_PDLIB
     nseal_local = nseal - ng
 #else
@@ -755,6 +740,7 @@ contains
        ix = mapsf(isea,1)
        iy = mapsf(isea,2)
        gindex_sea(jsea) = ix + (iy-1)*nx
+       print '(a,6i8)','XYXY ',jsea,isea,iplg(jsea),ix,iy,gindex_sea(jsea)
     end do
 
     if (unstr_mesh) then
@@ -903,35 +889,6 @@ contains
     deallocate(ownedElemCoords_x)
     deallocate(ownedElemCoords_y)
     !--------------------------------------------------------------- !DEBUG
-!!$
-!!$    !if (lpdlib) then
-!!$       allocate(gindex_halo(1:ng))
-!!$       do jsea = 1,ng
-!!$          gindex_halo(jsea) = ghostlg(jsea)
-!!$       end do
-!!$       call ESMF_MeshGet(EMesh, elementDistgrid=Distgrid, rc=rc)
-!!$       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-!!$       call ESMF_LogWrite('element distgrid got', ESMF_LOGMSG_INFO)
-!!$
-!!$       larray = ESMF_ArrayCreate(Distgrid, typekind=ESMF_TYPEKIND_R8, &
-!!$            haloSeqIndexList=gindex_halo, rc=rc)
-!!$       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-!!$       call ESMF_LogWrite('larray created', ESMF_LOGMSG_INFO)
-!!$
-!!$       lfield = ESMF_FieldCreate(EMesh, array=larray, meshloc=ESMF_MESHLOC_ELEMENT, rc=rc)
-!!$       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-!!$       call ESMF_LogWrite('lfield created', ESMF_LOGMSG_INFO)
-!!$
-!!$       call ESMF_FieldGet(lfield, farrayptr=fldptr1d, rc=rc)
-!!$       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-!!$       print *,'XXYY ',lbound(fldptr1d,1),ubound(fldptr1d,1)
-!!$
-!!$       call ESMF_FieldHaloStore(lfield, routehandle=haloRH, rc=rc)
-!!$       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-!!$       call ESMF_LogWrite('haloRH created', ESMF_LOGMSG_INFO)
-!!$       deallocate(gindex_halo)
-!!$    !end if
-!!$    !call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     !--------------------------------------------------------------------
     ! Realize the actively coupled fields
@@ -1158,7 +1115,6 @@ contains
     !------------
     ! Obtain import data from import state
     !------------
-    call ESMF_LogWrite('calling import_fields', ESMF_LOGMSG_INFO)
     call import_fields(gcomp, time0, timen, rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 

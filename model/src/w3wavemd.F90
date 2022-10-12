@@ -1,4 +1,4 @@
-#include "w3macros.h"
+ #include "w3macros.h"
 !/ ------------------------------------------------------------------- /
       MODULE W3WAVEMD
 !/
@@ -2660,6 +2660,7 @@
                 DELA=1.
                 DELX=1.
                 DELY=1.
+                print '(A,4i8,2f8.2)','XXY ',isea,jsea,ix,iy,xgrd(1,isea),ygrd(1,isea)
 #ifdef W3_REF1
                 IF (GTYPE.EQ.RLGTYPE) THEN
                   DELX=SX*CLATS(ISEA)/FACX

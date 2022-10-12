@@ -285,7 +285,6 @@ contains
     use wmmdatmd    , only: mpi_comm_grd
 #endif
 #endif
-    use wav_shr_mod , only: state_fillhalos
     ! debug
     use w3gdatmd     , only : xgrd, ygrd
 
@@ -325,16 +324,6 @@ contains
     ! Get import state, clock and vm
     call ESMF_GridCompGet(gcomp, clock=clock, importState=importState, vm=vm, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
-!!$
-!!$    if (dbug_flag > 5) then
-!!$       call state_diagnose(importState, 'at import b4 halo', rc=rc)
-!!$       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-!!$    end if
-!!$
-!!$    call ESMF_LogWrite('calling state_fillhalos', ESMF_LOGMSG_INFO)
-!!$    call state_fillhalos(importState, rc=rc)
-!!$    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-!!$    call ESMF_LogWrite('done state_fillhalos', ESMF_LOGMSG_INFO)
 
     if (dbug_flag > 5) then
        call state_diagnose(importState, 'at import ', rc=rc)
@@ -438,7 +427,6 @@ contains
              call FillGlobalInput(global_data, WXN)
           end if
        end if
-       print '(A,7f8.2)','AA1 Sa_u10m ',wx0(nseal_local-3:nseal_local+3,1)
 
        ! atm v wind
        WY0(:,:) = def_value
@@ -459,6 +447,9 @@ contains
              call FillGlobalInput(global_data, WYN)
           end if
        end if
+       do j = 1,nx
+          print '(A,i8,4f8.2)','AA1 Sa_u10m ',j,wx0(j,1),wy0(j,1),xgrd(1,j),ygrd(1,j)
+       end do
 
        ! air temp - ocn temp
        DT0(:,:) = def_value
@@ -1103,6 +1094,8 @@ contains
 #ifdef W3_ST4
     use w3src4md,   only : w3spr4
 #endif
+    ! debug
+    use w3gdatmd     , only : xgrd, ygrd
 
     ! input/output variables
     real(r8), pointer :: wrln(:) ! 1D roughness length export field ponter
@@ -1145,6 +1138,7 @@ contains
           end if
        endif !firstCall
        wrln(jsea) = charn(jsea)*ust(isea)**2/grav
+       if (isea .eq. 11037)print '(A,2i8,3g18.11,2f8.2)','Z0 ',isea,jsea,wrln(jsea),charn(jsea),ust(isea),xgrd(1,isea),ygrd(1,isea)
     enddo jsea_loop
 
     firstCall = .false.
@@ -1349,7 +1343,7 @@ contains
     end do
     call ESMF_VMAllReduce(vm, sendData=global_input, recvData=global_output, count=nsea, reduceflag=ESMF_REDUCE_SUM, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    print '(A,7f8.2)','AA0 '//trim(fldname),global_output(nseal_local-3:nseal_local+3)
+
   end subroutine SetGlobalInput
 
   !====================================================================================
@@ -1371,9 +1365,9 @@ contains
     real(r4), intent(inout) :: globalfield(nx,ny)
 
     ! local variables
-    integer           :: isea, jsea, ix, iy
+    integer           :: isea, ix, iy
 
-    do jsea = 1,nsea
+    do isea = 1,nsea
        ix = mapsf(isea,1)
        iy = mapsf(isea,2)
        globalfield(ix,iy) = global_data(isea)

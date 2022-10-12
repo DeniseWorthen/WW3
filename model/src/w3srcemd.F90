@@ -45,6 +45,8 @@
 !
 !/ ------------------------------------------------------------------- /
 !/
+      use constants, only : debug_node
+
       REAL, PARAMETER, PRIVATE:: OFFSET = 1.
 !/
       CONTAINS
@@ -869,7 +871,7 @@
       CALL TICK21 (QI5TSTART, -1.0 * DTG)
 #endif
 !
-#ifdef W3_DEBUGSRC
+!#ifdef W3_DEBUGSRC
      IF (IX .eq. DEBUG_NODE) THEN
        WRITE(740+IAPROC,*) 'W3SRCE start sum(SPEC)=', sum(SPEC)
        WRITE(740+IAPROC,*) 'W3SRCE start sum(SPECOLD)=', sum(SPECOLD)
@@ -878,7 +880,7 @@
        WRITE(740+IAPROC,*) 'W3SRCE start sum(VDIO)=', sum(VDIO)
        WRITE(740+IAPROC,*) 'W3SRCE start USTAR=', USTAR
      END IF
-#endif
+!#endif
 
 #ifdef W3_ST4
       DLWMEAN= 0.
@@ -931,6 +933,15 @@
           USTAR=0.
           USTDIR=0.
       ELSE
+!      REAL, INTENT(IN)        :: A(NTH,NK), CG(NK), WN(NK), U, UDIR
+!#ifdef W3_FLX5
+!      REAL, INTENT(IN)        :: TAUA, TAUADIR, DAIR
+!#endif
+!      REAL, INTENT(IN)        :: TAUWX, TAUWY
+!      LOGICAL, INTENT(IN)     :: LLWS(NSPEC)
+!      REAL, INTENT(INOUT)     :: USTAR ,USDIR
+!      REAL, INTENT(OUT)       :: EMEAN, FMEAN, FMEAN1, WNMEAN, AMAX,  &
+!                                 CD, Z0, CHARN, FMEANWS, DLWMEAN
         CALL W3SPR4 (SPEC, CG1, WN1, EMEAN, FMEAN, FMEAN1, WNMEAN, &
                    AMAX, U10ABS, U10DIR,                           &
 #ifdef W3_FLX5
@@ -940,8 +951,8 @@
                    TAUWX, TAUWY, CD, Z0, CHARN, LLWS, FMEANWS, DLWMEAN)
 #endif
 
-#ifdef W3_DEBUGSRC
-#ifdef W3_ST4
+!#ifdef W3_DEBUGSRC
+!#ifdef W3_ST4
         IF (IX == DEBUG_NODE) THEN
           WRITE(740+IAPROC,*) '1: out value USTAR=', USTAR, ' USTDIR=', USTDIR
           WRITE(740+IAPROC,*) '1: out value EMEAN=', EMEAN, ' FMEAN=', FMEAN
@@ -949,8 +960,8 @@
           WRITE(740+IAPROC,*) '1: out value CD=', CD, ' Z0=', Z0
           WRITE(740+IAPROC,*) '1: out value ALPHA=', CHARN, ' FMEANWS=', FMEANWS
         END IF
-#endif
-#endif
+!#endif
+!#endif
 
 #ifdef W3_ST4
         CALL W3SIN4 ( SPEC, CG1, WN2, U10ABS, USTAR, DRAT, AS,       &
@@ -958,20 +969,20 @@
                  VSIN, VDIN, LLWS, IX, IY, BRLAMBDA )
         END IF
 #endif
-#ifdef W3_DEBUGSRC
-#ifdef W3_ST4
+!#ifdef W3_DEBUGSRC
+!#ifdef W3_ST4
         IF (IX == DEBUG_NODE) THEN
-          WRITE(740+IAPROC,*) '1: U10DIR=', U10DIR, ' Z0=', Z0, ' CHARN=', CHARN
-          WRITE(740+IAPROC,*) '1: USTAR=', USTAR, ' U10ABS=', U10ABS, ' AS=', AS
-          WRITE(740+IAPROC,*) '1: DRAT=', DRAT
-          WRITE(740+IAPROC,*) '1: TAUWX=', TAUWX, ' TAUWY=', TAUWY
-          WRITE(740+IAPROC,*) '1: TAUWAX=', TAUWAX, ' TAUWAY=', TAUWAY
-          WRITE(740+IAPROC,*) '1: min(CG1)=', minval(CG1), ' max(CG1)=', maxval(CG1)
-          WRITE(740+IAPROC,*) '1: W3SIN4(min/max/sum)VSIN=', minval(VSIN), maxval(VSIN), sum(VSIN)
-          WRITE(740+IAPROC,*) '1: W3SIN4(min/max/sum)VDIN=', minval(VDIN), maxval(VDIN), sum(VDIN)
+          WRITE(740+IAPROC,*) '2: U10DIR=', U10DIR, ' Z0=', Z0, ' CHARN=', CHARN
+          WRITE(740+IAPROC,*) '2: USTAR=', USTAR, ' U10ABS=', U10ABS, ' AS=', AS
+          WRITE(740+IAPROC,*) '2: DRAT=', DRAT
+          WRITE(740+IAPROC,*) '2: TAUWX=', TAUWX, ' TAUWY=', TAUWY
+          WRITE(740+IAPROC,*) '2: TAUWAX=', TAUWAX, ' TAUWAY=', TAUWAY
+          WRITE(740+IAPROC,*) '2: min(CG1)=', minval(CG1), ' max(CG1)=', maxval(CG1)
+          WRITE(740+IAPROC,*) '2: W3SIN4(min/max/sum)VSIN=', minval(VSIN), maxval(VSIN), sum(VSIN)
+          WRITE(740+IAPROC,*) '2: W3SIN4(min/max/sum)VDIN=', minval(VDIN), maxval(VDIN), sum(VDIN)
         END IF
-#endif
-#endif
+!#endif
+!#endif
 
 #ifdef W3_ST4
       CALL W3SPR4 (SPEC, CG1, WN1, EMEAN, FMEAN, FMEAN1, WNMEAN, &
@@ -986,6 +997,16 @@
 #ifdef W3_ST6
       CALL W3SPR6 (SPEC, CG1, WN1, EMEAN, FMEAN, WNMEAN, AMAX, FP)
 #endif
+        IF (IX == DEBUG_NODE) THEN
+          WRITE(740+IAPROC,*) '3: U10DIR=', U10DIR, ' Z0=', Z0, ' CHARN=', CHARN
+          WRITE(740+IAPROC,*) '3: USTAR=', USTAR, ' U10ABS=', U10ABS, ' AS=', AS
+          WRITE(740+IAPROC,*) '3: DRAT=', DRAT
+          WRITE(740+IAPROC,*) '3: TAUWX=', TAUWX, ' TAUWY=', TAUWY
+          WRITE(740+IAPROC,*) '3: TAUWAX=', TAUWAX, ' TAUWAY=', TAUWAY
+          WRITE(740+IAPROC,*) '3: min(CG1)=', minval(CG1), ' max(CG1)=', maxval(CG1)
+          WRITE(740+IAPROC,*) '3: W3SIN4(min/max/sum)VSIN=', minval(VSIN), maxval(VSIN), sum(VSIN)
+          WRITE(740+IAPROC,*) '3: W3SIN4(min/max/sum)VDIN=', minval(VDIN), maxval(VDIN), sum(VDIN)
+        END IF
 !
 ! 1.c2 Stores the initial data
 !
@@ -1011,6 +1032,16 @@
       CALL W3FLX5 ( ZWND, U10ABS, U10DIR, TAUA, TAUADIR, DAIR,  &
                                           USTAR, USTDIR, Z0, CD, CHARN )
 #endif
+        IF (IX == DEBUG_NODE) THEN
+          WRITE(740+IAPROC,*) '4: U10DIR=', U10DIR, ' Z0=', Z0, ' CHARN=', CHARN
+          WRITE(740+IAPROC,*) '4: USTAR=', USTAR, ' U10ABS=', U10ABS, ' AS=', AS
+          WRITE(740+IAPROC,*) '4: DRAT=', DRAT
+          WRITE(740+IAPROC,*) '4: TAUWX=', TAUWX, ' TAUWY=', TAUWY
+          WRITE(740+IAPROC,*) '4: TAUWAX=', TAUWAX, ' TAUWAY=', TAUWAY
+          WRITE(740+IAPROC,*) '4: min(CG1)=', minval(CG1), ' max(CG1)=', maxval(CG1)
+          WRITE(740+IAPROC,*) '4: W3SIN4(min/max/sum)VSIN=', minval(VSIN), maxval(VSIN), sum(VSIN)
+          WRITE(740+IAPROC,*) '4: W3SIN4(min/max/sum)VDIN=', minval(VDIN), maxval(VDIN), sum(VDIN)
+        END IF
 !
 ! 1.e Prepare cut-off beyond which the tail is imposed with a power law
 !
@@ -1106,6 +1137,16 @@
 #endif
 #endif
 
+        IF (IX == DEBUG_NODE) THEN
+          WRITE(740+IAPROC,*) '5: U10DIR=', U10DIR, ' Z0=', Z0, ' CHARN=', CHARN
+          WRITE(740+IAPROC,*) '5: USTAR=', USTAR, ' U10ABS=', U10ABS, ' AS=', AS
+          WRITE(740+IAPROC,*) '5: DRAT=', DRAT
+          WRITE(740+IAPROC,*) '5: TAUWX=', TAUWX, ' TAUWY=', TAUWY
+          WRITE(740+IAPROC,*) '5: TAUWAX=', TAUWAX, ' TAUWAY=', TAUWAY
+          WRITE(740+IAPROC,*) '5: min(CG1)=', minval(CG1), ' max(CG1)=', maxval(CG1)
+          WRITE(740+IAPROC,*) '5: W3SIN4(min/max/sum)VSIN=', minval(VSIN), maxval(VSIN), sum(VSIN)
+          WRITE(740+IAPROC,*) '5: W3SIN4(min/max/sum)VDIN=', minval(VDIN), maxval(VDIN), sum(VDIN)
+        END IF
 #ifdef W3_ST6
         CALL W3SIN6 ( SPEC, CG1, WN2, U10ABS, USTAR, USTDIR, CD, DAIR, &
                       TAUWX, TAUWY, TAUWAX, TAUWAY, VSIN, VDIN )
@@ -1166,7 +1207,16 @@
         END IF
 #endif
 #endif
-
+        IF (IX == DEBUG_NODE) THEN
+          WRITE(740+IAPROC,*) '6: U10DIR=', U10DIR, ' Z0=', Z0, ' CHARN=', CHARN
+          WRITE(740+IAPROC,*) '6: USTAR=', USTAR, ' U10ABS=', U10ABS, ' AS=', AS
+          WRITE(740+IAPROC,*) '6: DRAT=', DRAT
+          WRITE(740+IAPROC,*) '6: TAUWX=', TAUWX, ' TAUWY=', TAUWY
+          WRITE(740+IAPROC,*) '6: TAUWAX=', TAUWAX, ' TAUWAY=', TAUWAY
+          WRITE(740+IAPROC,*) '6: min(CG1)=', minval(CG1), ' max(CG1)=', maxval(CG1)
+          WRITE(740+IAPROC,*) '6: W3SIN4(min/max/sum)VSIN=', minval(VSIN), maxval(VSIN), sum(VSIN)
+          WRITE(740+IAPROC,*) '6: W3SIN4(min/max/sum)VDIN=', minval(VDIN), maxval(VDIN), sum(VDIN)
+        END IF
 #ifdef W3_ST6
         CALL W3SDS6 ( SPEC, CG1, WN1,                   VSDS, VDDS )
 #endif
@@ -1665,6 +1715,16 @@
                                           USTAR, USTDIR, Z0, CD )
 #endif
 !
+        IF (IX == DEBUG_NODE) THEN
+          WRITE(740+IAPROC,*) '7: U10DIR=', U10DIR, ' Z0=', Z0, ' CHARN=', CHARN
+          WRITE(740+IAPROC,*) '7: USTAR=', USTAR, ' U10ABS=', U10ABS, ' AS=', AS
+          WRITE(740+IAPROC,*) '7: DRAT=', DRAT
+          WRITE(740+IAPROC,*) '7: TAUWX=', TAUWX, ' TAUWY=', TAUWY
+          WRITE(740+IAPROC,*) '7: TAUWAX=', TAUWAX, ' TAUWAY=', TAUWAY
+          WRITE(740+IAPROC,*) '7: min(CG1)=', minval(CG1), ' max(CG1)=', maxval(CG1)
+          WRITE(740+IAPROC,*) '7: W3SIN4(min/max/sum)VSIN=', minval(VSIN), maxval(VSIN), sum(VSIN)
+          WRITE(740+IAPROC,*) '7: W3SIN4(min/max/sum)VDIN=', minval(VDIN), maxval(VDIN), sum(VDIN)
+        END IF
 #ifdef W3_ST1
         FH1    = FXFM * FMEAN
         FHIGH  = MIN ( SIG(NK) , MAX ( FH1 , FH2 ) )
@@ -1789,6 +1849,16 @@
                       VSIN, VDIN, LLWS, IX, IY, BRLAMBDA )
 #endif
 
+        IF (IX == DEBUG_NODE) THEN
+          WRITE(740+IAPROC,*) '9: U10DIR=', U10DIR, ' Z0=', Z0, ' CHARN=', CHARN
+          WRITE(740+IAPROC,*) '9: USTAR=', USTAR, ' U10ABS=', U10ABS, ' AS=', AS
+          WRITE(740+IAPROC,*) '9: DRAT=', DRAT
+          WRITE(740+IAPROC,*) '9: TAUWX=', TAUWX, ' TAUWY=', TAUWY
+          WRITE(740+IAPROC,*) '9: TAUWAX=', TAUWAX, ' TAUWAY=', TAUWAY
+          WRITE(740+IAPROC,*) '9: min(CG1)=', minval(CG1), ' max(CG1)=', maxval(CG1)
+          WRITE(740+IAPROC,*) '9: W3SIN4(min/max/sum)VSIN=', minval(VSIN), maxval(VSIN), sum(VSIN)
+          WRITE(740+IAPROC,*) '9: W3SIN4(min/max/sum)VDIN=', minval(VDIN), maxval(VDIN), sum(VDIN)
+        END IF
 !
 ! 7.  Check if integration complete ---------------------------------- *
 !
@@ -2073,6 +2143,16 @@
           CHARN = AALPHA
       ENDIF
 #endif
+        IF (IX == DEBUG_NODE) THEN
+          WRITE(740+IAPROC,*) '11: U10DIR=', U10DIR, ' Z0=', Z0, ' CHARN=', CHARN
+          WRITE(740+IAPROC,*) '11: USTAR=', USTAR, ' U10ABS=', U10ABS, ' AS=', AS
+          WRITE(740+IAPROC,*) '11: DRAT=', DRAT
+          WRITE(740+IAPROC,*) '11: TAUWX=', TAUWX, ' TAUWY=', TAUWY
+          WRITE(740+IAPROC,*) '11: TAUWAX=', TAUWAX, ' TAUWAY=', TAUWAY
+          WRITE(740+IAPROC,*) '11: min(CG1)=', minval(CG1), ' max(CG1)=', maxval(CG1)
+          WRITE(740+IAPROC,*) '11: W3SIN4(min/max/sum)VSIN=', minval(VSIN), maxval(VSIN), sum(VSIN)
+          WRITE(740+IAPROC,*) '11: W3SIN4(min/max/sum)VDIN=', minval(VDIN), maxval(VDIN), sum(VDIN)
+        END IF
 !
 ! 12. includes shoreline reflection --------------------------------------------- *
 !
