@@ -1129,6 +1129,12 @@ contains
                   tauwy, cd, z0, charn(jsea), llws, fmeanws )
 #endif
 #ifdef W3_ST4
+!      REAL, INTENT(IN)        :: A(NTH,NK), CG(NK), WN(NK), U, UDIR
+!      REAL, INTENT(IN)        :: TAUWX, TAUWY
+!      LOGICAL, INTENT(IN)     :: LLWS(NSPEC)
+!      REAL, INTENT(INOUT)     :: USTAR ,USDIR
+!      REAL, INTENT(OUT)       :: EMEAN, FMEAN, FMEAN1, WNMEAN, AMAX,  &
+!                                 CD, Z0, CHARN, FMEANWS, DLWMEAN
              call w3spr4( va(:,jsea), cg(1:nk,isea), wn(1:nk,isea),   &
                   emean, fmean, fmean1, wnmean, amax,         &
                   u10(isea), u10d(isea), ustar, ustdr, tauwx, &
@@ -1138,7 +1144,9 @@ contains
           end if
        endif !firstCall
        wrln(jsea) = charn(jsea)*ust(isea)**2/grav
-       if (isea .eq. 11037)print '(A,2i8,3g18.11,2f8.2)','Z0 ',isea,jsea,wrln(jsea),charn(jsea),ust(isea),xgrd(1,isea),ygrd(1,isea)
+       if (isea .eq. 23373)print '(A,2i8,10g18.11,2f8.2)','Z0 ',isea,jsea,&
+            wrln(jsea),charn(jsea),ust(isea),u10(isea),u10d(isea),ustar,ustdr,tauwx,tauwy,cd,&
+            xgrd(1,isea),ygrd(1,isea)
     enddo jsea_loop
 
     firstCall = .false.

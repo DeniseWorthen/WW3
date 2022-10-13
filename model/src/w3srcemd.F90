@@ -870,7 +870,7 @@
       QI5TSTART = TIME
       CALL TICK21 (QI5TSTART, -1.0 * DTG)
 #endif
-!
+
 !#ifdef W3_DEBUGSRC
      IF (IX .eq. DEBUG_NODE) THEN
        WRITE(740+IAPROC,*) 'W3SRCE start sum(SPEC)=', sum(SPEC)
@@ -878,7 +878,7 @@
        WRITE(740+IAPROC,*) 'W3SRCE start sum(SPECINIT)=', sum(SPECINIT)
        WRITE(740+IAPROC,*) 'W3SRCE start sum(VSIO)=', sum(VSIO)
        WRITE(740+IAPROC,*) 'W3SRCE start sum(VDIO)=', sum(VDIO)
-       WRITE(740+IAPROC,*) 'W3SRCE start USTAR=', USTAR
+       print '(2(a,g18.11))', 'W3SRCE start USTAR=', USTAR,' ustar dir ',ustdir
      END IF
 !#endif
 
@@ -954,6 +954,7 @@
 !#ifdef W3_DEBUGSRC
 !#ifdef W3_ST4
         IF (IX == DEBUG_NODE) THEN
+           print '(2(a,g18.11))', 'out value USTAR=', USTAR,' ustar dir ',ustdir
           WRITE(740+IAPROC,*) '1: out value USTAR=', USTAR, ' USTDIR=', USTDIR
           WRITE(740+IAPROC,*) '1: out value EMEAN=', EMEAN, ' FMEAN=', FMEAN
           WRITE(740+IAPROC,*) '1: out value FMEAN1=', FMEAN1, ' WNMEAN=', WNMEAN

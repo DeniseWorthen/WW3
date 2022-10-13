@@ -1900,6 +1900,8 @@
               DTDYN (JSEA) = UNDEF
               FCUT  (JSEA) = UNDEF
             END IF
+       if (isea .eq. 23373)print '(A,2i8,3g18.11,2f8.2)','w3srcemd0 ',isea,jsea,&
+            ust(isea),charn(jsea),asf(isea), xgrd(1,isea),ygrd(1,isea)
           END DO ! JSEA
         END IF ! PDLIB
 #endif
@@ -2760,6 +2762,8 @@
                     FCUT  (JSEA) = UNDEF
 !                    VA(:,JSEA)  = 0.
                 END IF
+       if (isea .eq. 23373)print '(A,2i8,3g18.11,2f8.2)','w3srcemd1 ',isea,jsea,&
+            ust(isea),charn(jsea),asf(isea), xgrd(1,isea),ygrd(1,isea)
 #ifdef W3_DEBUGRUN
         WRITE(740+IAPROC,*) 'RET: min/max/sum(VA)=',minval(VA(:,JSEA)),maxval(VA(:,JSEA)),sum(VA(:,JSEA))
 #endif
