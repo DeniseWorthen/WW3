@@ -415,7 +415,7 @@ contains
 #endif
     use wav_shel_inp      , only : set_shel_io
     use wav_grdout        , only : wavinit_grdout
-    use wav_shr_mod       , only : diagnose_mesh
+    use wav_shr_mod       , only : diagnose_mesh, write_meshdecomp
 #ifdef W3_PDLIB
     use yowNodepool       , only : ng, npa, iplg, np, ghostlg
 #endif
@@ -472,10 +472,7 @@ contains
     character(ESMF_MAXSTR)         :: ifname = 'ww3_multi.inp'
     character(len=*), parameter    :: subname = '(wav_comp_nuopc:InitializeRealize)'
     !DEBUG
-    integer                        :: i,ndims,nelements
-    type(ESMF_Field)               :: fcoord
-    real(r8), pointer              :: fldptr1d(:)
-    real(r8), pointer              :: ownedElemCoords(:), ownedElemCoords_x(:), ownedElemCoords_y(:)
+    integer                        :: i
     ! -------------------------------------------------------------------
 
     rc = ESMF_SUCCESS
@@ -704,31 +701,32 @@ contains
     else
        unstr_mesh = .false.
     end if
-!!$
-    !np=number of nodes, local; ng=number of ghost nodes; npa=number of ghost + resident nodes
-    !> ng long. give the global node id of nodes, which belong to adjacent domains
-    print '(a,12i8)','DEBUG1:',nx,ny,nsea,nseal,npa,np,ng,lbound(iplg,1),ubound(iplg,1),lbound(ghostlg,1),ubound(ghostlg,1),&
-         size(ust,1)
-    do i = 1,nseal
-       print '(a,2i8,2f8.2)','XX:',i,iplg(i),xgrd(1,iplg(i)),ygrd(1,iplg(i))
-    end do
-    do i = 1,nseal-ng
-       print '(a,2i8,2f8.2)','YY:',i,iplg(i),xgrd(1,iplg(i)),ygrd(1,iplg(i))
-    end do
-    do i = 1,ng
-       print '(a,2i8,2f8.2)','ZZ:',i,ghostlg(i),xgrd(1,ghostlg(i)),ygrd(1,ghostlg(i))
-    end do
-    !call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-    ! Note that nsea is the global number of sea points - and nseal is the local number
-    ! of sea points
+    ! DEBUG
+    if (unstr_mesh) then
+       !np=number of nodes, local; ng=number of ghost nodes; npa=number of ghost + resident nodes
+       !> ng long. give the global node id of nodes, which belong to adjacent domains
+       print '(a,12i8)','DEBUG1:',nx,ny,nsea,nseal,npa,np,ng,lbound(iplg,1),ubound(iplg,1),lbound(ghostlg,1),ubound(ghostlg,1),&
+            size(ust,1)
+       do i = 1,nseal
+          print '(a,2i8,2f8.2)','XX:',i,iplg(i),xgrd(1,iplg(i)),ygrd(1,iplg(i))
+       end do
+       do i = 1,nseal-ng
+          print '(a,2i8,2f8.2)','YY:',i,iplg(i),xgrd(1,iplg(i)),ygrd(1,iplg(i))
+       end do
+       do i = 1,ng
+          print '(a,2i8,2f8.2)','ZZ:',i,ghostlg(i),xgrd(1,ghostlg(i)),ygrd(1,ghostlg(i))
+       end do
+    end if
 
-    ! create a  global index array for sea points. For the unstr mesh, the nsea points are
-    ! on mesh nodes. We will use the gindex to set the element distgrid of a dual mesh. A
-    ! dual mesh contains the mesh nodes at the center of each element. For a triangular mesh,
-    ! this element is composed of 2 overlapping triangles (6 vertices)).
-
-    ! set a value of the local sea points on this processor minus the ghost points (pdlib only)
+    ! Create a  global index array for sea points.
+    ! Note that nsea is the global number of sea points - and nseal is the local
+    ! number of sea points. For the unstr mesh, the nsea points are on mesh nodes.
+    ! We will use the gindex to set the element distgrid of a dual mesh. A dual mesh
+    ! contains the mesh nodes at the center of each element. For a triangular mesh,
+    ! this element is composed of 2 overlapping triangles (6 vertices)). For the domain
+    ! decomposition case (PDLIB), set a value of the local sea points on this processor
+    ! minus the ghost points.
 #ifdef W3_PDLIB
     nseal_local = nseal - ng
 #else
@@ -740,7 +738,9 @@ contains
        ix = mapsf(isea,1)
        iy = mapsf(isea,2)
        gindex_sea(jsea) = ix + (iy-1)*nx
-       print '(a,6i8)','XYXY ',jsea,isea,iplg(jsea),ix,iy,gindex_sea(jsea)
+       if (unstr_mesh) then
+          print '(a,6i8)','DEBUG2: ',jsea,isea,iplg(jsea),ix,iy,gindex_sea(jsea)
+       end if
     end do
 
     if (unstr_mesh) then
@@ -846,49 +846,10 @@ contains
        deallocate(gindex)
     end if
 
-    !--------------------------------------------------------------- ! DEBUG
-    ! dump mesh coordinates and field
-    ! EMesh is after distgrid transfer
-    call ESMF_MeshGet(EMesh, spatialDim=ndims, numOwnedElements=nelements, rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-    write(msgString,*)trim(subname)//'ndims, nelements = ', ndims, nelements
-    call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
-
-    ! Set element coordinates
-    allocate(ownedElemCoords(ndims*nelements))
-    allocate(ownedElemCoords_x(ndims*nelements/2))
-    allocate(ownedElemCoords_y(ndims*nelements/2))
-    call ESMF_MeshGet(Emesh, ownedElemCoords=ownedElemCoords, rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-    ownedElemCoords_x(1:nelements) = ownedElemCoords(1::2)
-    ownedElemCoords_y(1:nelements) = ownedElemCoords(2::2)
-
-    ! a field for the mesh coords
-    fcoord = ESMF_FieldCreate(EMesh, ESMF_TYPEKIND_R8, meshloc=ESMF_MESHLOC_ELEMENT, rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-    call ESMF_FieldGet(fcoord, farrayPtr=fldptr1d, rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-
-    fldptr1d(:) = ownedElemCoords_x(:)
-    call ESMF_FieldWrite(fcoord, fileName='emesh.x.nc', variableName='coordx', &
-         overwrite=.true., rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-
-    fldptr1d(:) = ownedElemCoords_y(:)
-    call ESMF_FieldWrite(fcoord, fileName='emesh.y.nc', variableName='coordy', &
-         overwrite=.true., rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-
-    do i = 1,ndims*nelements/2
-       fldptr1d(i) = iaproc
-    end do
-    call ESMF_FieldWrite(fcoord, fileName='emesh.fld.nc', variableName='dummy', &
-         overwrite=.true., rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-    deallocate(ownedElemCoords)
-    deallocate(ownedElemCoords_x)
-    deallocate(ownedElemCoords_y)
-    !--------------------------------------------------------------- !DEBUG
+    if (dbug_flag > 5) then
+       call write_meshdecomp(Emesh, 'emesh', rc=rc)
+       if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    end if
 
     !--------------------------------------------------------------------
     ! Realize the actively coupled fields
