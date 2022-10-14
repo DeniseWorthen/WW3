@@ -1367,7 +1367,6 @@ contains
   subroutine fillglobal_with_import(global_data, globalfield)
 
     use w3gdatmd    , only : nsea, mapsf, nx, ny
-    use w3parall    , only : init_get_isea
 
     real(r4), intent(in)    :: global_data(nsea)
     real(r4), intent(inout) :: globalfield(nx,ny)

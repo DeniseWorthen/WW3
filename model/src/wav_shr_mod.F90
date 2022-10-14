@@ -59,10 +59,10 @@ module wav_shr_mod
   integer                , public :: dbug_flag = 0                  !< @public flag used to produce additional output
   logical                , public :: unstr_mesh = .false.           !< @public flag to specify use of unstructured mesh
   character(len=256)     , public :: casename = ''                  !< @public the name pre-prended to an output file
-                                                                    !! Only used by cesm and optionally by uwm
-                                                                    !! to construct the initial file and used in W3IORSMD
-                                                                    !! if a run is a continue run, then casename is used
-                                                                    !! to construct the restart filename in W3IORSMD
+  ! Only used by cesm and optionally by uwm
+  ! to construct the initial file and used in W3IORSMD
+  ! if a run is a continue run, then casename is used to construct
+  ! the restart filename in W3IORSMD
   integer                , public :: inst_index  !< @public number of current instance (ie 1)
   character(len=16)      , public :: inst_name   !< @public fullname of current instance (ie "wav_0001")
   character(len=16)      , public :: inst_suffix !< @public  char string associated with instance

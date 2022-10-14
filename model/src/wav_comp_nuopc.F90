@@ -417,7 +417,9 @@ contains
     use wav_grdout        , only : wavinit_grdout
     use wav_shr_mod       , only : diagnose_mesh, write_meshdecomp
 #ifdef W3_PDLIB
-    use yowNodepool       , only : ng, npa, iplg, np, ghostlg
+    use yowNodepool       , only : ng
+    !debug
+    use yowNodepool       , only : npa, iplg, np, ghostlg
 #endif
     ! debug
     use w3gdatmd , only : xgrd, ygrd
