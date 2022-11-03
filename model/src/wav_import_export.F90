@@ -63,8 +63,6 @@ module wav_import_export
 #else
   logical :: cesmcoupled = .false.                  !< logical defining a non-CESM use case (UWM)
 #endif
-  integer, parameter :: nwav_elev_spectrum = 25     !< the size of the wave spectrum exported if coupling
-                                                    !! waves to cice6
   integer, public    :: nseal_noghost               !< the number of local sea points on a processor, exclusive
                                                     !! of the ghost points. For non-PDLIB cases, this is nseal
   character(*),parameter :: u_FILE_u = &            !< a character string for an ESMF log message
