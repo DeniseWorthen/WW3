@@ -120,7 +120,7 @@ contains
     use w3odatmd       , only : flogrr, flogr, ofiles
     use w3iogrmd       , only : w3iogr
     use w3iogomd       , only : w3readflgrd, fldout, w3flgrdflag
-    use w3servmd       , only : nextln, extcde
+    use w3servmd       , only : nextln, extcde, print_memcheck
     use w3timemd       , only : dsec21, stme21, tick21, t2d, d2j
 #ifdef W3_OASIS
     use w3wdatmd       , only : time00, timeend

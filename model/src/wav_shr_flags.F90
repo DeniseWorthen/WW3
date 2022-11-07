@@ -1173,30 +1173,4 @@ contains
 
   end subroutine print_logmsg_4line
 
-  !========================================================================
-  !> Write memory statistics if requested
-  !!
-  !> @details Writes a single line of memory statistics
-  !!
-  !! @param[in]   iun               unit number
-  !! @param[in]   msg               message
-  !!
-  !> @author mvertens@ucar.edu, Denise.Worthen@noaa.gov
-  !> @date 06-01-2022
-
-  subroutine print_memcheck(iun, msg)
-#ifdef W3_MEMCHECK
-    USE MallocInfo_m
-    USE W3ADATMD, only: MALLINFOS
-#endif
-    integer          , intent(in) :: iun
-    character(len=*) , intent(in) :: msg
-
-#ifdef W3_MEMCHECK
-    write(iun,*) trim(msg)
-    call getMallocInfo(mallinfos)
-    call printMallInfo(iun, mallInfos)
-#endif
-  end subroutine print_memcheck
-
 end module wav_shr_flags
