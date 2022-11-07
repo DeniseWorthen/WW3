@@ -1178,8 +1178,6 @@ CONTAINS
       !
     END DO
     !
-    call print_memcheck(memunit, 'memcheck_____:'//' WW3_INIT SECTION 5')
-    !
     ! J=8, second stream of restart files
     !
     J=8

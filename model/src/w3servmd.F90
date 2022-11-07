@@ -1,3 +1,4 @@
+
 #include "w3macros.h"
 !/ ------------------------------------------------------------------- /
 MODULE W3SERVMD
@@ -2040,9 +2041,10 @@ CONTAINS
     integer          , intent(in) :: iun
     character(len=*) , intent(in) :: msg
 
+#ifdef W3_MEMCHECK
     ! local variables
     type(MallInfo_t)        :: mallinfos
-#ifdef W3_MEMCHECK
+
     write(iun,*) trim(msg)
     call getMallocInfo(mallinfos)
     call printMallInfo(iun, mallInfos)
