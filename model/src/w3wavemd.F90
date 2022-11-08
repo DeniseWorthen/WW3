@@ -985,14 +985,13 @@ CONTAINS
             ELSEIF (IC3PARS(13).GE.0.0)THEN
               HICE=IC3PARS(13)
             ELSE
-              IF ( IAPROC .EQ. NAPERR )                       &
-                   WRITE(NDSE,*)'ICE THICKNESS NOT AVAILABLE ',    &
-                   'FOR CG CALC'
+              IF ( IAPROC .EQ. NAPERR ) then
+                WRITE(NDSE,*)'ICE THICKNESS NOT AVAILABLE FOR CG CALC'
+              end if
               CALL EXTCDE(2)
             ENDIF
             IF (HICE > 0.0) THEN ! non-zero ice
-              CALL W3IC3WNCG_CHENG(WN(:,ISEA),WN_I(:),        &
-                   CG(:,ISEA),HICE,FIXEDVISC,                    &
+              CALL W3IC3WNCG_CHENG(WN(:,ISEA),WN_I(:), CG(:,ISEA),HICE,FIXEDVISC, &
                    FIXEDDENS, FIXEDELAS, DEPTH)
             END IF ! non-zero ice
 #endif
@@ -1006,14 +1005,13 @@ CONTAINS
 #ifdef W3_IC3
             IF (FLIC1.AND.FLIC2.AND.FLIC3.AND.FLIC4) THEN
               IF (ICEP1(IX,IY)>0.0) THEN ! non-zero ice
-                CALL W3IC3WNCG_V1(WN(:,ISEA),WN_I(:),        &
-                     CG(:,ISEA),ICEP1(IX,IY),ICEP2(IX,IY),      &
-                     ICEP3(IX,IY),ICEP4(IX,IY),DEPTH)
+                CALL W3IC3WNCG_V1(WN(:,ISEA),WN_I(:), CG(:,ISEA),ICEP1(IX,IY), &
+                     ICEP2(IX,IY), ICEP3(IX,IY),ICEP4(IX,IY),DEPTH)
               END IF ! non-zero ice
             ELSE
-              IF ( IAPROC .EQ. NAPERR )                       &
-                   WRITE(NDSE,*)'ICE PARAMETERS NOT AVAILABLE ',   &
-                   'FOR CG CALC'
+              IF ( IAPROC .EQ. NAPERR ) then
+                WRITE(NDSE,*)'ICE PARAMETERS NOT AVAILABLE FOR CG CALC'
+              end if
               CALL EXTCDE(2)
             END IF
           ENDIF ! IF USE_CHENG...
@@ -1245,8 +1243,7 @@ CONTAINS
             FLACT  = READBC .OR. FLACT
 
             IF ( READBC ) THEN
-              CALL W3IOBC ( 'READ', NDS(9), TBPI0, TBPIN,       &
-                   ITEST, IMOD )
+              CALL W3IOBC ( 'READ', NDS(9), TBPI0, TBPIN, ITEST, IMOD )
               IF ( ITEST .NE. 1 ) CALL W3UBPT
             ELSE
               ITEST  = 0
@@ -1729,7 +1726,9 @@ CONTAINS
 #endif
           NTLOC  = 1 + INT( DTG/DTCFLI - 0.001 )
 #ifdef W3_SEC1
-          IF ( IAPROC .EQ. NAPOUT )    WRITE(NDSE,'(A,I4,A,I4)') '   SUBSECOND STEP:',ISEC1,' out of ',NITERSEC1
+          IF ( IAPROC .EQ. NAPOUT ) then
+            WRITE(NDSE,'(A,I4,A,I4)') '   SUBSECOND STEP:',ISEC1,' out of ',NITERSEC1
+          end if
 #endif
           !
           FACTH  = DTG / (DTH*REAL(NTLOC))
@@ -2352,12 +2351,10 @@ CONTAINS
         IF ( FLACT .AND. IT.NE.NT .AND. IAPROC.EQ.NAPLOG ) THEN
           CALL STME21 ( TIME , IDTIME )
           IF ( IDLAST .NE. TIME(1) ) THEN
-            WRITE (NDSO,900) ITIME, IPASS, IDTIME(01:19),       &
-                 IDACT, OUTID
+            WRITE (NDSO,900) ITIME, IPASS, IDTIME(01:19), IDACT, OUTID
             IDLAST = TIME(1)
           ELSE
-            WRITE (NDSO,901) ITIME, IPASS, IDTIME(12:19),       &
-                 IDACT, OUTID
+            WRITE (NDSO,901) ITIME, IPASS, IDTIME(12:19), IDACT, OUTID
           END IF
           FLACT  = .FALSE.
           IDACT  = '         '
@@ -2432,10 +2429,12 @@ CONTAINS
         END IF
         !
         FLPART = .FALSE.
-        IF ( FLOUT(1) .AND. FLPFLD )                               &
-             FLPART = FLPART .OR. DSEC21(TIME,TONEXT(:,1)).EQ.0.
-        IF ( FLOUT(6) )                                            &
-             FLPART = FLPART .OR. DSEC21(TIME,TONEXT(:,6)).EQ.0.
+        IF ( FLOUT(1) .AND. FLPFLD ) then
+          FLPART = FLPART .OR. DSEC21(TIME,TONEXT(:,1)).EQ.0.
+        end if
+        IF ( FLOUT(6) ) then
+          FLPART = FLPART .OR. DSEC21(TIME,TONEXT(:,6)).EQ.0.
+        end if
         !
 #ifdef W3_T
         WRITE (NDST,9042) LOCAL, FLPART, FLOUTG
@@ -2841,12 +2840,10 @@ CONTAINS
         END IF
         !
         IF ( IDLAST.NE.TIME(1) ) THEN
-          WRITE (NDSO,900) ITIME, IPASS, IDTIME(1:19),          &
-               IDACT, OUTID
+          WRITE (NDSO,900) ITIME, IPASS, IDTIME(1:19), IDACT, OUTID
           IDLAST = TIME(1)
         ELSE
-          WRITE (NDSO,901) ITIME, IPASS, IDTIME(12:19),         &
-               IDACT, OUTID
+          WRITE (NDSO,901) ITIME, IPASS, IDTIME(12:19), IDACT, OUTID
         END IF
         !
       END IF
@@ -3161,9 +3158,7 @@ CONTAINS
 #ifdef W3_MPI
     IF ( BSTAT(IBFLOC) .EQ. 2 ) THEN
       IOFF =  1 + (BISPL(IBFLOC)-1)*NRQSG2
-      IF ( NRQSG2 .GT. 0 ) CALL                              &
-           MPI_WAITALL ( NRQSG2, IRQSG2(IOFF,2),             &
-           STATUS, IERR_MPI )
+      IF ( NRQSG2 .GT. 0 ) CALL MPI_WAITALL ( NRQSG2, IRQSG2(IOFF,2), STATUS, IERR_MPI )
       BSTAT(IBFLOC) = 0
 #endif
 #ifdef W3_MPIT
@@ -3237,8 +3232,7 @@ CONTAINS
         BSTAT(IB0) = 1
         BISPL(IB0) = IS0
         IOFF       = 1 + (IS0-1)*NRQSG2
-        IF ( NRQSG2 .GT. 0 ) CALL                            &
-             MPI_STARTALL ( NRQSG2, IRQSG2(IOFF,1), IERR_MPI )
+        IF ( NRQSG2 .GT. 0 ) CALL MPI_STARTALL ( NRQSG2, IRQSG2(IOFF,1), IERR_MPI )
         NPST       = NPST + 1
 #endif
 #ifdef W3_MPIT
@@ -3545,9 +3539,7 @@ CONTAINS
       DO IB0=1, MPIBUF
         IF ( BSTAT(IB0) .EQ. 2 ) THEN
           IOFF   = 1 + (BISPL(IB0)-1)*NRQSG2
-          IF ( NRQSG2 .GT. 0 ) CALL                        &
-               MPI_WAITALL ( NRQSG2, IRQSG2(IOFF,2),       &
-               STATUS, IERR_MPI )
+          IF ( NRQSG2 .GT. 0 ) CALL MPI_WAITALL ( NRQSG2, IRQSG2(IOFF,2), STATUS, IERR_MPI )
           BSTAT(IB0) = 0
 #endif
 #ifdef W3_MPIT
