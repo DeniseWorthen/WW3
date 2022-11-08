@@ -1852,8 +1852,10 @@ CONTAINS
         IF ( IAPPRO(ISP) .NE. IAPROC ) THEN
           ITARG  = IAPPRO(ISP) - 1
           IH     = IH + 1
-          CALL MPI_SEND_INIT ( VA(ISP,1), 1, WW3_SPEC_VEC, ITARG, ISP, MPI_COMM_WAVE, IRQSG1(IH,1), IERR1 )
-          CALL MPI_RECV_INIT ( VA(ISP,1), 1, WW3_SPEC_VEC, ITARG, ISP, MPI_COMM_WAVE, IRQSG1(IH,2), IERR2 )
+          CALL MPI_SEND_INIT ( VA(ISP,1), 1, WW3_SPEC_VEC, ITARG, ISP, MPI_COMM_WAVE, &
+               IRQSG1(IH,1), IERR1 )
+          CALL MPI_RECV_INIT ( VA(ISP,1), 1, WW3_SPEC_VEC, ITARG, ISP, MPI_COMM_WAVE, &
+               IRQSG1(IH,2), IERR2 )
 #endif
 #ifdef W3_MPIT
           WRITE (NDST,9022) IH, ISP, ITARG+1, IRQSG1(IH,1), IERR1, IRQSG1(IH,2), IERR2
@@ -1910,14 +1912,14 @@ CONTAINS
               ITARG  = IP - 1
               IH     = IH + 1
               !
-              CALL MPI_RECV_INIT ( WADATS(IMOD)%GSTORE(IP,IBFLOC), 1,        &
-                   WW3_FIELD_VEC, ITARG, ISP, MPI_COMM_WAVE, IRQSG2(IH,1), IERR2 )
-              CALL MPI_SEND_INIT ( WADATS(IMOD)%SSTORE(IP,IBFLOC), 1,        &
-                   WW3_FIELD_VEC, ITARG, ISP, MPI_COMM_WAVE, IRQSG2(IH,2), IERR2 )
+              CALL MPI_RECV_INIT ( WADATS(IMOD)%GSTORE(IP,IBFLOC), 1, WW3_FIELD_VEC, &
+                   ITARG, ISP, MPI_COMM_WAVE, IRQSG2(IH,1), IERR2 )
+              CALL MPI_SEND_INIT ( WADATS(IMOD)%SSTORE(IP,IBFLOC), 1, WW3_FIELD_VEC, &
+                   ITARG, ISP, MPI_COMM_WAVE, IRQSG2(IH,2), IERR2 )
 #endif
 #ifdef W3_MPIT
-              WRITE (NDST,9032) IH, ISP, ITARG+1, IBFLOC, &
-                   IRQSG2(IH,1), IERR1, IRQSG2(IH,2), IERR2
+              WRITE (NDST,9032) IH, ISP, ITARG+1, IBFLOC, IRQSG2(IH,1), IERR1, &
+                   IRQSG2(IH,2), IERR2
 #endif
               !
               ! ... End of loops

@@ -2375,7 +2375,7 @@ CONTAINS
                ( (REAL(olsize(:)) - &
                REAL(sysMem(ind2(:))%nPoints) )/&
                (0.50*MAX(REAL(sysMem(ind2(:))%nPoints),0.001)) )**2
-          !                 Remove GoF entries which exceed predifined tolerances
+          ! Remove GoF entries which exceed predifined tolerances
           DO ii = 1,SIZE(ind2)
             WRITE(20,*) 'Testing: ii,olsize(ii),size,frac =',&
                  ii,olsize(ii),sysMem(ind2(ii))%nPoints,&

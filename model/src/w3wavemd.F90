@@ -622,7 +622,6 @@ CONTAINS
     memunit = 40000+iaproc
     ! 0.a Set pointers to data structure
     !
-    memunit =  40000+iaproc
 #ifdef W3_COU
     SCREEN   =  333
 #endif
@@ -1109,10 +1108,8 @@ CONTAINS
           DTTST1 = DSEC21 ( TIME, TGN )
           DTTST2 = DSEC21 ( TG0, TGN )
           FAC    = DTTST1 / MAX ( 1. , DTTST2 )
-          VGX    = (FAC*GA0+(1.-FAC)*GAN) *                       &
-               COS(FAC*GD0+(1.-FAC)*GDN)
-          VGY    = (FAC*GA0+(1.-FAC)*GAN) *                       &
-               SIN(FAC*GD0+(1.-FAC)*GDN)
+          VGX    = (FAC*GA0+(1.-FAC)*GAN) * COS(FAC*GD0+(1.-FAC)*GDN)
+          VGY    = (FAC*GA0+(1.-FAC)*GAN) * SIN(FAC*GD0+(1.-FAC)*GDN)
         END IF
 #ifdef W3_TIMINGS
         CALL PRINT_MY_TIME("After VGX/VGY assignation")
@@ -1381,7 +1378,7 @@ CONTAINS
             DTL0   = 0.
             FLACT  = .TRUE.
             FLMAP  = .TRUE.
-            FLDDIR = FLDDIR .OR.  FLCTH .OR. FSREFRACTION .OR. FLCK .OR. FSFREQSHIFT
+            FLDDIR = FLDDIR .OR. FLCTH .OR. FSREFRACTION .OR. FLCK .OR. FSFREQSHIFT
           END IF
         END IF
 #ifdef W3_DEBUGCOH
@@ -1672,7 +1669,8 @@ CONTAINS
                   IF (.NOT. LPDLIB) THEN
 #endif
 #ifdef W3_PR3
-                    CALL W3CFLUG ( ISEA, NKCFL, FACX, FACX, DTG, MAPFS, CFLXYMAX(JSEA), VGX, VGY )
+                    CALL W3CFLUG ( ISEA, NKCFL, FACX, FACX, DTG, MAPFS, CFLXYMAX(JSEA), &
+                         VGX, VGY )
 #endif
 #ifdef W3_PDLIB
                   ENDIF
@@ -1712,7 +1710,7 @@ CONTAINS
               IX     = MAPSF(ISEA,1)
               IF (JSEA.EQ.1) then
                 WRITE(995,*) '       IP  dtmax_exp(ip)        x-coord        y-coord        z-coord'
-              end IF
+              end if
               WRITE(995,'(I10,F10.2,3F10.4)') IX,  DTCFL1(JSEA), XGRD(1,IX), YGRD(2,IX), ZB(IX)
             END DO ! JSEA
             CLOSE(995)
