@@ -494,6 +494,7 @@ CONTAINS
     use w3iogoncdmd   , only : w3iogoncd
     use w3odatmd      , only : histwr, rstwr, user_netcdf_grdout
     !
+    !
 #ifdef W3_MPI
     INCLUDE "mpif.h"
 #endif
@@ -1132,7 +1133,6 @@ CONTAINS
 #ifdef W3_TIMINGS
           CALL PRINT_MY_TIME("W3WAVE, step 6.4.1")
 #endif
-
           CALL W3UCUR ( FLFRST )
 
           call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 3b')
@@ -1432,7 +1432,7 @@ CONTAINS
 
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 12')
         !
-        !         Calculate PHASE SPEED GRADIENT.
+        ! Calculate PHASE SPEED GRADIENT.
         DCDX = 0.
         DCDY = 0.
 #ifdef W3_REFRX
@@ -1446,7 +1446,7 @@ CONTAINS
         ELSE
           WRITE (NDSE,1040)
           CALL EXTCDE(2)
-          !      CALL UG_GRADIENTS(CMN, DCDX, DCDY) !/ Stefan, to be confirmed!
+          ! CALL UG_GRADIENTS(CMN, DCDX, DCDY) !/ Stefan, to be confirmed!
         END IF
 #endif
         !
@@ -1557,28 +1557,28 @@ CONTAINS
               FLUSH(740+IAPROC)
 #endif
               CALL W3SRCE(srce_imp_pre, IT, ISEA, JSEA, IX, IY, IMOD, &
-                   VAold(:,JSEA), VA(:,JSEA),                        &
-                   VSioDummy, VDioDummy, SHAVETOT(JSEA),  &
-                   ALPHA(1:NK,JSEA), WN(1:NK,ISEA),               &
-                   CG(1:NK,ISEA), CLATS(ISEA), DW(ISEA), U10(ISEA),            &
-                   U10D(ISEA),                                    &
+                   VAold(:,JSEA), VA(:,JSEA),                         &
+                   VSioDummy, VDioDummy, SHAVETOT(JSEA),              &
+                   ALPHA(1:NK,JSEA), WN(1:NK,ISEA),                   &
+                   CG(1:NK,ISEA), CLATS(ISEA), DW(ISEA), U10(ISEA),   &
+                   U10D(ISEA),                                        &
 #ifdef W3_FLX5
-                   TAUA(ISEA), TAUADIR(ISEA),                  &
+                   TAUA(ISEA), TAUADIR(ISEA),                         &
 #endif
-                   AS(ISEA), UST(ISEA),               &
-                   USTDIR(ISEA), CX(ISEA), CY(ISEA),              &
-                   ICE(ISEA), ICEH(ISEA), ICEF(ISEA),             &
-                   ICEDMAX(ISEA),                                 &
-                   REFLEC, REFLED, DELX, DELY, DELA,              &
-                   TRNX(IY,IX), TRNY(IY,IX), BERG(ISEA),          &
-                   FPIS(ISEA), DTDYN(JSEA),                       &
-                   FCUT(JSEA), DTGpre, TAUWX(JSEA), TAUWY(JSEA),  &
-                   TAUOX(JSEA), TAUOY(JSEA), TAUWIX(JSEA),        &
-                   TAUWIY(JSEA), TAUWNX(JSEA),                    &
-                   TAUWNY(JSEA),  PHIAW(JSEA), CHARN(JSEA),       &
-                   TWS(JSEA), PHIOC(JSEA), TMP1, D50, PSIC, TMP2, &
-                   PHIBBL(JSEA), TMP3, TMP4, PHICE(JSEA),         &
-                   TAUOCX(JSEA), TAUOCY(JSEA), WNMEAN(JSEA),      &
+                   AS(ISEA), UST(ISEA),                               &
+                   USTDIR(ISEA), CX(ISEA), CY(ISEA),                  &
+                   ICE(ISEA), ICEH(ISEA), ICEF(ISEA),                 &
+                   ICEDMAX(ISEA),                                     &
+                   REFLEC, REFLED, DELX, DELY, DELA,                  &
+                   TRNX(IY,IX), TRNY(IY,IX), BERG(ISEA),              &
+                   FPIS(ISEA), DTDYN(JSEA),                           &
+                   FCUT(JSEA), DTGpre, TAUWX(JSEA), TAUWY(JSEA),      &
+                   TAUOX(JSEA), TAUOY(JSEA), TAUWIX(JSEA),            &
+                   TAUWIY(JSEA), TAUWNX(JSEA),                        &
+                   TAUWNY(JSEA),  PHIAW(JSEA), CHARN(JSEA),           &
+                   TWS(JSEA), PHIOC(JSEA), TMP1, D50, PSIC, TMP2,     &
+                   PHIBBL(JSEA), TMP3, TMP4, PHICE(JSEA),             &
+                   TAUOCX(JSEA), TAUOCY(JSEA), WNMEAN(JSEA),          &
                    RHOAIR(ISEA), ASF(ISEA))
               IF (.not. LSLOC) THEN
                 VSTOT(:,JSEA) = VSioDummy
@@ -1783,11 +1783,11 @@ CONTAINS
                     J = 1
 #ifdef W3_SMC
                     !!Li    Refraction and GCT in theta direction is done by rotation.
-                    CALL W3KRTN ( ISEA, FACTH, FACK, CTHG0S(ISEA), &
-                         CG(:,ISEA), WN(:,ISEA), DEPTH,            &
-                         DHDX(ISEA), DHDY(ISEA), DHLMT(:,ISEA),    &
-                         CX(ISEA), CY(ISEA), DCXDX(IY,IX),         &
-                         DCXDY(IY,IX), DCYDX(IY,IX), DCYDY(IY,IX), &
+                    CALL W3KRTN ( ISEA, FACTH, FACK, CTHG0S(ISEA),       &
+                         CG(:,ISEA), WN(:,ISEA), DEPTH,                  &
+                         DHDX(ISEA), DHDY(ISEA), DHLMT(:,ISEA),          &
+                         CX(ISEA), CY(ISEA), DCXDX(IY,IX),               &
+                         DCXDY(IY,IX), DCYDX(IY,IX), DCYDY(IY,IX),       &
                          DCDX(:,IY,IX), DCDY(:,IY,IX), VA(:,JSEA) )
 #endif
                     !
@@ -1795,24 +1795,24 @@ CONTAINS
                     J = 1
                     !
 #ifdef W3_PR1
-                    CALL W3KTP1 ( ISEA, FACTH, FACK, CTHG0S(ISEA), &
-                         CG(:,ISEA), WN(:,ISEA), DEPTH,            &
+                    CALL W3KTP1 ( ISEA, FACTH, FACK, CTHG0S(ISEA),       &
+                         CG(:,ISEA), WN(:,ISEA), DEPTH,                  &
                          DDDX(IY,IXrel), DDDY(IY,IXrel), CX(ISEA),       &
                          CY(ISEA), DCXDX(IY,IXrel), DCXDY(IY,IXrel),     &
                          DCYDX(IY,IXrel), DCYDY(IY,IXrel),               &
                          DCDX(:,IY,IXrel), DCDY(:,IY,IXrel), VA(:,JSEA))
 #endif
 #ifdef W3_PR2
-                    CALL W3KTP2 ( ISEA, FACTH, FACK, CTHG0S(ISEA), &
-                         CG(:,ISEA), WN(:,ISEA), DEPTH,            &
+                    CALL W3KTP2 ( ISEA, FACTH, FACK, CTHG0S(ISEA),       &
+                         CG(:,ISEA), WN(:,ISEA), DEPTH,                  &
                          DDDX(IY,IXrel), DDDY(IY,IXrel), CX(ISEA),       &
                          CY(ISEA), DCXDX(IY,IXrel), DCXDY(IY,IXrel),     &
                          DCYDX(IY,IXrel), DCYDY(IY,IXrel),               &
                          DCDX(:,IY,IXrel), DCDY(:,IY,IXrel), VA(:,JSEA))
 #endif
 #ifdef W3_PR3
-                    CALL W3KTP3 ( ISEA, FACTH, FACK, CTHG0S(ISEA), &
-                         CG(:,ISEA), WN(:,ISEA), DEPTH,            &
+                    CALL W3KTP3 ( ISEA, FACTH, FACK, CTHG0S(ISEA),       &
+                         CG(:,ISEA), WN(:,ISEA), DEPTH,                  &
                          DDDX(IY,IXrel), DDDY(IY,IXrel), CX(ISEA),       &
                          CY(ISEA), DCXDX(IY,IXrel), DCXDY(IY,IXrel),     &
                          DCYDX(IY,IXrel), DCYDY(IY,IXrel),               &
@@ -2107,11 +2107,11 @@ CONTAINS
                     J = 1
 #ifdef W3_SMC
                     !!Li    Refraction and GCT in theta direction is done by rotation.
-                    CALL W3KRTN ( ISEA, FACTH, FACK, CTHG0S(ISEA), &
-                         CG(:,ISEA), WN(:,ISEA), DEPTH,            &
-                         DHDX(ISEA), DHDY(ISEA), DHLMT(:,ISEA),    &
-                         CX(ISEA), CY(ISEA), DCXDX(IY,IX),         &
-                         DCXDY(IY,IX), DCYDX(IY,IX), DCYDY(IY,IX), &
+                    CALL W3KRTN ( ISEA, FACTH, FACK, CTHG0S(ISEA),       &
+                         CG(:,ISEA), WN(:,ISEA), DEPTH,                  &
+                         DHDX(ISEA), DHDY(ISEA), DHLMT(:,ISEA),          &
+                         CX(ISEA), CY(ISEA), DCXDX(IY,IX),               &
+                         DCXDY(IY,IX), DCYDX(IY,IX), DCYDY(IY,IX),       &
                          DCDX(:,IY,IX), DCDY(:,IY,IX), VA(:,JSEA) )
 #endif
                     !
@@ -2235,55 +2235,55 @@ CONTAINS
                 TMP4   = TAUICE(JSEA,1:2)
 #ifdef W3_PDLIB
                 IF (FSSOURCE) THEN
-                  CALL W3SRCE(srce_imp_post,IT,ISEA,JSEA,IX,IY,IMOD,  &
-                       VAOLD(:,JSEA), VA(:,JSEA),                  &
-                       VSioDummy,VDioDummy,SHAVETOT(JSEA), &
-                       ALPHA(1:NK,JSEA), WN(1:NK,ISEA),            &
+                  CALL W3SRCE(srce_imp_post,IT,ISEA,JSEA,IX,IY,IMOD,     &
+                       VAOLD(:,JSEA), VA(:,JSEA),                        &
+                       VSioDummy,VDioDummy,SHAVETOT(JSEA),               &
+                       ALPHA(1:NK,JSEA), WN(1:NK,ISEA),                  &
                        CG(1:NK,ISEA), CLATS(ISEA), DW(ISEA), U10(ISEA),  &
-                       U10D(ISEA),                                 &
+                       U10D(ISEA),                                       &
 #ifdef W3_FLX5
-                       TAUA(ISEA), TAUADIR(ISEA),                  &
+                       TAUA(ISEA), TAUADIR(ISEA),                        &
 #endif
-                       AS(ISEA), UST(ISEA),                        &
-                       USTDIR(ISEA), CX(ISEA), CY(ISEA),           &
-                       ICE(ISEA), ICEH(ISEA), ICEF(ISEA),          &
-                       ICEDMAX(ISEA),                              &
-                       REFLEC, REFLED, DELX, DELY, DELA,           &
-                       TRNX(IY,IX), TRNY(IY,IX), BERG(ISEA),       &
-                       FPIS(ISEA), DTDYN(JSEA),                    &
-                       FCUT(JSEA), DTG, TAUWX(JSEA), TAUWY(JSEA),  &
-                       TAUOX(JSEA), TAUOY(JSEA), TAUWIX(JSEA),     &
-                       TAUWIY(JSEA), TAUWNX(JSEA),                 &
-                       TAUWNY(JSEA),  PHIAW(JSEA), CHARN(JSEA),    &
-                       TWS(JSEA),PHIOC(JSEA), TMP1, D50, PSIC, TMP2,&
-                       PHIBBL(JSEA), TMP3, TMP4, PHICE(JSEA),      &
-                       TAUOCX(JSEA), TAUOCY(JSEA), WNMEAN(JSEA),   &
+                       AS(ISEA), UST(ISEA),                              &
+                       USTDIR(ISEA), CX(ISEA), CY(ISEA),                 &
+                       ICE(ISEA), ICEH(ISEA), ICEF(ISEA),                &
+                       ICEDMAX(ISEA),                                    &
+                       REFLEC, REFLED, DELX, DELY, DELA,                 &
+                       TRNX(IY,IX), TRNY(IY,IX), BERG(ISEA),             &
+                       FPIS(ISEA), DTDYN(JSEA),                          &
+                       FCUT(JSEA), DTG, TAUWX(JSEA), TAUWY(JSEA),        &
+                       TAUOX(JSEA), TAUOY(JSEA), TAUWIX(JSEA),           &
+                       TAUWIY(JSEA), TAUWNX(JSEA),                       &
+                       TAUWNY(JSEA),  PHIAW(JSEA), CHARN(JSEA),          &
+                       TWS(JSEA),PHIOC(JSEA), TMP1, D50, PSIC, TMP2,     &
+                       PHIBBL(JSEA), TMP3, TMP4, PHICE(JSEA),            &
+                       TAUOCX(JSEA), TAUOCY(JSEA), WNMEAN(JSEA),         &
                        RHOAIR(ISEA), ASF(ISEA))
                 ELSE
 #endif
                   CALL W3SRCE(srce_direct, IT, ISEA, JSEA, IX, IY, IMOD, &
-                       VAoldDummy, VA(:,JSEA),                     &
-                       VSioDummy, VDioDummy, SHAVETOTioDummy,      &
-                       ALPHA(1:NK,JSEA), WN(1:NK,ISEA),            &
-                       CG(1:NK,ISEA), CLATS(ISEA), DW(ISEA), U10(ISEA),         &
-                       U10D(ISEA),                                 &
+                       VAoldDummy, VA(:,JSEA),                           &
+                       VSioDummy, VDioDummy, SHAVETOTioDummy,            &
+                       ALPHA(1:NK,JSEA), WN(1:NK,ISEA),                  &
+                       CG(1:NK,ISEA), CLATS(ISEA), DW(ISEA), U10(ISEA),  &
+                       U10D(ISEA),                                       &
 #ifdef W3_FLX5
-                       TAUA(ISEA), TAUADIR(ISEA),                  &
+                       TAUA(ISEA), TAUADIR(ISEA),                        &
 #endif
-                       AS(ISEA), UST(ISEA),                        &
-                       USTDIR(ISEA), CX(ISEA), CY(ISEA),           &
-                       ICE(ISEA), ICEH(ISEA), ICEF(ISEA),          &
-                       ICEDMAX(ISEA),                              &
-                       REFLEC, REFLED, DELX, DELY, DELA,           &
-                       TRNX(IY,IX), TRNY(IY,IX), BERG(ISEA),       &
-                       FPIS(ISEA), DTDYN(JSEA),                    &
-                       FCUT(JSEA), DTG, TAUWX(JSEA), TAUWY(JSEA),  &
-                       TAUOX(JSEA), TAUOY(JSEA), TAUWIX(JSEA),     &
-                       TAUWIY(JSEA), TAUWNX(JSEA),                 &
-                       TAUWNY(JSEA),  PHIAW(JSEA), CHARN(JSEA),    &
-                       TWS(JSEA), PHIOC(JSEA), TMP1, D50, PSIC,TMP2,&
-                       PHIBBL(JSEA), TMP3, TMP4 , PHICE(JSEA),     &
-                       TAUOCX(JSEA), TAUOCY(JSEA), WNMEAN(JSEA),   &
+                       AS(ISEA), UST(ISEA),                              &
+                       USTDIR(ISEA), CX(ISEA), CY(ISEA),                 &
+                       ICE(ISEA), ICEH(ISEA), ICEF(ISEA),                &
+                       ICEDMAX(ISEA),                                    &
+                       REFLEC, REFLED, DELX, DELY, DELA,                 &
+                       TRNX(IY,IX), TRNY(IY,IX), BERG(ISEA),             &
+                       FPIS(ISEA), DTDYN(JSEA),                          &
+                       FCUT(JSEA), DTG, TAUWX(JSEA), TAUWY(JSEA),        &
+                       TAUOX(JSEA), TAUOY(JSEA), TAUWIX(JSEA),           &
+                       TAUWIY(JSEA), TAUWNX(JSEA),                       &
+                       TAUWNY(JSEA),  PHIAW(JSEA), CHARN(JSEA),          &
+                       TWS(JSEA), PHIOC(JSEA), TMP1, D50, PSIC,TMP2,     &
+                       PHIBBL(JSEA), TMP3, TMP4 , PHICE(JSEA),           &
+                       TAUOCX(JSEA), TAUOCY(JSEA), WNMEAN(JSEA),         &
                        RHOAIR(ISEA), ASF(ISEA))
 #ifdef W3_PDLIB
                 END IF
@@ -2429,20 +2429,14 @@ CONTAINS
         END IF
         !
         FLPART = .FALSE.
-        IF ( FLOUT(1) .AND. FLPFLD ) then
-          FLPART = FLPART .OR. DSEC21(TIME,TONEXT(:,1)).EQ.0.
-        end if
-        IF ( FLOUT(6) ) then
-          FLPART = FLPART .OR. DSEC21(TIME,TONEXT(:,6)).EQ.0.
-        end if
+        IF ( FLOUT(1) .AND. FLPFLD ) FLPART = FLPART .OR. DSEC21(TIME,TONEXT(:,1)).EQ.0.
+        IF ( FLOUT(6) ) FLPART = FLPART .OR. DSEC21(TIME,TONEXT(:,6)).EQ.0.
         !
 #ifdef W3_T
         WRITE (NDST,9042) LOCAL, FLPART, FLOUTG
 #endif
         !
-        IF ( LOCAL .AND. FLPART ) then
-          CALL W3CPRT ( IMOD )
-        end IF
+        IF ( LOCAL .AND. FLPART ) CALL W3CPRT ( IMOD )
 
         do_w3outg = .false.
         if (w3_cesmcoupled_flag .and. histwr) then
@@ -2674,7 +2668,7 @@ CONTAINS
               ELSE IF ( do_wavefield_separation_output ) THEN
                 IF ( IAPROC .EQ. NAPBPT ) THEN
 #ifdef W3_MPI
-                  IF (NRQBP2.NE.0) CALL MPI_WAITALL( NRQBP2, IRQBP2, STATIO, IERR_MPI )
+                  IF (NRQBP2.NE.0) CALL MPI_WAITALL ( NRQBP2, IRQBP2,STATIO, IERR_MPI )
 #endif
                   CALL W3IOBC ( 'WRITE', NDS(10), TIME, TIME, ITEST, IMOD )
                 END IF
@@ -2881,58 +2875,58 @@ CONTAINS
     !
 900 FORMAT (4X,I6,'|',I6,'| ', A19  ,' | ',A,' | ',A,' |')
 901 FORMAT (4X,I6,'|',I6,'| ',11X,A8,' | ',A,' | ',A,' |')
-902 FORMAT (2X,'--------+------+---------------------+'             &
+902 FORMAT (2X,'--------+------+---------------------+'                  &
          ,'-----------------------+------------------+')
     !
 #ifdef W3_IC3
 920 FORMAT ('     Updating k and Cg from ice param. 1,2,3,4.'/)
 #endif
 950 FORMAT ('  WAVEWATCH III calculating for ',A,' at ',A)
-951 FORMAT ('  WAVEWATCH III reached the end of a computation',     &
+951 FORMAT ('  WAVEWATCH III reached the end of a computation',          &
          ' loop at ',A)
-1000 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                &
+1000 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                    &
          '     ENDING TIME BEFORE STARTING TIME '/)
-1001 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                &
+1001 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                    &
          '     NEW WATER LEVEL BEFORE OLD WATER LEVEL '/)
-1002 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                &
+1002 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                    &
          '     ILLEGAL CURRENT INTERVAL '/)
-1003 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                &
+1003 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                    &
          '     ILLEGAL WIND INTERVAL '/)
-1004 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                &
+1004 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                    &
          '     NEW ICE FIELD BEFORE OLD ICE FIELD '/)
-1005 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                &
+1005 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                    &
          '     NEW IC1 FIELD BEFORE OLD IC1 FIELD '/)
-1007 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                &
+1007 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                    &
          '     NEW ATM MOMENTUM BEFORE OLD ATM MOMENTUM '/)
-1008 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                &
+1008 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                    &
          '     NEW AIR DENSITY BEFORE OLD AIR DENSITY '/)
 #ifdef W3_IS2
-1006 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                &
+1006 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                    &
          '     NEW IC5 FIELD BEFORE OLD IC5 FIELD '/)
 #endif
-1030 FORMAT (/' *** WAVEWATCH III WARING IN W3WAVE :'/               &
-         '     AT LEAST ONE PROCESSOR HAS 0 ACTIVE POINTS',     &
+1030 FORMAT (/' *** WAVEWATCH III WARING IN W3WAVE :'/                   &
+         '     AT LEAST ONE PROCESSOR HAS 0 ACTIVE POINTS',              &
          ' IN GRID',I3)
 #ifdef W3_REFRX
-1040 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                &
+1040 FORMAT (/' *** WAVEWATCH III ERROR IN W3WAVE :'/                    &
          '     EXPERIMENTAL FEATURE !/REFRX NOT FULLY IMPLEMENTED.'/)
 #endif
     !
 #ifdef W3_T
-9000 FORMAT (                                                     &
+9000 FORMAT (                                                            &
          '============================================================', &
          '===================='/                                         &
          ' TEST W3WAVE : RUN MODEL',I3,' FILEXT [',A,                    &
-         '] UP TO ',I8.8,I7.6 /                         &
+         '] UP TO ',I8.8,I7.6 /                                          &
          '====================',                                         &
          '============================================================')
 9010 FORMAT (' TEST W3WAVE : DT INT. =',F12.1,'   FLZERO = ',L1)
 9011 FORMAT (' TEST W3WAVE : DT LEV. =',F12.1)
-9012 FORMAT (' TEST W3WAVE : DT CUR. =',F12.1/                    &
-         '                        ',F12.1/                    &
+9012 FORMAT (' TEST W3WAVE : DT CUR. =',F12.1/                           &
+         '                        ',F12.1/                               &
          '                        ',F12.1)
-9013 FORMAT (' TEST W3WAVE : DT WIND =',F12.1/                    &
-         '                        ',F12.1/                    &
+9013 FORMAT (' TEST W3WAVE : DT WIND =',F12.1/                           &
+         '                        ',F12.1/                               &
          '                        ',F12.1)
 9014 FORMAT (' TEST W3WAVE : DT ICE  =',F12.1)
 9015 FORMAT (' TEST W3WAVE : DT IC1  =',F12.1)
@@ -2940,14 +2934,14 @@ CONTAINS
 9017 FORMAT (' TEST W3WAVE : DT TAU  =',F12.1)
 9018 FORMAT (' TEST W3WAVE : DT RHO  =',F12.1)
 9020 FORMAT (' TEST W3WAVE : IT0, NT, DTG :',2I4,F8.1)
-9021 FORMAT (' TEST W3WAVE : ITIME etc',I6,I4,I10.8,I7.6,1X,2L1,  &
+9021 FORMAT (' TEST W3WAVE : ITIME etc',I6,I4,I10.8,I7.6,1X,2L1,         &
          2F6.2,F7.1,F6.2)
 9022 FORMAT (' TEST W3WAVE : SKIP TO 400 IN 3.5')
 9023 FORMAT (' TEST W3WAVE : SKIP TO 380 IN 3.5')
 9030 FORMAT (' TEST W3WAVE : END OF COMPUTATION LOOP')
-9040 FORMAT (' TEST W3WAVE : CHECKING FOR OUTPUT'/                &
-         '               TOFRST           :',I9.8,I7.6/       &
-         '               TND              :',I9.8,I7.6/       &
+9040 FORMAT (' TEST W3WAVE : CHECKING FOR OUTPUT'/                       &
+         '               TOFRST           :',I9.8,I7.6/                  &
+         '               TND              :',I9.8,I7.6/                  &
          '               DTTST[1], FLAG_O :',2F8.1,L4)
 9041 FORMAT (' TEST W3WAVE : PERFORMING OUTPUT')
 9042 FORMAT (' TEST W3WAVE : OUTPUT COMPUTATION FLAGS: ',3L2)
@@ -3084,6 +3078,7 @@ CONTAINS
     USE W3ODATMD, ONLY: NDST, IAPROC, NAPROC, NOTYPE
 #endif
     !/
+    !
 #ifdef W3_MPI
     INCLUDE "mpif.h"
 #endif
@@ -3399,6 +3394,7 @@ CONTAINS
     USE CONSTANTS, ONLY : LPDLIB
     USE W3PARALL, only: INIT_GET_ISEA
     !/
+    !
 #ifdef W3_MPI
     INCLUDE "mpif.h"
 #endif
@@ -3684,6 +3680,7 @@ CONTAINS
     USE W3GDATMD, ONLY: NSEA, MAPSF, NX, NY
     USE W3ODATMD, ONLY: NDST, NAPROC
     USE W3PARALL, ONLY: INIT_GET_JSEA_ISPROC
+    !/
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
