@@ -172,27 +172,28 @@ contains
     integer             :: time0(2), timen(2), ttime(2)
     character(len=80)   :: msg1
     logical             :: is_open
+    integer             :: memunit
 
-    data idflds / 'ice param. 1 ' , 'ice param. 2 ' ,               &
-         'ice param. 3 ' , 'ice param. 4 ' ,               &
-         'ice param. 5 ' ,                                 &
-         'mud density  ' , 'mud thkness  ' ,               &
-         'mud viscos.  ' ,                                 &
-         'water levels ' , 'currents     ' ,               &
-         'winds        ' , 'ice fields   ' ,               &
-         'momentum     ' , 'air density  ' ,               &
-         'mean param.  ' , '1D spectra   ' ,               &
+    data idflds / 'ice param. 1 ' , 'ice param. 2 ' , &
+         'ice param. 3 ' , 'ice param. 4 ' ,          &
+         'ice param. 5 ' ,                            &
+         'mud density  ' , 'mud thkness  ' ,          &
+         'mud viscos.  ' ,                            &
+         'water levels ' , 'currents     ' ,          &
+         'winds        ' , 'ice fields   ' ,          &
+         'momentum     ' , 'air density  ' ,          &
+         'mean param.  ' , '1D spectra   ' ,          &
          '2D spectra   ' , 'moving grid  ' /
-    data idotyp / 'Fields of mean wave parameters' ,                &
-         'Point output                  ' ,                &
-         'Track point output            ' ,                &
-         'Restart files                 ' ,                &
-         'Nesting data                  ' ,                &
-         'Partitioned wave field data   ' ,                &
-         'Fields for coupling           ' ,                &
+    data idotyp / 'Fields of mean wave parameters' ,  &
+         'Point output                  ' ,           &
+         'Track point output            ' ,           &
+         'Restart files                 ' ,           &
+         'Nesting data                  ' ,           &
+         'Partitioned wave field data   ' ,           &
+         'Fields for coupling           ' ,           &
          'Restart files second request  '/
     data idstr  / 'IC1', 'IC2', 'IC3', 'IC4', 'IC5', 'MDN', 'MTH',  &
-         'MVS', 'LEV', 'CUR', 'WND', 'ICE', 'TAU', 'RHO',  &
+         'MVS', 'LEV', 'CUR', 'WND', 'ICE', 'TAU', 'RHO',           &
          'DT0', 'DT1', 'DT2', 'MOV' /
     !---------------------------------------------------
     !
@@ -201,6 +202,7 @@ contains
     flgr2 = .false.
     flh(:) = .false.
     iprt(:) = 0
+    memunit = 740+IAPROC
     call print_logmsg(740+IAPROC, 'read_shel_config, step 1', w3_debuginit_flag)
 
     ! ndso, ndse, ndst are set in w3initmd using mds;  w3initmd is called by either
@@ -829,8 +831,7 @@ contains
         if (flagsc(1) .and. inflags1(2) .and. .not. flagsc(2)) goto 2102
         if (flagsc(2) .and. inflags1(1) .and. .not. flagsc(1)) goto 2102
       end if
-
-      call print_memcheck(740+IAPROC, 'memcheck_____:'//'read_shel_config SECTION 2b')
+      call print_memcheck(memunit, 'memcheck_____:'//' read_shel_config SECTION 2b')
 
       inflags1(10) = .false.
       if (w3_mgw_flag .or. w3_mgp_flag) then
@@ -866,12 +867,11 @@ contains
       call print_logmsg(740+IAPROC, '2.2 Time setup ',  w3_debuginit_flag)
       call nextln ( comstr , ndsi , ndsen )
       read (ndsi,*) time0
-
-      call print_memcheck(740+IAPROC, 'memcheck_____:'//'read_shel_config SECTION 2c')
+      call print_memcheck(memunit, 'memcheck_____:'//' read_shel_config SECTION 2c')
 
       call nextln ( comstr , ndsi , ndsen )
       read (ndsi,*) timen
-      call print_memcheck(740+IAPROC, 'memcheck_____:'//'read_shel_config SECTION 2d')
+      call print_memcheck(memunit, 'memcheck_____:'//' read_shel_config SECTION 2d')
 
       !--------------------
       ! 2.3 Domain setup
@@ -988,7 +988,7 @@ contains
           end if !j le 2
           odat(5*(j-1)+3) = max ( 0 , odat(5*(j-1)+3) )
           write(msg1, *) 'read_shel_config NOTTYPE', J
-          call print_memcheck(740+IAPROC, 'memcheck_____:'//trim(msg1))
+          call print_memcheck(memunit, 'memcheck_____:'//trim(msg1))
 
           !--------------------
           ! 2.5 Output types
@@ -1192,7 +1192,7 @@ contains
             end if
           end do
         end do
-        call print_memcheck(740+IAPROC, 'memcheck_____:'//'read_shel_config SECTION 3')
+        call print_memcheck(memunit, 'memcheck_____:'//' read_shel_config SECTION 3')
 
         if (w3_o7_flag) then
           do j=jfirst, 10
@@ -1230,8 +1230,7 @@ contains
       end if ! flhom
       close(ndsi)
     end if  ! .not. flgnml
-
-    call print_memcheck(740+IAPROC, 'memcheck_____:'//'read_shel_config SECTION 4')
+    call print_memcheck(memunit, 'memcheck_____:'//' read_shel_config SECTION 4')
 
     !--------------------
     ! 2.2 Time setup
@@ -1410,9 +1409,7 @@ contains
       if ( iaproc .eq. napout )  write (ndso,8945) trim(idotyp(j))
       continue
     end if
-    !
-
-    call print_memcheck(740+IAPROC, 'memcheck_____:'//'read_shel_config SECTION 5')
+    call print_memcheck(memunit, 'memcheck_____:'//' read_shel_config SECTION 5')
 
     !--- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
