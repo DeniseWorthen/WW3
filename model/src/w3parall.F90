@@ -157,7 +157,7 @@ CONTAINS
     !/
   END SUBROUTINE WAV_MY_WTIME
   !/ ------------------------------------------------------------------- /
-  SUBROUTINE PRINT_MY_TIME(string)
+  SUBROUTINE PRINT_MY_TIME(string, lwrite)
     !/
     !/                  +-----------------------------------+
     !/                  | WAVEWATCH III           NOAA/NCEP |
@@ -221,7 +221,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !
     character(*), intent(in) :: string
+    logical     , intent(in) :: lwrite
+
     REAL(8) :: eTime
+
+    if (.not. lwrite) return
 #ifdef W3_S
     CALL STRACE (IENT, 'PRINT_MY_TIME')
 #endif

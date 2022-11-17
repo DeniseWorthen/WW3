@@ -1,8 +1,5 @@
-!> @file
-!> @brief Read/write restart files.
-!>
-!> @author H. L. Tolman  @date 22-Mar-2021
-!>
+!> @file @brief Read/write restart files.  @author H. L. Tolman @date
+!> 22-Mar-2021
 
 #include "w3macros.h"
 !/ ------------------------------------------------------------------- /
@@ -62,6 +59,8 @@ MODULE W3IORSMD
   !  7. Source code :
   !
   !/ ------------------------------------------------------------------- /
+
+  use wav_shr_flags
   !module default
   IMPLICIT NONE
   PUBLIC
@@ -324,9 +323,8 @@ CONTAINS
     USE CONSTANTS, only: LPDLIB, file_endian
     USE W3PARALL, ONLY: INIT_GET_ISEA, INIT_GET_JSEA_ISPROC
     USE W3GDATMD, ONLY: NK, NTH
-#ifdef W3_TIMINGS
     USE W3PARALL, ONLY: PRINT_MY_TIME
-#endif
+
     USE w3odatmd, ONLY : RUNTYPE, INITFILE
 #ifdef W3_PDLIB
     USE PDLIB_FIELD_VEC
@@ -702,15 +700,11 @@ CONTAINS
           !
           IF (LPDLIB .and. (GTYPE.eq.UNGTYPE)) THEN
 #endif
-#ifdef W3_TIMINGS
-            CALL PRINT_MY_TIME("Before UNST_PDLIB_WRITE_TO_FILE")
-#endif
+            CALL PRINT_MY_TIME("Before UNST_PDLIB_WRITE_TO_FILE", w3_timings_flag)
 #ifdef W3_PDLIB
             CALL UNST_PDLIB_WRITE_TO_FILE(NDSR)
 #endif
-#ifdef W3_TIMINGS
-            CALL PRINT_MY_TIME("After UNST_PDLIB_WRITE_TO_FILE")
-#endif
+            CALL PRINT_MY_TIME("After UNST_PDLIB_WRITE_TO_FILE", w3_timings_flag)
 #ifdef W3_MPI
           ELSE
 
@@ -783,15 +777,11 @@ CONTAINS
 #endif
       ELSE
         IF (LPDLIB .and. (GTYPE.eq.UNGTYPE)) THEN
-#ifdef W3_TIMINGS
-          CALL PRINT_MY_TIME("Before UNST_PDLIB_READ_FROM_FILE")
-#endif
+          CALL PRINT_MY_TIME("Before UNST_PDLIB_READ_FROM_FILE", w3_timings_flag)
 #ifdef W3_PDLIB
           CALL UNST_PDLIB_READ_FROM_FILE(NDSR)
 #endif
-#ifdef W3_TIMINGS
-          CALL PRINT_MY_TIME("After UNST_PDLIB_READ_FROM_FILE")
-#endif
+          CALL PRINT_MY_TIME("After UNST_PDLIB_READ_FROM_FILE", w3_timings_flag)
         ELSE
 #ifdef W3_MPI
           NSEAL_MIN = 1 + (NSEA-NAPROC)/NAPROC

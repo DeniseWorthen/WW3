@@ -433,9 +433,8 @@ CONTAINS
     USE W3GDATMD, ONLY: FSN,FSPSI,FSFCT,FSNIMP, FSTOTALIMP, FSTOTALEXP, XGRD, YGRD
     USE W3GDATMD, ONLY: FSREFRACTION, FSFREQSHIFT
     USE W3PARALL, ONLY: INIT_GET_JSEA_ISPROC, INIT_GET_ISEA
-#ifdef W3_TIMINGS
     USE W3PARALL, ONLY: PRINT_MY_TIME
-#endif
+
 #if defined W3_PDLIB && defined W3_DEBUGCOH
     USE PDLIB_W3PROFSMD, ONLY: ALL_VA_INTEGRAL_PRINT, TEST_MPI_STATUS
 #endif
@@ -538,9 +537,8 @@ CONTAINS
 #ifdef W3_UOST
     CALL UOST_SETGRID(IMOD)
 #endif
-#ifdef W3_TIMINGS
-    CALL PRINT_MY_TIME("Case 2")
-#endif
+    CALL PRINT_MY_TIME("Case 2", w3_timings_flag)
+
     call print_memcheck(memunit, 'memcheck_____:'//' WW3_INIT SECTION 1e')
     !
     !
@@ -740,16 +738,14 @@ CONTAINS
 #ifdef W3_PDLIB
       CALL PDLIB_INIT(IMOD)
 #endif
-    call print_memcheck(memunit, 'memcheck_____:'//' WW3_INIT SECTION 2c')
+      call print_memcheck(memunit, 'memcheck_____:'//' WW3_INIT SECTION 2c')
 
-#ifdef W3_TIMINGS
-      CALL PRINT_MY_TIME("After PDLIB_INIT")
-#endif
+      CALL PRINT_MY_TIME("After PDLIB_INIT", w3_timings_flag)
 
 #ifdef W3_PDLIB
       CALL SYNCHRONIZE_IPGL_ETC_ARRAY(IMOD, IsMulti)
 #endif
-    call print_memcheck(memunit, 'memcheck_____:'//' WW3_INIT SECTION 2cc')
+      call print_memcheck(memunit, 'memcheck_____:'//' WW3_INIT SECTION 2cc')
 
 #ifdef W3_PDLIB
     END IF
@@ -760,9 +756,7 @@ CONTAINS
 
     CALL W3FLGRDUPDT ( NDSO, NDSE, FLGRD, FLGR2, FLGD, FLG2 )
 
-#ifdef W3_TIMINGS
-    CALL PRINT_MY_TIME("After W3FLGRDUPDT")
-#endif
+    CALL PRINT_MY_TIME("After W3FLGRDUPDT", w3_timings_flag)
 
     IF ( FLAGLL ) THEN
       FACTOR = 1.
@@ -808,9 +802,8 @@ CONTAINS
     ENDIF
 #endif
 
-#ifdef W3_TIMINGS
-    CALL PRINT_MY_TIME("After BLOCK_SOLVER_INIT")
-#endif
+    CALL PRINT_MY_TIME("After BLOCK_SOLVER_INIT", w3_timings_flag)
+
     call print_memcheck(memunit, 'memcheck_____:'//' WW3_INIT SECTION 2g')
     !
     !
@@ -823,16 +816,16 @@ CONTAINS
       CALL W3DIMW ( IMOD, NDSE, NDST, .FALSE. )
       call print_memcheck(memunit, 'memcheck_____:'//' WW3_INIT SECTION 2i')
     END IF
-#ifdef W3_TIMINGS
-    CALL PRINT_MY_TIME("After W3DIMW")
-#endif
+
+    CALL PRINT_MY_TIME("After W3DIMW", w3_timings_flag)
+
     CALL W3DIMA ( IMOD, NDSE, NDST )
     call print_memcheck(memunit, 'memcheck_____:'//' WW3_INIT SECTION 2j')
 
     CALL W3DIMI ( IMOD, NDSE, NDST , FLAGSTIDEIN )
-#ifdef W3_TIMINGS
-    CALL PRINT_MY_TIME("After W3DIMI")
-#endif
+
+    CALL PRINT_MY_TIME("After W3DIMI", w3_timings_flag)
+
     call print_memcheck(memunit, 'memcheck_____:'//' WW3_INIT SECTION 3')
     !
     ! 2.c.3 Calculated expected number of prop. calls per processor
@@ -913,9 +906,7 @@ CONTAINS
     END IF
 #endif
     !
-#ifdef W3_TIMINGS
-    CALL PRINT_MY_TIME("After Case 14")
-#endif
+    CALL PRINT_MY_TIME("After Case 14", w3_timings_flag)
     ! 2.c.8 Test output
     !
 #ifdef W3_T
@@ -949,13 +940,12 @@ CONTAINS
 #ifdef W3_DEBUGCOH
     CALL ALL_VA_INTEGRAL_PRINT(IMOD, "Before W3IORS call", 1)
 #endif
-#ifdef W3_TIMINGS
-    CALL PRINT_MY_TIME("Before W3IORS")
-#endif
+    CALL PRINT_MY_TIME("Before W3IORS", w3_timings_flag)
+
     CALL W3IORS ( 'READ', NDS(6), SIG(NK), IMOD)
-#ifdef W3_TIMINGS
-    CALL PRINT_MY_TIME("After W3IORS")
-#endif
+
+    CALL PRINT_MY_TIME("After W3IORS", w3_timings_flag)
+
     call print_memcheck(memunit, 'memcheck_____:'//' WW3_INIT SECTION 3a')
 
 #ifdef W3_DEBUGCOH
@@ -976,10 +966,8 @@ CONTAINS
 #ifdef W3_DEBUGCOH
     CALL ALL_VA_INTEGRAL_PRINT(IMOD, "W3INIT, step 4.2", 1)
 #endif
-#ifdef W3_TIMINGS
-    CALL PRINT_MY_TIME("After restart inits")
-#endif
 
+    CALL PRINT_MY_TIME("After restart inits", w3_timings_flag)
     !
     ! 3.b Compare MAPSTA from grid and restart
     !
@@ -1118,9 +1106,8 @@ CONTAINS
 #ifdef W3_DEBUGCOH
     CALL ALL_VA_INTEGRAL_PRINT(IMOD, "W3INIT, step 7", 1)
 #endif
-#ifdef W3_TIMINGS
-    CALL PRINT_MY_TIME("Before NOTYPE loop")
-#endif
+    CALL PRINT_MY_TIME("Before NOTYPE loop", w3_timings_flag)
+
     DO J=1, NOTYPE
       !
       ! ... check time step
@@ -1224,9 +1211,8 @@ CONTAINS
     ! END J=8
     !
     call print_memcheck(memunit, 'memcheck_____:'//' WW3_INIT SECTION 5')
-#ifdef W3_TIMINGS
-    CALL PRINT_MY_TIME("After NOTYPE loop")
-#endif
+
+    CALL PRINT_MY_TIME("After NOTYPE loop", w3_timings_flag)
 #ifdef W3_DEBUGCOH
     CALL ALL_VA_INTEGRAL_PRINT(IMOD, "W3INIT, step 8.1", 1)
 #endif
@@ -1336,9 +1322,7 @@ CONTAINS
     END DO
     DEALLOCATE ( MAPOUT, XOUT )
 #endif
-#ifdef W3_TIMINGS
-    CALL PRINT_MY_TIME("Before section 5.b")
-#endif
+    CALL PRINT_MY_TIME("Before section 5.b", w3_timings_flag)
     !
     ! 5.b Fill wavenumber and group velocity arrays.
     !
@@ -1492,9 +1476,8 @@ CONTAINS
 #ifdef W3_DEBUGINIT
     CALL PRINT_WN_STATISTIC("W3INIT leaving")
 #endif
-#ifdef W3_TIMINGS
-    CALL PRINT_MY_TIME("Leaving W3INIT")
-#endif
+    CALL PRINT_MY_TIME("Leaving W3INIT", w3_timings_flag)
+
     RETURN
     !
     ! Escape locations read errors :

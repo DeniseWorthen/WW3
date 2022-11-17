@@ -188,6 +188,7 @@ MODULE W3WAVEMD
   !  7. Source code :
   !
   !/ ------------------------------------------------------------------- /
+  use wav_shr_flags
   use w3servmd, only : print_memcheck
 #ifdef W3_MPI
   USE W3ADATMD, ONLY: MPIBUF
@@ -488,9 +489,8 @@ CONTAINS
     USE PDLIB_W3PROFSMD, ONLY: ASPAR_JAC, ASPAR_DIAG_ALL, B_JAC
     USE W3PARALL, only : LSLOC
 #endif
-#ifdef W3_TIMINGS
     USE W3PARALL, only : PRINT_MY_TIME
-#endif
+
     use w3iogoncdmd   , only : w3iogoncd
     use w3odatmd      , only : histwr, rstwr, user_netcdf_grdout
     !
@@ -902,9 +902,7 @@ CONTAINS
     !
     FLFRST = .TRUE.
     DO
-#ifdef W3_TIMINGS
-      CALL PRINT_MY_TIME("First entry in the TIME LOOP")
-#endif
+      CALL PRINT_MY_TIME("First entry in the TIME LOOP", w3_timings_flag)
       !      DO JSEA = 1, NSEAL
       !        DO IS = 1, NSPEC
       !          IF (VA(IS, JSEA) .LT. 0.) THEN
@@ -1058,9 +1056,7 @@ CONTAINS
 
       !
       DO IT = IT0, NT
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("Begin of IT loop")
-#endif
+        CALL PRINT_MY_TIME("Begin of IT loop", w3_timings_flag)
 #ifdef W3_SETUP
         CALL WAVE_SETUP_COMPUTATION
 #endif
@@ -1076,9 +1072,7 @@ CONTAINS
 #ifdef W3_DEBUGCOH
         CALL ALL_VA_INTEGRAL_PRINT(IMOD, "Beginning time loop", 1)
 #endif
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("After assigning VAOLD")
-#endif
+        CALL PRINT_MY_TIME("After assigning VAOLD", w3_timings_flag)
         !
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 0')
         !
@@ -1108,9 +1102,7 @@ CONTAINS
           VGX    = (FAC*GA0+(1.-FAC)*GAN) * COS(FAC*GD0+(1.-FAC)*GDN)
           VGY    = (FAC*GA0+(1.-FAC)*GAN) * SIN(FAC*GD0+(1.-FAC)*GDN)
         END IF
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("After VGX/VGY assignation")
-#endif
+        CALL PRINT_MY_TIME("After VGX/VGY assignation", w3_timings_flag)
         !
 #ifdef W3_T
         WRITE (NDST,9021) ITIME, IT, TIME, FLMAP, FLDDIR, VGX, VGY, DTG, DTRES
@@ -1128,9 +1120,8 @@ CONTAINS
 #ifdef W3_DEBUGCOH
           CALL ALL_VA_INTEGRAL_PRINT(IMOD, "Before UCUR", 1)
 #endif
-#ifdef W3_TIMINGS
-          CALL PRINT_MY_TIME("W3WAVE, step 6.4.1")
-#endif
+          CALL PRINT_MY_TIME("W3WAVE, step 6.4.1", w3_timings_flag)
+
           CALL W3UCUR ( FLFRST )
 
           call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 3b')
@@ -1162,9 +1153,7 @@ CONTAINS
           CX = 0.
           CY = 0.
         END IF ! FLCUR
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("After CX/CY assignation")
-#endif
+        CALL PRINT_MY_TIME("After CX/CY assignation", w3_timings_flag)
         !
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 5')
 
@@ -1193,16 +1182,13 @@ CONTAINS
         !      ENDIF
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 6')
 
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("After U10, etc. assignation")
-#endif
+        CALL PRINT_MY_TIME("After U10, etc. assignation", w3_timings_flag)
         !
 #ifdef W3_DEBUGCOH
         CALL ALL_VA_INTEGRAL_PRINT(IMOD, "Before call to W3UINI", 1)
 #endif
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("Before call W3UINI")
-#endif
+        CALL PRINT_MY_TIME("Before call W3UINI", w3_timings_flag)
+
         IF ( FLIWND .AND. LOCAL ) CALL W3UINI ( VA )
         !
         IF ( FLTAUA ) THEN
@@ -1223,9 +1209,8 @@ CONTAINS
 #ifdef W3_DEBUGCOH
         CALL ALL_VA_INTEGRAL_PRINT(IMOD, "Before boundary update", 1)
 #endif
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("Before boundary update")
-#endif
+        CALL PRINT_MY_TIME("Before boundary update", w3_timings_flag)
+
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 7')
 
         IF ( FLBPI .AND. LOCAL ) THEN
@@ -1260,9 +1245,8 @@ CONTAINS
         CALL ALL_VA_INTEGRAL_PRINT(IMOD, "After FLBPI and LOCAL", 1)
 #endif
 #endif
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("After FLBPI and LOCAL")
-#endif
+        CALL PRINT_MY_TIME("After FLBPI and LOCAL", w3_timings_flag)
+
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 8')
         !
         ! 3.3.1 Update ice coverage (if new ice map).
@@ -1291,9 +1275,8 @@ CONTAINS
 #ifdef W3_DEBUGCOH
         CALL ALL_VA_INTEGRAL_PRINT(IMOD, "After FLICE and DTI0", 1)
 #endif
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("After FLICE and DTI0")
-#endif
+        CALL PRINT_MY_TIME("After FLICE and DTI0", w3_timings_flag)
+
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 9')
         !
         ! 3.3.2 Update ice thickness
@@ -1379,9 +1362,8 @@ CONTAINS
 #ifdef W3_DEBUGCOH
         CALL ALL_VA_INTEGRAL_PRINT(IMOD, "After FFLEV and DTL0", 1)
 #endif
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("After FFLEV and DTL0")
-#endif
+        CALL PRINT_MY_TIME("After FFLEV and DTL0", w3_timings_flag)
+
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 11b')
         !
         ! 3.5 Update maps and derivatives.
@@ -1742,9 +1724,8 @@ CONTAINS
 #ifdef W3_DEBUGCOH
           CALL ALL_VA_INTEGRAL_PRINT(IMOD, "Before intraspectral part 1", 1)
 #endif
-#ifdef W3_TIMINGS
-          CALL PRINT_MY_TIME("Before intraspectral")
-#endif
+          CALL PRINT_MY_TIME("Before intraspectral", w3_timings_flag)
+
           IF ( FLCTH .OR. FLCK ) THEN
             DO ITLOC=1, ITLOCH
               !
@@ -1835,9 +1816,7 @@ CONTAINS
 #ifdef W3_DEBUGCOH
           CALL ALL_VA_INTEGRAL_PRINT(IMOD, "Before spatial advection", 1)
 #endif
-#ifdef W3_TIMINGS
-          CALL PRINT_MY_TIME("Before spatial advection")
-#endif
+          CALL PRINT_MY_TIME("Before spatial advection", w3_timings_flag)
           !
           ! 3.6.3 Longitude-latitude
           !       (time step correction in routine)
@@ -2063,9 +2042,7 @@ CONTAINS
 #ifdef W3_DEBUGCOH
           CALL ALL_VA_INTEGRAL_PRINT(IMOD, "After spatial advection", 1)
 #endif
-#ifdef W3_TIMINGS
-          CALL PRINT_MY_TIME("After spatial advection")
-#endif
+          CALL PRINT_MY_TIME("After spatial advection", w3_timings_flag)
           !
           ! 3.6.4 Intra-spectral part 2
           !
@@ -2156,9 +2133,7 @@ CONTAINS
 #ifdef W3_DEBUGCOH
           CALL ALL_VA_INTEGRAL_PRINT(IMOD, "After intraspectral adv.", 1)
 #endif
-#ifdef W3_TIMINGS
-          CALL PRINT_MY_TIME("fter intraspectral adv.")
-#endif
+          CALL PRINT_MY_TIME("fter intraspectral adv.", w3_timings_flag)
           !
           UGDTUPDATE = .FALSE.
           !
@@ -2322,9 +2297,7 @@ CONTAINS
 #ifdef W3_DEBUGCOH
           CALL ALL_VA_INTEGRAL_PRINT(IMOD, "After source terms", 1)
 #endif
-#ifdef W3_TIMINGS
-          CALL PRINT_MY_TIME("After source terms")
-#endif
+          CALL PRINT_MY_TIME("After source terms", w3_timings_flag)
           !
           ! End of interations for DTMAX < 1s
           !
@@ -2361,16 +2334,12 @@ CONTAINS
 #ifdef W3_DEBUGCOH
         CALL ALL_VA_INTEGRAL_PRINT(IMOD, "end of time loop", 1)
 #endif
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("end of time loop")
-#endif
+        CALL PRINT_MY_TIME("end of time loop", w3_timings_flag)
         !
         !
       END DO
 
-#ifdef W3_TIMINGS
-      CALL PRINT_MY_TIME("W3WAVE, step 6.21.1")
-#endif
+      CALL PRINT_MY_TIME("W3WAVE, step 6.21.1", w3_timings_flag)
       !
 #ifdef W3_T
       WRITE (NDST,9030)
@@ -2800,9 +2769,9 @@ CONTAINS
         WRITE (NDST,9044)
 #endif
       END IF
-#ifdef W3_TIMINGS
-      CALL PRINT_MY_TIME("Before update log file")
-#endif
+
+      CALL PRINT_MY_TIME("Before update log file", w3_timings_flag)
+
       call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP 4')
       !
       ! 5.  Update log file ------------------------------------------------ /
@@ -2848,9 +2817,9 @@ CONTAINS
       !
       DTTST  = DSEC21 ( TIME, TEND )
       IF ( DTTST .EQ. 0. ) EXIT
-#ifdef W3_TIMINGS
-      CALL PRINT_MY_TIME("Continuing the loop")
-#endif
+
+      CALL PRINT_MY_TIME("Continuing the loop", w3_timings_flag)
+
     END DO
     call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP 5')
     !

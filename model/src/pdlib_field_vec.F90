@@ -47,6 +47,8 @@ MODULE PDLIB_FIELD_VEC
   !/
   !/ ------------------------------------------------------------------- /
   !/
+  use wav_shr_flags
+
 CONTAINS
   !/ ------------------------------------------------------------------- /
   !
@@ -446,9 +448,8 @@ CONTAINS
     USE W3GDATMD, ONLY: NSEAL
     USE W3ADATMD, ONLY: NSEALM
     USE W3SERVMD, ONLY : EXTCDE
-#ifdef W3_TIMINGS
     USE W3PARALL, ONLY: PRINT_MY_TIME
-#endif
+
     use yowNodepool, only: ListNP, ListNPA, ListIPLG
     IMPLICIT NONE
     INCLUDE "mpif.h"
@@ -512,9 +513,7 @@ CONTAINS
     DO iBlock=1,nbBlock
       iFirst = 1 + (iBlock - 1)*BlockSize
       iEnd   = MIN(iBlock * BlockSize, NSEA)
-#ifdef W3_TIMINGS
-      CALL PRINT_MY_TIME("Beginning of iBlock value treatment")
-#endif
+      CALL PRINT_MY_TIME("Beginning of iBlock value treatment", w3_timings_flag)
 
       !    Let's try to get the indexes right.
       !    We have 1 <= IB <= len = iEnd + 1 - iFirst
@@ -523,18 +522,16 @@ CONTAINS
       !    and thus iFirst <= ISEA <= iEnd
       len=iEnd + 1 - iFirst
       IF (IAPROC .eq. 1) THEN
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("Before data reading")
-#endif
+        CALL PRINT_MY_TIME("Before data reading", w3_timings_flag)
+
         DO IB=1,len
           ISEA = (iBlock - 1)*BlockSize + IB
           NREC = ISEA + 2
           RPOS = 1_8 + LRECL*(NREC-1_8)
           READ (NDREAD, POS=RPOS, IOSTAT=IERR) (DATAread(I,IB), I=1,NSPEC)
         END DO
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("After data reading")
-#endif
+        CALL PRINT_MY_TIME("After data reading", w3_timings_flag)
+
         DO iProc=2,NAPROC
           NbMatch=0
           DO IPloc=1,ListNPA(iProc)
@@ -566,9 +563,8 @@ CONTAINS
             VA(:,IPloc) = DATAread(:,pos)
           END IF
         END DO
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("After the sending")
-#endif
+        CALL PRINT_MY_TIME("After the sending", w3_timings_flag)
+
       ELSE
         NbMatch=0
         DO IPloc=1,ListNPA(IAPROC)
@@ -591,9 +587,8 @@ CONTAINS
           deallocate(ArrSend)
         END IF
       END IF
-#ifdef W3_TIMINGS
-      CALL PRINT_MY_TIME("Beginning of iBlock value treatment")
-#endif
+      CALL PRINT_MY_TIME("Beginning of iBlock value treatment", w3_timings_flag)
+
     END DO
     IF (IAPROC .eq. 1) THEN
       deallocate(DATAread)
