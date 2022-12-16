@@ -146,9 +146,9 @@ CONTAINS
     USE W3GDATMD,  ONLY: NK, NTH, NSPEC, SIG, DTH, XFR, TH
     USE W3ODATMD,  ONLY: NDSE
     USE W3SERVMD,  ONLY: EXTCDE
-    USE W3FLD1MD,  ONLY: APPENDTAIL,sig2wn,wnd2z0m,infld,tail_choice,&
-         tail_level, tail_transition_ratio1,         &
-         tail_transition_ratio2
+    USE W3FLD1MD,  ONLY: APPENDTAIL,sig2wn,wnd2z0m,infld,tail_choice
+    USE W3FLD1MD,  ONLY: tail_level, tail_transition_ratio1
+    USE W3FLD1MD,  ONLY: tail_transition_ratio2
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
 #endif
