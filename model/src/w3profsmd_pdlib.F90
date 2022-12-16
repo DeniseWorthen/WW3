@@ -677,12 +677,12 @@ CONTAINS
     !
     USE W3TIMEMD, only: DSEC21
     !
-    USE W3GDATMD, only: NX, NY, MAPFS, CLATS,        &
-         FLCX, FLCY, NK, NTH, DTH, XFR,              &
-         ECOS, ESIN, SIG,  PFMOVE,                   &
-         IOBP, IOBPD,                                &
-         FSN, FSPSI, FSFCT, FSNIMP,                  &
-         GTYPE, UNGTYPE, NBND_MAP, INDEX_MAP
+    USE W3GDATMD, only: NX, NY, MAPFS, CLATS
+    USE W3GDATMD, only: FLCX, FLCY, NK, NTH, DTH, XFR
+    USE W3GDATMD, only: ECOS, ESIN, SIG,  PFMOVE
+    USE W3GDATMD, only: IOBP, IOBPD
+    USE W3GDATMD, only: FSN, FSPSI, FSFCT, FSNIMP
+    USE W3GDATMD, only: GTYPE, UNGTYPE, NBND_MAP, INDEX_MAP
     USE YOWNODEPOOL, only: PDLIB_IEN, PDLIB_TRIA
     USE W3GDATMD, only: IOBP_LOC, IOBPD_LOC, IOBPA_LOC, IOBDP_LOC
     USE YOWNODEPOOL, only: iplg, npa
