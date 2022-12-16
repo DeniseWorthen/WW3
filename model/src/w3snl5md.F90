@@ -141,13 +141,13 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS, ONLY: GRAV, TPI
     USE W3GKEMD,   ONLY: CalcQRSNL, qr_depth
-    USE W3GDATMD,  ONLY: NK, NTH, NSPEC, SIG, TH,            &
-         GTYPE, RLGTYPE, CLGTYPE,            &
-         QR5DPT, QI5NNZ, QI5PMX
-    USE W3WDATMD,  ONLY: QI5TBEG, QR5TIM0, QR5CVK0, QC5INT0, &
-         QR5TMIX
-    USE W3ODATMD,  ONLY: FLOUT, NOPTS, TOSNL5, TOLAST, &
-         IAPROC, NAPOUT, SCREEN
+    USE W3GDATMD,  ONLY: NK, NTH, NSPEC, SIG, TH
+    USE W3GDATMD,  ONLY: GTYPE, RLGTYPE, CLGTYPE
+    USE W3GDATMD,  ONLY: QR5DPT, QI5NNZ, QI5PMX
+    USE W3WDATMD,  ONLY: QI5TBEG, QR5TIM0, QR5CVK0, QC5INT0
+    USE W3WDATMD,  ONLY: QR5TMIX
+    USE W3ODATMD,  ONLY: FLOUT, NOPTS, TOSNL5, TOLAST
+    USE W3ODATMD,  ONLY: IAPROC, NAPOUT, SCREEN
     USE W3PARALL,  ONLY: INIT_GET_ISEA
     USE W3TIMEMD,  ONLY: DSEC21
     USE W3SERVMD,  ONLY: EXTCDE
@@ -433,11 +433,11 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GKEMD,  ONLY: qr_depth, qr_oml, qi_disc, qi_kev, qi_nnz,  &
-         qi_interp, PrepKernelIO
-    USE W3GDATMD, ONLY: NK, NTH, SIG, TH,                           &
-         QR5DPT, QR5OML, QI5DIS, QI5KEV, QI5NNZ,     &
-         QI5IPL, QI5PMX
+    USE W3GKEMD,  ONLY: qr_depth, qr_oml, qi_disc, qi_kev, qi_nnz
+    USE W3GKEMD,  ONLY: qi_interp, PrepKernelIO
+    USE W3GDATMD, ONLY: NK, NTH, SIG, TH
+    USE W3GDATMD, ONLY: QR5DPT, QR5OML, QI5DIS, QI5KEV, QI5NNZ
+    USE W3GDATMD, ONLY: QI5IPL, QI5PMX
     USE W3ODATMD, ONLY: IAPROC, NAPOUT, SCREEN
     USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
@@ -694,10 +694,10 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS, ONLY: TPI
-    USE W3GDATMD,  ONLY: NK, NTH, SIG, TH, QR5DPT,         &
-         FLAGLL, XGRD, YGRD, MAPSTA, MAPFS
-    USE W3ODATMD,  ONLY: NOPTS, PTNME, PTLOC, IPTINT,      &
-         IAPROC, NAPOUT, SCREEN
+    USE W3GDATMD,  ONLY: NK, NTH, SIG, TH, QR5DPT
+    USE W3GDATMD,  ONLY: FLAGLL, XGRD, YGRD, MAPSTA, MAPFS
+    USE W3ODATMD,  ONLY: NOPTS, PTNME, PTLOC, IPTINT
+    USE W3ODATMD,  ONLY: IAPROC, NAPOUT, SCREEN
     USE W3SERVMD,  ONLY: DIST_SPHERE
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE

@@ -204,9 +204,9 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS, ONLY: TPIINV
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, DTH, DDEN, WWNMEANP, &
-         WWNMEANPTAIL, FTE, FTF, SSTXFTF, SSTXFTWN,&
-         SSTXFTFTAIL, SSWELLF
+    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, DTH, DDEN, WWNMEANP
+    USE W3GDATMD, ONLY: WWNMEANPTAIL, FTE, FTF, SSTXFTF, SSTXFTWN
+    USE W3GDATMD, ONLY: SSTXFTFTAIL, SSWELLF
 #ifdef W3_T
     USE W3ODATMD, ONLY: NDST
 #endif
@@ -465,10 +465,10 @@ CONTAINS
 #ifdef W3_T
     USE CONSTANTS, ONLY: RADE
 #endif
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC, XFR, DDEN, SIG, SIG2, TH,   &
-         ESIN, ECOS, EC2, ZZWND, AALPHA, BBETA, ZZALP,&
-         SSWELLF,                                     &
-         DDEN2, DTH, SSINTHP,ZZ0RAT
+    USE W3GDATMD, ONLY: NK, NTH, NSPEC, XFR, DDEN, SIG, SIG2, TH
+    USE W3GDATMD, ONLY: ESIN, ECOS, EC2, ZZWND, AALPHA, BBETA, ZZALP
+    USE W3GDATMD, ONLY: SSWELLF
+    USE W3GDATMD, ONLY: DDEN2, DTH, SSINTHP,ZZ0RAT
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
 #endif
@@ -1323,11 +1323,11 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS, ONLY: GRAV, TPI
-    USE W3GDATMD, ONLY: NSPEC, NTH, NK, DDELTA1, DDELTA2,   &
+    USE W3GDATMD, ONLY: NSPEC, NTH, NK, DDELTA1, DDELTA2
 #ifdef W3_T0
-         SIG,                                &
+    USE W3GDATMD, ONLY: SIG
 #endif
-         SSDSC1
+    USE W3GDATMD, ONLY: SSDSC1
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
 #endif

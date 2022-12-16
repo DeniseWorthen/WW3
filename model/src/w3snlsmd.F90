@@ -164,9 +164,9 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS
-    USE W3GDATMD, ONLY: NFR => NK, NTH, SIG, XFR, FACHFA, DTH,      &
-         NTHX, NFRX, NSPL, NSPH, SNSST, CNLSC,       &
-         CNLSFM, CNLSC1, CNLSC2, CNLSC3
+    USE W3GDATMD, ONLY: NFR => NK, NTH, SIG, XFR, FACHFA, DTH
+    USE W3GDATMD, ONLY: NTHX, NFRX, NSPL, NSPH, SNSST, CNLSC
+    USE W3GDATMD, ONLY: CNLSFM, CNLSC1, CNLSC2, CNLSC3
     USE W3ODATMD, ONLY: NDST, NDSE
     !
     USE W3DISPMD, ONLY: WAVNU1
@@ -670,7 +670,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS
     USE W3ODATMD, ONLY: NDST, NDSE
-    USE W3GDATMD,       NFR => NK, A34 => CNLSA
+    USE W3GDATMD, ONLY: NFR => NK, A34 => CNLSA
     !
     USE W3DISPMD, ONLY: WAVNU2
     USE W3SERVMD, ONLY: EXTCDE

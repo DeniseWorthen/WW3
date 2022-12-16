@@ -307,8 +307,8 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS
-    USE W3GDATMD, ONLY: NK, NTH, SIG, TH,                           &
-         NLTAIL, DPTHNL, NDPTHS, IQTPE
+    USE W3GDATMD, ONLY: NK, NTH, SIG, TH
+    USE W3GDATMD, ONLY: NLTAIL, DPTHNL, NDPTHS, IQTPE
     USE W3ODATMD, ONLY: NDSE, NDST, IAPROC, NAPERR
     USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S

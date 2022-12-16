@@ -201,8 +201,8 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS
-    USE W3GDATMD, ONLY: NK, NTH, DTH, SIG, DDEN, FTE, FTF, FTWN,    &
-         NITTIN, ZWIND, CINXSI
+    USE W3GDATMD, ONLY: NK, NTH, DTH, SIG, DDEN, FTE, FTF, FTWN
+    USE W3GDATMD, ONLY: NITTIN, ZWIND, CINXSI
 #ifdef W3_T
     USE W3ODATMD, ONLY: NDST
 #endif
@@ -385,9 +385,9 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC, XFR, DDEN, SIG, SIG2,       &
-         ESIN, ECOS, FTE, FTTR, FPIMIN, ZWIND,       &
-         FACTI1, FACTI2, FSWELL
+    USE W3GDATMD, ONLY: NK, NTH, NSPEC, XFR, DDEN, SIG, SIG2
+    USE W3GDATMD, ONLY: ESIN, ECOS, FTE, FTTR, FPIMIN, ZWIND
+    USE W3GDATMD, ONLY: FACTI1, FACTI2, FSWELL
 #ifdef W3_T
     USE W3ODATMD, ONLY: NDST
 #endif
@@ -652,10 +652,10 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS
-    USE W3GDATMD, ONLY: NK, NTH, SIG, DDEN, DTH, FTE, FPIMIN,       &
-         FACTI1, FACTI2, XF1, XF2, XFH, SDSALN,      &
-         CDSA0, CDSA1, CDSA2, CDSB0, CDSB1, CDSB2,   &
-         CDSB3
+    USE W3GDATMD, ONLY: NK, NTH, SIG, DDEN, DTH, FTE, FPIMIN
+    USE W3GDATMD, ONLY: FACTI1, FACTI2, XF1, XF2, XFH, SDSALN
+    USE W3GDATMD, ONLY: CDSA0, CDSA1, CDSA2, CDSB0, CDSB1, CDSB2
+    USE W3GDATMD, ONLY: CDSB3
 #ifdef W3_T
     USE W3ODATMD, ONLY: NDST
 #endif

@@ -493,16 +493,16 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: DWAT, srce_imp_post, srce_imp_pre,         &
-         srce_direct, GRAV, TPI, TPIINV, LPDLIB
+    USE CONSTANTS, ONLY: DWAT, srce_imp_post, srce_imp_pre
+    USE CONSTANTS, ONLY: srce_direct, GRAV, TPI, TPIINV, LPDLIB
 #ifdef W3_T
     USE CONSTANTS, ONLY: RADE
 #endif
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, TH, DMIN, DTMAX,       &
-         DTMIN, FACTI1, FACTI2, FACSD, FACHFA, FACP, &
-         XFC, XFLT, XREL, XFT, FXFM, FXPM, DDEN,     &
-         FTE, FTF, FHMAX, ECOS, ESIN, IICEDISP,      &
-         ICESCALES, IICESMOOTH
+    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, TH, DMIN, DTMAX
+    USE W3GDATMD, ONLY: DTMIN, FACTI1, FACTI2, FACSD, FACHFA, FACP
+    USE W3GDATMD, ONLY: XFC, XFLT, XREL, XFT, FXFM, FXPM, DDEN
+    USE W3GDATMD, ONLY: FTE, FTF, FHMAX, ECOS, ESIN, IICEDISP
+    USE W3GDATMD, ONLY: ICESCALES, IICESMOOTH
     USE W3GDATMD, ONLY: FSSOURCE, optionCall
     USE W3GDATMD, ONLY: B_JGS_NLEVEL, B_JGS_SOURCE_NONLINEAR
 #ifdef W3_REF1
