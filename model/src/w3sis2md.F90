@@ -111,12 +111,12 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !/
-    USE W3GDATMD,   ONLY: SIG, DSIP, NK, NTH, IS2PARS
-    USE W3GDATMD,   ONLY: EC2, ES2, ESC, ESIN, ECOS
-    USE CONSTANTS,  ONLY: TPI, TPIINV
-    USE W3SERVMD, ONLY: DIAGONALIZE
+    USE W3GDATMD  , ONLY : SIG, DSIP, NK, NTH, IS2PARS
+    USE W3GDATMD  , ONLY : EC2, ES2, ESC, ESIN, ECOS
+    USE CONSTANTS , ONLY : TPI, TPIINV
+    USE W3SERVMD  , ONLY : DIAGONALIZE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
     !
     IMPLICIT NONE
@@ -670,19 +670,19 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3ODATMD, ONLY: NDSE
-    USE CONSTANTS, ONLY: TPIINV, PI, TPI, GRAV, DWAT
-    USE W3SERVMD, ONLY: EXTCDE
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, SIG2, DDEN, IS2PARS, XFR
-    USE W3GDATMD, ONLY: IICEHMIN,IICESMOOTH
+    USE W3ODATMD  , ONLY : NDSE
+    USE CONSTANTS , ONLY : TPIINV, PI, TPI, GRAV, DWAT
+    USE W3SERVMD  , ONLY : EXTCDE
+    USE W3GDATMD  , ONLY : NK, NTH, NSPEC, SIG, SIG2, DDEN, IS2PARS, XFR
+    USE W3GDATMD  , ONLY : IICEHMIN,IICESMOOTH
 #ifdef W3_T
-    USE W3ODATMD, ONLY: NDST
+    USE W3ODATMD  , ONLY : NDST
 #endif
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
 #ifdef W3_T
-    USE W3ARRYMD, ONLY: PRT2DS
+    USE W3ARRYMD  , ONLY : PRT2DS
 #endif
     USE W3DISPMD
     !
@@ -1069,8 +1069,8 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: GRAV
-    USE W3GDATMD, ONLY: NK, SIG
+    USE CONSTANTS , ONLY : GRAV
+    USE W3GDATMD  , ONLY : NK, SIG
 
     IMPLICIT NONE
     !/
@@ -1163,8 +1163,8 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3ODATMD, ONLY: NDSE
-    USE W3SERVMD, ONLY: EXTCDE
+    USE W3ODATMD , ONLY : NDSE
+    USE W3SERVMD , ONLY : EXTCDE
     !/
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
@@ -1355,7 +1355,7 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: GRAV
+    USE CONSTANTS , ONLY : GRAV
 
     IMPLICIT NONE
 
@@ -1446,7 +1446,7 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: GRAV
+    USE CONSTANTS , ONLY : GRAV
 
     IMPLICIT NONE
 

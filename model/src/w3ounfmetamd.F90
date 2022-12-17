@@ -175,17 +175,17 @@ MODULE W3OUNFMETAMD
   !/ ------------------------------------------------------------------- /
   !/
   USE NETCDF
-  USE CONSTANTS, ONLY: TPIINV
-  USE W3GDATMD, ONLY: SIG, NK, GTYPE, UNGTYPE
+  USE CONSTANTS , ONLY : TPIINV
+  USE W3GDATMD , ONLY : SIG, NK, GTYPE, UNGTYPE
 #ifdef W3_RTD
   USE W3GDATMD, ONLY : FLAGUNR, POLAT, POLON
 #endif
 #ifdef W3_SMC
   USE W3SMCOMD, ONLY : SMCOTYPE
 #endif
-  USE W3ODATMD, ONLY: PTMETH, PTFCUT, NOGRP, NOGE, NGRPP
-  USE W3ODATMD, ONLY: NDSE, FNMPRE, NOSWLL
-  USE W3SERVMD, ONLY: EXTCDE, STR_TO_UPPER
+  USE W3ODATMD , ONLY : PTMETH, PTFCUT, NOGRP, NOGE, NGRPP
+  USE W3ODATMD , ONLY : NDSE, FNMPRE, NOSWLL
+  USE W3SERVMD , ONLY : EXTCDE, STR_TO_UPPER
 
   USE W3METAMD
 
@@ -942,7 +942,7 @@ CONTAINS
     !     ----------------------------------------------------------------
     !
     !/ ------------------------------------------------------------------- /
-    USE W3IOGOMD, ONLY: W3FLDTOIJ
+    USE W3IOGOMD , ONLY : W3FLDTOIJ
 
     IMPLICIT NONE
 

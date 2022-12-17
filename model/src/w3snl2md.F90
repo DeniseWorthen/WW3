@@ -141,19 +141,19 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/
     USE CONSTANTS
-    USE W3GDATMD, ONLY: NK, NTH, SIG, TH, IQTPE
-    USE W3ODATMD, ONLY: NDSE, NDST, IAPROC, NAPERR
-    USE W3SERVMD, ONLY: EXTCDE
+    USE W3GDATMD  , ONLY : NK, NTH, SIG, TH, IQTPE
+    USE W3ODATMD  , ONLY : NDSE, NDST, IAPROC, NAPERR
+    USE W3SERVMD  , ONLY : EXTCDE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
 #ifdef W3_T0
-    USE W3ARRYMD, ONLY: PRT2DS
+    USE W3ARRYMD  , ONLY : PRT2DS
 #endif
 #ifdef W3_T1
-    USE W3ARRYMD, ONLY: OUTMAT
+    USE W3ARRYMD  , ONLY : OUTMAT
 #endif
-    USE m_xnldata, ONLY: xnl_main
+    USE m_xnldata , ONLY : xnl_main
     !/
     IMPLICIT NONE
     !/
@@ -307,15 +307,15 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS
-    USE W3GDATMD, ONLY: NK, NTH, SIG, TH
-    USE W3GDATMD, ONLY: NLTAIL, DPTHNL, NDPTHS, IQTPE
-    USE W3ODATMD, ONLY: NDSE, NDST, IAPROC, NAPERR
-    USE W3SERVMD, ONLY: EXTCDE
+    USE W3GDATMD    , ONLY : NK, NTH, SIG, TH
+    USE W3GDATMD    , ONLY : NLTAIL, DPTHNL, NDPTHS, IQTPE
+    USE W3ODATMD    , ONLY : NDSE, NDST, IAPROC, NAPERR
+    USE W3SERVMD    , ONLY : EXTCDE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD    , ONLY : STRACE
 #endif
     USE m_xnldata
-    USE m_constants, ONLY: init_constants
+    USE m_constants , ONLY : init_constants
     !/
     IMPLICIT NONE
     !/

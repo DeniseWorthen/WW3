@@ -156,10 +156,10 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: GRAV, DWAT
-    USE W3GDATMD,  ONLY: NK, NTH, NSPEC, SIG2, DDEN, FTE, SWL6B1
+    USE CONSTANTS , ONLY : GRAV, DWAT
+    USE W3GDATMD  , ONLY : NK, NTH, NSPEC, SIG2, DDEN, FTE, SWL6B1
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
     !/
     IMPLICIT NONE
@@ -318,14 +318,14 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: GRAV
-    USE W3GDATMD,  ONLY: NK, NTH, NSPEC, SIG, DDEN, DTH
-    USE W3GDATMD,  ONLY: SWL6CSTB1, SWL6B1, FTE, FTWN
+    USE CONSTANTS , ONLY : GRAV
+    USE W3GDATMD  , ONLY : NK, NTH, NSPEC, SIG, DDEN, DTH
+    USE W3GDATMD  , ONLY : SWL6CSTB1, SWL6B1, FTE, FTWN
 #ifdef W3_T6
-    USE W3ODATMD,  ONLY: NDST
+    USE W3ODATMD  , ONLY : NDST
 #endif
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !/
     IMPLICIT NONE

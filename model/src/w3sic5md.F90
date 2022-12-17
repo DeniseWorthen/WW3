@@ -268,23 +268,23 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/
 #ifdef W3_T
-    USE W3ODATMD, ONLY: NDST
+    USE W3ODATMD  , ONLY : NDST
 #endif
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
 #ifdef W3_T0
-    USE W3ARRYMD, ONLY: PRT2DS
+    USE W3ARRYMD  , ONLY : PRT2DS
 #endif
 #ifdef W3_T1
-    USE W3ARRYMD, ONLY: OUTMAT
+    USE W3ARRYMD  , ONLY : OUTMAT
 #endif
     !/
-    USE CONSTANTS, ONLY: TPI
-    USE W3SERVMD,  ONLY: EXTCDE
-    USE W3ODATMD,  ONLY: NDSE, IAPROC, NAPROC, NAPERR
-    USE W3GDATMD,  ONLY: NK, NTH, NSPEC, SIG, MAPWN, IC5PARS
-    USE W3IDATMD,  ONLY: INFLAGS2, ICEP1, ICEP2, ICEP3, ICEP4, ICEI
+    USE CONSTANTS , ONLY : TPI
+    USE W3SERVMD  , ONLY : EXTCDE
+    USE W3ODATMD  , ONLY : NDSE, IAPROC, NAPROC, NAPERR
+    USE W3GDATMD  , ONLY : NK, NTH, NSPEC, SIG, MAPWN, IC5PARS
+    USE W3IDATMD  , ONLY : INFLAGS2, ICEP1, ICEP2, ICEP3, ICEP4, ICEI
     !
     IMPLICIT NONE
     !
@@ -505,12 +505,12 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
-    USE CONSTANTS, ONLY: TPI
-    USE W3GDATMD,  ONLY: NK, SIG
-    USE W3ODATMD,  ONLY: NDSE, IAPROC, NAPROC, NAPERR
-    USE W3SERVMD,  ONLY: EXTCDE
+    USE CONSTANTS , ONLY : TPI
+    USE W3GDATMD  , ONLY : NK, SIG
+    USE W3ODATMD  , ONLY : NDSE, IAPROC, NAPROC, NAPERR
+    USE W3SERVMD  , ONLY : EXTCDE
     !/
     IMPLICIT NONE
     !/
@@ -652,15 +652,15 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
     !/
-    USE CONSTANTS, ONLY: GRAV, TPI
-    USE W3DISPMD,  ONLY: WAVNU1
-    USE W3SERVMD,  ONLY: EXTCDE
-    USE W3ODATMD,  ONLY: NDSE, IAPROC, NAPROC, NAPERR
-    USE W3GDATMD,  ONLY: IC5PARS
-    USE W3GSRUMD,  ONLY: W3INAN
+    USE CONSTANTS , ONLY : GRAV, TPI
+    USE W3DISPMD  , ONLY : WAVNU1
+    USE W3SERVMD  , ONLY : EXTCDE
+    USE W3ODATMD  , ONLY : NDSE, IAPROC, NAPROC, NAPERR
+    USE W3GDATMD  , ONLY : IC5PARS
+    USE W3GSRUMD  , ONLY : W3INAN
     !/
     IMPLICIT NONE
     !/
@@ -956,7 +956,7 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !
     IMPLICIT NONE
@@ -1117,11 +1117,11 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !/
-    USE W3SERVMD, ONLY: EXTCDE
-    USE W3ODATMD, ONLY: NDSE, IAPROC, NAPROC, NAPERR
+    USE W3SERVMD , ONLY : EXTCDE
+    USE W3ODATMD , ONLY : NDSE, IAPROC, NAPROC, NAPERR
     !/
     IMPLICIT NONE
     !/
@@ -1421,11 +1421,11 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !/
-    USE W3SERVMD, ONLY: EXTCDE
-    USE W3ODATMD, ONLY: NDSE, IAPROC, NAPROC, NAPERR
+    USE W3SERVMD , ONLY : EXTCDE
+    USE W3ODATMD , ONLY : NDSE, IAPROC, NAPROC, NAPERR
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -1569,7 +1569,7 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !/
     IMPLICIT NONE
@@ -1703,12 +1703,12 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !/
-    USE W3SERVMD, ONLY: EXTCDE
-    USE W3ODATMD, ONLY: NDSE, IAPROC, NAPROC, NAPERR
-    USE W3GDATMD, ONLY: IC5PARS
+    USE W3SERVMD , ONLY : EXTCDE
+    USE W3ODATMD , ONLY : NDSE, IAPROC, NAPROC, NAPERR
+    USE W3GDATMD , ONLY : IC5PARS
     !/
     IMPLICIT NONE
     !/
@@ -1857,7 +1857,7 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !/
     IMPLICIT NONE
@@ -1954,7 +1954,7 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !/
     IMPLICIT NONE
@@ -2053,7 +2053,7 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !/
     IMPLICIT NONE
@@ -2134,7 +2134,7 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !/
     IMPLICIT NONE

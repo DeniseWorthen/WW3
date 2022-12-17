@@ -332,26 +332,25 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: TPI, DWAT, ABMIN, DELAB, SIZEFWTABLE
-    USE CONSTANTS, ONLY: FWTABLE, GRAV
-    USE W3ODATMD, ONLY: NDSE, IAPROC, NAPROC, NAPERR
-    !     USE WMMDATMD, ONLY: IMPROC, NMPERR ! WMMDATMD unavailable to outp
-    USE W3SERVMD, ONLY: EXTCDE
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, MAPWN, IC3PARS, DDEN
-    USE W3GDATMD, ONLY: FLAGLL, YGRD, GTYPE, RLGTYPE
-    USE W3IDATMD, ONLY: ICEP1, ICEP2, ICEP3, ICEP4, ICEP5, ICEI
-    USE W3IDATMD, ONLY: INFLAGS2
+    USE CONSTANTS , ONLY : TPI, DWAT, ABMIN, DELAB, SIZEFWTABLE
+    USE CONSTANTS , ONLY : FWTABLE, GRAV
+    USE W3ODATMD  , ONLY : NDSE, IAPROC, NAPROC, NAPERR
+    USE W3SERVMD  , ONLY : EXTCDE
+    USE W3GDATMD  , ONLY : NK, NTH, NSPEC, SIG, MAPWN, IC3PARS, DDEN
+    USE W3GDATMD  , ONLY : FLAGLL, YGRD, GTYPE, RLGTYPE
+    USE W3IDATMD  , ONLY : ICEP1, ICEP2, ICEP3, ICEP4, ICEP5, ICEI
+    USE W3IDATMD  , ONLY : INFLAGS2
 #ifdef W3_T
-    USE W3ODATMD, ONLY: NDST
+    USE W3ODATMD  , ONLY : NDST
 #endif
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
 #ifdef W3_T0
-    USE W3ARRYMD, ONLY: PRT2DS
+    USE W3ARRYMD  , ONLY : PRT2DS
 #endif
 #ifdef W3_T1
-    USE W3ARRYMD, ONLY: OUTMAT
+    USE W3ARRYMD  , ONLY : OUTMAT
 #endif
     !
     IMPLICIT NONE
@@ -732,11 +731,11 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    USE W3GDATMD, ONLY: NK, SIG, IC3PARS
-    USE W3DISPMD, ONLY: WAVNU1
-    USE W3ODATMD, ONLY: NDSE
-    USE W3SERVMD, ONLY: EXTCDE
-    USE CONSTANTS, ONLY: TPI
+    USE W3GDATMD  , ONLY : NK, SIG, IC3PARS
+    USE W3DISPMD  , ONLY : WAVNU1
+    USE W3ODATMD  , ONLY : NDSE
+    USE W3SERVMD  , ONLY : EXTCDE
+    USE CONSTANTS , ONLY : TPI
     !/
     IMPLICIT NONE
     !/
@@ -922,7 +921,7 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: TPI
+    USE CONSTANTS , ONLY : TPI
     !/
     IMPLICIT NONE
     !/
@@ -1057,7 +1056,7 @@ CONTAINS
     !
     ! 10. Source code :
     !
-    USE CONSTANTS, ONLY: TPI
+    USE CONSTANTS , ONLY : TPI
     !/
     IMPLICIT NONE
     !/
@@ -1177,8 +1176,8 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3ODATMD, ONLY: NDSE
-    USE W3SERVMD, ONLY: EXTCDE
+    USE W3ODATMD , ONLY : NDSE
+    USE W3SERVMD , ONLY : EXTCDE
     !/
     IMPLICIT NONE
     !/
@@ -1434,7 +1433,7 @@ CONTAINS
     !
     !/
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: GRAV
+    USE CONSTANTS , ONLY : GRAV
     !/
     IMPLICIT NONE
     !/
@@ -1535,7 +1534,7 @@ CONTAINS
     ! 10. Source code :
     !/
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: GRAV, DWAT
+    USE CONSTANTS , ONLY : GRAV, DWAT
     !/
     IMPLICIT NONE
     !/
@@ -1870,11 +1869,11 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    USE W3GDATMD, ONLY: NK,SIG, IC3PARS
-    USE W3ADATMD, ONLY: IC3WN_R, IC3WN_I, IC3CG
-    USE W3ODATMD, ONLY: NDSE
-    USE W3SERVMD, ONLY: EXTCDE
-    USE W3DISPMD, ONLY: WAVNU1
+    USE W3GDATMD , ONLY : NK,SIG, IC3PARS
+    USE W3ADATMD , ONLY : IC3WN_R, IC3WN_I, IC3CG
+    USE W3ODATMD , ONLY : NDSE
+    USE W3SERVMD , ONLY : EXTCDE
+    USE W3DISPMD , ONLY : WAVNU1
     !/
     IMPLICIT NONE
     !/
@@ -2018,12 +2017,12 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD, ONLY: NK,SIG
-    USE W3ADATMD, ONLY: IC3WN_R, IC3WN_I, IC3CG
-    USE W3IDATMD, ONLY: INFLAGS2
-    USE W3ODATMD, ONLY: NDSE
-    USE W3SERVMD, ONLY: EXTCDE
-    USE CONSTANTS, ONLY: GRAV
+    USE W3GDATMD  , ONLY : NK,SIG
+    USE W3ADATMD  , ONLY : IC3WN_R, IC3WN_I, IC3CG
+    USE W3IDATMD  , ONLY : INFLAGS2
+    USE W3ODATMD  , ONLY : NDSE
+    USE W3SERVMD  , ONLY : EXTCDE
+    USE CONSTANTS , ONLY : GRAV
     !
     IMPLICIT NONE
     REAL       :: ICE1, ICE2, ICE3, ICE4, DPT
@@ -2105,10 +2104,10 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD, ONLY: NK, SIG
-    USE W3DISPMD, ONLY: WAVNU1
-    USE W3ODATMD, ONLY: NDSE
-    USE W3SERVMD, ONLY: EXTCDE
+    USE W3GDATMD , ONLY : NK, SIG
+    USE W3DISPMD , ONLY : WAVNU1
+    USE W3ODATMD , ONLY : NDSE
+    USE W3SERVMD , ONLY : EXTCDE
     !/
     IMPLICIT NONE
     !/
@@ -2247,7 +2246,7 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: TPI
+    USE CONSTANTS , ONLY : TPI
     !/
     IMPLICIT NONE
     !/
@@ -2612,8 +2611,8 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3ODATMD, ONLY: NDSE
-    USE W3SERVMD, ONLY: EXTCDE
+    USE W3ODATMD , ONLY : NDSE
+    USE W3SERVMD , ONLY : EXTCDE
     !/
     IMPLICIT NONE
     !/
@@ -2883,7 +2882,7 @@ CONTAINS
     ! 10. Source code :
     !/
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: GRAV, DWAT
+    USE CONSTANTS , ONLY : GRAV, DWAT
     !/
     IMPLICIT NONE
     !/
@@ -3041,7 +3040,7 @@ CONTAINS
     ! 10. Source code :
     !/
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: GRAV, DWAT
+    USE CONSTANTS , ONLY : GRAV, DWAT
     !/
     IMPLICIT NONE
     !/

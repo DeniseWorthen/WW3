@@ -195,12 +195,12 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !
-    USE CONSTANTS, ONLY: RADIUS, DERA
-    USE W3GDATMD,  ONLY: NX, NY, FLAGLL, XGRD, YGRD, MAPSTA
-    USE W3GDATMD,  ONLY: HPFAC, HQFAC, GTYPE
-    USE W3GDATMD,  ONLY: UNGTYPE, RLGTYPE, CLGTYPE, SMCTYPE
+    USE CONSTANTS , ONLY : RADIUS, DERA
+    USE W3GDATMD  , ONLY : NX, NY, FLAGLL, XGRD, YGRD, MAPSTA
+    USE W3GDATMD  , ONLY : HPFAC, HQFAC, GTYPE
+    USE W3GDATMD  , ONLY : UNGTYPE, RLGTYPE, CLGTYPE, SMCTYPE
 #ifdef W3_SMC
-    USE W3GDATMD,  ONLY: NSEA, X0, Y0, MRFct, SX, SY, IJKCel
+    USE W3GDATMD  , ONLY : NSEA, X0, Y0, MRFct, SX, SY, IJKCel
 #endif
 #ifdef W3_MPI
     INCLUDE "mpif.h"
@@ -413,10 +413,10 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !
-    USE W3GDATMD, ONLY: NSEAL,NSEA, NX, NY, MAPSTA, MAPSF, GTYPE
-    USE W3GDATMD, ONLY: UNGTYPE, RLGTYPE, CLGTYPE, SMCTYPE
-    USE W3ODATMD, ONLY: NAPROC, IAPROC
-    USE W3PARALL, ONLY : INIT_GET_ISEA
+    USE W3GDATMD , ONLY : NSEAL,NSEA, NX, NY, MAPSTA, MAPSF, GTYPE
+    USE W3GDATMD , ONLY : UNGTYPE, RLGTYPE, CLGTYPE, SMCTYPE
+    USE W3ODATMD , ONLY : NAPROC, IAPROC
+    USE W3PARALL , ONLY : INIT_GET_ISEA
     !
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -802,7 +802,7 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !
-    USE W3SERVMD, ONLY: STRSPLIT
+    USE W3SERVMD , ONLY : STRSPLIT
     !
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
