@@ -460,9 +460,9 @@ CONTAINS
     INTEGER ,                 :: IERR_MPI, BGROUP, LGROUP, IROOT
 #endif
 #ifdef W3_S
-    INTEGER ,, SAVE           :: IENT = 0
+    INTEGER , SAVE            :: IENT = 0
 #endif
-    INTEGER ,, ALLOCATABLE    :: MDS(:,:), NTRACE(:,:), ODAT(:,:),    &
+    INTEGER , ALLOCATABLE     :: MDS(:,:), NTRACE(:,:), ODAT(:,:),    &
          TMPRNK(:), TMPGRP(:), NINGRP(:),     &
          TMOVE(:,:), LOADMP(:,:), IPRT(:,:),  &
          NDPOUT(:), OUTFF(:,:)
@@ -3798,10 +3798,10 @@ CONTAINS
     INTEGER                 :: IERR_MPI, BGROUP, LGROUP, IROOT
 #endif
 #ifdef W3_S
-    INTEGER ,, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !
-    INTEGER ,, ALLOCATABLE    :: MDS(:,:), NTRACE(:,:), ODAT(:,:),     &
+    INTEGER , ALLOCATABLE    :: MDS(:,:), NTRACE(:,:), ODAT(:,:),     &
          TMPRNK(:), TMPGRP(:), NINGRP(:),      &
          TMOVE(:,:), LOADMP(:,:), IPRT(:,:),   &
          NDPOUT(:)                             &
