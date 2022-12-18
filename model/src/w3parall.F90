@@ -1,4 +1,4 @@
-uMODULE W3PARALL
+MODULE W3PARALL
   !/
   !/                  +-----------------------------------+
   !/                  | WAVEWATCH III           NOAA/NCEP |
