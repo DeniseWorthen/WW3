@@ -158,17 +158,16 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: ASPC(NSPEC), WNDX, WNDY, &
-         ZWND, DEPTH, RIB, DAIR, FPI
-    REAL, INTENT(OUT)       :: UST, USTD, Z0
-    REAL, INTENT(OUT),OPTIONAL :: CHARN
-    REAL, INTENT(INOUT)     :: TAUNUX, TAUNUY
+    REAL , INTENT(IN)            :: ASPC(NSPEC), WNDX, WNDY, ZWND, DEPTH, RIB, DAIR, FPI
+    REAL , INTENT(OUT)           :: UST, USTD, Z0
+    REAL , INTENT(OUT), OPTIONAL :: CHARN
+    REAL , INTENT(INOUT)         :: TAUNUX, TAUNUY
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     !-Parameters
-    REAL, PARAMETER  :: NU=0.105/10000.0
+    REAL , PARAMETER  :: NU=0.105/10000.0
     !-Commonly used values
     REAL :: UREF, UREFD
     !-Tail
@@ -176,8 +175,8 @@ CONTAINS
     REAL :: KMAX, KTAILA, KTAILB, KTAILC
     INTEGER :: KA1, KA2, KA3, NKT
     !-Extended spectrum
-    REAL, ALLOCATABLE, DIMENSION(:)   :: WN, DWN, CP, sig2,TAUINTX, TAUINTY
-    REAL, ALLOCATABLE, DIMENSION(:,:) :: SPC2
+    REAL , ALLOCATABLE, DIMENSION(:)   :: WN, DWN, CP, sig2,TAUINTX, TAUINTY
+    REAL , ALLOCATABLE, DIMENSION(:,:) :: SPC2
     !-Stress Calculation
     INTEGER :: K, T, ITS
     REAL :: TAUXW, TAUYW, TAUX, TAUY
@@ -210,7 +209,7 @@ CONTAINS
     INTEGER :: ITTOT
     INTEGER :: COUNT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     LOGICAL, SAVE           :: FIRST = .TRUE.
 #ifdef W3_OMPG
@@ -653,10 +652,10 @@ CONTAINS
 #endif
     !
     IMPLICIT NONE
-    REAL, INTENT(IN) :: WND10
-    REAL, INTENT(OUT) :: SAT
+    REAL , INTENT(IN)  :: WND10
+    REAL , INTENT(OUT) :: SAT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
     CALL STRACE (IENT, 'WND2SAT')
 #endif
     !

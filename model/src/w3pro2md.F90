@@ -101,7 +101,7 @@ MODULE W3PRO2MD
   !/
   !/ Private data
   !/
-  REAL, PRIVATE, PARAMETER:: TRNMIN = 0.95
+  REAL , PRIVATE, PARAMETER:: TRNMIN = 0.95
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
@@ -661,9 +661,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: ISP, MAPSTA(NY*NX), MAPFS(NY*NX)
-    REAL, INTENT(IN)        :: DTG, VGX, VGY
-    REAL, INTENT(INOUT)     :: VQ(1-NY:NY*(NX+2))
+    INTEGER , INTENT(IN)    :: ISP, MAPSTA(NY*NX), MAPFS(NY*NX)
+    REAL ,    INTENT(IN)    :: DTG, VGX, VGY
+    REAL ,    INTENT(INOUT) :: VQ(1-NY:NY*(NX+2))
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -672,7 +672,7 @@ CONTAINS
          IX,IY, IY0, IP, IBI
     INTEGER                 :: TTEST(2),DTTST
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: CG0, CGA, CGN, CGX, CGY, CXC, CYC,  &
          CXMIN, CXMAX, CYMIN, CYMAX
@@ -1350,19 +1350,18 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: ISEA
-    REAL, INTENT(IN)        :: FACTH, FACK, CTHG0, CG(0:NK+1),      &
-         WN(0:NK+1), DEPTH, DDDX, DDDY,       &
-         CX, CY, DCXDX, DCXDY, DCYDX, DCYDY
-    REAL, INTENT(IN)        :: DCDX(0:NK+1), DCDY(0:NK+1)
-    REAL, INTENT(INOUT)     :: VA(NSPEC)
+    INTEGER , INTENT(IN)    :: ISEA
+    REAL ,    INTENT(IN)    :: FACTH, FACK, CTHG0, CG(0:NK+1), WN(0:NK+1)
+    REAL ,    INTENT(IN)    :: DEPTH, DDDX, DDDY, CX, CY, DCXDX, DCXDY, DCYDX, DCYDY
+    REAL ,    INTENT(IN)    :: DCDX(0:NK+1), DCDY(0:NK+1)
+    REAL ,    INTENT(INOUT) :: VA(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: ITH, IK, ISP
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: FDDMAX, FDG, FKD, FKD0, DCYX,        &
          DCXXYY, DCXY, DCXX, DCXYYX, DCYY

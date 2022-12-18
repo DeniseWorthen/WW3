@@ -154,18 +154,17 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MX, MY, LX, HX, LY, HY, NDS, NDST,  &
-         NDSE, IDFM, IDLA
-    REAL, INTENT(IN)        :: VSC, VOF
-    CHARACTER, INTENT(IN)   :: RFORM*(*)
-    REAL, INTENT(OUT)       :: ARRAY(MX,MY)
+    INTEGER ,   INTENT(IN)  :: MX, MY, LX, HX, LY, HY, NDS, NDST, NDSE, IDFM, IDLA
+    REAL ,      INTENT(IN)  :: VSC, VOF
+    CHARACTER , INTENT(IN)  :: RFORM*(*)
+    REAL ,      INTENT(OUT) :: ARRAY(MX,MY)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: IIDFM, IIDLA, IX, IY, ISTAT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -325,17 +324,17 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MX, MY, LX, HX, LY, HY, NDS, NDST,  &
-         NDSE, IDFM, IDLA, VSC, VOF
-    INTEGER, INTENT(OUT)    :: ARRAY(MX,MY)
-    CHARACTER, INTENT(IN)   :: RFORM*(*)
+    INTEGER ,   INTENT(IN)  :: MX, MY, LX, HX, LY, HY, NDS, NDST, NDSE, IDFM, IDLA
+    INTEGER ,   INTENT(IN)  :: VSC, VOF
+    INTEGER ,   INTENT(OUT) :: ARRAY(MX,MY)
+    CHARACTER , INTENT(IN)  :: RFORM*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: IIDFM, IIDLA, IX, IY, ISTAT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -501,17 +500,16 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MX, MY, LX, HX, LY, HY, NDS, NDST,  &
-         NDSE, IDFM, IDLA
-    REAL, INTENT(IN)        :: VSC, VOF, ARRAY(MX,MY)
-    CHARACTER, INTENT(IN)   :: RFORM*(*)
+    INTEGER ,   INTENT(IN) :: MX, MY, LX, HX, LY, HY, NDS, NDST, NDSE, IDFM, IDLA
+    REAL ,      INTENT(IN) :: VSC, VOF, ARRAY(MX,MY)
+    CHARACTER , INTENT(IN) :: RFORM*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: IIDFM, IIDLA, IX, IY, ISTAT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -656,17 +654,17 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MX, MY, LX, HX, LY, HY, NDS, NDST,  &
-         NDSE, IDFM, IDLA, ARRAY(MX,MY)
-    INTEGER, INTENT(IN)     :: VSC, VOF
-    CHARACTER, INTENT(IN)   :: RFORM*(*)
+    INTEGER ,   INTENT(IN) :: MX, MY, LX, HX, LY, HY, NDS, NDST, NDSE, IDFM, IDLA
+    INTEGER ,   INTENT(IN) :: ARRAY(MX,MY)
+    INTEGER ,   INTENT(IN) :: VSC, VOF
+    CHARACTER , INTENT(IN) :: RFORM*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: IIDFM, IIDLA, IX, IY, ISTAT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -806,16 +804,16 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, DIM
-    REAL, INTENT(IN)        :: ARRAY(DIM)
-    CHARACTER, INTENT(IN)   :: ANAME*(*)
+    INTEGER ,   INTENT(IN) :: NDS, DIM
+    REAL ,      INTENT(IN) :: ARRAY(DIM)
+    CHARACTER , INTENT(IN) :: ANAME*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: I, K
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -920,15 +918,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, DIM, IARRAY(DIM)
-    CHARACTER, INTENT(IN)   :: ANAME*(*)
+    INTEGER ,   INTENT(IN) :: NDS, DIM, IARRAY(DIM)
+    CHARACTER , INTENT(IN) :: ANAME*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: I, K
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -1036,16 +1034,16 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, MX, NX, NY
-    REAL, INTENT(IN)        :: A(MX,NY)
-    CHARACTER, INTENT(IN)   :: MNAME*(*)
+    INTEGER ,   INTENT(IN) :: NDS, MX, NX, NY
+    REAL ,      INTENT(IN) :: A(MX,NY)
+    CHARACTER , INTENT(IN) :: MNAME*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: LBLOK, NBLOK, IBLOK, IX, IX1, IX2, IY
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -1184,17 +1182,17 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, NX, NY, MX, MAP(MX,NY), MAP0,  &
-         IX1, IX2, IX3, IY1, IY2, IY3
-    REAL, INTENT(IN)        :: F(MX,NY), FSC
-    CHARACTER, INTENT(IN)   :: PRVAR*(*), PRUNIT*(*)
+    INTEGER ,   INTENT(IN) :: NDS, NX, NY, MX, MAP(MX,NY), MAP0
+    INTEGER ,   INTENT(IN) :: IX1, IX2, IX3, IY1, IY2, IY3
+    REAL ,      INTENT(IN) :: F(MX,NY), FSC
+    CHARACTER , INTENT(IN) :: PRVAR*(*), PRUNIT*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: IX, IY, JJ, JM, K1, LX, I
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: FMAX, RR
     LOGICAL                 :: FLSCLE
@@ -1443,19 +1441,18 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, NFR, NLINES
-    REAL, INTENT(IN)        :: FTOPI, E(NFR), FR(NFR)
-    CHARACTER, INTENT(IN)   :: PRVAR*(*), PRUNIT*(*), PNTNME*(*),  &
-         UFR*(*)
+    INTEGER ,   INTENT(IN) :: NDS, NFR, NLINES
+    REAL ,      INTENT(IN) :: FTOPI, E(NFR), FR(NFR)
+    CHARACTER , INTENT(IN) :: PRVAR*(*), PRUNIT*(*), PNTNME*(*), UFR*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: NFRB, IFR, IL, IL0
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
-    REAL, SAVE              :: TOPFAC = 1.1
+    REAL , SAVE              :: TOPFAC = 1.1
     REAL                    :: FTOP, RLINES, FACFR, FSC, FLINE,    &
          EMAX, EMIN, EXTR, FLOC
     LOGICAL                 :: FLSCLE
@@ -1705,22 +1702,21 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, NFR, NE, NLINES
-    REAL, INTENT(IN)        :: FTOPI, E(NFR,NE), FR(NFR)
-    CHARACTER, INTENT(IN)   :: PRVAR*(*), PRUNIT*(*), PNTNME*(*),  &
-         UFR*(*)
-    DIMENSION               :: PRVAR(NE)
+    INTEGER ,   INTENT(IN) :: NDS, NFR, NE, NLINES
+    REAL ,      INTENT(IN) :: FTOPI, E(NFR,NE), FR(NFR)
+    CHARACTER , INTENT(IN) :: PRVAR*(*), PRUNIT*(*), PNTNME*(*), UFR*(*)
+    DIMENSION :: PRVAR(NE)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER, PARAMETER      :: NFRMAX = 100
-    INTEGER, PARAMETER      :: NFM2   = NFRMAX+1
+    INTEGER , PARAMETER      :: NFRMAX = 100
+    INTEGER , PARAMETER      :: NFM2   = NFRMAX+1
     INTEGER                 :: NFRB, IFR, IE, IL
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
-    REAL, SAVE              :: TOPFAC = 1.1
+    REAL , SAVE              :: TOPFAC = 1.1
     REAL                    :: FTOP, RLINES, FACFR, FSC, FLINE,    &
          EMAX, EMIN, EXTR, FLOC
     LOGICAL                 :: FLSCLE
@@ -2028,17 +2024,16 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, NFR0, NFR, NTH
-    REAL, INTENT(IN)        :: E(NFR0,*), FR(*), FACSP, FSC, RRCUT
-    CHARACTER, INTENT(IN)   :: PRVAR*(*), PRUNIT*(*), PNTNME*(*),  &
-         UFR*(*)
+    INTEGER ,   INTENT(IN) :: NDS, NFR0, NFR, NTH
+    REAL ,      INTENT(IN) :: E(NFR0,*), FR(*), FACSP, FSC, RRCUT
+    CHARACTER , INTENT(IN) :: PRVAR*(*), PRUNIT*(*), PNTNME*(*), UFR*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: IFR, ITH, NFRB, INTANG, ITHSEC
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     LOGICAL                 :: FLSCLE
     REAL                    :: FACFR, EMAX, EMIN, DTHDEG, RR, RRC
@@ -2317,8 +2312,8 @@ CONTAINS
       !/ ------------------------------------------------------------------- /
       !/ Parameter list
       !/
-      INTEGER, INTENT(IN)     :: IANG, ILEN, INUM
-      CHARACTER, INTENT(OUT)  :: SANG*(*)
+      INTEGER ,   INTENT(IN)  :: IANG, ILEN, INUM
+      CHARACTER , INTENT(OUT) :: SANG*(*)
       !/
       !/ ------------------------------------------------------------------- /
       !/ Local parameters

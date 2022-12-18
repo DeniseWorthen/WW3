@@ -95,18 +95,18 @@ MODULE WMUNITMD
   !/
   !/ Define acceptable ranges of unit numbers
   !/
-  INTEGER, PARAMETER, PRIVATE   :: UNITLW =   1          !< UNITLW
-  INTEGER, PARAMETER, PRIVATE   :: UNITHG = 120          !< UNITHG
-  INTEGER, PARAMETER, PRIVATE   :: INPLOW =  10          !< INPLOW
-  INTEGER, PARAMETER, PRIVATE   :: INPHGH =  49          !< INPHGH
-  INTEGER, PARAMETER, PRIVATE   :: OUTLOW =  50          !< OUTLOW
-  INTEGER, PARAMETER, PRIVATE   :: OUTHGH =  98          !< OUTHGH
-  INTEGER, PARAMETER, PRIVATE   :: SCRLOW =  99          !< SCRLOW
-  INTEGER, PARAMETER, PRIVATE   :: SCRHGH = 100          !< SCRHGH
+  INTEGER , PARAMETER, PRIVATE   :: UNITLW =   1          !< UNITLW
+  INTEGER , PARAMETER, PRIVATE   :: UNITHG = 120          !< UNITHG
+  INTEGER , PARAMETER, PRIVATE   :: INPLOW =  10          !< INPLOW
+  INTEGER , PARAMETER, PRIVATE   :: INPHGH =  49          !< INPHGH
+  INTEGER , PARAMETER, PRIVATE   :: OUTLOW =  50          !< OUTLOW
+  INTEGER , PARAMETER, PRIVATE   :: OUTHGH =  98          !< OUTHGH
+  INTEGER , PARAMETER, PRIVATE   :: SCRLOW =  99          !< SCRLOW
+  INTEGER , PARAMETER, PRIVATE   :: SCRHGH = 100          !< SCRHGH
   !
-  LOGICAL,            PRIVATE   :: FLINIT = .FALSE.      !< FLINIT
+  LOGICAL ,            PRIVATE   :: FLINIT = .FALSE.      !< FLINIT
 
-  LOGICAL,            PRIVATE, ALLOCATABLE :: U_USED(:)  !< U_USED
+  LOGICAL ,            PRIVATE, ALLOCATABLE :: U_USED(:)  !< U_USED
   CHARACTER(LEN= 3),  PRIVATE, ALLOCATABLE :: U_TYPE(:)  !< U_TYPE
   CHARACTER(LEN=30),  PRIVATE, ALLOCATABLE :: U_NAME(:)  !< U_NAME
   CHARACTER(LEN=30),  PRIVATE, ALLOCATABLE :: U_DESC(:)  !< U_DESC
@@ -187,14 +187,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDSE, NDST
+    INTEGER , INTENT(IN) :: NDSE, NDST
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: J, I1, IN, I
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     CHARACTER(LEN=3)        :: STRING
     !/
@@ -397,14 +397,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, IREQ
+    INTEGER , INTENT(IN) :: NDS, IREQ
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: I
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !/
 #ifdef W3_S
@@ -557,18 +557,16 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDSE, NDST, NDS
-    LOGICAL, INTENT(IN)     :: FLAG
-    CHARACTER(LEN=3), INTENT(IN), OPTIONAL ::                       &
-         TYPE
-    CHARACTER*(*), INTENT(IN), OPTIONAL ::                          &
-         NAME, DESC
+    INTEGER ,          INTENT(IN)           :: NDSE, NDST, NDS
+    LOGICAL ,          INTENT(IN)           :: FLAG
+    CHARACTER(LEN=3) , INTENT(IN), OPTIONAL :: TYPE
+    CHARACTER*(*) ,    INTENT(IN), OPTIONAL :: NAME, DESC
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !/
 #ifdef W3_S
@@ -730,17 +728,17 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)           :: NDSE, NDST
-    INTEGER, INTENT(OUT)          :: NDS
-    CHARACTER(LEN=3), INTENT(IN)  :: TYPE
-    INTEGER, INTENT(IN), OPTIONAL :: NR
+    INTEGER ,          INTENT(IN)           :: NDSE, NDST
+    INTEGER ,          INTENT(OUT)          :: NDS
+    CHARACTER(LEN=3) , INTENT(IN)           :: TYPE
+    INTEGER ,          INTENT(IN), OPTIONAL :: NR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: NRC, I, J
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     LOGICAL                 :: OK
     LOGICAL                 :: OPND
@@ -897,13 +895,13 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)           :: NDSE, NDST, NDS
+    INTEGER , INTENT(IN) :: NDSE, NDST, NDS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     LOGICAL                 :: CHECK
     !/

@@ -962,14 +962,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NX, NY, IX1, IXN, IY1, IYN, NSEA,     &
-         E3DF(3,5), P2MSF(3), US3DF(3),        &
-         USSPF(2), NCTYPE, NCVARTYPEI
-    CHARACTER(30)           :: FILEPREFIX
-    LOGICAL, INTENT(IN)     :: TOGETHER
-    LOGICAL, INTENT(IN)     :: FLG2D(NOGRP,NGRPP)
-    INTEGER, INTENT(INOUT)  :: NCIDS(NOGRP,NGRPP,NOSWLL + 1), S3
-    CHARACTER*30,INTENT(IN) :: STRSTOPDATE
+    INTEGER ,      INTENT(IN)    :: NX, NY, IX1, IXN, IY1, IYN, NSEA
+    INTEGER ,      INTENT(IN)    :: E3DF(3,5), P2MSF(3), US3DF(3)
+    INTEGER ,      INTENT(IN)    :: USSPF(2), NCTYPE, NCVARTYPEI
+    CHARACTER(30)                :: FILEPREFIX
+    LOGICAL ,      INTENT(IN)    :: TOGETHER
+    LOGICAL ,      INTENT(IN)    :: FLG2D(NOGRP,NGRPP)
+    INTEGER ,      INTENT(INOUT) :: NCIDS(NOGRP,NGRPP,NOSWLL + 1), S3
+    CHARACTER*30 , INTENT(IN)    :: STRSTOPDATE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -988,7 +988,7 @@ CONTAINS
     !
     INTEGER                  :: DEFLATE=1
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT   =   0
+    INTEGER , SAVE           :: IENT   =   0
 #endif
     !
     ! Make the below allocatable to avoid stack overflow on some machines
@@ -997,16 +997,16 @@ CONTAINS
     !
     REAL                    :: CABS, UABS, MFILLR
 #ifdef W3_BT4
-    REAL, PARAMETER            :: LOG2=LOG(2.)
+    REAL , PARAMETER            :: LOG2=LOG(2.)
 #endif
     !
-    REAL,DIMENSION(:),  ALLOCATABLE    :: LON, LAT, FREQ
-    REAL,DIMENSION(:,:),  ALLOCATABLE  :: LON2D, LAT2D, ANGLD2D
+    REAL ,DIMENSION(:),  ALLOCATABLE    :: LON, LAT, FREQ
+    REAL ,DIMENSION(:,:),  ALLOCATABLE  :: LON2D, LAT2D, ANGLD2D
 #ifdef W3_RTD
-    REAL,DIMENSION(:,:),  ALLOCATABLE  :: LON2DEQ, LAT2DEQ
+    REAL ,DIMENSION(:,:),  ALLOCATABLE  :: LON2DEQ, LAT2DEQ
 #endif
     ! Make the below allocatable to avoid stack overflow on some machines
-    REAL, ALLOCATABLE       :: X1(:,:), X2(:,:), XX(:,:), XY(:,:),   &
+    REAL , ALLOCATABLE       :: X1(:,:), X2(:,:), XX(:,:), XY(:,:),   &
          XK(:,:,:), XXK(:,:,:), XYK(:,:,:),    &
          MX1R(:,:), MXXR(:,:), MYYR(:,:),      &
          MXYR(:,:), AUX1(:)
@@ -3473,16 +3473,14 @@ CONTAINS
 
     IMPLICIT NONE
 
-
-
-    INTEGER, INTENT(IN)               :: EXTRADIM
-    INTEGER, INTENT(IN)               :: NCTYPE
-    CHARACTER*(*), INTENT(IN)         :: NCFILE
-    INTEGER, INTENT(OUT)              :: NCID
-    INTEGER, INTENT(OUT)              :: DIMID(6)
-    INTEGER, INTENT(IN)               :: DIMLN(6)
-    INTEGER, INTENT(OUT)              :: VARID(300)
-    LOGICAL, INTENT(IN)               :: MAPSTAOUT
+    INTEGER ,       INTENT(IN)  :: EXTRADIM
+    INTEGER ,       INTENT(IN)  :: NCTYPE
+    CHARACTER*(*) , INTENT(IN)  :: NCFILE
+    INTEGER ,       INTENT(OUT) :: NCID
+    INTEGER ,       INTENT(OUT) :: DIMID(6)
+    INTEGER ,       INTENT(IN)  :: DIMLN(6)
+    INTEGER ,       INTENT(OUT) :: VARID(300)
+    LOGICAL ,       INTENT(IN)  :: MAPSTAOUT
     !
     !/ ------------------------------------------------------------------- /
     !   Local parameters
@@ -3994,9 +3992,9 @@ CONTAINS
 
     IMPLICIT NONE
 
-    REAL, INTENT(INOUT)  :: S(:)
-    REAL, INTENT(OUT) :: X(:,:)
-    LOGICAL, OPTIONAL, INTENT(IN) :: FLDIRN
+    REAL ,              INTENT(INOUT) :: S(:)
+    REAL ,              INTENT(OUT)   :: X(:,:)
+    LOGICAL , OPTIONAL, INTENT(IN)    :: FLDIRN
 
     LOGICAL :: FLDR
     INTEGER :: ISEA
@@ -4048,8 +4046,8 @@ CONTAINS
     ! magnitude.
     IMPLICIT NONE
 
-    REAL, INTENT(INOUT) :: U(:), V(:)
-    REAL, INTENT(IN), OPTIONAL :: TOLERANCE
+    REAL , INTENT(INOUT)        :: U(:), V(:)
+    REAL , INTENT(IN), OPTIONAL :: TOLERANCE
 
     REAL :: TOL = 1.0
     REAL :: MAG ! Magnitude

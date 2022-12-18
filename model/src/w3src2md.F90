@@ -92,10 +92,10 @@ MODULE W3SRC2MD
   !/
   INTEGER, PARAMETER, PRIVATE :: NRSIGA =  400
   INTEGER, PARAMETER, PRIVATE :: NRDRAG =   20
-  REAL, PARAMETER, PRIVATE    :: SIGAMX =   40.
-  REAL, PARAMETER, PRIVATE    :: DRAGMX =    1.E-2
+  REAL , PARAMETER, PRIVATE    :: SIGAMX =   40.
+  REAL , PARAMETER, PRIVATE    :: DRAGMX =    1.E-2
   !
-  REAL, PRIVATE           :: DSIGA, DDRAG,                        &
+  REAL , PRIVATE           :: DSIGA, DDRAG,                        &
        BETATB(-NRSIGA:NRSIGA+1,NRDRAG+1)
   !/
 CONTAINS
@@ -217,17 +217,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NTH,NK), CG(NK), WN(NK), DEPTH,    &
-         FPI, U, USTAR
-    REAL, INTENT(OUT)       :: EMEAN, FMEAN, WNMEAN, AMAX,          &
-         ALFA(NK), FP
+    REAL , INTENT(IN)  :: A(NTH,NK), CG(NK), WN(NK), DEPTH, FPI, U, USTAR
+    REAL , INTENT(OUT) :: EMEAN, FMEAN, WNMEAN, AMAX, ALFA(NK), FP
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: IK, ITH, I1, ITT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: EBAND, FPISTR, EB(NK), UST
     !/
@@ -406,16 +404,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NSPEC), CG(NK), K(NSPEC), U, UDIR, &
-         CD, Z0
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC), FPI
+    REAL , INTENT(IN)  :: A(NSPEC), CG(NK), K(NSPEC), U, UDIR, CD, Z0
+    REAL , INTENT(OUT) :: S(NSPEC), D(NSPEC), FPI
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: IS, IK, IOMA, ICL, NKFILT, NKFIL2
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
 #ifdef W3_T0
     INTEGER       ITH
@@ -424,8 +421,8 @@ CONTAINS
          CLAM, OMA, M0, M1, RD1, RD2, BETA,   &
          FACLN1, FACLN2, USTAR, TRANS, FPISTR,&
          FP1STR, FP1, SIN1A(NK)
-    REAL, PARAMETER         :: TRANSF = 0.75
-    REAL, PARAMETER         :: PEAKFC = 0.8
+    REAL , PARAMETER         :: TRANSF = 0.75
+    REAL , PARAMETER         :: PEAKFC = 0.8
 #ifdef W3_T0
     REAL                    :: DOUT(NK,NTH)
 #endif
@@ -674,16 +671,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NTH,NK), CG(NK), K(NK), FPI,       &
-         USTAR, ALFA(NK)
-    REAL, INTENT(OUT)       :: S(NTH,NK), D(NTH,NK)
+    REAL , INTENT(IN)  :: A(NTH,NK), CG(NK), K(NK), FPI, USTAR, ALFA(NK)
+    REAL , INTENT(OUT) :: S(NTH,NK), D(NTH,NK)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: IK, ITH, IKHW
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: FHW, XHW, FPIT, PHI, AF1, AF2,       &
          AFILT, BFILT, CDIST, FILT, POW,      &
@@ -930,7 +926,7 @@ CONTAINS
     !/
     INTEGER                 :: ISIGA, IDRAG
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
 #ifdef W3_T0
     INTEGER                 :: I1
@@ -1139,14 +1135,14 @@ CONTAINS
       !/ ------------------------------------------------------------------- /
       !/ Parameter list
       !/
-      INTEGER, INTENT(IN)     :: NDST
-      REAL, INTENT(IN)        :: OMA, CL
+      INTEGER , INTENT(IN) :: NDST
+      REAL ,    INTENT(IN) :: OMA, CL
       !/
       !/ ------------------------------------------------------------------- /
       !/ Local parameters
       !/
 #ifdef W3_S
-      INTEGER, SAVE           :: IENT = 0
+      INTEGER , SAVE           :: IENT = 0
 #endif
       REAL                    :: OM1, OM2, A0, A1, A2, A3, A4, A5,    &
            A6, A7, A8, A9, A10

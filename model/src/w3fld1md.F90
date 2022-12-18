@@ -74,14 +74,14 @@ Module W3FLD1MD
   !
   PUBLIC
   ! Tail_Choice: Chose the method to determine the level of the tail
-  INTEGER, SAVE :: Tail_Choice
+  INTEGER , SAVE :: Tail_Choice
 #ifdef W3_OMPG
   !$omp threadprivate(Tail_Choice)
 #endif
-  REAL, SAVE    :: Tail_Level !if Tail_Choice=0, tail is constant
-  REAL, SAVE    :: Tail_transition_ratio1! freq/fpi where tail
+  REAL , SAVE    :: Tail_Level !if Tail_Choice=0, tail is constant
+  REAL , SAVE    :: Tail_transition_ratio1! freq/fpi where tail
   !  adjustment begins
-  REAL, SAVE    :: Tail_transition_ratio2! freq/fpi where tail
+  REAL , SAVE    :: Tail_transition_ratio2! freq/fpi where tail
   !  adjustment ends
 #ifdef W3_OMPG
   !$omp threadprivate(Tail_Level)
@@ -185,17 +185,16 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: ASPC(NSPEC), WNDX, WNDY,  &
-         ZWND, DEPTH, RIB, DAIR, FPI
-    REAL, INTENT(OUT)       :: UST, USTD, Z0
-    REAL, INTENT(OUT), OPTIONAL :: CHARN
-    REAL, INTENT(INOUT)     :: TAUNUX, TAUNUY
+    REAL , INTENT(IN)            :: ASPC(NSPEC), WNDX, WNDY, ZWND, DEPTH, RIB, DAIR, FP
+    REAL , INTENT(OUT)           :: UST, USTD, Z0
+    REAL , INTENT(OUT), OPTIONAL :: CHARN
+    REAL , INTENT(INOUT)         :: TAUNUX, TAUNUY
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    REAL, PARAMETER         ::  NU=0.105/10000.0
-    REAL, PARAMETER         ::  DELTA=0.03
+    REAL , PARAMETER         ::  NU=0.105/10000.0
+    REAL , PARAMETER         ::  DELTA=0.03
     ! Commonly used parameters
     REAL                    ::  wnd_in_mag, wnd_in_dir
     !For Calculating Tail
@@ -230,19 +229,19 @@ CONTAINS
          I, CTR, ITERATION, KA1, KA2, &
          KA3, KB
     ! For defining extended spectrum with appended tail.
-    REAL, ALLOCATABLE, DIMENSION(:)   :: WN, DWN, CP,SIG2
-    REAL, ALLOCATABLE, DIMENSION(:,:) :: SPC2
-    REAL, ALLOCATABLE, DIMENSION(:)   :: TLTN, TLTE, TAUD, &
+    REAL , ALLOCATABLE, DIMENSION(:)   :: WN, DWN, CP,SIG2
+    REAL , ALLOCATABLE, DIMENSION(:,:) :: SPC2
+    REAL , ALLOCATABLE, DIMENSION(:)   :: TLTN, TLTE, TAUD, &
          TLTND, &
          TLTED, ZOFK, UPROF, VPROF, &
          FTILDE, UP1, VP1, UP, VP, &
          TLTNA, TLTEA
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     LOGICAL                 :: FSFL1,FSFL2, CRIT1, CRIT2
     LOGICAL                 :: IT_FLAG1, IT_FLAG2
-    LOGICAL, SAVE           :: FIRST = .TRUE.
+    LOGICAL , SAVE           :: FIRST = .TRUE.
 #ifdef W3_OMPG
     !$omp threadprivate( FIRST)
 #endif
@@ -850,7 +849,7 @@ CONTAINS
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -945,21 +944,21 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN) :: NKT, KA1, KA2, KA3
-    REAL, INTENT(IN)    :: WN2(NKT), WNDDIR,SAT
-    REAL, INTENT(INOUT)   :: INSPC(NKT,NTH)
+    INTEGER , INTENT(IN)    :: NKT, KA1, KA2, KA3
+    REAL ,    INTENT(IN)    :: WN2(NKT), WNDDIR,SAT
+    REAL ,    INTENT(INOUT) :: INSPC(NKT,NTH)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                :: BT(NKT), IC, ANGLE2, ANG(NKT),&
          NORMSPC(NTH), AVG, ANGDIF, M, MAXANG, &
          MAXAN, MINAN
     INTEGER             :: MAI, I, K, T
-    REAL, ALLOCATABLE, DIMENSION(:)  :: ANGLE1
+    REAL , ALLOCATABLE, DIMENSION(:)  :: ANGLE1
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -1182,8 +1181,8 @@ CONTAINS
     !/
     implicit none
     !/
-    REAL,INTENT(IN)    :: SIG,DEPTH
-    REAL,INTENT(OUT)   :: WN
+    REAL , INTENT(IN)  :: SIG,DEPTH
+    REAL , INTENT(OUT) :: WN
     !/
     real    :: wn1,wn2 !,sig1,sig2,dsigdk
     real    :: fk, fk_slp
@@ -1307,31 +1306,31 @@ CONTAINS
 #endif
     !/
     IMPLICIT NONE
-    REAL, INTENT(IN) :: W10M
-    REAL, INTENT(OUT):: ZNOTM
+    REAL , INTENT(IN)  :: W10M
+    REAL , INTENT(OUT) :: ZNOTM
 
     !Parameters from znot_m_v1
-    REAL, PARAMETER :: bs0 = -8.367276172397277e-12
-    REAL, PARAMETER :: bs1 = 1.7398510865876079e-09
-    REAL, PARAMETER :: bs2 = -1.331896578363359e-07
-    REAL, PARAMETER :: bs3 = 4.507055294438727e-06
-    REAL, PARAMETER :: bs4 = -6.508676881906914e-05
-    REAL, PARAMETER :: bs5 = 0.00044745137674732834
-    REAL, PARAMETER :: bs6 = -0.0010745704660847233
+    REAL , PARAMETER :: bs0 = -8.367276172397277e-12
+    REAL , PARAMETER :: bs1 = 1.7398510865876079e-09
+    REAL , PARAMETER :: bs2 = -1.331896578363359e-07
+    REAL , PARAMETER :: bs3 = 4.507055294438727e-06
+    REAL , PARAMETER :: bs4 = -6.508676881906914e-05
+    REAL , PARAMETER :: bs5 = 0.00044745137674732834
+    REAL , PARAMETER :: bs6 = -0.0010745704660847233
 
-    REAL, PARAMETER :: cf0 = 2.1151080765239772e-13
-    REAL, PARAMETER :: cf1 = -3.2260663894433345e-11
-    REAL, PARAMETER :: cf2 = -3.329705958751961e-10
-    REAL, PARAMETER :: cf3 = 1.7648562021709124e-07
-    REAL, PARAMETER :: cf4 = 7.107636825694182e-06
-    REAL, PARAMETER :: cf5 = -0.0013914681964973246
-    REAL, PARAMETER :: cf6 = 0.0406766967657759
+    REAL , PARAMETER :: cf0 = 2.1151080765239772e-13
+    REAL , PARAMETER :: cf1 = -3.2260663894433345e-11
+    REAL , PARAMETER :: cf2 = -3.329705958751961e-10
+    REAL , PARAMETER :: cf3 = 1.7648562021709124e-07
+    REAL , PARAMETER :: cf4 = 7.107636825694182e-06
+    REAL , PARAMETER :: cf5 = -0.0013914681964973246
+    REAL , PARAMETER :: cf6 = 0.0406766967657759
 
     !Variables from znot_wind10m
     REAL            :: Z10, U10,AAA,TMP
 
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
     CALL STRACE (IENT, 'WND2Z0M')
 #endif
 
@@ -1430,10 +1429,10 @@ CONTAINS
     !/
     IMPLICIT NONE
     !/
-    REAL, INTENT(IN) :: WND10
-    REAL, INTENT(OUT) :: SAT
+    REAL , INTENT(IN)  :: WND10
+    REAL , INTENT(OUT) :: SAT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
     CALL STRACE (IENT, 'WND2SAT')
 #endif
     !/ Old HWRF 2015 and ST2

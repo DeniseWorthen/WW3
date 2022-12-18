@@ -234,11 +234,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(OUT)          :: NP
-    INTEGER, INTENT(IN)           :: DIMXP
-    REAL, INTENT(IN)              :: SPEC(NK,NTH), WN(NK), UABS,    &
-         UDIR, DEPTH
-    REAL, INTENT(OUT)             :: XP(DIMP,0:DIMXP)
+    INTEGER , INTENT(OUT) :: NP
+    INTEGER , INTENT(IN)  :: DIMXP
+    REAL ,    INTENT(IN)  :: SPEC(NK,NTH), WN(NK), UABS, UDIR, DEPTH
+    REAL ,    INTENT(OUT) :: XP(DIMP,0:DIMXP)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -249,7 +248,7 @@ CONTAINS
          IPW, IPT, ISP
     INTEGER                 :: PMAP(DIMXP)
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: ZP(NSPEC), ZMIN, ZMAX, Z(NSPEC),     &
          FACT, WSMAX, HSMAX
@@ -557,15 +556,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)      :: IHMAX, IMI(NSPEC)
-    INTEGER, INTENT(OUT)     :: IND(NSPEC)
+    INTEGER , INTENT(IN)  :: IHMAX, IMI(NSPEC)
+    INTEGER , INTENT(OUT) :: IND(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: I, IN, IV
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     INTEGER                 :: NUMV(IHMAX), IADDR(IHMAX),           &
          IORDER(NSPEC)
@@ -677,15 +676,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    !     INTEGER, INTENT(IN)      :: IHMAX, IMI(NSPEC)
-    !     INTEGER, INTENT(IN)      :: IMD(NSPEC)
+    !     INTEGER , INTENT(IN)      :: IHMAX, IMI(NSPEC)
+    !     INTEGER , INTENT(IN)      :: IMD(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: N, J, I, K
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
     CALL STRACE (IENT, 'PTNGHB')
 #endif
     !
@@ -886,9 +885,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMI(NSPEC), IND(NSPEC)
-    INTEGER, INTENT(OUT)    :: IMO(NSPEC), NPART
-    REAL, INTENT(IN)        :: ZP(NSPEC)
+    INTEGER , INTENT(IN)  :: IMI(NSPEC), IND(NSPEC)
+    INTEGER , INTENT(OUT) :: IMO(NSPEC), NPART
+    REAL ,    INTENT(IN)  :: ZP(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -899,7 +898,7 @@ CONTAINS
          JL, JN, IPT, J
     INTEGER                 :: IQ(NSPEC), IQ_START, IQ_END
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: ZPMAX, EP1, DIFF
     !/
@@ -1103,7 +1102,7 @@ CONTAINS
     !> @date 01 Nov 2006
     SUBROUTINE FIFO_ADD ( IV )
 
-      INTEGER, INTENT(IN)      :: IV
+      INTEGER , INTENT(IN) :: IV
       !
       IQ(IQ_END) = IV
       !
@@ -1122,7 +1121,7 @@ CONTAINS
     !>
     SUBROUTINE FIFO_EMPTY ( IEMPTY )
 
-      INTEGER, INTENT(OUT)     :: IEMPTY
+      INTEGER , INTENT(OUT) :: IEMPTY
       !
       IF ( IQ_START .NE. IQ_END ) THEN
         IEMPTY = 0
@@ -1142,7 +1141,7 @@ CONTAINS
     !>
     SUBROUTINE FIFO_FIRST ( IV )
 
-      INTEGER, INTENT(OUT)     :: IV
+      INTEGER , INTENT(OUT) :: IV
       !
       IV = IQ(IQ_START)
       !
@@ -1239,24 +1238,24 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NPI, IMO(NSPEC), DIMXP
-    INTEGER, INTENT(OUT)    :: NPO, PMAP(DIMXP)
-    REAL, INTENT(IN)        :: ZP(NSPEC), DEPTH, UABS, UDIR, WN(NK)
-    REAL, INTENT(OUT)       :: XP(DIMP,0:DIMXP)
+    INTEGER , INTENT(IN)  :: NPI, IMO(NSPEC), DIMXP
+    INTEGER , INTENT(OUT) :: NPO, PMAP(DIMXP)
+    REAL ,    INTENT(IN)  :: ZP(NSPEC), DEPTH, UABS, UDIR, WN(NK)
+    REAL ,    INTENT(OUT) :: XP(DIMP,0:DIMXP)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: IK, ITH, ISP, IP, IFPMAX(0:NPI)
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: SUMF(0:NK+1,0:NPI), SUMFW(NK,0:NPI), &
          SUMFX(NK,0:NPI), SUMFY(NK,0:NPI),    &
          SUME(0:NPI), SUMEW(0:NPI),           &
          SUMEX(0:NPI), SUMEY(0:NPI),          &
          EFPMAX(0:NPI), FCDIR(NTH)
-    REAL,DIMENSION(0:NPI)   :: SUME1, SUME2, SUMEM1, SUMQP
+    REAL , DIMENSION(0:NPI)   :: SUME1, SUME2, SUMEM1, SUMQP
     REAL                    :: HS, XL, XH, XL2, XH2, EL, EH, DENOM, &
          SIGP, WNP, CGP, UPAR, C(NK), RD, FACT
     REAL                    :: QP, M0, M1, M2, MM1, FSPRD, EPM_FP, ALP_PM

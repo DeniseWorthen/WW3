@@ -172,13 +172,13 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MX, MY, NX, NY, INC, MAPACT(MY*MX),  &
-         NACT, MAPBOU(MY*MX), NB0, NB1, NB2,  &
-         NDSE, NDST
-    REAL, INTENT(IN)        :: DT
-    REAL, INTENT(INOUT)     :: VELO(MY*(MX+1)), DX1(MY*(MX+1)),     &
-         DX2(1-MY:MY*(MX+1)), Q(1-MY:MY*(MX+2))
-    LOGICAL, INTENT(IN)     :: BCLOSE
+    INTEGER , INTENT(IN)    :: MX, MY, NX, NY, INC, MAPACT(MY*MX)
+    INTEGER , INTENT(IN)    :: NACT, MAPBOU(MY*MX), NB0, NB1, NB2
+    INTEGER , INTENT(IN)    :: NDSE, NDST
+    REAL ,    INTENT(IN)    :: DT
+    REAL ,    INTENT(INOUT) :: VELO(MY*(MX+1)), DX1(MY*(MX+1))
+    REAL ,    INTENT(INOUT) :: DX2(1-MY:MY*(MX+1)), Q(1-MY:MY*(MX+2))
+    LOGICAL , INTENT(IN)    :: BCLOSE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -186,7 +186,7 @@ CONTAINS
     INTEGER                 :: IXY, IP, IXYC, IXYU, IXYD, IY, IX,   &
          IAD00, IAD02, IADN0, IADN1, IADN2
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT
+    INTEGER , SAVE           :: IENT
 #endif
 #ifdef W3_T1
     INTEGER                 :: IX2, IY2
@@ -552,11 +552,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MX, MY, NX, NY, INC, MAPACT(MY*MX),  &
-         NACT, MAPBOU(MY*MX), NB0, NB1, NB2,  &
-         NDSE, NDST
-    REAL, INTENT(INOUT)     :: CFLL(MY*(MX+1)), Q(1-MY:MY*(MX+2))
-    LOGICAL, INTENT(IN)     :: BCLOSE
+    INTEGER , INTENT(IN)    :: MX, MY, NX, NY, INC, MAPACT(MY*MX)
+    INTEGER , INTENT(IN)    :: NACT, MAPBOU(MY*MX), NB0, NB1, NB2, NDSE, NDST
+    REAL ,    INTENT(INOUT) :: CFLL(MY*(MX+1)), Q(1-MY:MY*(MX+2))
+    LOGICAL , INTENT(IN)    :: BCLOSE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -564,7 +563,7 @@ CONTAINS
     INTEGER                 :: IXY, IP, IXYC, IXYU, IXYD, IY, IX,   &
          IAD00, IAD02, IADN0, IADN1, IADN2
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
 #ifdef W3_T1
     INTEGER                 :: IX2, IY2
@@ -917,12 +916,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MX, MY, NX, NY, INC, MAPACT(MY*MX),  &
-         NACT, MAPBOU(MY*MX), NB0, NB1, NB2,  &
-         NDSE, NDST
-    REAL, INTENT(IN)        :: TRANS(MY*MX,-1:1)
-    REAL, INTENT(INOUT)     :: CFLL(MY*(MX+1)), Q(1-MY:MY*(MX+2))
-    LOGICAL, INTENT(IN)     :: BCLOSE
+    INTEGER , INTENT(IN)    :: MX, MY, NX, NY, INC, MAPACT(MY*MX), NACT
+    INTEGER , INTENT(IN)    :: MAPBOU(MY*MX), NB0, NB1, NB2, NDSE, NDST
+    REAL ,    INTENT(IN)    :: TRANS(MY*MX,-1:1)
+    REAL ,    INTENT(INOUT) :: CFLL(MY*(MX+1)), Q(1-MY:MY*(MX+2))
+    LOGICAL , INTENT(IN)    :: BCLOSE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -931,7 +929,7 @@ CONTAINS
          IAD00, IAD02, IADN0, IADN1, IADN2,   &
          JN, JP
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
 #ifdef W3_T1
     INTEGER                 :: IX2, IY2

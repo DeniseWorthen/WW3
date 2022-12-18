@@ -168,15 +168,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NTH,NK), CG(NK), WN(NK)
-    REAL, INTENT(OUT)       :: EMEAN, FMEAN, WNMEAN, AMAX
+    REAL , INTENT(IN)  :: A(NTH,NK), CG(NK), WN(NK)
+    REAL , INTENT(OUT) :: EMEAN, FMEAN, WNMEAN, AMAX
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: IK, ITH
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: EB(NK), EBAND
     !/
@@ -345,15 +345,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NSPEC), K(NSPEC), USTAR, USDIR
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC)
+    REAL , INTENT(IN)  :: A(NSPEC), K(NSPEC), USTAR, USDIR
+    REAL , INTENT(OUT) :: S(NSPEC), D(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: IS
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
 #ifdef W3_T0
     INTEGER                 :: IK, ITH
@@ -519,16 +519,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NSPEC), K(NSPEC),                  &
-         EMEAN, FMEAN, WNMEAN
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC)
+    REAL , INTENT(IN)  :: A(NSPEC), K(NSPEC), EMEAN, FMEAN, WNMEAN
+    REAL , INTENT(OUT) :: S(NSPEC), D(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: IS
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
 #ifdef W3_T0
     INTEGER                 :: IK, ITH

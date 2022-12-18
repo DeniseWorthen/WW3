@@ -1,4 +1,4 @@
-#include "w3macros.h"
+ #include "w3macros.h"
 !/ ------------------------------------------------------------------- /
 MODULE W3PRO1MD
   !/
@@ -152,14 +152,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MAPSTA(NY*NX)
+    INTEGER , INTENT(IN) :: MAPSTA(NY*NX)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: IX, IY, IXY, ISP, IXNEXT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -406,9 +406,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: ISP, MAPSTA(NY*NX)
-    REAL, INTENT(IN)        :: DTG, VGX, VGY
-    REAL, INTENT(INOUT)     :: FIELD(1-NY:NY*(NX+2))
+    INTEGER , INTENT(IN)    :: ISP, MAPSTA(NY*NX)
+    REAL ,    INTENT(IN)    :: DTG, VGX, VGY
+    REAL ,    INTENT(INOUT) :: FIELD(1-NY:NY*(NX+2))
     !/
     !/ ------------------------------------------------------------------ /
     !/ Local parameters
@@ -420,7 +420,7 @@ CONTAINS
     INTEGER                 ::  IXF, IYF
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: CG0, CGL, CGA, CC, CGN
     REAL                    :: DTLOC,DTRAD, VCB
@@ -943,12 +943,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: ISEA
-    REAL, INTENT(IN)        :: FACTH, FACK, CTHG0, CG(0:NK+1),      &
-         WN(0:NK+1), DEPTH, DDDX, DDDY,       &
-         CX, CY, DCXDX, DCXDY, DCYDX, DCYDY
-    REAL, INTENT(IN)        :: DCDX(0:NK+1), DCDY(0:NK+1)
-    REAL, INTENT(INOUT)     :: VA(NSPEC)
+    INTEGER , INTENT(IN)    :: ISEA
+    REAL ,    INTENT(IN)    :: FACTH, FACK, CTHG0, CG(0:NK+1), WN(0:NK+1)
+    REAL ,    INTENT(IN)    :: DEPTH, DDDX, DDDY, CX, CY, DCXDX, DCXDY, DCYDX, DCYDY
+    REAL ,    INTENT(IN)    :: DCDX(0:NK+1), DCDY(0:NK+1)
+    REAL ,    INTENT(INOUT) :: VA(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -962,7 +961,7 @@ CONTAINS
          VFLWN(1-NTH:NSPEC), DSDD(0:NK+1),    &
          FRK(NK), FRG(NK), FKC(NTH), DWNI(NK)
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
     CALL STRACE (IENT, 'W3KTP1')
 #endif
     !/

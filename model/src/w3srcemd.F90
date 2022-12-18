@@ -66,7 +66,7 @@ MODULE W3SRCEMD
   !
   !/ ------------------------------------------------------------------- /
   !/
-  REAL, PARAMETER, PRIVATE:: OFFSET = 1.
+  REAL , PARAMETER, PRIVATE:: OFFSET = 1.
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
@@ -654,29 +654,26 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: srce_call, IT, ISEA, JSEA, IX, IY, IMOD
-    REAL, intent(in)        :: SPECOLD(NSPEC), CLATSL
-    REAL, INTENT(OUT)       :: VSIO(NSPEC), VDIO(NSPEC)
-    LOGICAL, INTENT(OUT)    :: SHAVEIO
-    REAL, INTENT(IN)        :: D_INP, U10ABS,     &
-         U10DIR, AS, CX, CY, DTG, D50,PSIC,   &
-         ICE, ICEH
+    INTEGER , INTENT(IN)    :: srce_call, IT, ISEA, JSEA, IX, IY, IMOD
+    REAL ,    intent(in)    :: SPECOLD(NSPEC), CLATSL
+    REAL ,    INTENT(OUT)   :: VSIO(NSPEC), VDIO(NSPEC)
+    LOGICAL , INTENT(OUT)   :: SHAVEIO
+    REAL ,    INTENT(IN)    :: D_INP, U10ABS, U10DIR, AS, CX, CY, DTG, D50
+    REAL ,    INTENT(IN)    :: PSIC, ICE, ICEH
 #ifdef W3_FLX5
-    REAL, INTENT(IN)        :: TAUA, TAUADIR
+    REAL ,    INTENT(IN)    :: TAUA, TAUADIR
 #endif
-    INTEGER, INTENT(IN)     :: REFLED(6)
-    REAL, INTENT(IN)        :: REFLEC(4), DELX, DELY, DELA,         &
-         TRNX, TRNY, BERG, ICEDMAX, DAIR
-    REAL, INTENT(INOUT)     :: WN1(NK), CG1(NK), &
-         SPEC(NSPEC), ALPHA(NK), USTAR,       &
-         USTDIR, FPI, TAUOX, TAUOY,           &
-         TAUWX, TAUWY, PHIAW, PHIOC, PHICE,   &
-         CHARN, TWS, BEDFORM(3), PHIBBL,      &
-         TAUBBL(2), TAUICE(2), WHITECAP(4),   &
-         TAUWIX, TAUWIY, TAUWNX, TAUWNY,      &
-         ICEF, TAUOCX, TAUOCY, WNMEAN
-    REAL, INTENT(OUT)       :: DTDYN, FCUT
-    REAL, INTENT(IN)        :: COEF
+    INTEGER , INTENT(IN)    :: REFLED(6)
+    REAL ,    INTENT(IN)    :: REFLEC(4), DELX, DELY, DELA, TRNX, TRNY, BERG, ICEDMAX, DAIR
+    REAL ,    INTENT(INOUT) :: WN1(NK), CG1(NK), SPEC(NSPEC), ALPHA(NK), USTAR
+    REAL ,    INTENT(INOUT) :: USTDIR, FPI, TAUOX, TAUOY
+    REAL ,    INTENT(INOUT) :: TAUWX, TAUWY, PHIAW, PHIOC, PHICE
+    REAL ,    INTENT(INOUT) :: CHARN, TWS, BEDFORM(3), PHIBBL
+    REAL ,    INTENT(INOUT) :: TAUBBL(2), TAUICE(2), WHITECAP(4)
+    REAL ,    INTENT(INOUT) :: TAUWIX, TAUWIY, TAUWNX, TAUWNY
+    REAL ,    INTENT(INOUT) :: ICEF, TAUOCX, TAUOCY, WNMEAN
+    REAL ,    INTENT(OUT)   :: DTDYN, FCUT
+    REAL ,    INTENT(IN)    :: COEF
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -685,16 +682,16 @@ CONTAINS
          IKS1, IS1, NSPECH, IDT, IERR, NKD, ISP
     INTEGER                 :: IOBPIP, IOBPDIP, IOBDPIP
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
 #ifdef W3_NNT
-    INTEGER, SAVE           :: NDSD = 89, NDSD2 = 88, J
+    INTEGER , SAVE           :: NDSD = 89, NDSD2 = 88, J
 #endif
 #ifdef W3_NL5
     INTEGER                 :: QI5TSTART(2)
     REAL                    :: QR5KURT
-    INTEGER, PARAMETER      :: NL5_SELECT = 1
-    REAL, PARAMETER         :: NL5_OFFSET = 0.  ! explicit dyn.
+    INTEGER , PARAMETER      :: NL5_SELECT = 1
+    REAL , PARAMETER         :: NL5_OFFSET = 0.  ! explicit dyn.
 #endif
     REAL                    :: DTTOT, FHIGH, DT, AFILT, DAMAX, AFAC,&
          HDT, ZWND, FP, DEPTH, TAUSCX, TAUSCY, FHIGI
@@ -793,7 +790,7 @@ CONTAINS
     DOUBLE PRECISION        :: SCATSPEC(NTH)
 #endif
     REAL                    :: FOUT(NK,NTH), SOUT(NK,NTH), DOUT(NK,NTH)
-    REAL, SAVE              :: TAUNUX, TAUNUY
+    REAL , SAVE              :: TAUNUX, TAUNUY
 #ifdef W3_OMPG
     !$omp threadprivate( TAUNUX, TAUNUY)
 #endif
@@ -810,7 +807,7 @@ CONTAINS
     LOGICAL                 :: PrintDeltaSmDA
     REAL                    :: eInc1, eInc2, eVS, eVD, JAC
     REAL                    :: DeltaSRC(NSPEC)
-    REAL, PARAMETER         :: DTMINTOT = 0.01
+    REAL , PARAMETER         :: DTMINTOT = 0.01
     LOGICAL                 :: LNEWLIMITER = .FALSE.
 #ifdef W3_PDLIB
     REAL                 :: PreVS, FAK, DVS, SIDT, FAKS, MAXDAC
@@ -2418,15 +2415,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NSPEC), CG(NK), S(NSPEC)
-    REAL, INTENT(OUT)       :: FPI
+    REAL , INTENT(IN)  :: A(NSPEC), CG(NK), S(NSPEC)
+    REAL , INTENT(OUT) :: FPI
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: IS, IK
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    ::  M0, M1, SIN1A(NK)
     !/
@@ -2536,15 +2533,16 @@ CONTAINS
     !/ Local PARAMETERs
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
     !/
+    REAL , INTENT(IN)    :: SPEC(NSPEC)
+    REAL , INTENT(INOUT) :: VS(NSPEC), VD(NSPEC)
 
-    INTEGER             :: ISP, ITH, IK, IS
-    REAL, INTENT(IN)    :: SPEC(NSPEC)
-    REAL, INTENT(INOUT) :: VS(NSPEC), VD(NSPEC)
+    INTEGER :: ISP, ITH, IK, IS
+
 #ifdef W3_S
     CALL STRACE (IENT, 'SIGN_VSD_SEMI_IMPLICIT_WW3')
 #endif
@@ -2624,14 +2622,16 @@ CONTAINS
     !/ Local PARAMETERs
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
     !/
+    REAL , INTENT(IN)    :: SPEC(NSPEC)
+    REAL , INTENT(INOUT) :: VS(NSPEC), VD(NSPEC)
+
     INTEGER             :: ISP, ITH, IK, IS
-    REAL, INTENT(IN)    :: SPEC(NSPEC)
-    REAL, INTENT(INOUT) :: VS(NSPEC), VD(NSPEC)
+
 #ifdef W3_S
     CALL STRACE (IENT, 'SIGN_VSD_PATANKAR_WW3')
 #endif

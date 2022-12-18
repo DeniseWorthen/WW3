@@ -201,15 +201,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD
-    INTEGER, INTENT(INOUT)  :: TDATA(2)
+    INTEGER , INTENT(IN)    :: IMOD
+    INTEGER , INTENT(INOUT) :: TDATA(2)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: MDSEN, J, DTIME(2), IERR, NDTNEW, JJ
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: DTTST
     LOGICAL                 :: FIRST
@@ -607,9 +607,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)          :: IMOD, J
-    INTEGER, INTENT(OUT)         :: IERR
-    CHARACTER(LEN=3), INTENT(IN) :: IDSTR
+    INTEGER , INTENT(IN)          :: IMOD, J
+    INTEGER , INTENT(OUT)         :: IERR
+    CHARACTER(LEN=3) , INTENT(IN) :: IDSTR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -617,7 +617,7 @@ CONTAINS
     INTEGER                 :: MDSEN, DTIME(2), NDTNEW
     REAL                    :: XXX(NY,NX)
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -826,10 +826,10 @@ CONTAINS
     CASE ( 10 )
       ! notes:
       ! SUBROUTINE W3FLDM in w3fldsmd.ftn :
-      !       INTEGER, INTENT(INOUT)  :: NH, THO(2,6,NHM), TF0(2), TFN(2)
-      !       INTEGER, INTENT(INOUT)  :: NH, THO(2,-7:6,NHM), TF0(2), TFN(2)
-      !       REAL, INTENT(INOUT)     :: HA(NHM,6), HD(NHM,6), A0, AN, D0, DN
-      !       REAL, INTENT(INOUT)     :: HA(NHM,-7:6), HD(NHM,-7:6), A0, AN, D0, DN
+      !       INTEGER , INTENT(INOUT)  :: NH, THO(2,6,NHM), TF0(2), TFN(2)
+      !       INTEGER , INTENT(INOUT)  :: NH, THO(2,-7:6,NHM), TF0(2), TFN(2)
+      !       REAL , INTENT(INOUT)     :: HA(NHM,6), HD(NHM,6), A0, AN, D0, DN
+      !       REAL , INTENT(INOUT)     :: HA(NHM,-7:6), HD(NHM,-7:6), A0, AN, D0, DN
       ! Arguments #
       !   THO     8
       !   HA      9
@@ -955,15 +955,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, J, JMOD
-    INTEGER, INTENT(OUT)    :: IERR
+    INTEGER , INTENT(IN)  :: IMOD, J, JMOD
+    INTEGER , INTENT(OUT) :: IERR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: ICONSC, ICONSW, ICONSU
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -1398,11 +1398,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, JMOD, CONSTP
-    REAL, INTENT(OUT)       :: VX(NX,NY), VY(NX,NY)
-    REAL, INTENT(IN)        :: VXI(GRIDS(JMOD)%NX,GRIDS(JMOD)%NY),  &
-         VYI(GRIDS(JMOD)%NX,GRIDS(JMOD)%NY),  &
-         UNDEF
+    INTEGER , INTENT(IN)  :: IMOD, JMOD, CONSTP
+    REAL ,    INTENT(OUT) :: VX(NX,NY), VY(NX,NY)
+    REAL ,    INTENT(IN)  :: VXI(GRIDS(JMOD)%NX,GRIDS(JMOD)%NY)
+    REAL ,    INTENT(IN)  :: VYI(GRIDS(JMOD)%NX,GRIDS(JMOD)%NY)
+    REAL ,    INTENT(IN)  :: UNDEF
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1414,9 +1414,9 @@ CONTAINS
     INTEGER                 :: NPOIX, NPOIY, I,  IFIELDS,CURVI   !RP
 
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
-    INTEGER, ALLOCATABLE    :: NXA(:,:), NYA(:,:)
+    INTEGER , ALLOCATABLE    :: NXA(:,:), NYA(:,:)
     REAL                    :: XR, YR, R1, R2, RT, XFL, XFR, XSL,   &
          XSR, YFL, YFR, YSL, YSR
     REAL                    :: VXL, VYL, VA0, VA, VA2, FACTOR,      &
@@ -1425,21 +1425,21 @@ CONTAINS
     REAL                    :: LONC, LATC, SXYC,                    &
          XDI, DTOLER, VALUEX, VALUEY
 
-    REAL, ALLOCATABLE       :: RXA(:,:), RYA(:,:)
+    REAL , ALLOCATABLE       :: RXA(:,:), RYA(:,:)
 
-    !      REAL, ALLOCATABLE       :: VARIN(:,:)                        !RP
+    !      REAL , ALLOCATABLE       :: VARIN(:,:)                        !RP
 
     LOGICAL                 :: MAP1(NX,NY), MAP2(NX,NY),            &
          MAP3(NX,NY), FLAGUP
     !
-    INTEGER, POINTER        :: NXI, NYI, MAP(:,:), MAPI(:,:)
-    REAL, POINTER           :: X0I, Y0I, SXI, SYI !RP , HPFACI, HQFACI
+    INTEGER , POINTER        :: NXI, NYI, MAP(:,:), MAPI(:,:)
+    REAL , POINTER           :: X0I, Y0I, SXI, SYI !RP , HPFACI, HQFACI
 
-    REAL, POINTER           :: HPFACI(:,:), HQFACI(:,:)
+    REAL , POINTER           :: HPFACI(:,:), HQFACI(:,:)
     DOUBLE PRECISION, POINTER :: XGRDI(:,:), YGRDI(:,:), XGRDC(:,:), YGRDC(:,:)
 
-    INTEGER, POINTER        :: ICLOSE
-    REAL, ALLOCATABLE       :: XGRTMP(:),YGRTMP(:)
+    INTEGER , POINTER        :: ICLOSE
+    REAL , ALLOCATABLE       :: XGRTMP(:),YGRTMP(:)
 #ifdef W3_T1
     CHARACTER(LEN=17)       :: FORMAT1
 #endif
@@ -2076,10 +2076,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, JMOD
-    REAL, INTENT(OUT)       :: FD(NX,NY)
-    REAL, INTENT(IN)        :: FDI(GRIDS(JMOD)%NX,GRIDS(JMOD)%NY),  &
-         UNDEF
+    INTEGER , INTENT(IN)  :: IMOD, JMOD
+    REAL ,    INTENT(OUT) :: FD(NX,NY)
+    REAL ,    INTENT(IN)  :: FDI(GRIDS(JMOD)%NX,GRIDS(JMOD)%NY)
+    REAL ,    INTENT(IN)  :: UNDEF
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2092,9 +2092,9 @@ CONTAINS
     INTEGER                 :: NPOIX, NPOIY, I, CURVI               !RP
 
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
-    INTEGER, ALLOCATABLE    :: NXA(:,:), NYA(:,:)
+    INTEGER , ALLOCATABLE    :: NXA(:,:), NYA(:,:)
     REAL                    :: XR, YR, R1, R2, RT, XFL, XFR, XSL,   &
          XSR, YFL, YFR, YSL, YSR
     REAL                    :: FDL, WTOT, WL
@@ -2102,19 +2102,19 @@ CONTAINS
     REAL                    :: LONC, LATC,  SXYC,                   &
          XDI, DTOLER, VALUEINTER
 
-    REAL, ALLOCATABLE       :: RXA(:,:), RYA(:,:)
+    REAL , ALLOCATABLE       :: RXA(:,:), RYA(:,:)
 
 
     LOGICAL                 :: MAP1(NX,NY), MAP2(NX,NY),            &
          MAP3(NX,NY), FLAGUP
     !
-    INTEGER, POINTER        :: NXI, NYI, MAP(:,:), MAPI(:,:)
+    INTEGER , POINTER        :: NXI, NYI, MAP(:,:), MAPI(:,:)
 
     DOUBLE PRECISION, POINTER :: XGRDI(:,:), YGRDI(:,:), XGRDC(:,:), YGRDC(:,:)
-    REAL, POINTER             :: HPFACI(:,:), HQFACI(:,:)  !RP
+    REAL , POINTER             :: HPFACI(:,:), HQFACI(:,:)  !RP
 
-    REAL, POINTER           :: X0I, Y0I, SXI, SYI !RPXXX , HPFACI, HQFACI
-    INTEGER, POINTER        :: ICLOSE
+    REAL , POINTER           :: X0I, Y0I, SXI, SYI !RPXXX , HPFACI, HQFACI
+    INTEGER , POINTER        :: ICLOSE
 #ifdef W3_T1
     CHARACTER(LEN=17)       :: FORMAT1
 #endif
@@ -2684,10 +2684,10 @@ CONTAINS
     !
     !  7. Source code :
 
-    INTEGER, INTENT(IN) :: LENGTH
-    REAL, DIMENSION(LENGTH), INTENT(IN) :: ARRAY
-    REAL, INTENT(IN) :: VALUE
-    REAL, INTENT(IN), OPTIONAL :: DELTA
+    INTEGER ,                 INTENT(IN)           :: LENGTH
+    REAL , DIMENSION(LENGTH), INTENT(IN)           :: ARRAY
+    REAL ,                    INTENT(IN)           :: VALUE
+    REAL ,                    INTENT(IN), OPTIONAL :: DELTA
 
     INTEGER :: XYCURVISEARCH
 
@@ -2823,12 +2823,13 @@ CONTAINS
     ! BY XARRAY WITH DIMENSION X_LEN
     ! AND THE GRID Y VALUES SPECIFIED BY YARRAY WITH DIMENSION Y_LEN
     !
-    INTEGER, INTENT(IN) :: X_LEN, Y_LEN
-    REAL, DIMENSION(X_LEN), INTENT(IN) :: XARRAY
-    REAL, DIMENSION(Y_LEN), INTENT(IN) :: YARRAY
-    REAL, DIMENSION(X_LEN, Y_LEN), INTENT(IN) :: FUNC
-    REAL, INTENT(IN) :: X,Y
-    REAL, INTENT(IN), OPTIONAL :: DELTA
+    INTEGER ,                       INTENT(IN)           :: X_LEN, Y_LEN
+    REAL , DIMENSION(X_LEN),        INTENT(IN)           :: XARRAY
+    REAL , DIMENSION(Y_LEN),        INTENT(IN)           :: YARRAY
+    REAL , DIMENSION(X_LEN, Y_LEN), INTENT(IN)           :: FUNC
+    REAL ,                          INTENT(IN)           :: X,Y
+    REAL ,                          INTENT(IN), OPTIONAL :: DELTA
+
     REAL :: DENOM, X1, X2, Y1, Y2
     INTEGER :: INX,JNX
 
@@ -2962,13 +2963,13 @@ CONTAINS
     !
     ! 10. Source code :
     !
-    INTEGER, INTENT(IN) :: X_LEN, Y_LEN
-    REAL, DIMENSION(X_LEN), INTENT(IN) :: XARRAY
-    REAL, DIMENSION(Y_LEN), INTENT(IN) :: YARRAY
-    REAL, DIMENSION(X_LEN, Y_LEN), INTENT(IN) :: FUNC1, FUNC2
-    REAL, INTENT(IN) :: X,Y
-    REAL, INTENT(IN), OPTIONAL :: DELTA
-    REAL, INTENT(OUT) :: VAL1,VAL2
+    INTEGER ,                       INTENT(IN)           :: X_LEN, Y_LEN
+    REAL , DIMENSION(X_LEN),        INTENT(IN)           :: XARRAY
+    REAL , DIMENSION(Y_LEN),        INTENT(IN)           :: YARRAY
+    REAL , DIMENSION(X_LEN, Y_LEN), INTENT(IN)           :: FUNC1, FUNC2
+    REAL ,                          INTENT(IN)           :: X,Y
+    REAL ,                          INTENT(IN), OPTIONAL :: DELTA
+    REAL ,                          INTENT(OUT)          :: VAL1,VAL2
 
     REAL :: DENOM, X1, X2, Y1, Y2,C1,C2,C3,C4
     INTEGER :: INX,JNX
@@ -3048,9 +3049,9 @@ CONTAINS
 
     !IMPLICIT NONE
     INTEGER  X_LEN, Y_LEN, INXEND, INYEND, NPX,NPY
-    REAL, DIMENSION(X_LEN) :: XARRAY
-    REAL, DIMENSION(Y_LEN)  :: YARRAY
-    REAL, DIMENSION(X_LEN, Y_LEN) :: FUNC
+    REAL , DIMENSION(X_LEN) :: XARRAY
+    REAL , DIMENSION(Y_LEN)  :: YARRAY
+    REAL , DIMENSION(X_LEN, Y_LEN) :: FUNC
     REAL :: X,Y
 
     REAL :: X1, X2, Y1, Y2, SUM

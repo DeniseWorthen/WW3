@@ -208,15 +208,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)                 :: NDS, NDST, NDSE, NY
-    INTEGER, INTENT(INOUT)              :: NX
-    INTEGER, INTENT(OUT)                :: IERR
-    INTEGER, INTENT(INOUT)              :: GTYPE
-    CHARACTER(LEN=3), INTENT(INOUT)     :: IDFLD
-    CHARACTER, INTENT(IN)               :: INXOUT*(*)
-    CHARACTER, INTENT(IN), OPTIONAL     :: FEXT*(*), FPRE*(*)
-    LOGICAL, INTENT(IN), OPTIONAL       :: FHDR
-    INTEGER, INTENT(INOUT), OPTIONAL    :: TIDEFLAGIN
+    INTEGER ,          INTENT(IN)              :: NDS, NDST, NDSE, NY
+    INTEGER ,          INTENT(INOUT)           :: NX
+    INTEGER ,          INTENT(OUT)             :: IERR
+    INTEGER ,          INTENT(INOUT)           :: GTYPE
+    CHARACTER(LEN=3) , INTENT(INOUT)           :: IDFLD
+    CHARACTER ,        INTENT(IN)              :: INXOUT*(*)
+    CHARACTER ,        INTENT(IN), OPTIONAL    :: FEXT*(*), FPRE*(*)
+    LOGICAL,           INTENT(IN), OPTIONAL    :: FHDR
+    INTEGER ,          INTENT(INOUT), OPTIONAL :: TIDEFLAGIN
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -224,7 +224,7 @@ CONTAINS
     INTEGER                 :: NXT, NYT, GTYPET, I
     INTEGER                 :: FILLER(3)
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     LOGICAL                 :: WRITE
     CHARACTER(LEN=3)        :: TSFLD
@@ -622,16 +622,16 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)                 :: NDS, NDST, NDSE, NX, NY
-    CHARACTER(LEN=3), INTENT(INOUT)     :: IDFLD
-    CHARACTER*(*), INTENT(IN)           :: INXOUT
-    INTEGER, INTENT(OUT)                :: IERR
+    INTEGER ,          INTENT(IN)    :: NDS, NDST, NDSE, NX, NY
+    CHARACTER(LEN=3) , INTENT(INOUT) :: IDFLD
+    CHARACTER*(*),     INTENT(IN)    :: INXOUT
+    INTEGER ,          INTENT(OUT)   :: IERR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     LOGICAL                 :: WRITE
     INTEGER                 :: I, IX
@@ -814,16 +814,16 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)                 :: NDS, NDST, NDSE, NX, NY, IDAT
-    CHARACTER(LEN=3), INTENT(INOUT)     :: IDFLD
-    CHARACTER*(*), INTENT(IN)           :: INXOUT
-    INTEGER, INTENT(OUT)                :: IERR
+    INTEGER ,          INTENT(IN)    :: NDS, NDST, NDSE, NX, NY, IDAT
+    CHARACTER(LEN=3) , INTENT(INOUT) :: IDFLD
+    CHARACTER*(*),     INTENT(IN)    :: INXOUT
+    INTEGER ,          INTENT(OUT)   :: IERR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     LOGICAL                 :: WRITE
     INTEGER                 :: I, IX, TIDE_MF1
@@ -1091,27 +1091,26 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)          :: NDS, NDST, NDSE, MX, MY,        &
-         NX, NY, T0(2), TN(2)
-    INTEGER, INTENT(INOUT)       :: TF0(2), TFN(2)
-    INTEGER, INTENT(OUT)         :: IERR
-    REAL, INTENT(INOUT)          :: FX0(MX,MY), FY0(MX,MY),         &
-         FXN(MX,MY), FYN(MX,MY),         &
-         FA0(MX,MY), FAN(MX,MY)
-    CHARACTER, INTENT(IN)        :: INXOUT*(*)
-    CHARACTER(LEN=3), INTENT(IN) :: IDFLD
-    LOGICAL, INTENT(INOUT), OPTIONAL        :: FLAGSC
+    INTEGER ,          INTENT(IN)              :: NDS, NDST, NDSE, MX, MY, NX, NY
+    INTEGER ,          INTENT(IN)              :: T0(2), TN(2)
+    INTEGER ,          INTENT(INOUT)           :: TF0(2), TFN(2)
+    INTEGER ,          INTENT(OUT)             :: IERR
+    REAL ,             INTENT(INOUT)           :: FX0(MX,MY), FY0(MX,MY)
+    REAL ,             INTENT(INOUT)           :: FXN(MX,MY), FYN(MX,MY)
+    REAL ,             INTENT(INOUT)           :: FA0(MX,MY), FAN(MX,MY)
+    CHARACTER ,        INTENT(IN)              :: INXOUT*(*)
+    CHARACTER(LEN=3) , INTENT(IN)              :: IDFLD
+    LOGICAL,           INTENT(INOUT), OPTIONAL :: FLAGSC
 #ifdef W3_OASIS
-    INTEGER, INTENT(IN), OPTIONAL :: COUPL_COMM
+    INTEGER ,          INTENT(IN), OPTIONAL    :: COUPL_COMM
 #endif
-
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: IX, IY, J, ISTAT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: DTTST
     LOGICAL                 :: WRITE, FL2D, FLFRST, FLBE, FLST,    &
@@ -1573,19 +1572,19 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)          :: NDS, NDST, NDSE, TIME(2), NR, ND
-    INTEGER, INTENT(INOUT)       :: TD(2), NDOUT
-    INTEGER, INTENT(OUT)         :: IERR
-    REAL, INTENT(INOUT)          :: DATA(NR,ND)
-    CHARACTER, INTENT(IN)        :: INXOUT*(*)
-    CHARACTER(LEN=3), INTENT(IN) :: IDFLD
+    INTEGER ,          INTENT(IN)    :: NDS, NDST, NDSE, TIME(2), NR, ND
+    INTEGER ,          INTENT(INOUT) :: TD(2), NDOUT
+    INTEGER ,          INTENT(OUT)   :: IERR
+    REAL ,             INTENT(INOUT) :: DATA(NR,ND)
+    CHARACTER ,        INTENT(IN)    :: INXOUT*(*)
+    CHARACTER(LEN=3) , INTENT(IN)    :: IDFLD
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: ISTAT, NRT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: DTTST
     LOGICAL                 :: WRITE, SIZE
@@ -1894,32 +1893,31 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDSM, NDST, NDSE, MX, MY, NX, NY,    &
-         MXI, MYI, NXI, NYI, MASK(MXI,MYI)
-    INTEGER, INTENT(INOUT)  :: MAPOVR(MX,MY), ILAND
-    INTEGER, INTENT(OUT)    :: IERR, IX1(MX,MY), IX2(MX,MY),        &
-         IY1(MX,MY), IY2(MX,MY)
-    REAL, INTENT(IN)        :: TLAT(MY,MX), TLON(MY,MX)
-    REAL, INTENT(IN)   ,TARGET :: ALAT(MXI,MYI)
-    REAL, INTENT(INOUT),TARGET :: ALON(MXI,MYI)
-    REAL, INTENT(OUT)       :: RD11(MX,MY), RD12(MX,MY),            &
-         RD21(MX,MY), RD22(MX,MY)
-    LOGICAL, INTENT(IN)     :: FLAGLL, CLOSED
+    INTEGER , INTENT(IN)            :: NDSM, NDST, NDSE, MX, MY, NX, NY
+    INTEGER , INTENT(IN)            :: MXI, MYI, NXI, NYI, MASK(MXI,MYI)
+    INTEGER , INTENT(INOUT)         :: MAPOVR(MX,MY), ILAND
+    INTEGER , INTENT(OUT)           :: IERR, IX1(MX,MY), IX2(MX,MY)
+    INTEGER , INTENT(OUT)           :: IY1(MX,MY), IY2(MX,MY)
+    REAL ,    INTENT(IN)            :: TLAT(MY,MX), TLON(MY,MX)
+    REAL ,    INTENT(IN)   , TARGET :: ALAT(MXI,MYI)
+    REAL ,    INTENT(INOUT), TARGET :: ALON(MXI,MYI)
+    REAL ,    INTENT(OUT)           :: RD11(MX,MY), RD12(MX,MY), RD21(MX,MY), RD22(MX,MY)
+    LOGICAL,  INTENT(IN)            :: FLAGLL, CLOSED
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     TYPE(T_GSU)             :: GSU
     INTEGER                 :: IX, IY, I, J, NNBR, II(4), JJ(4),    &
          MSKC, IFOUND, IMASK, ICOR1
     REAL                    :: RR(4), X, Y
-    REAL, POINTER           :: PLAT(:,:), PLON(:,:)
+    REAL , POINTER           :: PLAT(:,:), PLON(:,:)
     LOGICAL                 :: INGRID, LMSK(MXI,MYI)
     LOGICAL                 :: LDBG = .FALSE.
-    INTEGER, PARAMETER      :: NNBR_MAX = 2
+    INTEGER , PARAMETER      :: NNBR_MAX = 2
     INTEGER                 :: ICLO
     !/
     !/ ------------------------------------------------------------------- /
@@ -2252,20 +2250,19 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: J, NDST, NDSE, MX, MY, NX, NY,       &
-         T0(2), TN(2), NHM
-    INTEGER, INTENT(INOUT)  :: NH, THO(2,-7:10,NHM), TF0(2), TFN(2)
-    INTEGER, INTENT(OUT)    :: IERR
-    REAL, INTENT(INOUT)     :: HA(NHM,-7:10), HD(NHM,-7:10), HS(NHM,-7:10), &
-         FX0(MX,MY), FY0(MX,MY), FS0(MX,MY),  &
-         FXN(MX,MY), FYN(MX,MY), FSN(MX,MY)
+    INTEGER , INTENT(IN)    :: J, NDST, NDSE, MX, MY, NX, NY, T0(2), TN(2), NHM
+    INTEGER , INTENT(INOUT) :: NH, THO(2,-7:10,NHM), TF0(2), TFN(2)
+    INTEGER , INTENT(OUT)   :: IERR
+    REAL ,    INTENT(INOUT) :: HA(NHM,-7:10), HD(NHM,-7:10), HS(NHM,-7:10)
+    REAL ,    INTENT(INOUT) :: FX0(MX,MY), FY0(MX,MY), FS0(MX,MY)
+    REAL ,    INTENT(INOUT) :: FXN(MX,MY), FYN(MX,MY), FSN(MX,MY)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: IX, IY, I
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: X, Y, DIR, DTTST, DERA
     LOGICAL                 :: FLFRST
@@ -2576,17 +2573,17 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: J, NDST, NDSE, T0(2), TN(2), NHM
-    INTEGER, INTENT(INOUT)  :: NH, THO(2,-7:10,NHM), TF0(2), TFN(2)
-    INTEGER, INTENT(OUT)    :: IERR
-    REAL, INTENT(INOUT)     :: HA(NHM,-7:10), HD(NHM,-7:10), A0, AN, D0, DN
+    INTEGER , INTENT(IN)    :: J, NDST, NDSE, T0(2), TN(2), NHM
+    INTEGER , INTENT(INOUT) :: NH, THO(2,-7:10,NHM), TF0(2), TFN(2)
+    INTEGER , INTENT(OUT)   :: IERR
+    REAL ,    INTENT(INOUT) :: HA(NHM,-7:10), HD(NHM,-7:10), A0, AN, D0, DN
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: I
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: DTTST, DERA
     LOGICAL                 :: FLFRST

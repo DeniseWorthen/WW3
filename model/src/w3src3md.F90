@@ -92,13 +92,13 @@ MODULE W3SRC3MD
   !/ Public variables
   !/
   !air kinematic viscosity (used in WAM)
-  INTEGER, PARAMETER      :: ITAUMAX=200,JUMAX=200
-  INTEGER, PARAMETER      :: IUSTAR=100,IALPHA=200, ILEVTAIL=50
+  INTEGER , PARAMETER      :: ITAUMAX=200,JUMAX=200
+  INTEGER , PARAMETER      :: IUSTAR=100,IALPHA=200, ILEVTAIL=50
   REAL                    :: TAUT(0:ITAUMAX,0:JUMAX), DELTAUW, DELU
   ! Table for H.F. stress as a function of 2 variables
   REAL                    :: TAUHFT(0:IUSTAR,0:IALPHA), DELUST, DELALP
-  REAL,    PARAMETER      :: UMAX    = 50.
-  REAL,    PARAMETER      :: TAUWMAX = 2.2361 !SQRT(5.)
+  REAL ,    PARAMETER      :: UMAX    = 50.
+  REAL ,    PARAMETER      :: TAUWMAX = 2.2361 !SQRT(5.)
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
@@ -219,19 +219,18 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NTH,NK), CG(NK), WN(NK), U, UDIR
-    REAL, INTENT(IN)        :: TAUWX, TAUWY
-    LOGICAL, INTENT(IN)     :: LLWS(NSPEC)
-    REAL, INTENT(INOUT)     :: USTAR ,USDIR
-    REAL, INTENT(OUT)       :: EMEAN, FMEAN, FMEANS, WNMEAN, AMAX,  &
-         CD, Z0, CHARN, FMEANWS
+    REAL ,   INTENT(IN)    :: A(NTH,NK), CG(NK), WN(NK), U, UDIR
+    REAL ,   INTENT(IN)    :: TAUWX, TAUWY
+    LOGICAL, INTENT(IN)    :: LLWS(NSPEC)
+    REAL ,   INTENT(INOUT) :: USTAR ,USDIR
+    REAL ,   INTENT(OUT)   :: EMEAN, FMEAN, FMEANS, WNMEAN, AMAX, CD, Z0, CHARN, FMEANWS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: IS, IK, ITH
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
 
     REAL                    :: TAUW, EBAND, EMEANWS, UNZ,       &
@@ -493,19 +492,19 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NSPEC)
-    REAL, INTENT(IN)        :: CG(NK), K(NSPEC),Z0,U, CD
-    REAL, INTENT(IN)        :: USTAR, USDIR, AS, DRAT, ICE       !/Stefan: ICE is DUMMY argument; remove later.
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC), TAUWX, TAUWY, TAUWNX, TAUWNY
-    LOGICAL, INTENT(OUT)    :: LLWS(NSPEC)
-    INTEGER, INTENT(IN)     :: IX, IY
+    REAL ,    INTENT(IN)  :: A(NSPEC)
+    REAL ,    INTENT(IN)  :: CG(NK), K(NSPEC),Z0,U, CD
+    REAL ,    INTENT(IN)  :: USTAR, USDIR, AS, DRAT, ICE       !/Stefan: ICE is DUMMY argument; remove later.
+    REAL ,    INTENT(OUT) :: S(NSPEC), D(NSPEC), TAUWX, TAUWY, TAUWNX, TAUWNY
+    LOGICAL,  INTENT(OUT) :: LLWS(NSPEC)
+    INTEGER , INTENT(IN)  :: IX, IY
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: IS,IK,ITH
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: COSU, SINU, TAUX, TAUY
     REAL                    :: UST2, TAUW, TAUWB
@@ -794,7 +793,7 @@ CONTAINS
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -889,7 +888,7 @@ CONTAINS
     USE CONSTANTS , ONLY : GRAV
     USE W3GDATMD  , ONLY : ZZWND, AALPHA, ZZ0MAX
     IMPLICIT NONE
-    INTEGER, PARAMETER      :: NITER=10
+    INTEGER , PARAMETER      :: NITER=10
     REAL   , PARAMETER      :: XM=0.50, EPS1=0.00001
     !     VARIABLE.   TYPE.     PURPOSE.
     !      *XM*        REAL      POWER OF TAUW/TAU IN ROUGHNESS LENGTH.
@@ -1024,7 +1023,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, intent(in) :: FRMAX  !  maximum frequency
+    REAL , intent(in) :: FRMAX  !  maximum frequency
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1042,14 +1041,14 @@ CONTAINS
     REAL                    :: USTARM, ALPHAM
     REAL                    :: CONST1, OMEGA, OMEGAC
     REAL                    :: UST, ZZ0,OMEGACC, CM
-    INTEGER, PARAMETER      :: JTOT=250
-    REAL, ALLOCATABLE       :: W(:)
+    INTEGER , PARAMETER      :: JTOT=250
+    REAL , ALLOCATABLE       :: W(:)
     REAL                    :: ZX,ZARG,ZMU,ZLOG,ZZ00,ZBETA
     REAL                    :: Y,YC,DELY
     INTEGER                 :: I,J,K,L
     REAL                    :: X0
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
     CALL STRACE (IENT, 'TABU_HF')
 #endif
     !
@@ -1193,8 +1192,8 @@ CONTAINS
     USE CONSTANTS , ONLY : GRAV
     USE W3GDATMD  , ONLY : ZZWND, AALPHA
     IMPLICIT NONE
-    REAL, intent(in) :: WINDSPEED,TAUW
-    REAL, intent(out) :: USTAR, Z0, CHARN
+    REAL , intent(in) :: WINDSPEED,TAUW
+    REAL , intent(out) :: USTAR, Z0, CHARN
     ! local variables
     REAL SQRTCDM1
     REAL X,XI,DELI1,DELI2,XJ,delj1,delj2
@@ -1349,17 +1348,17 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NSPEC), K(NK), CG(NK),                     &
-         DEPTH, USTAR, USDIR, EMEAN, FMEAN, WNMEAN
-    INTEGER, INTENT(IN)     :: IX, IY
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC)
+    REAL ,    INTENT(IN)  :: A(NSPEC), K(NK), CG(NK), DEPTH, USTAR, USDIR, EMEAN
+    REAL ,    INTENT(IN)  :: FMEAN, WNMEAN
+    INTEGER , INTENT(IN)  :: IX, IY
+    REAL ,    INTENT(OUT) :: S(NSPEC), D(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: IS, IK, ITH
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: FACTOR, FACTOR2
     REAL                    :: ALFAMEAN, WNMEAN2

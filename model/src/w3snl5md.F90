@@ -160,34 +160,34 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NTH, NK)         ! N(θ, k)
-    REAL, INTENT(IN)        :: CG(NK)             ! Cg(k)
-    REAL, INTENT(IN)        :: WN(NK)             ! WN(k)
-    REAL, INTENT(IN)        :: FMEAN              ! 1/T_{0, -1}
-    INTEGER, INTENT(IN)     :: T1ABS(2)           ! Absol. t1
-    REAL, INTENT(IN)        :: U10                ! Wind velocity
-    REAL, INTENT(IN)        :: UDIR               ! φ (in rad)
-    INTEGER, INTENT(IN)     :: JSEA               ! Local sea point count
-    REAL, INTENT(OUT)       :: S(NTH,NK),      &  ! Snl
-         D(NTH,NK),      &  ! Dnl
-         KURT               ! Kurtosis
+    REAL ,    INTENT(IN)  :: A(NTH, NK)         ! N(θ, k)
+    REAL ,    INTENT(IN)  :: CG(NK)             ! Cg(k)
+    REAL ,    INTENT(IN)  :: WN(NK)             ! WN(k)
+    REAL ,    INTENT(IN)  :: FMEAN              ! 1/T_{0, -1}
+    INTEGER , INTENT(IN)  :: T1ABS(2)           ! Absol. t1
+    REAL ,    INTENT(IN)  :: U10                ! Wind velocity
+    REAL ,    INTENT(IN)  :: UDIR               ! φ (in rad)
+    INTEGER , INTENT(IN)  :: JSEA               ! Local sea point count
+    REAL ,    INTENT(OUT) :: S(NTH,NK)          ! Snl
+    REAL ,    INTENT(OUT) :: D(NTH,NK)          ! Dnl
+    REAL ,    INTENT(OUT) :: KURT               ! Kurtosis
 
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
-    REAL, PARAMETER         :: BTLOW = 10., BTHGH = 500.
+    REAL , PARAMETER         :: BTLOW = 10., BTHGH = 500.
     REAL                    :: T0REL, T1REL, TDEL1, TDEL2
     REAL                    :: Cvk1(NSPEC), SNL(NSPEC), DNL(NSPEC)
     REAL                    :: Cvk0(NSPEC)
     COMPLEX                 :: INPQR0(QI5NNZ)
     INTEGER                 :: IK, ITH, ISPEC, ISEA, JLOC
-    INTEGER, ALLOCATABLE    :: PDIFF(:)
+    INTEGER , ALLOCATABLE    :: PDIFF(:)
     LOGICAL, SAVE           :: FSTOUT = .TRUE.
     REAL                    :: FACTOR(NK), A2(NK, NTH), S2(NK, NTH)
     REAL                    :: PM_PREV, PM_IVAL, PM_DELT
     REAL                    :: WBT, BTINV
     INTEGER                 :: IUNT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
 
     !/
@@ -454,7 +454,7 @@ CONTAINS
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -537,22 +537,23 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)     :: A(NTH, NK)       ! N(θ, k)
-    REAL, INTENT(IN)     :: CG(NK)           ! Cg(k)
-    REAL, INTENT(IN)     :: WN(NK)           ! WN(k)
-    REAL, INTENT(IN)     :: DPT              ! water depth
-    REAL, INTENT(IN)     :: U10              ! wind velocity
-    REAL, INTENT(IN)     :: UDIR             ! wind dirc. (φ in rad)
-    REAL                 :: CALC_WBTv2
+    REAL , INTENT(IN) :: A(NTH, NK)       ! N(θ, k)
+    REAL , INTENT(IN) :: CG(NK)           ! Cg(k)
+    REAL , INTENT(IN) :: WN(NK)           ! WN(k)
+    REAL , INTENT(IN) :: DPT              ! water depth
+    REAL , INTENT(IN) :: U10              ! wind velocity
+    REAL , INTENT(IN) :: UDIR             ! wind dirc. (φ in rad)
+
+    REAL :: CALC_WBTv2
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !
-    REAL, PARAMETER      :: BETA  = 1.2
+    REAL , PARAMETER      :: BETA  = 1.2
     !
     INTEGER              :: IK, ITH
     REAL                 :: SINU, COSU, TC, TFORCE
@@ -816,8 +817,8 @@ CONTAINS
     !/
     IMPLICIT NONE
     !
-    INTEGER, INTENT(IN)  :: NK, NTH        ! # OF FREQ. & DIRC.
-    REAL, INTENT(IN)     :: ARR2D(NK, NTH)
+    INTEGER , INTENT(IN) :: NK, NTH        ! # OF FREQ. & DIRC.
+    REAL ,    INTENT(IN) :: ARR2D(NK, NTH)
     LOGICAL              :: HasNaN
     !/
     HasNaN = .TRUE.

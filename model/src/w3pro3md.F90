@@ -106,7 +106,7 @@ MODULE W3PRO3MD
   !/
   !/ Private data
   !/
-  REAL, PRIVATE, PARAMETER:: TRNMIN = 0.95
+  REAL ,PRIVATE, PARAMETER:: TRNMIN = 0.95
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
@@ -210,7 +210,7 @@ CONTAINS
     INTEGER                 :: IX, IY, IXY0, IX2, IY2, IX0, IY0,    &
          ISEA, IK, ITH, ISP, ISP0, ISP2, NCENTC
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
 #ifdef W3_T
     INTEGER                 :: MAPTXY(NY,NX), I, IXY
@@ -554,7 +554,7 @@ CONTAINS
     !/
     INTEGER                 :: ISEA, IXY
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -768,9 +768,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: ISP, MAPSTA(NY*NX), MAPFS(NY*NX)
-    REAL, INTENT(IN)        :: DTG, VGX, VGY
-    REAL, INTENT(INOUT)     :: VQ(1-NY:NY*(NX+2))
+    INTEGER , INTENT(IN)    :: ISP, MAPSTA(NY*NX), MAPFS(NY*NX)
+    REAL ,    INTENT(IN)    :: DTG, VGX, VGY
+    REAL ,    INTENT(INOUT) :: VQ(1-NY:NY*(NX+2))
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -781,7 +781,7 @@ CONTAINS
          IIXY3(NSEA), IIXY4(NSEA)
     INTEGER                 :: TTEST(2),DTTST
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: CG0, CGA, CGN, CGX, CGY, CXC, CYC,   &
          CXMIN, CXMAX, CYMIN, CYMAX
@@ -1556,20 +1556,19 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: ISEA
-    REAL, INTENT(IN)        :: FACTH, FACK, CTHG0, CG(0:NK+1),      &
-         WN(0:NK+1), DW, DDDX, DDDY,       &
-         CX, CY, DCXDX, DCXDY, DCYDX, DCYDY
-    REAL, INTENT(IN)        :: DCDX(0:NK+1), DCDY(0:NK+1)
-    REAL, INTENT(INOUT)     :: VA(NSPEC)
-    REAL, INTENT(OUT)       :: CFLTHMAX, CFLKMAX
+    INTEGER , INTENT(IN)    :: ISEA
+    REAL ,    INTENT(IN)    :: FACTH, FACK, CTHG0, CG(0:NK+1), WN(0:NK+1)
+    REAL ,    INTENT(IN)    :: DW, DDDX, DDDY, CX, CY, DCXDX, DCXDY, DCYDX, DCYDY
+    REAL ,    INTENT(IN)    :: DCDX(0:NK+1), DCDY(0:NK+1)
+    REAL ,    INTENT(INOUT) :: VA(NSPEC)
+    REAL ,    INTENT(OUT)   :: CFLTHMAX, CFLKMAX
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER                 :: ITH, IK, ISP
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: FDDMAX, FDG, FKD, FKD0, DCYX,        &
          DCXXYY, DCXY, DCXX, DCXYYX, DCYY,    &
@@ -1966,9 +1965,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: ISEA, MAPSTA(NY*NX), MAPFS(NY*NX)
-    REAL, INTENT(IN)        :: DTG, VGX, VGY
-    REAL, INTENT(INOUT)     :: CFLXYMAX
+    INTEGER , INTENT(IN)    :: ISEA, MAPSTA(NY*NX), MAPFS(NY*NX)
+    REAL ,    INTENT(IN)    :: DTG, VGX, VGY
+    REAL ,    INTENT(INOUT) :: CFLXYMAX
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1976,7 +1975,7 @@ CONTAINS
     INTEGER                 :: ITH, IK, IXY, IP
     INTEGER                 :: IX, IY, IXC, IYC, IBI
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: CG0, CGA, CGN, CGX, CGY, CXC, CYC,   &
          CXMIN, CXMAX, CYMIN, CYMAX

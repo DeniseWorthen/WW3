@@ -440,15 +440,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)        :: IDSI, IDSO, IDSS, IDST, IDSE,     &
-         MPI_COMM
-    CHARACTER*(*), INTENT(IN)  :: IFNAME
-    CHARACTER*(*), INTENT(IN), OPTIONAL :: PREAMB
+    INTEGER ,       INTENT(IN)           :: IDSI, IDSO, IDSS, IDST, IDSE, MPI_COMM
+    CHARACTER*(*) , INTENT(IN)           :: IFNAME
+    CHARACTER*(*) , INTENT(IN), OPTIONAL :: PREAMB
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: MDSE2, IERR, I, J, NMOVE, TTIME(2),  &
+    INTEGER ,                 :: MDSE2, IERR, I, J, NMOVE, TTIME(2),  &
          ILOOP, MDSI2, SCRATCH, RNKMIN,       &
          RNKMAX, RNKTMP, GRPMIN, GRPMAX, II,  &
          NDSREC, NDSFND, NPTS, JJ, IP1, IPN,  &
@@ -456,14 +455,14 @@ CONTAINS
          TLST(2), NCPROC, NPOUTT, NAPLOC,     &
          NAPRES, NAPADD, NAPBCT, IFI, IFJ, IW,&
          IFT
-    INTEGER                 :: STMPT(2), ETMPT(2)
+    INTEGER ,                 :: STMPT(2), ETMPT(2)
 #ifdef W3_MPI
-    INTEGER                 :: IERR_MPI, BGROUP, LGROUP, IROOT
+    INTEGER ,                 :: IERR_MPI, BGROUP, LGROUP, IROOT
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER ,, SAVE           :: IENT = 0
 #endif
-    INTEGER, ALLOCATABLE    :: MDS(:,:), NTRACE(:,:), ODAT(:,:),    &
+    INTEGER ,, ALLOCATABLE    :: MDS(:,:), NTRACE(:,:), ODAT(:,:),    &
          TMPRNK(:), TMPGRP(:), NINGRP(:),     &
          TMOVE(:,:), LOADMP(:,:), IPRT(:,:),  &
          NDPOUT(:), OUTFF(:,:)
@@ -473,7 +472,7 @@ CONTAINS
     REAL                    :: PRFT0, PRFTN
     REAL(KIND=8)            :: get_memory
 #endif
-    REAL, ALLOCATABLE       :: X(:), Y(:), AMOVE(:), DMOVE(:),      &
+    REAL , ALLOCATABLE       :: X(:), Y(:), AMOVE(:), DMOVE(:),      &
          RP1(:), RPN(:)
     LOGICAL                 :: FLT, TFLAGI, TFLAGS(-7:14), PSHARE
     LOGICAL, ALLOCATABLE    :: FLGRD(:,:,:), FLRBPI(:), BCDTMP(:),   &
@@ -511,8 +510,8 @@ CONTAINS
     CHARACTER(LEN=8)        :: WORDS(6)
 
     TYPE OT2TPE
-      INTEGER                    :: NPTS
-      REAL, POINTER              :: X(:), Y(:)
+      INTEGER ,                    :: NPTS
+      REAL , POINTER              :: X(:), Y(:)
       CHARACTER(LEN=40), POINTER :: PNAMES(:)
     END TYPE OT2TPE
     !
@@ -3762,9 +3761,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)        :: IDSI, IDSO, IDSS, IDST, IDSE,     &
-         MPI_COMM
-    CHARACTER*(*), INTENT(IN)  :: IFNAME
+    INTEGER ,      INTENT(IN)           :: IDSI, IDSO, IDSS, IDST, IDSE, MPI_COMM
+    CHARACTER*(*), INTENT(IN)           :: IFNAME
     CHARACTER*(*), INTENT(IN), OPTIONAL :: PREAMB
     !/
     !/ ------------------------------------------------------------------- /
@@ -3800,10 +3798,10 @@ CONTAINS
     INTEGER                 :: IERR_MPI, BGROUP, LGROUP, IROOT
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER ,, SAVE           :: IENT = 0
 #endif
     !
-    INTEGER, ALLOCATABLE    :: MDS(:,:), NTRACE(:,:), ODAT(:,:),     &
+    INTEGER ,, ALLOCATABLE    :: MDS(:,:), NTRACE(:,:), ODAT(:,:),     &
          TMPRNK(:), TMPGRP(:), NINGRP(:),      &
          TMOVE(:,:), LOADMP(:,:), IPRT(:,:),   &
          NDPOUT(:)                             &
@@ -3815,7 +3813,7 @@ CONTAINS
     REAL(KIND=8)            :: get_memory
 #endif
     !
-    REAL, ALLOCATABLE       :: X(:), Y(:), AMOVE(:), DMOVE(:),       &
+    REAL , ALLOCATABLE       :: X(:), Y(:), AMOVE(:), DMOVE(:),       &
          RP1(:), RPN(:)
     !
     LOGICAL                 :: FLT, TFLAGI, TFLAGS(-7:14), PSHARE

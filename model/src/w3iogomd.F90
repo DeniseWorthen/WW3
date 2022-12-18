@@ -240,9 +240,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDSO, NDSEN
-    LOGICAL, INTENT(INOUT)  :: FLGRD(NOGRP,NGRPP), FLGD(NOGRP),     &
-         FLGR2(NOGRP,NGRPP), FLG2(NOGRP)
+    INTEGER , INTENT(IN)    :: NDSO, NDSEN
+    LOGICAL , INTENT(INOUT) :: FLGRD(NOGRP,NGRPP), FLGD(NOGRP)
+    LOGICAL , INTENT(INOUT) :: FLGR2(NOGRP,NGRPP), FLG2(NOGRP)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -250,7 +250,7 @@ CONTAINS
     INTEGER             :: I
     CHARACTER(LEN=10)  :: VARNAME1(5),VARNAME2(5)
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -410,18 +410,18 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDSI, NDSO, NDSS, NDSEN, IAPROC, NAPOUT
-    INTEGER, INTENT(OUT)    :: IERR
-    CHARACTER(LEN=1)        :: COMSTR
-    LOGICAL, INTENT(OUT)    :: FLG2D(NOGRP,NGRPP), FLG1D(NOGRP)
-    CHARACTER(LEN=100)      :: OUT_NAMES(100), TESTSTR
+    INTEGER , INTENT(IN)  :: NDSI, NDSO, NDSS, NDSEN, IAPROC, NAPOUT
+    INTEGER , INTENT(OUT) :: IERR
+    CHARACTER(LEN=1)      :: COMSTR
+    LOGICAL , INTENT(OUT) :: FLG2D(NOGRP,NGRPP), FLG1D(NOGRP)
+    CHARACTER(LEN=100)    :: OUT_NAMES(100), TESTSTR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER             :: IFI, IFJ, IOUT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     CHARACTER(LEN=1)    :: AFLG
     LOGICAL             :: FLT, NAMES
@@ -660,18 +660,18 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDSO, NDSS, NDSEN, IAPROC, NAPOUT
-    CHARACTER(1024), INTENT(IN)   :: FLDOUT
-    INTEGER, INTENT(OUT)    :: IERR
-    LOGICAL, INTENT(OUT)    :: FLG2D(NOGRP,NGRPP), FLG1D(NOGRP)
-    CHARACTER(LEN=100)      :: OUT_NAMES(100), TESTSTR
+    INTEGER ,        INTENT(IN)  :: NDSO, NDSS, NDSEN, IAPROC, NAPOUT
+    CHARACTER(1024), INTENT(IN)  :: FLDOUT
+    INTEGER ,        INTENT(OUT) :: IERR
+    LOGICAL ,        INTENT(OUT) :: FLG2D(NOGRP,NGRPP), FLG1D(NOGRP)
+    CHARACTER(LEN=100)           :: OUT_NAMES(100), TESTSTR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER             :: I, IFI, IFJ, IOUT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     LOGICAL             :: FLT
     !/
@@ -791,9 +791,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    CHARACTER(LEN=*), INTENT(IN) :: FLD
-    INTEGER, INTENT(IN) :: IAPROC, NAPOUT, NDSEN
-    INTEGER, INTENT(OUT) :: I, J
+    CHARACTER(LEN=*) , INTENT(IN)  :: FLD
+    INTEGER ,          INTENT(IN)  :: IAPROC, NAPOUT, NDSEN
+    INTEGER ,          INTENT(OUT) :: I, J
 
     I = -1
     J = -1
@@ -1309,8 +1309,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NTH,NK,0:NSEAL)
-    LOGICAL, INTENT(IN)     :: FLPART, FLOUTG, FLOUTG2
+    REAL ,    INTENT(IN) :: A(NTH,NK,0:NSEAL)
+    LOGICAL , INTENT(IN) :: FLPART, FLOUTG, FLOUTG2
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1319,7 +1319,7 @@ CONTAINS
          IKP0(NSEAL), NKH(NSEAL),             &
          I, J, LKMS, HKMS, ITL
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: FXPMC, FACTOR, FACTOR2, EBAND, FKD,  &
          AABS, UABS,                          &
@@ -1355,7 +1355,7 @@ CONTAINS
          ALPXT(NSEAL), ALPYT(NSEAL),          &
          ALPXY(NSEAL), SCREST(NSEAL)
     REAL                       USSCO, FT1
-    REAL, SAVE              :: HSMIN = 0.01
+    REAL , SAVE              :: HSMIN = 0.01
     LOGICAL                 :: FLOLOC(NOGRP,NGRPP)
     !/
     !/ ------------------------------------------------------------------- /
@@ -2516,11 +2516,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(INOUT)        :: IOTST
-    INTEGER, INTENT(IN)           :: NDSOG
-    INTEGER, INTENT(IN), OPTIONAL :: IMOD
-    CHARACTER, INTENT(IN)         :: INXOUT*(*)
-    CHARACTER(LEN=15) :: TIMETAG
+    INTEGER ,  INTENT(INOUT)        :: IOTST
+    INTEGER ,  INTENT(IN)           :: NDSOG
+    INTEGER ,  INTENT(IN), OPTIONAL :: IMOD
+    CHARACTER, INTENT(IN)           :: INXOUT*(*)
+    CHARACTER(LEN=15)               :: TIMETAG
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2528,9 +2528,9 @@ CONTAINS
     INTEGER                 :: IGRD, IERR, I, J, IX, IY, MOGRP,     &
          MGRPP, ISEA, MOSWLL, IK, IFI, IFJ    &
          ,IFILOUT
-    INTEGER, ALLOCATABLE    :: MAPTMP(:,:)
+    INTEGER , ALLOCATABLE    :: MAPTMP(:,:)
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: AUX1(NSEA), AUX2(NSEA),              &
          AUX3(NSEA), AUX4(NSEA)
@@ -3797,8 +3797,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NTH,NK,0:NSEAL)
-    INTEGER, INTENT(IN)     :: USS_SWITCH
+    REAL ,    INTENT(IN) :: A(NTH,NK,0:NSEAL)
+    INTEGER , INTENT(IN) :: USS_SWITCH
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -3806,7 +3806,7 @@ CONTAINS
     INTEGER                 :: IK, ITH, ISEA, JSEA
     INTEGER                 :: IKST, IKFI, IB
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: FACTOR, FKD,KD
     REAL                    :: ABX(NSEAL), ABY(NSEAL), USSCO
@@ -4034,13 +4034,13 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)     :: A  (NTH, NK, 0:NSEAL)
+    REAL , INTENT(IN) :: A  (NTH, NK, 0:NSEAL)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     !
     INTEGER              :: FPOPT = 0

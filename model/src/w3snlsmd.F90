@@ -77,10 +77,10 @@ MODULE W3SNLSMD
   !/ ------------------------------------------------------------------- /
   !/
   INTEGER, PRIVATE, PARAMETER :: NKD = 100
-  REAL, PRIVATE, PARAMETER    :: KDMIN = 0.25 ,  KDMAX = 10.
-  REAL, PRIVATE               :: SITMIN, XSIT
+  REAL , PRIVATE, PARAMETER    :: KDMIN = 0.25 ,  KDMAX = 10.
+  REAL , PRIVATE               :: SITMIN, XSIT
   !
-  REAL, PARAMETER             :: ABMAX = 0.25
+  REAL , PARAMETER             :: ABMAX = 0.25
   !
   PUBLIC
   !/
@@ -182,9 +182,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)            :: A(NTH,NFR), CG(NFR), WN(NFR),    &
-         DEPTH, UABS, DT
-    REAL, INTENT(OUT), OPTIONAL :: SNL(NTH,NFR), AA(NTH,NFR)
+    REAL , INTENT(IN)            :: A(NTH,NFR), CG(NFR), WN(NFR), DEPTH, UABS, DT
+    REAL , INTENT(OUT), OPTIONAL :: SNL(NTH,NFR), AA(NTH,NFR)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -192,7 +191,7 @@ CONTAINS
     INTEGER                 :: IFR, IFRMIN, ITH, IFRMN2,            &
          IKD, JKD(0:NFR+2), ISPX0, ISPX
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: SIGP, CP, CM, XL, XH, EL, EH, DENOM, &
          SIT, XSITLN, MC, F3A,  F3B, F3C,     &
@@ -571,8 +570,7 @@ CONTAINS
       !/
       !/ Parameter list
       !/
-      REAL, INTENT(OUT)       :: PSPC(0:NTH+1,0:NFR+2),               &
-           SPEC(0:NTH+1,0:NFR+2)
+      REAL , INTENT(OUT) :: PSPC(0:NTH+1,0:NFR+2), SPEC(0:NTH+1,0:NFR+2)
       !/
       !/ Local parameters
       !/
@@ -688,7 +686,7 @@ CONTAINS
     !/
     INTEGER                 :: IKD, IERR
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     REAL                    :: DEPTH, SITMAX, OFF, S0, WN0, CG0,    &
          S3, WN3, CG3, S4, WN4, CG4, WN12,    &

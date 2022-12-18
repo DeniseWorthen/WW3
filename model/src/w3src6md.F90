@@ -197,18 +197,18 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NTH,NK), CG(NK), WN(NK)
-    REAL, INTENT(OUT)       :: EMEAN, FMEAN, WNMEAN, AMAX, FP
+    REAL , INTENT(IN)  :: A(NTH,NK), CG(NK), WN(NK)
+    REAL , INTENT(OUT) :: EMEAN, FMEAN, WNMEAN, AMAX, FP
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE           :: IENT = 0
 #endif
     INTEGER                 :: IMAX
     REAL                    :: EB(NK), EBAND
-    REAL, PARAMETER         :: HSMIN = 0.05
+    REAL , PARAMETER         :: HSMIN = 0.05
     REAL                    :: COEFF(3)
     !/
     !/ ------------------------------------------------------------------- /
@@ -387,24 +387,24 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL, INTENT(IN)       :: A (NSPEC), CG(NK), WN2(NSPEC)
-    REAL, INTENT(IN)       :: UABS, USTAR, USDIR, CD, DAIR
-    REAL, INTENT(OUT)      :: TAUWX, TAUWY, TAUNWX, TAUNWY
-    REAL, INTENT(OUT)      :: S(NSPEC), D(NSPEC)
+    REAL , INTENT(IN)  :: A (NSPEC), CG(NK), WN2(NSPEC)
+    REAL , INTENT(IN)  :: UABS, USTAR, USDIR, CD, DAIR
+    REAL , INTENT(OUT) :: TAUWX, TAUWY, TAUNWX, TAUNWY
+    REAL , INTENT(OUT) :: S(NSPEC), D(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
 #ifdef W3_S
-    INTEGER, SAVE          :: IENT = 0
+    INTEGER , SAVE          :: IENT = 0
 #endif
     INTEGER                :: IK, ITH, IKN(NK)
     REAL                   :: COSU, SINU, UPROXY
-    REAL, DIMENSION(NSPEC) :: CG2, ECOS2, ESIN2, DSII2
-    REAL, DIMENSION(NK)    :: DSII, SIG, WN
+    REAL , DIMENSION(NSPEC) :: CG2, ECOS2, ESIN2, DSII2
+    REAL , DIMENSION(NK)    :: DSII, SIG, WN
     REAL                   :: K(NTH,NK), SDENSIG(NTH,NK)           ! 1,2,5)
-    REAL, DIMENSION(NK)    :: ADENSIG, KMAX, ANAR, SQRTBN          ! 1,2,3)
-    REAL, DIMENSION(NSPEC) :: W1, W2, SQRTBN2, CINV2               ! 4,7)
-    REAL, DIMENSION(NK)    :: LFACT, CINV                          ! 5)
+    REAL , DIMENSION(NK)    :: ADENSIG, KMAX, ANAR, SQRTBN          ! 1,2,3)
+    REAL , DIMENSION(NSPEC) :: W1, W2, SQRTBN2, CINV2               ! 4,7)
+    REAL , DIMENSION(NK)    :: LFACT, CINV                          ! 5)
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
     CALL STRACE (IENT, 'W3SIN6')
@@ -640,13 +640,13 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL, INTENT(IN)  :: A(NSPEC), CG(NK), WN(NK)
-    REAL, INTENT(OUT) :: S(NSPEC), D(NSPEC)
+    REAL , INTENT(IN)  :: A(NSPEC), CG(NK), WN(NK)
+    REAL , INTENT(OUT) :: S(NSPEC), D(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
 #ifdef W3_S
-    INTEGER, SAVE     :: IENT = 0
+    INTEGER , SAVE     :: IENT = 0
 #endif
     INTEGER           :: IK, ITH, IKN(NK)
     REAL              :: FREQ(NK)     ! frequencies [Hz]
@@ -858,28 +858,28 @@ CONTAINS
     IMPLICIT NONE
     !
     !/ ------ I/O parameters --------------------------------------------- /
-    REAL, INTENT(IN)  :: S(NTH,NK)      ! wind-input source term Sin
-    REAL, INTENT(IN)  :: CINV(NK)       ! inverse phase speed
-    REAL, INTENT(IN)  :: U10            ! wind speed
-    REAL, INTENT(IN)  :: USTAR, USDIR   ! friction velocity & direction
-    REAL, INTENT(IN)  :: SIG(NK)        ! relative frequencies
-    REAL, INTENT(IN)  :: DSII(NK)       ! frequency bandwidths
-    REAL, INTENT(OUT) :: LFACT(NK)      ! correction factor
-    REAL, INTENT(OUT) :: TAUWX, TAUWY   ! normal stress components
+    REAL , INTENT(IN)  :: S(NTH,NK)      ! wind-input source term Sin
+    REAL , INTENT(IN)  :: CINV(NK)       ! inverse phase speed
+    REAL , INTENT(IN)  :: U10            ! wind speed
+    REAL , INTENT(IN)  :: USTAR, USDIR   ! friction velocity & direction
+    REAL , INTENT(IN)  :: SIG(NK)        ! relative frequencies
+    REAL , INTENT(IN)  :: DSII(NK)       ! frequency bandwidths
+    REAL , INTENT(OUT) :: LFACT(NK)      ! correction factor
+    REAL , INTENT(OUT) :: TAUWX, TAUWY   ! normal stress components
     !
     !/    --- local parameters (in order of appearance) ------------------ /
 #ifdef W3_S
-    INTEGER, SAVE     :: IENT = 0
+    INTEGER , SAVE     :: IENT = 0
 #endif
-    REAL, PARAMETER   :: FRQMAX  = 10.  ! Upper freq. limit to extrapolate to.
-    INTEGER, PARAMETER:: ITERMAX = 80   ! Maximum number of iterations to
+    REAL , PARAMETER   :: FRQMAX  = 10.  ! Upper freq. limit to extrapolate to.
+    INTEGER , PARAMETER:: ITERMAX = 80   ! Maximum number of iterations to
     ! find numerical solution for LFACT.
     INTEGER           :: IK, NK10Hz, SIGN_NEW, SIGN_OLD
     !
     REAL              :: ECOS2(NSPEC), ESIN2(NSPEC)
-    REAL, ALLOCATABLE :: IK10Hz(:), LF10Hz(:), SIG10Hz(:), CINV10Hz(:)
-    REAL, ALLOCATABLE :: SDENS10Hz(:), SDENSX10Hz(:), SDENSY10Hz(:)
-    REAL, ALLOCATABLE :: DSII10Hz(:), UCINV10Hz(:)
+    REAL , ALLOCATABLE :: IK10Hz(:), LF10Hz(:), SIG10Hz(:), CINV10Hz(:)
+    REAL , ALLOCATABLE :: SDENS10Hz(:), SDENSX10Hz(:), SDENSY10Hz(:)
+    REAL , ALLOCATABLE :: DSII10Hz(:), UCINV10Hz(:)
     REAL              :: TAU_TOT, TAU, TAU_VIS, TAU_WAV
     REAL              :: TAUVX, TAUVY, TAUX, TAUY
     REAL              :: TAU_NND, TAU_INIT(2)
@@ -1123,23 +1123,23 @@ CONTAINS
     IMPLICIT NONE
     !
     !/ ------ I/O parameters --------------------------------------------- /
-    REAL, INTENT(IN)  :: S(NTH,NK)      ! wind-input source term Sin
-    REAL, INTENT(IN)  :: CINV(NK)       ! inverse phase speed
-    REAL, INTENT(IN)  :: SIG(NK)        ! relative frequencies
-    REAL, INTENT(IN)  :: DSII(NK)       ! frequency bandwidths
-    REAL, INTENT(OUT) :: TAUNWX, TAUNWY ! stress components (wave->atmos)
+    REAL , INTENT(IN)  :: S(NTH,NK)      ! wind-input source term Sin
+    REAL , INTENT(IN)  :: CINV(NK)       ! inverse phase speed
+    REAL , INTENT(IN)  :: SIG(NK)        ! relative frequencies
+    REAL , INTENT(IN)  :: DSII(NK)       ! frequency bandwidths
+    REAL , INTENT(OUT) :: TAUNWX, TAUNWY ! stress components (wave->atmos)
     !
     !/    --- local parameters (in order of appearance) ------------------ /
 #ifdef W3_S
-    INTEGER, SAVE     :: IENT = 0
+    INTEGER , SAVE     :: IENT = 0
 #endif
-    REAL, PARAMETER   :: FRQMAX  = 10.  ! Upper freq. limit to extrapolate to.
+    REAL , PARAMETER   :: FRQMAX  = 10.  ! Upper freq. limit to extrapolate to.
     INTEGER           :: NK10Hz
     !
     REAL              :: ECOS2(NSPEC), ESIN2(NSPEC)
-    REAL, ALLOCATABLE :: IK10Hz(:), SIG10Hz(:), CINV10Hz(:)
-    REAL, ALLOCATABLE :: SDENSX10Hz(:), SDENSY10Hz(:)
-    REAL, ALLOCATABLE :: DSII10Hz(:), UCINV10Hz(:)
+    REAL , ALLOCATABLE :: IK10Hz(:), SIG10Hz(:), CINV10Hz(:)
+    REAL , ALLOCATABLE :: SDENSX10Hz(:), SDENSY10Hz(:)
+    REAL , ALLOCATABLE :: DSII10Hz(:), UCINV10Hz(:)
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
@@ -1229,10 +1229,10 @@ CONTAINS
     !
     !/
     IMPLICIT NONE
-    INTEGER, INTENT(IN)  :: X0, X1, DX
-    INTEGER, ALLOCATABLE :: IX(:)
-    INTEGER              :: N
-    INTEGER              :: I
+    INTEGER , INTENT(IN)  :: X0, X1, DX
+    INTEGER , ALLOCATABLE :: IX(:)
+    INTEGER               :: N
+    INTEGER               :: I
     !
     N = INT(REAL(X1-X0)/REAL(DX))+1
     ALLOCATE(IX(N))
@@ -1286,10 +1286,10 @@ CONTAINS
     !/
     USE CONSTANTS , ONLY : GRAV, DWAT    ! gravity, density of water
     IMPLICIT NONE
-    REAL, INTENT(IN)  :: SDENSIG(:)    ! Sin(sigma) in [m2/rad-Hz]
-    REAL, INTENT(IN)  :: CINV(:)       ! inverse phase speed
-    REAL, INTENT(IN)  :: DSII(:)       ! freq. bandwidths in [radians]
-    REAL              :: TAU_WINDS     ! wind stress
+    REAL , INTENT(IN)  :: SDENSIG(:)    ! Sin(sigma) in [m2/rad-Hz]
+    REAL , INTENT(IN)  :: CINV(:)       ! inverse phase speed
+    REAL , INTENT(IN)  :: DSII(:)       ! freq. bandwidths in [radians]
+    REAL               :: TAU_WINDS     ! wind stress
     !
     TAU_WINDS = GRAV * DWAT * SUM(SDENSIG*CINV*DSII)
     !/

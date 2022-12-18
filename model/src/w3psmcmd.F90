@@ -116,7 +116,7 @@ MODULE W3PSMCMD
   PUBLIC
   !/
   !/ Private data !/
-  REAL, PRIVATE, PARAMETER:: TRNMIN = 0.95 !< Minimum transparancy for local
+  REAL , PRIVATE, PARAMETER:: TRNMIN = 0.95 !< Minimum transparancy for local
   !/
 CONTAINS
 
@@ -272,9 +272,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: ISP
-    REAL,    INTENT(IN)     :: DTG
-    REAL,    INTENT(INOUT)  :: VQ(NSEA)
+    INTEGER, INTENT(IN)    :: ISP
+    REAL ,   INTENT(IN)    :: DTG
+    REAL ,   INTENT(INOUT) :: VQ(NSEA)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -297,10 +297,10 @@ CONTAINS
     !/
     !/ Automatic work arrays
     !
-    REAL, Dimension(-9:NCel) ::  FCNt, AFCN, BCNt, UCFL, VCFL, CQ,  &
+    REAL , Dimension(-9:NCel) ::  FCNt, AFCN, BCNt, UCFL, VCFL, CQ,  &
          CQA, CXTOT, CYTOT
-    REAL, Dimension(   NUFc) ::  FUMD, FUDIFX, ULCFLX
-    REAL, Dimension(   NVFc) ::  FVMD, FVDIFY, VLCFLY
+    REAL , Dimension(   NUFc) ::  FUMD, FUDIFX, ULCFLX
+    REAL , Dimension(   NVFc) ::  FVMD, FVDIFY, VLCFLY
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -1087,15 +1087,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN) :: ISEA
+    INTEGER , INTENT(IN)    :: ISEA
+    REAL ,    INTENT(IN)    :: FACTH, FACK, CTHG0, CG(0:NK+1), WN(0:NK+1), DEPTH
+    REAL ,    INTENT(IN)    :: DDDX, DDDY, ALFLMT(NTH), CX, CY, DCXDX, DCXDY
+    REAL ,    INTENT(IN)    :: DCYDX, DCYDY, DCDX(0:NK+1), DCDY(0:NK+1)
+    REAL ,    INTENT(INOUT) :: VA(NSPEC)
 #ifdef W3_S
-    INTEGER, SAVE       :: IENT = 0
+    INTEGER , SAVE       :: IENT = 0
 #endif
-    REAL, INTENT(IN)    :: FACTH, FACK, CTHG0, CG(0:NK+1),      &
-         WN(0:NK+1), DEPTH, DDDX, DDDY,       &
-         ALFLMT(NTH), CX, CY, DCXDX, DCXDY,   &
-         DCYDX, DCYDY, DCDX(0:NK+1), DCDY(0:NK+1)
-    REAL, INTENT(INOUT) :: VA(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1295,9 +1294,9 @@ CONTAINS
     USE W3ODATMD , ONLY : NDSE, NDST
 
     IMPLICIT NONE
-    INTEGER, INTENT( IN):: NUA, NUB
-    REAL,    INTENT( IN):: CF(-9:NCel), UC(-9:NCel), AKDif, FTS
-    REAL,    INTENT(Out):: UFLX(NUFc), FU(NUFc), FX(NUFc)
+    INTEGER , INTENT( IN) :: NUA, NUB
+    REAL ,    INTENT( IN) :: CF(-9:NCel), UC(-9:NCel), AKDif, FTS
+    REAL ,    INTENT(Out) :: UFLX(NUFc), FU(NUFc), FX(NUFc)
     !
     INTEGER ::  i, j, k, L, M, N, ij
     REAL:: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6, CNST8, CNST9
@@ -1421,9 +1420,9 @@ CONTAINS
     USE W3ODATMD , ONLY : NDSE, NDST
 
     IMPLICIT NONE
-    INTEGER, INTENT( IN):: NVA, NVB
-    REAL,    INTENT( IN):: CF(-9:NCel), VC(-9:NCel), AKDif, FTS
-    REAL,    INTENT(Out):: VFLY(NVFc), FV(NVFc), FY(NVFc)
+    INTEGER , INTENT( IN) :: NVA, NVB
+    REAL ,    INTENT( IN) :: CF(-9:NCel), VC(-9:NCel), AKDif, FTS
+    REAL ,    INTENT(Out) :: VFLY(NVFc), FV(NVFc), FY(NVFc)
     INTEGER ::  i, j, k, L, M, N, ij
     REAL:: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6, CNST8
 
@@ -1549,9 +1548,9 @@ CONTAINS
     USE W3ODATMD , ONLY : NDSE, NDST
 
     IMPLICIT NONE
-    INTEGER, INTENT( IN):: NUA, NUB
-    REAL,    INTENT( IN):: CF(-9:NCel), UC(-9:NCel), AKDif
-    REAL,    INTENT(Out):: UFLX(NUFc), FU(NUFc), FX(NUFc)
+    INTEGER , INTENT( IN) :: NUA, NUB
+    REAL ,    INTENT( IN) :: CF(-9:NCel), UC(-9:NCel), AKDif
+    REAL ,    INTENT(Out) :: UFLX(NUFc), FU(NUFc), FX(NUFc)
     !
     INTEGER ::  i, j, k, L, M, N, ij
     REAL:: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
@@ -1658,9 +1657,9 @@ CONTAINS
     USE W3ODATMD , ONLY : NDSE, NDST
 
     IMPLICIT NONE
-    INTEGER, INTENT( IN):: NVA, NVB
-    REAL,    INTENT( IN):: CF(-9:NCel), VC(-9:NCel), AKDif
-    REAL,    INTENT(Out):: VFLY(NVFc), FV(NVFc), FY(NVFc)
+    INTEGER , INTENT( IN) :: NVA, NVB
+    REAL ,    INTENT( IN) :: CF(-9:NCel), VC(-9:NCel), AKDif
+    REAL ,    INTENT(Out) :: VFLY(NVFc), FV(NVFc), FY(NVFc)
     INTEGER ::  i, j, k, L, M, N, ij
     REAL:: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6, CNST8
 
@@ -1762,9 +1761,9 @@ CONTAINS
     USE W3ODATMD , ONLY : NDSE, NDST
 
     IMPLICIT NONE
-    INTEGER, INTENT( IN):: NUA, NUB
-    REAL,    INTENT( IN):: CF(-9:NCel), UC(-9:NCel), AKDif, FTS
-    REAL,    INTENT(Out):: UFLX(NUFc), FU(NUFc), FX(NUFc)
+    INTEGER , INTENT( IN) :: NUA, NUB
+    REAL ,    INTENT( IN) :: CF(-9:NCel), UC(-9:NCel), AKDif, FTS
+    REAL ,    INTENT(Out) :: UFLX(NUFc), FU(NUFc), FX(NUFc)
     !
     INTEGER ::  i, j, k, L, M, N, ij
     REAL    :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6,  &
@@ -1917,9 +1916,9 @@ CONTAINS
     USE W3ODATMD , ONLY : NDSE, NDST
 
     IMPLICIT NONE
-    INTEGER, INTENT( IN):: NVA, NVB
-    REAL,    INTENT( IN):: CF(-9:NCel), VC(-9:NCel), AKDif, FTS
-    REAL,    INTENT(Out):: VFLY(NVFc), FV(NVFc), FY(NVFc)
+    INTEGER , INTENT( IN) :: NVA, NVB
+    REAL ,    INTENT( IN) :: CF(-9:NCel), VC(-9:NCel), AKDif, FTS
+    REAL ,    INTENT(Out) :: VFLY(NVFc), FV(NVFc), FY(NVFc)
     INTEGER ::  i, j, k, L, M, N, ij
     REAL:: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6,  &
          CNST7, CNST8, CNST9
@@ -2078,9 +2077,9 @@ CONTAINS
     USE W3ODATMD , ONLY : NDSE, NDST
 
     IMPLICIT NONE
-    INTEGER, INTENT( IN):: NUA, NUB
-    REAL,    INTENT( IN):: CF(-9:NCel), UC(-9:NCel), AKDif
-    REAL,    INTENT(Out):: UFLX(NUFc), FU(NUFc), FX(NUFc)
+    INTEGER , INTENT( IN) :: NUA, NUB
+    REAL ,    INTENT( IN) :: CF(-9:NCel), UC(-9:NCel), AKDif
+    REAL ,    INTENT(Out) :: UFLX(NUFc), FU(NUFc), FX(NUFc)
     !
     INTEGER ::  i, j, k, L, M, N, ij
     REAL:: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6, &
@@ -2208,9 +2207,9 @@ CONTAINS
     USE W3ODATMD , ONLY : NDSE, NDST
 
     IMPLICIT NONE
-    INTEGER, INTENT( IN):: NVA, NVB
-    REAL,    INTENT( IN):: CF(-9:NCel), VC(-9:NCel), AKDif
-    REAL,    INTENT(Out):: VFLY(NVFc), FV(NVFc), FY(NVFc)
+    INTEGER , INTENT( IN) :: NVA, NVB
+    REAL ,    INTENT( IN) :: CF(-9:NCel), VC(-9:NCel), AKDif
+    REAL ,    INTENT(Out) :: VFLY(NVFc), FV(NVFc), FY(NVFc)
     INTEGER ::  i, j, k, L, M, N, ij
     REAL    :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6, &
          CNST7, CNST8, CNST9
@@ -2343,16 +2342,16 @@ CONTAINS
     !!    New boundary conditions depending on user defined L0r1.
     !!    L0r1 = 0 will set zero at land points while L0r1 > 0 invokes
     !!    the zero-gradient boundary condition.    JGLi08Aug2017
-    REAL,    INTENT( IN)::  CVQ(NSEA)
-    REAL,    INTENT(Out):: GrdX(NSEA), GrdY(NSEA)
-    INTEGER, INTENT( IN):: L0r1
+    REAL ,    INTENT( IN) ::  CVQ(NSEA)
+    REAL ,    INTENT(Out) :: GrdX(NSEA), GrdY(NSEA)
+    INTEGER , INTENT( IN) :: L0r1
     !
     INTEGER :: I, J, K, L, M, N
     REAL:: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
     REAL :: DX0I, DY0I
 
     !     Use a few working arrays
-    REAL,  Dimension(-9:NSEA):: CVF, AUN, AVN
+    REAL ,  Dimension(-9:NSEA):: CVF, AUN, AVN
 
     !     Two layer of boundary cells are added to each boundary cell face
     !     with all boundary cell default values CVF(-9:0)= 0.0.
@@ -2549,13 +2548,13 @@ CONTAINS
     USE W3ODATMD , ONLY : NDSE, NDST
 
     IMPLICIT NONE
-    REAL, INTENT(INOUT) :: CVQ(-9:NSEA)
+    REAL , INTENT(INOUT) :: CVQ(-9:NSEA)
     !
     INTEGER :: I, J, K, L, M, N
     REAL :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
 
     !     Use a few working arrays
-    REAL, Dimension(-9:NSEA) :: CVF, AUN, AVN
+    REAL , Dimension(-9:NSEA) :: CVF, AUN, AVN
 
     !     Two layer of boundary cells are added to each boundary cell face
     !     with all boundary cell values stored in CVF(-9:0).
@@ -2712,10 +2711,10 @@ CONTAINS
     USE W3GDATMD , ONLY : NK, NTH, DTH, CTMAX
 
     IMPLICIT NONE
-    REAL, INTENT(IN)   ::  CoRfr(NTH, NK)
-    REAL, INTENT(INOUT):: SpeTHK(NTH, NK)
+    REAL , INTENT(IN)    ::  CoRfr(NTH, NK)
+    REAL , INTENT(INOUT) :: SpeTHK(NTH, NK)
     INTEGER ::  I, J, K, L, M, N
-    REAL, Dimension(NTH):: SpeGCT, Spectr
+    REAL , Dimension(NTH):: SpeGCT, Spectr
     REAL:: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
 
     !     Loop through NK spectral bins.
@@ -2817,10 +2816,10 @@ CONTAINS
     USE W3GDATMD , ONLY : NK, NK2, NTH, DTH, XFR, CTMAX
 
     IMPLICIT NONE
-    REAL, INTENT(IN)   ::  CoRfr(NTH, 0:NK), DKC(0:NK+1), DKS(-1:NK+1)
-    REAL, INTENT(INOUT):: SpeTHK(NTH, NK)
+    REAL , INTENT(IN)    ::  CoRfr(NTH, 0:NK), DKC(0:NK+1), DKS(-1:NK+1)
+    REAL , INTENT(INOUT) :: SpeTHK(NTH, NK)
     INTEGER ::  I, J, K, L, M, N
-    REAL, Dimension(-1:NK+2):: SpeRfr, Spectr, SpeFlx
+    REAL , Dimension(-1:NK+2):: SpeRfr, Spectr, SpeFlx
     REAL:: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
 
     CNST=XFR**(-7)
@@ -2905,8 +2904,8 @@ CONTAINS
 
     INTEGER :: I, J, K, L, M, N
     REAL :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
-    REAL, Dimension(NSEA) :: HCel, GrHx, GrHy
-    !     REAL, Dimension(-9:NSEA) :: HCel
+    REAL , Dimension(NSEA) :: HCel, GrHx, GrHy
+    !     REAL , Dimension(-9:NSEA) :: HCel
 
     !!    Assign water depth to HCel from DW integer values.
     !!    set half the minimum depth DMIN for negative cells.
@@ -3049,8 +3048,8 @@ CONTAINS
 
     INTEGER :: I, J, K, L, M, N
     REAL :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
-    REAL, Dimension(NSEA) :: CXCY, GrHx, GrHy
-    !     REAL, Dimension(-9:NSEA) :: CXCY
+    REAL , Dimension(NSEA) :: CXCY, GrHx, GrHy
+    !     REAL , Dimension(-9:NSEA) :: CXCY
 
     !!    Assign current CX speed to CXCY and set negative cells.
     !     CXCY(-9:0) = 0.0
@@ -3286,8 +3285,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: ISPEC
-    REAL,    INTENT(OUT)    :: FIELD(NCel)
+    INTEGER , INTENT(IN)  :: ISPEC
+    REAL ,    INTENT(OUT) :: FIELD(NCel)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -3301,7 +3300,7 @@ CONTAINS
          IXY, IS0, IB0, NPST, J
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT
+    INTEGER , SAVE           :: IENT
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -3517,8 +3516,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: ISPEC, MAPSTA(NY*NX)
-    REAL,    INTENT(IN)     :: FIELD(NCel)
+    INTEGER , INTENT(IN) :: ISPEC, MAPSTA(NY*NX)
+    REAL ,    INTENT(IN) :: FIELD(NCel)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -3532,7 +3531,7 @@ CONTAINS
          JSEA, IB0
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT
+    INTEGER , SAVE           :: IENT
 #endif
 #ifdef W3_MPI
     LOGICAL                 :: DONE
@@ -3721,9 +3720,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     ! Input/Output variables
 
-    INTEGER, INTENT(IN)               :: IMOD, NC
-    INTEGER, INTENT(in), Dimension(NC):: IDCl        ! Automatic array
-    REAL   , INTENT(out),Dimension(NC):: XLon, YLat
+    INTEGER , INTENT(IN)                 :: IMOD, NC
+    INTEGER , INTENT(in), Dimension(NC)  :: IDCl        ! Automatic array
+    REAL   ,  INTENT(out), Dimension(NC) :: XLon, YLat
     !/ ------------------------------------------------------------------- /
     ! Local variables.
 
@@ -3862,12 +3861,12 @@ CONTAINS
 
     !/ ------------------------------------------------------------------- /
     ! Iuput/Output variables
-    INTEGER, INTENT(IN)                :: IMOD, NC
-    REAL   , INTENT(in),  Dimension(NC):: XLon, YLat
-    INTEGER, INTENT(out), Dimension(NC):: IDCl
+    INTEGER , INTENT(IN)                 :: IMOD, NC
+    REAL   ,  INTENT(in),  Dimension(NC) :: XLon, YLat
+    INTEGER , INTENT(out), Dimension(NC) :: IDCl
     !/ ------------------------------------------------------------------- /
     ! Local variables
-    INTEGER, Dimension(NC) :: IX1, JY1
+    INTEGER , Dimension(NC) :: IX1, JY1
     REAL       :: XI0, YJ0, DXG, DYG, DX1, DY1, XLow(NC)
     INTEGER    :: I1, I3, J2, J4, ij, ijp, MRF, NSEM, NFund
 #ifdef W3_S
