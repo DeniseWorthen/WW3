@@ -55,11 +55,11 @@ MODULE W3UOSTMD
   !/ ------------------------------------------------------------------- /
   !/
 
-  USE W3GDATMD , ONLY : GRID, SGRD, GRIDS, SGRDS
-  USE W3ODATMD , ONLY : NDSO, NDSE
-  USE W3SERVMD , ONLY : EXTCDE
+  USE W3GDATMD, ONLY: GRID, SGRD, GRIDS, SGRDS
+  USE W3ODATMD, ONLY: NDSO, NDSE
+  USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
-  USE W3SERVMD , ONLY : STRACE
+  USE W3SERVMD, ONLY: STRACE
 #endif
 
   IMPLICIT NONE
@@ -723,7 +723,7 @@ CONTAINS
     !  4. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS , ONLY : PI
+    USE CONSTANTS, ONLY: PI
 
     IMPLICIT NONE
 

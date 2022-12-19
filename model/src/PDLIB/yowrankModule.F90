@@ -73,7 +73,7 @@ contains
 
   !> allocate and exchange
   subroutine initRankModule()
-    use yowDatapool , only : nTasks, myrank
+    use yowDatapool, only: nTasks, myrank
     implicit none
     integer :: stat
 
@@ -88,8 +88,8 @@ contains
   !> send iplg from this thread to every neighbor thread
   !> \internal
   subroutine exchangeIPLG()
-    use yowNodepool , only : np, npa, iplg, np_global
-    use yowDatapool , only : nTasks, myrank, comm, itype
+    use yowNodepool, only: np, npa, iplg, np_global
+    use yowDatapool, only: nTasks, myrank, comm, itype
     use MPI
     implicit none
     integer :: i, ierr, stat
@@ -235,7 +235,7 @@ contains
 
   !> \internal
   subroutine calcISTART()
-    use yowDatapool , only : nTasks, myrank
+    use yowDatapool, only: nTasks, myrank
     implicit none
     integer :: ir
 

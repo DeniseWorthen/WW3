@@ -69,7 +69,7 @@ MODULE W3UNO2MD
   !
   !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-  USE W3SERVMD , ONLY : STRACE
+  USE W3SERVMD, ONLY: STRACE
 #endif
   !/
 CONTAINS

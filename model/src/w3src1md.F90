@@ -155,12 +155,12 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS
-    USE W3GDATMD , ONLY : NK, NTH, SIG, DDEN, FTE, FTF, FTWN
+    USE W3GDATMD, ONLY: NK, NTH, SIG, DDEN, FTE, FTF, FTWN
 #ifdef W3_T
-    USE W3ODATMD , ONLY : NDST
+    USE W3ODATMD, ONLY: NDST
 #endif
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     IMPLICIT NONE
@@ -326,18 +326,18 @@ CONTAINS
 #ifdef W3_T
     USE CONSTANTS
 #endif
-    USE W3GDATMD , ONLY : NK, NTH, NSPEC, SIG, SIG2, ESIN, ECOS, SINC1
+    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, SIG2, ESIN, ECOS, SINC1
 #ifdef W3_T
-    USE W3ODATMD , ONLY : NDST
+    USE W3ODATMD, ONLY: NDST
 #endif
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
 #ifdef W3_T0
-    USE W3ARRYMD , ONLY : PRT2DS
+    USE W3ARRYMD, ONLY: PRT2DS
 #endif
 #ifdef W3_T1
-    USE W3ARRYMD , ONLY : OUTMAT
+    USE W3ARRYMD, ONLY: OUTMAT
 #endif
     !
     IMPLICIT NONE
@@ -500,18 +500,18 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD , ONLY : NK, NTH, NSPEC, SIG, SDSC1
+    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, SDSC1
 #ifdef W3_T
-    USE W3ODATMD , ONLY : NDST
+    USE W3ODATMD, ONLY: NDST
 #endif
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
 #ifdef W3_T0
-    USE W3ARRYMD , ONLY : PRT2DS
+    USE W3ARRYMD, ONLY: PRT2DS
 #endif
 #ifdef W3_T1
-    USE W3ARRYMD , ONLY : OUTMAT
+    USE W3ARRYMD, ONLY: OUTMAT
 #endif
     !
     IMPLICIT NONE

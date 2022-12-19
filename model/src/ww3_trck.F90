@@ -74,16 +74,16 @@ PROGRAM W3TRCK
   ! 10. Source code :
   !
   !/ ------------------------------------------------------------------- /
-  USE W3GDATMD  , ONLY : W3NMOD, W3SETG, FLAGLL, XFR
-  USE W3ODATMD  , ONLY : W3NOUT, W3SETO, FNMPRE
-  USE W3SERVMD  , ONLY : ITRACE, NEXTLN, EXTCDE
+  USE W3GDATMD, ONLY : W3NMOD, W3SETG, FLAGLL, XFR
+  USE W3ODATMD, ONLY : W3NOUT, W3SETO, FNMPRE
+  USE W3SERVMD, ONLY : ITRACE, NEXTLN, EXTCDE
 #ifdef W3_S
-  USE W3SERVMD  , ONLY : STRACE
+  USE W3SERVMD, ONLY : STRACE
 #endif
-  USE W3TIMEMD  , ONLY : STME21
+  USE W3TIMEMD, ONLY : STME21
   !
-  USE W3ODATMD  , ONLY : NDSO, NDSE, NDST
-  use constants , only : file_endian
+  USE W3ODATMD, ONLY: NDSO, NDSE, NDST
+  use constants, only: file_endian
   !
   IMPLICIT NONE
   !/

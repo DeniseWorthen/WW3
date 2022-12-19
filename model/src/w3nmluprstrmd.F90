@@ -108,9 +108,9 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 
-    USE W3ODATMD , ONLY : NDSE
+    USE W3ODATMD, ONLY: NDSE
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
 
     IMPLICIT NONE
@@ -220,10 +220,10 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 
-    USE W3ODATMD , ONLY : NDSE
-    USE W3SERVMD , ONLY : EXTCDE
+    USE W3ODATMD, ONLY: NDSE
+    USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
 
     IMPLICIT NONE
@@ -323,10 +323,10 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 
-    USE W3ODATMD , ONLY : NDSE
-    USE W3SERVMD , ONLY : EXTCDE
+    USE W3ODATMD, ONLY: NDSE
+    USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
 
     IMPLICIT NONE
@@ -432,7 +432,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
 
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
 
     IMPLICIT NONE
@@ -515,7 +515,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
 
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
 
     IMPLICIT NONE

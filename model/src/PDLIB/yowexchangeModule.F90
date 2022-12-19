@@ -37,8 +37,8 @@
 !
 !> Has only the ghost nodes assign to a neighbor domain
 module yowExchangeModule
-  use yowDatapool , only : rkind
-  use MPI , only : MPI_DATATYPE_NULL
+  use yowDatapool, only: rkind
+  use MPI, only: MPI_DATATYPE_NULL
   implicit none
   private
   public :: initNbrDomains, createMPITypes, setDimSize
@@ -147,8 +147,8 @@ contains
   subroutine createMPIType(this)
     use yowerr
     use MPI
-    use yowNodepool , only : ghostgl, np, ipgl
-    use yowDatapool , only : rtype, itype
+    use yowNodepool, only: ghostgl, np, ipgl
+    use yowDatapool, only: rtype, itype
     implicit none
     class(t_neighborDomain), intent(inout) :: this
 
@@ -245,8 +245,8 @@ contains
   !> \note MPI recv tag: 10000 + MPI rank
   !> \note MPI send tag: 10000 + neighbor MPI rank
   subroutine PDLIB_exchange1Dreal(U)
-    use yowDatapool , only : comm, myrank, rkind
-    use yowNodepool , only : t_Node, nodes_global, np, ng, ghosts, npa
+    use yowDatapool, only: comm, myrank, rkind
+    use yowNodepool, only: t_Node, nodes_global, np, ng, ghosts, npa
     use yowerr
     use MPI
     implicit none
@@ -297,8 +297,8 @@ contains
   !> \note MPI recv tag: 30000 + MPI rank
   !> \note MPI send tag: 30000 + neighbor MPI rank
   subroutine PDLIB_exchange2Dreal(U)
-    use yowDatapool , only : comm, myrank, rkind
-    use yowNodepool , only : t_Node, nodes_global, np, ng, ghosts, npa
+    use yowDatapool, only: comm, myrank, rkind
+    use yowNodepool, only: t_Node, nodes_global, np, ng, ghosts, npa
     use yowerr
     use MPI
     USE W3ODATMD, only : IAPROC
@@ -392,8 +392,8 @@ contains
   !> \note MPI recv tag: 10001 + MPI rank
   !> \note MPI send tag: 10001 + neighbor MPI rank
   subroutine PDLIB_exchange1Dreal_zero(U)
-    use yowDatapool , only : comm, myrank, rkind
-    use yowNodepool , only : npa
+    use yowDatapool, only: comm, myrank, rkind
+    use yowNodepool, only: npa
     use yowErr
     use Mpi
     implicit none
@@ -462,8 +462,8 @@ contains
   !> \note MPI recv tag: 30001 + MPI rank
   !> \note MPI send tag: 30001 + neighbor MPI rank
   subroutine PDLIB_exchange2Dreal_zero(U)
-    use yowDatapool , only : comm, myrank, rkind
-    use yowNodepool , only : npa
+    use yowDatapool, only: comm, myrank, rkind
+    use yowNodepool, only: npa
     use yowErr
     use Mpi
     implicit none

@@ -40,7 +40,7 @@ module yowerr
   implicit none
 contains
   subroutine parallel_abort(string, error)
-    use yowDatapool , only : comm
+    use yowDatapool, only: comm
     use MPI
     implicit none
 
@@ -90,7 +90,7 @@ contains
       !> \param[in] file Filename
       !> \param[in] errno The MPI error number which is translated into an error string
       subroutine abort(string, line, file, errno)
-        use yowDatapool , only : comm
+        use yowDatapool, only: comm
         use MPI
         implicit none
         ! Errorstring to print
@@ -166,7 +166,7 @@ contains
       !> \param[in] line Line number
       !> \param[in] file Filename
       subroutine warn(string, line, file)
-        use yowDatapool , only : comm
+        use yowDatapool, only: comm
         use MPI
         implicit none
         ! Errorstring to print

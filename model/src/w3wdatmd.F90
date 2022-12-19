@@ -258,10 +258,10 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD , ONLY : NGRIDS
-    USE W3SERVMD , ONLY : EXTCDE
+    USE W3GDATMD, ONLY: NGRIDS
+    USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     IMPLICIT NONE
@@ -412,21 +412,21 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD      , ONLY : NGRIDS, IGRID, W3SETG, NSPEC, NSEA, NSEAL, GRIDS
-    USE W3ODATMD      , ONLY : NAPROC, IAPROC
-    USE W3SERVMD      , ONLY : EXTCDE
-    USE CONSTANTS     , ONLY : LPDLIB, DAIR
-    USE W3PARALL      , ONLY : SET_UP_NSEAL_NSEALM, LSLOC
+    USE W3GDATMD, ONLY: NGRIDS, IGRID, W3SETG, NSPEC, NSEA, NSEAL, GRIDS
+    USE W3ODATMD, ONLY: NAPROC, IAPROC
+    USE W3SERVMD, ONLY: EXTCDE
+    USE CONSTANTS, ONLY : LPDLIB, DAIR
+    USE W3PARALL, ONLY: SET_UP_NSEAL_NSEALM, LSLOC
 #ifdef W3_NL5
-    USE W3GDATMD      , ONLY : QI5NNZ
+    USE W3GDATMD, ONLY: QI5NNZ
 #endif
 #ifdef W3_PDLIB
-    use yowNodepool   , only : npa, np
-    use yowRankModule , only : rank
-    USE W3GDATMD      , ONLY : GTYPE, UNGTYPE
+    use yowNodepool, only: npa, np
+    use yowRankModule, only : rank
+    USE W3GDATMD, ONLY: GTYPE, UNGTYPE
 #endif
 #ifdef W3_S
-    USE W3SERVMD      , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     IMPLICIT NONE
@@ -712,9 +712,9 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3SERVMD , ONLY : EXTCDE
+    USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     IMPLICIT NONE

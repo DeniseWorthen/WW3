@@ -288,10 +288,10 @@ CONTAINS
     !
     ! 10. Source code :
     !
-    USE W3ODATMD , ONLY : IAPROC, NAPROC, NAPERR, NAPOUT
-    USE W3ODATMD , ONLY : NDSE, NDSO
+    USE W3ODATMD, ONLY: IAPROC, NAPROC, NAPERR, NAPOUT
+    USE W3ODATMD, ONLY: NDSE, NDSO
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
@@ -386,10 +386,10 @@ CONTAINS
     !
     ! 10. Source code :
     !
-    USE W3ODATMD , ONLY : IAPROC, NAPROC, NAPERR, NAPOUT
-    USE W3ODATMD , ONLY : NDSE, NDSO
+    USE W3ODATMD, ONLY: IAPROC, NAPROC, NAPERR, NAPOUT
+    USE W3ODATMD, ONLY: NDSE, NDSO
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     !/ ------------------------------------------------------------------- /

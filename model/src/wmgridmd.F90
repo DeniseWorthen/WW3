@@ -233,16 +233,16 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !
-    USE W3SERVMD , ONLY : EXTCDE
+    USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     USE W3GDATMD
     USE W3ODATMD
     USE W3TRIAMD
     USE WMMDATMD
-    USE W3PARALL , ONLY : INIT_GET_JSEA_ISPROC
+    USE W3PARALL, ONLY : INIT_GET_JSEA_ISPROC
     !
     IMPLICIT NONE
     !
@@ -1228,10 +1228,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !
     USE CONSTANTS
-    USE W3SERVMD , ONLY : EXTCDE
-    USE W3GSRUMD , ONLY : W3DIST
+    USE W3SERVMD, ONLY: EXTCDE
+    USE W3GSRUMD, ONLY: W3DIST
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     USE W3GDATMD
@@ -3797,10 +3797,10 @@ CONTAINS
     USE W3ADATMD
     USE WMMDATMD
     !
-    USE W3SERVMD , ONLY : EXTCDE
-    !      USE W3PARALL , ONLY : INIT_GET_JSEA_ISPROC_GLOB
+    USE W3SERVMD, ONLY: EXTCDE
+    !      USE W3PARALL, ONLY: INIT_GET_JSEA_ISPROC_GLOB
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     IMPLICIT NONE
@@ -5193,13 +5193,13 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !
-    USE W3SERVMD , ONLY : EXTCDE
+    USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     USE W3GDATMD
-    USE W3ODATMD , ONLY : UNIPTS
+    USE W3ODATMD, ONLY: UNIPTS
     USE WMMDATMD
     !
     IMPLICIT NONE
@@ -5355,13 +5355,13 @@ CONTAINS
     USE W3ADATMD
     USE WMMDATMD
     !
-    USE W3SERVMD , ONLY : EXTCDE
+    USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_SMC
-    USE W3PSMCMD , ONLY : W3SMCGMP, W3SMCELL
+    USE W3PSMCMD, ONLY: W3SMCGMP, W3SMCELL
 #endif
 
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     IMPLICIT NONE

@@ -63,7 +63,7 @@ MODULE W3WAVSET
   !
   !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-  USE W3SERVMD , ONLY : STRACE
+  USE W3SERVMD, ONLY: STRACE
 #endif
   !/
   !/ ------------------------------------------------------------------- /
@@ -155,13 +155,13 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD          , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    use yowExchangeModule , only : PDLIB_exchange1Dreal
-    use yowNodepool       , only : PDLIB_IEN, PDLIB_TRIA, npa
-    use yowElementpool    , only : INE, NE
-    USE W3GDATMD          , ONLY : MAPSTA
+    use yowExchangeModule, only : PDLIB_exchange1Dreal
+    use yowNodepool,    only : PDLIB_IEN, PDLIB_TRIA, npa
+    use yowElementpool, only : INE, NE
+    USE W3GDATMD, ONLY : MAPSTA
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -275,14 +275,14 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD          , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    use yowExchangeModule , only : PDLIB_exchange1Dreal
-    use yowNodepool       , only : PDLIB_IEN, PDLIB_TRIA, npa, iplg
-    use yowElementpool    , only : INE, NE
-    USE W3GDATMD          , ONLY : MAPSTA
-    USE W3PARALL          , only : INIT_GET_ISEA
+    use yowExchangeModule, only : PDLIB_exchange1Dreal
+    use yowNodepool,    only : PDLIB_IEN, PDLIB_TRIA, npa, iplg
+    use yowElementpool, only : INE, NE
+    USE W3GDATMD, ONLY : MAPSTA
+    USE W3PARALL, only: INIT_GET_ISEA
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -414,10 +414,10 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD    , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    use yowNodepool , only : npa
+    use yowNodepool, only: npa
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -500,17 +500,17 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD    , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    USE CONSTANTS   , ONLY : GRAV, DWAT
-    use yowNodepool , only : npa, iplg
-    USE W3GDATMD    , only : MAPFS
-    USE W3ADATMD    , ONLY : SXX, SXY, SYY, WN, CG
-    USE W3PARALL    , only : INIT_GET_ISEA
-    USE W3ODATMD    , only : IAPROC
-    USE W3GDATMD    , ONLY : NSEAL, MAPSTA
-    USE W3ADATMD    , ONLY : DW
+    USE CONSTANTS, ONLY: GRAV, DWAT
+    use yowNodepool, only: npa, iplg
+    USE W3GDATMD, only : MAPFS
+    USE W3ADATMD, ONLY: SXX, SXY, SYY, WN, CG
+    USE W3PARALL, only: INIT_GET_ISEA
+    USE W3ODATMD, only : IAPROC
+    USE W3GDATMD, ONLY : NSEAL, MAPSTA
+    USE W3ADATMD, ONLY: DW
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -654,11 +654,11 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD       , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    use yowElementpool , only : INE
-    use yowNodepool    , only : x, y, PDLIB_TRIA
+    use yowElementpool, only: INE
+    use yowNodepool,    only: x, y, PDLIB_TRIA
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -759,12 +759,12 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD       , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    use yowElementpool , only : INE, NE
-    use yowNodepool    , only : PDLIB_NNZ, PDLIB_JA_IE, PDLIB_TRIA, npa, np
-    USE yowNodepool    , only : iplg
+    use yowElementpool, only: INE, NE
+    use yowNodepool, only: PDLIB_NNZ, PDLIB_JA_IE, PDLIB_TRIA, npa, np
+    USE yowNodepool, only: iplg
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -937,15 +937,15 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD          , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    use yowExchangeModule , only : PDLIB_exchange1Dreal
-    use yowNodepool       , only : PDLIB_NNZ, PDLIB_IA, PDLIB_JA, PDLIB_I_DIAG
-    use yowNodepool       , only : npa
-    USE W3ODATMD          , only : IAPROC
-    USE W3ODATMD          , only : IAPROC
-    USE yowNodepool       , only : iplg
+    use yowExchangeModule, only : PDLIB_exchange1Dreal
+    use yowNodepool, only: PDLIB_NNZ, PDLIB_IA, PDLIB_JA, PDLIB_I_DIAG
+    use yowNodepool, only: npa
+    USE W3ODATMD, only : IAPROC
+    USE W3ODATMD, only : IAPROC
+    USE yowNodepool, only: iplg
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -1071,13 +1071,13 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD          , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    use yowExchangeModule , only : PDLIB_exchange1Dreal
-    USE yowNodepool       , only : PDLIB_IA, PDLIB_JA, PDLIB_NNZ
-    use yowNodepool       , only : np, npa
-    USE W3GDATMD          , ONLY : NSEAL
+    use yowExchangeModule, only : PDLIB_exchange1Dreal
+    USE yowNodepool, only: PDLIB_IA, PDLIB_JA, PDLIB_NNZ
+    use yowNodepool, only: np, npa
+    USE W3GDATMD, ONLY: NSEAL
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -1172,15 +1172,15 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD    , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    USE W3GDATMD    , ONLY : NX
-    USE W3ADATMD    , ONLY : MPI_COMM_WCMP
-    use yowDatapool , only : rtype, istatus
-    use yowNodepool , only : np, npa
-    USE W3ODATMD    , only : IAPROC, NAPROC, NTPROC
-    USE W3GDATMD    , ONLY : NSEAL
+    USE W3GDATMD, ONLY: NX
+    USE W3ADATMD, ONLY: MPI_COMM_WCMP
+    use yowDatapool, only: rtype, istatus
+    use yowNodepool, only: np, npa
+    USE W3ODATMD, only : IAPROC, NAPROC, NTPROC
+    USE W3GDATMD, ONLY: NSEAL
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -1285,13 +1285,13 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD    , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    USE yowNodepool , only : PDLIB_NNZ
-    USE W3GDATMD    , ONLY : NSEAL, SOLVERTHR_STP
-    USE W3ODATMD    , only : IAPROC
-    use yowNodepool , only : np, npa
+    USE yowNodepool, only: PDLIB_NNZ
+    USE W3GDATMD, ONLY: NSEAL, SOLVERTHR_STP
+    USE W3ODATMD, only : IAPROC
+    use yowNodepool, only: np, npa
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -1461,16 +1461,16 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD    , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    USE yowNodepool , only : PDLIB_SI
-    USE W3GDATMD    , ONLY : NX, SI
-    USE W3GDATMD    , ONLY : NSEAL
-    USE W3ADATMD    , ONLY : MPI_COMM_WCMP
-    USE W3ODATMD    , only : IAPROC, NAPROC, NTPROC
-    use yowDatapool , only : rtype, istatus
-    use yowNodepool , only : np, npa
+    USE yowNodepool, only: PDLIB_SI
+    USE W3GDATMD, ONLY: NX, SI
+    USE W3GDATMD, ONLY: NSEAL
+    USE W3ADATMD, ONLY: MPI_COMM_WCMP
+    USE W3ODATMD, only : IAPROC, NAPROC, NTPROC
+    use yowDatapool, only: rtype, istatus
+    use yowNodepool, only: np, npa
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -1586,12 +1586,12 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD    , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    USE W3GDATMD    , ONLY : CRIT_DEP_STP
-    USE yowNodepool , only : PDLIB_NNZ, PDLIB_IA, PDLIB_JA, iplg, npa, np
-    USE W3ODATMD    , only : IAPROC
+    USE W3GDATMD, ONLY : CRIT_DEP_STP
+    USE yowNodepool, only: PDLIB_NNZ, PDLIB_IA, PDLIB_JA, iplg, npa, np
+    USE W3ODATMD, only : IAPROC
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -1689,18 +1689,18 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD          , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    USE yowNodepool       , only : PDLIB_NNZ, PDLIB_IA, PDLIB_JA, iplg, npa, np
-    USE W3GDATMD          , only : MAPFS
-    USE W3PARALL          , only : SYNCHRONIZE_GLOBAL_ARRAY
-    USE W3ADATMD          , ONLY : DW
-    USE W3GDATMD          , ONLY : NSEAL, NSEA, NX
-    USE W3WDATMD          , ONLY : ZETA_SETUP
-    USE W3ODATMD          , only : IAPROC, NAPROC, NTPROC
-    USE W3PARALL          , only : INIT_GET_ISEA
-    use yowExchangeModule , only : PDLIB_exchange1Dreal
+    USE yowNodepool, only: PDLIB_NNZ, PDLIB_IA, PDLIB_JA, iplg, npa, np
+    USE W3GDATMD, only : MAPFS
+    USE W3PARALL, only : SYNCHRONIZE_GLOBAL_ARRAY
+    USE W3ADATMD, ONLY: DW
+    USE W3GDATMD, ONLY: NSEAL, NSEA, NX
+    USE W3WDATMD, ONLY: ZETA_SETUP
+    USE W3ODATMD, only : IAPROC, NAPROC, NTPROC
+    USE W3PARALL, only: INIT_GET_ISEA
+    use yowExchangeModule, only : PDLIB_exchange1Dreal
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -1849,11 +1849,11 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD    , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    USE yowNodepool , only : PDLIB_NNZ, PDLIB_IA, PDLIB_JA, PDLIB_I_DIAG
-    USE W3GDATMD    , ONLY : NX, NY, NSEA, MAPSF, GRIDS
+    USE yowNodepool, only: PDLIB_NNZ, PDLIB_IA, PDLIB_JA, PDLIB_I_DIAG
+    USE W3GDATMD, ONLY: NX, NY, NSEA, MAPSF, GRIDS
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -2018,11 +2018,11 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD    , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    USE W3GDATMD    , ONLY : NX, NNZ, IAA, JAA, NSEA
-    use yowNodepool , only : PDLIB_IA, PDLIB_JA
+    USE W3GDATMD, ONLY: NX, NNZ, IAA, JAA, NSEA
+    use yowNodepool, only: PDLIB_IA, PDLIB_JA
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -2113,11 +2113,11 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD    , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    USE yowNodepool , only : PDLIB_NNZ, PDLIB_IA, PDLIB_JA, PDLIB_I_DIAG
-    USE W3GDATMD    , ONLY : NSEA
+    USE yowNodepool, only: PDLIB_NNZ, PDLIB_IA, PDLIB_JA, PDLIB_I_DIAG
+    USE W3GDATMD, ONLY: NSEA
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -2227,14 +2227,14 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD    , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    USE W3ADATMD    , ONLY : SXX, SXY, SYY
-    USE W3GDATMD    , ONLY : NSEA, NSEAL
-    USE W3ODATMD    , only : IAPROC, NAPROC
-    use yowDatapool , only : rtype, istatus
-    USE W3ADATMD    , ONLY : MPI_COMM_WCMP
+    USE W3ADATMD, ONLY: SXX, SXY, SYY
+    USE W3GDATMD, ONLY: NSEA, NSEAL
+    USE W3ODATMD, only : IAPROC, NAPROC
+    use yowDatapool, only: rtype, istatus
+    USE W3ADATMD, ONLY: MPI_COMM_WCMP
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -2357,11 +2357,11 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    USE W3GDATMD , ONLY : NX, NY, NSEA, NEIGH
-    USE W3ADATMD , ONLY : SXX, SXY, SYY
+    USE W3GDATMD, ONLY: NX, NY, NSEA, NEIGH
+    USE W3ADATMD, ONLY: SXX, SXY, SYY
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -2510,11 +2510,11 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    USE W3GDATMD , ONLY : MAPSF, EDGES
-    USE W3GDATMD , ONLY : XGRD, YGRD
+    USE W3GDATMD, ONLY: MAPSF, EDGES
+    USE W3GDATMD, ONLY: XGRD, YGRD
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -2617,12 +2617,12 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD    , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    USE yowNodepool , only : PDLIB_NNZ
-    USE W3GDATMD    , ONLY : NX, NY, NSEA, NBEDGE, EDGES
-    USE W3ADATMD    , ONLY : DW
+    USE yowNodepool, only: PDLIB_NNZ
+    USE W3GDATMD, ONLY: NX, NY, NSEA, NBEDGE, EDGES
+    USE W3ADATMD, ONLY: DW
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -2734,10 +2734,10 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    USE W3GDATMD , ONLY : NX
+    USE W3GDATMD, ONLY: NX
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -2822,11 +2822,11 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD    , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    USE yowNodepool , only : PDLIB_NNZ
-    USE W3GDATMD    , ONLY : NX
+    USE yowNodepool, only: PDLIB_NNZ
+    USE W3GDATMD, ONLY: NX
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -2944,10 +2944,10 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    USE W3GDATMD , ONLY : NX, SI
+    USE W3GDATMD, ONLY: NX, SI
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -3036,15 +3036,15 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD    , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    USE yowNodepool , only : PDLIB_NNZ
-    USE W3GDATMD    , ONLY : NX, NSEA, NSEAL
-    USE W3WDATMD    , ONLY : ZETA_SETUP
-    use yowDatapool , only : rtype, istatus
-    USE W3ADATMD    , ONLY : MPI_COMM_WCMP
-    USE W3ODATMD    , only : IAPROC, NAPROC
+    USE yowNodepool, only: PDLIB_NNZ
+    USE W3GDATMD, ONLY: NX, NSEA, NSEAL
+    USE W3WDATMD, ONLY: ZETA_SETUP
+    use yowDatapool, only: rtype, istatus
+    USE W3ADATMD, ONLY: MPI_COMM_WCMP
+    USE W3ODATMD, only : IAPROC, NAPROC
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -3143,12 +3143,12 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    USE W3GDATMD , ONLY : NSEA, NSEAL
-    USE W3GDATMD , ONLY : GTYPE, UNGTYPE
-    USE W3ODATMD , only : IAPROC, NAPROC, NTPROC
+    USE W3GDATMD, ONLY: NSEA, NSEAL
+    USE W3GDATMD, ONLY: GTYPE, UNGTYPE
+    USE W3ODATMD, only : IAPROC, NAPROC, NTPROC
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /

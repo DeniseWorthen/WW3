@@ -69,7 +69,7 @@ PROGRAM WW3GRID
   !
   !/ ------------------------------------------------------------------- /
 
-  USE W3GRIDMD , ONLY : W3GRID
+  USE W3GRIDMD, ONLY: W3GRID
   IMPLICIT NONE
 
   CALL W3GRID

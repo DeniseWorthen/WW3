@@ -149,7 +149,7 @@ contains
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     implicit none
@@ -219,7 +219,7 @@ contains
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     !/
@@ -318,7 +318,7 @@ contains
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     !/
@@ -403,7 +403,7 @@ contains
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     !/

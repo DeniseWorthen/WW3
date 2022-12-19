@@ -101,8 +101,8 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 
-    USE W3ODATMD , ONLY : NDSE
-    !/S      USE W3SERVMD , ONLY : STRACE
+    USE W3ODATMD, ONLY: NDSE
+    !/S      USE W3SERVMD, ONLY: STRACE
 
     IMPLICIT NONE
 
@@ -205,9 +205,9 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 
-    USE W3ODATMD , ONLY : NDSE
-    USE W3SERVMD , ONLY : EXTCDE
-    !/S      USE W3SERVMD , ONLY : STRACE
+    USE W3ODATMD, ONLY: NDSE
+    USE W3SERVMD, ONLY: EXTCDE
+    !/S      USE W3SERVMD, ONLY: STRACE
 
     IMPLICIT NONE
 
@@ -309,7 +309,7 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 
-    !/S      USE W3SERVMD , ONLY : STRACE
+    !/S      USE W3SERVMD, ONLY: STRACE
 
     IMPLICIT NONE
 

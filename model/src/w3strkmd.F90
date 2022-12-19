@@ -27,7 +27,7 @@ MODULE W3STRKMD
   !/       reserved.  WAVEWATCH III is a trademark of the NWS.
   !/       No unauthorized use without permission.
   !/
-  use constants , only : file_endian
+  use constants, only: file_endian
   IMPLICIT NONE
   !
   !  1. Purpose :

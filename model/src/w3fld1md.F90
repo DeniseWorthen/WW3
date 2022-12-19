@@ -172,12 +172,12 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS , ONLY : GRAV, DWAT, TPI, PI, KAPPA
-    USE W3GDATMD  , ONLY : NK, NTH, NSPEC, SIG, DTH, XFR, TH
-    USE W3ODATMD  , ONLY : NDSE
-    USE W3SERVMD  , ONLY : EXTCDE
+    USE CONSTANTS, ONLY: GRAV, DWAT, TPI, PI, KAPPA
+    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, DTH, XFR, TH
+    USE W3ODATMD, ONLY: NDSE
+    USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
-    USE W3SERVMD  , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !/
     IMPLICIT NONE
@@ -833,11 +833,11 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3ODATMD , ONLY : NDSE
-    USE W3GDATMD , ONLY : TAIL_ID, TAIL_LEV, TAIL_TRAN1, TAIL_TRAN2
-    USE W3SERVMD , ONLY : EXTCDE
+    USE W3ODATMD, ONLY: NDSE
+    USE W3GDATMD, ONLY: TAIL_ID, TAIL_LEV, TAIL_TRAN1, TAIL_TRAN2
+    USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !/
     IMPLICIT NONE
@@ -932,12 +932,12 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS , ONLY : TPI, PI
-    USE W3GDATMD  , ONLY : NTH, TH, DTH
-    USE W3ODATMD  , ONLY : NDSE
-    USE W3SERVMD  , ONLY : EXTCDE
+    USE CONSTANTS, ONLY: TPI, PI
+    USE W3GDATMD, ONLY: NTH, TH, DTH
+    USE W3ODATMD, ONLY: NDSE
+    USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
-    USE W3SERVMD  , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !/
     IMPLICIT NONE
@@ -1178,7 +1178,7 @@ CONTAINS
     !      Improved by using newton's method for iteration.(2018)
     !/ ------------------------------------------------------------------- /
     !/
-    use constants , only : GRAV
+    use constants, only: GRAV
     !/
     implicit none
     !/
@@ -1303,7 +1303,7 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !/
     IMPLICIT NONE
@@ -1425,7 +1425,7 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !/
     IMPLICIT NONE

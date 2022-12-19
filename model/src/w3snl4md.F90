@@ -333,13 +333,13 @@ CONTAINS
     !!
     !!
 #ifdef W3_S
-    USE W3SERVMD  , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
-    USE W3ODATMD  , ONLY : NDSE, NDST, NDSO
+    USE W3ODATMD, ONLY: NDSE, NDST, NDSO
 #ifdef W3_MPI
-    USE WMMDATMD  , ONLY : NMPSCR, IMPROC
+    USE WMMDATMD, ONLY: NMPSCR, IMPROC
 #endif
-    USE CONSTANTS , ONLY : file_endian
+    USE CONSTANTS, ONLY: file_endian
     !!    ------------------------------------------------------------------
     !!    ==================================================================
     !!
@@ -775,15 +775,15 @@ CONTAINS
     !!    ==================================================================
     !!
     !!
-    USE CONSTANTS , ONLY : TPI
-    USE W3GDATMD  , ONLY : NK,  NTH,  XFR, DTH,  SIG, TH, ECOS, ESIN
-    USE W3GDATMD  , ONLY : ITSA, IALT
+    USE CONSTANTS, ONLY: TPI
+    USE W3GDATMD,  ONLY: NK,  NTH,  XFR, DTH,  SIG, TH, ECOS, ESIN, &
+         ITSA, IALT
     !!    dimension: SIG(0:NK+1),TH(NTH), ECOS(NSPEC+NTH), ESIN(NSPEC+NTH)
     !!
-    USE W3SERVMD  , ONLY : EXTCDE
-    USE W3ODATMD  , ONLY : NDSE, NDST, NDSO
+    USE W3SERVMD, ONLY: EXTCDE
+    USE W3ODATMD, ONLY: NDSE, NDST, NDSO
 #ifdef W3_S
-    USE W3SERVMD  , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !!    ==================================================================
     !!
@@ -2137,7 +2137,7 @@ CONTAINS
     !!
     !!
     !!wvn
-    !wvn  USE W3DISPMD , ONLY : WAVNU2
+    !wvn  USE W3DISPMD, ONLY: WAVNU2
     !!wvn---
     !!
     IMPLICIT NONE
@@ -2431,8 +2431,8 @@ CONTAINS
     !!    ==================================================================
     !!
     !!
-    USE W3SERVMD , ONLY : EXTCDE
-    USE W3ODATMD , ONLY : NDSE
+    USE W3SERVMD, ONLY: EXTCDE
+    USE W3ODATMD, ONLY: NDSE
     !!
     !!
     IMPLICIT NONE

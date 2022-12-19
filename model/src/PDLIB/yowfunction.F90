@@ -54,11 +54,11 @@ CONTAINS
   !*                                                                    *
   !**********************************************************************
   SUBROUTINE ComputeListNP_ListNPA_ListIPLG_Kernel
-    USE W3ODATMD    , only : IAPROC, NAPROC, NTPROC
-    USE W3ADATMD    , ONLY : MPI_COMM_WCMP
-    USE yowDatapool , only : rtype, istatus
-    USE yowNodepool , only : npa, np, iplg
-    USE yowNodepool , only : ListNP, ListNPA, ListIPLG
+    USE W3ODATMD, only : IAPROC, NAPROC, NTPROC
+    USE W3ADATMD, ONLY: MPI_COMM_WCMP
+    USE yowDatapool, only: rtype, istatus
+    USE yowNodepool, only: npa, np, iplg
+    USE yowNodepool, only: ListNP, ListNPA, ListIPLG
     IMPLICIT NONE
     INCLUDE "mpif.h"
     integer IPROC, idx, IP, len, istat, sumNP, ierr
@@ -192,11 +192,11 @@ CONTAINS
   !*                                                                    *
   !**********************************************************************
   SUBROUTINE ComputeListNP_ListNPA_ListIPLG
-    USE W3ODATMD    , only : IAPROC, NAPROC, NTPROC
-    USE W3ADATMD    , ONLY : MPI_COMM_WAVE
-    USE yowDatapool , only : rtype, istatus
-    USE yowNodepool , only : npa, np, iplg
-    USE yowNodepool , only : ListNP, ListNPA, ListIPLG
+    USE W3ODATMD, only : IAPROC, NAPROC, NTPROC
+    USE W3ADATMD, ONLY: MPI_COMM_WAVE
+    USE yowDatapool, only: rtype, istatus
+    USE yowNodepool, only: npa, np, iplg
+    USE yowNodepool, only: ListNP, ListNPA, ListIPLG
     IMPLICIT NONE
     INCLUDE "mpif.h"
     INTEGER sumNP, iProc, ierr, istat
@@ -280,9 +280,9 @@ CONTAINS
   !*                                                                    *
   !**********************************************************************
   SUBROUTINE ComputeBoundaryInformation
-    use yowNodepool , only : ListNP, ListNPA, ListIPLG
-    USE W3GDATMD    , ONLY : IOBP
-    USE W3ODATMD    , only : IAPROC, NAPROC
+    use yowNodepool, only: ListNP, ListNPA, ListIPLG
+    USE W3GDATMD, ONLY: IOBP
+    USE W3ODATMD, only : IAPROC, NAPROC
     IMPLICIT NONE
     integer ListFirst(NAPROC), NbSend(NAPROC)
     integer IPROC, eSend, IP, IP_glob, NPAloc

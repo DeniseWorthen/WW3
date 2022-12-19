@@ -634,10 +634,10 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD , ONLY : NGRIDS
-    USE W3SERVMD , ONLY : EXTCDE
+    USE W3GDATMD, ONLY: NGRIDS
+    USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     IMPLICIT NONE
@@ -841,11 +841,11 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD , ONLY : NGRIDS, IGRID, W3SETG
-    USE W3ODATMD , ONLY : NAPROC
-    USE W3SERVMD , ONLY : EXTCDE
+    USE W3GDATMD, ONLY: NGRIDS, IGRID, W3SETG
+    USE W3ODATMD, ONLY: NAPROC
+    USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     IMPLICIT NONE
@@ -1042,11 +1042,11 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD , ONLY : NGRIDS, IGRID, W3SETG
-    USE W3ODATMD , ONLY : NAPROC
-    USE W3SERVMD , ONLY : EXTCDE
+    USE W3GDATMD, ONLY: NGRIDS, IGRID, W3SETG
+    USE W3ODATMD, ONLY: NAPROC
+    USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     IMPLICIT NONE
@@ -1214,9 +1214,9 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3SERVMD , ONLY : EXTCDE
+    USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     IMPLICIT NONE
@@ -1367,11 +1367,11 @@ CONTAINS
     !
     ! 10. Source code :
     !
-    USE CONSTANTS , ONLY : LPDLIB
-    USE W3ODATMD  , ONLY : OUTPTS
-    USE W3GDATMD  , ONLY : GTYPE, GRIDS, UNGTYPE
+    USE CONSTANTS, ONLY: LPDLIB
+    USE W3ODATMD, ONLY: OUTPTS
+    USE W3GDATMD, ONLY: GTYPE, GRIDS, UNGTYPE
 #ifdef W3_S
-    USE W3SERVMD  , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !/
     IMPLICIT NONE

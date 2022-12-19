@@ -125,10 +125,10 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !
-    USE W3OACPMD ,  ONLY : ID_OASIS_TIME, IL_NB_SND, SND_FLD, CPL_OASIS_SND
-    USE W3GDATMD ,  ONLY : NSEAL, NSEA
-    USE W3ADATMD ,  ONLY : CX, CY, CHARN, HS, FP0, TWS
-    USE W3ODATMD ,  ONLY : UNDEF, NAPROC, IAPROC
+    USE W3OACPMD,  ONLY: ID_OASIS_TIME, IL_NB_SND, SND_FLD, CPL_OASIS_SND
+    USE W3GDATMD,  ONLY: NSEAL, NSEA
+    USE W3ADATMD,  ONLY: CX, CY, CHARN, HS, FP0, TWS
+    USE W3ODATMD,  ONLY: UNDEF, NAPROC, IAPROC
     !
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -285,10 +285,10 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !
-    USE W3OACPMD , ONLY : ID_OASIS_TIME, IL_NB_RCV, RCV_FLD, CPL_OASIS_RCV
-    USE W3GDATMD , ONLY : NX, NY, NSEAL, NSEA, MAPSF
-    USE W3ODATMD , ONLY : NAPROC, IAPROC
-    USE W3SERVMD , ONLY : W3S2XY
+    USE W3OACPMD, ONLY: ID_OASIS_TIME, IL_NB_RCV, RCV_FLD, CPL_OASIS_RCV
+    USE W3GDATMD, ONLY: NX, NY, NSEAL, NSEA, MAPSF
+    USE W3ODATMD, ONLY: NAPROC, IAPROC
+    USE W3SERVMD, ONLY: W3S2XY
     !
     !/ ------------------------------------------------------------------- /
     !/ Parameter list

@@ -618,10 +618,10 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD , ONLY : NGRIDS, NAUXGR
-    USE W3SERVMD , ONLY : EXTCDE
+    USE W3GDATMD, ONLY: NGRIDS, NAUXGR
+    USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     IMPLICIT NONE
@@ -1014,10 +1014,10 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD , ONLY : W3SETG, NGRIDS, NAUXGR, IGRID, NSPEC
-    USE W3SERVMD , ONLY : EXTCDE
+    USE W3GDATMD, ONLY: W3SETG, NGRIDS, NAUXGR, IGRID, NSPEC
+    USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     IMPLICIT NONE
@@ -1209,10 +1209,10 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD , ONLY : W3SETG, NGRIDS, IGRID, NX, NY
-    USE W3SERVMD , ONLY : EXTCDE
+    USE W3GDATMD, ONLY: W3SETG, NGRIDS, IGRID, NX, NY
+    USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     IMPLICIT NONE
@@ -1378,10 +1378,10 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD , ONLY : W3SETG, NGRIDS, IGRID, NX, NY, NSPEC
-    USE W3SERVMD , ONLY : EXTCDE
+    USE W3GDATMD, ONLY: W3SETG, NGRIDS, IGRID, NX, NY, NSPEC
+    USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     IMPLICIT NONE
@@ -1580,10 +1580,10 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD , ONLY : NAUXGR
-    USE W3SERVMD , ONLY : EXTCDE
+    USE W3GDATMD, ONLY: NAUXGR
+    USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     IMPLICIT NONE

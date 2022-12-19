@@ -207,12 +207,12 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS
     USE W3DISPMD
-    USE W3GDATMD , ONLY : NK, NTH, NSPEC, SIG, TH, DTH, DDEN
-    USE W3GDATMD , ONLY : ECOS, ESIN, EC2, MAPTH, MAPWN
-    USE W3GDATMD , ONLY : DSIP, IOBPD, GTYPE, UNGTYPE, IGPARS
+    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, TH, DTH, DDEN,  &
+         ECOS, ESIN, EC2, MAPTH, MAPWN, &
+         DSIP, IOBPD, GTYPE, UNGTYPE, IGPARS
 
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !/
     !

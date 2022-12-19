@@ -146,12 +146,12 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS
-    USE W3GDATMD , ONLY : NK, NTH, SIG, DDEN, FTE, FTF, FTWN
+    USE W3GDATMD, ONLY: NK, NTH, SIG, DDEN, FTE, FTF, FTWN
 #ifdef W3_T
-    USE W3ODATMD , ONLY : NDST
+    USE W3ODATMD, ONLY: NDST
 #endif
 #ifdef W3_S
-    USE W3SERVMD , ONLY : STRACE
+    USE W3SERVMD, ONLY: STRACE
 #endif
     !
     IMPLICIT NONE
