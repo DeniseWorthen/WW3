@@ -83,7 +83,7 @@ MODULE W3SRC3MD
   !/
   !/ ------------------------------------------------------------------- /
   !/
-  USE CONSTANTS, ONLY: KAPPA, nu_air
+  USE CONSTANTS , ONLY : KAPPA, nu_air
 
   IMPLICIT NONE
 
@@ -203,15 +203,15 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: TPIINV
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, DTH, DDEN, WWNMEANP, &
-         WWNMEANPTAIL, FTE, FTF, SSTXFTF, SSTXFTWN,&
-         SSTXFTFTAIL, SSWELLF
+    USE CONSTANTS , ONLY : TPIINV
+    USE W3GDATMD  , ONLY : NK, NTH, NSPEC, SIG, DTH, DDEN, WWNMEANP
+    USE W3GDATMD  , ONLY : WWNMEANPTAIL, FTE, FTF, SSTXFTF, SSTXFTWN
+    USE W3GDATMD  , ONLY : SSTXFTFTAIL, SSWELLF
 #ifdef W3_T
-    USE W3ODATMD, ONLY: NDST
+    USE W3ODATMD  , ONLY : NDST
 #endif
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
     !
     IMPLICIT NONE
@@ -461,31 +461,31 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: GRAV, TPI
+    USE CONSTANTS , ONLY : GRAV, TPI
 #ifdef W3_T
-    USE CONSTANTS, ONLY: RADE
+    USE CONSTANTS , ONLY : RADE
 #endif
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC, XFR, DDEN, SIG, SIG2, TH,   &
-         ESIN, ECOS, EC2, ZZWND, AALPHA, BBETA, ZZALP,&
-         SSWELLF,                                     &
-         DDEN2, DTH, SSINTHP,ZZ0RAT
+    USE W3GDATMD  , ONLY : NK, NTH, NSPEC, XFR, DDEN, SIG, SIG2, TH
+    USE W3GDATMD  , ONLY : ESIN, ECOS, EC2, ZZWND, AALPHA, BBETA, ZZALP
+    USE W3GDATMD  , ONLY : SSWELLF
+    USE W3GDATMD  , ONLY : DDEN2, DTH, SSINTHP,ZZ0RAT
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
 #ifdef W3_T
-    USE W3ODATMD, ONLY: NDST
+    USE W3ODATMD  , ONLY : NDST
 #endif
 #ifdef W3_T0
-    USE W3ODATMD, ONLY: NDST
+    USE W3ODATMD  , ONLY : NDST
 #endif
 #ifdef W3_T1
-    USE W3ODATMD, ONLY: NDST
+    USE W3ODATMD  , ONLY : NDST
 #endif
 #ifdef W3_T0
-    USE W3ARRYMD, ONLY: PRT2DS
+    USE W3ARRYMD  , ONLY : PRT2DS
 #endif
 #ifdef W3_T1
-    USE W3ARRYMD, ONLY: OUTMAT
+    USE W3ARRYMD  , ONLY : OUTMAT
 #endif
     !
     IMPLICIT NONE
@@ -779,10 +779,10 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: TPIINV
-    USE W3GDATMD,  ONLY: SIG, NK
+    USE CONSTANTS , ONLY : TPIINV
+    USE W3GDATMD  , ONLY : SIG, NK
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
     !/
     IMPLICIT NONE
@@ -886,8 +886,8 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: GRAV
-    USE W3GDATMD, ONLY: ZZWND, AALPHA, ZZ0MAX
+    USE CONSTANTS , ONLY : GRAV
+    USE W3GDATMD  , ONLY : ZZWND, AALPHA, ZZ0MAX
     IMPLICIT NONE
     INTEGER, PARAMETER      :: NITER=10
     REAL   , PARAMETER      :: XM=0.50, EPS1=0.00001
@@ -1010,13 +1010,13 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: GRAV, TPI
-    USE W3GDATMD, ONLY: AALPHA, BBETA, ZZALP, XFR, FACHFE, ZZ0MAX
+    USE CONSTANTS , ONLY : GRAV, TPI
+    USE W3GDATMD  , ONLY : AALPHA, BBETA, ZZALP, XFR, FACHFE, ZZ0MAX
 #ifdef W3_T
-    USE W3ODATMD, ONLY: NDST
+    USE W3ODATMD  , ONLY : NDST
 #endif
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
     !
     IMPLICIT NONE
@@ -1190,8 +1190,8 @@ CONTAINS
     !
     ! 10. Source code :
     !-----------------------------------------------------------------------------!
-    USE CONSTANTS, ONLY: GRAV
-    USE W3GDATMD,  ONLY: ZZWND, AALPHA
+    USE CONSTANTS , ONLY : GRAV
+    USE W3GDATMD  , ONLY : ZZWND, AALPHA
     IMPLICIT NONE
     REAL, intent(in) :: WINDSPEED,TAUW
     REAL, intent(out) :: USTAR, Z0, CHARN
@@ -1322,26 +1322,26 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: GRAV, TPI
-    USE W3GDATMD, ONLY: NSPEC, NTH, NK, DDELTA1, DDELTA2,   &
+    USE CONSTANTS , ONLY : GRAV, TPI
+    USE W3GDATMD  , ONLY : NSPEC, NTH, NK, DDELTA1, DDELTA2
 #ifdef W3_T0
-         SIG,                                &
+    USE W3GDATMD  , ONLY : SIG
 #endif
-         SSDSC1
+    USE W3GDATMD  , ONLY : SSDSC1
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
 #ifdef W3_T
-    USE W3ODATMD, ONLY: NDST
+    USE W3ODATMD  , ONLY : NDST
 #endif
 #ifdef W3_T1
-    USE W3ODATMD, ONLY: NDST
+    USE W3ODATMD  , ONLY : NDST
 #endif
 #ifdef W3_T0
-    USE W3ARRYMD, ONLY: PRT2DS
+    USE W3ARRYMD  , ONLY : PRT2DS
 #endif
 #ifdef W3_T1
-    USE W3ARRYMD, ONLY: OUTMAT
+    USE W3ARRYMD  , ONLY : OUTMAT
 #endif
     !
     IMPLICIT NONE

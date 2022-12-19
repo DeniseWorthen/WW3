@@ -177,9 +177,9 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3SERVMD, ONLY: EXTCDE
+    USE W3SERVMD , ONLY : EXTCDE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !
     IMPLICIT NONE
@@ -387,9 +387,9 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3SERVMD, ONLY: EXTCDE
+    USE W3SERVMD , ONLY : EXTCDE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !
     IMPLICIT NONE
@@ -547,9 +547,9 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3SERVMD, ONLY: EXTCDE
+    USE W3SERVMD , ONLY : EXTCDE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !
     IMPLICIT NONE
@@ -720,9 +720,9 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3SERVMD, ONLY: EXTCDE
+    USE W3SERVMD , ONLY : EXTCDE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !
     IMPLICIT NONE
@@ -887,9 +887,9 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3SERVMD, ONLY: EXTCDE
+    USE W3SERVMD , ONLY : EXTCDE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !
     IMPLICIT NONE

@@ -194,11 +194,11 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: KAPPA, GRAV, nu_air
-    USE W3ODATMD, ONLY: NDSE, IAPROC, NAPERR
-    USE W3SERVMD, ONLY: EXTCDE
+    USE CONSTANTS , ONLY : KAPPA, GRAV, nu_air
+    USE W3ODATMD  , ONLY : NDSE, IAPROC, NAPERR
+    USE W3SERVMD  , ONLY : EXTCDE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
     !/
     IMPLICIT NONE

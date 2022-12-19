@@ -182,12 +182,12 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: GRAV, PI, TPI
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC, DTH, SIG, DDEN, FTE, FTF, PPTRIAD
-    USE W3ODATMD, ONLY: NDSE
-    USE W3SERVMD, ONLY: EXTCDE
+    USE CONSTANTS , ONLY : GRAV, PI, TPI
+    USE W3GDATMD  , ONLY : NK, NTH, NSPEC, DTH, SIG, DDEN, FTE, FTF, PPTRIAD
+    USE W3ODATMD  , ONLY : NDSE
+    USE W3SERVMD  , ONLY : EXTCDE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
     !/
     IMPLICIT NONE
