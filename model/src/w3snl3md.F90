@@ -864,7 +864,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS
     USE W3ODATMD , ONLY : NDSE, NDST
-    USE W3GDATMD , ONLY : NFR => NK
+    USE W3GDATMD , ONLY : XSI, NFR => NK
     !
     USE W3DISPMD , ONLY : WAVNU2
     USE W3SERVMD , ONLY : EXTCDE
