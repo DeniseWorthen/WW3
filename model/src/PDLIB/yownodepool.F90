@@ -37,7 +37,7 @@
 !
 !> Has data that belong to nodes
 module yowNodepool
-  use yowDatapool, only: rkind
+  use yowDatapool , only : rkind
   implicit none
   private
   public :: finalizeNodepool, nodes, ghosts

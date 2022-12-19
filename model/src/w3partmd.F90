@@ -80,7 +80,7 @@ MODULE W3PARTMD
   !
   !/ ------------------------------------------------------------------- /
   !
-  USE W3ODATMD, ONLY: IHMAX, HSPMIN, WSMULT, DIMP, PTMETH, PTFCUT
+  USE W3ODATMD , ONLY : IHMAX, HSPMIN, WSMULT, DIMP, PTMETH, PTFCUT
   !
   PUBLIC
   !
@@ -223,11 +223,11 @@ CONTAINS
     !/
     USE CONSTANTS
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, TH
-    USE W3ODATMD, ONLY: WSCUT, FLCOMB
+    USE W3GDATMD , ONLY : NK, NTH, NSPEC, SIG, TH
+    USE W3ODATMD , ONLY : WSCUT, FLCOMB
     !
     IMPLICIT NONE
     !/
@@ -547,10 +547,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !
-    USE W3GDATMD, ONLY: NSPEC
+    USE W3GDATMD , ONLY : NSPEC
     !
     IMPLICIT NONE
     !/
@@ -667,10 +667,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC
+    USE W3GDATMD , ONLY : NK, NTH, NSPEC
     !
     IMPLICIT NONE
     !/
@@ -876,10 +876,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !
-    USE W3GDATMD, ONLY: NSPEC
+    USE W3GDATMD , ONLY : NSPEC
     !
     IMPLICIT NONE
     !/
@@ -1226,13 +1226,13 @@ CONTAINS
     !
     USE CONSTANTS
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
-    USE W3DISPMD, ONLY: WAVNU1
+    USE W3DISPMD , ONLY : WAVNU1
     !
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC, DTH, SIG, DSII, DSIP,       &
-         ECOS, ESIN, XFR, FACHFE, TH, FTE
-    USE W3ODATMD, ONLY: IAPROC, NAPERR, NDSE, NDST
+    USE W3GDATMD , ONLY : NK, NTH, NSPEC, DTH, SIG, DSII, DSIP
+    USE W3GDATMD , ONLY :  ECOS, ESIN, XFR, FACHFE, TH, FTE
+    USE W3ODATMD , ONLY : IAPROC, NAPERR, NDSE, NDST
     !
     IMPLICIT NONE
     !/

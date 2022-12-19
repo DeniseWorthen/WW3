@@ -166,11 +166,11 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3ODATMD, ONLY: NDSE, IAPROC, NAPERR
-    USE W3GDATMD, ONLY: FLX4A0
-    USE W3SERVMD, ONLY: EXTCDE
+    USE W3ODATMD , ONLY : NDSE, IAPROC, NAPERR
+    USE W3GDATMD , ONLY : FLX4A0
+    USE W3SERVMD , ONLY : EXTCDE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !/
     IMPLICIT NONE
