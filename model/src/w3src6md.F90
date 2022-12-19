@@ -184,12 +184,12 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: TPIINV
-    USE W3GDATMD,  ONLY: NK, NTH, SIG, DTH, DDEN, FTE, FTF, FTWN, DSII
-    USE W3ODATMD,  ONLY: NDST, NDSE
-    USE W3SERVMD,  ONLY: EXTCDE
+    USE CONSTANTS , ONLY : TPIINV
+    USE W3GDATMD  , ONLY : NK, NTH, SIG, DTH, DDEN, FTE, FTF, FTWN, DSII
+    USE W3ODATMD  , ONLY : NDST, NDSE
+    USE W3SERVMD  , ONLY : EXTCDE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
     !/
     IMPLICIT NONE
@@ -374,13 +374,13 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: DWAT, TPI, GRAV
-    USE W3GDATMD,  ONLY: NK, NTH, NSPEC, DTH, SIG2, DDEN2
-    USE W3GDATMD,  ONLY: ECOS, ESIN, SIN6A0, SIN6WS
-    USE W3ODATMD,  ONLY: NDSE
-    USE W3SERVMD,  ONLY: EXTCDE
+    USE CONSTANTS , ONLY : DWAT, TPI, GRAV
+    USE W3GDATMD  , ONLY : NK, NTH, NSPEC, DTH, SIG2, DDEN2
+    USE W3GDATMD  , ONLY : ECOS, ESIN, SIN6A0, SIN6WS
+    USE W3ODATMD  , ONLY : NDSE
+    USE W3SERVMD  , ONLY : EXTCDE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
     !/
     IMPLICIT NONE
@@ -622,18 +622,18 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: GRAV, TPI
-    USE W3GDATMD,  ONLY: NK, NTH, NSPEC, DDEN, DSII, SIG2, DTH, XFR
-    USE W3GDATMD,  ONLY: SDS6A1, SDS6A2, SDS6P1, SDS6P2, SDS6ET
-    USE W3ODATMD,  ONLY: NDSE
-    USE W3SERVMD,  ONLY: EXTCDE
+    USE CONSTANTS  , ONLY : GRAV, TPI
+    USE W3GDATMD   , ONLY : NK, NTH, NSPEC, DDEN, DSII, SIG2, DTH, XFR
+    USE W3GDATMD   , ONLY : SDS6A1, SDS6A2, SDS6P1, SDS6P2, SDS6ET
+    USE W3ODATMD   , ONLY : NDSE
+    USE W3SERVMD   , ONLY : EXTCDE
 #ifdef W3_T6
-    USE W3TIMEMD,  ONLY: STME21
-    USE W3WDATMD,  ONLY: TIME
-    USE W3ODATMD,  ONLY: NDST
+    USE W3TIMEMD   , ONLY : STME21
+    USE W3WDATMD   , ONLY : TIME
+    USE W3ODATMD   , ONLY : NDST
 #endif
 #ifdef W3_S
-    USE W3SERVMD,  ONLY: STRACE
+    USE W3SERVMD   , ONLY : STRACE
 #endif
     !/
     IMPLICIT NONE
@@ -846,14 +846,14 @@ CONTAINS
     !      case the last approximation for RTAU is used.
     !
     !/
-    USE CONSTANTS, ONLY: DAIR, GRAV, TPI
-    USE W3GDATMD,  ONLY: NK, NTH, NSPEC, DTH, XFR, ECOS, ESIN
-    USE W3GDATMD,  ONLY: SIN6WS
-    USE W3ODATMD,  ONLY: NDST, NDSE, IAPROC, NAPERR
-    USE W3TIMEMD,  ONLY: STME21
-    USE W3WDATMD,  ONLY: TIME
+    USE CONSTANTS  , ONLY : DAIR, GRAV, TPI
+    USE W3GDATMD   , ONLY : NK, NTH, NSPEC, DTH, XFR, ECOS, ESIN
+    USE W3GDATMD   , ONLY : SIN6WS
+    USE W3ODATMD   , ONLY : NDST, NDSE, IAPROC, NAPERR
+    USE W3TIMEMD   , ONLY : STME21
+    USE W3WDATMD   , ONLY : TIME
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD   , ONLY : STRACE
 #endif
     IMPLICIT NONE
     !
@@ -1115,10 +1115,10 @@ CONTAINS
     !  5. Source code :
     !
     !/
-    USE CONSTANTS, ONLY: GRAV, TPI
-    USE W3GDATMD,  ONLY: NK, NTH, NSPEC, DTH, XFR, ECOS, ESIN
+    USE CONSTANTS , ONLY : GRAV, TPI
+    USE W3GDATMD  , ONLY : NK, NTH, NSPEC, DTH, XFR, ECOS, ESIN
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
     IMPLICIT NONE
     !
@@ -1284,7 +1284,7 @@ CONTAINS
     !      tau = g * rho_water * | Sin(f)/C(f) df
     !                            /
     !/
-    USE CONSTANTS, ONLY: GRAV, DWAT    ! gravity, density of water
+    USE CONSTANTS , ONLY : GRAV, DWAT    ! gravity, density of water
     IMPLICIT NONE
     REAL, INTENT(IN)  :: SDENSIG(:)    ! Sin(sigma) in [m2/rad-Hz]
     REAL, INTENT(IN)  :: CINV(:)       ! inverse phase speed

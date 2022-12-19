@@ -41,8 +41,8 @@
 !> \date 2011-2012
 module yowpdlibMain
   use yowerr
-  use yowDatapool, only : rkind
-  use w3servmd,    only : print_memcheck
+  use yowDatapool , only : rkind
+  use w3servmd    , only : print_memcheck
 
   !module default
   implicit none
@@ -63,12 +63,12 @@ contains
   !> @param[in] MPIComm MPI communicator to use with pdlib
   !> @overload initPD1
   subroutine initFromGridDim(MNP, MNE, INE_global, secDim, MPIcomm)
-    use yowDatapool,       only: myrank, debugPrePartition, debugPostPartition
-    use yowNodepool,       only: np_global, np, np_perProcSum, ng, ipgl, iplg, npa
-    use yowElementpool,    only: ne_global,ne
-    use yowSidepool,       only: ns, ns_global
-    use yowExchangeModule, only: nConnDomains, setDimSize
-    use yowRankModule,     only: initRankModule, ipgl_npa
+    use yowDatapool       , only : myrank, debugPrePartition, debugPostPartition
+    use yowNodepool       , only : np_global, np, np_perProcSum, ng, ipgl, iplg, npa
+    use yowElementpool    , only : ne_global,ne
+    use yowSidepool       , only : ns, ns_global
+    use yowExchangeModule , only : nConnDomains, setDimSize
+    use yowRankModule     , only : initRankModule, ipgl_npa
 
     integer, intent(in) :: MNP, MNE
     integer, intent(in) :: INE_global(3,MNE)
@@ -208,7 +208,7 @@ contains
 
   !> initialize MPI.
   subroutine initMPI(MPIcomm)
-    use yowDatapool, only: comm, nTasks, myrank
+    use yowDatapool , only : comm, nTasks, myrank
     use yowerr
     use MPI
 
@@ -255,9 +255,9 @@ contains
   !> @param[in] INE element array
   !> alter: np_global, nodes_global(), ne_global, elements(), INE_global
   subroutine assignMesh(MNP, MNE)
-    use yowNodepool,    only: nodes_global, np_global
-    use yowElementpool, only: ne_global
-    use yowerr,       only: parallel_abort
+    use yowNodepool    , only : nodes_global, np_global
+    use yowElementpool , only : ne_global
+    use yowerr         , only : parallel_abort
 
     integer, intent(in) :: MNP, MNE
     !integer, intent(in) :: INE(3,MNE)
@@ -290,9 +290,9 @@ contains
   !> and create a premature iplg
   !> alter: np_perProc, np_perProcSum, np, iplg
   subroutine prePartition
-    use yowDatapool, only: nTasks ,myrank
-    use yowerr,    only: parallel_abort
-    use yowNodepool, only: np_global, np, np_perProc, np_perProcSum, iplg
+    use yowDatapool , only : nTasks ,myrank
+    use yowerr      , only : parallel_abort
+    use yowNodepool , only : np_global, np, np_perProc, np_perProcSum, iplg
 
     integer :: i, stat
 
@@ -339,10 +339,10 @@ contains
   !> finally calculate the number of sides
   !> alter: maxConnNodes, connNodes_data, ns, ns_global, node%nConnNodes
   subroutine findConnNodes(INE_global)
-    use yowerr,       only: parallel_abort
-    use yowNodepool,    only: np, np_global, nodes_global, nodes, maxConnNodes, t_Node, connNodes_data
-    use yowElementpool, only: ne_global
-    use yowSidepool,    only: ns, ns_global
+    use yowerr         , only : parallel_abort
+    use yowNodepool    , only : np, np_global, nodes_global, nodes, maxConnNodes, t_Node, connNodes_data
+    use yowElementpool , only : ne_global
+    use yowSidepool    , only : ns, ns_global
 
     integer, intent(in) :: INE_global(3,ne_global)
     integer :: i, j, stat
@@ -419,12 +419,12 @@ contains
   !> after that, we know for every node the domain ID
   !> alter: t_Node::domainID
   subroutine runParmetis(MNP)
-    use yowerr,    only: parallel_abort
-    use yowDatapool, only: debugParmetis,debugPartition, nTasks, myrank, itype, comm
-    use yowNodepool, only: np, npa, np_global, nodes, nodes_global, t_Node, iplg, np_perProcSum, np_perProc
-    use yowSidepool, only: ns
-    use yowElementpool, only: ne, ne_global
-    use w3gdatmd, only: xgrd, ygrd
+    use yowerr         , only : parallel_abort
+    use yowDatapool    , only : debugParmetis,debugPartition, nTasks, myrank, itype, comm
+    use yowNodepool    , only : np, npa, np_global, nodes, nodes_global, t_Node, iplg, np_perProcSum, np_perProc
+    use yowSidepool    , only : ns
+    use yowElementpool , only : ne, ne_global
+    use w3gdatmd       , only : xgrd, ygrd
     use MPI
 
     integer, intent(in) :: MNP
@@ -766,10 +766,10 @@ contains
   !> alter: np, ns, np_perProc, np_perProcSum, iplg, ipgl, nodes_global%id
   !> @note connNodes_data(:) has not changed after the call to parmetis.
   subroutine postPartition
-    use yowerr,    only: parallel_abort
-    use yowDatapool, only: myrank, nTasks
-    use yowNodepool, only: np_global, np, nodes_global, nodes, np_perProc, np_perProcSum, iplg, ipgl, t_Node
-    use yowSidepool, only: ns
+    use yowerr      , only : parallel_abort
+    use yowDatapool , only : myrank, nTasks
+    use yowNodepool , only : np_global, np, nodes_global, nodes, np_perProc, np_perProcSum, iplg, ipgl, t_Node
+    use yowSidepool , only : ns
 
     integer :: i, j, stat
     type(t_Node), pointer :: node
@@ -829,9 +829,9 @@ contains
   !> find the ghost nodes of the local domain
   !> alter: ng, ghosts(), ghostlg, ghostgl, npa, iplg
   subroutine findGhostNodes
-    use yowerr,    only: parallel_abort
-    use yowDatapool, only: myrank
-    use yowNodepool, only: t_Node, np, nodes, ghosts, nodes_global, ng, ghostlg, ghostgl, npa, np_global, iplg
+    use yowerr      , only : parallel_abort
+    use yowDatapool , only : myrank
+    use yowNodepool , only : t_Node, np, nodes, ghosts, nodes_global, ng, ghostlg, ghostgl, npa, np_global, iplg
 
     integer :: i, j, k, stat
     type(t_Node), pointer :: node, nodeNeighbor, nodeGhost
@@ -952,10 +952,10 @@ contains
   !> 2) assign the ghost nodes to their domains
   !> alter: neighborDomains(), nConnDomains
   subroutine findConnDomains
-    use yowerr,          only: parallel_abort
-    use yowNodepool,       only: ghosts, ng, t_Node
-    use yowDatapool,       only: nTasks, myrank
-    use yowExchangeModule, only: neighborDomains, initNbrDomains
+    use yowerr            , only : parallel_abort
+    use yowNodepool       , only : ghosts, ng, t_Node
+    use yowDatapool       , only : nTasks, myrank
+    use yowExchangeModule , only : neighborDomains, initNbrDomains
 
     integer :: i, stat, itemp
     type(t_Node), pointer :: ghost
@@ -1037,9 +1037,9 @@ contains
   !> alter: neighborDomains()%{numNodesToSend, nodesToSend},
   subroutine exchangeGhostIds
     use yowerr
-    use yowNodepool,       only: np, t_node, nodes
-    use yowDatapool,       only: nTasks, myrank, comm
-    use yowExchangeModule, only: neighborDomains, nConnDomains, createMPITypes
+    use yowNodepool       , only : np, t_node, nodes
+    use yowDatapool       , only : nTasks, myrank, comm
+    use yowExchangeModule , only : neighborDomains, nConnDomains, createMPITypes
     use MPI
 
     integer :: i, j, k
@@ -1165,12 +1165,12 @@ contains
   !> this collects all data which depends on ghost information
   !> alter: ne, INE, x, y, z, ielg
   subroutine postPartition2(INE_global)
-    use yowElementpool, only: ne, ne_global, INE, belongto, ielg
-    use yowerr,         only: parallel_abort
-    use yowDatapool,    only: myrank
-    use yowNodepool,    only: np_global, np, nodes_global, iplg, t_Node, ghostlg, ng, npa
-    use yowNodepool,    only: x, y, z
-    use w3gdatmd,       only: xgrd, ygrd, zb
+    use yowElementpool , only : ne, ne_global, INE, belongto, ielg
+    use yowerr         , only : parallel_abort
+    use yowDatapool    , only : myrank
+    use yowNodepool    , only : np_global, np, nodes_global, iplg, t_Node, ghostlg, ng, npa
+    use yowNodepool    , only : x, y, z
+    use w3gdatmd       , only : xgrd, ygrd, zb
 
     integer, intent(in) :: INE_global(3,ne_global)
 
@@ -1288,12 +1288,12 @@ contains
   !*                                                                    *
   !**********************************************************************
   subroutine ComputeTRIA_IEN_SI_CCON
-    use yowElementpool, only: ne, ne_global, INE, ielg
-    use yowExchangeModule, only : PDLIB_exchange1Dreal
-    use yowerr,       only: parallel_abort
-    use yowDatapool,    only: myrank
-    use yowNodepool,    only: np_global, np, iplg, t_Node, ghostlg, ng, npa
-    use yowNodepool,    only: x, y, z, PDLIB_SI, PDLIB_IEN, PDLIB_TRIA, PDLIB_CCON, PDLIB_TRIA03
+    use yowElementpool    , only : ne, ne_global, INE, ielg
+    use yowExchangeModule , only : PDLIB_exchange1Dreal
+    use yowerr            , only : parallel_abort
+    use yowDatapool       , only : myrank
+    use yowNodepool       , only : np_global, np, iplg, t_Node, ghostlg, ng, npa
+    use yowNodepool       , only : x, y, z, PDLIB_SI, PDLIB_IEN, PDLIB_TRIA, PDLIB_CCON, PDLIB_TRIA03
 
     integer I1, I2, I3, stat, IE, NI(3)
     real(rkind) :: DXP1, DXP2, DXP3, DYP1, DYP2, DYP3, DBLTMP, TRIA03
@@ -1388,13 +1388,13 @@ contains
   !*                                                                    *
   !**********************************************************************
   subroutine ComputeIA_JA_POSI_NNZ
-    use yowElementpool, only: ne, ne_global, INE, ielg
-    use yowerr,       only: parallel_abort
-    use yowDatapool,    only: myrank
-    use yowNodepool,    only: np_global, np, nodes_global, iplg, t_Node, ghostlg, ng, npa
-    use yowNodepool,    only: PDLIB_CCON, PDLIB_IA, PDLIB_JA, PDLIB_JA_IE, PDLIB_IA_P, PDLIB_JA_P
-    use yowNodepool,    only: PDLIB_NNZ, PDLIB_POSI, PDLIB_IE_CELL, PDLIB_POS_CELL, PDLIB_IE_CELL2
-    use yowNodepool,    only: PDLIB_POS_CELL2, PDLIB_I_DIAG
+    use yowElementpool , only : ne, ne_global, INE, ielg
+    use yowerr         , only : parallel_abort
+    use yowDatapool    , only : myrank
+    use yowNodepool    , only : np_global, np, nodes_global, iplg, t_Node, ghostlg, ng, npa
+    use yowNodepool    , only : PDLIB_CCON, PDLIB_IA, PDLIB_JA, PDLIB_JA_IE, PDLIB_IA_P, PDLIB_JA_P
+    use yowNodepool    , only : PDLIB_NNZ, PDLIB_POSI, PDLIB_IE_CELL, PDLIB_POS_CELL, PDLIB_IE_CELL2
+    use yowNodepool    , only : PDLIB_POS_CELL2, PDLIB_I_DIAG
 
     integer CHILF(npa)
     integer istat
@@ -1582,10 +1582,10 @@ contains
   !*                                                                    *
   !**********************************************************************
   subroutine finalizePD()
-    use yowExchangeModule, only: finalizeExchangeModule
-    use yowNodepool,    only: finalizeNodepool
-    use yowElementpool, only: finalizeElementpool
-    use yowRankModule,  only: finalizeRankModule
+    use yowExchangeModule , only : finalizeExchangeModule
+    use yowNodepool       , only : finalizeNodepool
+    use yowElementpool    , only : finalizeElementpool
+    use yowRankModule     , only : finalizeRankModule
 
     call finalizeRankModule()
     call finalizeExchangeModule()

@@ -171,7 +171,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !/
     IMPLICIT NONE
@@ -351,13 +351,13 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
 
     USE CONSTANTS
-    USE W3ODATMD, ONLY: NDSE
-    USE W3SERVMD, ONLY: EXTCDE
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, DDEN,  &
-         SBTCX, ECOS, ESIN, DTH
+    USE W3ODATMD , ONLY : NDSE
+    USE W3SERVMD , ONLY : EXTCDE
+    USE W3GDATMD , ONLY : NK, NTH, NSPEC, SIG, DDEN
+    USE W3GDATMD , ONLY : SBTCX, ECOS, ESIN, DTH
 
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     IMPLICIT NONE
     !/

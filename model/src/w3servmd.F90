@@ -1957,7 +1957,7 @@ CONTAINS
     !       'C'=Cartesian    : North=90, counter-clockwise, direction-to
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: RADE, UNDEF
+    USE CONSTANTS , ONLY : RADE, UNDEF
     REAL, INTENT(INOUT)             :: U(NSEA), V(NSEA)
     INTEGER, INTENT(IN)             :: NSEA
     REAL, INTENT(OUT), OPTIONAL     :: MAG(NSEA), DIR(NSEA)
