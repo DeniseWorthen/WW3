@@ -69,7 +69,7 @@ MODULE W3TIMEMD
   !/ ------------------------------------------------------------------- /
   !/
 #ifdef W3_S
-  USE W3SERVMD, ONLY: STRACE
+  USE W3SERVMD , ONLY : STRACE
 #endif
   !
   ! module default
@@ -1729,8 +1729,8 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !/
-    USE W3SERVMD, ONLY: EXTCDE
-    USE W3ODATMD, ONLY: NDSE
+    USE W3SERVMD , ONLY : EXTCDE
+    USE W3ODATMD , ONLY : NDSE
     !
     IMPLICIT NONE
     !/
@@ -1976,8 +1976,8 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !/
-    USE W3SERVMD, ONLY: EXTCDE
-    USE W3ODATMD, ONLY: NDSE
+    USE W3SERVMD , ONLY : EXTCDE
+    USE W3ODATMD , ONLY : NDSE
     !
     IMPLICIT NONE
     !/

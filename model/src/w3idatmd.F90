@@ -342,10 +342,10 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD, ONLY: NGRIDS, NAUXGR
-    USE W3SERVMD, ONLY: EXTCDE
+    USE W3GDATMD , ONLY : NGRIDS, NAUXGR
+    USE W3SERVMD , ONLY : EXTCDE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !
     IMPLICIT NONE
@@ -504,13 +504,13 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD,  ONLY: NGRIDS, NAUXGR, IGRID, W3SETG, NX, NY
+    USE W3GDATMD , ONLY : NGRIDS, NAUXGR, IGRID, W3SETG, NX, NY
 #ifdef W3_SMC
-    USE W3GDATMD,  ONLY: FSWND, NSEA
+    USE W3GDATMD , ONLY : FSWND, NSEA
 #endif
-    USE W3SERVMD,  ONLY: EXTCDE
+    USE W3SERVMD , ONLY : EXTCDE
 #ifdef W3_S
-    USE W3SERVMD,  ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !
     IMPLICIT NONE
@@ -885,11 +885,11 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD, ONLY: NAUXGR
+    USE W3GDATMD , ONLY : NAUXGR
     !
-    USE W3SERVMD, ONLY: EXTCDE
+    USE W3SERVMD , ONLY : EXTCDE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !
     IMPLICIT NONE

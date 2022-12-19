@@ -247,12 +247,12 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 
-    USE WMMDATMD, ONLY: MDSE, IMPROC, NMPLOG
+    USE WMMDATMD , ONLY : MDSE, IMPROC, NMPLOG
 #ifdef W3_MPI
-    USE WMMDATMD, ONLY: MPI_COMM_MWAVE
+    USE WMMDATMD , ONLY : MPI_COMM_MWAVE
 #endif
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
 
     IMPLICIT NONE
@@ -397,10 +397,10 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 
-    USE WMMDATMD, ONLY: MDSE
-    USE W3SERVMD, ONLY: EXTCDE
+    USE WMMDATMD , ONLY : MDSE
+    USE W3SERVMD , ONLY : EXTCDE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
 
     IMPLICIT NONE
@@ -515,10 +515,10 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 
-    USE WMMDATMD, ONLY: MDSE
-    USE W3SERVMD, ONLY: EXTCDE
+    USE WMMDATMD , ONLY : MDSE
+    USE W3SERVMD , ONLY : EXTCDE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
 
     IMPLICIT NONE
@@ -641,10 +641,10 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 
-    USE WMMDATMD, ONLY: MDSE
-    USE W3SERVMD, ONLY: EXTCDE
+    USE WMMDATMD , ONLY : MDSE
+    USE W3SERVMD , ONLY : EXTCDE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
 
     IMPLICIT NONE
@@ -766,10 +766,10 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 
-    USE WMMDATMD, ONLY: MDSE
-    USE W3SERVMD, ONLY: EXTCDE
+    USE WMMDATMD , ONLY : MDSE
+    USE W3SERVMD , ONLY : EXTCDE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
 
     IMPLICIT NONE
@@ -902,10 +902,10 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 
-    USE WMMDATMD, ONLY: MDSE
-    USE W3SERVMD, ONLY: EXTCDE
+    USE WMMDATMD , ONLY : MDSE
+    USE W3SERVMD , ONLY : EXTCDE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
 
     IMPLICIT NONE
@@ -1062,7 +1062,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
 
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
 
     IMPLICIT NONE
@@ -1155,7 +1155,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
 
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
 
     IMPLICIT NONE
@@ -1264,7 +1264,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
 
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
 
     IMPLICIT NONE
@@ -1372,7 +1372,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
 
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
 
     IMPLICIT NONE
@@ -1490,7 +1490,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
 
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
 
     IMPLICIT NONE

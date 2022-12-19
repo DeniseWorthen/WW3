@@ -1088,7 +1088,7 @@ contains
     !
     !    ✓ dispopt = 1 for WAVNU1
     !/
-    USE W3DISPMD, ONLY: WAVNU1
+    USE W3DISPMD , ONLY : WAVNU1
     !
     implicit none
     !
@@ -1222,7 +1222,7 @@ contains
     !    finite-deep cases.
     !
     !/
-    USE CONSTANTS, ONLY: file_endian
+    USE CONSTANTS , ONLY : file_endian
 
     implicit none
     !
