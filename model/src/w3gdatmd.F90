@@ -600,8 +600,7 @@ MODULE W3GDATMD
   !/
   !/ Conventional declarations
   !/
-  INTEGER                 :: NGRIDS = -1, IGRID = -1, ISGRD = -1, &
-       IPARS = -1, NAUXGR
+  INTEGER :: NGRIDS = -1, IGRID = -1, ISGRD = -1, IPARS = -1, NAUXGR
   !
 #ifdef W3_IC4
   INTEGER, PARAMETER      :: NIC4=10
@@ -633,8 +632,8 @@ MODULE W3GDATMD
 #ifdef W3_SEC1
     INTEGER          :: NITERSEC1
 #endif
-    INTEGER, POINTER :: MAPSTA(:,:), MAPST2(:,:),            &
-         MAPFS(:,:), MAPSF(:,:)
+    INTEGER ,          POINTER     :: MAPSTA(:,:), MAPST2(:,:)
+    INTEGER ,          POINTER     :: MAPFS(:,:), MAPSF(:,:)
     !
 #ifdef W3_SMC
     !!Li     Cell and face arrays for SMC grid.
@@ -645,16 +644,16 @@ MODULE W3GDATMD
     INTEGER, POINTER :: ISMCBP(:),   ICLBAC(:)
 
     !/ Data duplicated for better performance
-    INTEGER, POINTER :: IJKCel3(:), IJKCel4(:), &
-         IJKVFc5(:), IJKVFc6(:), &
-         IJKUFc5(:), IJKUFc6(:)
+    INTEGER ,          POINTER     :: IJKCel3(:), IJKCel4(:)
+    INTEGER ,          POINTER     :: IJKVFc5(:), IJKVFc6(:)
+    INTEGER ,          POINTER     :: IJKUFc5(:), IJKUFc6(:)
 #endif
     !
-    REAL             :: SX, SY, X0, Y0, DTCFL, DTCFLI, DTMAX,      &
-         DTMIN, DMIN, CTMAX, FICE0, FICEN, FICEL,   &
-         PFMOVE, STEXU, STEYU, STEDU, IICEHMIN,     &
-         IICEHINIT, ICESCALES(4), IICEHFAC, IICEHDISP, &
-         IICEDDISP, IICEFDISP, BTBETA, AAIRCMIN, AAIRGB
+    REAL                           :: SX, SY, X0, Y0, DTCFL, DTCFLI, DTMAX
+    REAL                           :: DTMIN, DMIN, CTMAX, FICE0, FICEN, FICEL
+    REAL                           :: PFMOVE, STEXU, STEYU, STEDU, IICEHMIN
+    REAL                           :: IICEHINIT, ICESCALES(4), IICEHFAC, IICEHDISP
+    REAL                           :: IICEDDISP, IICEFDISP, BTBETA, AAIRCMIN, AAIRGB
 
     REAL(8)          :: GRIDSHIFT ! see notes in WMGHGH
 
@@ -683,8 +682,8 @@ MODULE W3GDATMD
     REAL   , POINTER :: HPFAC(:,:) ! H_P = SQRT(G_PP) DEFINED ON IX,IY
     REAL   , POINTER :: HQFAC(:,:) ! H_Q = SQRT(G_QQ) DEFINED ON IX,IY
 
-    LOGICAL          :: GINIT, FLDRY, FLCX, FLCY, FLCTH, FLCK, FLSOU, IICEDISP,&
-         IICESMOOTH
+    LOGICAL                        :: GINIT, FLDRY, FLCX, FLCY, FLCTH, FLCK, FLSOU, IICEDISP
+    LOGICAL                        :: IICESMOOTH
     LOGICAL          :: FLAGLL
     LOGICAL          :: CMPRTRCK
     LOGICAL, POINTER :: FLAGST(:)
@@ -748,10 +747,10 @@ MODULE W3GDATMD
     REAL                  :: MAXX, MAXY, DXYMAX
     REAL, POINTER         :: ANGLE(:,:),ANGLE0(:,:)
     INTEGER               :: COUNTRI,COUNTOT,NNZ, NBEDGE
-    INTEGER, POINTER      :: CCON(:), COUNTCON(:), IE_CELL(:), &
-         POS_CELL(:),   &
-         IAA(:), JAA(:), POSI(:,:), INDEX_CELL(:),       &
-         I_DIAG(:), JA_IE(:,:,:)
+    INTEGER ,          POINTER     :: CCON(:), COUNTCON(:), IE_CELL(:)
+    INTEGER ,          POINTER     :: POS_CELL(:)
+    INTEGER ,          POINTER     :: IAA(:), JAA(:), POSI(:,:), INDEX_CELL(:)
+    INTEGER ,          POINTER     :: I_DIAG(:), JA_IE(:,:,:)
     INTEGER*2, POINTER    :: IOBP(:)
     INTEGER*1, POINTER    :: IOBPD(:,:), IOBDP(:), IOBPA(:)
     INTEGER, POINTER      :: EDGES(:,:), NEIGH(:,:)
@@ -776,17 +775,17 @@ MODULE W3GDATMD
   TYPE SGRD   ! this is the spectral grid with all parameters that vary with freq. and direction
     INTEGER               :: NK=0, NK2=0, NTH=0, NSPEC=0
     INTEGER, POINTER      :: MAPWN(:), MAPTH(:)
-    REAL                  :: DTH=0., XFR=0., FR1=0., FTE=0., FTF=0., FTWN=0., FTTR=0., &
-         FTWL=0., FACTI1=0., FACTI2=0., FACHFA=0., FACHFE=0.
-    REAL, POINTER         :: TH(:), ESIN(:), ECOS(:), ES2(:),     &
-         ESC(:), EC2(:), SIG(:), SIG2(:),     &
-         DSIP(:), DSII(:), DDEN(:), DDEN2(:)
+    REAL                           :: DTH=0., XFR=0., FR1=0., FTE=0., FTF=0., FTWN=0., FTTR=0.
+    REAL                           :: FTWL=0., FACTI1=0., FACTI2=0., FACHFA=0., FACHFE=0.
+    REAL ,             POINTER     :: TH(:), ESIN(:), ECOS(:), ES2(:)
+    REAL ,             POINTER     :: ESC(:), EC2(:), SIG(:), SIG2(:)
+    REAL ,             POINTER     :: DSIP(:), DSII(:), DDEN(:), DDEN2(:)
     LOGICAL               :: SINIT=.FALSE.
   END TYPE SGRD
   !
   TYPE NPAR
-    REAL                  :: FACP, XREL, XFLT, FXFM, FXPM,        &
-         XFT, XFC, FACSD, FHMAX
+    REAL                           :: FACP, XREL, XFLT, FXFM, FXPM
+    REAL                           :: XFT, XFC, FACSD, FHMAX
 #ifdef W3_RWND
     REAL            :: RWINDC
 #endif
@@ -863,41 +862,41 @@ MODULE W3GDATMD
     REAL                  :: SINC1, SDSC1
 #endif
 #ifdef W3_ST2
-    REAL                  :: ZWIND, FSWELL, SHSTAB,               &
-         OFSTAB, CCNG, CCPS, FFNG, FFPS,      &
-         CDSA0, CDSA1, CDSA2, SDSALN,         &
-         CDSB0, CDSB1, CDSB2, CDSB3, FPIMIN,  &
-         XFH, XF1, XF2
+    REAL                           :: ZWIND, FSWELL, SHSTAB
+    REAL                           :: OFSTAB, CCNG, CCPS, FFNG, FFPS
+    REAL                           :: CDSA0, CDSA1, CDSA2, SDSALN
+    REAL                           :: CDSB0, CDSB1, CDSB2, CDSB3, FPIMIN
+    REAL                           :: XFH, XF1, XF2
 #endif
 #ifdef W3_ST3
     INTEGER               :: SSDSISO, SSDSBRFDF
-    REAL                  :: AALPHA, BBETA, ZZ0MAX, ZZ0RAT, ZZALP,&
-         SSINTHP, TTAUWSHELTER, SSWELLF(1:6), &
-         SSDSC1, SSDSC2, SSDSC3, SSDSBR,      &
-         SSDSP, WWNMEANP, SSTXFTF, SSTXFTWN,  &
-         FFXPM, FFXFM,                        &
-         SSDSC4, SSDSC5, SSDSC6, DDELTA1,     &
-         DDELTA2, ZZWND
+    REAL                           :: AALPHA, BBETA, ZZ0MAX, ZZ0RAT, ZZALP
+    REAL                           :: SSINTHP, TTAUWSHELTER, SSWELLF(1:6)
+    REAL                           :: SSDSC1, SSDSC2, SSDSC3, SSDSBR
+    REAL                           :: SSDSP, WWNMEANP, SSTXFTF, SSTXFTWN
+    REAL                           :: FFXPM, FFXFM
+    REAL                           :: SSDSC4, SSDSC5, SSDSC6, DDELTA1
+    REAL                           :: DDELTA2, ZZWND
 #endif
     !
 #ifdef W3_ST4
     INTEGER               :: SSWELLFPAR, SSDSISO, SSDSBRFDF
     INTEGER,  POINTER     :: IKTAB(:,:), SATINDICES(:,:)
     REAL,     POINTER     :: DCKI(:,:), SATWEIGHTS(:,:),CUMULW(:,:),QBI(:,:)
-    REAL                  :: AALPHA, BBETA, ZZ0MAX, ZZ0RAT, ZZALP,&
-         SSINTHP, TTAUWSHELTER, SSWELLF(1:7), &
-         SSDSC(1:21), SSDSBR,                 &
-         SSDSP, WWNMEANP, SSTXFTF, SSTXFTWN,  &
-         FFXPM, FFXFM, FFXFA,   &
-         SSDSBRF1, SSDSBRF2, SSDSBINT,SSDSBCK,&
-         SSDSHCK, SSDSABK, SSDSPBK, SSINBR
+    REAL                           :: AALPHA, BBETA, ZZ0MAX, ZZ0RAT, ZZALP
+    REAL                           :: SSINTHP, TTAUWSHELTER, SSWELLF(1:7)
+    REAL                           :: SSDSC(1:21), SSDSBR
+    REAL                           :: SSDSP, WWNMEANP, SSTXFTF, SSTXFTWN
+    REAL                           :: FFXPM, FFXFM, FFXFA
+    REAL                           :: SSDSBRF1, SSDSBRF2, SSDSBINT,SSDSBCK
+    REAL                           :: SSDSHCK, SSDSABK, SSDSPBK, SSINBR
     REAL                  :: ZZWND
     REAL                  :: SSDSCOS, SSDSDTH, SSDSBT, SSDSBM(0:4)
 #endif
     !
 #ifdef W3_ST6
-    REAL                  :: SIN6A0, SDS6A1, SDS6A2, SWL6B1, &
-         SIN6WS, SIN6FC
+    REAL                           :: SIN6A0, SDS6A1, SDS6A2, SWL6B1
+    REAL                           :: SIN6WS, SIN6FC
     INTEGER               :: SDS6P1, SDS6P2
     LOGICAL               :: SDS6ET, SWL6S6, SWL6CSTB1
 #endif
@@ -908,8 +907,8 @@ MODULE W3GDATMD
     REAL                  :: DUMMY
 #endif
 #ifdef W3_NL1
-    REAL                  :: SNLC1, LAM, KDCON, KDMN,             &
-         SNLS1, SNLS2, SNLS3
+    REAL                           :: SNLC1, LAM, KDCON, KDMN
+    REAL                           :: SNLS1, SNLS2, SNLS3
 #endif
 #ifdef W3_NL2
     INTEGER               :: IQTPE, NDPTHS
@@ -917,16 +916,16 @@ MODULE W3GDATMD
     REAL, POINTER         :: DPTHNL(:)
 #endif
 #ifdef W3_NL3
-    INTEGER               :: NFRMIN, NFRMAX, NFRCUT, NTHMAX,      &
-         NTHEXP, NSPMIN, NSPMAX, NSPMX2,      &
-         NQA, SNLNQ
+    INTEGER                        :: NFRMIN, NFRMAX, NFRCUT, NTHMAX
+    INTEGER                        :: NTHEXP, NSPMIN, NSPMAX, NSPMX2
+    INTEGER                        :: NQA, SNLNQ
     INTEGER, POINTER      :: QST1(:,:,:), QST4(:,:,:)
     REAL                  :: SNLMSC, SNLNSC, SNLSFD, SNLSFS
-    REAL, POINTER         :: FRQ(:), XSI(:),                      &
-         QST2(:,:,:), QST3(:,:,:),            &
-         QST5(:,:,:), QST6(:,:,:),            &
-         SNLL(:), SNLM(:), SNLT(:),           &
-         SNLCD(:), SNLCS(:)
+    REAL ,             POINTER     :: FRQ(:), XSI(:)
+    REAL ,             POINTER     :: QST2(:,:,:), QST3(:,:,:)
+    REAL ,             POINTER     :: QST5(:,:,:), QST6(:,:,:)
+    REAL ,             POINTER     :: SNLL(:), SNLM(:), SNLT(:)
+    REAL ,             POINTER     :: SNLCD(:), SNLCS(:)
 #endif
 #ifdef W3_NL4
     INTEGER               :: ITSA, IALT
@@ -938,8 +937,8 @@ MODULE W3GDATMD
 #endif
 #ifdef W3_NLS
     INTEGER               :: NTHX, NFRX, NSPL, NSPH
-    REAL                  :: CNLSA, CNLSC, CNLSFM,                &
-         CNLSC1, CNLSC2, CNLSC3
+    REAL                           :: CNLSA, CNLSC, CNLSFM
+    REAL                           :: CNLSC1, CNLSC2, CNLSC3
     REAL, POINTER         :: SNSST(:,:)
 #endif
 
@@ -1100,11 +1099,11 @@ MODULE W3GDATMD
 
   REAL(8), POINTER        :: IEN(:,:), LEN(:,:), SI(:)
   REAL, POINTER           :: ANGLE(:,:),ANGLE0(:,:)
-  INTEGER,  POINTER       :: CCON(:),  COUNTCON(:), IE_CELL(:),           &
-       POS_CELL(:),  &
-       IAA(:), JAA(:), POSI(:,:),                   &
-       I_DIAG(:), JA_IE(:,:,:),                     &
-       INDEX_CELL(:)
+  INTEGER ,            POINTER     :: CCON(:),  COUNTCON(:), IE_CELL(:)
+  INTEGER ,            POINTER     :: POS_CELL(:)
+  INTEGER ,            POINTER     :: IAA(:), JAA(:), POSI(:,:)
+  INTEGER ,            POINTER     :: I_DIAG(:), JA_IE(:,:,:)
+  INTEGER ,            POINTER     :: INDEX_CELL(:)
   INTEGER*2, POINTER      :: IOBP(:)
   INTEGER*1, POINTER      :: IOBPD(:,:), IOBDP(:), IOBPA(:)
   REAL(8), POINTER        :: TRIA(:)
@@ -1137,8 +1136,8 @@ MODULE W3GDATMD
 #ifdef W3_IS2
   REAL,    POINTER        :: IS2PARS(:)
 #endif
-  INTEGER, POINTER        :: MAPSTA(:,:), MAPST2(:,:),            &
-       MAPFS(:,:), MAPSF(:,:)
+  INTEGER ,            POINTER     :: MAPSTA(:,:), MAPST2(:,:)
+  INTEGER ,            POINTER     :: MAPFS(:,:), MAPSF(:,:)
   !
 #ifdef W3_SMC
   INTEGER, POINTER :: NCel, NUFc, NVFc, NRLv, MRFct
@@ -1148,21 +1147,21 @@ MODULE W3GDATMD
   INTEGER, POINTER :: ISMCBP(:),   ICLBAC(:)
 
   !/ Data duplicated for better performance
-  INTEGER, POINTER :: IJKCel3(:), IJKCel4(:), &
-       IJKVFc5(:), IJKVFc6(:), &
-       IJKUFc5(:), IJKUFc6(:)
+  INTEGER ,            POINTER     :: IJKCel3(:), IJKCel4(:)
+  INTEGER ,            POINTER     :: IJKVFc5(:), IJKVFc6(:)
+  INTEGER ,            POINTER     :: IJKUFc5(:), IJKUFc6(:)
   !/
 #endif
   !
 #ifdef W3_SEC1
   INTEGER, POINTER        :: NITERSEC1
 #endif
-  REAL, POINTER           :: SX, SY, X0, Y0, DTCFL, DTCFLI, DTMAX, &
-       DTMIN, DMIN, CTMAX, FICE0, FICEN,     &
-       FICEL, PFMOVE, STEXU, STEYU, STEDU,   &
-       IICEHMIN, IICEHINIT, ICESCALES(:),    &
-       IICEHFAC, IICEHDISP, IICEDDISP, IICEFDISP, &
-       BTBETA, AAIRCMIN, AAIRGB
+  REAL ,               POINTER     :: SX, SY, X0, Y0, DTCFL, DTCFLI, DTMAX
+  REAL ,               POINTER     :: DTMIN, DMIN, CTMAX, FICE0, FICEN
+  REAL ,               POINTER     :: FICEL, PFMOVE, STEXU, STEYU, STEDU
+  REAL ,               POINTER     :: IICEHMIN, IICEHINIT, ICESCALES(:)
+  REAL ,               POINTER     :: IICEHFAC, IICEHDISP, IICEDDISP, IICEFDISP
+  REAL ,               POINTER     :: BTBETA, AAIRCMIN, AAIRGB
   REAL(8),POINTER         :: GRIDSHIFT ! see notes in WMGHGH
 #ifdef W3_RTD
   REAL, POINTER         :: PoLat, PoLon
@@ -1191,8 +1190,8 @@ MODULE W3GDATMD
   REAL, POINTER         :: SED_D50(:), SED_PSIC(:)
 #endif
 
-  LOGICAL, POINTER :: GINIT, FLDRY, FLCX, FLCY, FLCTH, FLCK, FLSOU, IICEDISP,&
-       IICESMOOTH
+  LOGICAL ,            POINTER     :: GINIT, FLDRY, FLCX, FLCY, FLCTH, FLCK, FLSOU, IICEDISP
+  LOGICAL ,            POINTER     :: IICESMOOTH
   LOGICAL, POINTER :: FLAGLL
   LOGICAL, POINTER :: CMPRTRCK
   LOGICAL, POINTER :: FLAGST(:)
@@ -1206,11 +1205,11 @@ MODULE W3GDATMD
   !/
   INTEGER, POINTER        :: NK, NK2, NTH, NSPEC
   INTEGER, POINTER        :: MAPWN(:), MAPTH(:)
-  REAL, POINTER           :: DTH, XFR, FR1, FTE, FTF, FTWN, FTTR, &
-       FTWL, FACTI1, FACTI2, FACHFA, FACHFE
-  REAL, POINTER           :: TH(:), ESIN(:), ECOS(:), ES2(:),     &
-       ESC(:), EC2(:), SIG(:), SIG2(:),     &
-       DSIP(:), DSII(:), DDEN(:), DDEN2(:)
+  REAL ,               POINTER     :: DTH, XFR, FR1, FTE, FTF, FTWN, FTTR
+  REAL ,               POINTER     :: FTWL, FACTI1, FACTI2, FACHFA, FACHFE
+  REAL ,               POINTER     :: TH(:), ESIN(:), ECOS(:), ES2(:)
+  REAL ,               POINTER     :: ESC(:), EC2(:), SIG(:), SIG2(:)
+  REAL ,               POINTER     :: DSIP(:), DSII(:), DDEN(:), DDEN2(:)
   LOGICAL, POINTER        :: SINIT
   !/
   !/ Data aliasses for structure MPAR(S)
@@ -1219,8 +1218,8 @@ MODULE W3GDATMD
   !/
   !/ Data aliasses for structure NPAR(S)
   !/
-  REAL, POINTER           :: FACP, XREL, XFLT, FXFM, FXPM,        &
-       XFT, XFC, FACSD, FHMAX
+  REAL ,               POINTER     :: FACP, XREL, XFLT, FXFM, FXPM
+  REAL ,               POINTER     :: XFT, XFC, FACSD, FHMAX
 #ifdef W3_RWND
   REAL, POINTER           :: RWINDC
 #endif
@@ -1278,38 +1277,38 @@ MODULE W3GDATMD
   REAL, POINTER           :: SINC1, SDSC1
 #endif
 #ifdef W3_ST2
-  REAL, POINTER           :: ZWIND, FSWELL, SHSTAB,               &
-       OFSTAB, CCNG, CCPS, FFNG, FFPS,      &
-       CDSA0, CDSA1, CDSA2, SDSALN,         &
-       CDSB0, CDSB1, CDSB2, CDSB3, FPIMIN,  &
-       XFH, XF1, XF2
+  REAL ,               POINTER     :: ZWIND, FSWELL, SHSTAB
+  REAL ,               POINTER     :: OFSTAB, CCNG, CCPS, FFNG, FFPS
+  REAL ,               POINTER     :: CDSA0, CDSA1, CDSA2, SDSALN
+  REAL ,               POINTER     :: CDSB0, CDSB1, CDSB2, CDSB3, FPIMIN
+  REAL ,               POINTER     :: XFH, XF1, XF2
 #endif
 #ifdef W3_ST3
-  REAL, POINTER           :: ZZWND, AALPHA, BBETA, ZZ0MAX, ZZ0RAT,&
-       ZZALP, FFXFM, FFXPM,                 &
-       SSINTHP, TTAUWSHELTER, SSWELLF(:),   &
-       SSDSC1, SSDSC2, SSDSC3, SSDSBR,      &
-       SSDSP, WWNMEANP, SSTXFTF, SSTXFTWN,  &
-       SSDSC4, SSDSC5, SSDSC6, SSDSBT,      &
-       DDELTA1, DDELTA2,                    &
-       SSDSCOS, SSDSDTH, SSDSBM(:)
+  REAL ,               POINTER     :: ZZWND, AALPHA, BBETA, ZZ0MAX, ZZ0RAT
+  REAL ,               POINTER     :: ZZALP, FFXFM, FFXPM
+  REAL ,               POINTER     :: SSINTHP, TTAUWSHELTER, SSWELLF(:)
+  REAL ,               POINTER     :: SSDSC1, SSDSC2, SSDSC3, SSDSBR
+  REAL ,               POINTER     :: SSDSP, WWNMEANP, SSTXFTF, SSTXFTWN
+  REAL ,               POINTER     :: SSDSC4, SSDSC5, SSDSC6, SSDSBT
+  REAL ,               POINTER     :: DDELTA1, DDELTA2
+  REAL ,               POINTER     :: SSDSCOS, SSDSDTH, SSDSBM(:)
 #endif
 #ifdef W3_ST4
-  INTEGER, POINTER        :: SSWELLFPAR, SSDSISO,SSDSBRFDF,       &
-       IKTAB(:,:), SATINDICES(:,:),SSDSDIK
+  INTEGER ,            POINTER     :: SSWELLFPAR, SSDSISO,SSDSBRFDF
+  INTEGER ,            POINTER     :: IKTAB(:,:), SATINDICES(:,:),SSDSDIK
   REAL, POINTER           :: DCKI(:,:), SATWEIGHTS(:,:),CUMULW(:,:),QBI(:,:)
-  REAL, POINTER           :: ZZWND, AALPHA, BBETA, ZZ0MAX, ZZ0RAT,&
-       ZZALP, FFXFA,          &
-       FFXFM, FFXPM, SSDSBRF1, SSDSBRF2,    &
-       SSDSBINT, SSDSBCK, SSDSHCK, SSDSABK, &
-       SSDSPBK, SSINBR,SSINTHP,TTAUWSHELTER,&
-       SSWELLF(:), SSDSC(:), SSDSBR,        &
-       SSDSP, WWNMEANP, SSTXFTF, SSTXFTWN,  &
-       SSDSBT, SSDSCOS, SSDSDTH, SSDSBM(:)
+  REAL ,               POINTER     :: ZZWND, AALPHA, BBETA, ZZ0MAX, ZZ0RAT
+  REAL ,               POINTER     :: ZZALP, FFXFA
+  REAL ,               POINTER     :: FFXFM, FFXPM, SSDSBRF1, SSDSBRF2
+  REAL ,               POINTER     :: SSDSBINT, SSDSBCK, SSDSHCK, SSDSABK
+  REAL ,               POINTER     :: SSDSPBK, SSINBR,SSINTHP,TTAUWSHELTER
+  REAL ,               POINTER     :: SSWELLF(:), SSDSC(:), SSDSBR
+  REAL ,               POINTER     :: SSDSP, WWNMEANP, SSTXFTF, SSTXFTWN
+  REAL ,               POINTER     :: SSDSBT, SSDSCOS, SSDSDTH, SSDSBM(:)
 #endif
 #ifdef W3_ST6
-  REAL, POINTER           :: SIN6A0, SDS6A1, SDS6A2, SWL6B1, &
-       SIN6WS, SIN6FC
+  REAL ,               POINTER     :: SIN6A0, SDS6A1, SDS6A2, SWL6B1
+  REAL ,               POINTER     :: SIN6WS, SIN6FC
   INTEGER, POINTER        :: SDS6P1, SDS6P2
   LOGICAL, POINTER        :: SDS6ET, SWL6S6, SWL6CSTB1
 #endif
@@ -1318,8 +1317,8 @@ MODULE W3GDATMD
   !/ Data aliasses for structure SNLP(S)
   !/
 #ifdef W3_NL1
-  REAL, POINTER           :: SNLC1, LAM, KDCON, KDMN,             &
-       SNLS1, SNLS2, SNLS3
+  REAL ,               POINTER     :: SNLC1, LAM, KDCON, KDMN
+  REAL ,               POINTER     :: SNLS1, SNLS2, SNLS3
 #endif
 #ifdef W3_NL2
   INTEGER, POINTER        :: IQTPE, NDPTHS
@@ -1327,16 +1326,16 @@ MODULE W3GDATMD
   REAL, POINTER           :: DPTHNL(:)
 #endif
 #ifdef W3_NL3
-  INTEGER, POINTER        :: NFRMIN, NFRMAX, NFRCUT, NTHMAX,      &
-       NTHEXP, NSPMIN, NSPMAX, NSPMX2,      &
-       NQA, SNLNQ
+  INTEGER ,            POINTER     :: NFRMIN, NFRMAX, NFRCUT, NTHMAX
+  INTEGER ,            POINTER     :: NTHEXP, NSPMIN, NSPMAX, NSPMX2
+  INTEGER ,            POINTER     :: NQA, SNLNQ
   INTEGER, POINTER        :: QST1(:,:,:), QST4(:,:,:)
   REAL, POINTER           :: SNLMSC, SNLNSC, SNLSFD, SNLSFS
-  REAL, POINTER           :: FRQ(:), XSI(:),                      &
-       QST2(:,:,:), QST3(:,:,:),            &
-       QST5(:,:,:), QST6(:,:,:),            &
-       SNLL(:), SNLM(:), SNLT(:),           &
-       SNLCD(:), SNLCS(:)
+  REAL ,               POINTER     :: FRQ(:), XSI(:)
+  REAL ,               POINTER     :: QST2(:,:,:), QST3(:,:,:)
+  REAL ,               POINTER     :: QST5(:,:,:), QST6(:,:,:)
+  REAL ,               POINTER     :: SNLL(:), SNLM(:), SNLT(:)
+  REAL ,               POINTER     :: SNLCD(:), SNLCS(:)
 #endif
 #ifdef W3_NL4
   INTEGER, POINTER        :: ITSA, IALT
@@ -1348,8 +1347,8 @@ MODULE W3GDATMD
 #endif
 #ifdef W3_NLS
   INTEGER, POINTER        :: NTHX, NFRX, NSPL, NSPH
-  REAL, POINTER           :: CNLSA, CNLSC, CNLSFM,                &
-       CNLSC1, CNLSC2, CNLSC3, SNSST(:,:)
+  REAL ,               POINTER     :: CNLSA, CNLSC, CNLSFM
+  REAL ,               POINTER     :: CNLSC1, CNLSC2, CNLSC3, SNSST(:,:)
 #endif
   !/
   !/ Data aliasses for structure SBTP(S)

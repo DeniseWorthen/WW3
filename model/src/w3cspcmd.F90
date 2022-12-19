@@ -102,16 +102,16 @@ MODULE W3CSPCMD
   PUBLIC
   !/
   TYPE CASE
-    INTEGER               :: ICASE, NFR1, NTH1, NFR2, NTH2, NFR2T
-    REAL                  :: XF1, FR1, TH1, XF2, FR2, TH2,       &
-         DTH1, DTH2, XDF1, XDF2
-    INTEGER, POINTER      :: IDTH(:,:), IDFR(:,:)
-    REAL, POINTER         :: RDTH(:,:), FRQ1(:), FRQ2(:), RDFR(:,:)
-    TYPE(CASE), POINTER   :: NEXT
+    INTEGER              :: ICASE, NFR1, NTH1, NFR2, NTH2, NFR2T
+    REAL                 :: XF1, FR1, TH1, XF2, FR2, TH2
+    REAL                 :: DTH1, DTH2, XDF1, XDF2
+    INTEGER ,    POINTER :: IDTH(:,:), IDFR(:,:)
+    REAL ,       POINTER :: RDTH(:,:), FRQ1(:), FRQ2(:), RDFR(:,:)
+    TYPE(CASE) , POINTER :: NEXT
   END TYPE CASE
   !/
-  INTEGER, PRIVATE        :: NCASES = 0
-  TYPE(CASE), PRIVATE, POINTER :: IDATA
+  INTEGER ,    PRIVATE          :: NCASES = 0
+  TYPE(CASE) , PRIVATE, POINTER :: IDATA
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
