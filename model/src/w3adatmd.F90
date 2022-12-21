@@ -380,9 +380,9 @@ MODULE W3ADATMD
     !
     ! The grid
     !
-    REAL, POINTER         :: CG(:,:), WN(:,:)
+    REAL ,    POINTER :: CG(:,:), WN(:,:)
 #ifdef W3_IC3
-    REAL, POINTER         :: IC3WN_R(:,:), IC3WN_I(:,:), IC3CG(:,:)
+    REAL ,    POINTER :: IC3WN_R(:,:), IC3WN_I(:,:), IC3CG(:,:)
 #endif
     !
     ! Arrays for processing model input
@@ -451,13 +451,13 @@ MODULE W3ADATMD
     REAL ,    POINTER :: USSY(:), TAUOCX(:), TAUOCY(:)
     REAL ,    POINTER :: PRMS(:),  TPMS(:), PHICE(:), TAUICE(:,:)
 
-    REAL, POINTER         ::  P2SMS(:,:),  US3D(:,:), USSP(:,:)
+    REAL ,    POINTER ::  P2SMS(:,:),  US3D(:,:), USSP(:,:)
     REAL ,    POINTER :: XSXX(:), XSYY(:), XSXY(:), XTAUOX(:)
     REAL ,    POINTER :: XTAUOY(:), XBHD(:), XPHIOC(:)
     REAL ,    POINTER :: XTUSX(:), XTUSY(:), XUSSX(:)
     REAL ,    POINTER :: XUSSY(:), XTAUOCX(:), XTAUOCY(:)
     REAL ,    POINTER :: XPRMS(:), XTPMS(:), XPHICE(:), XTAUICE(:,:)
-    REAL, POINTER         :: XP2SMS(:,:), XUS3D(:,:), XUSSP(:,:)
+    REAL ,    POINTER :: XP2SMS(:,:), XUS3D(:,:), XUSSP(:,:)
     !
     ! Output fields group 7)
     !
@@ -478,21 +478,21 @@ MODULE W3ADATMD
     !
     ! Output fields group 10)
     !
-    REAL, POINTER         ::  USERO(:,:)
-    REAL, POINTER         :: XUSERO(:,:)
+    REAL ,    POINTER ::  USERO(:,:)
+    REAL ,    POINTER :: XUSERO(:,:)
     !
     ! Spatial derivatives
     !
     REAL ,    POINTER :: DDDX(:,:), DDDY(:,:), DCXDX(:,:)
     REAL ,    POINTER :: DCYDX(:,:), DCXDY(:,:), DCYDY(:,:)
-    REAL, POINTER         :: DCDX(:,:,:), DCDY(:,:,:)
+    REAL ,    POINTER :: DCDX(:,:,:), DCDY(:,:,:)
 #ifdef W3_SMC
-    REAL, POINTER         :: DHDX(:), DHDY(:), DHLMT(:,:)
+    REAL ,    POINTER :: DHDX(:), DHDY(:), DHLMT(:,:)
 #endif
     !
 #ifdef W3_PR1
-    INTEGER, POINTER      :: IS0(:), IS2(:)
-    REAL, POINTER         :: FACVX(:), FACVY(:)
+    INTEGER , POINTER :: IS0(:), IS2(:)
+    REAL ,    POINTER :: FACVX(:), FACVY(:)
 #endif
     !
 #ifdef W3_PR2
@@ -503,14 +503,14 @@ MODULE W3ADATMD
 #ifdef W3_PR3
     INTEGER           :: NMX0, NMX1, NMX2, NMY0, NMY1, NMY2, NACT, NCENT
     INTEGER , POINTER :: MAPX2(:), MAPY2(:), MAPAXY(:), MAPCXY(:), MAPTH2(:), MAPWN2(:)
-    LOGICAL, POINTER      :: MAPTRN(:)
+    LOGICAL , POINTER :: MAPTRN(:)
 #endif
     !
     ! Warning Defined but not set if UGTYPE .EQ. .T.
-    INTEGER, POINTER      :: ITER(:,:)
+    INTEGER,  POINTER :: ITER(:,:)
     !
 #ifdef W3_NL1
-    INTEGER               :: NFR, NFRHGH, NFRCHG, NSPECX, NSPECY
+    INTEGER           :: NFR, NFRHGH, NFRCHG, NSPECX, NSPECY
     INTEGER , POINTER :: IP11(:), IP12(:), IP13(:), IP14(:)
     INTEGER , POINTER :: IM11(:), IM12(:), IM13(:), IM14(:)
     INTEGER , POINTER :: IP21(:), IP22(:), IP23(:), IP24(:)
@@ -523,28 +523,28 @@ MODULE W3ADATMD
     REAL              :: AWG1, AWG2, AWG3, AWG4, AWG5, AWG6
     REAL              :: AWG7, AWG8, SWG1, SWG2, SWG3, SWG4
     REAL              :: SWG5, SWG6, SWG7, SWG8
-    REAL, POINTER         :: AF11(:)
-    LOGICAL               :: NLINIT
+    REAL ,    POINTER :: AF11(:)
+    LOGICAL           :: NLINIT
 #endif
     !
-    INTEGER, POINTER      :: IAPPRO(:)
+    INTEGER , POINTER :: IAPPRO(:)
 #ifdef W3_MPI
     INTEGER           :: MPI_COMM_WAVE, MPI_COMM_WCMP, WW3_FIELD_VEC, WW3_SPEC_VEC
     INTEGER           :: NRQSG1 = 0, NRQSG2, IBFLOC, ISPLOC, NSPLOC
 #endif
 #ifdef W3_PDLIB
-    INTEGER               :: NBFIELD, PDLIB_MPI_TYPE
+    INTEGER           :: NBFIELD, PDLIB_MPI_TYPE
 #endif
 #ifdef W3_MPI
-    INTEGER               :: BSTAT(MPIBUF), BISPL(MPIBUF)
-    INTEGER, POINTER      :: IRQSG1(:,:), IRQSG2(:,:)
-    REAL, POINTER         :: GSTORE(:,:), SSTORE(:,:)
+    INTEGER           :: BSTAT(MPIBUF), BISPL(MPIBUF)
+    INTEGER , POINTER :: IRQSG1(:,:), IRQSG2(:,:)
+    REAL ,    POINTER :: GSTORE(:,:), SSTORE(:,:)
 #endif
-    REAL, POINTER         :: SPPNT(:,:,:)
+    REAL,     POINTER :: SPPNT(:,:,:)
     !
-    INTEGER               :: ITIME, IPASS, IDLAST, NSEALM
-    REAL, POINTER         :: ALPHA(:,:)
-    LOGICAL               :: AINIT, AINIT2, FL_ALL, FLCOLD, FLIWND
+    INTEGER           :: ITIME, IPASS, IDLAST, NSEALM
+    REAL ,    POINTER :: ALPHA(:,:)
+    LOGICAL           :: AINIT, AINIT2, FL_ALL, FLCOLD, FLIWND
     !
   END TYPE WADAT
   !/
@@ -554,8 +554,8 @@ MODULE W3ADATMD
   !/
   !/ Data aliases for structure WADAT(S)
   !/
-  REAL, POINTER           :: CG(:,:), WN(:,:)
-  REAL, POINTER           :: IC3WN_R(:,:), IC3WN_I(:,:), IC3CG(:,:)
+  REAL ,    POINTER :: CG(:,:), WN(:,:)
+  REAL ,    POINTER :: IC3WN_R(:,:), IC3WN_I(:,:), IC3CG(:,:)
   !
   REAL ,    POINTER :: CA0(:), CAI(:), CD0(:), CDI(:)
   REAL ,    POINTER :: UA0(:), UAI(:), UD0(:), UDI(:)
@@ -590,7 +590,7 @@ MODULE W3ADATMD
   REAL ,    POINTER :: TUSX(:), TUSY(:), USSX(:), USSY(:)
   REAL ,    POINTER :: TAUOCX(:), TAUOCY(:), PRMS(:)
   REAL ,    POINTER :: TPMS(:), PHICE(:), TAUICE(:,:)
-  REAL, POINTER           :: P2SMS(:,:), US3D(:,:), USSP(:,:)
+  REAL ,    POINTER :: P2SMS(:,:), US3D(:,:), USSP(:,:)
   !
   REAL ,    POINTER :: ABA(:), ABD(:), UBA(:), UBD(:), BEDFORMS(:,:), PHIBBL(:), TAUBBL(:,:)
   !
@@ -598,19 +598,19 @@ MODULE W3ADATMD
   !
   REAL ,    POINTER :: DTDYN(:), FCUT(:), CFLXYMAX(:), CFLTHMAX(:), CFLKMAX(:)
   !
-  REAL, POINTER           :: USERO(:,:)
+  REAL,     POINTER :: USERO(:,:)
   !
   !
   REAL ,    POINTER :: DDDX(:,:), DDDY(:,:), DCXDX(:,:)
   REAL ,    POINTER :: DCYDX(:,:), DCXDY(:,:), DCYDY(:,:)
-  REAL, POINTER           :: DCDX(:,:,:), DCDY(:,:,:)
+  REAL ,    POINTER :: DCDX(:,:,:), DCDY(:,:,:)
 #ifdef W3_SMC
-  REAL, POINTER         :: DHDX(:), DHDY(:), DHLMT(:,:)
+  REAL ,    POINTER :: DHDX(:), DHDY(:), DHLMT(:,:)
 #endif
   !
 #ifdef W3_PR1
-  INTEGER, POINTER        :: IS0(:), IS2(:)
-  REAL, POINTER           :: FACVX(:), FACVY(:)
+  INTEGER , POINTER :: IS0(:), IS2(:)
+  REAL ,    POINTER :: FACVX(:), FACVY(:)
 #endif
   !
 #ifdef W3_PR2
@@ -622,13 +622,13 @@ MODULE W3ADATMD
 #ifdef W3_PR3
   INTEGER , POINTER :: NMX0, NMX1, NMX2, NMY0, NMY1, NMY2, NACT, NCENT
   INTEGER , POINTER :: MAPX2(:), MAPY2(:), MAPAXY(:), MAPCXY(:), MAPTH2(:), MAPWN2(:)
-  LOGICAL, POINTER        :: MAPTRN(:)
+  LOGICAL ,  POINTER :: MAPTRN(:)
 #endif
   !
-  INTEGER, POINTER        :: ITER(:,:)
+  INTEGER , POINTER :: ITER(:,:)
   !
 #ifdef W3_NL1
-  INTEGER, POINTER        :: NFR, NFRHGH, NFRCHG, NSPECX, NSPECY
+  INTEGER , POINTER :: NFR, NFRHGH, NFRCHG, NSPECX, NSPECY
   INTEGER , POINTER :: IP11(:), IP12(:), IP13(:), IP14(:)
   INTEGER , POINTER :: IM11(:), IM12(:), IM13(:), IM14(:)
   INTEGER , POINTER :: IP21(:), IP22(:), IP23(:), IP24(:)
@@ -641,23 +641,23 @@ MODULE W3ADATMD
   REAL ,    POINTER :: AWG1, AWG2, AWG3, AWG4, AWG5, AWG6
   REAL ,    POINTER :: AWG7, AWG8, SWG1, SWG2, SWG3, SWG4
   REAL ,    POINTER :: SWG5, SWG6, SWG7, SWG8
-  REAL, POINTER           :: AF11(:)
-  LOGICAL, POINTER        :: NLINIT
+  REAL ,    POINTER :: AF11(:)
+  LOGICAL , POINTER :: NLINIT
 #endif
   !
-  INTEGER, POINTER        :: IAPPRO(:)
+  INTEGER , POINTER :: IAPPRO(:)
 #ifdef W3_MPI
   INTEGER , POINTER :: MPI_COMM_WAVE, MPI_COMM_WCMP, WW3_FIELD_VEC, WW3_SPEC_VEC
   INTEGER , POINTER :: NRQSG1, NRQSG2, IBFLOC, ISPLOC, NSPLOC
-  INTEGER, POINTER        :: BSTAT(:), BISPL(:)
-  INTEGER, POINTER        :: IRQSG1(:,:), IRQSG2(:,:)
-  REAL, POINTER           :: GSTORE(:,:), SSTORE(:,:)
+  INTEGER , POINTER :: BSTAT(:), BISPL(:)
+  INTEGER , POINTER :: IRQSG1(:,:), IRQSG2(:,:)
+  REAL ,    POINTER :: GSTORE(:,:), SSTORE(:,:)
 #endif
-  REAL, POINTER           :: SPPNT(:,:,:)
+  REAL ,    POINTER :: SPPNT(:,:,:)
   !
-  INTEGER, POINTER        :: ITIME, IPASS, IDLAST, NSEALM
-  REAL, POINTER           :: ALPHA(:,:)
-  LOGICAL, POINTER        :: AINIT, AINIT2, FL_ALL, FLCOLD, FLIWND
+  INTEGER , POINTER :: ITIME, IPASS, IDLAST, NSEALM
+  REAL ,    POINTER :: ALPHA(:,:)
+  LOGICAL , POINTER :: AINIT, AINIT2, FL_ALL, FLCOLD, FLIWND
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /

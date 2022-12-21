@@ -311,12 +311,12 @@ MODULE W3GSRUMD
   !/   the seam at j = UBY.  The j-index closure for i' in [LBX,UBX] and j' > UBY
   !/   is computed as i = UBX + LBX - i' and j = 2*UBY - j' + 1.
   !/
-  INTEGER, PARAMETER, PUBLIC :: ICLO_NONE = -1
-  INTEGER, PARAMETER, PUBLIC :: ICLO_SMPL =  2
-  INTEGER, PARAMETER, PUBLIC :: ICLO_GRDI =  ICLO_SMPL
-  INTEGER, PARAMETER, PUBLIC :: ICLO_GRDJ =  3
-  INTEGER, PARAMETER, PUBLIC :: ICLO_TRDL =  6
-  INTEGER, PARAMETER, PUBLIC :: ICLO_TRPL =  8
+  INTEGER , PARAMETER, PUBLIC :: ICLO_NONE = -1
+  INTEGER , PARAMETER, PUBLIC :: ICLO_SMPL =  2
+  INTEGER , PARAMETER, PUBLIC :: ICLO_GRDI =  ICLO_SMPL
+  INTEGER , PARAMETER, PUBLIC :: ICLO_GRDJ =  3
+  INTEGER , PARAMETER, PUBLIC :: ICLO_TRDL =  6
+  INTEGER , PARAMETER, PUBLIC :: ICLO_TRPL =  8
   !/
   !/ Public grid-search-utility type
   !/ This is an opaque type -- that is, it's internals are private and only
@@ -330,50 +330,50 @@ MODULE W3GSRUMD
   !/ Private grid-search-utility class
   !/
   TYPE :: CLASS_GSU
-    LOGICAL :: IJG  ! grid array ordering flag: T = (NX,NY), F = (NY,NX)
-    LOGICAL :: LLG  ! spherical coordinate flag of associated grid
-    INTEGER :: ICLO ! parameter indicating type of index space closure
-    ! this flag must be set by the user
-    LOGICAL :: LCLO ! flag indicating longitudinal periodicity
-    ! this flag is calculated internally
-    ! LLG & ICLO != ICLO_NONE => LCLO = T
-    LOGICAL :: L360 ! flag indicating longitude range:
-    !   T = [0:360],  F = [-180:180]
-    INTEGER :: GKIND  ! kind (precision: 4 or 8) of associated grid
-    INTEGER :: LBX, LBY ! lower-bounds of associated grid
-    INTEGER :: UBX, UBY ! upper-bounds of associated grid
-    INTEGER :: NX, NY   ! dimensions of associated grid
-    REAL(4), POINTER :: XG4(:,:), YG4(:,:) ! coordinates of associated grid (r4)
-    REAL(8), POINTER :: XG8(:,:), YG8(:,:) ! coordinates of associated grid (r8)
-    TYPE(T_NNS), POINTER :: NNP  ! nearest-neighbor point search indices object
-    INTEGER :: NBX, NBY  ! number of buckets in each spatial direction
-    REAL(8) :: DXB, DYB  ! spatial extent of each search bucket
-    REAL(8) :: XMIN, YMIN, XMAX, YMAX ! bounding box of search domain
-    TYPE(T_BKT), POINTER :: B(:,:) ! array of search buckets
-    TYPE(T_NNS), POINTER :: NNB  ! nearest-neighbor bucket search indices object
+    LOGICAL              :: IJG                    ! grid array ordering flag: T = (NX,NY), F = (NY,NX)
+    LOGICAL              :: LLG                    ! spherical coordinate flag of associated grid
+    INTEGER              :: ICLO                   ! parameter indicating type of index space closure
+                                                   ! this flag must be set by the user
+    LOGICAL              :: LCLO                   ! flag indicating longitudinal periodicity
+                                                   ! this flag is calculated internally
+                                                   ! LLG & ICLO != ICLO_NONE => LCLO = T
+    LOGICAL              :: L360                   ! flag indicating longitude range:
+                                                   !   T = [0:360],  F = [-180:180]
+    INTEGER              :: GKIND                  ! kind (precision: 4 or 8) of associated grid
+    INTEGER              :: LBX, LBY               ! lower-bounds of associated grid
+    INTEGER              :: UBX, UBY               ! upper-bounds of associated grid
+    INTEGER              :: NX, NY                 ! dimensions of associated grid
+    REAL(4) ,    POINTER :: XG4(:,:), YG4(:,:)     ! coordinates of associated grid (r4)
+    REAL(8) ,    POINTER :: XG8(:,:), YG8(:,:)     ! coordinates of associated grid (r8)
+    TYPE(T_NNS), POINTER :: NNP                    ! nearest-neighbor point search indices object
+    INTEGER              :: NBX, NBY               ! number of buckets in each spatial direction
+    REAL(8)              :: DXB, DYB               ! spatial extent of each search bucket
+    REAL(8)              :: XMIN, YMIN, XMAX, YMAX ! bounding box of search domain
+    TYPE(T_BKT), POINTER :: B(:,:)                 ! array of search buckets
+    TYPE(T_NNS), POINTER :: NNB                    ! nearest-neighbor bucket search indices object
   END TYPE CLASS_GSU
-  !/
-  !/ Private search bucket type
-  !/
+ !/
+ !/ Private search bucket type
+ !/
   TYPE :: T_BKT
-    INTEGER :: N  ! number of cells in bucket
-    INTEGER, POINTER :: I(:)  ! i-index of cell c
-    INTEGER, POINTER :: J(:)  ! j-index of cell c
+    INTEGER              :: N     ! number of cells in bucket
+    INTEGER ,    POINTER :: I(:)  ! i-index of cell c
+    INTEGER ,    POINTER :: J(:)  ! j-index of cell c
   END TYPE T_BKT
-  !/
-  !/ Public nearest-neighbor grid-point search type
-  !/
-  TYPE, PUBLIC :: T_NNS
-    INTEGER :: NLVL  ! number of nnbr levels
-    INTEGER :: NNBR  ! total number of nnbr's
-    INTEGER, POINTER :: N1(:)  ! starting nearest-nbr loop index for level l
-    INTEGER, POINTER :: N2(:)  ! ending nearest-nbr loop index for level l
-    INTEGER, POINTER :: DI(:)  ! i-index delta for nearest-nbr n
-    INTEGER, POINTER :: DJ(:)  ! j-index delta for nearest-nbr n
+ !/
+ !/ Public nearest-neighbor grid-point search type
+ !/
+  TYPE, PUBLIC           :: T_NNS
+    INTEGER              :: NLVL  ! number of nnbr levels
+    INTEGER              :: NNBR  ! total number of nnbr's
+    INTEGER ,    POINTER :: N1(:) ! starting nearest-nbr loop index for level l
+    INTEGER ,    POINTER :: N2(:) ! ending nearest-nbr loop index for level l
+    INTEGER ,    POINTER :: DI(:) ! i-index delta for nearest-nbr n
+    INTEGER ,    POINTER :: DJ(:) ! j-index delta for nearest-nbr n
   END TYPE T_NNS
-  !/
-  !/ Private module parameters
-  !/
+ !/
+ !/ Private module parameters
+ !/
   REAL(8), PARAMETER :: PI = 3.14159265358979323846D0
   REAL(8), PARAMETER :: PI2 = 2D0*PI
   REAL(8), PARAMETER :: PI3H = 3D0*PI/2D0
@@ -393,24 +393,24 @@ MODULE W3GSRUMD
 #if defined(COAMPS)
   REAL(8), PARAMETER :: REARTH = 6371229.D0
 #else
-  REAL(8), PARAMETER :: REARTH = 4.D7/PI2 !this gives D2M = 111111.111111
+  REAL(8), PARAMETER :: REARTH = 4.D7/PI2      !this gives D2M = 111111.111111
 #endif
   REAL(8), PARAMETER :: D2M  = REARTH*D2R
   REAL(8), PARAMETER :: M2D  = 1D0/D2M
-  !     Default small non-zero tolerance used to check if
-  !     target point is in domain and for point coincidence.
+                                               !     Default small non-zero tolerance used to check if
+                                               !     target point is in domain and for point coincidence.
   REAL(8), PARAMETER :: EPS_DEFAULT  = 1.0D-6
-  !     Distance (deg) from pole to consider a cell "near the pole"
+                                               !     Distance (deg) from pole to consider a cell "near the pole"
   REAL(8), PARAMETER :: NEAR_POLE = 10.0D0
-  !     Default number of grid cells (in each direction) per search bucket.
-  INTEGER, PARAMETER :: NCB_DEFAULT = 10
-  !     Default maximum number of nearest-neighbor grid point search levels.
-  INTEGER, PARAMETER :: NNP_DEFAULT = 2
-  !     Max number of non-empty levels for bucket search when target point
-  !     is outside source domain
-  INTEGER, PARAMETER :: MAX_FNCL_LEVEL = 3
-  !     Default finite-difference order
-  INTEGER, PARAMETER :: NFD_DEFAULT = 4
+                                               !     Default number of grid cells (in each direction) per search bucket.
+  INTEGER , PARAMETER :: NCB_DEFAULT = 10
+                                               !     Default maximum number of nearest-neighbor grid point search levels.
+  INTEGER , PARAMETER :: NNP_DEFAULT = 2
+                                               !     Max number of non-empty levels for bucket search when target point
+                                               !     is outside source domain
+  INTEGER , PARAMETER :: MAX_FNCL_LEVEL = 3
+                                               !     Default finite-difference order
+  INTEGER , PARAMETER :: NFD_DEFAULT = 4
   !/
   !/ Module Interfaces
   !/
@@ -525,14 +525,6 @@ CONTAINS
   !/
   !/ =================================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -736,14 +728,6 @@ CONTAINS
   !/
   !/ End of W3GSUC ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -826,14 +810,6 @@ CONTAINS
   !/
   !/ End of W3GSUD ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -998,14 +974,6 @@ CONTAINS
   !/
   !/ End of W3GSUP ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -1238,14 +1206,6 @@ CONTAINS
   !/
   !/ End of W3BBOX ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -1670,14 +1630,6 @@ CONTAINS
   !/
   !/ End of W3GFCL ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -1960,14 +1912,6 @@ CONTAINS
   !/
   !/ End of W3GFCD ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -2193,14 +2137,6 @@ CONTAINS
   !/
   !/ End of W3GFPT ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -2422,14 +2358,6 @@ CONTAINS
   !/
   !/ End of W3GFIJ ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -2896,14 +2824,6 @@ CONTAINS
   !/
   !/ End of W3GRMP ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -3488,14 +3408,6 @@ CONTAINS
   !/
   !/ End of W3GRMC ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -3841,14 +3753,6 @@ CONTAINS
   !/
   !/ End of W3CKCL ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -4718,14 +4622,6 @@ CONTAINS
   !/
   !/ End of W3CGDM ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -5047,14 +4943,6 @@ CONTAINS
   !/
   !/ End of W3GRD0 ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -5384,14 +5272,6 @@ CONTAINS
   !/
   !/ End of W3DIV1 ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -5736,14 +5616,6 @@ CONTAINS
   !/
   !/ End of W3DIV2 ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -5878,14 +5750,6 @@ CONTAINS
   !/
   !/ End of W3DIST ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -6084,14 +5948,6 @@ CONTAINS
   !/
   !/ End of W3SPLX ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -6288,14 +6144,6 @@ CONTAINS
   !/
   !/ End of W3SPXL ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -6487,14 +6335,6 @@ CONTAINS
   !/
   !/ End of W3TRLL ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -6598,14 +6438,6 @@ CONTAINS
   !/
   !/ End of W3LLAZ ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -6748,14 +6580,6 @@ CONTAINS
   !/
   !/ End of W3FDWT ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -6880,14 +6704,6 @@ CONTAINS
   !/
   !/ End of W3NNSC ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -6959,14 +6775,6 @@ CONTAINS
   !/
   !/ End of W3NNSD ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -7036,14 +6844,6 @@ CONTAINS
   !/
   !/ End of W3NNSP ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -7141,14 +6941,6 @@ CONTAINS
   !/
   !/ End of W3SORT ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -7254,14 +7046,6 @@ CONTAINS
   !/
   !/ End of W3ISRT ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -7337,14 +7121,6 @@ CONTAINS
   !/
   !/ End of W3INAN ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ Internal Support Routines ========================================= /
   !/
@@ -9609,14 +9385,6 @@ CONTAINS
   !/ End Internal Support Routines ===================================== /
   !/
   !/
-
-
-
-
-
-
-
-
 #ifndef ENABLE_WW3
   !/
   !/ Local routines for use outside of WW3 ============================= /
@@ -9640,14 +9408,6 @@ CONTAINS
   !/ End local routines for use outside of WW3 ========================= /
   !/
 #endif
-
-
-
-
-
-
-
-
   !/
   !/ End of module W3GSRUMD ============================================ /
   !/

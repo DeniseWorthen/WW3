@@ -138,27 +138,27 @@ MODULE W3WDATMD
   TYPE WDATA
     INTEGER           :: TIME(2), TLEV(2), TICE(2), TRHO(2), TIC1(2), TIC5(2)
 #ifdef W3_OASIS
-    INTEGER               :: TIME00(2)
-    INTEGER               :: TIMEEND(2)
+    INTEGER           :: TIME00(2)
+    INTEGER           :: TIMEEND(2)
 #endif
 #ifdef W3_NL5
-    INTEGER               :: QI5TBEG(2)
-    REAL, POINTER         :: QR5TIM0(:), QR5CVK0(:, :), QR5TMIX(:)
-    COMPLEX, POINTER      :: QC5INT0(:, :)
+    INTEGER           :: QI5TBEG(2)
+    REAL ,    POINTER :: QR5TIM0(:), QR5CVK0(:, :), QR5TMIX(:)
+    COMPLEX , POINTER :: QC5INT0(:, :)
 #endif
     REAL ,    POINTER :: VA(:,:), WLV(:), ICE(:), RHOAIR(:)
     REAL ,    POINTER :: UST(:), USTDIR(:), ASF(:), FPIS(:)
     REAL ,    POINTER :: BERG(:), ICEH(:), ICEF(:), ICEDMAX(:)
 #ifdef W3_SETUP
-    REAL, POINTER :: ZETA_SETUP(:), FX_zs(:), FY_zs(:)
-    REAL, POINTER :: SXX_zs(:), SXY_zs(:), SYY_zs(:)
+    REAL ,    POINTER :: ZETA_SETUP(:), FX_zs(:), FY_zs(:)
+    REAL ,    POINTER :: SXX_zs(:), SXY_zs(:), SYY_zs(:)
 #endif
 #ifdef W3_PDLIB
-    REAL, POINTER     :: VSTOT(:,:), VDTOT(:,:)
-    REAL, POINTER     :: VAOLD(:,:)
-    LOGICAL, POINTER  :: SHAVETOT(:)
+    REAL ,    POINTER :: VSTOT(:,:), VDTOT(:,:)
+    REAL ,    POINTER :: VAOLD(:,:)
+    LOGICAL,  POINTER :: SHAVETOT(:)
 #endif
-    LOGICAL               :: DINIT, FL_ALL
+    LOGICAL           :: DINIT, FL_ALL
   END TYPE WDATA
   !
   !/
@@ -170,27 +170,27 @@ MODULE W3WDATMD
   !/
   INTEGER ,   POINTER :: TIME(:), TLEV(:), TICE(:), TRHO(:), TIC1(:), TIC5(:)
 #ifdef W3_OASIS
-  INTEGER, POINTER        :: TIME00(:)
-  INTEGER, POINTER        :: TIMEEND(:)
+  INTEGER,    POINTER :: TIME00(:)
+  INTEGER,    POINTER :: TIMEEND(:)
 #endif
 #ifdef W3_NL5
-  INTEGER, POINTER        :: QI5TBEG(:)
-  REAL, POINTER           :: QR5TIM0(:), QR5CVK0(:, :), QR5TMIX(:)
-  COMPLEX, POINTER        :: QC5INT0(:, :)
+  INTEGER,    POINTER :: QI5TBEG(:)
+  REAL ,      POINTER :: QR5TIM0(:), QR5CVK0(:, :), QR5TMIX(:)
+  COMPLEX,    POINTER :: QC5INT0(:, :)
 #endif
   REAL ,      POINTER :: VA(:,:), WLV(:), ICE(:), RHOAIR(:)
   REAL ,      POINTER :: UST(:), USTDIR(:), ASF(:), FPIS(:)
   REAL ,      POINTER :: BERG(:), ICEH(:), ICEF(:), ICEDMAX(:)
 #ifdef W3_SETUP
-  REAL, POINTER :: ZETA_SETUP(:), FX_zs(:), FY_zs(:)
-  REAL, POINTER :: SXX_zs(:), SXY_zs(:), SYY_zs(:)
+  REAL ,      POINTER :: ZETA_SETUP(:), FX_zs(:), FY_zs(:)
+  REAL ,      POINTER :: SXX_zs(:), SXY_zs(:), SYY_zs(:)
 #endif
 #ifdef W3_PDLIB
-  REAL, POINTER           :: VSTOT(:,:), VDTOT(:,:)
-  REAL, POINTER           :: VAOLD(:,:)
-  LOGICAL, POINTER        :: SHAVETOT(:)
+  REAL ,      POINTER :: VSTOT(:,:), VDTOT(:,:)
+  REAL ,      POINTER :: VAOLD(:,:)
+  LOGICAL ,   POINTER :: SHAVETOT(:)
 #endif
-  LOGICAL, POINTER        :: DINIT, FL_ALL
+  LOGICAL ,   POINTER :: DINIT, FL_ALL
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /

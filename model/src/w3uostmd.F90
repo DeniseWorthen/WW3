@@ -73,12 +73,12 @@ MODULE W3UOSTMD
 
 
   TYPE UOST_SOURCETERM
-    REAL, ALLOCATABLE :: COSTH(:), SINTH(:)
-    REAL :: GAMMAUP = 10
-    REAL :: GAMMADOWN = 20
+    REAL , ALLOCATABLE   :: COSTH(:), SINTH(:)
+    REAL                 :: GAMMAUP = 10
+    REAL                 :: GAMMADOWN = 20
     ! griddata is a pointer to the grid actually computed
-    TYPE(GRID), POINTER :: GRD
-    TYPE(SGRD), POINTER :: SGD
+    TYPE(GRID) , POINTER :: GRD
+    TYPE(SGRD) , POINTER :: SGD
   CONTAINS
     !PROCEDURE, PASS, PRIVATE :: COMPUTE_PSI => UOST_SOURCETERM_COMPUTE_PSI
 

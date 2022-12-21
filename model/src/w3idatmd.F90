@@ -229,7 +229,7 @@ MODULE W3IDATMD
   !/
   !/ Data storage
   !/
-  TYPE(INPUT), TARGET, ALLOCATABLE :: INPUTS(:)
+  TYPE(INPUT) , TARGET, ALLOCATABLE :: INPUTS(:)
   !/
   !/ Data aliasses for structure INPUT(S)
   !/
