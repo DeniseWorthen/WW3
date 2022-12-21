@@ -144,7 +144,6 @@ PROGRAM W3GRID_INTERP
     INTEGER ,    ALLOCATABLE :: GDID(:)
     TYPE(GR_WT), ALLOCATABLE :: IND_WTS(:)
   END TYPE GR_INT
-
   !/
   !/ Local variables
   !/

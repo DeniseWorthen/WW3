@@ -558,6 +558,7 @@ MODULE WMMDATMD
   LOGICAL ,   POINTER :: FLDAT0              !< FLDAT0
   LOGICAL ,   POINTER :: FLDAT1              !< FLDAT1
   LOGICAL ,   POINTER :: FLDAT2              !< FLDAT2
+
 #ifdef W3_MPI
   LOGICAL ,   POINTER :: FBCAST              !< FBCAST
 #endif

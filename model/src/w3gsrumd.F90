@@ -397,19 +397,19 @@ MODULE W3GSRUMD
 #endif
   REAL(8), PARAMETER :: D2M  = REARTH*D2R
   REAL(8), PARAMETER :: M2D  = 1D0/D2M
-                                               !     Default small non-zero tolerance used to check if
-                                               !     target point is in domain and for point coincidence.
+  !     Default small non-zero tolerance used to check if
+  !     target point is in domain and for point coincidence.
   REAL(8), PARAMETER :: EPS_DEFAULT  = 1.0D-6
-                                               !     Distance (deg) from pole to consider a cell "near the pole"
+  !     Distance (deg) from pole to consider a cell "near the pole"
   REAL(8), PARAMETER :: NEAR_POLE = 10.0D0
-                                               !     Default number of grid cells (in each direction) per search bucket.
+  !     Default number of grid cells (in each direction) per search bucket.
   INTEGER , PARAMETER :: NCB_DEFAULT = 10
-                                               !     Default maximum number of nearest-neighbor grid point search levels.
+  !     Default maximum number of nearest-neighbor grid point search levels.
   INTEGER , PARAMETER :: NNP_DEFAULT = 2
-                                               !     Max number of non-empty levels for bucket search when target point
-                                               !     is outside source domain
+  !     Max number of non-empty levels for bucket search when target point
+  !     is outside source domain
   INTEGER , PARAMETER :: MAX_FNCL_LEVEL = 3
-                                               !     Default finite-difference order
+  !     Default finite-difference order
   INTEGER , PARAMETER :: NFD_DEFAULT = 4
   !/
   !/ Module Interfaces
