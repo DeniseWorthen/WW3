@@ -29,7 +29,7 @@ MODULE W3ARRYMD
   !                               print plots of spectra.
   !     ----------------------------------------------------------------
   !
-  !  3. Subroutines and functions :
+  !  3. Subsroutines and functions :
   !
   !      Name      Type  Scope    Description
   !     ----------------------------------------------------------------
@@ -154,11 +154,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MX, MY, LX, HX, LY, HY, NDS, NDST,  &
-         NDSE, IDFM, IDLA
-    REAL, INTENT(IN)        :: VSC, VOF
-    CHARACTER, INTENT(IN)   :: RFORM*(*)
-    REAL, INTENT(OUT)       :: ARRAY(MX,MY)
+    INTEGER ,   INTENT(IN)  :: MX, MY, LX, HX, LY, HY, NDS, NDST
+    INTEGER ,   INTENT(IN)  :: NDSE, IDFM, IDLA
+    REAL ,      INTENT(IN)  :: VSC, VOF
+    CHARACTER , INTENT(IN)  :: RFORM*(*)
+    REAL ,      INTENT(OUT) :: ARRAY(MX,MY)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -325,10 +325,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MX, MY, LX, HX, LY, HY, NDS, NDST,  &
-         NDSE, IDFM, IDLA, VSC, VOF
-    INTEGER, INTENT(OUT)    :: ARRAY(MX,MY)
-    CHARACTER, INTENT(IN)   :: RFORM*(*)
+    INTEGER ,   INTENT(IN)  :: MX, MY, LX, HX, LY, HY, NDS, NDST
+    INTEGER ,   INTENT(IN)  :: NDSE, IDFM, IDLA, VSC, VOF
+    INTEGER ,   INTENT(OUT) :: ARRAY(MX,MY)
+    CHARACTER , INTENT(IN)  :: RFORM*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -501,10 +501,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MX, MY, LX, HX, LY, HY, NDS, NDST,  &
-         NDSE, IDFM, IDLA
-    REAL, INTENT(IN)        :: VSC, VOF, ARRAY(MX,MY)
-    CHARACTER, INTENT(IN)   :: RFORM*(*)
+    INTEGER ,   INTENT(IN) :: MX, MY, LX, HX, LY, HY, NDS, NDST
+    INTEGER ,   INTENT(IN) :: NDSE, IDFM, IDLA
+    REAL ,      INTENT(IN) :: VSC, VOF, ARRAY(MX,MY)
+    CHARACTER , INTENT(IN) :: RFORM*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -656,10 +656,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MX, MY, LX, HX, LY, HY, NDS, NDST,  &
-         NDSE, IDFM, IDLA, ARRAY(MX,MY)
-    INTEGER, INTENT(IN)     :: VSC, VOF
-    CHARACTER, INTENT(IN)   :: RFORM*(*)
+    INTEGER ,   INTENT(IN) :: MX, MY, LX, HX, LY, HY, NDS, NDST,
+    INTEGER ,   INTENT(IN) ::NDSE, IDFM, IDLA, ARRAY(MX,MY)
+    INTEGER ,   INTENT(IN) :: VSC, VOF
+    CHARACTER , INTENT(IN) :: RFORM*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -806,9 +806,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, DIM
-    REAL, INTENT(IN)        :: ARRAY(DIM)
-    CHARACTER, INTENT(IN)   :: ANAME*(*)
+    INTEGER ,   INTENT(IN) :: NDS, DIM
+    REAL ,      INTENT(IN) :: ARRAY(DIM)
+    CHARACTER , INTENT(IN) :: ANAME*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -920,8 +920,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, DIM, IARRAY(DIM)
-    CHARACTER, INTENT(IN)   :: ANAME*(*)
+    INTEGER ,   INTENT(IN) :: NDS, DIM, IARRAY(DIM)
+    CHARACTER , INTENT(IN) :: ANAME*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1036,9 +1036,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, MX, NX, NY
-    REAL, INTENT(IN)        :: A(MX,NY)
-    CHARACTER, INTENT(IN)   :: MNAME*(*)
+    INTEGER ,   INTENT(IN) :: NDS, MX, NX, NY
+    REAL ,      INTENT(IN) :: A(MX,NY)
+    CHARACTER , INTENT(IN) :: MNAME*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1184,10 +1184,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, NX, NY, MX, MAP(MX,NY), MAP0,  &
-         IX1, IX2, IX3, IY1, IY2, IY3
-    REAL, INTENT(IN)        :: F(MX,NY), FSC
-    CHARACTER, INTENT(IN)   :: PRVAR*(*), PRUNIT*(*)
+    INTEGER ,   INTENT(IN) :: NDS, NX, NY, MX, MAP(MX,NY), MAP0
+    INTEGER ,   INTENT(IN) :: IX1, IX2, IX3, IY1, IY2, IY3
+    REAL ,      INTENT(IN) :: F(MX,NY), FSC
+    CHARACTER , INTENT(IN) :: PRVAR*(*), PRUNIT*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1443,10 +1443,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, NFR, NLINES
-    REAL, INTENT(IN)        :: FTOPI, E(NFR), FR(NFR)
-    CHARACTER, INTENT(IN)   :: PRVAR*(*), PRUNIT*(*), PNTNME*(*),  &
-         UFR*(*)
+    INTEGER ,   INTENT(IN) :: NDS, NFR, NLINES
+    REAL ,      INTENT(IN) :: FTOPI, E(NFR), FR(NFR)
+    CHARACTER , INTENT(IN) :: PRVAR*(*), PRUNIT*(*), PNTNME*(*), UFR*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1705,11 +1704,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, NFR, NE, NLINES
-    REAL, INTENT(IN)        :: FTOPI, E(NFR,NE), FR(NFR)
-    CHARACTER, INTENT(IN)   :: PRVAR*(*), PRUNIT*(*), PNTNME*(*),  &
-         UFR*(*)
-    DIMENSION               :: PRVAR(NE)
+    INTEGER ,   INTENT(IN) :: NDS, NFR, NE, NLINES
+    REAL ,      INTENT(IN) :: FTOPI, E(NFR,NE), FR(NFR)
+    CHARACTER , INTENT(IN) :: PRVAR*(*), PRUNIT*(*), PNTNME*(*), UFR*(*)
+    DIMENSION              :: PRVAR(NE)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2028,10 +2026,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, NFR0, NFR, NTH
-    REAL, INTENT(IN)        :: E(NFR0,*), FR(*), FACSP, FSC, RRCUT
-    CHARACTER, INTENT(IN)   :: PRVAR*(*), PRUNIT*(*), PNTNME*(*),  &
-         UFR*(*)
+    INTEGER ,   INTENT(IN) :: NDS, NFR0, NFR, NTH
+    REAL ,      INTENT(IN) :: E(NFR0,*), FR(*), FACSP, FSC, RRCUT
+    CHARACTER , INTENT(IN) :: PRVAR*(*), PRUNIT*(*), PNTNME*(*), UFR*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2317,8 +2314,8 @@ CONTAINS
       !/ ------------------------------------------------------------------- /
       !/ Parameter list
       !/
-      INTEGER, INTENT(IN)     :: IANG, ILEN, INUM
-      CHARACTER, INTENT(OUT)  :: SANG*(*)
+      INTEGER ,   INTENT(IN) :: IANG, ILEN, INUM
+      CHARACTER , INTENT(OUT) :: SANG*(*)
       !/
       !/ ------------------------------------------------------------------- /
       !/ Local parameters

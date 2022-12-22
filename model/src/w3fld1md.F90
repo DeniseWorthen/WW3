@@ -185,11 +185,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: ASPC(NSPEC), WNDX, WNDY,  &
-         ZWND, DEPTH, RIB, DAIR, FPI
-    REAL, INTENT(OUT)       :: UST, USTD, Z0
-    REAL, INTENT(OUT), OPTIONAL :: CHARN
-    REAL, INTENT(INOUT)     :: TAUNUX, TAUNUY
+    REAL , INTENT(IN)            :: ASPC(NSPEC), WNDX, WNDY
+    REAL , INTENT(IN)            :: ZWND, DEPTH, RIB, DAIR, FPI
+    REAL , INTENT(OUT)           :: UST, USTD, Z0
+    REAL , INTENT(OUT), OPTIONAL :: CHARN
+    REAL , INTENT(INOUT)         :: TAUNUX, TAUNUY
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -945,9 +945,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN) :: NKT, KA1, KA2, KA3
-    REAL, INTENT(IN)    :: WN2(NKT), WNDDIR,SAT
-    REAL, INTENT(INOUT)   :: INSPC(NKT,NTH)
+    INTEGER , INTENT(IN)    :: NKT, KA1, KA2, KA3
+    REAL ,    INTENT(IN)    :: WN2(NKT), WNDDIR,SAT
+    REAL ,    INTENT(INOUT) :: INSPC(NKT,NTH)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1182,8 +1182,8 @@ CONTAINS
     !/
     implicit none
     !/
-    REAL,INTENT(IN)    :: SIG,DEPTH
-    REAL,INTENT(OUT)   :: WN
+    REAL ,INTENT(IN)  :: SIG,DEPTH
+    REAL ,INTENT(OUT) :: WN
     !/
     real    :: wn1,wn2 !,sig1,sig2,dsigdk
     real    :: fk, fk_slp
@@ -1307,8 +1307,8 @@ CONTAINS
 #endif
     !/
     IMPLICIT NONE
-    REAL, INTENT(IN) :: W10M
-    REAL, INTENT(OUT):: ZNOTM
+    REAL , INTENT(IN)  :: W10M
+    REAL , INTENT(OUT) :: ZNOTM
 
     !Parameters from znot_m_v1
     REAL, PARAMETER :: bs0 = -8.367276172397277e-12
@@ -1430,8 +1430,8 @@ CONTAINS
     !/
     IMPLICIT NONE
     !/
-    REAL, INTENT(IN) :: WND10
-    REAL, INTENT(OUT) :: SAT
+    REAL , INTENT(IN)  :: WND10
+    REAL , INTENT(OUT) :: SAT
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
     CALL STRACE (IENT, 'WND2SAT')

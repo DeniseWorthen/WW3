@@ -158,11 +158,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: ASPC(NSPEC), WNDX, WNDY, &
-         ZWND, DEPTH, RIB, DAIR, FPI
-    REAL, INTENT(OUT)       :: UST, USTD, Z0
-    REAL, INTENT(OUT),OPTIONAL :: CHARN
-    REAL, INTENT(INOUT)     :: TAUNUX, TAUNUY
+    REAL , INTENT(IN)            :: ASPC(NSPEC), WNDX, WNDY
+    REAL , INTENT(IN)            :: ZWND, DEPTH, RIB, DAIR, FPI
+    REAL , INTENT(OUT)           :: UST, USTD, Z0
+    REAL , INTENT(OUT), OPTIONAL :: CHARN
+    REAL , INTENT(INOUT)         :: TAUNUX, TAUNUY
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -653,8 +653,8 @@ CONTAINS
 #endif
     !
     IMPLICIT NONE
-    REAL, INTENT(IN) :: WND10
-    REAL, INTENT(OUT) :: SAT
+    REAL , INTENT(IN)  :: WND10
+    REAL , INTENT(OUT) :: SAT
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
     CALL STRACE (IENT, 'WND2SAT')

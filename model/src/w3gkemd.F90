@@ -254,9 +254,9 @@ contains
     !/
     implicit none
     !
-    real, intent(in) :: kx, ky   ! x, y components of wavenumber
-    ! vector (kx, ky)
-    real             :: QFunc    ! Returned function
+    real , intent(in) :: kx, ky   ! x, y components of wavenumber
+                                  ! vector (kx, ky)
+    real              :: QFunc    ! Returned function
     !/
     QFunc = sqrt(kx*kx + ky*ky)  ! deep-water case (q = k)
     !
@@ -372,9 +372,9 @@ contains
     !/
     implicit none
     !
-    real, intent(in) :: k0x, k0y, k1x, k1y,       &
-         k2x, k2y, k3x, k3y        ! 4 waves
-    real             :: UFunc                     ! U_{1, 2, 3, 4}
+    real , intent(in) :: k0x, k0y, k1x, k1y
+    real , intent(in) :: k2x, k2y, k3x, k3y        ! 4 waves
+    real              :: UFunc                     ! U_{1, 2, 3, 4}
     !
     real             :: q0, q1, q2, q3            ! q for 4 waves
     !/
@@ -414,8 +414,8 @@ contains
     !/
     implicit none
     !
-    real, intent(in) :: k0x, k0y, k1x, k1y, &
-         k2x, k2y, k3x, k3y        ! 4 waves
+    real , intent(in) :: k0x, k0y, k1x, k1y
+    real , intent(in) :: k2x, k2y, k3x, k3y       ! 4 waves
     real             :: TFunc                     ! T_{1, 2, 3, 4}
     !
     ! Virtual-state interaction: two free waves generate a virtual state
@@ -646,16 +646,15 @@ contains
     !/
     implicit none
     !
-    integer, intent(in)  :: ns           ! length of 1D wavenumber
-    ! vector, ns = nk * nth
-    real, intent(in)     :: kx(ns),   &
-         ky(ns),   &  ! (kx, ky) components
-         om(ns)       ! ω or σ
-    real, intent(in)     :: oml          ! cut-off value λc for the
-    ! quasi-resonant criterion 2)
-    !
-    integer(kind=8), intent(out)      &
-         :: nnz          ! total number of quartets
+    integer ,         intent(in)  :: ns     ! length of 1D wavenumber
+                                            ! vector, ns = nk * nth
+    real ,            intent(in)  :: kx(ns)
+    real ,            intent(in)  :: ky(ns) ! (kx, ky) components
+    real ,            intent(in)  :: om(ns) ! ω or σ
+    real ,            intent(in)  :: oml    ! cut-off value λc for the
+                                            ! quasi-resonant criterion 2)
+                                            !
+    integer(kind=8) , intent(out) :: nnz    ! total number of quartets
     ! i.e., nonzero values
     ! in the large-sparse matrix
     ! illustrated above
@@ -759,26 +758,25 @@ contains
     !/
     implicit none
     !
-    integer, intent(in)  :: ns           ! length of 1D wavenumber
-    ! vector, ns = nk * nth
-    real, intent(in)     :: kx(ns),   &
-         ky(ns),   &  ! (kx, ky) components
-         om(ns)       ! ω or σ
-    real, intent(in)     :: oml          ! cut-off value λc for the
-    ! quasi-resonant criterion 2)
-    integer(kind=8), intent(in)       &
-         :: nnz          ! total number of quartets
-    ! returned from the subr.
-    ! FindQuartetNumber
+    integer ,         intent(in)  :: ns       ! length of 1D wavenumber
+                                              ! vector, ns = nk * nth
+    real ,            intent(in)  :: kx(ns)
+    real ,            intent(in)  :: ky(ns)   ! (kx, ky) components
+    real ,            intent(in)  :: om(ns)   ! ω or σ
+    real ,            intent(in)  :: oml      ! cut-off value λc for the
+                                              ! quasi-resonant criterion 2)
+    integer(kind=8) , intent(in)  :: nnz      ! total number of quartets
+                                              ! returned from the subr.
+                                              ! FindQuartetNumber
     !
-    integer, intent(out) :: NN(nnz),  &  ! index of k₁
-         PP(nnz),  &  !          k₂
-         QQ(nnz),  &  !          k₃
-         RR(nnz)      !          k₄ in the 1D
-    ! wavenumber vector [1 - NS]
-    real, intent(out)    :: k4x(nnz), &
-         k4y(nnz), &  ! x, y comp. of k₄
-         om4(nnz)     ! ω₄
+    integer ,         intent(out) :: NN(nnz)  ! index of k₁
+    integer ,         intent(out) :: PP(nnz)  !          k₂
+    integer ,         intent(out) :: QQ(nnz)  !          k₃
+    integer ,         intent(out) :: RR(nnz)  !          k₄ in the 1D
+                                              ! wavenumber vector [1 - NS]
+    real ,            intent(out) :: k4x(nnz)
+    real ,            intent(out) :: k4y(nnz) ! x, y comp. of k₄
+    real ,            intent(out) :: om4(nnz) ! ω₄
     !
     ! Local parameters
     real                 :: k(ns)        ! scalar/mag k
@@ -924,13 +922,12 @@ contains
     !/
     implicit none
     !
-    integer, intent(in)  :: nrow               ! # of rows of sparse matrix
-    integer(kind=8), intent(in)     &
-         :: nnz                ! # of nonzero elements
-    integer, intent(in)  :: ir(nnz)            ! COO row
-    integer, intent(in)  :: jc(nnz)            ! COO col
-    integer, intent(out) :: ind_translate(nnz) ! indices from COO to CSR
-    integer, intent(out) :: iao(nrow+1)        ! CSR iao
+    integer ,        intent(in)  :: nrow               ! # of rows of sparse matrix
+    integer(kind=8), intent(in)  :: nnz                ! # of nonzero elements
+    integer ,        intent(in)  :: ir(nnz)            ! COO row
+    integer ,        intent(in)  :: jc(nnz)            ! COO col
+    integer ,        intent(out) :: ind_translate(nnz) ! indices from COO to CSR
+    integer ,        intent(out) :: iao(nrow+1)        ! CSR iao
     !
     ! Local parameters
     integer              :: i, j, k, k0, iad
@@ -1025,15 +1022,15 @@ contains
     !/
     implicit none
     !
-    integer, intent(in)   :: n           ! # of rows/cols
+    integer , intent(in)  :: n           ! # of rows/cols
     !
-    real, intent(in)      :: a(:)        ! CSR a (nnz)
-    integer, intent(in)   :: ja(:)       ! CSR ja(nnz)
-    integer, intent(in)   :: ia(n+1)     ! CSR ia(n+1)
+    real ,    intent(in)  :: a(:)        ! CSR a (nnz)
+    integer , intent(in)  :: ja(:)       ! CSR ja(nnz)
+    integer , intent(in)  :: ia(n+1)     ! CSR ia(n+1)
     !
-    real, intent(in)      :: x(n)        ! vector of the same length
-    real, intent(out)     :: y(n)        ! return product y = B * x
-    real, intent(in)      :: Symb        ! -1 for minus, 1 for plus
+    real ,    intent(in)  :: x(n)        ! vector of the same length
+    real ,    intent(out) :: y(n)        ! return product y = B * x
+    real ,    intent(in)  :: Symb        ! -1 for minus, 1 for plus
     !
     ! Local parameters
     integer               :: i, k
@@ -1092,13 +1089,13 @@ contains
     !
     implicit none
     !
-    integer, intent(in)    :: nk          ! # of frequencies
-    integer, intent(in)    :: nth         ! # of directions
-    real, intent(in)       :: dpt         ! water depth (m)
-    real, intent(in)       :: sig(nk)     ! radian frequency σ
-    real, intent(in)       :: th(nth)     ! θ (rad) [equally spaced,
-    ! but may start from non-zero
-    ! value]
+    integer , intent(in) :: nk      ! # of frequencies
+    integer , intent(in) :: nth     ! # of directions
+    real ,    intent(in) :: dpt     ! water depth (m)
+    real ,    intent(in) :: sig(nk) ! radian frequency σ
+    real ,    intent(in) :: th(nth) ! θ (rad) [equally spaced,
+                                    ! but may start from non-zero
+                                    ! value]
     !
     integer, parameter     :: dispopt = 1 ! dispersion relation
     !
@@ -1226,13 +1223,13 @@ contains
 
     implicit none
     !
-    integer, intent(in)          :: nk             ! # of frequencies
-    integer, intent(in)          :: nth            ! # of directions
-    real, intent(in)             :: sig(nk)        ! radian frequency (rad)
-    real, intent(in)             :: th(nth)        ! θ (rad) [equally spaced,
-    ! but may start from non-zero
-    ! value]
-    character(len=*), intent(in) :: act            ! 'read' or 'write'
+    integer ,          intent(in) :: nk      ! # of frequencies
+    integer ,          intent(in) :: nth     ! # of directions
+    real ,             intent(in) :: sig(nk) ! radian frequency (rad)
+    real ,             intent(in) :: th(nth) ! θ (rad) [equally spaced,
+                                             ! but may start from non-zero
+                                             ! value]
+    character(len=*) , intent(in) :: act     ! 'read' or 'write'
     !
     ! Local parameters
     integer                      :: ns, iq, i1, i3, icol
@@ -1496,10 +1493,10 @@ contains
     !/
     implicit none
     !
-    integer, intent(in) :: nk
-    integer, intent(in) :: nth
-    real, intent(in)    :: wn(nk)  ! k
-    real, intent(in)    :: th(nth) ! θ
+    integer , intent(in) :: nk
+    integer , intent(in) :: nth
+    real ,    intent(in) :: wn(nk)  ! k
+    real ,    intent(in) :: th(nth) ! θ
     !
     integer             :: iq, jkU, jk4, jk4p, jth4T, jth4, jth4p
     real                :: dth, aRef, k4T, angR, &
@@ -1659,23 +1656,23 @@ contains
     !/
     implicit none
     !
-    integer, intent(in)        :: nk             ! # of frequencies
-    integer, intent(in)        :: nth            ! # of directions
-    real, intent(in)           :: sig(nk)        ! radian frequency (rad)
-    real, intent(in)           :: th(nth)        ! θ (rad) [equally spaced,
-    ! but may start from non-zero
+    integer , intent(in)    :: nk           ! # of frequencies
+    integer , intent(in)    :: nth          ! # of directions
+    real ,    intent(in)    :: sig(nk)      ! radian frequency (rad)
+    real ,    intent(in)    :: th(nth)      ! θ (rad) [equally spaced,
+                                            ! but may start from non-zero
     !
-    real, intent(inout)        :: t0             ! previous time step
-    real, intent(inout)        :: Cvk0(nk*nth)   ! Action density @ t0
-    complex, intent(inout)     :: Inpqr0(:)      ! I(t) @ t0
+    real ,    intent(inout) :: t0           ! previous time step
+    real ,    intent(inout) :: Cvk0(nk*nth) ! Action density @ t0
+    complex , intent(inout) :: Inpqr0(:)    ! I(t) @ t0
     !
-    real, intent(in)           :: t1             ! current  time step
-    real, intent(in)           :: Cvk1(nk*nth)   ! Action density @ t1
-    ! ... C(\vec{k})
+    real ,    intent(in)    :: t1           ! current  time step
+    real ,    intent(in)    :: Cvk1(nk*nth) ! Action density @ t1
+                                            ! ... C(\vec{k})
     !
-    real, intent(out)          :: Snl(nk*nth)    ! Snl = dC/dt
-    real, intent(out)          :: Dnl(nk*nth)    ! Dnl
-    real, intent(out)          :: Kurt           ! Kurtosis
+    real ,    intent(out)   :: Snl(nk*nth)  ! Snl = dC/dt
+    real ,    intent(out)   :: Dnl(nk*nth)  ! Dnl
+    real ,    intent(out)   :: Kurt         ! Kurtosis
     !
     ! Local parameters
     !

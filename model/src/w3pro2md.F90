@@ -661,9 +661,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: ISP, MAPSTA(NY*NX), MAPFS(NY*NX)
-    REAL, INTENT(IN)        :: DTG, VGX, VGY
-    REAL, INTENT(INOUT)     :: VQ(1-NY:NY*(NX+2))
+    INTEGER , INTENT(IN)    :: ISP, MAPSTA(NY*NX), MAPFS(NY*NX)
+    REAL ,    INTENT(IN)    :: DTG, VGX, VGY
+    REAL ,    INTENT(INOUT) :: VQ(1-NY:NY*(NX+2))
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1350,12 +1350,12 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: ISEA
-    REAL, INTENT(IN)        :: FACTH, FACK, CTHG0, CG(0:NK+1),      &
-         WN(0:NK+1), DEPTH, DDDX, DDDY,       &
-         CX, CY, DCXDX, DCXDY, DCYDX, DCYDY
-    REAL, INTENT(IN)        :: DCDX(0:NK+1), DCDY(0:NK+1)
-    REAL, INTENT(INOUT)     :: VA(NSPEC)
+    INTEGER , INTENT(IN)    :: ISEA
+    REAL ,    INTENT(IN)    :: FACTH, FACK, CTHG0, CG(0:NK+1)
+    REAL ,    INTENT(IN)    :: WN(0:NK+1), DEPTH, DDDX, DDDY
+    REAL ,    INTENT(IN)    :: CX, CY, DCXDX, DCXDY, DCYDX, DCYDY
+    REAL ,    INTENT(IN)    :: DCDX(0:NK+1), DCDY(0:NK+1)
+    REAL ,    INTENT(INOUT) :: VA(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

@@ -234,11 +234,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(OUT)          :: NP
-    INTEGER, INTENT(IN)           :: DIMXP
-    REAL, INTENT(IN)              :: SPEC(NK,NTH), WN(NK), UABS,    &
-         UDIR, DEPTH
-    REAL, INTENT(OUT)             :: XP(DIMP,0:DIMXP)
+    INTEGER , INTENT(OUT) :: NP
+    INTEGER , INTENT(IN)  :: DIMXP
+    REAL ,    INTENT(IN)  :: SPEC(NK,NTH), WN(NK), UABS
+    REAL ,    INTENT(IN)  :: UDIR, DEPTH
+    REAL ,    INTENT(OUT) :: XP(DIMP,0:DIMXP)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -557,8 +557,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)      :: IHMAX, IMI(NSPEC)
-    INTEGER, INTENT(OUT)     :: IND(NSPEC)
+    INTEGER , INTENT(IN)  :: IHMAX, IMI(NSPEC)
+    INTEGER , INTENT(OUT) :: IND(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -886,9 +886,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMI(NSPEC), IND(NSPEC)
-    INTEGER, INTENT(OUT)    :: IMO(NSPEC), NPART
-    REAL, INTENT(IN)        :: ZP(NSPEC)
+    INTEGER , INTENT(IN)  :: IMI(NSPEC), IND(NSPEC)
+    INTEGER , INTENT(OUT) :: IMO(NSPEC), NPART
+    REAL ,    INTENT(IN)  :: ZP(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1103,7 +1103,7 @@ CONTAINS
     !> @date 01 Nov 2006
     SUBROUTINE FIFO_ADD ( IV )
 
-      INTEGER, INTENT(IN)      :: IV
+      INTEGER , INTENT(IN) :: IV
       !
       IQ(IQ_END) = IV
       !
@@ -1122,7 +1122,7 @@ CONTAINS
     !>
     SUBROUTINE FIFO_EMPTY ( IEMPTY )
 
-      INTEGER, INTENT(OUT)     :: IEMPTY
+      INTEGER , INTENT(OUT) :: IEMPTY
       !
       IF ( IQ_START .NE. IQ_END ) THEN
         IEMPTY = 0
@@ -1142,7 +1142,7 @@ CONTAINS
     !>
     SUBROUTINE FIFO_FIRST ( IV )
 
-      INTEGER, INTENT(OUT)     :: IV
+      INTEGER , INTENT(OUT) :: IV
       !
       IV = IQ(IQ_START)
       !
@@ -1239,10 +1239,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NPI, IMO(NSPEC), DIMXP
-    INTEGER, INTENT(OUT)    :: NPO, PMAP(DIMXP)
-    REAL, INTENT(IN)        :: ZP(NSPEC), DEPTH, UABS, UDIR, WN(NK)
-    REAL, INTENT(OUT)       :: XP(DIMP,0:DIMXP)
+    INTEGER , INTENT(IN)  :: NPI, IMO(NSPEC), DIMXP
+    INTEGER , INTENT(OUT) :: NPO, PMAP(DIMXP)
+    REAL ,    INTENT(IN)  :: ZP(NSPEC), DEPTH, UABS, UDIR, WN(NK)
+    REAL ,    INTENT(OUT) :: XP(DIMP,0:DIMXP)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

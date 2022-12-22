@@ -224,8 +224,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)            :: A(NTH,NFR), CG(NFR), WN(NFR),    &
-         DEPTH, UABS, DT
+    REAL, INTENT(IN)            :: A(NTH,NFR), CG(NFR), WN(NFR)
+    REAL, INTENT(IN)            :: DEPTH, UABS, DT
     REAL, INTENT(OUT), OPTIONAL :: SNL(NTH,NFR), AA(NTH,NFR)
     !/
     !/ ------------------------------------------------------------------- /
@@ -622,8 +622,8 @@ CONTAINS
       !/
       !/ Parameter list
       !/
-      REAL, INTENT(OUT)       :: PSPC(0:NTH+1,0:NFR+2),               &
-           SPEC(0:NTH+1,0:NFR+2)
+      REAL , INTENT(OUT) :: PSPC(0:NTH+1,0:NFR+2)
+      REAL , INTENT(OUT) :: SPEC(0:NTH+1,0:NFR+2)
       !/
       !/ Local parameters
       !/

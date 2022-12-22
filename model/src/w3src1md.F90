@@ -168,8 +168,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NTH,NK), CG(NK), WN(NK)
-    REAL, INTENT(OUT)       :: EMEAN, FMEAN, WNMEAN, AMAX
+    REAL , INTENT(IN)  :: A(NTH,NK), CG(NK), WN(NK)
+    REAL , INTENT(OUT) :: EMEAN, FMEAN, WNMEAN, AMAX
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -345,8 +345,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NSPEC), K(NSPEC), USTAR, USDIR
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC)
+    REAL , INTENT(IN)  :: A(NSPEC), K(NSPEC), USTAR, USDIR
+    REAL , INTENT(OUT) :: S(NSPEC), D(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -519,9 +519,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NSPEC), K(NSPEC),                  &
-         EMEAN, FMEAN, WNMEAN
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC)
+    REAL , INTENT(IN)  :: A(NSPEC), K(NSPEC)
+    REAL , INTENT(IN)  :: EMEAN, FMEAN, WNMEAN
+    REAL , INTENT(OUT) :: S(NSPEC), D(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
