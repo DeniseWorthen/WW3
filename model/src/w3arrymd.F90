@@ -29,7 +29,7 @@ MODULE W3ARRYMD
   !                               print plots of spectra.
   !     ----------------------------------------------------------------
   !
-  !  3. Subsroutines and functions :
+  !  3. Subroutines and functions :
   !
   !      Name      Type  Scope    Description
   !     ----------------------------------------------------------------
@@ -656,7 +656,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER ,   INTENT(IN) :: MX, MY, LX, HX, LY, HY, NDS, NDST,
+    INTEGER ,   INTENT(IN) :: MX, MY, LX, HX, LY, HY, NDS, NDST
     INTEGER ,   INTENT(IN) ::NDSE, IDFM, IDLA, ARRAY(MX,MY)
     INTEGER ,   INTENT(IN) :: VSC, VOF
     CHARACTER , INTENT(IN) :: RFORM*(*)
