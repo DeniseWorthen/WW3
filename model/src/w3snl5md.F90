@@ -215,20 +215,20 @@ CONTAINS
 
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
-    REAL, PARAMETER         :: BTLOW = 10., BTHGH = 500.
-    REAL                    :: T0REL, T1REL, TDEL1, TDEL2
-    REAL                    :: Cvk1(NSPEC), SNL(NSPEC), DNL(NSPEC)
-    REAL                    :: Cvk0(NSPEC)
-    COMPLEX                 :: INPQR0(QI5NNZ)
-    INTEGER                 :: IK, ITH, ISPEC, ISEA, JLOC
-    INTEGER, ALLOCATABLE    :: PDIFF(:)
-    LOGICAL, SAVE           :: FSTOUT = .TRUE.
-    REAL                    :: FACTOR(NK), A2(NK, NTH), S2(NK, NTH)
-    REAL                    :: PM_PREV, PM_IVAL, PM_DELT
-    REAL                    :: WBT, BTINV
-    INTEGER                 :: IUNT
+    REAL, PARAMETER      :: BTLOW = 10., BTHGH = 500.
+    REAL                 :: T0REL, T1REL, TDEL1, TDEL2
+    REAL                 :: Cvk1(NSPEC), SNL(NSPEC), DNL(NSPEC)
+    REAL                 :: Cvk0(NSPEC)
+    COMPLEX              :: INPQR0(QI5NNZ)
+    INTEGER              :: IK, ITH, ISPEC, ISEA, JLOC
+    INTEGER, ALLOCATABLE :: PDIFF(:)
+    LOGICAL, SAVE        :: FSTOUT = .TRUE.
+    REAL                 :: FACTOR(NK), A2(NK, NTH), S2(NK, NTH)
+    REAL                 :: PM_PREV, PM_IVAL, PM_DELT
+    REAL                 :: WBT, BTINV
+    INTEGER              :: IUNT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE        :: IENT = 0
 #endif
 
     !/
@@ -613,18 +613,18 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    REAL                 :: CALC_WBTv2
+    REAL            :: CALC_WBTv2
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE   :: IENT = 0
 #endif
     !
-    REAL, PARAMETER      :: BETA  = 1.2
+    REAL, PARAMETER :: BETA  = 1.2
     !
-    INTEGER              :: IK, ITH
-    REAL                 :: SINU, COSU, TC, TFORCE
-    REAL                 :: ESIG(NK) ! E(σ)
-    REAL                 :: FACTOR, ET, HS, ETP, HSP, SIGP, KP, &
-         CGP, WSTP, TWBT
+    INTEGER         :: IK, ITH
+    REAL            :: SINU, COSU, TC, TFORCE
+    REAL            :: ESIG(NK) ! E(σ)
+    REAL            :: FACTOR, ET, HS, ETP, HSP, SIGP, KP
+    REAL            :: CGP, WSTP, TWBT
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -778,9 +778,9 @@ CONTAINS
     IMPLICIT NONE
     !/ ------------------------------------------------------------------- /
     !/
-    INTEGER           :: IXS(4), IYS(4), IX, IY, IPT, IS, &
-         JLOC, JX, JY, ISEA, SMAP(4), IUNT
-    REAL              :: PLON, PLAT, XLON, YLAT, DIST(4)
+    INTEGER :: IXS(4), IYS(4), IX, IY, IPT, IS
+    INTEGER :: JLOC, JX, JY, ISEA, SMAP(4), IUNT
+    REAL    :: PLON, PLAT, XLON, YLAT, DIST(4)
     !/ ------------------------------------------------------------------- /
     !/
     ! Initialize arrays

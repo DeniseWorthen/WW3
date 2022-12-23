@@ -158,37 +158,37 @@ PROGRAM W3GRIB
   !/ ------------------------------------------------------------------- /
   !/ Local variables
   !/
-  INTEGER                 :: NDSI, NDSM, NDSOG, NDSDAT, NDSTRC,   &
-       NTRACE, IERR, IOTEST, I,J,K, IFI,IFJ,&
-       ISEA, IX, IY, TOUT(2), NOUT, TDUM(2),&
-       FTIME(2), CID, PID, GID, GDS, IOUT,  &
-       GDTN
-  INTEGER, ALLOCATABLE    :: IFIA(:),IFJA(:)
+  INTEGER                       :: NDSI, NDSM, NDSOG, NDSDAT, NDSTRC
+  INTEGER                       :: NTRACE, IERR, IOTEST, I,J,K, IFI,IFJ
+  INTEGER                       :: ISEA, IX, IY, TOUT(2), NOUT, TDUM(2)
+  INTEGER                       :: FTIME(2), CID, PID, GID, GDS, IOUT
+  INTEGER                       :: GDTN
+  INTEGER,          ALLOCATABLE :: IFIA(:),IFJA(:)
 #ifdef W3_NOGRB
-  INTEGER                 :: KPDS(1), KGDS(1)
+  INTEGER                       :: KPDS(1), KGDS(1)
 #endif
   ! GRIB2 specific variables
 #ifdef W3_NCEP2
-  INTEGER                 :: KPDS(200), KGDS(200), IDRS(200)
-  INTEGER                 :: LISTSEC0(3), LISTSEC1(13),IGDS(5)
-  INTEGER                 :: IDEFLIST, IDEFNUM, KPDSNUM, NUMCOORD
-  INTEGER                 :: IBMP, LCGRIB, LENGRIB, IDRSNUM
-  REAL                    :: COORDLIST, XN
-  CHARACTER(LEN=1), ALLOCATABLE  :: CGRIB(:)
-  INTEGER                 :: LATAN1, LONV, SCNMOD, LATIN1, &
-       LATIN2, LATSP, LONSP
-  REAL                    :: DSX, DSY
-  REAL                    :: YN, X0N, Y0N
+  INTEGER                       :: KPDS(200), KGDS(200), IDRS(200)
+  INTEGER                       :: LISTSEC0(3), LISTSEC1(13),IGDS(5)
+  INTEGER                       :: IDEFLIST, IDEFNUM, KPDSNUM, NUMCOORD
+  INTEGER                       :: IBMP, LCGRIB, LENGRIB, IDRSNUM
+  REAL                          :: COORDLIST, XN
+  CHARACTER(LEN=1), ALLOCATABLE :: CGRIB(:)
+  INTEGER                       :: LATAN1, LONV, SCNMOD, LATIN1
+  INTEGER                       :: LATIN2, LATSP, LONSP
+  REAL                          :: DSX, DSY
+  REAL                          :: YN, X0N, Y0N
 #endif
 #ifdef W3_S
-  INTEGER, SAVE           :: IENT = 0
+  INTEGER, SAVE                 :: IENT = 0
 #endif
-  REAL                    :: DTREQ, DTEST, RFTIME
-  LOGICAL                 :: FLREQ(NOGRP,NGRPP), FLGRIB(NOGRP,NGRPP)
-  CHARACTER               :: COMSTR*1, IDTIME*23, IDDDAY*11
-  CHARACTER(LEN=80)       :: LINEIN
-  CHARACTER(LEN=8)        :: WORDS(5)
-  INTEGER                 :: GEN_PRO
+  REAL                          :: DTREQ, DTEST, RFTIME
+  LOGICAL                       :: FLREQ(NOGRP,NGRPP), FLGRIB(NOGRP,NGRPP)
+  CHARACTER                     :: COMSTR*1, IDTIME*23, IDDDAY*11
+  CHARACTER(LEN=80)             :: LINEIN
+  CHARACTER(LEN=8)              :: WORDS(5)
+  INTEGER                       :: GEN_PRO
 
   !/
   !/ ------------------------------------------------------------------- /
@@ -998,22 +998,22 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NX, NY, NSEA
+    INTEGER, INTENT(IN) :: NX, NY, NSEA
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: J, IXY, NDATA
-    INTEGER                 :: IO
+    INTEGER       :: J, IXY, NDATA
+    INTEGER       :: IO
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    ::  X1(NX*NY), X2(NX*NY), XX(NX*NY),    &
-         XY(NX*NY), CABS, UABS,              &
-         YY(NX*NY,0:NOSWLL), KPDS5A, KPDS5B, &
-         KPDS5A1(3)
-    LOGICAL*1               ::  BITMAP(NX*NY)
-    LOGICAL                 :: FLONE, FLTWO, FLDIR, FLTRI, FLPRT
+    REAL          ::  X1(NX*NY), X2(NX*NY), XX(NX*NY)
+    REAL          :: XY(NX*NY), CABS, UABS
+    REAL          :: YY(NX*NY,0:NOSWLL), KPDS5A, KPDS5B
+    REAL          :: KPDS5A1(3)
+    LOGICAL*1     ::  BITMAP(NX*NY)
+    LOGICAL       :: FLONE, FLTWO, FLDIR, FLTRI, FLPRT
     !/
     !/ ------------------------------------------------------------------- /
     !/

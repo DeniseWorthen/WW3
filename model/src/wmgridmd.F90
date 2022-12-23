@@ -258,38 +258,38 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: I, IBI, IX, IY, JS, J,       &
-         JTOT, I1, J1, I2, J2
+    INTEGER                       :: I, IBI, IX, IY, JS, J
+    INTEGER                       :: JTOT, I1, J1, I2, J2
 #ifdef W3_MPI
-    INTEGER                 :: NXYG, IERR_MPI
+    INTEGER                       :: NXYG, IERR_MPI
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE                 :: IENT = 0
 #endif
-    INTEGER, ALLOCATABLE    :: TSTORE(:,:)
+    INTEGER, ALLOCATABLE          :: TSTORE(:,:)
 #ifdef W3_MPI
-    LOGICAL                 :: FLBARR
+    LOGICAL                       :: FLBARR
 #endif
-    REAL                    :: XA, YA
-    REAL                    :: FACTOR
-    LOGICAL                 :: GRIDD(NRGRD,NRGRD) ! indicates grid-to-grid
+    REAL                          :: XA, YA
+    REAL                          :: FACTOR
+    LOGICAL                       :: GRIDD(NRGRD,NRGRD) ! indicates grid-to-grid
     ! dependency
-    LOGICAL                 :: RFILE(NRGRD),  FLAGOK
-    LOGICAL                 :: INGRID ! indicates whether boundary point
+    LOGICAL                       :: RFILE(NRGRD),  FLAGOK
+    LOGICAL                       :: INGRID ! indicates whether boundary point
     ! is in lower rank grid
-    INTEGER                 :: IVER(4),JVER(4) ! (I,J) indices of vertices
+    INTEGER                       :: IVER(4),JVER(4) ! (I,J) indices of vertices
     ! of cell (in lower rank grid J) enclosing
     ! boundary point (in higher rank grid I)
-    REAL                    :: RW(4) ! Array of interpolation weights.
-    INTEGER                 :: KVER ! counter for 4 vertices
+    REAL                          :: RW(4) ! Array of interpolation weights.
+    INTEGER                       :: KVER ! counter for 4 vertices
 
-    REAL                    :: DX_MIN_GRIDI,DY_MIN_GRIDI,DX_MAX_GRIDI, &
-         DY_MAX_GRIDI
-    REAL                    :: DX_MIN_GRIDJ,DY_MIN_GRIDJ,DX_MAX_GRIDJ, &
-         DY_MAX_GRIDJ
-    INTEGER  :: ITRI, IM1, IM2, IT, JT, ISFIRST, ITOUT, NBRELEVANT
-    REAL :: DIST_MIN, DIST_MAX, EDIST
-    LOGICAL RESOL_CHECK
+    REAL                          :: DX_MIN_GRIDI,DY_MIN_GRIDI,DX_MAX_GRIDI
+    REAL                          :: DY_MAX_GRIDI
+    REAL                          :: DX_MIN_GRIDJ,DY_MIN_GRIDJ,DX_MAX_GRIDJ
+    REAL                          :: DY_MAX_GRIDJ
+    INTEGER                       :: ITRI, IM1, IM2, IT, JT, ISFIRST, ITOUT, NBRELEVANT
+    REAL                          :: DIST_MIN, DIST_MAX, EDIST
+    LOGICAL                       :: RESOL_CHECK
     !
 #ifdef W3_T9
     CHARACTER(LEN=1), ALLOCATABLE :: TMAP(:,:)
@@ -1267,133 +1267,133 @@ CONTAINS
     !         grid I ==> grid GDST
     !         grid J ==> grid GSRC
 
-    INTEGER                 :: GDST, IJ, IDST, JDST, GSRC, JJ, IB, ISEA,    &
-         JSEA, IDSTLA, IDSTHA, JDSTLA, JDSTHA,        &
-         ISRC, JSRC, ISRCL, ISRCH, JSRCL, JSRCH, NIT, &
-         NRTOT, NROK, JF, JR, NLMAX, ISPROC, ISPRO2,  &
-         IREC, ISND, ITMP,ILOC
+    INTEGER                       :: GDST, IJ, IDST, JDST, GSRC, JJ, IB, ISEA
+    INTEGER                       :: JSEA, IDSTLA, IDSTHA, JDSTLA, JDSTHA
+    INTEGER                       :: ISRC, JSRC, ISRCL, ISRCH, JSRCL, JSRCH, NIT
+    INTEGER                       :: NRTOT, NROK, JF, JR, NLMAX, ISPROC, ISPRO2
+    INTEGER                       :: IREC, ISND, ITMP,ILOC
 #ifdef W3_SCRIP
-    INTEGER                 ::  NLMAX_SCRIP
+    INTEGER                       ::  NLMAX_SCRIP
 #endif
 
 #ifdef W3_DIST
-    INTEGER                 :: LTAG0
+    INTEGER                       :: LTAG0
 #endif
 #ifdef W3_MPI
-    INTEGER                 :: IERR_MPI
+    INTEGER                       :: IERR_MPI
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE                 :: IENT = 0
 #endif
 
-    INTEGER, ALLOCATABLE    :: IDSTL(:), IDSTH(:), JDSTL(:), JDSTH(:),      &
-         MAPTST(:,:),                                 &
-         I1(:,:), I2(:,:), I3(:), I4(:),              &
-         INFLND(:,:)
-    INTEGER, ALLOCATABLE    :: NX_BEG(:), NX_END(:)
+    INTEGER,          ALLOCATABLE :: IDSTL(:), IDSTH(:), JDSTL(:), JDSTH(:)
+    INTEGER,          ALLOCATABLE :: MAPTST(:,:)
+    INTEGER,          ALLOCATABLE :: I1(:,:), I2(:,:), I3(:), I4(:)
+    INTEGER,          ALLOCATABLE :: INFLND(:,:)
+    INTEGER,          ALLOCATABLE :: NX_BEG(:), NX_END(:)
 #ifdef W3_MPIBDI
-    INTEGER, ALLOCATABLE    :: NX_SIZE(:), IRQ(:), MSTAT(:,:)
+    INTEGER,          ALLOCATABLE :: NX_SIZE(:), IRQ(:), MSTAT(:,:)
 #endif
 #ifdef W3_MPI
-    INTEGER                 :: IM, NX_REM, TAG, NRQ
+    INTEGER                       :: IM, NX_REM, TAG, NRQ
 #endif
 
-    INTEGER, ALLOCATABLE    :: TMPINT_OM(:,:),TMPINT(:,:)
-    REAL, ALLOCATABLE       :: TMPRL_OM(:,:) ,TMPRL(:,:)
-    REAL, ALLOCATABLE       :: BDIST_OM(:)   ,BDIST(:)
-    INTEGER                 :: NR0   , NR1   , NR2   , NRL   , NLOC
-    INTEGER                 :: NR0_OM, NR1_OM, NR2_OM, NRL_OM, NLOC_OM
+    INTEGER,          ALLOCATABLE :: TMPINT_OM(:,:),TMPINT(:,:)
+    REAL,             ALLOCATABLE :: TMPRL_OM(:,:) ,TMPRL(:,:)
+    REAL,             ALLOCATABLE :: BDIST_OM(:)   ,BDIST(:)
+    INTEGER                       :: NR0   , NR1   , NR2   , NRL   , NLOC
+    INTEGER                       :: NR0_OM, NR1_OM, NR2_OM, NRL_OM, NLOC_OM
 
 #ifdef W3_DIST
-    INTEGER, ALLOCATABLE    :: LTAG(:)
+    INTEGER,          ALLOCATABLE :: LTAG(:)
 #endif
 
-    REAL                    :: FACTOR, STX, STY, STXY, NEWVAL,      &
-         XL, XH, YL, YH, XA, YA, DXC, JD,     &
-         WX, WY, WTOT
+    REAL                          :: FACTOR, STX, STY, STXY, NEWVAL
+    REAL                          :: XL, XH, YL, YH, XA, YA, DXC, JD
+    REAL                          :: WX, WY, WTOT
 
-    LOGICAL                 :: FLGREC
+    LOGICAL                       :: FLGREC
 
-    LOGICAL, ALLOCATABLE    :: GRIDOK(:),                           &
-         STMASK(:,:), MASKI(:,:), TMPLOG(:)
+    LOGICAL,          ALLOCATABLE :: GRIDOK(:)
+    LOGICAL,          ALLOCATABLE :: STMASK(:,:), MASKI(:,:), TMPLOG(:)
 
-    INTEGER                 :: JBND,IBND ! counter for boundary points
-    REAL                    :: DD  ! distance to boundary point
-    ! (temporary variable)
-    REAL                    :: XDST,YDST
-    REAL                    :: XSRC,YSRC
-    REAL                    :: WXWY
-    INTEGER                 :: NJDST,NIDST,KDST
-    INTEGER                 :: NJSRC,NISRC,KSRC
-    INTEGER                 :: IPNT,ICOUNT,IPNT2
-    INTEGER                 :: DST_GRID_SIZE,ISTOP,JTMP
+    INTEGER                       :: JBND,IBND            ! counter for boundary points
+    REAL                          :: DD                   ! distance to boundary point
+                                                          ! (temporary variable)
+    REAL                          :: XDST,YDST
+    REAL                          :: XSRC,YSRC
+    REAL                          :: WXWY
+    INTEGER                       :: NJDST,NIDST,KDST
+    INTEGER                       :: NJSRC,NISRC,KSRC
+    INTEGER                       :: IPNT,ICOUNT,IPNT2
+    INTEGER                       :: DST_GRID_SIZE,ISTOP,JTMP
 
-    REAL                    :: DX_MAX_GDST,DY_MAX_GDST
-    REAL                    :: DX_MIN_GSRC,DY_MIN_GSRC
+    REAL                          :: DX_MAX_GDST,DY_MAX_GDST
+    REAL                          :: DX_MIN_GSRC,DY_MIN_GSRC
 
 #ifdef W3_SCRIP
     TYPE ALLWGT
-      TYPE(WEIGHT_DATA), POINTER :: WGTDATA(:)
+      TYPE(WEIGHT_DATA), POINTER  :: WGTDATA(:)
     END TYPE ALLWGT
-    TYPE(ALLWGT), ALLOCATABLE :: ALLWGTS(:)
-    LOGICAL              :: L_MASTER = .TRUE.
-    LOGICAL              :: L_READ   = .FALSE.
-    LOGICAL              :: L_WRITE = .FALSE.
+    TYPE(ALLWGT),     ALLOCATABLE :: ALLWGTS(:)
+    LOGICAL                       :: L_MASTER = .TRUE.
+    LOGICAL                       :: L_READ   = .FALSE.
+    LOGICAL                       :: L_WRITE = .FALSE.
 #endif
 #ifdef W3_SCRIPNC
-    INTEGER              :: IMPROC_ASSIGN
-    CHARACTER(LEN=80)    :: interp_file1, interp_file_test
-    CHARACTER(LEN=3)     :: cdst, csrc
-    LOGICAL, ALLOCATABLE :: LGRDREAD(:,:)
-    LOGICAL, ALLOCATABLE :: LGRDWRITE(:,:)
-    INTEGER              :: NGRDRANK(2)
+    INTEGER                       :: IMPROC_ASSIGN
+    CHARACTER(LEN=80)             :: interp_file1, interp_file_test
+    CHARACTER(LEN=3)              :: cdst, csrc
+    LOGICAL,          ALLOCATABLE :: LGRDREAD(:,:)
+    LOGICAL,          ALLOCATABLE :: LGRDWRITE(:,:)
+    INTEGER                       :: NGRDRANK(2)
 #endif
 
-    LOGICAL                 :: LSCRIP=.FALSE.      ! true if SCRIP switch is set,
-    ! indicates that SCRIP code has
-    ! been compiled into WW3
-    LOGICAL                 :: LSCRIPNC=.FALSE.    ! true if SCRIPNC switch is set,
-    ! indicates that SCRIP code has
-    ! been compiled with netCDF
-    ! into WW3
-    LOGICAL                 :: L_STOP = .FALSE.    ! true if SCRIPNC switch is set
-    ! and STOP_SCRIP file exists
-    LOGICAL                 :: T38=.FALSE.         ! true if T38 switch is set.
-    ! This logical is necessary
-    ! since it isn't possible to
-    ! have two switches disabling
-    ! the same line of code.
-    LOGICAL                 :: ALL_REGULAR=.TRUE.  ! true if all grids are
-    ! regular grids
-    LOGICAL                 :: DO_CHECKING=.FALSE. ! true if we will be
-    ! checking "old method" of
-    ! computing weights vs.
-    ! SCRIP method of computing
-    ! weights.
-    LOGICAL                 :: OLD_METHOD=.FALSE.  ! true if we will compute
-    ! using "old method" (does
-    ! not necessarily mean
-    ! that this solution is
-    ! utilized)
-    LOGICAL                 :: LMPIBDI=.FALSE.     ! true if MPIBDI switch is set
-    LOGICAL                 :: CALLED_SCRIP=.FALSE.! true if SCRIP has been
-    ! called for this processor
+    LOGICAL                       :: LSCRIP=.FALSE.       ! true if SCRIP switch is set,
+                                                          ! indicates that SCRIP code has
+                                                          ! been compiled into WW3
+    LOGICAL                       :: LSCRIPNC=.FALSE.     ! true if SCRIPNC switch is set,
+                                                          ! indicates that SCRIP code has
+                                                          ! been compiled with netCDF
+                                                          ! into WW3
+    LOGICAL                       :: L_STOP = .FALSE.     ! true if SCRIPNC switch is set
+                                                          ! and STOP_SCRIP file exists
+    LOGICAL                       :: T38=.FALSE.          ! true if T38 switch is set.
+                                                          ! This logical is necessary
+                                                          ! since it isn't possible to
+                                                          ! have two switches disabling
+                                                          ! the same line of code.
+    LOGICAL                       :: ALL_REGULAR=.TRUE.   ! true if all grids are
+                                                          ! regular grids
+    LOGICAL                       :: DO_CHECKING=.FALSE.  ! true if we will be
+                                                          ! checking "old method" of
+                                                          ! computing weights vs.
+                                                          ! SCRIP method of computing
+                                                          ! weights.
+    LOGICAL                       :: OLD_METHOD=.FALSE.   ! true if we will compute
+                                                          ! using "old method" (does
+                                                          ! not necessarily mean
+                                                          ! that this solution is
+                                                          ! utilized)
+    LOGICAL                       :: LMPIBDI=.FALSE.      ! true if MPIBDI switch is set
+    LOGICAL                       :: CALLED_SCRIP=.FALSE. ! true if SCRIP has been
+                                                          ! called for this processor
 
 
-    INTEGER  :: ITRI, IM1, IM2, IT, JT, IsFirst
-    REAL :: DIST_MIN, DIST_MAX, eDist
+    INTEGER                       :: ITRI, IM1, IM2, IT, JT, IsFirst
+    REAL                          :: DIST_MIN, DIST_MAX, eDist
 
 #ifdef W3_T
     CHARACTER(LEN=1), ALLOCATABLE :: MAPST(:,:)
 #endif
     !/
 #ifdef W3_T38
-    CHARACTER (LEN=10) :: CDATE_TIME(3)
-    INTEGER            :: DATE_TIME(8)
-    INTEGER            :: ELAPSED_TIME, BEG_TIME(10), END_TIME
-    INTEGER            :: NMYOUT=42
-    CHARACTER (LEN=14) :: CMYOUT="myout00000.lis"
-    CHARACTER (LEN=5)  :: CRANK
+    CHARACTER (LEN=10)            :: CDATE_TIME(3)
+    INTEGER                       :: DATE_TIME(8)
+    INTEGER                       :: ELAPSED_TIME, BEG_TIME(10), END_TIME
+    INTEGER                       :: NMYOUT=42
+    CHARACTER (LEN=14)            :: CMYOUT="myout00000.lis"
+    CHARACTER (LEN=5)             :: CRANK
 #endif
 
 #ifdef W3_T38
@@ -3811,45 +3811,45 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                  :: I, J, IX, IXL, IXH, IY, IYL, IYH,   &
-         JX, JXL, JXH, JXL2, JXH2,           &
-         JY, JYL, JYH, JYL2, JYH2,           &
-         NR, NT, NA, NTL, JJ, NIT, NG, NOUT, &
-         ISEA, JSEA, ISPROC, ITAG, TGRP,     &
-         EXTRA, IP, NP
+    INTEGER                        :: I, J, IX, IXL, IXH, IY, IYL, IYH
+    INTEGER                        :: JX, JXL, JXH, JXL2, JXH2
+    INTEGER                        :: JY, JYL, JYH, JYL2, JYH2
+    INTEGER                        :: NR, NT, NA, NTL, JJ, NIT, NG, NOUT
+    INTEGER                        :: ISEA, JSEA, ISPROC, ITAG, TGRP
+    INTEGER                        :: EXTRA, IP, NP
 #ifdef W3_T7
-    INTEGER                  :: IA
+    INTEGER                        :: IA
 #endif
 #ifdef W3_S
-    INTEGER, SAVE            :: IENT = 0
+    INTEGER, SAVE                  :: IENT = 0
 #endif
-    INTEGER, ALLOCATABLE     :: MAP3D(:,:,:), NREC(:), NSND(:),     &
-         NTPP(:), MAPOUT(:,:)
-    REAL                     :: FACTOR, XSL, XSH, YSL, YSH, XA, YA, &
-         XR, YR, RX(2), RY(2), STX, STY,     &
-         STXY, NEWVAL, WGTH
-    REAL, PARAMETER          :: TODO   = -9.99E25
-    REAL, PARAMETER          :: ODIMAX = 25.
-    REAL, PARAMETER          :: FACMAX = 2.001
-    REAL, ALLOCATABLE        :: WGT3D(:,:,:)
-    LOGICAL                  :: CHANGE, XEXPND, YEXPND
-    LOGICAL, ALLOCATABLE     :: SHRANK(:,:), DOGRID(:),             &
-         MASKA(:,:), MASKI(:,:)
+    INTEGER,           ALLOCATABLE :: MAP3D(:,:,:), NREC(:), NSND(:)
+    INTEGER,           ALLOCATABLE :: NTPP(:), MAPOUT(:,:)
+    REAL                           :: FACTOR, XSL, XSH, YSL, YSH, XA, YA
+    REAL                           :: XR, YR, RX(2), RY(2), STX, STY
+    REAL                           :: STXY, NEWVAL, WGTH
+    REAL, PARAMETER                :: TODO   = -9.99E25
+    REAL, PARAMETER                :: ODIMAX = 25.
+    REAL, PARAMETER                :: FACMAX = 2.001
+    REAL,              ALLOCATABLE :: WGT3D(:,:,:)
+    LOGICAL                        :: CHANGE, XEXPND, YEXPND
+    LOGICAL,           ALLOCATABLE :: SHRANK(:,:), DOGRID(:)
+    LOGICAL,           ALLOCATABLE :: MASKA(:,:), MASKI(:,:)
 #ifdef W3_T5
     CHARACTER(LEN=18), ALLOCATABLE :: TSTR(:)
     CHARACTER(LEN=18)              :: DSTR
 #endif
     !
     TYPE STORE
-      INTEGER                :: NTOT, NFIN
-      INTEGER, POINTER       :: IX(:), IY(:), NAV(:), ISS(:,:),     &
-           JSS(:,:), IPS(:,:), ITG(:,:)
-      REAL, POINTER          :: AWG(:,:)
-      LOGICAL, POINTER       :: FLA(:)
-      LOGICAL                :: INIT
+      INTEGER                      :: NTOT, NFIN
+      INTEGER, POINTER             :: IX(:), IY(:), NAV(:), ISS(:,:)
+      INTEGER, POINTER             :: JSS(:,:), IPS(:,:), ITG(:,:)
+      REAL,    POINTER             :: AWG(:,:)
+      LOGICAL, POINTER             :: FLA(:)
+      LOGICAL                      :: INIT
     END TYPE STORE
     !
-    TYPE(STORE), ALLOCATABLE :: STORES(:,:)
+    TYPE(STORE), ALLOCATABLE       :: STORES(:,:)
     !/
 #ifdef W3_S
     CALL STRACE (IENT, 'WMGEQL')
@@ -5376,38 +5376,38 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                :: I, J, IX, IY, IXY, JX, JY, NPJ,      &
-         NR, NT, NA, NTL, JJ, NIT, NG, NOUT,  &
-         ISEA, JSEA, IPRC, ITAG, TGRP, NPMX,  &
-         IP, NP, ICROOT, JCROOT, IEER
+    INTEGER                             :: I, J, IX, IY, IXY, JX, JY, NPJ
+    INTEGER                             :: NR, NT, NA, NTL, JJ, NIT, NG, NOUT
+    INTEGER                             :: ISEA, JSEA, IPRC, ITAG, TGRP, NPMX
+    INTEGER                             :: IP, NP, ICROOT, JCROOT, IEER
 
 #ifdef W3_MPI
-    INTEGER, Dimension(MPI_STATUS_SIZE):: MPIState
+    INTEGER, Dimension(MPI_STATUS_SIZE) :: MPIState
 #endif
 
 #ifdef W3_S
-    INTEGER, SAVE            :: IENT = 0
+    INTEGER, SAVE                       :: IENT = 0
 #endif
-    INTEGER, ALLOCATABLE   :: NREC(:),  NSND(:),  NTPP(:),  &
-         IBPTS(:), JBPTS(:), IPBPT(:)
-    REAL, PARAMETER        :: ODIMAX = 25.
-    REAL, ALLOCATABLE      :: XLon(:), YLat(:)
-    LOGICAL                :: CHANGE
-    LOGICAL, ALLOCATABLE   :: SHRANK(:,:), DOGRID(:)
+    INTEGER,           ALLOCATABLE      :: NREC(:),  NSND(:),  NTPP(:)
+    INTEGER,           ALLOCATABLE      :: IBPTS(:), JBPTS(:), IPBPT(:)
+    REAL, PARAMETER                     :: ODIMAX = 25.
+    REAL,              ALLOCATABLE      :: XLon(:), YLat(:)
+    LOGICAL                             :: CHANGE
+    LOGICAL,           ALLOCATABLE      :: SHRANK(:,:), DOGRID(:)
 #ifdef W3_T5
-    CHARACTER(LEN=18), ALLOCATABLE :: TSTR(:)
-    CHARACTER(LEN=18)              :: DSTR
+    CHARACTER(LEN=18), ALLOCATABLE      :: TSTR(:)
+    CHARACTER(LEN=18)                   :: DSTR
 #endif
     !
     TYPE STORE
-      INTEGER              :: NTOT, NFIN
-      INTEGER, POINTER     :: ICVBP(:), MSDBP(:), ISS(:), JSS(:),   &
-           JCVBP(:), IPCVB(:), IPS(:), ITG(:)
-      LOGICAL, POINTER     :: FLA(:)
-      LOGICAL              :: INIT
+      INTEGER                           :: NTOT, NFIN
+      INTEGER, POINTER                  :: ICVBP(:), MSDBP(:), ISS(:), JSS(:
+      INTEGER, POINTER                  :: JCVBP(:), IPCVB(:), IPS(:), ITG(:)
+      LOGICAL, POINTER                  :: FLA(:)
+      LOGICAL                           :: INIT
     END TYPE STORE
     !
-    TYPE(STORE), ALLOCATABLE :: STORES(:,:)
+    TYPE(STORE),       ALLOCATABLE      :: STORES(:,:)
     !/
 #ifdef W3_S
     CALL STRACE (IENT, 'WMSMCEQL ')

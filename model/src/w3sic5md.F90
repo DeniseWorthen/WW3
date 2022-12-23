@@ -141,7 +141,7 @@ MODULE W3SIC5MD
   !     Kind for single- and double-precision complex type
   INTEGER, PARAMETER :: KSPC   = KIND((1.0, 1.0))
   INTEGER, PARAMETER :: KDPC   = KIND((1.0D0, 1.0D0))
-  REAL, PARAMETER    :: ERRTOL = 1.E-12
+  REAL,    PARAMETER :: ERRTOL = 1.E-12
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
@@ -333,26 +333,26 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: CG(NK), WN(NK), A(NSPEC), DEPTH
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC)
-    INTEGER, INTENT(IN)     :: IX, IY
+    REAL,    INTENT(IN)  :: CG(NK), WN(NK), A(NSPEC), DEPTH
+    REAL,    INTENT(OUT) :: S(NSPEC), D(NSPEC)
+    INTEGER, INTENT(IN)  :: IX, IY
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE       :: IENT = 0
 #endif
 #ifdef W3_T0
-    INTEGER                :: ITH
-    REAL                   :: DOUT(NK,NTH)
+    INTEGER             :: ITH
+    REAL                :: DOUT(NK,NTH)
 #endif
     !/
-    REAL                    :: ICECOEF1, ICECOEF2, ICECOEF3, &
-         ICECOEF4, ICECONC
-    REAL, DIMENSION(NK)     :: D1D, WN_R, WN_I
-    !     REAL                    :: TWN_R, TWN_I
-    INTEGER                 :: IK, IKTH
-    LOGICAL                 :: NOICE
+    REAL                :: ICECOEF1, ICECOEF2, ICECOEF3
+    REAL                :: ICECOEF4, ICECONC
+    REAL, DIMENSION(NK) :: D1D, WN_R, WN_I
+    !     REAL          :: TWN_R, TWN_I
+    INTEGER             :: IK, IKTH
+    LOGICAL             :: NOICE
     !/ ------------------------------------------------------------------- /
     !/
 #ifdef W3_S
@@ -576,18 +576,18 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL, INTENT(INOUT)   :: WN_R(:), WN_I(:)
-    REAL, INTENT(IN)      :: CG(:)
-    REAL, INTENT(IN)      :: HICE, IVISC, RHOI, ISMODG, HWAT
+    REAL, INTENT(INOUT) :: WN_R(:), WN_I(:)
+    REAL, INTENT(IN)    :: CG(:)
+    REAL, INTENT(IN)    :: HICE, IVISC, RHOI, ISMODG, HWAT
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
-    REAL, ALLOCATABLE     :: SIGMA(:)
-    INTEGER               :: KL, KU, IK
-    REAL                  :: TWN_R, TWN_I
+    REAL, ALLOCATABLE :: SIGMA(:)
+    INTEGER           :: KL, KU, IK
+    REAL              :: TWN_R, TWN_I
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE     :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -748,23 +748,23 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !
-    REAL                  :: IC5MINIG, IC5MINWT, IC5MAXKRATIO, &
-         IC5MAXKI, IC5MINHW, IC5VEMOD
-    REAL                  :: TISMODG, TWT, TRATIO, THW
-    REAL, PARAMETER       :: NU = 0.3, RHOW = 1025.
-    !     COMPLEX               :: GV, C1
-    !     REAL                  :: SIGMA, C2, WNO, CGO, THKH,  &
-    COMPLEX               :: GV, C1, C2
-    REAL                  :: SIGMA, WNO, CGO, THKH,  &
-         RTRL(5), RTIM(5), RTANG(5)
-    INTEGER               :: IREAL
-    !     COMPLEX(KDPC)         :: GUESS, CROOT, C1D
-    !     REAL(KDP)             :: C2D, HWATD
-    COMPLEX(KDPC)         :: GUESS, CROOT, C1D, C2D
-    REAL(KDP)             :: HWATD
+    REAL                :: IC5MINIG, IC5MINWT, IC5MAXKRATIO
+    REAL                :: IC5MAXKI, IC5MINHW, IC5VEMOD
+    REAL                :: TISMODG, TWT, TRATIO, THW
+    REAL, PARAMETER     :: NU = 0.3, RHOW = 1025.
+    !     COMPLEX       :: GV, C1
+    !     REAL          :: SIGMA, C2, WNO, CGO, THKH,  &
+    COMPLEX             :: GV, C1, C2
+    REAL                :: SIGMA, WNO, CGO, THKH
+    REAL                :: RTRL(5), RTIM(5), RTANG(5)
+    INTEGER             :: IREAL
+    !     COMPLEX(KDPC) :: GUESS, CROOT, C1D
+    !     REAL(KDP)     :: C2D, HWATD
+    COMPLEX(KDPC)       :: GUESS, CROOT, C1D, C2D
+    REAL(KDP)           :: HWATD
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE       :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -1050,17 +1050,17 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     INTEGER, INTENT(IN)    :: NMAT
-    REAL, INTENT(INOUT)    :: MATRIX(NMAT, NMAT)
+    REAL,    INTENT(INOUT) :: MATRIX(NMAT, NMAT)
     !/ ------------------------------------------------------------------- /
     !/ Local parameter
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE   :: IENT = 0
 #endif
     ! the parameter radx is the machine's floating-point radix
-    REAL, PARAMETER        :: RADX = RADIX(MATRIX), &
-         SQRADX = RADX ** 2
-    INTEGER                :: I, LAST
-    REAL                   :: C, F, G, R, S
+    REAL, PARAMETER :: RADX = RADIX(MATRIX)
+    REAL, PARAMETER :: SQRADX = RADX ** 2
+    INTEGER         :: I, LAST
+    REAL            :: C, F, G, R, S
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
     CALL STRACE (IENT, 'BALANCING_MATRIX')
@@ -1225,20 +1225,20 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)  :: NMAT
-    REAL, INTENT(INOUT)  :: HMAT(NMAT, NMAT)
-    REAL, INTENT(OUT)    :: EIGR(NMAT), EIGI(NMAT)
+    INTEGER, INTENT(IN)    :: NMAT
+    REAL,    INTENT(INOUT) :: HMAT(NMAT, NMAT)
+    REAL,    INTENT(OUT)   :: EIGR(NMAT), EIGI(NMAT)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
     !/
-    INTEGER              :: I, ITS, K, L, M, NN, MNNK, IDIAG
-    REAL                 :: ANORM, P, Q, R, S, T, U, V, W, X, Y, Z
-    REAL                 :: PP(NMAT)
+    INTEGER       :: I, ITS, K, L, M, NN, MNNK, IDIAG
+    REAL          :: ANORM, P, Q, R, S, T, U, V, W, X, Y, Z
+    REAL          :: PP(NMAT)
     !/ ------------------------------------------------------------------- /
     !/
 #ifdef W3_S
@@ -1539,19 +1539,19 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    INTEGER, INTENT(IN)   :: NPC
-    REAL, INTENT(IN)      :: PCVEC(NPC)
-    REAL, INTENT(OUT)     :: RTRL(NPC-1), RTIM(NPC-1)
+    INTEGER, INTENT(IN)  :: NPC
+    REAL,    INTENT(IN)  :: PCVEC(NPC)
+    REAL,    INTENT(OUT) :: RTRL(NPC-1), RTIM(NPC-1)
     !/
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                  :: HESS(NPC-1, NPC-1)
-    INTEGER               :: J
+    REAL          :: HESS(NPC-1, NPC-1)
+    INTEGER       :: J
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -1699,21 +1699,21 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !     COMPLEX(KDPC), INTENT(IN)     :: K, C1
-    !     REAL(KDP), INTENT(IN)         :: C2, H
-    COMPLEX(KDPC), INTENT(IN)     :: K, C1, C2
-    REAL(KDP), INTENT(IN)         :: H
-    COMPLEX(KDPC)                 :: NR_CORR
+    !     REAL(KDP), INTENT(IN) :: C2, H
+    COMPLEX(KDPC),   INTENT(IN) :: K, C1, C2
+    REAL(KDP),       INTENT(IN) :: H
+    COMPLEX(KDPC)               :: NR_CORR
     !/
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE        :: IENT = 0
 #endif
     ! A rough value to differentiate deep water case from finite water case
-    REAL(KDP), PARAMETER          :: KH_LIM = 7.5
-    COMPLEX(KDPC)                 :: LAM, LAMPR, FV, DF, TKH
+    REAL(KDP), PARAMETER :: KH_LIM = 7.5
+    COMPLEX(KDPC)        :: LAM, LAMPR, FV, DF, TKH
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -1849,22 +1849,22 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    !     COMPLEX(KDPC), INTENT(IN)     :: C1, GUESS
-    !     REAL(KDP), INTENT(IN)         :: C2, H
-    COMPLEX(KDPC), INTENT(IN)     :: C1, GUESS, C2
-    REAL(KDP), INTENT(IN)         :: H
-    COMPLEX(KDPC)                 :: NR_ROOT
+    !     COMPLEX(KDPC), INTENT(IN) :: C1, GUESS
+    !     REAL(KDP),     INTENT(IN) :: C2, H
+    COMPLEX(KDPC),       INTENT(IN) :: C1, GUESS, C2
+    REAL(KDP),           INTENT(IN) :: H
+    COMPLEX(KDPC)                   :: NR_ROOT
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    COMPLEX(KDPC)                 :: K0, K1, DK
-    INTEGER                       :: ITER
-    REAL                          :: TRANVAL
-    REAL                          :: IC5MAXITER, IC5RKICK, IC5KFILTER
+    COMPLEX(KDPC) :: K0, K1, DK
+    INTEGER       :: ITER
+    REAL          :: TRANVAL
+    REAL          :: IC5MAXITER, IC5RKICK, IC5KFILTER
     !/
     !/ ------------------------------------------------------------------- /
     !/

@@ -95,10 +95,10 @@ MODULE W3SNLSMD
   !/ ------------------------------------------------------------------- /
   !/
   INTEGER, PRIVATE, PARAMETER :: NKD = 100
-  REAL, PRIVATE, PARAMETER    :: KDMIN = 0.25 ,  KDMAX = 10.
-  REAL, PRIVATE               :: SITMIN, XSIT
+  REAL,    PRIVATE, PARAMETER :: KDMIN = 0.25 ,  KDMAX = 10.
+  REAL,    PRIVATE            :: SITMIN, XSIT
   !
-  REAL, PARAMETER             :: ABMAX = 0.25
+  REAL,             PARAMETER :: ABMAX = 0.25
   !
   PUBLIC
   !/
@@ -231,23 +231,23 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IFR, IFRMIN, ITH, IFRMN2,            &
-         IKD, JKD(0:NFR+2), ISPX0, ISPX
+    INTEGER       :: IFR, IFRMIN, ITH, IFRMN2
+    INTEGER       :: IKD, JKD(0:NFR+2), ISPX0, ISPX
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: SIGP, CP, CM, XL, XH, EL, EH, DENOM, &
-         SIT, XSITLN, MC, F3A,  F3B, F3C,     &
-         F4A, F4B, F4C, F00, F31, F32, F41,   &
-         F42, AUXB, AUX11, AUX21, AUX12,      &
-         AUX22, FC1, FC2, FC3, FC4
-    REAL                    :: XSI(NFR+2), XWN(NFR+2), XCG(NFR+2),  &
-         UP(NSPL:NSPH), UN(NSPL:NSPH),        &
-         E1(0:NFR+2), FILTFP(NFR+2),          &
-         FPROP(NFR+2), DS1(NSPL:NSPH),        &
-         DS2(NSPL:NSPH), DS3(NSPL:NSPH),      &
-         DA1(NSPL:NSPH), DA2(NSPL:NSPH),      &
-         DA3(NSPL:NSPH)
+    REAL          :: SIGP, CP, CM, XL, XH, EL, EH, DENOM
+    REAL          :: SIT, XSITLN, MC, F3A,  F3B, F3C
+    REAL          :: F4A, F4B, F4C, F00, F31, F32, F41
+    REAL          :: F42, AUXB, AUX11, AUX21, AUX12
+    REAL          :: AUX22, FC1, FC2, FC3, FC4
+    REAL          :: XSI(NFR+2), XWN(NFR+2), XCG(NFR+2)
+    REAL          :: UP(NSPL:NSPH), UN(NSPL:NSPH)
+    REAL          :: E1(0:NFR+2), FILTFP(NFR+2)
+    REAL          :: FPROP(NFR+2), DS1(NSPL:NSPH)
+    REAL          :: DS2(NSPL:NSPH), DS3(NSPL:NSPH)
+    REAL          :: DA1(NSPL:NSPH), DA2(NSPL:NSPH)
+    REAL          :: DA3(NSPL:NSPH)
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -627,7 +627,7 @@ CONTAINS
       !/
       !/ Local parameters
       !/
-      INTEGER                 :: IFR, ITH
+      INTEGER :: IFR, ITH
       !/
       !/ ------------------------------------------------------------------- /
       !
@@ -746,13 +746,13 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IKD, IERR
+    INTEGER       :: IKD, IERR
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: DEPTH, SITMAX, OFF, S0, WN0, CG0,    &
-         S3, WN3, CG3, S4, WN4, CG4, WN12,    &
-         DT3, DT4, B3, B4
+    REAL          :: DEPTH, SITMAX, OFF, S0, WN0, CG0
+    REAL          :: S3, WN3, CG3, S4, WN4, CG4, WN12
+    REAL          :: DT3, DT4, B3, B4
     !/
     !/ ------------------------------------------------------------------- /
     !/

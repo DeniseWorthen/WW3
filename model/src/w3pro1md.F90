@@ -413,32 +413,32 @@ CONTAINS
     !/ ------------------------------------------------------------------ /
     !/ Local parameters
     !/
-    INTEGER                 :: IK, ITH, NTLOC, ITLOC, ISEA, IXY,    &
-         IY0, IX, IY, JXN, JXP, JYN, JYP,     &
-         IBI, NYMAX
+    INTEGER       :: IK, ITH, NTLOC, ITLOC, ISEA, IXY
+    INTEGER       :: IY0, IX, IY, JXN, JXP, JYN, JYP
+    INTEGER       :: IBI, NYMAX
 #ifdef W3_T3
-    INTEGER                 ::  IXF, IYF
+    INTEGER       ::  IXF, IYF
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: CG0, CGL, CGA, CC, CGN
-    REAL                    :: DTLOC,DTRAD, VCB
-    REAL                    :: RD1, RD2
-    REAL                    :: CP, CQ
+    REAL          :: CG0, CGL, CGA, CC, CGN
+    REAL          :: DTLOC,DTRAD, VCB
+    REAL          :: RD1, RD2
+    REAL          :: CP, CQ
 #ifdef W3_T3
-    REAL                    :: AOLD
+    REAL          :: AOLD
 #endif
     !/
     !/ Automatic work arrays
     !/
-    REAL                    :: CXTOT2D(NY,NX)
-    REAL                    :: CYTOT2D(NY,NX)
-    REAL                    :: FLD2D(NY+1,NX+1)
-    REAL                    :: VCX2D(NY,NX+1)
-    REAL                    :: VCY2D(NY+1,NX)
-    REAL                    :: VFLX2D(1:NY,0:NX)
-    REAL                    :: VFLY2D(NY,NX)
+    REAL          :: CXTOT2D(NY,NX)
+    REAL          :: CYTOT2D(NY,NX)
+    REAL          :: FLD2D(NY+1,NX+1)
+    REAL          :: VCX2D(NY,NX+1)
+    REAL          :: VCY2D(NY+1,NX)
+    REAL          :: VFLX2D(1:NY,0:NX)
+    REAL          :: VFLY2D(NY,NX)
 
     !/
     !/ ------------------------------------------------------------------- /
@@ -953,16 +953,16 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: ITH, IK, ISP, ITH0
-    REAL                    :: FDDMAX, FDG, DCYX, DCXXYY, DCXY,     &
-         DCXX, DCXYYX, DCYY, FKD, FKD0, CTHB, &
-         CWNB
-    REAL                    :: VCTH(NSPEC), VCWN(1-NTH:NSPEC+NTH),  &
-         VAA(1-NTH:NSPEC+NTH), VFLTH(NSPEC),  &
-         VFLWN(1-NTH:NSPEC), DSDD(0:NK+1),    &
-         FRK(NK), FRG(NK), FKC(NTH), DWNI(NK)
+    INTEGER       :: ITH, IK, ISP, ITH0
+    REAL          :: FDDMAX, FDG, DCYX, DCXXYY, DCXY
+    REAL          :: DCXX, DCXYYX, DCYY, FKD, FKD0, CTHB
+    REAL          :: CWNB
+    REAL          :: VCTH(NSPEC), VCWN(1-NTH:NSPEC+NTH)
+    REAL          :: VAA(1-NTH:NSPEC+NTH), VFLTH(NSPEC)
+    REAL          :: VFLWN(1-NTH:NSPEC), DSDD(0:NK+1)
+    REAL          :: FRK(NK), FRG(NK), FKC(NTH), DWNI(NK)
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
     CALL STRACE (IENT, 'W3KTP1')
 #endif
     !/

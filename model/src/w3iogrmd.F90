@@ -88,8 +88,7 @@ MODULE W3IOGRMD
   !/ Private parameter statements (ID strings)
   !/
   CHARACTER(LEN=10), PARAMETER, PRIVATE :: VERGRD = '2021-08-06'
-  CHARACTER(LEN=35), PARAMETER, PRIVATE ::                        &
-       IDSTR = 'WAVEWATCH III MODEL DEFINITION FILE'
+  CHARACTER(LEN=35), PARAMETER, PRIVATE :: IDSTR = 'WAVEWATCH III MODEL DEFINITION FILE'
   !/
   !/ Public variables
   !/
@@ -313,48 +312,48 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)             :: NDSM
-    INTEGER, INTENT(IN), OPTIONAL   :: IMOD
+    INTEGER,   INTENT(IN)           :: NDSM
+    INTEGER,   INTENT(IN), OPTIONAL :: IMOD
     CHARACTER, INTENT(IN)           :: INXOUT*(*)
     CHARACTER, INTENT(IN), OPTIONAL :: FEXT*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IGRD, IERR, I, J, MTH, MK, ISEA, IX, IY
-    INTEGER                 :: IEXT, IPRE
+    INTEGER              :: IGRD, IERR, I, J, MTH, MK, ISEA, IX, IY
+    INTEGER              :: IEXT, IPRE
 #ifdef W3_ST4
-    INTEGER                 :: IK, ITH, IK2, ITH2
+    INTEGER              :: IK, ITH, IK2, ITH2
 #endif
-    INTEGER, ALLOCATABLE    :: MAPTMP(:,:)
+    INTEGER, ALLOCATABLE :: MAPTMP(:,:)
 #ifdef W3_MPI
-    INTEGER                 :: IERR_MPI, IP
+    INTEGER              :: IERR_MPI, IP
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE        :: IENT = 0
 #endif
 #ifdef W3_T
-    INTEGER                 :: K
+    INTEGER              :: K
 #endif
-    LOGICAL                 :: WRITE, FLTEST = .FALSE., TESTLL,     &
-         FLSNL2 = .FALSE.
-    LOGICAL, SAVE           :: FLINP = .FALSE. , FLDISP = .FALSE.,  &
-         FLIS  = .FALSE.
-    CHARACTER(LEN=10)       :: VERTST
-    CHARACTER(LEN=13)       :: TEMPXT
-    CHARACTER(LEN=30)       :: TNAME0, TNAME1, TNAME2, TNAME3,      &
-         TNAME4, TNAME5, TNAME6,              &
-         TNAMEP, TNAMEG, TNAMEF, TNAMEI
-    CHARACTER(LEN=30)       :: FNAME0, FNAME1, FNAME2, FNAME3,      &
-         FNAME4, FNAME5, FNAME6,              &
-         FNAMEP, FNAMEG, FNAMEF, FNAMEI
-    CHARACTER(LEN=35)       :: IDTST
-    CHARACTER(LEN=60)       :: MESSAGE(5)
-    LOGICAL                 :: GLOBAL
+    LOGICAL              :: WRITE, FLTEST = .FALSE., TESTLL
+    LOGICAL              :: FLSNL2 = .FALSE.
+    LOGICAL, SAVE        :: FLINP = .FALSE. , FLDISP = .FALSE.
+    LOGICAL, SAVE        :: FLIS  = .FALSE.
+    CHARACTER(LEN=10)    :: VERTST
+    CHARACTER(LEN=13)    :: TEMPXT
+    CHARACTER(LEN=30)    :: TNAME0, TNAME1, TNAME2, TNAME3
+    CHARACTER(LEN=30)    :: TNAME4, TNAME5, TNAME6
+    CHARACTER(LEN=30)    :: TNAMEP, TNAMEG, TNAMEF, TNAMEI
+    CHARACTER(LEN=30)    :: FNAME0, FNAME1, FNAME2, FNAME3
+    CHARACTER(LEN=30)    :: FNAME4, FNAME5, FNAME6
+    CHARACTER(LEN=30)    :: FNAMEP, FNAMEG, FNAMEF, FNAMEI
+    CHARACTER(LEN=35)    :: IDTST
+    CHARACTER(LEN=60)    :: MESSAGE(5)
+    LOGICAL              :: GLOBAL
 
-    REAL, ALLOCATABLE       :: XGRD4(:,:), YGRD4(:,:)
+    REAL, ALLOCATABLE    :: XGRD4(:,:), YGRD4(:,:)
 
-    integer                 :: memunit
+    integer              :: memunit
     !/
     !/ ------------------------------------------------------------------- /
     !/

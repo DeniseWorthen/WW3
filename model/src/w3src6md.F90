@@ -204,12 +204,12 @@ CONTAINS
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE   :: IENT = 0
 #endif
-    INTEGER                 :: IMAX
-    REAL                    :: EB(NK), EBAND
-    REAL, PARAMETER         :: HSMIN = 0.05
-    REAL                    :: COEFF(3)
+    INTEGER         :: IMAX
+    REAL            :: EB(NK), EBAND
+    REAL, PARAMETER :: HSMIN = 0.05
+    REAL            :: COEFF(3)
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -869,23 +869,23 @@ CONTAINS
     !
     !/    --- local parameters (in order of appearance) ------------------ /
 #ifdef W3_S
-    INTEGER, SAVE     :: IENT = 0
+    INTEGER, SAVE      :: IENT = 0
 #endif
-    REAL, PARAMETER   :: FRQMAX  = 10.  ! Upper freq. limit to extrapolate to.
-    INTEGER, PARAMETER:: ITERMAX = 80   ! Maximum number of iterations to
+    REAL,    PARAMETER :: FRQMAX  = 10.  ! Upper freq. limit to extrapolate to.
+    INTEGER, PARAMETER :: ITERMAX = 80   ! Maximum number of iterations to
     ! find numerical solution for LFACT.
-    INTEGER           :: IK, NK10Hz, SIGN_NEW, SIGN_OLD
+    INTEGER            :: IK, NK10Hz, SIGN_NEW, SIGN_OLD
     !
-    REAL              :: ECOS2(NSPEC), ESIN2(NSPEC)
-    REAL, ALLOCATABLE :: IK10Hz(:), LF10Hz(:), SIG10Hz(:), CINV10Hz(:)
-    REAL, ALLOCATABLE :: SDENS10Hz(:), SDENSX10Hz(:), SDENSY10Hz(:)
-    REAL, ALLOCATABLE :: DSII10Hz(:), UCINV10Hz(:)
-    REAL              :: TAU_TOT, TAU, TAU_VIS, TAU_WAV
-    REAL              :: TAUVX, TAUVY, TAUX, TAUY
-    REAL              :: TAU_NND, TAU_INIT(2)
-    REAL              :: UPROXY, RTAU, DRTAU, ERR
-    LOGICAL           :: OVERSHOT
-    CHARACTER(LEN=23) :: IDTIME
+    REAL               :: ECOS2(NSPEC), ESIN2(NSPEC)
+    REAL, ALLOCATABLE  :: IK10Hz(:), LF10Hz(:), SIG10Hz(:), CINV10Hz(:)
+    REAL, ALLOCATABLE  :: SDENS10Hz(:), SDENSX10Hz(:), SDENSY10Hz(:)
+    REAL, ALLOCATABLE  :: DSII10Hz(:), UCINV10Hz(:)
+    REAL               :: TAU_TOT, TAU, TAU_VIS, TAU_WAV
+    REAL               :: TAUVX, TAUVY, TAUX, TAUY
+    REAL               :: TAU_NND, TAU_INIT(2)
+    REAL               :: UPROXY, RTAU, DRTAU, ERR
+    LOGICAL            :: OVERSHOT
+    CHARACTER(LEN=23)  :: IDTIME
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
@@ -1291,7 +1291,7 @@ CONTAINS
     REAL , INTENT(IN) :: CINV(:)       ! inverse phase speed
     REAL , INTENT(IN) :: DSII(:)       ! freq. bandwidths in [radians]
 
-    REAL              :: TAU_WINDS     ! wind stress
+    REAL :: TAU_WINDS                  ! wind stress
     !
     TAU_WINDS = GRAV * DWAT * SUM(SDENSIG*CINV*DSII)
     !/

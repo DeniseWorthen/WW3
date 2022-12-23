@@ -95,10 +95,10 @@ MODULE W3STRKMD
   !
   TYPE dat2d
     REAL*8               :: date
-    REAL, POINTER        :: lat(:,:)
-    REAL, POINTER        :: lon(:,:)
+    REAL,        POINTER :: lat(:,:)
+    REAL,        POINTER :: lon(:,:)
     TYPE(param), POINTER :: par(:,:)
-    TYPE(wind), POINTER  :: wnd(:,:)
+    TYPE(wind),  POINTER :: wnd(:,:)
     INTEGER              :: maxi
     INTEGER              :: maxj
   END TYPE dat2d
@@ -147,24 +147,24 @@ MODULE W3STRKMD
   !     grp      Int          time-tracked group that system is assigned to
   !
   TYPE system
-    REAL, POINTER    :: hs(:)
-    REAL, POINTER    :: tp(:)
-    REAL, POINTER    :: dir(:)
-    REAL, POINTER    :: dspr(:)
-    !         REAL, POINTER    :: wf(:)
-    INTEGER, POINTER :: i(:)
-    INTEGER, POINTER :: j(:)
-    INTEGER, POINTER :: indx(:)
-    REAL, POINTER    :: lat(:)
-    REAL, POINTER    :: lon(:)
-    INTEGER          :: sysInd
-    REAL             :: hsMean
-    REAL             :: tpMean
-    REAL             :: dirMean
-    !         REAL             :: wfMean
-    INTEGER          :: nPoints
-    INTEGER          :: ngbr(1000)
-    INTEGER          :: grp
+    REAL,           POINTER :: hs(:)
+    REAL,           POINTER :: tp(:)
+    REAL,           POINTER :: dir(:)
+    REAL,           POINTER :: dspr(:)
+    !         REAL, POINTER :: wf(:)
+    INTEGER,        POINTER :: i(:)
+    INTEGER,        POINTER :: j(:)
+    INTEGER,        POINTER :: indx(:)
+    REAL,           POINTER :: lat(:)
+    REAL,           POINTER :: lon(:)
+    INTEGER                 :: sysInd
+    REAL                    :: hsMean
+    REAL                    :: tpMean
+    REAL                    :: dirMean
+    !         REAL          :: wfMean
+    INTEGER                 :: nPoints
+    INTEGER                 :: ngbr(1000)
+    INTEGER                 :: grp
   END TYPE system
   !
   !     timsys   Der. type     structure for storing time-tracked systems (all time levels)
@@ -172,22 +172,22 @@ MODULE W3STRKMD
   !                            time level
   !
   TYPE timsys
-    TYPE(system), POINTER :: sys(:)
+    TYPE(system),   POINTER :: sys(:)
   END TYPE timsys
   !
   !     sysmemory  Der. type   Structure to store key characteristics of systems over multiple
   !                            time levels. Used during the time tracking routine.
   !
   TYPE sysmemory
-    INTEGER :: grp
-    INTEGER :: nPoints
-    INTEGER, POINTER :: indx(:)
-    INTEGER :: updated
-    INTEGER :: length
-    REAL    :: lonMean
-    REAL    :: latMean
-    REAL    :: tpMean
-    REAL    :: dirMean
+    INTEGER                 :: grp
+    INTEGER                 :: nPoints
+    INTEGER,        POINTER :: indx(:)
+    INTEGER                 :: updated
+    INTEGER                 :: length
+    REAL                    :: lonMean
+    REAL                    :: latMean
+    REAL                    :: tpMean
+    REAL                    :: dirMean
   END TYPE sysmemory
   !
   !  4. Subroutines and functions used :
@@ -361,18 +361,18 @@ CONTAINS
     !     wsdat       TYPE(dat2d)  output Final version of 2D (gridded) partition data
     !     maxGroup       Int       output Maximum number of wave systems ("groups") tracked in time
     !
-    CHARACTER    :: filename*50, paramFile*32
-    REAL         :: dirKnob, perKnob, hsKnob, wetPts, seedLat, &
-         seedLon, dirTimeKnob, tpTimeKnob
-    REAL*8       :: tstart, tend
-    INTEGER      :: maxGroup, intype, tmax, tcur, ntint
-    INTEGER, POINTER :: maxSys(:)
-    TYPE(dat2d), POINTER :: wsdat(:)
+    CHARACTER             :: filename*50, paramFile*32
+    REAL                  :: dirKnob, perKnob, hsKnob, wetPts, seedLat
+    REAL                  :: seedLon, dirTimeKnob, tpTimeKnob
+    REAL*8                :: tstart, tend
+    INTEGER               :: maxGroup, intype, tmax, tcur, ntint
+    INTEGER,      POINTER :: maxSys(:)
+    TYPE(dat2d),  POINTER :: wsdat(:)
     TYPE(timsys), POINTER :: sysA(:), sysAA(:)
-    INTEGER      :: NumConsSys, iConsSys
-    REAL         :: dt
-    REAL         :: minlon, maxlon, minlat, maxlat
-    INTEGER      :: mxcwt, mycwt
+    INTEGER               :: NumConsSys, iConsSys
+    REAL                  :: dt
+    REAL                  :: minlon, maxlon, minlat, maxlat
+    INTEGER               :: mxcwt, mycwt
 
     !     Note: Variables wsdat, sysA and maxSys have IN/OUT intent so that they
     !     can be manipulated outside of this subroutine, e.g. re-indexing of
@@ -400,45 +400,45 @@ CONTAINS
     !     tss      Int.    Time step counter
     !     t0       Int     Index of first time step to compute
     !
-    LOGICAL                :: file_exists, FLFORM, LOOP
-    LOGICAL                :: testout
+    LOGICAL              :: file_exists, FLFORM, LOOP
+    LOGICAL              :: testout
     PARAMETER (testout = .FALSE.)
-    CHARACTER              :: dummy*10, dummyc*12
-    CHARACTER(LEN=10)      :: VERPRT
-    CHARACTER(LEN=35)      :: IDSTR
-    CHARACTER(LEN=78)      :: headln1
-    CHARACTER(LEN=51)      :: headln2
-    INTEGER                :: line
-    INTEGER, ALLOCATABLE   :: ts(:), tmp_i4(:)
-    REAL, ALLOCATABLE      :: llat(:),llon(:),hs0(:), &
-         tp0(:),dir0(:),dspr0(:),&
-         wndSpd0(:),wndDir0(:)
-    REAL*8, ALLOCATABLE :: date0(:),tmp_r8(:)
-    INTEGER    :: maxTs, t0, nout1, nout2, maxI, maxJ
-    REAL, ALLOCATABLE :: mlon(:,:), mlat(:,:), tmp_r4(:)
-    REAL, POINTER :: uniqueTim(:),uniqueLatraw(:),uniqueLonraw(:), &
-         uniqueLat(:),uniqueLon(:)
-    INTEGER    :: ioerr,ierr, i, j, k, l, alreadyIn, ok, tss, tsA
-    INTEGER    :: maxPart, DATETIME(2)
-    INTEGER    :: tstep, iline, numpart, skipln, readln, filesize
-    REAL       :: x,y,wnd,wnddir
-    REAL       :: invar1, invar2, invar3, invar4
-    REAL       :: invar5, invar6, invar7
-    REAL, ALLOCATABLE :: phs(:),ptp(:),pdir(:),pspr(:),pwf(:) ! current partition values
-    REAL*8     :: date1, date2, ttest, ttemp
-    INTEGER    :: ic, leng, maxpartout                                  ! Remove?
-    REAL       :: dx
-    INTEGER    :: latind1, latind2, lonind1, lonind2
-    REAL       :: lonext, latext
+    CHARACTER            :: dummy*10, dummyc*12
+    CHARACTER(LEN=10)    :: VERPRT
+    CHARACTER(LEN=35)    :: IDSTR
+    CHARACTER(LEN=78)    :: headln1
+    CHARACTER(LEN=51)    :: headln2
+    INTEGER              :: line
+    INTEGER, ALLOCATABLE :: ts(:), tmp_i4(:)
+    REAL,    ALLOCATABLE :: llat(:),llon(:),hs0(:)
+    REAL,    ALLOCATABLE :: tp0(:),dir0(:),dspr0(:)
+    REAL,    ALLOCATABLE :: wndSpd0(:),wndDir0(:)
+    REAL*8,  ALLOCATABLE :: date0(:),tmp_r8(:)
+    INTEGER              :: maxTs, t0, nout1, nout2, maxI, maxJ
+    REAL,    ALLOCATABLE :: mlon(:,:), mlat(:,:), tmp_r4(:)
+    REAL, POINTER        :: uniqueTim(:),uniqueLatraw(:),uniqueLonraw(:)
+    REAL, POINTER        :: uniqueLat(:),uniqueLon(:)
+    INTEGER              :: ioerr,ierr, i, j, k, l, alreadyIn, ok, tss, tsA
+    INTEGER              :: maxPart, DATETIME(2)
+    INTEGER              :: tstep, iline, numpart, skipln, readln, filesize
+    REAL                 :: x,y,wnd,wnddir
+    REAL                 :: invar1, invar2, invar3, invar4
+    REAL                 :: invar5, invar6, invar7
+    REAL,    ALLOCATABLE :: phs(:),ptp(:),pdir(:),pspr(:),pwf(:) ! current partition values
+    REAL*8               :: date1, date2, ttest, ttemp
+    INTEGER              :: ic, leng, maxpartout                                  ! Remove?
+    REAL                 :: dx
+    INTEGER              :: latind1, latind2, lonind1, lonind2
+    REAL                 :: lonext, latext
 
 #ifdef W3_MPI
-    INTEGER    :: rank, irank, nproc, EXTENT, DOMSIZE, tag1, tag2
-    !      INTEGER    :: MPI_INT_DOMARR, MPI_REAL_DOMARR
-    INTEGER    :: MPI_STATUS(MPI_STATUS_SIZE)
-    INTEGER    :: REQ(16)
-    !    INTEGER    :: ISTAT(MPI_STATUS_SIZE,16)
-    REAL       :: COMMARR1(44)
-    INTEGER    :: COMMARR2(11)
+    INTEGER              :: rank, irank, nproc, EXTENT, DOMSIZE, tag1, tag2
+    !      INTEGER       :: MPI_INT_DOMARR, MPI_REAL_DOMARR
+    INTEGER              :: MPI_STATUS(MPI_STATUS_SIZE)
+    INTEGER              :: REQ(16)
+    !    INTEGER         :: ISTAT(MPI_STATUS_SIZE,16)
+    REAL                 :: COMMARR1(44)
+    INTEGER              :: COMMARR2(11)
 #endif
     !
     !  4. Subroutines used :
@@ -1801,9 +1801,9 @@ CONTAINS
     !     maxSys      Int      output Maximum number of partition systems
     !     sys     Type(system) output Final set of tracked systems, for one time level
     !
-    TYPE(dat2d)  :: wsdat
-    REAL         :: dirKnob,perKnob,wetPts,hsKnob,seedLat,seedLon
-    INTEGER      :: maxSys
+    TYPE(dat2d)           :: wsdat
+    REAL                  :: dirKnob,perKnob,wetPts,hsKnob,seedLat,seedLon
+    INTEGER               :: maxSys
     TYPE(system), POINTER :: sys(:)
 
     INTENT (IN) wetPts,dirKnob,perKnob,hsKnob,seedLat,seedLon
@@ -1820,9 +1820,9 @@ CONTAINS
     LOGICAL   :: first
     CHARACTER :: way *1
     INTEGER   :: ngbrExt, combine, maxI, maxJ, i, j, oldJ
-    INTEGER   :: horizStepCount, vertStepCount, checkCount, sc, &
-         maxPts, landPts, horizBorder, vertBorder, m, k, &
-         stepCount
+    INTEGER   :: horizStepCount, vertStepCount, checkCount, sc
+    INTEGER   :: maxPts, landPts, horizBorder, vertBorder, m, k
+    INTEGER   :: stepCount
     REAL      :: deltaLat, minLat, maxLat, minLon, maxLon
     !
     !  4. Subroutines used :
@@ -2012,12 +2012,12 @@ CONTAINS
     !     maxI, maxJ     Int       input  Maximum indices of wave field
     !
     TYPE(timsys), POINTER :: sysA(:)
-    INTEGER, POINTER :: maxSys(:)
-    REAL         :: dirTimeKnob, tpTimeKnob
-    INTEGER      :: ts0, maxGroup
-    REAL         :: dt
-    REAL         :: lonext, latext
-    INTEGER      :: maxI, maxJ
+    INTEGER,      POINTER :: maxSys(:)
+    REAL                  :: dirTimeKnob, tpTimeKnob
+    INTEGER               :: ts0, maxGroup
+    REAL                  :: dt
+    REAL                  :: lonext, latext
+    INTEGER               :: maxI, maxJ
 
     INTENT (IN) tpTimeKnob, dirTimeKnob, ts0, maxI, maxJ
     !      INTENT (IN OUT) sysA
@@ -2028,29 +2028,29 @@ CONTAINS
     !     ic        Int   Counter for wave systems
     !     ts1       Int   Adjusted initial time step in case ts0 has only empty systems
     !
-    LOGICAL :: file_exists
-    CHARACTER :: dummy*23
-    TYPE(sysmemory) :: sysMem(50)                                             !!! 50 memory spaces should be enough Check!!!
-    INTEGER :: leng, l, i, ii, j, k, kk, idir, numSys, &
-         counter, new, DIFSIZE, tpMinInd, dirMinInd, used, ok
-    REAL    :: Tb,  deltaPer, deltaDir, tpMinVal, dirMinVal, &
-         dirForTpMin, tpForDirMin
-    REAL, ALLOCATABLE :: sysOrdered(:), TEMP(:), dirs(:)
-    REAL, POINTER :: DIFARR(:)
+    LOGICAL              :: file_exists
+    CHARACTER            :: dummy*23
+    TYPE(sysmemory)      :: sysMem(50)                                             !!! 50 memory spaces should be enough Check!!!
+    INTEGER              :: leng, l, i, ii, j, k, kk, idir, numSys
+    INTEGER              :: counter, new, DIFSIZE, tpMinInd, dirMinInd, used, ok
+    REAL                 :: Tb,  deltaPer, deltaDir, tpMinVal, dirMinVal
+    REAL                 :: dirForTpMin, tpForDirMin
+    REAL,    ALLOCATABLE :: sysOrdered(:), TEMP(:), dirs(:)
+    REAL, POINTER        :: DIFARR(:)
     INTEGER, ALLOCATABLE :: indSorted(:), alreadyUsed(:), allInd(:)
     INTEGER, ALLOCATABLE :: ind(:), ind2(:)
-    INTEGER :: ts1
-    REAL, ALLOCATABLE :: GOF(:,:), GOFMinVal(:), GOFMinInd(:), &
-         Tbsysmem(:), deltaDirsysmem(:), &
-         deltaPersysmem(:),m1sysmem(:),m2sysmem(:)
-    REAL    :: m1, m2
-    REAL    :: lonmean, latmean, dmndiag
-    INTEGER :: npnts, npnts2
-    REAL, ALLOCATABLE :: mnlonlist(:), mnlatlist(:), mndist(:)
-    REAL, POINTER     :: dummy1(:),dummy2(:),dummy3(:)
+    INTEGER              :: ts1
+    REAL,    ALLOCATABLE :: GOF(:,:), GOFMinVal(:), GOFMinInd(:)
+    REAL,    ALLOCATABLE :: Tbsysmem(:), deltaDirsysmem(:)
+    REAL,    ALLOCATABLE :: deltaPersysmem(:),m1sysmem(:),m2sysmem(:)
+    REAL                 :: m1, m2
+    REAL                 :: lonmean, latmean, dmndiag
+    INTEGER              :: npnts, npnts2
+    REAL,    ALLOCATABLE :: mnlonlist(:), mnlatlist(:), mndist(:)
+    REAL, POINTER        :: dummy1(:),dummy2(:),dummy3(:)
     INTEGER, ALLOCATABLE :: olsize(:)
-    REAL    :: TEMP1, TEMP2
-    INTEGER :: iii, jj, ll, idup
+    REAL                 :: TEMP1, TEMP2
+    INTEGER              :: iii, jj, ll, idup
     !
     !  4. Subroutines used :
     !
@@ -2715,7 +2715,7 @@ CONTAINS
     !     stepCount   Int      output Number of steps to go in the selected direction (way)
     !
     CHARACTER   :: way *1
-    INTEGER     :: horizStepCount, vertStepCount, &
+    INTEGER     :: horizStepCount, vertStepCount
          vertBorder, horizBorder, stepCount
 
     INTENT (IN) vertBorder, horizBorder
@@ -2958,21 +2958,21 @@ CONTAINS
     !     nngbr       Int        Number of neighbours found
     !
     TYPE(system), ALLOCATABLE :: tmpsys(:)
-    TYPE(neighbr) :: ngbr(50)
-    TYPE(mtchsys) :: match
-    LOGICAL       :: found
-    INTEGER       :: counter, ii, jj, nngbr, startCount, endCount, l,&
-         nout, maxS, s, p, n, countAll, ind, minInd, &
-         npart, pp, leng
-    INTEGER       :: allFullSys(50)
-    REAL, POINTER :: realarr(:)
-    INTEGER, ALLOCATABLE :: allSys(:)
-    REAL         :: hsAll(50),tpAll(50),dirAll(50),GOF(50)
-    REAL         :: absDir,absPer,absHs,T,&
-         deltaPer,deltaDir,deltaHs,temp
-    REAL         :: dx, m1, m2
-    REAL         :: GOFMinVal
-    INTEGER      :: GOFMinInd
+    TYPE(neighbr)             :: ngbr(50)
+    TYPE(mtchsys)             :: match
+    LOGICAL                   :: found
+    INTEGER                   :: counter, ii, jj, nngbr, startCount, endCount, l
+    INTEGER                   :: nout, maxS, s, p, n, countAll, ind, minInd
+    INTEGER                   :: npart, pp, leng
+    INTEGER                   :: allFullSys(50)
+    REAL, POINTER             :: realarr(:)
+    INTEGER,      ALLOCATABLE :: allSys(:)
+    REAL                      :: hsAll(50),tpAll(50),dirAll(50),GOF(50)
+    REAL                      :: absDir,absPer,absHs,T
+    REAL                      :: deltaPer,deltaDir,deltaHs,temp
+    REAL                      :: dx, m1, m2
+    REAL                      :: GOFMinVal
+    INTEGER                   :: GOFMinInd
     !
     !  4. Subroutines used :
     !
@@ -3261,13 +3261,13 @@ CONTAINS
     !     ----------------------------------------------------------------
     !     nSys       Int   Number of wave systems (for checking iterative combining loop)
     !
-    LOGICAL   :: found
+    LOGICAL              :: found
     INTEGER, ALLOCATABLE :: sysOut(:)
     INTEGER, ALLOCATABLE :: actSysInd(:)
-    INTEGER   :: iter, ok, nSys, mS, s, so, ss, ind, leng, &
-         iw, jw, iloop
-    INTEGER   :: actSys
-    REAL      :: dev, hsCmp, maxHgt, temp(5)
+    INTEGER              :: iter, ok, nSys, mS, s, so, ss, ind, leng
+    INTEGER              :: iw, jw, iloop
+    INTEGER              :: actSys
+    REAL                 :: dev, hsCmp, maxHgt, temp(5)
     !
     !  4. Subroutines used :
     !
@@ -3504,12 +3504,12 @@ CONTAINS
     !     ----------------------------------------------------------------
     !     ic        Int   Counter for wave systems
     !
-    INTEGER   :: ic, nGuys, startInd, endInd, i, j, ind, leng, leng2
-    INTEGER   :: UNISIZE, DIFSIZE
-    REAL, ALLOCATABLE :: sysOrdered(:)
-    REAL, POINTER :: UNIARR(:), DIFARR(:)
+    INTEGER              :: ic, nGuys, startInd, endInd, i, j, ind, leng, leng2
+    INTEGER              :: UNISIZE, DIFSIZE
+    REAL,    ALLOCATABLE :: sysOrdered(:)
+    REAL, POINTER        :: UNIARR(:), DIFARR(:)
     INTEGER, ALLOCATABLE :: ngbrSysAll(:), sysSortedInd(:)
-    REAL      :: TEMP(2), TEMP1, TEMP2
+    REAL                 :: TEMP(2), TEMP1, TEMP2
     !
     !  4. Subroutines used :
     !
@@ -3720,43 +3720,43 @@ CONTAINS
     !     dirKnob     Real     input  Parameter in direction for combining fields in space
     !     perKnob     Real     input  Parameter in period for combining fields in space
     !
-    TYPE(dat2d)  :: wsdat                                               !40.PAR
-    TYPE(system), POINTER :: sys(:)                                     !40.PAR
-    INTEGER      :: maxSys, maxI, maxJ                                  !40.PAR
-    INTEGER, ALLOCATABLE :: actSysInd(:)
-    REAL         :: perKnob ,dirKnob
-    REAL         :: dx, m1, m2
+    TYPE(dat2d)           :: wsdat              !40.PAR
+    TYPE(system), POINTER :: sys(:)             !40.PAR
+    INTEGER               :: maxSys, maxI, maxJ !40.PAR
+    INTEGER, ALLOCATABLE  :: actSysInd(:)
+    REAL                  :: perKnob ,dirKnob
+    REAL                  :: dx, m1, m2
 
-    INTENT (IN) maxI, maxJ, perKnob, dirKnob                           !40.PAR
-    !      INTENT (IN OUT) wsdat, sys, maxSys                                  !40.PAR
+    INTENT (IN) maxI, maxJ, perKnob, dirKnob    !40.PAR
+    !      INTENT (IN OUT) wsdat, sys, maxSys   !40.PAR
     !
     !     Local variables
     !     ----------------------------------------------------------------
     !     ngbIndex    Int   Arr   Array of neighbours
     !
     INTEGER, ALLOCATABLE :: sysSortedInd(:), sysOut(:)
-    INTEGER, POINTER :: indSys1(:), indSys2(:)
-    REAL, ALLOCATABLE    :: sysOrdered(:), rounded(:)
-    REAL, POINTER    :: uniarr(:), difarr(:), allngbr(:)
-    INTEGER   :: leng, leng2, s, ss, so, ngb, lsys, lsys2, hh, i, j, &
-         ii, jj, ind, ind2, nn, nbr, icEnd,ic,iii,iloop
-    INTEGER   :: myngbr, indMatch, matchSys, keep, replacedInd, &
-         hhForIndMatch, lMatch, tot, outsize
-    INTEGER   :: ngbIndex(10000), keepInd(maxI*maxJ), oneLess(1000)     !Array large enough?
-    !      REAL      :: Tb,deltaPerB,deltaDirB,absDir,absPer,absHs,absWf
-    REAL      :: Tb,deltaPerB,deltaDirB,deltaHsB,absDir,absPer,absHs
-    LOGICAL   :: file_exists
-    INTEGER   :: MASK(maxI,maxJ)
-    REAL      :: lonmean, latmean, DIST
+    INTEGER, POINTER     :: indSys1(:), indSys2(:)
+    REAL,    ALLOCATABLE :: sysOrdered(:), rounded(:)
+    REAL,    POINTER     :: uniarr(:), difarr(:), allngbr(:)
+    INTEGER              :: leng, leng2, s, ss, so, ngb, lsys, lsys2, hh, i, j
+    INTEGER              :: ii, jj, ind, ind2, nn, nbr, icEnd,ic,iii,iloop
+    INTEGER              :: myngbr, indMatch, matchSys, keep, replacedInd
+    INTEGER              :: hhForIndMatch, lMatch, tot, outsize
+    INTEGER              :: ngbIndex(10000), keepInd(maxI*maxJ), oneLess(1000)     !Array large enough?
+    !      REAL          :: Tb,deltaPerB,deltaDirB,absDir,absPer,absHs,absWf
+    REAL                 :: Tb,deltaPerB,deltaDirB,deltaHsB,absDir,absPer,absHs
+    LOGICAL              :: file_exists
+    INTEGER              :: MASK(maxI,maxJ)
+    REAL                 :: lonmean, latmean, DIST
     !061512 -----------------------------------------------
-    LOGICAL   :: ZIPMATCH
-    INTEGER   :: counter, count2, izp, izp2, in, jn, icnt, ngbrExt
-    REAL      :: T, ngb_tp, ngb_dir
-    REAL      :: ngbmatch(maxI*maxJ)
-    TYPE(neighbr) :: ngbr(50)
+    LOGICAL              :: ZIPMATCH
+    INTEGER              :: counter, count2, izp, izp2, in, jn, icnt, ngbrExt
+    REAL                 :: T, ngb_tp, ngb_dir
+    REAL                 :: ngbmatch(maxI*maxJ)
+    TYPE(neighbr)        :: ngbr(50)
     !061512 -----------------------------------------------
-    REAL      :: TEMP1, TEMP2
-    INTEGER   :: actSys
+    REAL                 :: TEMP1, TEMP2
+    INTEGER              :: actSys
 
     !
     !  4. Subroutines used :
@@ -4331,9 +4331,9 @@ CONTAINS
     END TYPE duplicate
 
     TYPE(duplicate) :: dup(100)                                         !40.PAR
-    LOGICAL :: found
-    INTEGER :: nsys, ndup, p, pp, maxInd, npart, s, ss, ppp
-    REAL :: temp
+    LOGICAL         :: found
+    INTEGER         :: nsys, ndup, p, pp, maxInd, npart, s, ss, ppp
+    REAL            :: temp
     !
     !  4. Subroutines used :
     !
@@ -4606,8 +4606,8 @@ CONTAINS
     !     ang     Real   input    Array of angles to average
     !     ll      Int    input    Length of ang
     !
-    REAL :: ang(ll), hsign(ll)
-    REAL :: TEMP1, TEMP2
+    REAL    :: ang(ll), hsign(ll)
+    REAL    :: TEMP1, TEMP2
     INTEGER :: ll
     !
     !     Local variables
@@ -4729,12 +4729,12 @@ CONTAINS
     INTEGER , INTENT(OUT) :: OUTSIZE
     REAL ,    INTENT(IN)  :: INARRAY(INSIZE)
 
-    REAL, POINTER        :: OUTARRAY(:)
+    REAL, POINTER :: OUTARRAY(:)
     !
     !     Local variables
     !     ----------------------------------------------------------------
-    INTEGER          :: I, K
-    REAL             :: ARRAY(INSIZE), TEMP(INSIZE)
+    INTEGER :: I, K
+    REAL    :: ARRAY(INSIZE), TEMP(INSIZE)
     !
     !  4. Subroutines used :
     !
@@ -4856,10 +4856,10 @@ CONTAINS
     !     OUTARRAY  REAL    ARR  output   Sorted output array
     !     IY        INTEGER ARR  output   Sorted array of the original indices
 
-    CHARACTER         :: DIRECTION *1
-    INTEGER           :: INSIZE
-    INTEGER           :: IY(INSIZE)
-    REAL              :: INARRAY(INSIZE), OUTARRAY(INSIZE)
+    CHARACTER :: DIRECTION *1
+    INTEGER   :: INSIZE
+    INTEGER   :: IY(INSIZE)
+    REAL      :: INARRAY(INSIZE), OUTARRAY(INSIZE)
 
     INTENT (IN)  INARRAY, INSIZE, DIRECTION
     INTENT (OUT) OUTARRAY, IY
@@ -4975,20 +4975,20 @@ CONTAINS
     !     OUTARRAY  REAL    ARR  output   Output array
     !     OUTSIZE   INTEGER      output   Size of output array (number of unique elements)
 
-    INTEGER           :: INSIZE1, INSIZE2, OUTSIZE
-    REAL              :: INARRAY1(INSIZE1), INARRAY2(INSIZE2)
-    REAL, POINTER     :: OUTARRAY(:)
+    INTEGER       :: INSIZE1, INSIZE2, OUTSIZE
+    REAL          :: INARRAY1(INSIZE1), INARRAY2(INSIZE2)
+    REAL, POINTER :: OUTARRAY(:)
 
     INTENT (IN)  INARRAY1, INSIZE1, INARRAY2, INSIZE2
     INTENT (OUT) OUTSIZE
     !
     !     Local variables
     !     ----------------------------------------------------------------
-    INTEGER          :: I,J,K
-    REAL             :: TEMP(INSIZE1)
-    REAL             :: ARRAY1(INSIZE1),ARRAY2(INSIZE2)
-    REAL             :: ID1(INSIZE1),ID2(INSIZE2)
-    LOGICAL          :: LOOP
+    INTEGER :: I,J,K
+    REAL    :: TEMP(INSIZE1)
+    REAL    :: ARRAY1(INSIZE1),ARRAY2(INSIZE2)
+    REAL    :: ID1(INSIZE1),ID2(INSIZE2)
+    LOGICAL :: LOOP
     !
     !  4. Subroutines used :
     !
@@ -5140,8 +5140,8 @@ CONTAINS
     !     OUTSIZE   INTEGER      output   Size of output array (number of
     !     intersects)
     !
-    INTEGER           :: INSIZE1, INSIZE2, OUTSIZE
-    REAL              :: INARRAY1(INSIZE1), INARRAY2(INSIZE2)
+    INTEGER       :: INSIZE1, INSIZE2, OUTSIZE
+    REAL          :: INARRAY1(INSIZE1), INARRAY2(INSIZE2)
     REAL, POINTER :: OUTARRAY(:)
     REAL, POINTER :: IND1(:), IND2(:)
     !
@@ -5293,9 +5293,9 @@ CONTAINS
     !     OUTARRAY  REAL    ARR  output   Output array (sorted)
     !     OUTSIZE   INTEGER      output   Size of output array (number of
     !                                     unique elements)
-    INTEGER           :: INSIZE1, INSIZE2, OUTSIZE
-    REAL              :: INARRAY1(INSIZE1), INARRAY2(INSIZE2)
-    REAL, POINTER     :: OUTARRAY(:)
+    INTEGER       :: INSIZE1, INSIZE2, OUTSIZE
+    REAL          :: INARRAY1(INSIZE1), INARRAY2(INSIZE2)
+    REAL, POINTER :: OUTARRAY(:)
     !
     INTENT (IN)  INARRAY1, INSIZE1, INARRAY2, INSIZE2
     INTENT (OUT) OUTSIZE
@@ -5463,12 +5463,12 @@ CONTAINS
     !     Parameter list
     !     ----------------------------------------------------------------
     INTEGER :: ARRSIZE
-    REAL :: ARRAY(ARRSIZE)
-    REAL :: VAL
+    REAL    :: ARRAY(ARRSIZE)
+    REAL    :: VAL
     !
     !     Local variables
     !     ----------------------------------------------------------------
-    REAL :: FIELD
+    REAL    :: FIELD
     INTEGER :: I
     !
     ! 10. Source code :
@@ -5525,8 +5525,8 @@ CONTAINS
     !     Parameter list
     !     ----------------------------------------------------------------
     INTEGER :: ARRSIZE
-    REAL :: ARRAY(ARRSIZE)
-    REAL :: VAL
+    REAL    :: ARRAY(ARRSIZE)
+    REAL    :: VAL
     !
     !     Local variables
     !     ----------------------------------------------------------------
@@ -5589,7 +5589,7 @@ CONTAINS
     !
     !     Local variables
     !     ----------------------------------------------------------------
-    REAL    :: MN
+    REAL :: MN
     !
     ! 10. Source code :
     !
@@ -5949,13 +5949,13 @@ CONTAINS
     !     tmpA*, tmpB* Int.A.           Array of indices for combining
     !     systems
     !
-    INTEGER      :: LENG_AI,LENG_BI
-    INTEGER      :: OUTA,OUTB,I,J,IND,OUTDUMB
-    INTEGER      :: POSB,POSB_MM,POSB_PM,POSB_MP,POSB_PP
-    INTEGER      :: IND_B2(maxI,maxJ)
-    REAL,ALLOCATABLE :: TMPA(:),DUMA(:),TMPB(:)
-    REAL,POINTER     :: DUMB(:)
-    LOGICAL      :: FOUND
+    INTEGER           :: LENG_AI,LENG_BI
+    INTEGER           :: OUTA,OUTB,I,J,IND,OUTDUMB
+    INTEGER           :: POSB,POSB_MM,POSB_PM,POSB_MP,POSB_PP
+    INTEGER           :: IND_B2(maxI,maxJ)
+    REAL, ALLOCATABLE :: TMPA(:),DUMA(:),TMPB(:)
+    REAL, POINTER     :: DUMB(:)
+    LOGICAL           :: FOUND
     !
     !  4. Subroutines used :
     !

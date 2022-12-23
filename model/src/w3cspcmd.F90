@@ -234,30 +234,30 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)  :: NSP, NFR1, NTH1, NFR2, NTH2, NDST, NDSE
-    REAL,    INTENT(IN)  :: SP1(NTH1,NFR1,NSP), XF1, FR1, TH1
-    REAL,    INTENT(IN)  :: XF2, FR2, TH2, FTL
-    REAL,    INTENT(OUT) :: SP2(NTH2,NFR2,NSP)
+    INTEGER , INTENT(IN)  :: NSP, NFR1, NTH1, NFR2, NTH2, NDST, NDSE
+    REAL ,    INTENT(IN)  :: SP1(NTH1,NFR1,NSP), XF1, FR1, TH1
+    REAL ,    INTENT(IN)  :: XF2, FR2, TH2, FTL
+    REAL ,    INTENT(OUT) :: SP2(NTH2,NFR2,NSP)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: I, NRMAX, J, I1, L1, J1, I2, L2, J2, &
-         ISP
+    INTEGER              :: I, NRMAX, J, I1, L1, J1, I2, L2, J2
+    INTEGER              :: ISP
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE        :: IENT = 0
 #endif
-    REAL                    :: LOW, HGH, RLOW, RHGH, BLOW, BHGH,    &
-         FRAC, AUX1, AUX2, R1, R2, FACT
-    LOGICAL                 :: FOUND
-    TYPE(CASE), POINTER     :: CURRENT
+    REAL                 :: LOW, HGH, RLOW, RHGH, BLOW, BHGH
+    REAL                 :: FRAC, AUX1, AUX2, R1, R2, FACT
+    LOGICAL              :: FOUND
+    TYPE(CASE) , POINTER :: CURRENT
     !/
     !/ ------------------------------------------------------------------- /
-    !/ Pointers for aliases
+    !/           Pointers for aliases
     !/
-    INTEGER, POINTER        :: IDTH(:,:), IDFR(:,:), NFR2T
-    REAL, POINTER           :: DTH1, DTH2, RDTH(:,:), FRQ1(:),      &
-         FRQ2(:), XDF1, XDF2, RDFR(:,:)
+    INTEGER ,    POINTER :: IDTH(:,:), IDFR(:,:), NFR2T
+    REAL ,       POINTER :: DTH1, DTH2, RDTH(:,:), FRQ1(:)
+    REAL ,       POINTER :: FRQ2(:), XDF1, XDF2, RDFR(:,:)
     !/
 #ifdef W3_S
     CALL STRACE (IENT, 'W3CSPC')

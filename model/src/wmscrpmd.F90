@@ -177,11 +177,11 @@ CONTAINS
     !      USE W3GDATMD, ONLY : GRIDS
 
     IMPLICIT NONE
-    INTEGER(SCRIP_I4), INTENT(IN)      :: ID_SRC, ID_DST
-    INTEGER(SCRIP_I4), INTENT(IN)      :: MAPSTA_SRC(:,:)
-    INTEGER(SCRIP_I4), INTENT(IN)      :: MAPST2_SRC(:,:)
+    INTEGER(SCRIP_I4),      INTENT(IN) :: ID_SRC, ID_DST
+    INTEGER(SCRIP_I4),      INTENT(IN) :: MAPSTA_SRC(:,:)
+    INTEGER(SCRIP_I4),      INTENT(IN) :: MAPST2_SRC(:,:)
     LOGICAL(SCRIP_LOGICAL), INTENT(IN) :: FLAGLL
-    REAL   (SCRIP_R8), INTENT(IN)      :: GRIDSHIFT
+    REAL (SCRIP_R8),        INTENT(IN) :: GRIDSHIFT
     LOGICAL(SCRIP_LOGICAL), INTENT(IN) :: L_MASTER  ! Am I the master processor (do I/O)?
     LOGICAL(SCRIP_LOGICAL), INTENT(IN) :: L_READ    ! Do I read the remap file?
     LOGICAL(SCRIP_LOGICAL), INTENT(IN) :: L_TEST    ! Whether to include test output
@@ -189,19 +189,19 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ local variables
     !/
-    INTEGER(SCRIP_I4)                 :: IREC,I,J,NI,NJ,IDUM,NK,K, &
-         ILINK,IW,ICORNER,NGOODPNTS, &
-         NBADPNTS
-    INTEGER(SCRIP_I4)                 :: ISRC,JSRC,KSRC,IPNT,KDST, &
-         NI_SRC
-    REAL   (SCRIP_R8)                 :: LAT_CONVERSION,OFFSET
-    REAL   (SCRIP_R8)                 :: CONV_DX,CONV_DY,WEIGHT
-    REAL   (SCRIP_R8)                 :: WTSUM
+    INTEGER(SCRIP_I4)  :: IREC,I,J,NI,NJ,IDUM,NK,K
+    INTEGER(SCRIP_I4)  :: ILINK,IW,ICORNER,NGOODPNTS
+    INTEGER(SCRIP_I4)  :: NBADPNTS
+    INTEGER(SCRIP_I4)  :: ISRC,JSRC,KSRC,IPNT,KDST
+    INTEGER(SCRIP_I4)  :: NI_SRC
+    REAL   (SCRIP_R8)  :: LAT_CONVERSION,OFFSET
+    REAL   (SCRIP_R8)  :: CONV_DX,CONV_DY,WEIGHT
+    REAL   (SCRIP_R8)  :: WTSUM
 #ifdef W3_T38
-    CHARACTER (LEN=10)      :: CDATE_TIME(3)
-    INTEGER                 :: DATE_TIME(8)
-    INTEGER                 :: ELAPSED_TIME, BEG_TIME, &
-         END_TIME
+    CHARACTER (LEN=10) :: CDATE_TIME(3)
+    INTEGER            :: DATE_TIME(8)
+    INTEGER            :: ELAPSED_TIME, BEG_TIME
+    INTEGER            :: END_TIME
 #endif
 
     ! test output for input variables

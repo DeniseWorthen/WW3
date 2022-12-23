@@ -1407,41 +1407,41 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IXO, IYO, IX, IY, IXF0, IXFN, IYF0,  &
-         IYFN, IXS0, IXSN, IYS0, IYSN, IXS,   &
-         MXA, MYA, J, J1, J2, IXC, IYC, JJ,   &
-         JX, JY
-    INTEGER                 :: NPOIX, NPOIY, I,  IFIELDS,CURVI   !RP
+    INTEGER                   :: IXO, IYO, IX, IY, IXF0, IXFN, IYF0
+    INTEGER                   :: IYFN, IXS0, IXSN, IYS0, IYSN, IXS
+    INTEGER                   :: MXA, MYA, J, J1, J2, IXC, IYC, JJ
+    INTEGER                   :: JX, JY
+    INTEGER                   :: NPOIX, NPOIY, I,  IFIELDS,CURVI   !RP
 
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE             :: IENT = 0
 #endif
-    INTEGER, ALLOCATABLE    :: NXA(:,:), NYA(:,:)
-    REAL                    :: XR, YR, R1, R2, RT, XFL, XFR, XSL,   &
-         XSR, YFL, YFR, YSL, YSR
-    REAL                    :: VXL, VYL, VA0, VA, VA2, FACTOR,      &
-         WTOT, WL
+    INTEGER,     ALLOCATABLE  :: NXA(:,:), NYA(:,:)
+    REAL                      :: XR, YR, R1, R2, RT, XFL, XFR, XSL
+    REAL                      :: XSR, YFL, YFR, YSL, YSR
+    REAL                      :: VXL, VYL, VA0, VA, VA2, FACTOR
+    REAL                      :: WTOT, WL
 
-    REAL                    :: LONC, LATC, SXYC,                    &
-         XDI, DTOLER, VALUEX, VALUEY
+    REAL                      :: LONC, LATC, SXYC
+    REAL                      :: XDI, DTOLER, VALUEX, VALUEY
 
-    REAL, ALLOCATABLE       :: RXA(:,:), RYA(:,:)
+    REAL,        ALLOCATABLE  :: RXA(:,:), RYA(:,:)
 
-    !      REAL, ALLOCATABLE       :: VARIN(:,:)                        !RP
+    !      REAL, ALLOCATABLE  :: VARIN(:,:)                        !RP
 
-    LOGICAL                 :: MAP1(NX,NY), MAP2(NX,NY),            &
-         MAP3(NX,NY), FLAGUP
+    LOGICAL                   :: MAP1(NX,NY), MAP2(NX,NY)
+    LOGICAL                   :: MAP3(NX,NY), FLAGUP
     !
-    INTEGER, POINTER        :: NXI, NYI, MAP(:,:), MAPI(:,:)
-    REAL, POINTER           :: X0I, Y0I, SXI, SYI !RP , HPFACI, HQFACI
+    INTEGER, POINTER          :: NXI, NYI, MAP(:,:), MAPI(:,:)
+    REAL, POINTER             :: X0I, Y0I, SXI, SYI !RP , HPFACI, HQFACI
 
-    REAL, POINTER           :: HPFACI(:,:), HQFACI(:,:)
+    REAL, POINTER             :: HPFACI(:,:), HQFACI(:,:)
     DOUBLE PRECISION, POINTER :: XGRDI(:,:), YGRDI(:,:), XGRDC(:,:), YGRDC(:,:)
 
-    INTEGER, POINTER        :: ICLOSE
-    REAL, ALLOCATABLE       :: XGRTMP(:),YGRTMP(:)
+    INTEGER, POINTER          :: ICLOSE
+    REAL,        ALLOCATABLE  :: XGRTMP(:),YGRTMP(:)
 #ifdef W3_T1
-    CHARACTER(LEN=17)       :: FORMAT1
+    CHARACTER(LEN=17)         :: FORMAT1
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -2084,39 +2084,39 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IXO, IYO, IX, IY, IXF0, IXFN, IYF0,  &
-         IYFN, IXS0, IXSN, IYS0, IYSN, IXS,   &
-         MXA, MYA, J, J1, J2, IXC, IYC, JJ,   &
-         JX, JY
+    INTEGER                   :: IXO, IYO, IX, IY, IXF0, IXFN, IYF0
+    INTEGER                   :: IYFN, IXS0, IXSN, IYS0, IYSN, IXS
+    INTEGER                   :: MXA, MYA, J, J1, J2, IXC, IYC, JJ
+    INTEGER                   :: JX, JY
 
-    INTEGER                 :: NPOIX, NPOIY, I, CURVI               !RP
+    INTEGER                   :: NPOIX, NPOIY, I, CURVI               !RP
 
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE             :: IENT = 0
 #endif
-    INTEGER, ALLOCATABLE    :: NXA(:,:), NYA(:,:)
-    REAL                    :: XR, YR, R1, R2, RT, XFL, XFR, XSL,   &
-         XSR, YFL, YFR, YSL, YSR
-    REAL                    :: FDL, WTOT, WL
+    INTEGER, ALLOCATABLE      :: NXA(:,:), NYA(:,:)
+    REAL                      :: XR, YR, R1, R2, RT, XFL, XFR, XSL
+    REAL                      :: XSR, YFL, YFR, YSL, YSR
+    REAL                      :: FDL, WTOT, WL
 
-    REAL                    :: LONC, LATC,  SXYC,                   &
-         XDI, DTOLER, VALUEINTER
+    REAL                      :: LONC, LATC,  SXYC
+    REAL                      :: XDI, DTOLER, VALUEINTER
 
-    REAL, ALLOCATABLE       :: RXA(:,:), RYA(:,:)
+    REAL,    ALLOCATABLE      :: RXA(:,:), RYA(:,:)
 
 
-    LOGICAL                 :: MAP1(NX,NY), MAP2(NX,NY),            &
-         MAP3(NX,NY), FLAGUP
+    LOGICAL                   :: MAP1(NX,NY), MAP2(NX,NY)
+    LOGICAL                   :: MAP3(NX,NY), FLAGUP
     !
-    INTEGER, POINTER        :: NXI, NYI, MAP(:,:), MAPI(:,:)
+    INTEGER,          POINTER :: NXI, NYI, MAP(:,:), MAPI(:,:)
 
     DOUBLE PRECISION, POINTER :: XGRDI(:,:), YGRDI(:,:), XGRDC(:,:), YGRDC(:,:)
-    REAL, POINTER             :: HPFACI(:,:), HQFACI(:,:)  !RP
+    REAL,             POINTER :: HPFACI(:,:), HQFACI(:,:)  !RP
 
-    REAL, POINTER           :: X0I, Y0I, SXI, SYI !RPXXX , HPFACI, HQFACI
-    INTEGER, POINTER        :: ICLOSE
+    REAL,             POINTER :: X0I, Y0I, SXI, SYI !RPXXX , HPFACI, HQFACI
+    INTEGER,          POINTER :: ICLOSE
 #ifdef W3_T1
-    CHARACTER(LEN=17)       :: FORMAT1
+    CHARACTER(LEN=17)         :: FORMAT1
 #endif
     !/
     !/ ------------------------------------------------------------------- /

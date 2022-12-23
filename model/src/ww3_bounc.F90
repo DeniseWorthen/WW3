@@ -159,52 +159,52 @@ PROGRAM W3BOUNC
   !/ Local parameters
   !/
 
-  TYPE(NML_BOUND_T)       :: NML_BOUND
+  TYPE(NML_BOUND_T)             :: NML_BOUND
   !
-  INTEGER                 :: IX, IY, ISEA, I,JJ,IP,IP1,J,IT,       &
-       NDSI,NDSM, NDSI2,NDSS,NDSB, NDSC,     &
-       NDSTRC, NTRACE, NK1,NTH1,NT1, NSPEC1, &
-       NBI, NBI2, NKI, NTHI, NTI, NBO, NBO2, &
-       IERR, INTERP, ILOOP, VERBOSE, IBO,    &
-       IRET, ICODE, NDSL
-  INTEGER                 :: TIME(2), TIME2(2), VARID(12),         &
-       REFDATE(8), CURDATE(8), VARTYPE
+  INTEGER                       :: IX, IY, ISEA, I,JJ,IP,IP1,J,IT
+  INTEGER                       :: NDSI,NDSM, NDSI2,NDSS,NDSB, NDSC
+  INTEGER                       :: NDSTRC, NTRACE, NK1,NTH1,NT1, NSPEC1
+  INTEGER                       :: NBI, NBI2, NKI, NTHI, NTI, NBO, NBO2
+  INTEGER                       :: IERR, INTERP, ILOOP, VERBOSE, IBO
+  INTEGER                       :: IRET, ICODE, NDSL
+  INTEGER                       :: TIME(2), TIME2(2), VARID(12)
+  INTEGER                       :: REFDATE(8), CURDATE(8), VARTYPE
 #ifdef W3_S
-  INTEGER, SAVE           :: IENT = 0
+  INTEGER, SAVE                 :: IENT = 0
 #endif
   !
-  INTEGER, ALLOCATABLE    :: IPBPI(:,:), IPBPO(:,:), NCID(:),      &
-       DIMID(:,:), DIMLN(:,:)
+  INTEGER,          ALLOCATABLE :: IPBPI(:,:), IPBPO(:,:), NCID(:)
+  INTEGER,          ALLOCATABLE :: DIMID(:,:), DIMLN(:,:)
   !
-  REAL                    :: FR1I, XFRI, TH1I, FACTOR, OFFSET, DMIN,&
-       DIST, DMIN2, COS1, DLON, DLAT, DLO,    &
-       FILLVAL
+  REAL                          :: FR1I, XFRI, TH1I, FACTOR, OFFSET, DMIN
+  REAL                          :: DIST, DMIN2, COS1, DLON, DLAT, DLO
+  REAL                          :: FILLVAL
   !
-  REAL, ALLOCATABLE       :: SPEC2D(:,:,:,:), LATS(:), LONS(:),    &
-       FREQ(:), THETA(:),                    &
-       XBPI(:), YBPI(:), RDBPI(:,:),         &
-       XBPO(:), YBPO(:), RDBPO(:,:),         &
-       ABPIN(:,:), ABPIN2(:,:,:)
+  REAL,             ALLOCATABLE :: SPEC2D(:,:,:,:), LATS(:), LONS(:)
+  REAL,             ALLOCATABLE :: FREQ(:), THETA(:)
+  REAL,             ALLOCATABLE :: XBPI(:), YBPI(:), RDBPI(:,:)
+  REAL,             ALLOCATABLE :: XBPO(:), YBPO(:), RDBPO(:,:)
+  REAL,             ALLOCATABLE :: ABPIN(:,:), ABPIN2(:,:,:)
 #ifdef W3_RTD
-  REAL, ALLOCATABLE     :: XTMP(:), YTMP(:), ANGTMP(:)
-  LOGICAL               :: ISRTD
+  REAL,             ALLOCATABLE :: XTMP(:), YTMP(:), ANGTMP(:)
+  LOGICAL                       :: ISRTD
 #endif
   !
-  REAL, ALLOCATABLE       :: TMPSPCI(:,:),TMPSPCO(:,:)
+  REAL,             ALLOCATABLE :: TMPSPCI(:,:),TMPSPCO(:,:)
 
   !
-  DOUBLE PRECISION        :: REFJULDAY, CURJULDAY
-  DOUBLE PRECISION, ALLOCATABLE       :: TIMES(:)
+  DOUBLE PRECISION              :: REFJULDAY, CURJULDAY
+  DOUBLE PRECISION, ALLOCATABLE :: TIMES(:)
   !
-  CHARACTER               :: COMSTR*1, LINE*512, FILENAME*512,     &
-       INXOUT*5, FILE*128
-  CHARACTER*50            :: TIMEUNITS, CALENDAR
-  CHARACTER*10            :: VERTEST  ! = '2018-03-01'
-  CHARACTER*32            :: IDTST    != 'WAVEWATCH III BOUNDARY DATA FILE'
-  CHARACTER*512, ALLOCATABLE          :: SPECFILES(:)
-  CHARACTER, ALLOCATABLE              :: STATION(:,:)
+  CHARACTER                     :: COMSTR*1, LINE*512, FILENAME*512
+  CHARACTER                     :: INXOUT*5, FILE*128
+  CHARACTER*50                  :: TIMEUNITS, CALENDAR
+  CHARACTER*10                  :: VERTEST  ! = '2018-03-01'
+  CHARACTER*32                  :: IDTST    != 'WAVEWATCH III BOUNDARY DATA FILE'
+  CHARACTER*512,    ALLOCATABLE :: SPECFILES(:)
+  CHARACTER,        ALLOCATABLE :: STATION(:,:)
   !
-  LOGICAL                 :: FLGNML, SPCONV
+  LOGICAL                       :: FLGNML, SPCONV
   !
   !/
   !/ ------------------------------------------------------------------- /

@@ -91,32 +91,31 @@ PROGRAM W3TRNC
   TYPE(NML_TRACK_T)       :: NML_TRACK
   TYPE(NML_FILE_T)        :: NML_FILE
   !
-  INTEGER                 :: NDSI, NDSINP,                        &
-       NDSOUT, NDSTRC, NTRACE,              &
-       NSPEC, IERR, MK, MTH, IT,            &
-       ILOC, ISPEC, S3, IOUT,               &
-       IRET, NCTYPE,NCID, ITH
+  INTEGER                 :: NDSI, NDSINP
+  INTEGER                 :: NDSOUT, NDSTRC, NTRACE
+  INTEGER                 :: NSPEC, IERR, MK, MTH, IT
+  INTEGER                 :: ILOC, ISPEC, S3, IOUT
+  INTEGER                 :: IRET, NCTYPE,NCID, ITH
 
-  INTEGER                 :: TIME(2), TOUT(2), NOUT, TDUM(2),     &
-       DIMID(4), VARID(18), DIMLN(4),       &
-       STOPDATE(8)
+  INTEGER                 :: TIME(2), TOUT(2), NOUT, TDUM(2)
+  INTEGER                 :: DIMID(4), VARID(18), DIMLN(4)
+  INTEGER                 :: STOPDATE(8)
 #ifdef W3_S
   INTEGER, SAVE           :: IENT   = 0
 #endif
   !
-  REAL                    :: TH1, DTH, X, Y, DW, CX, CY, CAO, CDO,&
-       WX, WY, WAO, WDO, UST, AS, DTEST,    &
-       DTREQ, DTHD, RTH0, M2KM
+  REAL                    :: TH1, DTH, X, Y, DW, CX, CY, CAO, CDO
+  REAL                    :: WX, WY, WAO, WDO, UST, AS, DTEST
+  REAL                    :: DTREQ, DTHD, RTH0, M2KM
   !
-  REAL, ALLOCATABLE       :: FREQ(:), FREQ1(:), FREQ2(:), DSIP(:),&
-       SPEC(:,:), E(:,:), THD(:), DIR(:)
+  REAL, ALLOCATABLE       :: FREQ(:), FREQ1(:), FREQ2(:), DSIP(:)
+  REAL, ALLOCATABLE       :: SPEC(:,:), E(:,:), THD(:), DIR(:)
   !
-  CHARACTER*34, PARAMETER ::                                      &
-       IDTST  = 'WAVEWATCH III TRACK OUTPUT SPECTRA'
+  CHARACTER*34, PARAMETER :: IDTST  = 'WAVEWATCH III TRACK OUTPUT SPECTRA'
   CHARACTER*30            :: FILEPREFIX, STRSTOPDATE
   CHARACTER*20            :: FORMAT1
-  CHARACTER               :: IDTIME*23, IDDDAY*11, TRCKID*32,     &
-       COMSTR*1, IDSTR*34, TSTSTR*3, STIME*23
+  CHARACTER               :: IDTIME*23, IDDDAY*11, TRCKID*32
+  CHARACTER               :: COMSTR*1, IDSTR*34, TSTSTR*3, STIME*23
   !
   LOGICAL                 :: FLGNML
 

@@ -164,24 +164,24 @@ PROGRAM GXOUTP
   !/ ------------------------------------------------------------------- /
   !/ Local parameters
   !/
-  INTEGER                 :: NDSI, NDSM, NDSOP, NDSGRD, NDSPNT,   &
-       NDSCGR, NDSTRC, NTRACE, IERR,        &
-       IOTEST, I, TOUT(2), NOUT, TDUM(2),   &
-       NREQ, IPOINT, NLEV, IOUT, TIME0(2),  &
-       IH0, IM0, ID0, IID, IJ0, IINC, IK,   &
-       IREQ, TIMEN(2), J
+  INTEGER              :: NDSI, NDSM, NDSOP, NDSGRD, NDSPNT
+  INTEGER              :: NDSCGR, NDSTRC, NTRACE, IERR
+  INTEGER              :: IOTEST, I, TOUT(2), NOUT, TDUM(2)
+  INTEGER              :: NREQ, IPOINT, NLEV, IOUT, TIME0(2)
+  INTEGER              :: IH0, IM0, ID0, IID, IJ0, IINC, IK
+  INTEGER              :: IREQ, TIMEN(2), J
 #ifdef W3_S
-  INTEGER, SAVE           :: IENT   = 0
+  INTEGER, SAVE        :: IENT   = 0
 #endif
-  REAL                    :: DTREQ, DTEST
-  REAL                    :: UNDEFP = -99.E20
-  REAL                    :: FACT
-  LOGICAL                 :: FLSRCE(7)
-  LOGICAL, ALLOCATABLE    :: FLREQ(:)
-  CHARACTER               :: COMSTR*1, IDTIME*23, IDDDAY*11,      &
-       CINC*2
-  CHARACTER(LEN=3)        :: MNTH(12)
-  CHARACTER(LEN=25)       :: IDSRCE(7)
+  REAL                 :: DTREQ, DTEST
+  REAL                 :: UNDEFP = -99.E20
+  REAL                 :: FACT
+  LOGICAL              :: FLSRCE(7)
+  LOGICAL, ALLOCATABLE :: FLREQ(:)
+  CHARACTER            :: COMSTR*1, IDTIME*23, IDDDAY*11
+  CHARACTER            :: CINC*2
+  CHARACTER(LEN=3)     :: MNTH(12)
+  CHARACTER(LEN=25)    :: IDSRCE(7)
   !/
   !/ ------------------------------------------------------------------- /
   !/
@@ -723,76 +723,76 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: J, I1, I2, IK, ITH, ISPEC, IKM, IKL, &
-         IKH, ITT, IX, IY, ISEA
+    INTEGER        :: J, I1, I2, IK, ITH, ISPEC, IKM, IKL
+    INTEGER        :: IKH, ITT, IX, IY, ISEA
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT   = 0
+    INTEGER, SAVE  :: IENT   = 0
 #endif
-    REAL                    :: XL, XH, XL2, XH2, DEPTH, SQRTH, UDIR,&
-         UDIRR, UABS, CDIR, SIX, R1, R2, ET,  &
-         EWN, ETR, ETX, ETY, EBND, EBX, EBY,  &
-         HSIG, WLEN, TMEAN, THMEAN, THSPRD,   &
-         EMAX, EL, EH, DENOM, FP, THP, SPP,   &
-         FACTOR, CD, USTAR, FHIGH, ZWND, ICE, &
-         USTD, Z0, CHARN, EMEAN, FMEAN, WNMEAN,&
-         ICETHICK, ICECON, ICEF
+    REAL           :: XL, XH, XL2, XH2, DEPTH, SQRTH, UDIR
+    REAL           :: UDIRR, UABS, CDIR, SIX, R1, R2, ET
+    REAL           :: EWN, ETR, ETX, ETY, EBND, EBX, EBY
+    REAL           :: HSIG, WLEN, TMEAN, THMEAN, THSPRD
+    REAL           :: EMAX, EL, EH, DENOM, FP, THP, SPP
+    REAL           :: FACTOR, CD, USTAR, FHIGH, ZWND, ICE
+    REAL           :: USTD, Z0, CHARN, EMEAN, FMEAN, WNMEAN
+    REAL           :: ICETHICK, ICECON, ICEF
 #ifdef W3_FLX5
-    REAL                     ::TAUA, TAUADIR, RHOAIR
+    REAL           ::TAUA, TAUADIR, RHOAIR
 #endif
 #ifdef W3_IS2
-    REAL                   :: ICEDMAX
+    REAL           :: ICEDMAX
 #endif
 #ifdef W3_ST1
-    REAL                    :: AMAX, FH1, FH2
+    REAL           :: AMAX, FH1, FH2
 #endif
 #ifdef W3_ST2
-    REAL                    :: AMAX, ALPHA(NK), FPI
+    REAL           :: AMAX, ALPHA(NK), FPI
 #endif
 #ifdef W3_ST3
-    REAL                    :: FMEANS, FMEANWS, TAUWX, TAUWY, AMAX, &
-         TAUWNX, TAUWNY
+    REAL           :: FMEANS, FMEANWS, TAUWX, TAUWY, AMAX
+    REAL           :: TAUWNX, TAUWNY
 #endif
 #ifdef W3_ST4
-    REAL                    :: FMEANWS, TAUWX, TAUWY, AMAX, &
-         TAUWNX, TAUWNY,  FMEAN1, WHITECAP(1:4), DLWMEAN
+    REAL           :: FMEANWS, TAUWX, TAUWY, AMAX
+    REAL           :: TAUWNX, TAUWNY,  FMEAN1, WHITECAP(1:4), DLWMEAN
 #endif
 #ifdef W3_ST6
-    REAL                    :: AMAX, TAUWX, TAUWY, TAUWNX, TAUWNY
+    REAL           :: AMAX, TAUWX, TAUWY, TAUWNX, TAUWNY
 #endif
 #ifdef W3_BS1
-    REAL                    :: TAUSCX, TAUSCY
+    REAL           :: TAUSCX, TAUSCY
 #endif
 #ifdef W3_BT3
-    REAL                    :: D50
+    REAL           :: D50
 #endif
 #ifdef W3_BT4
-    REAL                    :: D50, PSIC, BEDFORM(3), TAUBBL(2)
+    REAL           :: D50, PSIC, BEDFORM(3), TAUBBL(2)
 #endif
 #ifdef W3_STAB2
-    REAL                    :: STAB0, STAB, THARG1, THARG2, COR1,   &
-         COR2, ASFAC
+    REAL           :: STAB0, STAB, THARG1, THARG2, COR1
+    REAL           :: COR2, ASFAC
 #endif
-    REAL                    :: HSMIN = 0.05
-    REAL                    :: WN(NK), CG(NK), E(NK,NTH), E1(NK),   &
-         APM(NK), THBND(NK), SPBND(NK),       &
-         A(NTH,NK), WN2(NTH,NK),WN_R(NK),     &
-         ALPHA_LIU(NK), CG_ICE(NK), R(NK)
-    REAL                    :: DIA(NTH,NK), SWI(NK,NTH), SNL(NK,NTH),&
-         SDS(NK,NTH), SBT(NK,NTH), SIS(NK,NTH),&
-         STT(NK,NTH), DIA2(NK,NTH)
-    REAL                    :: XLN(NTH,NK), XWI(NTH,NK), XNL(NTH,NK),&
-         XTR(NTH,NK), XDS(NTH,NK), XDB(NTH,NK),&
-         XBT(NTH,NK), XBS(NTH,NK), XXX(NTH,NK),&
-         XWL(NTH,NK), XIS(NTH,NK)
-    LOGICAL                 :: LBREAK
+    REAL           :: HSMIN = 0.05
+    REAL           :: WN(NK), CG(NK), E(NK,NTH), E1(NK)
+    REAL           :: APM(NK), THBND(NK), SPBND(NK)
+    REAL           :: A(NTH,NK), WN2(NTH,NK),WN_R(NK)
+    REAL           :: ALPHA_LIU(NK), CG_ICE(NK), R(NK)
+    REAL           :: DIA(NTH,NK), SWI(NK,NTH), SNL(NK,NTH)
+    REAL           :: SDS(NK,NTH), SBT(NK,NTH), SIS(NK,NTH)
+    REAL           :: STT(NK,NTH), DIA2(NK,NTH)
+    REAL           :: XLN(NTH,NK), XWI(NTH,NK), XNL(NTH,NK)
+    REAL           :: XTR(NTH,NK), XDS(NTH,NK), XDB(NTH,NK)
+    REAL           :: XBT(NTH,NK), XBS(NTH,NK), XXX(NTH,NK)
+    REAL           :: XWL(NTH,NK), XIS(NTH,NK)
+    LOGICAL        :: LBREAK
 #ifdef W3_ST3
-    LOGICAL                :: LLWS(NTH,NK)
+    LOGICAL        :: LLWS(NTH,NK)
 #endif
 #ifdef W3_ST4
-    LOGICAL                :: LLWS(NTH,NK)
-    REAL                   :: LAMBDA(NSPEC)
+    LOGICAL        :: LLWS(NTH,NK)
+    REAL           :: LAMBDA(NSPEC)
 #endif
-    CHARACTER               :: DTME21*23
+    CHARACTER      :: DTME21*23
     !/
     !/ ------------------------------------------------------------------- /
     !/

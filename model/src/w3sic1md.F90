@@ -258,25 +258,25 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL, INTENT(IN)        :: CG(NK),   A(NSPEC), DEPTH
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC)
-    INTEGER, INTENT(IN)     :: IX, IY
+    REAL,    INTENT(IN)  :: CG(NK),   A(NSPEC), DEPTH
+    REAL,    INTENT(OUT) :: S(NSPEC), D(NSPEC)
+    INTEGER, INTENT(IN)  :: IX, IY
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE     :: IENT = 0
 #endif
 #ifdef W3_T0
-    INTEGER                 :: ITH
-    REAL                    :: DOUT(NK,NTH)
+    INTEGER           :: ITH
+    REAL              :: DOUT(NK,NTH)
 #endif
-    INTEGER                 :: IKTH, IK
-    REAL                    :: D1D(NK) !In SBT1: D1D was named "CBETA"
-    REAL                    :: ICECOEF1, ICECOEF2, ICECOEF3, &
-         ICECOEF4, ICECOEF5
-    REAL, ALLOCATABLE       :: WN_I(:)  ! exponential decay rate for amplitude
+    INTEGER           :: IKTH, IK
+    REAL              :: D1D(NK) !In SBT1: D1D was named "CBETA"
+    REAL              :: ICECOEF1, ICECOEF2, ICECOEF3
+    REAL              :: ICECOEF4, ICECOEF5
+    REAL, ALLOCATABLE :: WN_I(:) ! exponential decay rate for amplitude
     !/
     !/ ------------------------------------------------------------------- /
     !/

@@ -260,40 +260,40 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: TEND(2,NRGRD)
+    INTEGER, INTENT(IN) :: TEND(2,NRGRD)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: J, JJ, I, JO, TPRNT(2), TAUX(2),     &
-         II, JJJ, IX, IY, UPNEXT(2), UPLAST(2)
-    INTEGER                 :: DUMMY2(35)=0
+    INTEGER              :: J, JJ, I, JO, TPRNT(2), TAUX(2)
+    INTEGER              :: II, JJJ, IX, IY, UPNEXT(2), UPLAST(2)
+    INTEGER              :: DUMMY2(35)=0
 #ifdef W3_T
-    INTEGER                 :: ILOOP
+    INTEGER              :: ILOOP
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE        :: IENT = 0
 #endif
 #ifdef W3_MPI
-    INTEGER                 :: IERR_MPI, NMPSCS
-    INTEGER, ALLOCATABLE    :: STATUS(:,:)
+    INTEGER              :: IERR_MPI, NMPSCS
+    INTEGER, ALLOCATABLE :: STATUS(:,:)
 #endif
-    REAL                    :: DTTST, DTMAXI
+    REAL                 :: DTTST, DTMAXI
 #ifdef W3_MPRF
-    REAL                    :: PRFT0, PRFTN, PRFTS
-    REAL(KIND=8)            :: get_memory
+    REAL                 :: PRFT0, PRFTN, PRFTS
+    REAL(KIND=8)         :: get_memory
 #endif
-    CHARACTER(LEN=8)        :: WTIME
-    CHARACTER(LEN=23)       :: MTIME
-    LOGICAL                 :: DONE, TSTAMP, FLAGOK, DO_UPT,        &
-         FLG_O1, FLG_O2
+    CHARACTER(LEN=8)     :: WTIME
+    CHARACTER(LEN=23)    :: MTIME
+    LOGICAL              :: DONE, TSTAMP, FLAGOK, DO_UPT
+    LOGICAL              :: FLG_O1, FLG_O2
 #ifdef W3_MPI
-    LOGICAL                 :: FLAG
+    LOGICAL              :: FLAG
 #endif
-    LOGICAL, ALLOCATABLE    :: FLSYNC(:), GRSYNC(:), TMSYNC(:),     &
-         FLEQOK(:)
+    LOGICAL, ALLOCATABLE :: FLSYNC(:), GRSYNC(:), TMSYNC(:)
+    LOGICAL, ALLOCATABLE :: FLEQOK(:)
 #ifdef W3_MPI
-    LOGICAL, ALLOCATABLE    :: PREGTB(:), PREGTH(:), PREGTE(:)
+    LOGICAL, ALLOCATABLE :: PREGTB(:), PREGTH(:), PREGTE(:)
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -2029,18 +2029,18 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NR, IMOD, NMOD, ID
-    INTEGER, INTENT(INOUT)  :: DATA(NR)
+    INTEGER, INTENT(IN)    :: NR, IMOD, NMOD, ID
+    INTEGER, INTENT(INOUT) :: DATA(NR)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_MPI
-    INTEGER                 :: ITAG, IP, IERR_MPI,             &
-         STATUS(MPI_STATUS_SIZE)
+    INTEGER       :: ITAG, IP, IERR_MPI
+    INTEGER       :: STATUS(MPI_STATUS_SIZE)
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
     !/
 #ifdef W3_S
@@ -2216,20 +2216,20 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, NMOD, ID
+    INTEGER, INTENT(IN) :: IMOD, NMOD, ID
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_MPI
-    INTEGER                 :: ITAG, IP, IERR_MPI,             &
-         STATUS(MPI_STATUS_SIZE)
+    INTEGER       :: ITAG, IP, IERR_MPI
+    INTEGER       :: STATUS(MPI_STATUS_SIZE)
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 #ifdef W3_MPI
-    REAL, SAVE              :: DUMMY = 999.
+    REAL,    SAVE :: DUMMY = 999.
 #endif
     !/
 #ifdef W3_S

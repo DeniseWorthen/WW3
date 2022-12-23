@@ -510,97 +510,97 @@ CONTAINS
     !/ Local parameters :
     !/
 #ifdef W3_T
-    INTEGER                 :: ILEN
+    INTEGER              :: ILEN
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE        :: IENT = 0
 #endif
-    INTEGER                 :: IP
-    INTEGER                 :: TCALC(2), IT, IT0, NT, ITEST,        &
-         ITLOC, ITLOCH, NTLOC, ISEA, JSEA,    &
-         IX, IY, ISPEC, J, TOUT(2), TLST(2),  &
-         REFLED(6), IK, ITH, IS, NKCFL
-    INTEGER                 :: ISP, IP_glob
-    INTEGER                 :: TTEST(2),DTTEST
-    REAL                    :: ICEDAVE
+    INTEGER              :: IP
+    INTEGER              :: TCALC(2), IT, IT0, NT, ITEST
+    INTEGER              :: ITLOC, ITLOCH, NTLOC, ISEA, JSEA
+    INTEGER              :: IX, IY, ISPEC, J, TOUT(2), TLST(2)
+    INTEGER              :: REFLED(6), IK, ITH, IS, NKCFL
+    INTEGER              :: ISP, IP_glob
+    INTEGER              :: TTEST(2),DTTEST
+    REAL                 :: ICEDAVE
     !
 #ifdef W3_MPI
-    LOGICAL                 :: SBSED
+    LOGICAL              :: SBSED
 #endif
 #ifdef W3_SEC1
-    INTEGER                 :: ISEC1
+    INTEGER              :: ISEC1
 #endif
 #ifdef W3_SBS
-    INTEGER                 :: JJ, NDSOFLG
+    INTEGER              :: JJ, NDSOFLG
 #endif
 #ifdef W3_MPI
-    INTEGER                 :: IERR_MPI, NRQMAX
-    INTEGER, ALLOCATABLE    :: STATCO(:,:), STATIO(:,:)
+    INTEGER              :: IERR_MPI, NRQMAX
+    INTEGER, ALLOCATABLE :: STATCO(:,:), STATIO(:,:)
 #endif
-    INTEGER                 :: IXrel
-    REAL                    :: DTTST, DTTST1, DTTST2, DTTST3,       &
-         DTL0, DTI0, DTR0, DTI10, DTI50,      &
-         DTGA, DTG, DTGpre, DTRES,            &
-         FAC, VGX, VGY, FACK, FACTH,          &
-         FACX, XXX, REFLEC(4),                &
-         DELX, DELY, DELA, DEPTH, D50, PSIC
-    REAL                     :: VSioDummy(NSPEC), VDioDummy(NSPEC), VAoldDummy(NSPEC)
-    LOGICAL                  :: SHAVETOTioDummy
+    INTEGER              :: IXrel
+    REAL                 :: DTTST, DTTST1, DTTST2, DTTST3
+    REAL                 :: DTL0, DTI0, DTR0, DTI10, DTI50
+    REAL                 :: DTGA, DTG, DTGpre, DTRES
+    REAL                 :: FAC, VGX, VGY, FACK, FACTH
+    REAL                 :: FACX, XXX, REFLEC(4)
+    REAL                 :: DELX, DELY, DELA, DEPTH, D50, PSIC
+    REAL                 :: VSioDummy(NSPEC), VDioDummy(NSPEC), VAoldDummy(NSPEC)
+    LOGICAL              :: SHAVETOTioDummy
 #ifdef W3_SEC1
-    REAL                    :: DTGTEMP
+    REAL                 :: DTGTEMP
 #endif
     !
-    REAL, ALLOCATABLE       :: FIELD(:)
-    REAL                    :: TMP1(4), TMP2(3), TMP3(2), TMP4(2)
+    REAL,    ALLOCATABLE :: FIELD(:)
+    REAL                 :: TMP1(4), TMP2(3), TMP3(2), TMP4(2)
 #ifdef W3_IC3
-    REAL, ALLOCATABLE       :: WN_I(:)
+    REAL,    ALLOCATABLE :: WN_I(:)
 #endif
 #ifdef W3_REFRX
-    REAL, ALLOCATABLE       :: CIK(:)
+    REAL,    ALLOCATABLE :: CIK(:)
 #endif
     !
     ! Orphaned arrays from old data structure
     !
-    REAL, ALLOCATABLE       :: TAUWX(:), TAUWY(:)
+    REAL,    ALLOCATABLE :: TAUWX(:), TAUWY(:)
     !
-    LOGICAL                 :: FLACT, FLZERO, FLFRST, FLMAP, TSTAMP,&
-         SKIP_O, FLAG_O, FLDDIR, READBC,      &
-         FLAG0 = .FALSE., FLOUTG, FLPFLD,     &
-         FLPART, LOCAL, FLOUTG2
+    LOGICAL              :: FLACT, FLZERO, FLFRST, FLMAP, TSTAMP
+    LOGICAL              :: SKIP_O, FLAG_O, FLDDIR, READBC
+    LOGICAL              :: FLAG0 = .FALSE., FLOUTG, FLPFLD
+    LOGICAL              :: FLPART, LOCAL, FLOUTG2
     !
 #ifdef W3_MPI
-    LOGICAL                 :: FLGMPI(0:8)
+    LOGICAL              :: FLGMPI(0:8)
 #endif
 #ifdef W3_IC3
-    REAL                    :: FIXEDVISC,FIXEDDENS,FIXEDELAS
-    REAL                    :: USE_CHENG, USE_CGICE, HICE
+    REAL                 :: FIXEDVISC,FIXEDDENS,FIXEDELAS
+    REAL                 :: USE_CHENG, USE_CGICE, HICE
 #endif
-    LOGICAL                 :: UGDTUPDATE    ! true if time step should be updated for UG schemes
-    CHARACTER(LEN=8)        :: STTIME
-    CHARACTER(LEN=21)       :: IDACT
-    CHARACTER(LEN=16)       :: OUTID
-    CHARACTER(LEN=23)       :: IDTIME
+    LOGICAL              :: UGDTUPDATE    ! true if time step should be updated for UG schemes
+    CHARACTER(LEN=8)     :: STTIME
+    CHARACTER(LEN=21)    :: IDACT
+    CHARACTER(LEN=16)    :: OUTID
+    CHARACTER(LEN=23)    :: IDTIME
     INTEGER eIOBP
     INTEGER ITH_F
 #ifdef W3_PDLIB
-    REAL ::             VS_SPEC(NSPEC)
-    REAL ::             VD_SPEC(NSPEC)
+    REAL                 :: VS_SPEC(NSPEC)
+    REAL                 :: VD_SPEC(NSPEC)
 #endif
     !
 #ifdef W3_SBS
-    CHARACTER(LEN=30)       :: FOUTNAME
+    CHARACTER(LEN=30)    :: FOUTNAME
 #endif
     !
 #ifdef W3_T
-    REAL             :: INDSORT(NSEA), DTCFL1(NSEA)
+    REAL                 :: INDSORT(NSEA), DTCFL1(NSEA)
 #endif
     !/
 #ifdef W3_SMC
     !Li   Temperature spectra for Arctic boundary update.
-    REAL, ALLOCATABLE       :: BACSPEC(:)
-    REAL                    :: BACANGL
+    REAL,    ALLOCATABLE :: BACSPEC(:)
+    REAL                 :: BACANGL
 #endif
-    integer :: memunit
+    integer              :: memunit
     !/ ------------------------------------------------------------------- /
     ! 0.  Initializations
     !
@@ -3054,25 +3054,25 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: ISPEC
-    REAL, INTENT(OUT)       :: FIELD(1-NY:NY*(NX+2))
+    INTEGER, INTENT(IN)  :: ISPEC
+    REAL,    INTENT(OUT) :: FIELD(1-NY:NY*(NX+2))
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_SHRD
-    INTEGER                 :: ISEA, IXY
+    INTEGER           :: ISEA, IXY
 #endif
 #ifdef W3_MPI
-    INTEGER                 :: STATUS(MPI_STATUS_SIZE,NSPEC),  &
-         IOFF, IERR_MPI, JSEA, ISEA,     &
-         IXY, IS0, IB0, NPST, J
+    INTEGER           :: STATUS(MPI_STATUS_SIZE,NSPEC)
+    INTEGER           :: IOFF, IERR_MPI, JSEA, ISEA
+    INTEGER           :: IXY, IS0, IB0, NPST, J
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT
+    INTEGER, SAVE     :: IENT
 #endif
 #ifdef W3_MPIT
-    CHARACTER(LEN=15)       :: STR(MPIBUF), STRT
+    CHARACTER(LEN=15) :: STR(MPIBUF), STRT
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -3370,28 +3370,28 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: ISPEC, MAPSTA(NY*NX)
-    REAL, INTENT(IN)        :: FIELD(1-NY:NY*(NX+2))
+    INTEGER, INTENT(IN) :: ISPEC, MAPSTA(NY*NX)
+    REAL,    INTENT(IN) :: FIELD(1-NY:NY*(NX+2))
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_SHRD
-    INTEGER                 :: ISEA, IXY
+    INTEGER           :: ISEA, IXY
 #endif
 #ifdef W3_MPI
-    INTEGER                 :: ISEA, IXY, IOFF, IERR_MPI, J,   &
-         STATUS(MPI_STATUS_SIZE,NSPEC),  &
-         JSEA, IB0
+    INTEGER           :: ISEA, IXY, IOFF, IERR_MPI, J
+    INTEGER           :: STATUS(MPI_STATUS_SIZE,NSPEC)
+    INTEGER           :: JSEA, IB0
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT
+    INTEGER, SAVE     :: IENT
 #endif
 #ifdef W3_MPIT
-    CHARACTER(LEN=15)       :: STR(MPIBUF), STRT
+    CHARACTER(LEN=15) :: STR(MPIBUF), STRT
 #endif
 #ifdef W3_MPI
-    LOGICAL                 :: DONE
+    LOGICAL           :: DONE
 #endif
     !/
     !/ ------------------------------------------------------------------- /

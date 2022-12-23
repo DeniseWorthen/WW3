@@ -101,9 +101,9 @@ MODULE W3SRC4MD
   REAL,    PARAMETER      :: TAUWMAX = 2.2361 !SQRT(5.)
   INTEGER                 :: DIKCUMUL
   !  Size of wave height table for integrating the PDF of wave heights
-  INTEGER,    PARAMETER      :: NKHI=100, FAC_KD2=1000
+  INTEGER, PARAMETER      :: NKHI=100, FAC_KD2=1000
   REAL,    PARAMETER      :: FAC_KD1=1.01, KHSMAX=2., KHMAX=2.
-  REAL,    PARAMETER      ::KDMAX=200000.
+  REAL,    PARAMETER      :: KDMAX=200000.
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
@@ -261,13 +261,13 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IS, IK, ITH
+    INTEGER       :: IS, IK, ITH
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
-    REAL                    :: TAUW, EBAND, EMEANWS,UNZ,            &
-         EB(NK),EB2(NK),ELCS, ELSN
+    REAL          :: TAUW, EBAND, EMEANWS,UNZ
+    REAL          :: EB(NK),EB2(NK),ELCS, ELSN
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -543,33 +543,33 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IS,IK,ITH
+    INTEGER          :: IS,IK,ITH
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE    :: IENT = 0
 #endif
-    REAL                    :: FACLN1, FACLN2, LAMBDA
-    REAL                    :: COSU, SINU, TAUX, TAUY, USDIRP, USTP
-    REAL                    :: TAUPX, TAUPY, UST2, TAUW, TAUWB
-    REAL   , PARAMETER      :: EPS1 = 0.00001, EPS2 = 0.000001
-    REAL                    :: Usigma           !standard deviation of U due to gustiness
-    REAL                    :: USTARsigma       !standard deviation of USTAR due to gustiness
-    REAL                    :: CM,UCN,ZCN, &
-         Z0VISC, Z0NOZ, EB,  &
-         EBX, EBY, AORB, AORB1, FW, UORB, TH2, &
-         RE, FU, FUD, SWELLCOEFV, SWELLCOEFT
-    REAL                   ::  PTURB, PVISC, SMOOTH
-    REAL XI,DELI1,DELI2
-    REAL XJ,DELJ1,DELJ2
-    REAL XK,DELK1,DELK2
-    REAL                    :: CONST, CONST0, CONST2, TAU1
-    REAL X,ZARG,ZLOG,UST
-    REAL                    :: COSWIND, XSTRESS, YSTRESS, TAUHF
-    REAL TEMP, TEMP2
-    INTEGER IND,J,I,ISTAB
-    REAL DSTAB(3,NSPEC), DVISC, DTURB
-    REAL STRESSSTAB(3,2),STRESSSTABN(3,2)
+    REAL             :: FACLN1, FACLN2, LAMBDA
+    REAL             :: COSU, SINU, TAUX, TAUY, USDIRP, USTP
+    REAL             :: TAUPX, TAUPY, UST2, TAUW, TAUWB
+    REAL , PARAMETER :: EPS1 = 0.00001, EPS2 = 0.000001
+    REAL             :: Usigma           !standard deviation of U due to gustiness
+    REAL             :: USTARsigma       !standard deviation of USTAR due to gustiness
+    REAL             :: CM,UCN,ZCN
+    REAL             :: Z0VISC, Z0NOZ, EB
+    REAL             :: EBX, EBY, AORB, AORB1, FW, UORB, TH2
+    REAL             :: RE, FU, FUD, SWELLCOEFV, SWELLCOEFT
+    REAL             :: PTURB, PVISC, SMOOTH
+    REAL             :: XI,DELI1,DELI2
+    REAL             :: XJ,DELJ1,DELJ2
+    REAL             :: XK,DELK1,DELK2
+    REAL             :: CONST, CONST0, CONST2, TAU1
+    REAL             :: X,ZARG,ZLOG,UST
+    REAL             :: COSWIND, XSTRESS, YSTRESS, TAUHF
+    REAL             :: TEMP, TEMP2
+    INTEGER          :: IND,J,I,ISTAB
+    REAL             :: DSTAB(3,NSPEC), DVISC, DTURB
+    REAL             :: STRESSSTAB(3,2),STRESSSTABN(3,2)
 #ifdef W3_T0
-    REAL                    :: DOUT(NK,NTH)
+    REAL             :: DOUT(NK,NTH)
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -960,14 +960,14 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    INTEGER  SDSNTH, ITH, I_INT, J_INT, IK, IK2, ITH2 , IS, IS2
-    INTEGER  IKL, ID, ICON, IKD, IKHS, IKH, TOTO
-    REAL     C, C2
-    REAL     DIFF1, DIFF2, BINF, BSUP, CGG, PROF
-    REAL     KIK, DHS, KD, KHS, KH, XT, GAM, DKH, PR, W, EPS
-    REAL     DKD
-    REAL, DIMENSION(:,:)   , ALLOCATABLE :: SIGTAB
-    REAL, DIMENSION(:,:)   , ALLOCATABLE :: K1, K2
+    INTEGER                            :: SDSNTH, ITH, I_INT, J_INT, IK, IK2, ITH2 , IS, IS2
+    INTEGER                            :: IKL, ID, ICON, IKD, IKHS, IKH, TOTO
+    REAL                               :: C, C2
+    REAL                               :: DIFF1, DIFF2, BINF, BSUP, CGG, PROF
+    REAL                               :: KIK, DHS, KD, KHS, KH, XT, GAM, DKH, PR, W, EPS
+    REAL                               :: DKD
+    REAL, DIMENSION(:,:) , ALLOCATABLE :: SIGTAB
+    REAL, DIMENSION(:,:) , ALLOCATABLE :: K1, K2
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1233,9 +1233,9 @@ CONTAINS
     !      *EPS1*      REAL      SMALL NUMBER TO MAKE SURE THAT A SOLUTION
     !                            IS OBTAINED IN ITERATION WITH TAU>TAUW.
     ! ----------------------------------------------------------------------
-    INTEGER I,J,ITER
-    REAL ZTAUW,UTOP,CDRAG,WCD,USTOLD,TAUOLD
-    REAL X,UST,ZZ0,ZNU,F,DELF,ZZ00
+    INTEGER :: I,J,ITER           !
+    REAL    :: ZTAUW,UTOP,CDRAG,WCD,USTOLD,TAUOLD
+    REAL    :: X,UST,ZZ0,ZNU,F,DELF,ZZ00
     !
     !
     DELU    = UMAX/FLOAT(JUMAX)
@@ -1376,17 +1376,17 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE      :: IENT = 0
 #endif
-    REAL                    :: USTARM, ALPHAM
-    REAL                    :: CONST1, OMEGA, OMEGAC
-    REAL                    :: UST, ZZ0,OMEGACC, CM
-    INTEGER, PARAMETER      :: JTOT=250
-    REAL, ALLOCATABLE       :: W(:)
-    REAL                    :: ZX,ZARG,ZMU,ZLOG,ZZ00,ZBETA
-    REAL                    :: Y,YC,DELY
-    INTEGER                 :: J,K,L
-    REAL                    :: X0
+    REAL               :: USTARM, ALPHAM
+    REAL               :: CONST1, OMEGA, OMEGAC
+    REAL               :: UST, ZZ0,OMEGACC, CM
+    INTEGER, PARAMETER :: JTOT=250
+    REAL, ALLOCATABLE  :: W(:)
+    REAL               :: ZX,ZARG,ZMU,ZLOG,ZZ00,ZBETA
+    REAL               :: Y,YC,DELY
+    INTEGER            :: J,K,L
+    REAL               :: X0
     !
 #ifdef W3_S
     CALL STRACE (IENT, 'TABU_HF')
@@ -1548,25 +1548,25 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE                :: IENT = 0
 #endif
-    REAL                    :: USTARM, ALPHAM, LEVTAILM
-    REAL                    :: CONST1, OMEGA, OMEGAC, LEVTAIL
-    REAL                    :: UST, UST0, ZZ0,OMEGACC, CM
-    REAL                    :: TAUW, TAUW0
-    INTEGER, PARAMETER      :: JTOT=250
-    REAL, ALLOCATABLE       :: W(:)
-    REAL                    :: ZX,ZARG,ZMU,ZLOG,ZBETA
-    REAL                    :: Y,YC,DELY
-    INTEGER                 :: I, J, K, L
-    REAL                    :: X0, INSIGMAX, INAALPHA, INBBETA, INZZALP, INKAPPA, INGRAV
-    INTEGER                 :: INIUSTAR, INIALPHA, INILEVTAIL, IERR
-    CHARACTER(160)          :: FNAMETAB
-    LOGICAL                 :: NOFILE
+    REAL                         :: USTARM, ALPHAM, LEVTAILM
+    REAL                         :: CONST1, OMEGA, OMEGAC, LEVTAIL
+    REAL                         :: UST, UST0, ZZ0,OMEGACC, CM
+    REAL                         :: TAUW, TAUW0
+    INTEGER,           PARAMETER :: JTOT=250
+    REAL, ALLOCATABLE            :: W(:)
+    REAL                         :: ZX,ZARG,ZMU,ZLOG,ZBETA
+    REAL                         :: Y,YC,DELY
+    INTEGER                      :: I, J, K, L
+    REAL                         :: X0, INSIGMAX, INAALPHA, INBBETA, INZZALP, INKAPPA, INGRAV
+    INTEGER                      :: INIUSTAR, INIALPHA, INILEVTAIL, IERR
+    CHARACTER(160)               :: FNAMETAB
+    LOGICAL                      :: NOFILE
     CHARACTER(LEN=10), PARAMETER :: VERGRD = '2018-06-08'
     CHARACTER(LEN=35), PARAMETER :: IDSTR = 'WAVEWATCH III ST4 TABLE FOR STRESS '
-    CHARACTER(LEN=10)       :: VERTST=' '
-    CHARACTER(LEN=35)       :: IDTST=' '
+    CHARACTER(LEN=10)            :: VERTST=' '
+    CHARACTER(LEN=35)            :: IDTST=' '
     !
 #ifdef W3_S
     CALL STRACE (IENT, 'TABU_HF')
@@ -1768,13 +1768,13 @@ CONTAINS
     USE W3ODATMD  , ONLY : NDST
 #endif
     IMPLICIT NONE
-    REAL, intent(in) :: WINDSPEED,TAUW
+    REAL, intent(in)  :: WINDSPEED,TAUW
     REAL, intent(out) :: USTAR, Z0, CHARN
     ! local variables
-    REAL SQRTCDM1
-    REAL XI,DELI1,DELI2,XJ,delj1,delj2
-    REAL TAUW_LOCAL
-    INTEGER IND,J
+    REAL    :: SQRTCDM1
+    REAL    :: XI,DELI1,DELI2,XJ,delj1,delj2
+    REAL    :: TAUW_LOCAL
+    INTEGER :: IND,J
     !
     TAUW_LOCAL=MAX(MIN(TAUW,TAUWMAX),0.)
     XI      = SQRT(TAUW_LOCAL)/DELTAUW
@@ -1953,43 +1953,43 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IS, IS2, IS0, IKL, IKC, ID, NKL
+    INTEGER       :: IS, IS2, IS0, IKL, IKC, ID, NKL
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    INTEGER                 :: IK, IK1, ITH, IK2, JTH, ITH2,             &
-         IKHS, IKD, SDSNTH, IT, IKM, NKM
-    INTEGER                 :: NSMOOTH(NK)
-    REAL                    :: C, COSWIND, ASUM, SDIAGISO
-    REAL                    :: COEF1, COEF2, COEF4(NK),      &
-         COEF5(NK)
+    INTEGER       :: IK, IK1, ITH, IK2, JTH, ITH2
+    INTEGER       :: IKHS, IKD, SDSNTH, IT, IKM, NKM
+    INTEGER       :: NSMOOTH(NK)
+    REAL          :: C, COSWIND, ASUM, SDIAGISO
+    REAL          :: COEF1, COEF2, COEF4(NK)
+    REAL          :: COEF5(NK)
 
-    REAL                    :: FACTURB, FACTURB2, DTURB, DVISC, DIAG2, BREAKFRACTION
-    REAL                    :: RENEWALFREQ, EPSR
-    REAL                    :: S1(NK), E1(NK)
-    INTEGER                 :: NTIMES(NK)
-    REAL                    :: GAM, XT
-    REAL                    :: DK(NK), HS(NK), KBAR(NK), DCK(NK)
-    REAL                    :: EFDF(NK)     ! Energy integrated over a spectral band
-    INTEGER                 :: IKSUP(NK)
-    REAL                    :: FACSAT, DKHS, FACSTRAINB, FACSTRAINL
-    REAL                    :: BTH0(NK)     !saturation spectrum
-    REAL                    :: BTH(NSPEC)   !saturation spectrum
-    REAL                    :: BTH0S(NK)    !smoothed saturation spectrum
-    REAL                    :: BTHS(NSPEC)  !smoothed saturation spectrum
-    INTEGER                 :: IMSSMAX(NK), NTHSUM
-    REAL                    :: MSSSUM(NK,5), WTHSUM(NTH), FACHF
-    REAL                    :: MSSSUM2(NK,NTH)
-    REAL                    :: MSSLONG(NK,NTH)
-    REAL                    :: MSSPCS, MSSPC2, MSSPS2, MSSP, MSSD, MSSTH
-    REAL                    :: MICHE, X, KLOC
+    REAL          :: FACTURB, FACTURB2, DTURB, DVISC, DIAG2, BREAKFRACTION
+    REAL          :: RENEWALFREQ, EPSR
+    REAL          :: S1(NK), E1(NK)
+    INTEGER       :: NTIMES(NK)
+    REAL          :: GAM, XT
+    REAL          :: DK(NK), HS(NK), KBAR(NK), DCK(NK)
+    REAL          :: EFDF(NK)     ! Energy integrated over a spectral band
+    INTEGER       :: IKSUP(NK)
+    REAL          :: FACSAT, DKHS, FACSTRAINB, FACSTRAINL
+    REAL          :: BTH0(NK)     !saturation spectrum
+    REAL          :: BTH(NSPEC)   !saturation spectrum
+    REAL          :: BTH0S(NK)    !smoothed saturation spectrum
+    REAL          :: BTHS(NSPEC)  !smoothed saturation spectrum
+    INTEGER       :: IMSSMAX(NK), NTHSUM
+    REAL          :: MSSSUM(NK,5), WTHSUM(NTH), FACHF
+    REAL          :: MSSSUM2(NK,NTH)
+    REAL          :: MSSLONG(NK,NTH)
+    REAL          :: MSSPCS, MSSPC2, MSSPS2, MSSP, MSSD, MSSTH
+    REAL          :: MICHE, X, KLOC
 #ifdef W3_T0
-    REAL                    :: DOUT(NK,NTH)
+    REAL          :: DOUT(NK,NTH)
 #endif
-    REAL                    :: QB(NK), S2(NK)
-    REAL                    :: TSTR, TMAX, DT, T, MFT
-    REAL                    :: PB(NSPEC), PB2(NSPEC), BRM12(NK), BTOVER
-    REAL                    :: KO, LMODULATION(NTH)
+    REAL          :: QB(NK), S2(NK)
+    REAL          :: TSTR, TMAX, DT, T, MFT
+    REAL          :: PB(NSPEC), PB2(NSPEC), BRM12(NK), BTOVER
+    REAL          :: KO, LMODULATION(NTH)
     !/
     !/ ------------------------------------------------------------------- /
     !/

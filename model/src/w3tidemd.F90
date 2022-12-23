@@ -89,51 +89,51 @@ MODULE W3TIDEMD
   !
   !  Array sizes
   !
-  INTEGER, PARAMETER          :: MC=70,NR=106000,NMAXP1=MC*2,NMAXPM=NR*2+NMAXP1
-  INTEGER, PARAMETER          :: MC2=MC*2
-  CHARACTER*5, PARAMETER       :: KBLANK='     '
+  INTEGER,     PARAMETER                 :: MC=70,NR=106000,NMAXP1=MC*2,NMAXPM=NR*2+NMAXP1
+  INTEGER,     PARAMETER                 :: MC2=MC*2
+  CHARACTER*5, PARAMETER                 :: KBLANK='     '
   !
-  INTEGER                     :: NTIDAL_CON, NTOTAL_CON, NKONCO
-  CHARACTER*5,    ALLOCATABLE :: TIDECON_ALLNAMES(:)       ! array of names of tidal constituents
-  CHARACTER*5,    ALLOCATABLE   :: KONCO_CON(:)
-  INTEGER, ALLOCATABLE, PRIVATE :: II(:),JJ(:),KK(:),LL(:),MM(:),NN(:),NJ(:)
-  REAL, ALLOCATABLE             :: SEMI(:),COEF_CON(:)
-  REAL , ALLOCATABLE            :: V_ARG(:,:),F_ARG(:,:),U_ARG(:,:)
-  REAL                          :: EE(180),PH(180)
-  INTEGER                       :: LDEL(180),MDEL(180),NDEL(180),IR(180)
+  INTEGER                                :: NTIDAL_CON, NTOTAL_CON, NKONCO
+  CHARACTER*5,      ALLOCATABLE          :: TIDECON_ALLNAMES(:)              ! array of names of tidal constituents
+  CHARACTER*5,      ALLOCATABLE          :: KONCO_CON(:)
+  INTEGER,          ALLOCATABLE, PRIVATE :: II(:),JJ(:),KK(:),LL(:),MM(:),NN(:),NJ(:)
+  REAL,             ALLOCATABLE          :: SEMI(:),COEF_CON(:)
+  REAL ,            ALLOCATABLE          :: V_ARG(:,:),F_ARG(:,:),U_ARG(:,:)
+  REAL                                   :: EE(180),PH(180)
+  INTEGER                                :: LDEL(180),MDEL(180),NDEL(180),IR(180)
   ! these two index table are used in VUF ...
-  INTEGER , ALLOCATABLE         :: TIDE_INDEXJ(:),TIDE_INDEXJK(:)
+  INTEGER ,         ALLOCATABLE          :: TIDE_INDEXJ(:),TIDE_INDEXJK(:)
   !
-  ! Parameters for tidal analysis
+  !            Parameters for tidal analysis
   !
-  INTEGER                      :: TIDE_MF, TIDE_NX, TIDE_NY
-  REAL, ALLOCATABLE            :: TIDE_FREQC(:)                 ! array of freq. of tidal constituents
-  CHARACTER(LEN=5), ALLOCATABLE:: TIDECON_NAMEI(:)              ! array of names of tidal constituents
-  CHARACTER(LEN=5), ALLOCATABLE:: TIDECON_NAME(:)               ! array of names of tidal constituents
-  CHARACTER(LEN=5)             :: TIDE_KONAN(10), TIDE_KONIN(10,10)
-  REAL                         :: TIDE_R(10,10), TIDE_ZETA(10,10)
-  REAL                         :: TIDE_SIGAN(10),TIDE_SIGIN(10,10)   ! these two are only read from files and written out
-  INTEGER                      :: TIDE_NIN,TIDE_NINF(10)
-  REAL, ALLOCATABLE            :: TIDAL_CONST(:,:,:,:,:)                 ! array of freq. of tidal constituents
+  INTEGER                                :: TIDE_MF, TIDE_NX, TIDE_NY
+  REAL,             ALLOCATABLE          :: TIDE_FREQC(:)                    ! array of freq. of tidal constituents
+  CHARACTER(LEN=5), ALLOCATABLE          :: TIDECON_NAMEI(:)                 ! array of names of tidal constituents
+  CHARACTER(LEN=5), ALLOCATABLE          :: TIDECON_NAME(:)                  ! array of names of tidal constituents
+  CHARACTER(LEN=5)                       :: TIDE_KONAN(10), TIDE_KONIN(10,10)
+  REAL                                   :: TIDE_R(10,10), TIDE_ZETA(10,10)
+  REAL                                   :: TIDE_SIGAN(10),TIDE_SIGIN(10,10) ! these two are only read from files and written out
+  INTEGER                                :: TIDE_NIN,TIDE_NINF(10)
+  REAL,             ALLOCATABLE          :: TIDAL_CONST(:,:,:,:,:)           ! array of freq. of tidal constituents
   !
   ! Data to be analyzed
   !
-  INTEGER(KIND=4)              :: TIDE_NTI
-  REAL, ALLOCATABLE            :: TIDE_DATA(:,:)
-  INTEGER(KIND=4), ALLOCATABLE :: TIDE_DAYS(:), TIDE_SECS(:)
-  REAL(KIND=8),    ALLOCATABLE :: TIDE_HOURS(:)
-  REAL,            PARAMETER   :: TIDE_DT = 1800.   ! time step used for forcing
+  INTEGER(KIND=4)                        :: TIDE_NTI
+  REAL,             ALLOCATABLE          :: TIDE_DATA(:,:)
+  INTEGER(KIND=4),  ALLOCATABLE          :: TIDE_DAYS(:), TIDE_SECS(:)
+  REAL(KIND=8),     ALLOCATABLE          :: TIDE_HOURS(:)
+  REAL,        PARAMETER                 :: TIDE_DT = 1800.                  ! time step used for forcing
   !
   ! Analysis result
   !
-  REAL                         :: TIDE_AMPC(MC,2), TIDE_PHG(MC,2),   &
-       TIDE_SIG1(MC,2), TIDE_SIG2(MC,2),  &
-       TIDE_SIG3(MC,2), TIDE_TTEST(MC,2)
-  REAL                         :: TIDE_ampci(10,10,2), TIDE_phgi(10,10,2)
-  INTEGER                      :: TIDE_INDEX(MC),TIDE_INDEX2(MC)
+  REAL                                   :: TIDE_AMPC(MC,2), TIDE_PHG(MC,2)
+  REAL                                   :: TIDE_SIG1(MC,2), TIDE_SIG2(MC,2)
+  REAL                                   :: TIDE_SIG3(MC,2), TIDE_TTEST(MC,2)
+  REAL                                   :: TIDE_ampci(10,10,2), TIDE_phgi(10,10,2)
+  INTEGER                                :: TIDE_INDEX(MC),TIDE_INDEX2(MC)
 
 
-  INTEGER                      :: NDSET, TIDE_VERBOSE = 0
+  INTEGER                                :: NDSET, TIDE_VERBOSE = 0
 
   !PUBLIC  :: TIDE_MF, TIDECON_NAME
 
@@ -400,12 +400,12 @@ CONTAINS
     !/
     CHARACTER(LEN=100), INTENT(IN) :: LIST(70)
     !
-    INTEGER TIDE_MF_ALL
-    CHARACTER(LEN=5)             :: TIDECON_NAME_ALL(65)      ! array of names of tidal constituents
-    REAL                         :: TIDE_FREQC_ALL(65)        ! array of freq. of tidal constituents
-    INTEGER                      :: INDS(65), J, FOUND, NTIDES
+    INTEGER          :: TIDE_MF_ALL
+    CHARACTER(LEN=5) :: TIDECON_NAME_ALL(65)      ! array of names of tidal constituents
+    REAL             :: TIDE_FREQC_ALL(65)        ! array of freq. of tidal constituents
+    INTEGER          :: INDS(65), J, FOUND, NTIDES
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT   =   0
+    INTEGER, SAVE    :: IENT   =   0
 #endif
     !
 #ifdef W3_S
@@ -539,12 +539,12 @@ CONTAINS
     !
     !   Local variables
     !
-    INTEGER                   :: K, L, L2, JBASE, J1, J, JL, K1
-    REAL(KIND=4), PARAMETER   :: PI=3.1415926536
-    REAL(KIND=4), PARAMETER   :: TWOPI=2.*3.1415926536
+    INTEGER                 :: K, L, L2, JBASE, J1, J, JL, K1
+    REAL(KIND=4), PARAMETER :: PI=3.1415926536
+    REAL(KIND=4), PARAMETER :: TWOPI=2.*3.1415926536
 
-    REAL                      :: SLAT, VDBL, RR, SUMC, SUMS, UUDBL, UU, CXLAT
-    INTEGER                   :: IUU, IV
+    REAL                    :: SLAT, VDBL, RR, SUMC, SUMS, UUDBL, UU, CXLAT
+    INTEGER                 :: IUU, IV
     ! This comment was taken from t_tide, a matlab tidal prediction suite
     !
     ! Apparently the second-order terms in the tidal potential go to zero
@@ -724,10 +724,10 @@ CONTAINS
     REAL ,            INTENT(OUT) :: XLON, XLAT
     CHARACTER*4 ,     INTENT(OUT) :: ITZ
     !
-    INTEGER                   :: I, IY
-    INTEGER       ID1,IM1,IY1,ID2,IM2,IY2,IC1,IC2
-    INTEGER       JSTN, LATD,LATM,LOND,LONM, K, K2
-    CHARACTER*4   NSTN(5)
+    INTEGER     :: I, IY
+    INTEGER     :: ID1,IM1,IY1,ID2,IM2,IY2,IC1,IC2
+    INTEGER     :: JSTN, LATD,LATM,LOND,LONM, K, K2
+    CHARACTER*4 :: NSTN(5)
 
     open(unit=kr1,file=filename,status='old',form='formatted')
 
@@ -929,7 +929,7 @@ CONTAINS
     !
     !   Local variables
     !
-    REAL(KIND=8)              :: d2,f,f2
+    REAL(KIND=8) :: d2,f,f2
 
     d2=d1*1.d-4
     f=360.d0
@@ -1715,7 +1715,7 @@ CONTAINS
     REAL(KIND=8) , INTENT(OUT) :: Vx,ux,FX
     INTEGER ,      INTENT(IN)  :: ITIME
 
-    INTEGER          :: K
+    INTEGER :: K
 
     DO  K=1,NTOTAL_CON
       IF (TIDECON_ALLNAMES(K).eq.KONX) go to 40
@@ -1900,18 +1900,18 @@ CONTAINS
     !
     !   Local variables
     !
-    INTEGER                   :: KD0, INT24, INTDYS, &
-         JBASE, J, K, L, J1, K1, JL, LK, iflag
-    INTEGER                   :: IV, IUU
+    INTEGER                 :: KD0, INT24, INTDYS
+    INTEGER                 :: JBASE, J, K, L, J1, K1, JL, LK, iflag
+    INTEGER                 :: IV, IUU
     !
-    REAL(KIND=4), PARAMETER   :: PI=3.1415926536
-    REAL(KIND=4), PARAMETER   :: TWOPI=2.*3.1415926536
+    REAL(KIND=4), PARAMETER :: PI=3.1415926536
+    REAL(KIND=4), PARAMETER :: TWOPI=2.*3.1415926536
     !
-    REAL                      :: SLAT, VDBL, VV, SUMC, SUMS, RR, &
-         UUDBL, UU, CXLAT
-    REAL(KIND=8)              :: d1,h,pp,s,p,enp,dh,dpp,ds,dp,dnp,hh,tau
+    REAL                    :: SLAT, VDBL, VV, SUMC, SUMS, RR
+    REAL                    :: UUDBL, UU, CXLAT
+    REAL(KIND=8)            :: d1,h,pp,s,p,enp,dh,dpp,ds,dp,dnp,hh,tau
 
-    INTEGER                   :: indx(170)
+    INTEGER                 :: indx(170)
 
     CXLAT = MAX(ABS(XLAT), 5.)
     SLAT=SIN(PI*CXLAT/180.)
@@ -2127,22 +2127,22 @@ CONTAINS
     REAL ,            INTENT(OUT) :: SSQ(NDEF), RES(NDEF)
     INTEGER ,         INTENT(OUT) :: IMAX(NDEF)
     !
-    INTEGER                     :: I, I1, I2, I21, II1, IDEF, ICODE,  INFLAG,  &
-         J, INFTOT, IREP, J2, JCODE, JJ1, K, K2, KH1,     &
-         KH2, KHM, KINF, L, M, MEQ, N, NCOL, NEW, NMAX
-    REAL(KIND=8)                :: AAMP, ARG, ARG1, ARG2, ARG3, C, C2, C3,     &
-         FX, FXI,  S, S2, S3, UX, VX, UXI, VXI,  &
-         WMIN, WMAX, XMID
-    REAL                        :: TOLER
-    REAL(KIND=8)                :: AV, SDEV, SUM2, hrm
-    DOUBLE PRECISION            :: X(NR),Y(NR), TIME(NR)
-    REAL                        :: Q(NMAXPM,NMAXP1),FREQ(MC),AMP(MC),PH(MC)
-    DOUBLE PRECISION            :: P(NMAXP1),CENHR,CUMHR
-    DOUBLE PRECISION            :: yy
+    INTEGER          :: I, I1, I2, I21, II1, IDEF, ICODE,  INFLAG
+    INTEGER          :: J, INFTOT, IREP, J2, JCODE, JJ1, K, K2, KH1
+    INTEGER          :: KH2, KHM, KINF, L, M, MEQ, N, NCOL, NEW, NMAX
+    REAL(KIND=8)     :: AAMP, ARG, ARG1, ARG2, ARG3, C, C2, C3
+    REAL(KIND=8)     :: FX, FXI,  S, S2, S3, UX, VX, UXI, VXI
+    REAL(KIND=8)     :: WMIN, WMAX, XMID
+    REAL             :: TOLER
+    REAL(KIND=8)     :: AV, SDEV, SUM2, hrm
+    DOUBLE PRECISION :: X(NR),Y(NR), TIME(NR)
+    REAL             :: Q(NMAXPM,NMAXP1),FREQ(MC),AMP(MC),PH(MC)
+    DOUBLE PRECISION :: P(NMAXP1),CENHR,CUMHR
+    DOUBLE PRECISION :: yy
     !
     !     Additional arrays, for use in the SVD routine (J.Ch., Aug. 1997)
-    DOUBLE PRECISION     :: U(NMAXPM,NMAXP1),V(NMAXP1,NMAXP1),      &
-         COV(NMAXP1,NMAXP1),B(NMAXPM),W(NMAXP1),SIG(NMAXPM)
+    DOUBLE PRECISION :: U(NMAXPM,NMAXP1),V(NMAXP1,NMAXP1)
+    DOUBLE PRECISION :: COV(NMAXP1,NMAXP1),B(NMAXPM),W(NMAXP1),SIG(NMAXPM)
     !
     !***********************************************************************
     !
@@ -2519,10 +2519,10 @@ CONTAINS
     REAL(KIND=8) , INTENT(OUT) :: SDEV(NDEF),RMSR(NDEF)
     REAL ,         INTENT(OUT) :: PREDICTED(N,NDEF), RESID(N,NDEF)
     !
-    INTEGER                        :: IDEF, I, K, K2
-    INTEGER                        :: J, M
-    REAL                           :: ARG, ADD, SUM1, SSQ
-    REAL(KIND=8)                   :: VX, UX, FX
+    INTEGER      :: IDEF, I, K, K2
+    INTEGER      :: J, M
+    REAL         :: ARG, ADD, SUM1, SSQ
+    REAL(KIND=8) :: VX, UX, FX
 
     M = 2*TIDE_MF
 
@@ -2576,10 +2576,10 @@ CONTAINS
     REAL ,         INTENT(IN)  :: XLAT
     REAL ,         INTENT(OUT) :: PREDICTED(N,NDEF)
     !
-    INTEGER                        :: IDEF, I, K, K2
-    INTEGER                        :: J
-    REAL                           :: ARG, ADD, SUM1
-    REAL(KIND=8)                   :: VX, UX, FX
+    INTEGER      :: IDEF, I, K, K2
+    INTEGER      :: J
+    REAL         :: ARG, ADD, SUM1
+    REAL(KIND=8) :: VX, UX, FX
 
     DO IDEF=1,NDEF
       DO I=1,N

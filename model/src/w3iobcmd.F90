@@ -74,8 +74,7 @@ MODULE W3IOBCMD
   !/ Public variables  (ID strings)
   !/
   CHARACTER(LEN=10), PARAMETER :: VERBPTBC = '2018-03-01'
-  CHARACTER(LEN=32), PARAMETER ::                        &
-       IDSTRBC  = 'WAVEWATCH III BOUNDARY DATA FILE'
+  CHARACTER(LEN=32), PARAMETER :: IDSTRBC  = 'WAVEWATCH III BOUNDARY DATA FILE'
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
@@ -261,29 +260,29 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IFILE, IERR, I, J, IX, IY, ISEA,     &
-         IP, ISP, NPTS, ISOUT, IS, IGRD
+    INTEGER           :: IFILE, IERR, I, J, IX, IY, ISEA
+    INTEGER           :: IP, ISP, NPTS, ISOUT, IS, IGRD
 #ifdef W3_T1
-    INTEGER               :: IK, ITH
+    INTEGER           :: IK, ITH
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE     :: IENT = 0
 #endif
 #ifdef W3_T1
-    REAL                  :: HS, HS0
+    REAL              :: HS, HS0
 #endif
 #ifdef W3_RTD
     !!    Declare rotation angle and rotated lat/lon variables for
     !!    boundary points.   JGLi12Jun2012
-    REAL, ALLOCATABLE      :: Anglbdy(:), ELatbdy(:), ELonbdy(:)
-    REAL                   :: Spectr(NK*NTH)
-    REAL                   :: XRLIM, YRLIM
+    REAL, ALLOCATABLE :: Anglbdy(:), ELatbdy(:), ELonbdy(:)
+    REAL              :: Spectr(NK*NTH)
+    REAL              :: XRLIM, YRLIM
 #endif
-    REAL, ALLOCATABLE       :: TMPSPC(:,:)
-    LOGICAL                 :: FLOK
-    CHARACTER(LEN=18)       :: FILEN
-    CHARACTER(LEN=10)       :: VERTST
-    CHARACTER(LEN=32)       :: IDTST
+    REAL, ALLOCATABLE :: TMPSPC(:,:)
+    LOGICAL           :: FLOK
+    CHARACTER(LEN=18) :: FILEN
+    CHARACTER(LEN=10) :: VERTST
+    CHARACTER(LEN=32) :: IDTST
     !/
     !/ ------------------------------------------------------------------- /
     !/

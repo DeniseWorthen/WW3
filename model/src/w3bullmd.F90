@@ -41,18 +41,20 @@ MODULE W3BULLMD
   USE CONSTANTS , ONLY : PI, TPI
   USE W3WDATMD  , ONLY : TIME
   USE W3TIMEMD  , ONLY : DSEC21
+
   PUBLIC
-  INTEGER, PARAMETER   :: NPTAB = 6, NFLD = 50, NPMAX = 80
+
+  INTEGER, PARAMETER :: NPTAB = 6, NFLD = 50, NPMAX = 80
   !
-  REAL, PARAMETER      :: BHSMIN = 0.15, BHSDROP = 0.05
-  REAL                 :: HST(NPTAB,2), TPT(NPTAB,2),     &
-       DMT(NPTAB,2)
-  CHARACTER(LEN=129)   :: ASCBLINE
-  CHARACTER(LEN=664)   :: CSVBLINE
+  REAL, PARAMETER    :: BHSMIN = 0.15, BHSDROP = 0.05
+  REAL               :: HST(NPTAB,2), TPT(NPTAB,2)
+  REAL               :: DMT(NPTAB,2)
+  CHARACTER(LEN=129) :: ASCBLINE
+  CHARACTER(LEN=664) :: CSVBLINE
+  LOGICAL            :: IYY(NPMAX)
 #ifdef W3_NCO
-  CHARACTER(LEN=67)    :: CASCBLINE
+  CHARACTER(LEN=67)  :: CASCBLINE
 #endif
-  LOGICAL              :: IYY(NPMAX)
   !/
   !/ Conventional declarations
   !/
@@ -86,8 +88,7 @@ CONTAINS
   !> @author H. L. Tolman
   !> @date   11-Mar-2013
   !>
-  SUBROUTINE W3BULL                                                &
-       ( NPART, XPART, DIMXP, UABS, UD, IPNT, IOUT, TIMEV )
+  SUBROUTINE W3BULL ( NPART, XPART, DIMXP, UABS, UD, IPNT, IOUT, TIMEV )
     !/
     !/                  +-----------------------------------+
     !/                  | WAVEWATCH-III           NOAA/NCEP |
@@ -184,30 +185,29 @@ CONTAINS
     ! 1.  Initializations
     !
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE      :: IENT = 0
 #endif
-    REAL                    :: DHSMAX, DTPMAX,        &
-         DDMMAX, DDWMAX, AGEMIN
+    REAL               :: DHSMAX, DTPMAX
+    REAL               :: DDMMAX, DDWMAX, AGEMIN
     PARAMETER     ( DHSMAX =   1.50 )
     PARAMETER     ( DTPMAX =   1.50 )
     PARAMETER     ( DDMMAX =  15.   )
     PARAMETER     ( DDWMAX =  30.   )
     PARAMETER     ( AGEMIN =   0.8  )
 
-
-    INTEGER                 :: IPG1,IPI(NPMAX), ILEN(NPMAX), IP,     &
-         IPNOW, IFLD, INOTAB, IPNT, ITAB,      &
-         DOUTP, FCSTI, NZERO
-    REAL                    :: AFR, AGE, DDMMAXR, DELDM, DELDMR,     &
-         DELDW, DELHS, DELTP, DHSMAXR,  &
-         DTPMAXR, HMAX, HSTOT, TP, UDIR, FACT
-    REAL                    :: HSP(NPMAX), TPP(NPMAX), &
-         DMP(NPMAX), WNP(NPMAX), HSD(NPMAX),   &
-         TPD(NPMAX), WDD(NPMAX)
-    LOGICAL                 :: FLAG(NPMAX)
-    CHARACTER(LEN=129)      :: BLANK, TAIL !, ASCBLINE
+    INTEGER            :: IPG1,IPI(NPMAX), ILEN(NPMAX), IP
+    INTEGER            :: IPNOW, IFLD, INOTAB, IPNT, ITAB
+    INTEGER            :: DOUTP, FCSTI, NZERO
+    REAL               :: AFR, AGE, DDMMAXR, DELDM, DELDMR
+    REAL               :: DELDW, DELHS, DELTP, DHSMAXR
+    REAL               :: DTPMAXR, HMAX, HSTOT, TP, UDIR, FACT
+    REAL               :: HSP(NPMAX), TPP(NPMAX)
+    REAL               :: DMP(NPMAX), WNP(NPMAX), HSD(NPMAX)
+    REAL               :: TPD(NPMAX), WDD(NPMAX)
+    LOGICAL            :: FLAG(NPMAX)
+    CHARACTER(LEN=129) :: BLANK, TAIL !, ASCBLINE
 #ifdef W3_NCO
-    CHARACTER(LEN=67)       :: CBLANK, CTAIL !, CASCBLINE
+    CHARACTER(LEN=67)  :: CBLANK, CTAIL !, CASCBLINE
 #endif
     CHARACTER(LEN=15)       :: PART
 #ifdef W3_NCO

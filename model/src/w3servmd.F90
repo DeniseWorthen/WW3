@@ -382,14 +382,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MSEA, NSEA, MX, MY, MAPSF(MSEA,2)
-    REAL, INTENT(IN)        :: S(MSEA)
-    REAL, INTENT(OUT)       :: XY(MX,MY)
+    INTEGER, INTENT(IN)  :: MSEA, NSEA, MX, MY, MAPSF(MSEA,2)
+    REAL,    INTENT(IN)  :: S(MSEA)
+    REAL,    INTENT(OUT) :: XY(MX,MY)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: ISEA, IX, IY
+    INTEGER :: ISEA, IX, IY
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -474,13 +474,13 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: F, ALFA, FP, YLN, SIGA, SIGB
+    REAL, INTENT(IN) :: F, ALFA, FP, YLN, SIGA, SIGB
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    REAL                    :: SIG, A, B, C
-    REAL, SAVE              :: EPS=1.E-4, EXPMIN=-180.
+    REAL       :: SIG, A, B, C
+    REAL, SAVE :: EPS=1.E-4, EXPMIN=-180.
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -571,7 +571,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: LO1, LA1, LO2, LA2
+    REAL, INTENT(IN) :: LO1, LA1, LO2, LA2
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -892,15 +892,15 @@ CONTAINS
     !   This routine is distinct from W3ACTURN since orders spectrum as freq, dirn
     !
     ! Subroutine arguments
-    INTEGER, INTENT(IN) :: NFreq, NDirc         ! No. freq and dirn bins
-    REAL,    INTENT(IN) :: Alpha                ! Turning angle (degrees)
-    REAL, INTENT(INOUT) :: Spectr(NFreq,NDirc)  ! Wave spectrum in/out
+    INTEGER, INTENT(IN)    :: NFreq, NDirc         ! No. freq and dirn bins
+    REAL,    INTENT(IN)    :: Alpha                ! Turning angle (degrees)
+    REAL,    INTENT(INOUT) :: Spectr(NFreq,NDirc)  ! Wave spectrum in/out
 
     ! Local variables
-    INTEGER :: ii, jj, kk, nsft
-    REAL    :: Ddirc, frac, CNST
-    REAL, Dimension(NFreq)      ::  Wrkfrq, Tmpfrq
-    REAL, Dimension(NFreq,NDirc)::  Wrkspc
+    INTEGER                      :: ii, jj, kk, nsft
+    REAL                         :: Ddirc, frac, CNST
+    REAL, Dimension(NFreq)       ::  Wrkfrq, Tmpfrq
+    REAL, Dimension(NFreq,NDirc) ::  Wrkspc
 
     ! Check input bin numbers
     IF( (NFreq .LT. 0) .OR. (NDirc .LT. 0) )  THEN
@@ -985,10 +985,10 @@ CONTAINS
     REAL, INTENT(INOUT) :: Spectr(NDirc, NFreq)  ! Wave action in/out
 
     ! Local variables
-    INTEGER :: ii, jj, kk, nsft
-    REAL    :: Ddirc, frac, CNST
-    REAL, Dimension(NFreq)      ::  Wrkfrq, Tmpfrq
-    REAL, Dimension(NDirc,NFreq)::  Wrkspc
+    INTEGER                      :: ii, jj, kk, nsft
+    REAL                         :: Ddirc, frac, CNST
+    REAL, Dimension(NFreq)       ::  Wrkfrq, Tmpfrq
+    REAL, Dimension(NDirc,NFreq) ::  Wrkspc
 
     ! Check input bin numbers
     IF( (NFreq .LT. 0) .OR. (NDirc .LT. 0) )  THEN
@@ -1095,8 +1095,8 @@ CONTAINS
          &        PHI_EQ       !OUT Latitude in equatorial lat-lon coords
 
     ! Define local varables:-----------------------------------------------
-    REAL(KIND=8) :: A_LAMBDA, A_PHI, E_LAMBDA, E_PHI, SIN_PHI_POLE, COS_PHI_POLE, &
-         TERM1, TERM2, ARG, LAMBDA_ZERO, LAMBDA_POLE_KEEP
+    REAL(KIND=8) :: A_LAMBDA, A_PHI, E_LAMBDA, E_PHI, SIN_PHI_POLE, COS_PHI_POLE
+    REAL(KIND=8) :: TERM1, TERM2, ARG, LAMBDA_ZERO, LAMBDA_POLE_KEEP
     INTEGER      :: I
 
     REAL(KIND=8), PARAMETER :: SMALL=1.0E-6
@@ -1224,8 +1224,8 @@ CONTAINS
 
     INTEGER:: POINTS      !IN  Number of points to be processed
 
-    REAL :: PHI_POLE,   & !IN  Latitude of equatorial lat-lon pole
-         &        LAMBDA_POLE   !IN  Longitude of equatorial lat-lon pole
+    REAL :: PHI_POLE      !IN  Latitude of equatorial lat-lon pole
+    REAL :: LAMBDA_POLE   !IN  Longitude of equatorial lat-lon pole
 
     REAL, DIMENSION(POINTS) ::         &
          &        PHI,       & !OUT Latitude
@@ -1235,9 +1235,9 @@ CONTAINS
          &        PHI_EQ       !IN  Latitude in equatorial lat-lon coords
 
     ! Local varables:------------------------------------------------------
-    REAL(KIND=8) :: E_LAMBDA, E_PHI, A_LAMBDA, A_PHI,                 &
-         SIN_PHI_POLE, COS_PHI_POLE,                       &
-         TERM1, TERM2, ARG, LAMBDA_ZERO
+    REAL(KIND=8) :: E_LAMBDA, E_PHI, A_LAMBDA, A_PHI
+    REAL(KIND=8) :: SIN_PHI_POLE, COS_PHI_POLE
+    REAL(KIND=8) :: TERM1, TERM2, ARG, LAMBDA_ZERO
     INTEGER :: I
 
     REAL(KIND=8), PARAMETER :: SMALL=1.0E-6
@@ -1562,14 +1562,14 @@ CONTAINS
     !           IF-THEN-ELSE-ENDIF.  (RWC, WRB)
     !***END PROLOGUE  SSORT
     !     .. Scalar Arguments ..
-    INTEGER KFLAG, N
+    INTEGER :: KFLAG, N
     !     .. Array Arguments ..
-    REAL*4 X(*), Y(*)
+    REAL*4  :: X(*), Y(*)
     !     .. Local Scalars ..
-    REAL*4 R, T, TT, TTY, TY
-    INTEGER I, IJ, J, K, KK, L, M, NN
+    REAL*4  :: R, T, TT, TTY, TY
+    INTEGER :: I, IJ, J, K, KK, L, M, NN
     !     .. Local Arrays ..
-    INTEGER IL(21), IU(21)
+    INTEGER :: IL(21), IU(21)
     !     .. External Subroutines ..
     !     None
     !     .. Intrinsic Functions ..
@@ -1958,18 +1958,18 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS , ONLY : RADE, UNDEF
-    REAL, INTENT(INOUT)             :: U(NSEA), V(NSEA)
-    INTEGER, INTENT(IN)             :: NSEA
-    REAL, INTENT(OUT), OPTIONAL     :: MAG(NSEA), DIR(NSEA)
-    REAL, INTENT(IN), OPTIONAL      :: TOLERANCE
-    CHARACTER, INTENT(IN), OPTIONAL :: CONV
+    REAL,      INTENT(INOUT)         :: U(NSEA), V(NSEA)
+    INTEGER,   INTENT(IN)            :: NSEA
+    REAL,      INTENT(OUT), OPTIONAL :: MAG(NSEA), DIR(NSEA)
+    REAL,      INTENT(IN), OPTIONAL  :: TOLERANCE
+    CHARACTER, INTENT(IN), OPTIONAL  :: CONV
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !
-    REAL :: TOL, SGN, OFFSET, TMP
+    REAL      :: TOL, SGN, OFFSET, TMP
     CHARACTER :: DIRCONV
-    INTEGER :: ISEA
-    LOGICAL :: INPLACE
+    INTEGER   :: ISEA
+    LOGICAL   :: INPLACE
 
     DIRCONV = 'N'
     TOL = 1.0

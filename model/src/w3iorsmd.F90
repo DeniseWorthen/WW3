@@ -70,8 +70,7 @@ MODULE W3IORSMD
   !/ Private parameter statements (ID strings)
   !/
   CHARACTER(LEN=10), PARAMETER, PRIVATE :: VERINI = '2021-05-28'
-  CHARACTER(LEN=26), PARAMETER, PRIVATE ::                        &
-       IDSTR = 'WAVEWATCH III RESTART FILE'
+  CHARACTER(LEN=26), PARAMETER, PRIVATE :: IDSTR = 'WAVEWATCH III RESTART FILE'
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
@@ -341,47 +340,47 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER                       :: NDSR
+    INTEGER                              :: NDSR
     !      INTEGER, INTENT(IN)           :: NDSR
-    INTEGER, INTENT(IN), OPTIONAL :: IMOD
-    REAL, INTENT(INOUT)           :: DUMFPI
-    CHARACTER, INTENT(IN)         :: INXOUT*(*)
-    LOGICAL, INTENT(IN),OPTIONAL  :: FLRSTRT
+    INTEGER,        INTENT(IN), OPTIONAL :: IMOD
+    REAL,           INTENT(INOUT)        :: DUMFPI
+    CHARACTER,      INTENT(IN)           :: INXOUT*(*)
+    LOGICAL,        INTENT(IN), OPTIONAL :: FLRSTRT
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER, PARAMETER      :: LRB = 4
+    INTEGER, PARAMETER          :: LRB = 4
     !
-    INTEGER                 :: IGRD, I, J, LRECL, NSIZE, IERR,      &
-         NSEAT, MSPEC, TTIME(2), ISEA, JSEA,  &
-         NREC, NPART, IPART, IX, IY, IXL, IP, &
-         NPRTX2, NPRTY2, IYL, ITMP
-    INTEGER, ALLOCATABLE    :: MAPTMP(:,:)
+    INTEGER                     :: IGRD, I, J, LRECL, NSIZE, IERR
+    INTEGER                     :: NSEAT, MSPEC, TTIME(2), ISEA, JSEA
+    INTEGER                     :: NREC, NPART, IPART, IX, IY, IXL, IP
+    INTEGER                     :: NPRTX2, NPRTY2, IYL, ITMP
+    INTEGER,        ALLOCATABLE :: MAPTMP(:,:)
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE               :: IENT = 0
 #endif
 #ifdef W3_MPI
-    INTEGER                 :: IERR_MPI, IH, IB, ISEA0, ISEAN, &
-         NRQ, NSEAL_MIN
+    INTEGER                     :: IERR_MPI, IH, IB, ISEA0, ISEAN
+    INTEGER                     :: NRQ, NSEAL_MIN
 #endif
-    INTEGER(KIND=8)         :: RPOS
+    INTEGER(KIND=8)             :: RPOS
 #ifdef W3_MPI
-    INTEGER, ALLOCATABLE    :: STAT1(:,:), STAT2(:,:)
-    REAL, ALLOCATABLE       :: VGBUFF(:), VLBUFF(:)
+    INTEGER,        ALLOCATABLE :: STAT1(:,:), STAT2(:,:)
+    REAL,           ALLOCATABLE :: VGBUFF(:), VLBUFF(:)
 #endif
     REAL(KIND=LRB), ALLOCATABLE :: WRITEBUFF(:), TMP(:), TMP2(:)
 
-    LOGICAL                 :: WRITE, IOSFLG
-    LOGICAL                 :: FLOGOA(NOGRP,NGRPP)
-    LOGICAL                 :: NDSROPN
-    CHARACTER(LEN=4)        :: TYPE
-    CHARACTER(LEN=10)       :: VERTST
-    !      CHARACTER(LEN=21)       :: FNAME
-    CHARACTER(LEN=40)       :: FNAME
-    CHARACTER(LEN=26)       :: IDTST
-    CHARACTER(LEN=30)       :: TNAME
-    CHARACTER(LEN=15)       :: TIMETAG
+    LOGICAL                     :: WRITE, IOSFLG
+    LOGICAL                     :: FLOGOA(NOGRP,NGRPP)
+    LOGICAL                     :: NDSROPN
+    CHARACTER(LEN=4)            :: TYPE
+    CHARACTER(LEN=10)           :: VERTST
+    !      CHARACTER(LEN=21)    :: FNAME
+    CHARACTER(LEN=40)           :: FNAME
+    CHARACTER(LEN=26)           :: IDTST
+    CHARACTER(LEN=30)           :: TNAME
+    CHARACTER(LEN=15)           :: TIMETAG
     !/
     !/ ------------------------------------------------------------------- /
     !/

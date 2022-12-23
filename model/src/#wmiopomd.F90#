@@ -1,5 +1,5 @@
 !> @file
-!> @brief Contains module WMIOPOMD.
+IERR_MPI, IT0, ITAG, IFROM,!> @brief Contains module WMIOPOMD.
 !>
 !> @author H. L. Tolman @date 06-Jun-2012
 !>

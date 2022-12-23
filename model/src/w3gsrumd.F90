@@ -1285,8 +1285,7 @@ CONTAINS
   !/
   !/ ------------------------------------------------------------------- /
   !/
-  FUNCTION W3GFCL_R4( GSU, XT, YT, IS, JS, XS, YS, &
-       POLE, EPS, FNCL, DEBUG ) RESULT(INGRID)
+  FUNCTION W3GFCL_R4( GSU, XT, YT, IS, JS, XS, YS, POLE, EPS, FNCL, DEBUG ) RESULT(INGRID)
     !     Single precision interface
     LOGICAL                 :: INGRID
     TYPE(T_GSU), INTENT(IN) :: GSU
@@ -1326,19 +1325,18 @@ CONTAINS
   !/
   !/ ------------------------------------------------------------------- /
   !/
-  FUNCTION W3GFCL_R8( GSU, XT, YT, IS, JS, XS, YS, &
-       POLE, EPS, FNCL, DEBUG ) RESULT(INGRID)
+  FUNCTION W3GFCL_R8( GSU, XT, YT, IS, JS, XS, YS, POLE, EPS, FNCL, DEBUG ) RESULT(INGRID)
     !     Double precision interface
-    LOGICAL                 :: INGRID
-    TYPE(T_GSU), INTENT(IN) :: GSU
-    REAL(8), INTENT(INOUT)  :: XT
-    REAL(8), INTENT(INOUT)  :: YT
-    INTEGER, INTENT(INOUT)  :: IS(4), JS(4)
-    REAL(8), INTENT(INOUT)  :: XS(4), YS(4)
-    LOGICAL, INTENT(OUT),OPTIONAL :: POLE
-    REAL(8), INTENT(IN), OPTIONAL :: EPS
-    LOGICAL, INTENT(IN), OPTIONAL :: FNCL
-    LOGICAL, INTENT(IN), OPTIONAL :: DEBUG
+    LOGICAL                           :: INGRID
+    TYPE(T_GSU), INTENT(IN)           :: GSU
+    REAL(8),     INTENT(INOUT)        :: XT
+    REAL(8),     INTENT(INOUT)        :: YT
+    INTEGER,     INTENT(INOUT)        :: IS(4), JS(4)
+    REAL(8),     INTENT(INOUT)        :: XS(4), YS(4)
+    LOGICAL,     INTENT(OUT),OPTIONAL :: POLE
+    REAL(8),     INTENT(IN), OPTIONAL :: EPS
+    LOGICAL,     INTENT(IN), OPTIONAL :: FNCL
+    LOGICAL,     INTENT(IN), OPTIONAL :: DEBUG
 
     !     Local parameters
     REAL(8) :: LEPS

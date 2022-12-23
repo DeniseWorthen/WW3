@@ -448,75 +448,73 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: MDSE2, IERR, I, J, NMOVE, TTIME(2),  &
-         ILOOP, MDSI2, SCRATCH, RNKMIN,       &
-         RNKMAX, RNKTMP, GRPMIN, GRPMAX, II,  &
-         NDSREC, NDSFND, NPTS, JJ, IP1, IPN,  &
-         MPI_COMM_LOC, NMPSC2, JJJ, TOUT(2),  &
-         TLST(2), NCPROC, NPOUTT, NAPLOC,     &
-         NAPRES, NAPADD, NAPBCT, IFI, IFJ, IW,&
-         IFT
-    INTEGER                 :: STMPT(2), ETMPT(2)
+    INTEGER                        :: MDSE2, IERR, I, J, NMOVE, TTIME(2)
+    INTEGER                        :: ILOOP, MDSI2, SCRATCH, RNKMIN
+    INTEGER                        :: RNKMAX, RNKTMP, GRPMIN, GRPMAX, II
+    INTEGER                        :: NDSREC, NDSFND, NPTS, JJ, IP1, IPN
+    INTEGER                        :: MPI_COMM_LOC, NMPSC2, JJJ, TOUT(2)
+    INTEGER                        :: TLST(2), NCPROC, NPOUTT, NAPLOC
+    INTEGER                        :: NAPRES, NAPADD, NAPBCT, IFI, IFJ, IW
+    INTEGER                        :: IFT
+    INTEGER                        :: STMPT(2), ETMPT(2)
 #ifdef W3_MPI
-    INTEGER                 :: IERR_MPI, BGROUP, LGROUP, IROOT
+    INTEGER                        :: IERR_MPI, BGROUP, LGROUP, IROOT
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE                  :: IENT = 0
 #endif
-    INTEGER, ALLOCATABLE    :: MDS(:,:), NTRACE(:,:), ODAT(:,:),    &
-         TMPRNK(:), TMPGRP(:), NINGRP(:),     &
-         TMOVE(:,:), LOADMP(:,:), IPRT(:,:),  &
-         NDPOUT(:), OUTFF(:,:)
-    REAL                    :: DTTST, XX, YY
+    INTEGER,           ALLOCATABLE :: MDS(:,:), NTRACE(:,:), ODAT(:,:)
+    INTEGER,           ALLOCATABLE :: TMPRNK(:), TMPGRP(:), NINGRP(:)
+    INTEGER,           ALLOCATABLE :: TMOVE(:,:), LOADMP(:,:), IPRT(:,:)
+    INTEGER,           ALLOCATABLE :: NDPOUT(:), OUTFF(:,:)
+    REAL                           :: DTTST, XX, YY
 
 #ifdef W3_MPRF
-    REAL                    :: PRFT0, PRFTN
-    REAL(KIND=8)            :: get_memory
+    REAL                           :: PRFT0, PRFTN
+    REAL(KIND=8)                   :: get_memory
 #endif
-    REAL, ALLOCATABLE       :: X(:), Y(:), AMOVE(:), DMOVE(:),      &
-         RP1(:), RPN(:)
-    LOGICAL                 :: FLT, TFLAGI, TFLAGS(-7:14), PSHARE
-    LOGICAL, ALLOCATABLE    :: FLGRD(:,:,:), FLRBPI(:), BCDTMP(:),   &
-         USEINP(:), LPRT(:), FLGR2(:,:,:),     &
-         FLGD(:,:), FLG2(:,:), FLG2D(:,:),     &
-         FLG1D(:), CPLINP(:)
-    CHARACTER(LEN=1)        :: COMSTR
-    CHARACTER(LEN=3)        :: IDSTR(9), IDTST
-    CHARACTER(LEN=5)        :: STOUT, OUTSTR(6)
-    CHARACTER(LEN=6)        :: ACTION(11), YESXX, XXXNO
-    CHARACTER(LEN=8)        :: LFILE, STTIME
+    REAL,              ALLOCATABLE :: X(:), Y(:), AMOVE(:), DMOVE(:)
+    REAL,              ALLOCATABLE :: RP1(:), RPN(:)
+    LOGICAL                        :: FLT, TFLAGI, TFLAGS(-7:14), PSHARE
+    LOGICAL,           ALLOCATABLE :: FLGRD(:,:,:), FLRBPI(:), BCDTMP(:)
+    LOGICAL,           ALLOCATABLE :: USEINP(:), LPRT(:), FLGR2(:,:,:)
+    LOGICAL,           ALLOCATABLE :: FLGD(:,:), FLG2(:,:), FLG2D(:,:)
+    LOGICAL,           ALLOCATABLE :: FLG1D(:), CPLINP(:)
+    CHARACTER(LEN=1)               :: COMSTR
+    CHARACTER(LEN=3)               :: IDSTR(9), IDTST
+    CHARACTER(LEN=5)               :: STOUT, OUTSTR(6)
+    CHARACTER(LEN=6)               :: ACTION(11), YESXX, XXXNO
+    CHARACTER(LEN=8)               :: LFILE, STTIME
 #ifdef W3_SHRD
-    CHARACTER(LEN=9)        :: TFILE
+    CHARACTER(LEN=9)               :: TFILE
 #endif
-    CHARACTER(LEN=13)       :: STDATE, MN, TNAMES(9)
-    CHARACTER(LEN=40)       :: PN
-    CHARACTER(LEN=13),                                              &
-         ALLOCATABLE :: INAMES(:,:), MNAMES(:)
-    CHARACTER(LEN=40),                                              &
-         ALLOCATABLE :: PNAMES(:)
-    CHARACTER(LEN=12)       :: FORMAT
+    CHARACTER(LEN=13)              :: STDATE, MN, TNAMES(9)
+    CHARACTER(LEN=40)              :: PN
+    CHARACTER(LEN=13), ALLOCATABLE :: INAMES(:,:), MNAMES(:)
+    CHARACTER(LEN=40), ALLOCATABLE :: PNAMES(:)
+    CHARACTER(LEN=12)              :: FORMAT
 #ifdef W3_DIST
-    CHARACTER(LEN=18)       :: TFILE
+    CHARACTER(LEN=18)              :: TFILE
 #endif
 #ifdef W3_MPRF
-    CHARACTER(LEN=18)       :: PFILE
+    CHARACTER(LEN=18)              :: PFILE
 #endif
 
-    CHARACTER(LEN=13)       :: IDFLDS(-7:9)
-    CHARACTER(LEN=23)       :: DTME21
-    CHARACTER(LEN=30)       :: IDOTYP(8)
-    CHARACTER(LEN=80)       :: TNAME
-    CHARACTER(LEN=80)       :: LINE
-    CHARACTER(LEN=80)       :: LINEIN
-    CHARACTER(LEN=8)        :: WORDS(6)
+    CHARACTER(LEN=13)              :: IDFLDS(-7:9)
+    CHARACTER(LEN=23)              :: DTME21
+    CHARACTER(LEN=30)              :: IDOTYP(8)
+    CHARACTER(LEN=80)              :: TNAME
+    CHARACTER(LEN=80)              :: LINE
+    CHARACTER(LEN=80)              :: LINEIN
+    CHARACTER(LEN=8)               :: WORDS(6)
 
     TYPE OT2TPE
-      INTEGER                     :: NPTS
-      REAL ,              POINTER :: X(:), Y(:)
-      CHARACTER(LEN=40) , POINTER :: PNAMES(:)
+      INTEGER                      :: NPTS
+      REAL ,              POINTER  :: X(:), Y(:)
+      CHARACTER(LEN=40) , POINTER  :: PNAMES(:)
     END TYPE OT2TPE
     !
-    TYPE(OT2TPE), ALLOCATABLE    :: OT2(:)
+    TYPE(OT2TPE),      ALLOCATABLE :: OT2(:)
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -3770,89 +3768,86 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    TYPE(NML_DOMAIN_T)                      :: NML_DOMAIN
-    TYPE(NML_INPUT_GRID_T), ALLOCATABLE     :: NML_INPUT_GRID(:)
-    TYPE(NML_MODEL_GRID_T), ALLOCATABLE     :: NML_MODEL_GRID(:)
-    TYPE(NML_OUTPUT_TYPE_T), ALLOCATABLE    :: NML_OUTPUT_TYPE(:)
-    TYPE(NML_OUTPUT_DATE_T), ALLOCATABLE    :: NML_OUTPUT_DATE(:)
-    TYPE(NML_HOMOG_COUNT_T)                 :: NML_HOMOG_COUNT
-    TYPE(NML_HOMOG_INPUT_T), ALLOCATABLE    :: NML_HOMOG_INPUT(:)
+    TYPE(NML_DOMAIN_T)                   :: NML_DOMAIN
+    TYPE(NML_INPUT_GRID_T),  ALLOCATABLE :: NML_INPUT_GRID(:)
+    TYPE(NML_MODEL_GRID_T),  ALLOCATABLE :: NML_MODEL_GRID(:)
+    TYPE(NML_OUTPUT_TYPE_T), ALLOCATABLE :: NML_OUTPUT_TYPE(:)
+    TYPE(NML_OUTPUT_DATE_T), ALLOCATABLE :: NML_OUTPUT_DATE(:)
+    TYPE(NML_HOMOG_COUNT_T)              :: NML_HOMOG_COUNT
+    TYPE(NML_HOMOG_INPUT_T), ALLOCATABLE :: NML_HOMOG_INPUT(:)
     !
     TYPE OT2TPE
-      INTEGER                    :: NPTS
-      REAL, POINTER              :: X(:), Y(:)
-      CHARACTER(LEN=40), POINTER :: PNAMES(:)
+      INTEGER                            :: NPTS
+      REAL,              POINTER         :: X(:), Y(:)
+      CHARACTER(LEN=40), POINTER         :: PNAMES(:)
     END TYPE OT2TPE
     !
-    TYPE(OT2TPE), ALLOCATABLE    :: OT2(:)
+    TYPE(OT2TPE),            ALLOCATABLE :: OT2(:)
     !
-    INTEGER                 :: MDSE2, IERR, I,J,K, N_MOV, N_TOT,     &
-         SCRATCH, RNKMIN, RNKMAX, RNKTMP,      &
-         GRPMIN, GRPMAX, II, NDSREC, NDSFND,   &
-         NPTS, JJ, IP1, IPN, MPI_COMM_LOC,     &
-         NMPSC2, JJJ, NCPROC, NPOUTT, NAPLOC,  &
-         NAPRES, NAPADD, NAPBCT, IFI, IFJ, IW, &
-         IFT, ILOOP
+    INTEGER                              :: MDSE2, IERR, I,J,K, N_MOV, N_TOT
+    INTEGER                              :: SCRATCH, RNKMIN, RNKMAX, RNKTMP
+    INTEGER                              :: GRPMIN, GRPMAX, II, NDSREC, NDSFND
+    INTEGER                              :: NPTS, JJ, IP1, IPN, MPI_COMM_LOC
+     INTEGER                             :: NMPSC2, JJJ, NCPROC, NPOUTT, NAPLOC
+    INTEGER                              :: NAPRES, NAPADD, NAPBCT, IFI, IFJ, IW
+    INTEGER                              :: IFT, ILOOP
     !
-    INTEGER                 :: TTIME(2), TOUT(2), STMPT(2), ETMPT(2),&
-         TLST(2)
+    INTEGER                              :: TTIME(2), TOUT(2), STMPT(2), ETMPT(2)
+    INTEGER                              :: TLST(2)
 #ifdef W3_MPI
-    INTEGER                 :: IERR_MPI, BGROUP, LGROUP, IROOT
+    INTEGER                              :: IERR_MPI, BGROUP, LGROUP, IROOT
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE                        :: IENT = 0
 #endif
     !
-    INTEGER, ALLOCATABLE    :: MDS(:,:), NTRACE(:,:), ODAT(:,:),     &
-         TMPRNK(:), TMPGRP(:), NINGRP(:),      &
-         TMOVE(:,:), LOADMP(:,:), IPRT(:,:),   &
-         NDPOUT(:)                             &
-         ,OUTFF(:,:)
+    INTEGER,                 ALLOCATABLE :: MDS(:,:), NTRACE(:,:), ODAT(:,:)
+    INTEGER,                 ALLOCATABLE :: TMPRNK(:), TMPGRP(:), NINGRP(:)
+    INTEGER,                 ALLOCATABLE :: TMOVE(:,:), LOADMP(:,:), IPRT(:,:)
+    INTEGER,                 ALLOCATABLE :: NDPOUT(:)
+    INTEGER,                 ALLOCATABLE :: OUTFF(:,:)
     !
-    REAL                    :: DTTST, XX, YY
+    REAL                                 :: DTTST, XX, YY
 #ifdef W3_MPRF
-    REAL                    :: PRFT0, PRFTN
-    REAL(KIND=8)            :: get_memory
+    REAL                                 :: PRFT0, PRFTN
+    REAL(KIND=8)                         :: get_memory
 #endif
     !
-    REAL, ALLOCATABLE       :: X(:), Y(:), AMOVE(:), DMOVE(:),       &
-         RP1(:), RPN(:)
+    REAL,                    ALLOCATABLE :: X(:), Y(:), AMOVE(:), DMOVE(:)
+    REAL,                    ALLOCATABLE :: RP1(:), RPN(:)
     !
-    LOGICAL                 :: FLT, TFLAGI, TFLAGS(-7:14), PSHARE
-    LOGICAL, ALLOCATABLE    :: FLGRD(:,:,:), FLRBPI(:), BCDTMP(:),   &
-         USEINP(:), LPRT(:), FLGR2(:,:,:),     &
-         FLGD(:,:), FLG2(:,:), FLG2D(:,:),     &
-         FLG1D(:), CPLINP(:)
+    LOGICAL                              :: FLT, TFLAGI, TFLAGS(-7:14), PSHARE
+    LOGICAL,                 ALLOCATABLE :: FLGRD(:,:,:), FLRBPI(:), BCDTMP(:)
+    LOGICAL,                 ALLOCATABLE :: USEINP(:), LPRT(:), FLGR2(:,:,:)
+    LOGICAL,                 ALLOCATABLE :: FLGD(:,:), FLG2(:,:), FLG2D(:,:)
+    LOGICAL,                 ALLOCATABLE :: FLG1D(:), CPLINP(:)
     !
-    CHARACTER(LEN=1)        :: COMSTR
-    CHARACTER(LEN=256)      :: TMPLINE, TEST
-    CHARACTER(LEN=3)        :: IDSTR(-7:9), IDTST
-    CHARACTER(LEN=5)        :: STOUT, OUTSTR(6)
-    CHARACTER(LEN=6)        :: YESXX, XXXNO
-    CHARACTER(LEN=6),                                                &
-         ALLOCATABLE :: ACTION(:)
-    CHARACTER(LEN=8)        :: LFILE, STTIME
+    CHARACTER(LEN=1)                     :: COMSTR
+    CHARACTER(LEN=256)                   :: TMPLINE, TEST
+    CHARACTER(LEN=3)                     :: IDSTR(-7:9), IDTST
+    CHARACTER(LEN=5)                     :: STOUT, OUTSTR(6)
+    CHARACTER(LEN=6)                     :: YESXX, XXXNO
+    CHARACTER(LEN=6),        ALLOCATABLE :: ACTION(:)
+    CHARACTER(LEN=8)                     :: LFILE, STTIME
 #ifdef W3_SHRD
-    CHARACTER(LEN=9)        :: TFILE
+    CHARACTER(LEN=9)                     :: TFILE
 #endif
-    CHARACTER(LEN=13)       :: STDATE, MN, TNAMES(9)
-    CHARACTER(LEN=40)       :: PN
-    CHARACTER(LEN=13),                                               &
-         ALLOCATABLE :: INAMES(:,:), MNAMES(:)
-    CHARACTER(LEN=40),                                               &
-         ALLOCATABLE :: PNAMES(:)
-    CHARACTER(LEN=12)       :: FORMAT
+    CHARACTER(LEN=13)                    :: STDATE, MN, TNAMES(9)
+    CHARACTER(LEN=40)                    :: PN
+    CHARACTER(LEN=13),       ALLOCATABLE :: INAMES(:,:), MNAMES(:)
+    CHARACTER(LEN=40),       ALLOCATABLE :: PNAMES(:)
+    CHARACTER(LEN=12)                    :: FORMAT
 #ifdef W3_DIST
-    CHARACTER(LEN=18)       :: TFILE
+    CHARACTER(LEN=18)                    :: TFILE
 #endif
 #ifdef W3_MPRF
-    CHARACTER(LEN=18)       :: PFILE
+    CHARACTER(LEN=18)                    :: PFILE
 #endif
-    CHARACTER(LEN=13)       :: IDFLDS(-7:9)
-    CHARACTER(LEN=23)       :: DTME21
-    CHARACTER(LEN=30)       :: IDOTYP(8)
-    CHARACTER(LEN=80)       :: TNAME, LINE
-    CHARACTER(LEN=1024)     :: FLDOUT
+    CHARACTER(LEN=13)                    :: IDFLDS(-7:9)
+    CHARACTER(LEN=23)                    :: DTME21
+    CHARACTER(LEN=30)                    :: IDOTYP(8)
+    CHARACTER(LEN=80)                    :: TNAME, LINE
+    CHARACTER(LEN=1024)                  :: FLDOUT
     !
 
     !/

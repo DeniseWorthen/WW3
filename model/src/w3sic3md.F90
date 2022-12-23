@@ -80,15 +80,15 @@ MODULE W3SIC3MD
   !/
   !/ ------------------------------------------------------------------- /
   !/
-  PUBLIC  ::  W3SIC3, W3IC3WNCG_V1, W3IC3WNCG_CHENG
-  PRIVATE ::  WN_CMPLX_V1, WN_CMPLX_HF
-  PRIVATE ::  CMPLX_ROOT_MULLER_V1, CMPLX_ROOT_MULLER_CHENG
-  PRIVATE ::  F_ZHAO_V1, F_ZHAO_CHENG
-  PRIVATE ::  FUNC1_ZHAO, FUNC0_ZHAO, BSDET
-  INTEGER,SAVE ::  CALLEDIC3TABLE = 0
-  REAL,PRIVATE,PARAMETER    ::  IC3_DITK  = 0.01, IC3_MAXITK = 3.
-  PUBLIC  ::  IC3TABLE_CHENG
-  PRIVATE ::  IC3PRECALC_CHENG, CGINIC3_CHENG
+  PUBLIC                 ::  W3SIC3, W3IC3WNCG_V1, W3IC3WNCG_CHENG
+  PRIVATE                ::  WN_CMPLX_V1, WN_CMPLX_HF
+  PRIVATE                ::  CMPLX_ROOT_MULLER_V1, CMPLX_ROOT_MULLER_CHENG
+  PRIVATE                ::  F_ZHAO_V1, F_ZHAO_CHENG
+  PRIVATE                ::  FUNC1_ZHAO, FUNC0_ZHAO, BSDET
+  INTEGER,SAVE           ::  CALLEDIC3TABLE = 0
+  REAL,PRIVATE,PARAMETER ::  IC3_DITK  = 0.01, IC3_MAXITK = 3.
+  PUBLIC                 ::  IC3TABLE_CHENG
+  PRIVATE                ::  IC3PRECALC_CHENG, CGINIC3_CHENG
 
 CONTAINS
   !/ ------------------------------------------------------------------- /
@@ -366,27 +366,27 @@ CONTAINS
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE       :: IENT = 0
 #endif
-    INTEGER                    :: ITH
+    INTEGER             :: ITH
 #ifdef W3_T0
-    REAL                   :: DOUT(NK,NTH)
+    REAL                :: DOUT(NK,NTH)
 #endif
-    INTEGER                    :: IKTH, IK
-    REAL                       :: ICECOEF1, ICECOEF2, ICECOEF3, &
-         ICECOEF4, ICECOEF5, ICECONC
-    REAL, DIMENSION(NK)        :: D1D, WN_I, WN_R, CG_IC3, CG_TMP
-    LOGICAL                    :: NOICE
-    REAL                       :: VISCM=1.83E-6
-    REAL                       :: FREQ
+    INTEGER             :: IKTH, IK
+    REAL                :: ICECOEF1, ICECOEF2, ICECOEF3
+    REAL                :: ICECOEF4, ICECOEF5, ICECONC
+    REAL, DIMENSION(NK) :: D1D, WN_I, WN_R, CG_IC3, CG_TMP
+    LOGICAL             :: NOICE
+    REAL                :: VISCM=1.83E-6
+    REAL                :: FREQ
     !  ............VISCM=1.83E-6 :  molecular viscosity of water at freezing
-    REAL                    :: PTURB, PVISC, DTURB, DVISC,   &
-         SMOOTH, RE, UORB, AORB, EB,   &
-         DELI1, DELI2, FW, XI, FTURB,  &
-         MAXTHK, MAXCNC, USE_CHENG,    &
-         USE_CGICE, FIXEDHICE,   &
-         FIXEDVISC,FIXEDDENS,FIXEDELAS
-    INTEGER                 :: IND, IS, NUMIN
+    REAL                :: PTURB, PVISC, DTURB, DVISC
+    REAL                :: SMOOTH, RE, UORB, AORB, EB
+    REAL                :: DELI1, DELI2, FW, XI, FTURB
+    REAL                :: MAXTHK, MAXCNC, USE_CHENG
+    REAL                :: USE_CGICE, FIXEDHICE
+    REAL                :: FIXEDVISC,FIXEDDENS,FIXEDELAS
+    INTEGER             :: IND, IS, NUMIN
     !
     !/
     !/ ------------------------------------------------------------------- /
@@ -742,14 +742,14 @@ CONTAINS
     REAL, INTENT(INOUT):: WN_R(:),WN_I(:),CG(:)
     REAL, INTENT(IN)   :: ICE1, ICE2, ICE3, ICE4, DPT
 
-    INTEGER            :: IK, KL,KU
-    REAL, ALLOCATABLE  :: SIGMA(:),CG_IC3(:)
-    REAL               :: K_OCEAN, CG_OCEAN
-    DOUBLE PRECISION   :: KH, K_NOICE, HWAT, HICE, NU, DICE, ES_MOD
-    DOUBLE PRECISION,PARAMETER :: KHMAX = 18.0D0 ! 18=OK, 19=fails
-    DOUBLE COMPLEX     :: WNCOMPLEX,WNCOMPLEX_OLD
-    REAL               :: STENSEC
-    REAL               :: IC3HILIM,IC3KILIM
+    INTEGER                     :: IK, KL,KU
+    REAL, ALLOCATABLE           :: SIGMA(:),CG_IC3(:)
+    REAL                        :: K_OCEAN, CG_OCEAN
+    DOUBLE PRECISION            :: KH, K_NOICE, HWAT, HICE, NU, DICE, ES_MOD
+    DOUBLE PRECISION, PARAMETER :: KHMAX = 18.0D0 ! 18=OK, 19=fails
+    DOUBLE COMPLEX              :: WNCOMPLEX,WNCOMPLEX_OLD
+    REAL                        :: STENSEC
+    REAL                        :: IC3HILIM,IC3KILIM
     !
     ALLOCATE( CG_IC3( SIZE(CG) ) )
     ALLOCATE(  SIGMA( SIZE(CG) ) )
@@ -1881,11 +1881,11 @@ CONTAINS
     REAL, INTENT(INOUT):: WN_R(:),WN_I(:),CG(:)
     REAL, ALLOCATABLE  :: SIGMA(:)
     !
-    INTEGER     :: I, I1, I2, IK, KL,KU, ITKNUM
-    COMPLEX(8)  :: WNCOMPLEX, X0,X1,X2, WNR, WNL
-    REAL(8)     :: DEPTH, HICE, NU, DICE, ES_MOD, RR, K_OCEAN, &
-         CG_OCEAN
-    REAL        :: IC3HILIM,IC3KILIM
+    INTEGER    :: I, I1, I2, IK, KL,KU, ITKNUM
+    COMPLEX(8) :: WNCOMPLEX, X0,X1,X2, WNR, WNL
+    REAL(8)    :: DEPTH, HICE, NU, DICE, ES_MOD, RR, K_OCEAN
+    REAL(8)    :: CG_OCEAN
+    REAL       :: IC3HILIM,IC3KILIM
 
     IC3HILIM=IC3PARS(10)
     IC3KILIM=IC3PARS(11)
@@ -2025,7 +2025,7 @@ CONTAINS
     USE CONSTANTS , ONLY : GRAV
     !
     IMPLICIT NONE
-    REAL       :: ICE1, ICE2, ICE3, ICE4, DPT
+    REAL    :: ICE1, ICE2, ICE3, ICE4, DPT
     INTEGER ::  I1, I2, JITK, ITKNUM, IK
 
     DPT    = 999.
@@ -2114,11 +2114,11 @@ CONTAINS
     REAL, INTENT(INOUT):: WN_R(0:NK+1),WN_I(0:NK+1), CG(0:NK+1)
     REAL, INTENT(IN)   :: ICE1, ICE2, ICE3, ICE4, DPT
 
-    INTEGER            :: IK, KL,KU,IX,NUM,SWITCHID
-    REAL               :: K_OCEAN,CG_OCEAN
-    REAL(8)            :: KH, K_NOICE, DEPTH, HICE, NU, DICE, &
-         ES_MOD,SIGMAM1
-    COMPLEX(8)         :: WNCOMPLEX, X0,X1,X2,WNM1,WNM2,WN_O
+    INTEGER    :: IK, KL,KU,IX,NUM,SWITCHID
+    REAL       :: K_OCEAN,CG_OCEAN
+    REAL(8)    :: KH, K_NOICE, DEPTH, HICE, NU, DICE
+    REAL(8)    :: ES_MOD,SIGMAM1
+    COMPLEX(8) :: WNCOMPLEX, X0,X1,X2,WNM1,WNM2,WN_O
     !
     !     --- Input to routine
     DEPTH   =   DPT     ! water depth
@@ -2253,14 +2253,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL(8)       :: SIGMA,SIGMAM1,ES_MOD,NU,DICE,HICE,DEPTH
-    COMPLEX(8)    :: WN_O, WNM1, WNM2, WN0, WN1,WN2
-    COMPLEX(8),INTENT(OUT) :: WN ! RESULT
+    COMPLEX(8), INTENT(OUT) :: WN ! RESULT
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     INTEGER       :: I,IX,NUM,SWITCHID,IK,KU
+    REAL(8)       :: SIGMA,SIGMAM1,ES_MOD,NU,DICE,HICE,DEPTH
+    COMPLEX(8)    :: WN_O, WNM1, WNM2, WN0, WN1,WN2
     REAL(8)       :: RR, R2, EPS, SIGMA0, KAPPA, DIS
     COMPLEX(8)    :: X0, X1, X2, kp, ks, Gv
     !/
@@ -2475,8 +2475,8 @@ CONTAINS
     REAL, INTENT(OUT) :: CG(1:N)
     INTEGER           :: N
     !/ LOCAL variables
-    INTEGER           :: IK, M
-    REAL              :: CG1,CG2,CG3,CG0(1:N)
+    INTEGER :: IK, M
+    REAL    :: CG1,CG2,CG3,CG0(1:N)
     !/
     IK = 1
     CG(IK)=(SIGMA(IK+1)-SIGMA(IK))/(WN_R(IK+1)-WN_R(IK))
@@ -2619,21 +2619,21 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    COMPLEX(8)            :: P3                     ! RESULT
-    COMPLEX(8), INTENT(IN):: X0,X1,X2
-    REAL(8), INTENT(IN)   :: SIGMA,ES,NU,DICE,HICE,DEPTH
-    INTEGER, INTENT(IN)   :: JUDGE
+    COMPLEX(8)             :: P3                     ! RESULT
+    COMPLEX(8), INTENT(IN) :: X0,X1,X2
+    REAL(8),    INTENT(IN) :: SIGMA,ES,NU,DICE,HICE,DEPTH
+    INTEGER,    INTENT(IN) :: JUDGE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 
-    INTEGER               :: I
-    INTEGER, PARAMETER    :: IMAX = 200
-    REAL(8)               :: DLTA,EPSI
-    COMPLEX(8)            :: P0,P1,P2
-    COMPLEX(8)            :: Y0,Y1,Y2,Y3
-    COMPLEX(8)            :: A,B,C,Q,DISC,DEN1,DEN2
+    INTEGER            :: I
+    INTEGER, PARAMETER :: IMAX = 200
+    REAL(8)            :: DLTA,EPSI
+    COMPLEX(8)         :: P0,P1,P2
+    COMPLEX(8)         :: Y0,Y1,Y2,Y3
+    COMPLEX(8)         :: A,B,C,Q,DISC,DEN1,DEN2
     !/
     !/ ------------------------------------------------------------------- /
 
@@ -2889,15 +2889,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    COMPLEX(8), INTENT(IN)   :: WN
-    REAL(8), INTENT(IN)      :: SIGMA, ES, NU, DICE, HICE, DEPTH
-    COMPLEX(8)               :: FUNC1,AA(4,4)                   ! RESULT
-    INTEGER                  :: JUDGE
+    COMPLEX(8), INTENT(IN) :: WN
+    REAL(8),    INTENT(IN) :: SIGMA, ES, NU, DICE, HICE, DEPTH
+    COMPLEX(8)             :: FUNC1,AA(4,4)                   ! RESULT
+    INTEGER                :: JUDGE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    COMPLEX(8)   :: VE,ALPHA,N,M,L,SK,CK,SA,CA,TH,THH,TEMP,J1,J2
+    COMPLEX(8) :: VE,ALPHA,N,M,L,SK,CK,SA,CA,TH,THH,TEMP,J1,J2
     !/
     !/ ------------------------------------------------------------------- /
     VE    = CMPLX( NU, ES/DICE/SIGMA )
@@ -3047,14 +3047,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    COMPLEX(8), INTENT(IN)   :: WN
-    REAL(8), INTENT(IN)      :: SIGMA, ES, NU, DICE, HICE, DEPTH
-    COMPLEX(8)               :: FUNC1                   ! RESULT
+    COMPLEX(8), INTENT(IN) :: WN
+    REAL(8),    INTENT(IN) :: SIGMA, ES, NU, DICE, HICE, DEPTH
+    COMPLEX(8)             :: FUNC1                   ! RESULT
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    COMPLEX(8)   :: VE,ALPHA,N,M,L,SK,CK,SA,CA,TH,THH,TEMP,J1,J2
+    COMPLEX(8) :: VE,ALPHA,N,M,L,SK,CK,SA,CA,TH,THH,TEMP,J1,J2
     !/
     !/ ------------------------------------------------------------------- /
     VE    = CMPLX( NU, ES/DICE/SIGMA )

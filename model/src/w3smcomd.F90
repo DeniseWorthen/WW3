@@ -94,8 +94,8 @@ MODULE W3SMCOMD
   INTEGER, ALLOCATABLE :: YIDX(:)  !< Y-Indices of SMC cells in regular grid
   INTEGER, ALLOCATABLE :: XSPAN(:) !< Number of longitude cells SMC cell spans
   INTEGER, ALLOCATABLE :: YSPAN(:) !< Number of longitude cells SMC cell spans
-  REAL, ALLOCATABLE    :: WTS(:)   !< Regridding weights
-  REAL, ALLOCATABLE    :: COV(:,:) !< Wet fraction (coverage) of cell
+  REAL,    ALLOCATABLE :: WTS(:)   !< Regridding weights
+  REAL,    ALLOCATABLE :: COV(:,:) !< Wet fraction (coverage) of cell
   INTEGER, ALLOCATABLE :: MAPSMC(:,:)  !< Regridded MAPSTA
   LOGICAL, ALLOCATABLE :: SMCMASK(:)   !< Mask for type 1 output (flat array)
   INTEGER, ALLOCATABLE :: SMCIDX(:)    !< Indices of SMC cells within output grid domain
@@ -111,8 +111,8 @@ MODULE W3SMCOMD
 
   ! Variables for SMC nearest neighbour interpolation (type 3/4 output)
   INTEGER, ALLOCATABLE :: NNIDX(:,:)  !< Nearest neighbour SMC point to regular grid
-  REAL, ALLOCATABLE    :: XDIST(:,:)  !< Lng. distance to nearest neighbour
-  REAL, ALLOCATABLE    :: YDIST(:,:)  !< Lat. distance to nearest neighbour
+  REAL,    ALLOCATABLE :: XDIST(:,:)  !< Lng. distance to nearest neighbour
+  REAL,    ALLOCATABLE :: YDIST(:,:)  !< Lat. distance to nearest neighbour
   INTEGER              :: NDSMC       !< ww3_smcint file unit number
 
   ! Counters:
@@ -583,8 +583,8 @@ CONTAINS
 
     ! Locals
     INTEGER :: IERR, I, J
-    REAL :: PLATO, PLONO ! Not used yet....future version might allow
-    ! output to a rotated pole grid...
+    REAL    :: PLATO, PLONO ! Not used yet....future version might allow
+                            ! output to a rotated pole grid...
 
     NDSMC = 50
     OPEN(NDSMC, file='smcint.ww3', status='old', form='unformatted', convert=file_endian, iostat=ierr)
@@ -630,10 +630,10 @@ CONTAINS
 
     IMPLICIT NONE
     INTEGER :: IERR, I, J, ISEA, N, CFAC
-    REAL :: mlon(NSEA), mlat(NSEA), olon(nxo,nyo), olat(nxo,nyo),     &
-         ang(nxo,nyo), lon, lat
+    REAL    :: mlon(NSEA), mlat(NSEA), olon(nxo,nyo), olat(nxo,nyo)
+    REAL    :: ang(nxo,nyo), lon, lat
 #ifdef W3_RTD
-    REAL :: tmplon(nxo,nyo), tmplat(nxo,nyo)
+    REAL    :: tmplon(nxo,nyo), tmplat(nxo,nyo)
 #endif
 
     ! Determine smallest cell size factor:
@@ -713,12 +713,12 @@ CONTAINS
     IMPLICIT NONE
 
     ! Input parameters:
-    REAL, INTENT(IN)    :: S(:)        ! Inupt array
-    REAL, INTENT(OUT)   :: XY(NXO,NYO) ! Output data
-    LOGICAL, INTENT(IN) :: DIRN        ! Directional field?
+    REAL,    INTENT(IN)  :: S(:)        ! Inupt array
+    REAL,    INTENT(OUT) :: XY(NXO,NYO) ! Output data
+    LOGICAL, INTENT(IN)  :: DIRN        ! Directional field?
 
     ! Local parameters
-    INTEGER           :: I, J, IX, IY, ISEA, ISMC
+    INTEGER :: I, J, IX, IY, ISEA, ISMC
     DO IX = 1,NXO
       DO IY = 1,NYO
         ISEA = NNIDX(IX,IY) ! Nearest neighbour SMC point
@@ -765,14 +765,14 @@ CONTAINS
     IMPLICIT NONE
 
     ! Input parameters:
-    REAL, INTENT(IN)    :: S(:)        ! Input array
-    REAL, INTENT(OUT)   :: XY(NXO,NYO) ! Output array
-    LOGICAL, INTENT(IN) :: DIRN        ! Directional field?
+    REAL,    INTENT(IN)  :: S(:)        ! Input array
+    REAL,    INTENT(OUT) :: XY(NXO,NYO) ! Output array
+    LOGICAL, INTENT(IN)  :: DIRN        ! Directional field?
 
     ! Locals
-    INTEGER           :: I, J, IX, IY, ISEA, ISMC
-    REAL              :: CVQ(-9:NSEA)
-    REAL              :: GrdX(NSEA), GrdY(NSEA)
+    INTEGER :: I, J, IX, IY, ISEA, ISMC
+    REAL    :: CVQ(-9:NSEA)
+    REAL    :: GrdX(NSEA), GrdY(NSEA)
 
     ! Calculate local gradients:
     CVQ(1:NSEA) = S ! Need to copy S into array with bounds starting at -9
@@ -821,8 +821,8 @@ CONTAINS
     REAL, INTENT(OUT) :: XY(NXO,NYO)
     LOGICAL, OPTIONAL :: DIR
 
-    LOGICAL           :: DIRN
-    INTEGER           :: ISEA
+    LOGICAL :: DIRN
+    INTEGER :: ISEA
 
     IF(PRESENT(DIR)) THEN
       DIRN = DIR

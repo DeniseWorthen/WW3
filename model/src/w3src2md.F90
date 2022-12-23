@@ -92,11 +92,11 @@ MODULE W3SRC2MD
   !/
   INTEGER, PARAMETER, PRIVATE :: NRSIGA =  400
   INTEGER, PARAMETER, PRIVATE :: NRDRAG =   20
-  REAL, PARAMETER, PRIVATE    :: SIGAMX =   40.
-  REAL, PARAMETER, PRIVATE    :: DRAGMX =    1.E-2
+  REAL,    PARAMETER, PRIVATE :: SIGAMX =   40.
+  REAL,    PARAMETER, PRIVATE :: DRAGMX =    1.E-2
   !
-  REAL, PRIVATE           :: DSIGA, DDRAG,                        &
-       BETATB(-NRSIGA:NRSIGA+1,NRDRAG+1)
+  REAL,               PRIVATE :: DSIGA, DDRAG
+  REAL,               PRIVATE :: BETATB(-NRSIGA:NRSIGA+1,NRDRAG+1)
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
@@ -225,11 +225,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IK, ITH, I1, ITT
+    INTEGER       :: IK, ITH, I1, ITT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: EBAND, FPISTR, EB(NK), UST
+    REAL          :: EBAND, FPISTR, EB(NK), UST
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -413,21 +413,21 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IS, IK, IOMA, ICL, NKFILT, NKFIL2
+    INTEGER         :: IS, IK, IOMA, ICL, NKFILT, NKFIL2
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE   :: IENT = 0
 #endif
 #ifdef W3_T0
-    INTEGER       ITH
+    INTEGER         :: ITH
 #endif
-    REAL                    :: COSU, SINU, COSFAC, LAMBDA, ULAM,    &
-         CLAM, OMA, M0, M1, RD1, RD2, BETA,   &
-         FACLN1, FACLN2, USTAR, TRANS, FPISTR,&
-         FP1STR, FP1, SIN1A(NK)
-    REAL, PARAMETER         :: TRANSF = 0.75
-    REAL, PARAMETER         :: PEAKFC = 0.8
+    REAL            :: COSU, SINU, COSFAC, LAMBDA, ULAM
+    REAL            :: CLAM, OMA, M0, M1, RD1, RD2, BETA
+    REAL            :: FACLN1, FACLN2, USTAR, TRANS, FPISTR
+    REAL            :: FP1STR, FP1, SIN1A(NK)
+    REAL, PARAMETER :: TRANSF = 0.75
+    REAL, PARAMETER :: PEAKFC = 0.8
 #ifdef W3_T0
-    REAL                    :: DOUT(NK,NTH)
+    REAL            :: DOUT(NK,NTH)
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -681,18 +681,18 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IK, ITH, IKHW
+    INTEGER       :: IK, ITH, IKHW
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: FHW, XHW, FPIT, PHI, AF1, AF2,       &
-         AFILT, BFILT, CDIST, FILT, POW,      &
-         CDISH, CDISP, HW, EHIGH, EBD(NK)
+    REAL          :: FHW, XHW, FPIT, PHI, AF1, AF2
+    REAL          :: AFILT, BFILT, CDIST, FILT, POW
+    REAL          :: CDISH, CDISP, HW, EHIGH, EBD(NK)
 #ifdef W3_T
-    REAL          POWMAX
+    REAL          :: POWMAX
 #endif
 #ifdef W3_T0
-    REAL             DOUT(NK,NTH)
+    REAL          :: DOUT(NK,NTH)
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -928,22 +928,22 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: ISIGA, IDRAG
+    INTEGER       :: ISIGA, IDRAG
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 #ifdef W3_T0
-    INTEGER                 :: I1
+    INTEGER       :: I1
 #endif
 #ifdef W3_T1
-    INTEGER                 :: IE1
+    INTEGER       :: IE1
 #endif
-    REAL                    :: SIGA, DRAG
+    REAL          :: SIGA, DRAG
 #ifdef W3_T0
-    REAL                    :: BMIN, BMAX
+    REAL          :: BMIN, BMAX
 #endif
 #ifdef W3_T1
-    REAL                    :: ENORM, ERR(NRDRAG)
+    REAL          :: ENORM, ERR(NRDRAG)
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -1146,10 +1146,10 @@ CONTAINS
       !/ Local parameters
       !/
 #ifdef W3_S
-      INTEGER, SAVE           :: IENT = 0
+      INTEGER, SAVE :: IENT = 0
 #endif
-      REAL                    :: OM1, OM2, A0, A1, A2, A3, A4, A5,    &
-           A6, A7, A8, A9, A10
+      REAL          :: OM1, OM2, A0, A1, A2, A3, A4, A5
+      REAL          :: A6, A7, A8, A9, A10
       !/
       !/ ------------------------------------------------------------------- /
       !/

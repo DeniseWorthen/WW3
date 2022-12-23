@@ -220,24 +220,24 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IXY, IP, IXYC, IXYU, IXYD, IY, IX,   &
-         IAD00, IAD02, IADN0, IADN1, IADN2
+    INTEGER       :: IXY, IP, IXYC, IXYU, IXYD, IY, IX
+    INTEGER       :: IAD00, IAD02, IADN0, IADN1, IADN2
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 #ifdef W3_T1
-    INTEGER                 :: IX2, IY2
+    INTEGER       :: IX2, IY2
 #endif
-    REAL                    :: CFL, QB, DQ, DQNZ, QCN, QBN, QBR, CFAC
-    REAL                    :: FLA(1-MY:MY*MX)
+    REAL          :: CFL, QB, DQ, DQNZ, QCN, QBN, QBR, CFAC
+    REAL          :: FLA(1-MY:MY*MX)
 #ifdef W3_T0
-    REAL                    :: QMAX
+    REAL          :: QMAX
 #endif
 #ifdef W3_T1
-    REAL                    :: QBO, QN
+    REAL          :: QBO, QN
 #endif
 #ifdef W3_T2
-    REAL                    :: QOLD
+    REAL          :: QOLD
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -615,24 +615,24 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IXY, IP, IXYC, IXYU, IXYD, IY, IX,   &
-         IAD00, IAD02, IADN0, IADN1, IADN2
+    INTEGER       :: IXY, IP, IXYC, IXYU, IXYD, IY, IX
+    INTEGER       :: IAD00, IAD02, IADN0, IADN1, IADN2
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT
+    INTEGER, SAVE :: IENT
 #endif
 #ifdef W3_T1
-    INTEGER                 :: IX2, IY2
+    INTEGER       :: IX2, IY2
 #endif
-    REAL                    :: CFL, VEL, QB, DQ, DQNZ, QCN, QBN,    &
-         QBR, CFAC, FLA(1-MY:MY*MX)
+    REAL          :: CFL, VEL, QB, DQ, DQNZ, QCN, QBN
+    REAL          :: QBR, CFAC, FLA(1-MY:MY*MX)
 #ifdef W3_T0
-    REAL                    :: QMAX
+    REAL          :: QMAX
 #endif
 #ifdef W3_T1
-    REAL                    :: QBO, QN, XCFL
+    REAL          :: QBO, QN, XCFL
 #endif
 #ifdef W3_T2
-    REAL                    :: QOLD
+    REAL          :: QOLD
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -1017,25 +1017,25 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IXY, IP, IXYC, IXYU, IXYD, IY, IX,   &
-         IAD00, IAD02, IADN0, IADN1, IADN2,   &
-         JN, JP
+    INTEGER       :: IXY, IP, IXYC, IXYU, IXYD, IY, IX
+    INTEGER       :: IAD00, IAD02, IADN0, IADN1, IADN2
+    INTEGER       :: JN, JP
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 #ifdef W3_T1
-    INTEGER                 :: IX2, IY2
+    INTEGER       :: IX2, IY2
 #endif
-    REAL                    :: CFL, QB, DQ, DQNZ, QCN, QBN, QBR, CFAC
-    REAL                    :: FLA(1-MY:MY*MX)
+    REAL          :: CFL, QB, DQ, DQNZ, QCN, QBN, QBR, CFAC
+    REAL          :: FLA(1-MY:MY*MX)
 #ifdef W3_T0
-    REAL                    :: QMAX
+    REAL          :: QMAX
 #endif
 #ifdef W3_T1
-    REAL                    :: QBO, QN
+    REAL          :: QBO, QN
 #endif
 #ifdef W3_T2
-    REAL                    :: QOLD
+    REAL          :: QOLD
 #endif
     !/
     !/ ------------------------------------------------------------------- /

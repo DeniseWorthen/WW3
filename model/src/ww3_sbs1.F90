@@ -186,18 +186,18 @@ PROGRAM W3SBS1
   !/ ------------------------------------------------------------------- /
   !/ Local parameters
   !/
-  INTEGER              :: MPI_COMM = -99, IERR, NDST1, NDST2 = -1,&
-       NXW = -1, NYW = -1, TNEXT(2), TOLD(2),  &
-       I
+  INTEGER                 :: MPI_COMM = -99, IERR, NDST1, NDST2 = -1
+  INTEGER                 :: NXW = -1, NYW = -1, TNEXT(2), TOLD(2)
+  INTEGER                 :: I
 #ifdef W3_MPI
-  INTEGER              :: IERR_MPI
+  INTEGER                 :: IERR_MPI
 #endif
-  INTEGER, PARAMETER   :: SLEEP1 = 10 , SLEEP2 = 10
-  INTEGER, ALLOCATABLE :: TEND(:,:)
-  REAL                 :: DTTST
-  !      CHARACTER(LEN=3)     :: TSFLD, TYPE = 'WNS'
-  CHARACTER(LEN=3)     :: TSFLD, TYPE = 'WND'
-  CHARACTER(LEN=13)    :: TSSTR
+  INTEGER, PARAMETER      :: SLEEP1 = 10 , SLEEP2 = 10
+  INTEGER, ALLOCATABLE    :: TEND(:,:)
+  REAL                    :: DTTST
+  !      CHARACTER(LEN=3) :: TSFLD, TYPE = 'WNS'
+  CHARACTER(LEN=3)        :: TSFLD, TYPE = 'WND'
+  CHARACTER(LEN=13)       :: TSSTR
   !/
   !/ ------------------------------------------------------------------- /
   ! 0.  Initialization necessary for driver

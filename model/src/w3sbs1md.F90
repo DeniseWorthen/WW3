@@ -76,16 +76,16 @@ MODULE W3SBS1MD
   !/
   !/ Public variables
   !/
-  REAL, DIMENSION(:,:), ALLOCATABLE   :: BOTSPEC
-  INTEGER, PARAMETER :: NKSCAT = 30                 !number of wavenumbers
-  DOUBLE PRECISION  ,DIMENSION(:,:,:) ,  ALLOCATABLE :: SCATMATV !scattering matrices
-  DOUBLE PRECISION  ,DIMENSION(:,:,:) ,  ALLOCATABLE :: SCATMATA !original matrix
-  DOUBLE PRECISION  ,DIMENSION(:,:)   ,  ALLOCATABLE :: SCATMATD
-  CHARACTER(len=10)                   :: botspec_indicator
-  INTEGER            :: nkbx, nkby
-  REAL               :: dkbx, dkby, kwmin, kwmax
-  REAL, PARAMETER    :: scattcutoff=0.
-  REAL               :: CURTX, CURTY
+  REAL,              DIMENSION(:,:) ,   ALLOCATABLE :: BOTSPEC
+  INTEGER, PARAMETER                                :: NKSCAT = 30                 !number of wavenumbers
+  DOUBLE PRECISION , DIMENSION(:,:,:) , ALLOCATABLE :: SCATMATV !scattering matrices
+  DOUBLE PRECISION , DIMENSION(:,:,:) , ALLOCATABLE :: SCATMATA !original matrix
+  DOUBLE PRECISION , DIMENSION(:,:) ,   ALLOCATABLE :: SCATMATD
+  CHARACTER(len=10)                                 :: botspec_indicator
+  INTEGER                                           :: nkbx, nkby
+  REAL                                              :: dkbx, dkby, kwmin, kwmax
+  REAL, PARAMETER                                   :: scattcutoff=0.
+  REAL                                              :: CURTX, CURTY
   !/
 CONTAINS
   !>
@@ -203,27 +203,27 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER         :: ISPEC, IK, NSCUT, ITH, ITH2, i, j,iajust,iajust2
+    INTEGER          :: ISPEC, IK, NSCUT, ITH, ITH2, i, j,iajust,iajust2
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE    :: IENT = 0
 #endif
-    LOGICAL, SAVE   :: FIRST = .TRUE.
-    INTEGER         :: MATRICES = 0
+    LOGICAL, SAVE    :: FIRST = .TRUE.
+    INTEGER          :: MATRICES = 0
 
-    REAL            :: R1, R2, R3
+    REAL             :: R1, R2, R3
 
-    REAL            :: WN2(NSPEC, NTH), Ka(NSPEC),        &
-         Kb(NSPEC, NTH), WNBOT(NSPEC, NTH), &
-         B(NSPEC, NTH)
-    REAL            :: kbotxi, kbotyi, xbk,   &
-         ybk,integral, kbotx, kboty, count,count2
+    REAL             :: WN2(NSPEC, NTH), Ka(NSPEC)
+    REAL             :: Kb(NSPEC, NTH), WNBOT(NSPEC, NTH)
+    REAL             :: B(NSPEC, NTH)
+    REAL             :: kbotxi, kbotyi, xbk
+    REAL             :: ybk,integral, kbotx, kboty, count,count2
 
-    INTEGER         :: ibk, jbk, ik2
-    REAL            ::  SIGP,KU, KPU, CGK, CGPK, WN2i, xk2, Ap, kcutoff, ECC2, &
-         variance , integral1,integral1b,integral2, SB(NK,NTH), integral3,&
-         ajust,absajust,aa,bb,LNORM,UdotL,KdotKP,MBANDC
-    REAL            :: KD, Kfactor, kscaled, kmod , CHECKSUM, ETOT
-    REAL            :: SMATRIX(NTH,NTH),SMATRIX2(NTH,NTH)
+    INTEGER          :: ibk, jbk, ik2
+    REAL             :: SIGP,KU, KPU, CGK, CGPK, WN2i, xk2, Ap, kcutoff, ECC2
+    REAL             :: variance , integral1,integral1b,integral2, SB(NK,NTH), integral3
+    REAL             :: ajust,absajust,aa,bb,LNORM,UdotL,KdotKP,MBANDC
+    REAL             :: KD, Kfactor, kscaled, kmod , CHECKSUM, ETOT
+    REAL             :: SMATRIX(NTH,NTH),SMATRIX2(NTH,NTH)
     DOUBLE PRECISION :: AVECT(NTH)
 
     CURTX=CX1
@@ -535,17 +535,17 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)        :: inistep
+    INTEGER, INTENT(IN) :: inistep
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE                                :: IENT = 0
 #endif
-    INTEGER         :: I, J, K1, K2, IK, JK, NROT
-    REAL            :: kbotx, kboty, kcurr, kcutoff, variance
-    REAL            :: kbotxi, kbotyi, xk, yk
+    INTEGER                                      :: I, J, K1, K2, IK, JK, NROT
+    REAL                                         :: kbotx, kboty, kcurr, kcutoff, variance
+    REAL                                         :: kbotxi, kbotyi, xk, yk
     DOUBLE PRECISION, ALLOCATABLE,DIMENSION(:,:) :: AMAT, V
     DOUBLE PRECISION, ALLOCATABLE,DIMENSION(:)   :: D
     !/

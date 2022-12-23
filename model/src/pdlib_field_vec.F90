@@ -854,27 +854,27 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD
+    INTEGER, INTENT(IN) :: IMOD
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IK, IFJ
-    INTEGER                 :: IH, IT0, IROOT, IT, IERR, I0,   &
-         IFROM, IX(4), IY(4), IS(4),     &
-         IP(4), I, J, JSEA, ITARG, IB,   &
-         JSEA0, JSEAN, NSEAB, IBOFF,     &
-         ISEA, ISPROC, K, NRQMAX
+    INTEGER              :: IK, IFJ
+    INTEGER              :: IH, IT0, IROOT, IT, IERR, I0
+    INTEGER              :: IFROM, IX(4), IY(4), IS(4)
+    INTEGER              :: IP(4), I, J, JSEA, ITARG, IB
+    INTEGER              :: JSEA0, JSEAN, NSEAB, IBOFF
+    INTEGER              :: ISEA, ISPROC, K, NRQMAX
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT
+    INTEGER, SAVE        :: IENT
 #endif
-    LOGICAL                 :: FLGRDALL(NOGRP,NGRPP)
-    REAL, allocatable       :: ARRexch(:,:), ARRexch_loc(:,:)
-    REAL, allocatable       :: ARRtotal(:,:)
-    INTEGER, allocatable    :: ARRpos(:), ARRpos_loc(:)
-    INTEGER                 :: eEnt(1), IPROC
-    INTEGER                 :: TheSize, NSEAL_loc
-    INTEGER, SAVE           :: indexOutput
+    LOGICAL              :: FLGRDALL(NOGRP,NGRPP)
+    REAL,    allocatable :: ARRexch(:,:), ARRexch_loc(:,:)
+    REAL,    allocatable :: ARRtotal(:,:)
+    INTEGER, allocatable :: ARRpos(:), ARRpos_loc(:)
+    INTEGER              :: eEnt(1), IPROC
+    INTEGER              :: TheSize, NSEAL_loc
+    INTEGER, SAVE        :: indexOutput
     !/
     !/ ------------------------------------------------------------------- /
     !/

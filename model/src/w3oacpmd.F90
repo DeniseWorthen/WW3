@@ -217,8 +217,8 @@ CONTAINS
     !/
     INTEGER, ALLOCATABLE :: MASK(:,:)
     INTEGER              :: I, IX, IY, NXW, NXE, NYS, NYN, INODE, IERR_MPI
-    REAL, ALLOCATABLE    :: LON(:,:),LAT(:,:),AREA(:,:),      &
-         CORLON(:,:,:),CORLAT(:,:,:)
+    REAL, ALLOCATABLE    :: LON(:,:),LAT(:,:),AREA(:,:)
+    REAL, ALLOCATABLE    :: CORLON(:,:,:),CORLAT(:,:,:)
     REAL                 :: FACTOR
 #ifdef W3_SMC
     REAL                 :: DLON, DLAT
@@ -605,10 +605,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)   :: ID_NB                         ! Number of the field to be send
-    INTEGER, INTENT(IN)   :: ID_TIME                       ! Atmosphere time-step in seconds
-    REAL(KIND=8), DIMENSION(:,:), INTENT(IN) :: RDA_FIELD  ! Coupling field array to be send
-    LOGICAL, INTENT(OUT)  :: LD_ACTION                     ! Action performed
+    INTEGER,                      INTENT(IN)  :: ID_NB     ! Number of the field to be send
+    INTEGER,                      INTENT(IN)  :: ID_TIME   ! Atmosphere time-step in seconds
+    REAL(KIND=8), DIMENSION(:,:), INTENT(IN)  :: RDA_FIELD ! Coupling field array to be send
+    LOGICAL,                      INTENT(OUT) :: LD_ACTION ! Action performed
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -676,10 +676,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)   :: ID_NB                          ! Number of the field to be received
-    INTEGER, INTENT(IN)   :: ID_TIME                        ! Ocean time-step in seconds
-    REAL(KIND=8), DIMENSION(:,:), INTENT(OUT) :: RDA_FIELD    ! Coupling field array to be received
-    LOGICAL, INTENT(OUT)  :: LD_ACTION                      ! Action performed
+    INTEGER,                      INTENT(IN)  :: ID_NB     ! Number of the field to be received
+    INTEGER,                      INTENT(IN)  :: ID_TIME   ! Ocean time-step in seconds
+    REAL(KIND=8), DIMENSION(:,:), INTENT(OUT) :: RDA_FIELD ! Coupling field array to be received
+    LOGICAL,                      INTENT(OUT) :: LD_ACTION ! Action performed
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

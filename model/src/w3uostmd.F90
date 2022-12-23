@@ -159,14 +159,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN) :: IGRID
+    INTEGER,          INTENT(IN) :: IGRID
     CHARACTER(LEN=*), INTENT(IN) :: FILELOCAL, FILESHADOW
-    REAL, INTENT(IN) :: LOCALFACTOR, SHADOWFACTOR
+    REAL,             INTENT(IN) :: LOCALFACTOR, SHADOWFACTOR
     TYPE(GRID), POINTER :: GRD
     TYPE(SGRD), POINTER :: SGD
-    REAL :: CGMAX, MINSIZE
+    REAL                :: CGMAX, MINSIZE
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT   = 0
+    INTEGER, SAVE       :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -263,7 +263,7 @@ CONTAINS
 
     INTEGER, INTENT(IN) :: IGRID
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT   = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -326,13 +326,13 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN) :: IX, IY
-    REAL, INTENT(IN) :: DT
-    REAL, INTENT(IN) :: SPEC(SRCTRM%SGD%NSPEC), CG(SRCTRM%SGD%NK)
-    REAL, INTENT(IN) :: U10ABS, U10DIR
-    REAL, INTENT(OUT) :: S(SRCTRM%SGD%NSPEC), D(SRCTRM%SGD%NSPEC)
+    INTEGER, INTENT(IN)  :: IX, IY
+    REAL,    INTENT(IN)  :: DT
+    REAL,    INTENT(IN)  :: SPEC(SRCTRM%SGD%NSPEC), CG(SRCTRM%SGD%NK)
+    REAL,    INTENT(IN)  :: U10ABS, U10DIR
+    REAL,    INTENT(OUT) :: S(SRCTRM%SGD%NSPEC), D(SRCTRM%SGD%NSPEC)
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT   = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -389,13 +389,14 @@ CONTAINS
     IMPLICIT NONE
 
     TYPE(GRID), INTENT(INOUT) :: GRD
-    TYPE(SGRD), INTENT(IN) :: SGD
-    INTEGER, INTENT(IN) :: FILEUNIT
+    TYPE(SGRD), INTENT(IN)    :: SGD
+    INTEGER,    INTENT(IN)    :: FILEUNIT
+
     CHARACTER(256) :: FILENAME
-    LOGICAL :: FILEEXISTS
-    INTEGER :: JG, J, L, I, IX, IY
+    LOGICAL        :: FILEEXISTS
+    INTEGER        :: JG, J, L, I, IX, IY
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT   = 0
+    INTEGER, SAVE  :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -505,19 +506,20 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
 
-    CHARACTER(*), INTENT(IN) :: FILENAME
-    REAL, INTENT(IN) :: MULTFACTOR
-    INTEGER, INTENT(IN) :: FILEUNIT, NX, NY, NK, NTH
-    INTEGER*1, INTENT(INOUT) :: ALPHAMTX(:,:,:,:), BETAMTX(:,:,:,:)
-    REAL*4, INTENT(INOUT) ::  CELLSIZE(:,:,:)
-    LOGICAL, INTENT(INOUT) ::  ISOBSTRUCTED(:,:)
+    CHARACTER(*) , INTENT(IN)    :: FILENAME
+    REAL ,         INTENT(IN)    :: MULTFACTOR
+    INTEGER ,      INTENT(IN)    :: FILEUNIT, NX, NY, NK, NTH
+    INTEGER*1 ,    INTENT(INOUT) :: ALPHAMTX(:,:,:,:), BETAMTX(:,:,:,:)
+    REAL*4 ,       INTENT(INOUT) ::  CELLSIZE(:,:,:)
+    LOGICAL ,      INTENT(INOUT) ::  ISOBSTRUCTED(:,:)
+
     CHARACTER(LEN=600) :: LINE
-    INTEGER :: FIOSTAT
-    LOGICAL :: HEADER, FILESTART, READINGCELLSIZE, READINGALPHA
-    INTEGER :: IX, IY, SPGRDS_SIZE, IK
-    REAL, ALLOCATABLE :: TRANS(:)
+    INTEGER            :: FIOSTAT
+    LOGICAL            :: HEADER, FILESTART, READINGCELLSIZE, READINGALPHA
+    INTEGER            :: IX, IY, SPGRDS_SIZE, IK
+    REAL, ALLOCATABLE  :: TRANS(:)
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT   = 0
+    INTEGER, SAVE      :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -638,11 +640,12 @@ CONTAINS
     IMPLICIT NONE
 
     CLASS(UOST_SOURCETERM), INTENT(INOUT) :: THIS
-    TYPE(GRID), TARGET, INTENT(IN) :: GRD
-    TYPE(SGRD), TARGET, INTENT(IN) :: SGD
-    INTEGER :: ITH, NTH
+    TYPE(GRID), TARGET,     INTENT(IN)    :: GRD
+    TYPE(SGRD), TARGET,     INTENT(IN)    :: SGD
+
+    INTEGER       :: ITH, NTH
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT   = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -727,14 +730,14 @@ CONTAINS
 
     IMPLICIT NONE
 
-    REAL, PARAMETER :: TOLERANCE = 0.000001
-    REAL, PARAMETER :: WHTHR1 = .5, WHTHR2 = 1.5
+    REAL, PARAMETER   :: TOLERANCE = 0.000001
+    REAL, PARAMETER   :: WHTHR1 = .5, WHTHR2 = 1.5
 
-    REAL, INTENT(IN) :: U10ABS, U10DIR, CGABS, CGDIR, DT
+    REAL, INTENT(IN)  :: U10ABS, U10DIR, CGABS, CGDIR, DT
     REAL, INTENT(OUT) :: PSI
-    REAL :: THDELTA, CP, WA
+    REAL              :: THDELTA, CP, WA
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT   = 0
+    INTEGER, SAVE     :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -832,18 +835,18 @@ CONTAINS
     IMPLICIT NONE
 
     CLASS(UOST_SOURCETERM), INTENT(INOUT) :: THIS
-    INTEGER, INTENT(IN) :: IX, IY
-    REAL, INTENT(IN) :: SPEC(THIS%SGD%NSPEC), CG(THIS%SGD%NK)
-    REAL, INTENT(OUT) :: S(THIS%SGD%NSPEC), D(THIS%SGD%NSPEC)
-    REAL, INTENT(IN) :: U10ABS, U10DIR
-    REAL, INTENT(IN) :: DT
+    INTEGER,                INTENT(IN)    :: IX, IY
+    REAL,                   INTENT(IN)    :: SPEC(THIS%SGD%NSPEC), CG(THIS%SGD%NK)
+    REAL,                   INTENT(OUT)   :: S(THIS%SGD%NSPEC), D(THIS%SGD%NSPEC)
+    REAL,                   INTENT(IN)    :: U10ABS, U10DIR
+    REAL,                   INTENT(IN)    :: DT
 
-    INTEGER :: IK, ITH, ISP, NK, NTH
-    REAL :: ALPHA, BETA, CGI, CELLSIZE, SPECI, SFC
-    LOGICAL :: CELLOBSTRUCTED
-    REAL :: TH, PSI
+    INTEGER       :: IK, ITH, ISP, NK, NTH
+    REAL          :: ALPHA, BETA, CGI, CELLSIZE, SPECI, SFC
+    LOGICAL       :: CELLOBSTRUCTED
+    REAL          :: TH, PSI
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT   = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -959,21 +962,21 @@ CONTAINS
     IMPLICIT NONE
 
     CLASS(UOST_SOURCETERM), INTENT(INOUT), TARGET :: THIS
-    INTEGER, INTENT(IN) :: IX, IY
-    REAL, INTENT(IN) :: SPEC(THIS%SGD%NSPEC), CG(THIS%SGD%NK)
-    REAL, INTENT(OUT) :: S(THIS%SGD%NSPEC), D(THIS%SGD%NSPEC)
-    REAL, INTENT(IN) :: U10ABS, U10DIR
-    REAL, INTENT(IN) :: DT
+    INTEGER,                INTENT(IN)            :: IX, IY
+    REAL,                   INTENT(IN)            :: SPEC(THIS%SGD%NSPEC), CG(THIS%SGD%NK)
+    REAL,                   INTENT(OUT)           :: S(THIS%SGD%NSPEC), D(THIS%SGD%NSPEC)
+    REAL,                   INTENT(IN)            :: U10ABS, U10DIR
+    REAL,                   INTENT(IN)            :: DT
 
-    INTEGER :: IK, ITH, IS
-    REAL :: CGI, SPECI, SFC, CELLSIZE, &
-         SFCLEFT, SFCRIGHT, SFCCENTER, THDIAG, CGDIAG, &
-         ALPHASH, BETASH, GAMMMA, GG
-    INTEGER :: N = 8, ITHDIAG, ISP, NK, NTH, NX, NY
-    LOGICAL :: CELLOBSTRUCTED
-    REAL :: TH, PSI
+    INTEGER       :: IK, ITH, IS
+    REAL          :: CGI, SPECI, SFC, CELLSIZE
+    REAL          :: SFCLEFT, SFCRIGHT, SFCCENTER, THDIAG, CGDIAG
+    REAL          :: ALPHASH, BETASH, GAMMMA, GG
+    INTEGER       :: N = 8, ITHDIAG, ISP, NK, NTH, NX, NY
+    LOGICAL       :: CELLOBSTRUCTED
+    REAL          :: TH, PSI
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT   = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -1095,16 +1098,16 @@ CONTAINS
     IMPLICIT NONE
 
     CLASS(UOST_SOURCETERM), INTENT(INOUT) :: THIS
-    INTEGER, INTENT(IN) :: IX, IY
-    REAL, INTENT(IN) :: SPEC(THIS%SGD%NSPEC), CG(THIS%SGD%NK)
-    REAL, INTENT(IN) :: DT
-    REAL, INTENT(IN) :: U10ABS, U10DIR
-    REAL, INTENT(OUT) :: S(THIS%SGD%NSPEC), D(THIS%SGD%NSPEC)
+    INTEGER,                INTENT(IN)    :: IX, IY
+    REAL,                   INTENT(IN)    :: SPEC(THIS%SGD%NSPEC), CG(THIS%SGD%NK)
+    REAL,                   INTENT(IN)    :: DT
+    REAL,                   INTENT(IN)    :: U10ABS, U10DIR
+    REAL,                   INTENT(OUT)   :: S(THIS%SGD%NSPEC), D(THIS%SGD%NSPEC)
 
-    REAL :: S_LD(THIS%SGD%NSPEC), S_SE(THIS%SGD%NSPEC)
-    REAL :: D_LD(THIS%SGD%NSPEC), D_SE(THIS%SGD%NSPEC)
+    REAL          :: S_LD(THIS%SGD%NSPEC), S_SE(THIS%SGD%NSPEC)
+    REAL          :: D_LD(THIS%SGD%NSPEC), D_SE(THIS%SGD%NSPEC)
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT   = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S

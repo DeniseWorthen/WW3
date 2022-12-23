@@ -681,8 +681,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IK, ITH, IS, IS0, NSTEPS,  NKH, NKH1,&
-         IKS1, IS1, NSPECH, IDT, IERR, NKD, ISP
+    INTEGER                 :: IK, ITH, IS, IS0, NSTEPS,  NKH, NKH1
+    INTEGER                 :: IKS1, IS1, NSPECH, IDT, IERR, NKD, ISP
     INTEGER                 :: IOBPIP, IOBPDIP, IOBDPIP
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
@@ -694,16 +694,16 @@ CONTAINS
     INTEGER                 :: QI5TSTART(2)
     REAL                    :: QR5KURT
     INTEGER, PARAMETER      :: NL5_SELECT = 1
-    REAL, PARAMETER         :: NL5_OFFSET = 0.  ! explicit dyn.
+    REAL,    PARAMETER      :: NL5_OFFSET = 0.  ! explicit dyn.
 #endif
-    REAL                    :: DTTOT, FHIGH, DT, AFILT, DAMAX, AFAC,&
-         HDT, ZWND, FP, DEPTH, TAUSCX, TAUSCY, FHIGI
+    REAL                    :: DTTOT, FHIGH, DT, AFILT, DAMAX, AFAC
+    REAL                    :: HDT, ZWND, FP, DEPTH, TAUSCX, TAUSCY, FHIGI
     ! Scaling factor for SIN, SDS, SNL
     REAL                    :: ICESCALELN, ICESCALEIN, ICESCALENL, ICESCALEDS
-    REAL                    :: EMEAN, FMEAN, AMAX, CD, Z0, SCAT,    &
-         SMOOTH_ICEDISP
-    REAL                    :: WN_R(NK), CG_ICE(NK),ALPHA_LIU(NK), ICECOEF2,&
-         R(NK)
+    REAL                    :: EMEAN, FMEAN, AMAX, CD, Z0, SCAT
+    REAL                    :: SMOOTH_ICEDISP
+    REAL                    :: WN_R(NK), CG_ICE(NK),ALPHA_LIU(NK), ICECOEF2
+    REAL                    :: R(NK)
     DOUBLE PRECISION        :: ATT, ISO
 #ifdef W3_ST1
     REAL                    :: FH1, FH2
@@ -730,58 +730,58 @@ CONTAINS
 #ifdef W3_T
     REAL                    :: DTRAW
 #endif
-    REAL                    :: EBAND, DIFF, EFINISH, HSTOT, PHINL,       &
-         FMEAN1, FMEANWS, MWXINIT, MWYINIT,        &
-         FACTOR, FACTOR2, DRAT, TAUWAX, TAUWAY,    &
-         MWXFINISH, MWYFINISH, A1BAND, B1BAND,     &
-         COSI(2)
+    REAL                    :: EBAND, DIFF, EFINISH, HSTOT, PHINL
+    REAL                    :: FMEAN1, FMEANWS, MWXINIT, MWYINIT
+    REAL                    :: FACTOR, FACTOR2, DRAT, TAUWAX, TAUWAY
+    REAL                    :: MWXFINISH, MWYFINISH, A1BAND, B1BAND
+    REAL                    :: COSI(2)
     REAL                    :: SPECINIT(NSPEC), SPEC2(NSPEC), FRLOCAL, JAC2
-    REAL                    :: DAM (NSPEC), DAM2(NSPEC), WN2 (NSPEC),            &
-         VSLN(NSPEC),                         &
-         VSIN(NSPEC), VDIN(NSPEC),            &
-         VSNL(NSPEC), VDNL(NSPEC),            &
-         VSDS(NSPEC), VDDS(NSPEC),            &
+    REAL                    :: DAM (NSPEC), DAM2(NSPEC), WN2 (NSPEC)
+    REAL                    :: VSLN(NSPEC)
+    REAL                    :: VSIN(NSPEC), VDIN(NSPEC)
+    REAL                    :: VSNL(NSPEC), VDNL(NSPEC)
+    REAL                    :: VSDS(NSPEC), VDDS(NSPEC)
 #ifdef W3_ST6
-         VSWL(NSPEC), VDWL(NSPEC),            &
+    REAL                    :: VSWL(NSPEC), VDWL(NSPEC)
 #endif
-         VSBT(NSPEC), VDBT(NSPEC),            &
+    REAL                    :: VSBT(NSPEC), VDBT(NSPEC)
 #ifdef W3_IC1
-         VSIC(NSPEC), VDIC(NSPEC),            &
+    REAL                    :: VSIC(NSPEC), VDIC(NSPEC)
 #endif
 #ifdef W3_IC2
-         VSIC(NSPEC), VDIC(NSPEC),            &
+    REAL                    :: VSIC(NSPEC), VDIC(NSPEC)
 #endif
 #ifdef W3_IC3
-         VSIC(NSPEC), VDIC(NSPEC),            &
+    REAL                    :: VSIC(NSPEC), VDIC(NSPEC)
 #endif
 #ifdef W3_IC4
-         VSIC(NSPEC), VDIC(NSPEC),            &
+    REAL                    :: VSIC(NSPEC), VDIC(NSPEC)
 #endif
 #ifdef W3_IC5
-         VSIC(NSPEC), VDIC(NSPEC),            &
+    REAL                    :: VSIC(NSPEC), VDIC(NSPEC)
 #endif
 #ifdef W3_DB1
-         VSDB(NSPEC), VDDB(NSPEC),            &
+    REAL                    :: VSDB(NSPEC), VDDB(NSPEC)
 #endif
 #ifdef W3_TR1
-         VSTR(NSPEC), VDTR(NSPEC),            &
+    REAL                    :: VSTR(NSPEC), VDTR(NSPEC)
 #endif
 #ifdef W3_BS1
-         VSBS(NSPEC), VDBS(NSPEC),            &
+    REAL                    :: VSBS(NSPEC), VDBS(NSPEC)
 #endif
 #ifdef W3_REF1
-         VREF(NSPEC),                         &
+    REAL                    :: VREF(NSPEC)
 #endif
 #ifdef W3_IS1
-         VSIR(NSPEC), VDIR(NSPEC),            &
+    REAL                    :: VSIR(NSPEC), VDIR(NSPEC)
 #endif
 #ifdef W3_IS2
-         VSIR(NSPEC), VDIR(NSPEC),VDIR2(NSPEC), &
+    REAL                    :: VSIR(NSPEC), VDIR(NSPEC),VDIR2(NSPEC)
 #endif
 #ifdef W3_UOST
-         VSUO(NSPEC), VDUO(NSPEC),            &
+    REAL                    :: VSUO(NSPEC), VDUO(NSPEC)
 #endif
-         VS(NSPEC), VD(NSPEC), EB(NK)
+    REAL                    :: VS(NSPEC), VD(NSPEC), EB(NK)
 #ifdef W3_ST3
     LOGICAL                 :: LLWS(NSPEC)
 #endif
@@ -810,12 +810,11 @@ CONTAINS
     LOGICAL                 :: PrintDeltaSmDA
     REAL                    :: eInc1, eInc2, eVS, eVD, JAC
     REAL                    :: DeltaSRC(NSPEC)
-    REAL, PARAMETER         :: DTMINTOT = 0.01
+    REAL,    PARAMETER      :: DTMINTOT = 0.01
     LOGICAL                 :: LNEWLIMITER = .FALSE.
 #ifdef W3_PDLIB
-    REAL                 :: PreVS, FAK, DVS, SIDT, FAKS, MAXDAC
+    REAL                    :: PreVS, FAK, DVS, SIDT, FAKS, MAXDAC
 #endif
-
 #ifdef W3_NNT
     CHARACTER(LEN=17), SAVE :: FNAME = 'test_data_nnn.ww3'
 #endif
@@ -2424,11 +2423,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IS, IK
+    INTEGER       :: IS, IK
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    ::  M0, M1, SIN1A(NK)
+    REAL          ::  M0, M1, SIN1A(NK)
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -2544,7 +2543,7 @@ CONTAINS
     REAL , INTENT(IN)    :: SPEC(NSPEC)
     REAL , INTENT(INOUT) :: VS(NSPEC), VD(NSPEC)
 
-    INTEGER             :: ISP, ITH, IK, IS
+    INTEGER :: ISP, ITH, IK, IS
 
 #ifdef W3_S
     CALL STRACE (IENT, 'SIGN_VSD_SEMI_IMPLICIT_WW3')
@@ -2633,7 +2632,7 @@ CONTAINS
     REAL , INTENT(IN)    :: SPEC(NSPEC)
     REAL , INTENT(INOUT) :: VS(NSPEC), VD(NSPEC)
 
-    INTEGER             :: ISP, ITH, IK, IS
+    INTEGER :: ISP, ITH, IK, IS
 #ifdef W3_S
     CALL STRACE (IENT, 'SIGN_VSD_PATANKAR_WW3')
 #endif

@@ -611,30 +611,30 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: J, I, IOFF, TTEST(2), ITEST
+    INTEGER              :: J, I, IOFF, TTEST(2), ITEST
 #ifdef W3_MPI
-    INTEGER                 :: IERR_MPI, IT0, ITAG, IFROM,     &
-         ISEA, JSEA, ISPROC
+    INTEGER              :: IERR_MPI, IT0, ITAG, IFROM
+    INTEGER              :: ISEA, JSEA, ISPROC
 #endif
 #ifdef W3_MPIT
-    INTEGER                 :: ICOUNT
+    INTEGER              :: ICOUNT
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE        :: IENT = 0
 #endif
-    INTEGER, POINTER        :: VTIME(:)
+    INTEGER, POINTER     :: VTIME(:)
 #ifdef W3_MPI
-    INTEGER, POINTER        :: NRQ, IRQ(:)
-    INTEGER, ALLOCATABLE    :: STATUS(:,:)
+    INTEGER, POINTER     :: NRQ, IRQ(:)
+    INTEGER, ALLOCATABLE :: STATUS(:,:)
 #endif
-    REAL                    :: DTTST, DT1, DT2, W1, W2
-    REAL, POINTER           :: SBPI(:,:)
+    REAL                 :: DTTST, DT1, DT2, W1, W2
+    REAL,    POINTER     :: SBPI(:,:)
 #ifdef W3_MPI
-    REAL, ALLOCATABLE       :: TSTORE(:,:)
-    LOGICAL                 :: FLAGOK
+    REAL,    ALLOCATABLE :: TSTORE(:,:)
+    LOGICAL              :: FLAGOK
 #endif
 #ifdef W3_MPIT
-    LOGICAL                 :: FLAG
+    LOGICAL              :: FLAG
 #endif
     !/
 #ifdef W3_S
@@ -1828,30 +1828,30 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: NTOT, J, IS, NA, IA, JSEA, ISEA, I
+    INTEGER          :: NTOT, J, IS, NA, IA, JSEA, ISEA, I
 #ifdef W3_MPI
-    INTEGER                 :: ITAG, IT0, IFROM, ILOC, NLOC,   &
-         ISPROC, IERR_MPI, ICOUNT,       &
-         I0, I1, I2
+    INTEGER          :: ITAG, IT0, IFROM, ILOC, NLOC
+    INTEGER          :: ISPROC, IERR_MPI, ICOUNT
+    INTEGER          :: I0, I1, I2
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE    :: IENT = 0
 #endif
-    INTEGER, POINTER        :: VTIME(:)
+    INTEGER, POINTER :: VTIME(:)
 #ifdef W3_MPI
-    INTEGER, POINTER        :: NRQ, IRQ(:), STATUS(:,:)
+    INTEGER, POINTER :: NRQ, IRQ(:), STATUS(:,:)
 #endif
-    REAL                    :: DTTST, WGTH
-    REAL, POINTER           :: SPEC1(:,:), SPEC2(:,:), SPEC(:,:)
+    REAL             :: DTTST, WGTH
+    REAL,    POINTER :: SPEC1(:,:), SPEC2(:,:), SPEC(:,:)
 #ifdef W3_MPI
-    REAL, POINTER           :: SHGH(:,:,:)
+    REAL,    POINTER :: SHGH(:,:,:)
 #endif
-    LOGICAL                 :: FLGALL
+    LOGICAL          :: FLGALL
 #ifdef W3_MPI
-    LOGICAL                 :: FLAGOK
+    LOGICAL          :: FLAGOK
 #endif
 #ifdef W3_MPIT
-    LOGICAL                 :: FLAG
+    LOGICAL          :: FLAG
 #endif
     !/
 #ifdef W3_S
@@ -2924,27 +2924,27 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: J, I, ISEA, JSEA, IA, IS
+    INTEGER          :: J, I, ISEA, JSEA, IA, IS
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE    :: IENT = 0
 #endif
 #ifdef W3_MPI
-    INTEGER                 :: IT0, ITAG, IFROM, IERR_MPI,     &
-         NA, IP, I1, I2
+    INTEGER          :: IT0, ITAG, IFROM, IERR_MPI
+    INTEGER          :: NA, IP, I1, I2
 #endif
 #ifdef W3_MPIT
-    INTEGER                 :: ICOUNT
+    INTEGER          :: ICOUNT
 #endif
-    INTEGER, POINTER        :: VTIME(:)
+    INTEGER, POINTER :: VTIME(:)
 #ifdef W3_MPI
-    INTEGER, POINTER        :: NRQ, IRQ(:), STATUS(:,:)
+    INTEGER, POINTER :: NRQ, IRQ(:), STATUS(:,:)
 #endif
-    REAL                    :: DTTST, WGHT
-    REAL, POINTER           :: SPEC1(:,:), SPEC2(:,:), SPEC(:,:)
+    REAL             :: DTTST, WGHT
+    REAL,    POINTER :: SPEC1(:,:), SPEC2(:,:), SPEC(:,:)
 #ifdef W3_MPI
-    REAL, POINTER           :: SEQL(:,:,:)
-    LOGICAL                 :: FLAGOK
-    LOGICAL                 :: FLAG
+    REAL,    POINTER :: SEQL(:,:,:)
+    LOGICAL          :: FLAGOK
+    LOGICAL          :: FLAG
 #endif
     !/
 #ifdef W3_S

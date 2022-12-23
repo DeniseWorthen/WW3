@@ -127,11 +127,11 @@ MODULE W3SNL3MD
   !/ ------------------------------------------------------------------- /
   !/
   INTEGER, PRIVATE, PARAMETER :: NKD = 275
-  REAL, PRIVATE, PARAMETER    :: KDMIN = 0.025 ,  KDMAX = 20.
-  REAL, PUBLIC, PARAMETER     :: LAMMAX = 0.49999
-  REAL, PUBLIC, PARAMETER     :: DELTHM = 90.
+  REAL,    PRIVATE, PARAMETER :: KDMIN = 0.025 ,  KDMAX = 20.
+  REAL, PUBLIC,     PARAMETER :: LAMMAX = 0.49999
+  REAL, PUBLIC,     PARAMETER :: DELTHM = 90.
   !
-  REAL, PRIVATE               :: SITMIN, XSIT
+  REAL,    PRIVATE            :: SITMIN, XSIT
   !
   PUBLIC
   !/
@@ -346,27 +346,27 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)   :: A(NTH,NFR), CG(NFR), WN(NFR), DEPTH
-    REAL, INTENT(OUT)  :: S(NTH,NFR), D(NTH,NFR)
+    REAL, INTENT(IN)  :: A(NTH,NFR), CG(NFR), WN(NFR), DEPTH
+    REAL, INTENT(OUT) :: S(NTH,NFR), D(NTH,NFR)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER            :: IFR, IERR, IKD, JKD(NFRCUT), IQA, IF1MIN, &
-         IF1MAX, IF2MIN, IF2MAX, ISP0, ISPX0, ITH, &
-         ISP, ISPX
+    INTEGER       :: IFR, IERR, IKD, JKD(NFRCUT), IQA, IF1MIN
+    INTEGER       :: IF1MAX, IF2MIN, IF2MAX, ISP0, ISPX0, ITH
+    INTEGER       :: ISP, ISPX
 #ifdef W3_S
-    INTEGER, SAVE      :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    INTEGER            :: LQST1(16), LQST4(16)
-    REAL               :: XSITLN, SIT, FPROP, FQ1, FQ2, FQ3, FQ4,   &
-         AUX1, AUX2
-    REAL               :: XWN(NFRMAX), XCG(NFRMAX), SCALE1(NFRCUT), &
-         SCALE2(NFRCUT), LQST2(16), FACT(6),       &
-         LQST5(16), LQST6(16)
-    REAL               :: UE(NSPMIN:NSPMAX), DSB(NSPMIN:NSPMX2),    &
-         DD1(NSPMIN:NSPMX2), DD2(NSPMIN:NSPMX2),   &
-         DD3(NSPMIN:NSPMX2), DD4(NSPMIN:NSPMX2)
+    INTEGER       :: LQST1(16), LQST4(16)
+    REAL          :: XSITLN, SIT, FPROP, FQ1, FQ2, FQ3, FQ4
+    REAL          :: AUX1, AUX2
+    REAL          :: XWN(NFRMAX), XCG(NFRMAX), SCALE1(NFRCUT)
+    REAL          :: SCALE2(NFRCUT), LQST2(16), FACT(6)
+    REAL          :: LQST5(16), LQST6(16)
+    REAL          :: UE(NSPMIN:NSPMAX), DSB(NSPMIN:NSPMX2)
+    REAL          :: DD1(NSPMIN:NSPMX2), DD2(NSPMIN:NSPMX2)
+    REAL          :: DD3(NSPMIN:NSPMX2), DD4(NSPMIN:NSPMX2)
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -666,11 +666,11 @@ CONTAINS
       !/
       !/ Parameter list
       !/
-      REAL, INTENT(OUT)       :: SPEC(1-NTHMAX:NTH+NTHMAX,NFRMIN:NFRMAX)
+      REAL, INTENT(OUT) :: SPEC(1-NTHMAX:NTH+NTHMAX,NFRMIN:NFRMAX)
       !/
       !/ Local parameters
       !/
-      INTEGER                 :: IFR, ITH
+      INTEGER :: IFR, ITH
       !/
       !/ ------------------------------------------------------------------- /
       !
@@ -740,13 +740,13 @@ CONTAINS
       !/
       !/ Parameter list
       !/
-      REAL, INTENT(IN)      :: ARIN(NTH,NFRCUT)
-      REAL, INTENT(OUT)     :: AROUT(1-NTHMAX:NTH+NTHMAX,NFRMIN:NFRCUT)
+      REAL, INTENT(IN)  :: ARIN(NTH,NFRCUT)
+      REAL, INTENT(OUT) :: AROUT(1-NTHMAX:NTH+NTHMAX,NFRMIN:NFRCUT)
       !/
       !/ Local parameters
       !/
-      INTEGER               :: IFR, ITH
-      REAL                  :: TEMP(NTH,NFRCUT)
+      INTEGER :: IFR, ITH
+      REAL    :: TEMP(NTH,NFRCUT)
       !/
       !/ ------------------------------------------------------------------- /
       !
@@ -881,27 +881,27 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IFRMIN, IFRMAX, IKD, IERR, IQ, NQD,  &
-         NQS, J, IFR, IQA, JJ, JF, NTHMX2,    &
-         JIQ, JOF, JQR, IST
-    INTEGER                 :: JFR(4), JFR1(4), JTH(4), JTH1(4)
+    INTEGER              :: IFRMIN, IFRMAX, IKD, IERR, IQ, NQD
+    INTEGER              :: NQS, J, IFR, IQA, JJ, JF, NTHMX2
+    INTEGER              :: JIQ, JOF, JQR, IST
+    INTEGER              :: JFR(4), JFR1(4), JTH(4), JTH1(4)
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE        :: IENT = 0
 #endif
-    INTEGER, ALLOCATABLE    :: AST1(:,:,:), AST2(:,:,:)
-    REAL                    :: SITMAX, XFRLN
-    REAL                    :: OFF12, OFF34, TH12, DEPTH,           &
-         S0, S1, S2, S3, S4, AUXFR(4),        &
-         WN0, WN1, WN2, WN3, WN4,             &
-         CG0, CG1, CG2, CG3, CG4, AUXF,       &
-         AA, BB, CC, DELTH(4), AUX1, AUX2,    &
-         WFR(4), WFR1(4), WTH(4), WTH1(4),    &
-         WFROFF, SIOFF, WF
+    INTEGER, ALLOCATABLE :: AST1(:,:,:), AST2(:,:,:)
+    REAL                 :: SITMAX, XFRLN
+    REAL                 :: OFF12, OFF34, TH12, DEPTH
+    REAL                 :: S0, S1, S2, S3, S4, AUXFR(4)
+    REAL                 :: WN0, WN1, WN2, WN3, WN4
+    REAL                 :: CG0, CG1, CG2, CG3, CG4, AUXF
+    REAL                 :: AA, BB, CC, DELTH(4), AUX1, AUX2
+    REAL                 :: WFR(4), WFR1(4), WTH(4), WTH1(4)
+    REAL                 :: WFROFF, SIOFF, WF
     !
     TYPE QST
-      INTEGER               :: OFR(4), OFR1(4), OTH(4), OTH1(4)
-      REAL                  :: HFR(4), HFR1(4), HTH(4), HTH1(4)
-      REAL                  :: F1, F2, F3, F4, CQD, CQS
+      INTEGER            :: OFR(4), OFR1(4), OTH(4), OTH1(4)
+      REAL               :: HFR(4), HFR1(4), HTH(4), HTH1(4)
+      REAL               :: F1, F2, F3, F4, CQD, CQS
     END TYPE QST
     !
     TYPE(QST), ALLOCATABLE  :: TSTORE(:,:)
@@ -1556,11 +1556,11 @@ CONTAINS
       !/
       !/ Parameter list
       !/
-      REAL, INTENT(IN)        :: MU, THETA
+      REAL, INTENT(IN) :: MU, THETA
       !/
       !/ Local parameters
       !/
-      REAL                    :: MULOC, THETAR, BB, AUX
+      REAL :: MULOC, THETAR, BB, AUX
       !/
       !/ ------------------------------------------------------------------- /
       !/
@@ -1624,11 +1624,11 @@ CONTAINS
       !/
       !/ Parameter list
       !/
-      REAL, INTENT(IN)        :: MU, THETA
+      REAL, INTENT(IN) :: MU, THETA
       !/
       !/ Local parameters
       !/
-      REAL                    :: MULOC, THETAR, BB, AUX
+      REAL :: MULOC, THETAR, BB, AUX
       !/
       !/ ------------------------------------------------------------------- /
       !/

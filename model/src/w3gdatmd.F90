@@ -2899,21 +2899,21 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, NDSE, NDST
+    INTEGER , INTENT(IN) :: IMOD, NDSE, NDST
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER, PARAMETER :: NFD    = 4
-    LOGICAL, PARAMETER :: PTILED = .FALSE.
-    LOGICAL, PARAMETER :: QTILED = .FALSE.
-    LOGICAL, PARAMETER :: IJG    = .FALSE.
-    LOGICAL, PARAMETER :: SPHERE = .FALSE.
-    INTEGER :: PRANGE(2), QRANGE(2)
-    INTEGER :: LBI(2), UBI(2), LBO(2), UBO(2), ISTAT
-    REAL   , ALLOCATABLE :: COSA(:,:)
+    INTEGER , PARAMETER :: NFD    = 4
+    LOGICAL , PARAMETER :: PTILED = .FALSE.
+    LOGICAL , PARAMETER :: QTILED = .FALSE.
+    LOGICAL , PARAMETER :: IJG    = .FALSE.
+    LOGICAL , PARAMETER :: SPHERE = .FALSE.
+    INTEGER             :: PRANGE(2), QRANGE(2)
+    INTEGER             :: LBI(2), UBI(2), LBO(2), UBO(2), ISTAT
+    REAL , ALLOCATABLE  :: COSA(:,:)
 #ifdef W3_S
-    INTEGER, SAVE      :: IENT = 0
+    INTEGER , SAVE      :: IENT = 0
     CALL STRACE (IENT, 'W3GNTX')
 #endif
     !
@@ -3302,15 +3302,14 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    INTEGER                 :: ISEA, IX, IY, IXY, IXN, IXP, IYN, IYP
-    INTEGER                 :: J, K, NEIGH1(0:7)
-    INTEGER                 :: ILEV, NLEV
+    INTEGER       :: ISEA, IX, IY, IXY, IXN, IXP, IYN, IYP
+    INTEGER       :: J, K, NEIGH1(0:7)
+    INTEGER       :: ILEV, NLEV
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-
-    REAL                    :: TRIX(NY*NX), TRIY(NY*NX), DX, DY,    &
-         COSAVG, SINAVG, THAVG, ANGLES(0:7), CLAT
+    REAL          :: TRIX(NY*NX), TRIY(NY*NX), DX, DY
+    REAL          :: COSAVG, SINAVG, THAVG, ANGLES(0:7), CLAT
     !/
     !/ ------------------------------------------------------------------- /
     !/

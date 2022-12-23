@@ -6459,15 +6459,15 @@ contains
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    real   , parameter :: zero  = 0.0
-    logical, save :: firstCall = .true.
-    integer :: isea, jsea
-    real    :: emean, fmean, fmean1, wnmean, amax, ustar, ustdr, &
-         tauwx, tauwy, cd, z0, fmeanws, dlwmean
-    logical :: llws(nspec)
-    type(ESMF_Field) :: chknField
+    real , parameter            :: zero  = 0.0
+    logical, save               :: firstCall = .true.
+    integer                     :: isea, jsea
+    real                        :: emean, fmean, fmean1, wnmean, amax, ustar, ustdr
+    real                        :: tauwx, tauwy, cd, z0, fmeanws, dlwmean
+    logical                     :: llws(nspec)
+    type(ESMF_Field)            :: chknField
     real(ESMF_KIND_RX), pointer :: chkn(:)
-    integer, save :: timeSlice = 1
+    integer, save               :: timeSlice = 1
     !
     ! -------------------------------------------------------------------- /
     !
@@ -6609,15 +6609,15 @@ contains
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    real   , parameter :: zero  = 0.0
-    logical, save :: firstCall = .true.
-    integer :: isea, jsea, ix, iy
-    real    :: emean, fmean, fmean1, wnmean, amax, ustar, ustdr, &
-         tauwx, tauwy, cd, z0, fmeanws, dlwmean
-    logical :: llws(nspec)
-    type(ESMF_Field) :: wrlnField
+    real , parameter            :: zero  = 0.0
+    logical, save               :: firstCall = .true.
+    integer                     :: isea, jsea, ix, iy
+    real                        :: emean, fmean, fmean1, wnmean, amax, ustar, ustdr
+    real                        :: tauwx, tauwy, cd, z0, fmeanws, dlwmean
+    logical                     :: llws(nspec)
+    type(ESMF_Field)            :: wrlnField
     real(ESMF_KIND_RX), pointer :: wrln(:)
-    integer, save :: timeSlice = 1
+    integer, save               :: timeSlice = 1
     !
     ! -------------------------------------------------------------------- /
     !

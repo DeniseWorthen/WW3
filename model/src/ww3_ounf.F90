@@ -216,46 +216,46 @@ PROGRAM W3OUNF
   !/ ------------------------------------------------------------------- /
   !/ Local parameters
   !/
-  TYPE(NML_FIELD_T)       :: NML_FIELD
-  TYPE(NML_FILE_T)        :: NML_FILE
-  TYPE(NML_SMC_T)         :: NML_SMC
+  TYPE(NML_FIELD_T)    :: NML_FIELD
+  TYPE(NML_FILE_T)     :: NML_FILE
+  TYPE(NML_SMC_T)      :: NML_SMC
   !
-  INTEGER                 :: NDSI, NDSM, NDSOG,                    &
-       NDSTRC, NTRACE, IERR, I, I1F, I2F,    &
-       IOTEST, NOUT,                         &
-       IFI, IFJ, NCTYPE, IX1, IXN, IY1, IYN, &
-       IOUT, S3, IRET,                       &
-       NBIPART, CNTIPART, NCVARTYPEI, IPART, &
-       RTDNX, RTDNY
-  INTEGER                 :: TOUT(2), TDUM(2), TREF(2), TEPOCH(2), &
-       STOPDATE(8), REFDATE(8)
+  INTEGER              :: NDSI, NDSM, NDSOG
+  INTEGER              :: NDSTRC, NTRACE, IERR, I, I1F, I2F
+  INTEGER              :: IOTEST, NOUT
+  INTEGER              :: IFI, IFJ, NCTYPE, IX1, IXN, IY1, IYN
+  INTEGER              :: IOUT, S3, IRET
+  INTEGER              :: NBIPART, CNTIPART, NCVARTYPEI, IPART
+  INTEGER              :: RTDNX, RTDNY
+  INTEGER              :: TOUT(2), TDUM(2), TREF(2), TEPOCH(2)
+  INTEGER              :: STOPDATE(8), REFDATE(8)
   !
-  INTEGER, ALLOCATABLE    :: TABIPART(:), NCIDS(:,:,:)
+  INTEGER, ALLOCATABLE :: TABIPART(:), NCIDS(:,:,:)
   !
 #ifdef W3_S
-  INTEGER, SAVE           :: IENT = 0
+  INTEGER, SAVE        :: IENT = 0
 #endif
   !
-  REAL                    :: DTREQ, DTEST
+  REAL                 :: DTREQ, DTEST
   !
-  CHARACTER*30            :: STRSTOPDATE, FILEPREFIX, STRINGIPART
-  CHARACTER*1024          :: FLDOUT
-  CHARACTER               :: COMSTR*1, IDTIME*23, IDDDAY*11, TTYPE*1
+  CHARACTER*30         :: STRSTOPDATE, FILEPREFIX, STRINGIPART
+  CHARACTER*1024       :: FLDOUT
+  CHARACTER            :: COMSTR*1, IDTIME*23, IDDDAY*11, TTYPE*1
   !
-  LOGICAL                 :: FLG2D(NOGRP,NGRPP), FLG1D(NOGRP),     &
-       VECTOR, TOGETHER, FLGNML, FLGFC
-  LOGICAL                 :: MAPSTAOUT = .TRUE.
-  LOGICAL                 :: SMCGRD = .FALSE.
+  LOGICAL              :: FLG2D(NOGRP,NGRPP), FLG1D(NOGRP)
+  LOGICAL              :: VECTOR, TOGETHER, FLGNML, FLGFC
+  LOGICAL              :: MAPSTAOUT = .TRUE.
+  LOGICAL              :: SMCGRD = .FALSE.
 #ifdef W3_RTD
-  LOGICAL                 :: RTDL = .FALSE.
+  LOGICAL              :: RTDL = .FALSE.
 #endif
 
-  INTEGER                 :: TVARTYPE = NF90_DOUBLE
-  CHARACTER(LEN=32)       :: EPOCH_ISO
-  CHARACTER(LEN=64)       :: EPOCH
-  CHARACTER               :: TIMEUNIT*1 ! 'D' = days, or 'S' for seconds
+  INTEGER              :: TVARTYPE = NF90_DOUBLE
+  CHARACTER(LEN=32)    :: EPOCH_ISO
+  CHARACTER(LEN=64)    :: EPOCH
+  CHARACTER            :: TIMEUNIT*1 ! 'D' = days, or 'S' for seconds
   !
-  REAL                    :: NOVAL      ! Fill value for seapoints with no value
+  REAL                 :: NOVAL      ! Fill value for seapoints with no value
   !/
   !/ ------------------------------------------------------------------- /
   !/
@@ -974,65 +974,65 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IFI, IFJ, MFILL, I, J, ISEA, IX, IY,  &
-         I1, J1, IPART, INDEXIPART, COORDTYPE
-    INTEGER                 :: S1, S2, S4, S5, NCID, OLDNCID, NDSDAT,&
-         NFIELD, N, IRET, IK, EXTRADIM, IVAR,  &
-         IVAR1
-    INTEGER                 :: DIMID(6), VARID(300), START(4),       &
-         COUNT(4), DIMLN(6),START1D(2),        &
-         COUNT1D(2), DIMFIELD(3),              &
-         STARTDATE(8), CURDATE(8),             &
-         EPOCHDATE(8),                         &
-         MAP(NX+1,NY), MP2(NX+1,NY)
+    INTEGER                           :: IFI, IFJ, MFILL, I, J, ISEA, IX, IY
+    INTEGER                           :: I1, J1, IPART, INDEXIPART, COORDTYPE
+    INTEGER                           :: S1, S2, S4, S5, NCID, OLDNCID, NDSDAT
+    INTEGER                           :: NFIELD, N, IRET, IK, EXTRADIM, IVAR
+    INTEGER                           :: IVAR1
+    INTEGER                           :: DIMID(6), VARID(300), START(4)
+    INTEGER                           :: COUNT(4), DIMLN(6),START1D(2)
+    INTEGER                           :: COUNT1D(2), DIMFIELD(3)
+    INTEGER                           :: STARTDATE(8), CURDATE(8)
+    INTEGER                           :: EPOCHDATE(8)
+    INTEGER                           :: MAP(NX+1,NY), MP2(NX+1,NY)
     !
-    INTEGER                  :: DEFLATE=1
+    INTEGER                           :: DEFLATE=1
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT   =   0
+    INTEGER, SAVE                     :: IENT   =   0
 #endif
     !
-    ! Make the below allocatable to avoid stack overflow on some machines
-    INTEGER(KIND=2), ALLOCATABLE    :: MX1(:,:), MXX(:,:), MYY(:,:), &
-         MXY(:,:), MAPOUT(:,:)
+    ! Make the below      allocatable to avoid stack overflow on some machines
+    INTEGER(KIND=2),      ALLOCATABLE :: MX1(:,:), MXX(:,:), MYY(:,:)
+    INTEGER(KIND=2),      ALLOCATABLE :: MXY(:,:), MAPOUT(:,:)
     !
-    REAL                    :: CABS, UABS, MFILLR
+    REAL                              :: CABS, UABS, MFILLR
 #ifdef W3_BT4
-    REAL, PARAMETER            :: LOG2=LOG(2.)
+    REAL, PARAMETER                   :: LOG2=LOG(2.)
 #endif
     !
-    REAL,DIMENSION(:),  ALLOCATABLE    :: LON, LAT, FREQ
-    REAL,DIMENSION(:,:),  ALLOCATABLE  :: LON2D, LAT2D, ANGLD2D
+    REAL, DIMENSION(:),   ALLOCATABLE :: LON, LAT, FREQ
+    REAL, DIMENSION(:,:), ALLOCATABLE :: LON2D, LAT2D, ANGLD2D
 #ifdef W3_RTD
-    REAL,DIMENSION(:,:),  ALLOCATABLE  :: LON2DEQ, LAT2DEQ
+    REAL, DIMENSION(:,:), ALLOCATABLE :: LON2DEQ, LAT2DEQ
 #endif
-    ! Make the below allocatable to avoid stack overflow on some machines
-    REAL, ALLOCATABLE       :: X1(:,:), X2(:,:), XX(:,:), XY(:,:),   &
-         XK(:,:,:), XXK(:,:,:), XYK(:,:,:),    &
-         MX1R(:,:), MXXR(:,:), MYYR(:,:),      &
-         MXYR(:,:), AUX1(:)
+    ! Make the below      allocatable to avoid stack overflow on some machines
+    REAL,                 ALLOCATABLE :: X1(:,:), X2(:,:), XX(:,:), XY(:,:)
+    REAL,                 ALLOCATABLE :: XK(:,:,:), XXK(:,:,:), XYK(:,:,:)
+    REAL,                 ALLOCATABLE :: MX1R(:,:), MXXR(:,:), MYYR(:,:)
+    REAL,                 ALLOCATABLE :: MXYR(:,:), AUX1(:)
     !
-    DOUBLE PRECISION        :: OUTJULDAY
-    INTEGER(KIND=8)         :: OUTSECS
-    DOUBLE PRECISION        :: SXD, SYD, X0D, Y0D
+    DOUBLE PRECISION                  :: OUTJULDAY
+    INTEGER(KIND=8)                   :: OUTSECS
+    DOUBLE PRECISION                  :: SXD, SYD, X0D, Y0D
     !
-    CHARACTER*120           :: STR2
-    CHARACTER*512           :: PARTCOM
-    !CHARACTER*30            :: UNITVAR(3),FORMAT1
-    CHARACTER*30            :: FORMAT1
-    CHARACTER*30            :: STRSTARTDATE
-    CHARACTER               :: FNAMENC*128,                           &
-         FORMF*11
-    CHARACTER, SAVE         :: OLDTIMEID*16 = '0000000000000000'
-    CHARACTER, SAVE         :: TIMEID*16 = '0000000000000000'
+    CHARACTER*120                     :: STR2
+    CHARACTER*512                     :: PARTCOM
+    !CHARACTER*30                     :: UNITVAR(3),FORMAT1
+    CHARACTER*30                      :: FORMAT1
+    CHARACTER*30                      :: STRSTARTDATE
+    CHARACTER                         :: FNAMENC*128
+    CHARACTER                         :: FORMF*11
+    CHARACTER, SAVE                   :: OLDTIMEID*16 = '0000000000000000'
+    CHARACTER, SAVE                   :: TIMEID*16 = '0000000000000000'
     !
-    LOGICAL                 :: FLFRQ, FLDIR, FEXIST, FREMOVE
-    LOGICAL                 :: CUSTOMFRQ=.FALSE.
+    LOGICAL                           :: FLFRQ, FLDIR, FEXIST, FREMOVE
+    LOGICAL                           :: CUSTOMFRQ=.FALSE.
 #ifdef W3_T
-    LOGICAL                 :: LTEMP(NGRPP)
+    LOGICAL                           :: LTEMP(NGRPP)
 #endif
 
-    TYPE(META_T)            :: META(3)
-    !TYPE(META_T)            :: META
+    TYPE(META_T)                      :: META(3)
+    !TYPE(META_T)                     :: META
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -4049,8 +4049,8 @@ CONTAINS
     REAL , INTENT(INOUT)        :: U(:), V(:)
     REAL , INTENT(IN), OPTIONAL :: TOLERANCE
 
-    REAL :: TOL = 1.0
-    REAL :: MAG ! Magnitude
+    REAL    :: TOL = 1.0
+    REAL    :: MAG ! Magnitude
     INTEGER :: ISEA
 
     IF(PRESENT(TOLERANCE)) TOL = TOLERANCE

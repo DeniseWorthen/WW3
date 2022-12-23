@@ -181,23 +181,23 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER         :: ISPECI, ISPEC, IK, ITH, ITH2, ITH3, ITH2X, ITH2Y, &
-         NRS, IK1
-    INTEGER         :: ISEA, ICALC, IOBPDIP(NTH)
-    LOGICAL         :: IGBCOVERWRITE, IGSWELLMAX
-    REAL            :: R1, R2, R3, R4, R2X, R2Y, DEPTHIG
-    REAL            :: DELA, DELX, DELY, FACX
-    REAL            :: FAC1, FAC2, FAC3, FAC4, RAMP0, RAMP, &
-         RAMP1, RAMP2, RAMP4, MICHEFAC, SLOPE
-    REAL             :: HS, HIG, HIG1, HIG2, EB, SB, EMEANA, FMEAN2,   &
-         FMEANA, FREQIG, EFIG, EFIG1, SQRTH, SMEANA
+    INTEGER       :: ISPECI, ISPEC, IK, ITH, ITH2, ITH3, ITH2X, ITH2Y
+    INTEGER       :: NRS, IK1
+    INTEGER       :: ISEA, ICALC, IOBPDIP(NTH)
+    LOGICAL       :: IGBCOVERWRITE, IGSWELLMAX
+    REAL          :: R1, R2, R3, R4, R2X, R2Y, DEPTHIG
+    REAL          :: DELA, DELX, DELY, FACX
+    REAL          :: FAC1, FAC2, FAC3, FAC4, RAMP0, RAMP
+    REAL          :: RAMP1, RAMP2, RAMP4, MICHEFAC, SLOPE
+    REAL          :: HS, HIG, HIG1, HIG2, EB, SB, EMEANA, FMEAN2
+    REAL          :: FMEANA, FREQIG, EFIG, EFIG1, SQRTH, SMEANA
 #ifdef W3_IG1
-    INTEGER        :: NKIG,NSPECIG,NSPECIGSTART, I1, I2
-    REAL           :: ATMP(NSPEC),ATMP2(NSPEC), STMP1(NSPEC),      &
-         STMP2(NSPEC), WNB(NK), CGB(NK), SIX, IGFAC1, IGFAC2
+    INTEGER       :: NKIG,NSPECIG,NSPECIGSTART, I1, I2
+    REAL          :: ATMP(NSPEC),ATMP2(NSPEC), STMP1(NSPEC)
+    REAL          :: STMP2(NSPEC), WNB(NK), CGB(NK), SIX, IGFAC1, IGFAC2
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
     CALL STRACE (IENT, 'W3SREF')
 #endif
     !
