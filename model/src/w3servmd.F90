@@ -1082,17 +1082,16 @@ CONTAINS
   SUBROUTINE W3LLTOEQ ( PHI, LAMBDA, PHI_EQ, LAMBDA_EQ, ANGLED, PHI_POLE, &
        LAMBDA_POLE, POINTS )
 
-    INTEGER:: POINTS    !IN  Number of points to be processed
+    INTEGER, intent(in)                     :: POINTS      !IN  Number of points to be processed
 
-    REAL :: PHI_POLE,  & !IN  Latitude of equatorial lat-lon pole
-         &        LAMBDA_POLE  !INOUT  Longitude of equatorial lat-lon pole
+    REAL,    intent(in)                     :: PHI_POLE    !IN  Latitude of equatorial lat-lon pole
+    real,    intent(inout)                  :: LAMBDA_POLE !INOUT  Longitude of equatorial lat-lon pole
 
-    REAL, DIMENSION(POINTS) ::         &
-         &        PHI,       & !IN  Latitude
-         &        LAMBDA,    & !IN  Longitude
-         &        ANGLED,    & !OUT turning angle in deg for standard wind
-         &        LAMBDA_EQ, & !OUT Longitude in equatorial lat-lon coords
-         &        PHI_EQ       !OUT Latitude in equatorial lat-lon coords
+    REAL,    intent(in),  DIMENSION(POINTS) :: PHI         !IN  Latitude
+    REAL,    intent(in),  DIMENSION(POINTS) :: LAMBDA      !IN  Longitude
+    REAL,    intent(out), DIMENSION(POINTS) :: ANGLED      !OUT turning angle in deg for standard wind
+    REAL,    intent(out), DIMENSION(POINTS) :: LAMBDA_EQ   !OUT Longitude in equatorial lat-lon coords
+    REAL,    intent(out), DIMENSION(POINTS) :: PHI_EQ      !OUT Latitude in equatorial lat-lon coords
 
     ! Define local varables:-----------------------------------------------
     REAL(KIND=8) :: A_LAMBDA, A_PHI, E_LAMBDA, E_PHI, SIN_PHI_POLE, COS_PHI_POLE, &
