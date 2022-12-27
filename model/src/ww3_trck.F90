@@ -99,12 +99,12 @@ PROGRAM W3TRCK
   INTEGER                 :: ILAST, NZERO, IK, ITH, IWZERO, ICH
   INTEGER                 :: IWDTH, J
 #ifdef W3_S
-  INTEGER, SAVE           :: IENT   = 0
+  INTEGER, SAVE           :: IENT = 0
 #endif
   INTEGER                 :: LINELN = 81
   REAL                    :: TH1, DTH, X, Y, DW, CX, CY, WX, WY
   REAL                    :: UST, AS, VALUE
-  REAL                    :: SCALE  = 0.001
+  REAL                    :: SCALE = 0.001
   REAL                    :: FACTOR
   REAL, ALLOCATABLE       :: SIG(:), DSIP(:), SPEC(:,:)
   CHARACTER               :: COMSTR*1, IDSTR*34, TSTSTR*3

@@ -223,21 +223,21 @@ module WMESMFMD
   INTEGER, PARAMETER :: DEFAULT_MASK_LAND  =  1 !< DEFAULT_MASK_LAND
 
   ! --- Miscellaneous
-  integer, parameter :: stdo = 6 !< stdo
-  type(ESMF_VM) :: vm            !< vm
-  integer :: lpet                !< lpet
-  integer :: npet                !< npet
-  integer :: verbosity           !< verbosity
-  logical :: realizeAllExport = .false.           !< realizeAllExport
-  integer :: maskValueWater = DEFAULT_MASK_WATER  !< maskValueWater
-  integer :: maskValueLand  = DEFAULT_MASK_LAND   !< maskValueLand
-  integer              :: nz    !< nz Number of z-levels for SDC
-  real(4), allocatable :: zl(:) !< zl Array of z-levels for SDC
-  character(256)       :: zlfile = 'none' !< zlfile File containing z-levels for SDC
-  character(ESMF_MAXSTR) :: msg           !< msg
-  real(ESMF_KIND_RX) :: zeroValue         !< zeroValue
-  real(ESMF_KIND_RX) :: missingValue      !< missingValue
-  real(ESMF_KIND_RX) :: fillValue         !< fillValue
+  integer, parameter :: stdo = 6                 !< stdo
+  type(ESMF_VM) :: vm                            !< vm
+  integer :: lpet                                !< lpet
+  integer :: npet                                !< npet
+  integer :: verbosity                           !< verbosity
+  logical :: realizeAllExport = .false.          !< realizeAllExport
+  integer :: maskValueWater = DEFAULT_MASK_WATER !< maskValueWater
+  integer :: maskValueLand  = DEFAULT_MASK_LAND  !< maskValueLand
+  integer              :: nz                     !< nz Number of z-levels for SDC
+  real(4), allocatable :: zl(:)                  !< zl Array of z-levels for SDC
+  character(256)       :: zlfile = 'none'        !< zlfile File containing z-levels for SDC
+  character(ESMF_MAXSTR) :: msg                  !< msg
+  real(ESMF_KIND_RX) :: zeroValue                !< zeroValue
+  real(ESMF_KIND_RX) :: missingValue             !< missingValue
+  real(ESMF_KIND_RX) :: fillValue                !< fillValue
   !
   ! --- Timing
   integer, parameter :: numwt=10          !< numwt
@@ -246,91 +246,91 @@ module WMESMFMD
   real(8)       :: wtime(numwt)           !< wtime
   !
   ! --- Import fields
-  type(ESMF_ArraySpec)          :: impArraySpec2D        !< impArraySpec2D
-  type(ESMF_StaggerLoc)         :: impStaggerLoc         !< impStaggerLoc
-  type(ESMF_Index_Flag)         :: impIndexFlag         !< impIndexFlag
-  type(ESMF_Grid)               :: impGrid         !< impGrid
-  integer                       :: impGridID         !< impGridID
-  logical                       :: impGridIsLocal         !< impGridIsLocal
-  integer, parameter            :: impHaloWidth = 3         !< impHaloWidth
-  integer                       :: impHaloLWidth(2)         !< impHaloLWidth
-  integer                       :: impHaloUWidth(2)         !< impHaloUWidth
-  type(ESMF_RouteHandle)        :: impHaloRH         !< impHaloRH
-  type(ESMF_Field)              :: impMask         !< impMask
-  logical                       :: noActiveImpFields         !< noActiveImpFields
-  integer                       :: numImpFields         !< numImpFields
-  character(64), allocatable    :: impFieldName(:)         !< impFieldName
-  character(128), allocatable   :: impFieldStdName(:)         !< impFieldStdName
-  logical, allocatable          :: impFieldInitRqrd(:)         !< impFieldInitRqrd
-  logical, allocatable          :: impFieldActive(:)         !< impFieldActive
+  type(ESMF_ArraySpec)          :: impArraySpec2D      !< impArraySpec2D
+  type(ESMF_StaggerLoc)         :: impStaggerLoc       !< impStaggerLoc
+  type(ESMF_Index_Flag)         :: impIndexFlag        !< impIndexFlag
+  type(ESMF_Grid)               :: impGrid             !< impGrid
+  integer                       :: impGridID           !< impGridID
+  logical                       :: impGridIsLocal      !< impGridIsLocal
+  integer, parameter            :: impHaloWidth = 3    !< impHaloWidth
+  integer                       :: impHaloLWidth(2)    !< impHaloLWidth
+  integer                       :: impHaloUWidth(2)    !< impHaloUWidth
+  type(ESMF_RouteHandle)        :: impHaloRH           !< impHaloRH
+  type(ESMF_Field)              :: impMask             !< impMask
+  logical                       :: noActiveImpFields   !< noActiveImpFields
+  integer                       :: numImpFields        !< numImpFields
+  character(64), allocatable    :: impFieldName(:)     !< impFieldName
+  character(128), allocatable   :: impFieldStdName(:)  !< impFieldStdName
+  logical, allocatable          :: impFieldInitRqrd(:) !< impFieldInitRqrd
+  logical, allocatable          :: impFieldActive(:)   !< impFieldActive
   type(ESMF_Field), allocatable :: impField(:)         !< impField
   !
   ! --- Background import fields
-  character(10), allocatable    :: mbgFieldName(:)     !< mbgFieldName
-  character(128), allocatable   :: mbgFieldStdName(:)  !< mbgFieldStdName
-  logical, allocatable          :: mbgFieldActive(:)         !< mbgFieldActive
-  type(ESMF_Field), allocatable :: mbgField(:)         !< mbgField
-  type(ESMF_Field), allocatable :: bmskField(:)         !< bmskField
+  character(10), allocatable    :: mbgFieldName(:)    !< mbgFieldName
+  character(128), allocatable   :: mbgFieldStdName(:) !< mbgFieldStdName
+  logical, allocatable          :: mbgFieldActive(:)  !< mbgFieldActive
+  type(ESMF_Field), allocatable :: mbgField(:)        !< mbgField
+  type(ESMF_Field), allocatable :: bmskField(:)       !< bmskField
   !
   ! --- Unstructured import meshes
-  type(ESMF_Mesh)               :: impMesh         !< impMesh
-  !      integer                       :: impMeshID         !< impMeshID
-  !      logical                       :: impMeshIsLocal         !< impMeshIsLocal
+  type(ESMF_Mesh)               :: impMesh        !< impMesh
+  !      integer                :: impMeshID      !< impMeshID
+  !      logical                :: impMeshIsLocal !< impMeshIsLocal
   !
   ! --- Export fields
-  type(ESMF_ArraySpec)          :: expArraySpec2D         !< expArraySpec2D
-  type(ESMF_ArraySpec)          :: expArraySpec3D         !< expArraySpec3D
-  type(ESMF_StaggerLoc)         :: expStaggerLoc         !< expStaggerLoc
-  type(ESMF_Index_Flag)         :: expIndexFlag         !< expIndexFlag
-  type(ESMF_Grid)               :: expGrid         !< expGrid
-  integer                       :: expGridID = 1         !< expGridID
-  logical                       :: expGridIsLocal         !< expGridIsLocal
-  integer, parameter            :: expHaloWidth = 3         !< expHaloWidth
-  integer                       :: expHaloLWidth(2)         !< expHaloLWidth
-  integer                       :: expHaloUWidth(2)         !< expHaloUWidth
-  type(ESMF_RouteHandle)        :: expHaloRH         !< expHaloRH
-  type(ESMF_Field)              :: expMask         !< expMask
-  logical                       :: noActiveExpFields         !< noActiveExpFields
-  integer                       :: numExpFields         !< numExpFields
-  character(64), allocatable    :: expFieldName(:)         !< expFieldName
-  character(128), allocatable   :: expFieldStdName(:)         !< expFieldStdName
-  integer, allocatable          :: expFieldDim(:)         !< expFieldDim
-  logical, allocatable          :: expFieldActive(:)         !< expFieldActive
-  type(ESMF_Field), allocatable :: expField(:)         !< expField
+  type(ESMF_ArraySpec)          :: expArraySpec2D     !< expArraySpec2D
+  type(ESMF_ArraySpec)          :: expArraySpec3D     !< expArraySpec3D
+  type(ESMF_StaggerLoc)         :: expStaggerLoc      !< expStaggerLoc
+  type(ESMF_Index_Flag)         :: expIndexFlag       !< expIndexFlag
+  type(ESMF_Grid)               :: expGrid            !< expGrid
+  integer                       :: expGridID = 1      !< expGridID
+  logical                       :: expGridIsLocal     !< expGridIsLocal
+  integer, parameter            :: expHaloWidth = 3   !< expHaloWidth
+  integer                       :: expHaloLWidth(2)   !< expHaloLWidth
+  integer                       :: expHaloUWidth(2)   !< expHaloUWidth
+  type(ESMF_RouteHandle)        :: expHaloRH          !< expHaloRH
+  type(ESMF_Field)              :: expMask            !< expMask
+  logical                       :: noActiveExpFields  !< noActiveExpFields
+  integer                       :: numExpFields       !< numExpFields
+  character(64), allocatable    :: expFieldName(:)    !< expFieldName
+  character(128), allocatable   :: expFieldStdName(:) !< expFieldStdName
+  integer, allocatable          :: expFieldDim(:)     !< expFieldDim
+  logical, allocatable          :: expFieldActive(:)  !< expFieldActive
+  type(ESMF_Field), allocatable :: expField(:)        !< expField
   !
   ! --- Unstructured export meshes
-  type(ESMF_Mesh)               :: expMesh         !< expMesh
-  integer                       :: expMeshID         !<  expMeshID
-  logical                       :: expMeshIsLocal         !< expMeshIsLocal
+  type(ESMF_Mesh)               :: expMesh        !< expMesh
+  integer                       :: expMeshID      !<  expMeshID
+  logical                       :: expMeshIsLocal !< expMeshIsLocal
   !
   ! --- Native field stuff
-  type(ESMF_ArraySpec)  :: natArraySpec1D         !< natArraySpec1D
-  type(ESMF_ArraySpec)  :: natArraySpec2D         !< natArraySpec2D
-  type(ESMF_ArraySpec)  :: natArraySpec3D         !< natArraySpec3D
-  type(ESMF_StaggerLoc) :: natStaggerLoc         !< natStaggerLoc
-  type(ESMF_Index_Flag) :: natIndexFlag         !< natIndexFlag
-  type(ESMF_Grid)       :: natGrid         !< natGrid
-  integer               :: natGridID         !< natGridID
-  logical               :: natGridIsLocal         !< natGridIsLocal
-  type(ESMF_RouteHandle):: n2eRH         !< n2eRH
+  type(ESMF_ArraySpec)   :: natArraySpec1D !< natArraySpec1D
+  type(ESMF_ArraySpec)   :: natArraySpec2D !< natArraySpec2D
+  type(ESMF_ArraySpec)   :: natArraySpec3D !< natArraySpec3D
+  type(ESMF_StaggerLoc)  :: natStaggerLoc  !< natStaggerLoc
+  type(ESMF_Index_Flag)  :: natIndexFlag   !< natIndexFlag
+  type(ESMF_Grid)        :: natGrid        !< natGrid
+  integer                :: natGridID      !< natGridID
+  logical                :: natGridIsLocal !< natGridIsLocal
+  type(ESMF_RouteHandle) :: n2eRH          !< n2eRH
   !
   ! --- Mediator
-  logical        :: med_present = .false.         !< med_present
-  character(256) :: flds_scalar_name = ''         !< flds_scalar_name
-  integer        :: flds_scalar_num = 0         !< flds_scalar_num
+  logical        :: med_present = .false.                 !< med_present
+  character(256) :: flds_scalar_name = ''                 !< flds_scalar_name
+  integer        :: flds_scalar_num = 0                   !< flds_scalar_num
   ! flds_scalar_index_nx and flds_scalar_index_nx are domain
   ! metadata that allows CMEPS to convert a mesh back to 2d
   ! space for mediator restart and history outputs
-  integer        :: flds_scalar_index_nx = 0         !< flds_scalar_index_nx
-  integer        :: flds_scalar_index_ny = 0         !< flds_scalar_index_ny
+  integer        :: flds_scalar_index_nx = 0              !< flds_scalar_index_nx
+  integer        :: flds_scalar_index_ny = 0              !< flds_scalar_index_ny
   ! --- Memory Profiling
-  logical        :: profile_memory = .false.         !< profile_memory
+  logical        :: profile_memory = .false.              !< profile_memory
   !
   ! --- Coupling stuff for non completely overlapped domains
-  logical                       :: merge_import = .false.         !< merge_import
+  logical                       :: merge_import = .false. !< merge_import
   logical, allocatable          :: mmskCreated(:)         !< mmskCreated
-  type(ESMF_Field), allocatable :: mmskField(:)         !< mmskField
-  type(ESMF_Field), allocatable :: mdtField(:)         !< mdtField
+  type(ESMF_Field), allocatable :: mmskField(:)           !< mmskField
+  type(ESMF_Field), allocatable :: mdtField(:)            !< mdtField
   !/
   !/ ------------------------------------------------------------------- /
 

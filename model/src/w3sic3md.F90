@@ -739,8 +739,8 @@ CONTAINS
     !/
     IMPLICIT NONE
     !/
-    REAL, INTENT(INOUT):: WN_R(:),WN_I(:),CG(:)
-    REAL, INTENT(IN)   :: ICE1, ICE2, ICE3, ICE4, DPT
+    REAL, INTENT(INOUT) :: WN_R(:),WN_I(:),CG(:)
+    REAL, INTENT(IN)    :: ICE1, ICE2, ICE3, ICE4, DPT
 
     INTEGER                     :: IK, KL,KU
     REAL, ALLOCATABLE           :: SIGMA(:),CG_IC3(:)
@@ -1877,9 +1877,9 @@ CONTAINS
     !/
     IMPLICIT NONE
     !/
-    REAL, INTENT(IN)   :: ICE1, ICE2, ICE3, ICE4, DPT
-    REAL, INTENT(INOUT):: WN_R(:),WN_I(:),CG(:)
-    REAL, ALLOCATABLE  :: SIGMA(:)
+    REAL, INTENT(IN)    :: ICE1, ICE2, ICE3, ICE4, DPT
+    REAL, INTENT(INOUT) :: WN_R(:),WN_I(:),CG(:)
+    REAL, ALLOCATABLE   :: SIGMA(:)
     !
     INTEGER    :: I, I1, I2, IK, KL,KU, ITKNUM
     COMPLEX(8) :: WNCOMPLEX, X0,X1,X2, WNR, WNL
@@ -2111,8 +2111,8 @@ CONTAINS
     !/
     IMPLICIT NONE
     !/
-    REAL, INTENT(INOUT):: WN_R(0:NK+1),WN_I(0:NK+1), CG(0:NK+1)
-    REAL, INTENT(IN)   :: ICE1, ICE2, ICE3, ICE4, DPT
+    REAL, INTENT(INOUT) :: WN_R(0:NK+1),WN_I(0:NK+1), CG(0:NK+1)
+    REAL, INTENT(IN)    :: ICE1, ICE2, ICE3, ICE4, DPT
 
     INTEGER    :: IK, KL,KU,IX,NUM,SWITCHID
     REAL       :: K_OCEAN,CG_OCEAN

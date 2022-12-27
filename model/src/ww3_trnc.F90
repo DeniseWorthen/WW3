@@ -101,7 +101,7 @@ PROGRAM W3TRNC
   INTEGER                 :: DIMID(4), VARID(18), DIMLN(4)
   INTEGER                 :: STOPDATE(8)
 #ifdef W3_S
-  INTEGER, SAVE           :: IENT   = 0
+  INTEGER, SAVE           :: IENT = 0
 #endif
   !
   REAL                    :: TH1, DTH, X, Y, DW, CX, CY, CAO, CDO
@@ -111,7 +111,7 @@ PROGRAM W3TRNC
   REAL, ALLOCATABLE       :: FREQ(:), FREQ1(:), FREQ2(:), DSIP(:)
   REAL, ALLOCATABLE       :: SPEC(:,:), E(:,:), THD(:), DIR(:)
   !
-  CHARACTER*34, PARAMETER :: IDTST  = 'WAVEWATCH III TRACK OUTPUT SPECTRA'
+  CHARACTER*34, PARAMETER :: IDTST = 'WAVEWATCH III TRACK OUTPUT SPECTRA'
   CHARACTER*30            :: FILEPREFIX, STRSTOPDATE
   CHARACTER*20            :: FORMAT1
   CHARACTER               :: IDTIME*23, IDDDAY*11, TRCKID*32
@@ -512,9 +512,9 @@ CONTAINS
     !/
     INTEGER                 :: S1, S2, S4, S5, NDSDAT, IRET
     INTEGER                 :: STARTDATE(8), CURDATE(8), REFDATE(8)
-    INTEGER                  :: DEFLATE=1
+    INTEGER                 :: DEFLATE=1
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT   =   0
+    INTEGER, SAVE           :: IENT = 0
 #endif
     !
     DOUBLE PRECISION        :: OUTJULDAY

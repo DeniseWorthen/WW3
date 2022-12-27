@@ -245,7 +245,7 @@ PROGRAM W3OUNP
   INTEGER                         :: NDBO
 #endif
 #ifdef W3_S
-  INTEGER, SAVE                   :: IENT   = 0
+  INTEGER, SAVE                   :: IENT = 0
 #endif
 #ifdef W3_NCO
   INTEGER                         :: NDSTAB
@@ -1604,7 +1604,7 @@ CONTAINS
     INTEGER          :: ITH, IK, ITT, NPART, IX, IY, ISEA
     INTEGER          :: CURDATE(8), REFDATE(8)
 #ifdef W3_S
-    INTEGER, SAVE    :: IENT   = 0
+    INTEGER, SAVE    :: IENT = 0
 #endif
     !
     REAL             :: DEPTH, SQRTH, CDIR, SIX, R1, R2

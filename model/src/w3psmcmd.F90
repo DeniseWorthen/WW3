@@ -2351,9 +2351,10 @@ CONTAINS
     REAL ,    INTENT(Out) :: GrdX(NSEA), GrdY(NSEA)
     INTEGER , INTENT( IN) :: L0r1
     !
-    INTEGER                   :: I, J, K, L, M, N
-    REAL                      :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
-    REAL                      :: DX0I, DY0I
+    INTEGER :: I, J, K, L, M, N
+    REAL    :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
+    REAL    :: DX0I, DY0I
+
     !     Use a few working arrays
     REAL,  Dimension(-9:NSEA) :: CVF, AUN, AVN
 
@@ -2720,7 +2721,6 @@ CONTAINS
     INTEGER              ::  I, J, K, L, M, N
     REAL, Dimension(NTH) :: SpeGCT, Spectr
     REAL                 :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
-
     !     Loop through NK spectral bins.
     DO n=1, NK
 

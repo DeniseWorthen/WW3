@@ -171,7 +171,7 @@ PROGRAM GXOUTP
   INTEGER              :: IH0, IM0, ID0, IID, IJ0, IINC, IK
   INTEGER              :: IREQ, TIMEN(2), J
 #ifdef W3_S
-  INTEGER, SAVE        :: IENT   = 0
+  INTEGER, SAVE        :: IENT = 0
 #endif
   REAL                 :: DTREQ, DTEST
   REAL                 :: UNDEFP = -99.E20
@@ -726,7 +726,7 @@ CONTAINS
     INTEGER        :: J, I1, I2, IK, ITH, ISPEC, IKM, IKL
     INTEGER        :: IKH, ITT, IX, IY, ISEA
 #ifdef W3_S
-    INTEGER, SAVE  :: IENT   = 0
+    INTEGER, SAVE  :: IENT = 0
 #endif
     REAL           :: XL, XH, XL2, XH2, DEPTH, SQRTH, UDIR
     REAL           :: UDIRR, UABS, CDIR, SIX, R1, R2, ET
