@@ -2348,11 +2348,11 @@ CONTAINS
     INTEGER , INTENT( IN) :: L0r1
     !
     INTEGER :: I, J, K, L, M, N
-    REAL:: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
+    REAL :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
     REAL :: DX0I, DY0I
 
     !     Use a few working arrays
-    REAL,  Dimension(-9:NSEA):: CVF, AUN, AVN
+    REAL,  Dimension(-9:NSEA) :: CVF, AUN, AVN
 
     !     Two layer of boundary cells are added to each boundary cell face
     !     with all boundary cell default values CVF(-9:0)= 0.0.
@@ -2715,8 +2715,8 @@ CONTAINS
     REAL , INTENT(IN)    ::  CoRfr(NTH, NK)
     REAL , INTENT(INOUT) :: SpeTHK(NTH, NK)
     INTEGER ::  I, J, K, L, M, N
-    REAL, Dimension(NTH):: SpeGCT, Spectr
-    REAL:: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
+    REAL, Dimension(NTH) :: SpeGCT, Spectr
+    REAL :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
 
     !     Loop through NK spectral bins.
     DO n=1, NK
@@ -2820,8 +2820,8 @@ CONTAINS
     REAL , INTENT(IN)    ::  CoRfr(NTH, 0:NK), DKC(0:NK+1), DKS(-1:NK+1)
     REAL , INTENT(INOUT) :: SpeTHK(NTH, NK)
     INTEGER ::  I, J, K, L, M, N
-    REAL, Dimension(-1:NK+2):: SpeRfr, Spectr, SpeFlx
-    REAL:: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
+    REAL, Dimension(-1:NK+2) :: SpeRfr, Spectr, SpeFlx
+    REAL :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
 
     CNST=XFR**(-7)
 

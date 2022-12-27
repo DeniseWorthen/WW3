@@ -899,8 +899,8 @@ CONTAINS
     ! Local variables
     INTEGER :: ii, jj, kk, nsft
     REAL    :: Ddirc, frac, CNST
-    REAL, Dimension(NFreq)      ::  Wrkfrq, Tmpfrq
-    REAL, Dimension(NFreq,NDirc)::  Wrkspc
+    REAL, Dimension(NFreq)       ::  Wrkfrq, Tmpfrq
+    REAL, Dimension(NFreq,NDirc) ::  Wrkspc
 
     ! Check input bin numbers
     IF( (NFreq .LT. 0) .OR. (NDirc .LT. 0) )  THEN
@@ -987,8 +987,8 @@ CONTAINS
     ! Local variables
     INTEGER :: ii, jj, kk, nsft
     REAL    :: Ddirc, frac, CNST
-    REAL, Dimension(NFreq)      ::  Wrkfrq, Tmpfrq
-    REAL, Dimension(NDirc,NFreq)::  Wrkspc
+    REAL, Dimension(NFreq)       ::  Wrkfrq, Tmpfrq
+    REAL, Dimension(NDirc,NFreq) ::  Wrkspc
 
     ! Check input bin numbers
     IF( (NFreq .LT. 0) .OR. (NDirc .LT. 0) )  THEN
