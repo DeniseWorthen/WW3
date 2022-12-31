@@ -197,8 +197,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL , INTENT(IN)  :: A(NTH,NK), CG(NK), WN(NK)
-    REAL , INTENT(OUT) :: EMEAN, FMEAN, WNMEAN, AMAX, FP
+    REAL, INTENT(IN)  :: A(NTH,NK), CG(NK), WN(NK)
+    REAL, INTENT(OUT) :: EMEAN, FMEAN, WNMEAN, AMAX, FP
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -387,10 +387,10 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL , INTENT(IN)  :: A (NSPEC), CG(NK), WN2(NSPEC)
-    REAL , INTENT(IN)  :: UABS, USTAR, USDIR, CD, DAIR
-    REAL , INTENT(OUT) :: TAUWX, TAUWY, TAUNWX, TAUNWY
-    REAL , INTENT(OUT) :: S(NSPEC), D(NSPEC)
+    REAL, INTENT(IN)  :: A (NSPEC), CG(NK), WN2(NSPEC)
+    REAL, INTENT(IN)  :: UABS, USTAR, USDIR, CD, DAIR
+    REAL, INTENT(OUT) :: TAUWX, TAUWY, TAUNWX, TAUNWY
+    REAL, INTENT(OUT) :: S(NSPEC), D(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -640,8 +640,8 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL , INTENT(IN)  :: A(NSPEC), CG(NK), WN(NK)
-    REAL , INTENT(OUT) :: S(NSPEC), D(NSPEC)
+    REAL, INTENT(IN)  :: A(NSPEC), CG(NK), WN(NK)
+    REAL, INTENT(OUT) :: S(NSPEC), D(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -858,14 +858,14 @@ CONTAINS
     IMPLICIT NONE
     !
     !/ ------ I/O parameters --------------------------------------------- /
-    REAL , INTENT(IN)  :: S(NTH,NK)      ! wind-input source term Sin
-    REAL , INTENT(IN)  :: CINV(NK)       ! inverse phase speed
-    REAL , INTENT(IN)  :: U10            ! wind speed
-    REAL , INTENT(IN)  :: USTAR, USDIR   ! friction velocity & direction
-    REAL , INTENT(IN)  :: SIG(NK)        ! relative frequencies
-    REAL , INTENT(IN)  :: DSII(NK)       ! frequency bandwidths
-    REAL , INTENT(OUT) :: LFACT(NK)      ! correction factor
-    REAL , INTENT(OUT) :: TAUWX, TAUWY   ! normal stress components
+    REAL, INTENT(IN)  :: S(NTH,NK)      ! wind-input source term Sin
+    REAL, INTENT(IN)  :: CINV(NK)       ! inverse phase speed
+    REAL, INTENT(IN)  :: U10            ! wind speed
+    REAL, INTENT(IN)  :: USTAR, USDIR   ! friction velocity & direction
+    REAL, INTENT(IN)  :: SIG(NK)        ! relative frequencies
+    REAL, INTENT(IN)  :: DSII(NK)       ! frequency bandwidths
+    REAL, INTENT(OUT) :: LFACT(NK)      ! correction factor
+    REAL, INTENT(OUT) :: TAUWX, TAUWY   ! normal stress components
     !
     !/    --- local parameters (in order of appearance) ------------------ /
 #ifdef W3_S
@@ -1123,11 +1123,11 @@ CONTAINS
     IMPLICIT NONE
     !
     !/ ------ I/O parameters --------------------------------------------- /
-    REAL , INTENT(IN)  :: S(NTH,NK)      ! wind-input source term Sin
-    REAL , INTENT(IN)  :: CINV(NK)       ! inverse phase speed
-    REAL , INTENT(IN)  :: SIG(NK)        ! relative frequencies
-    REAL , INTENT(IN)  :: DSII(NK)       ! frequency bandwidths
-    REAL , INTENT(OUT) :: TAUNWX, TAUNWY ! stress components (wave->atmos)
+    REAL, INTENT(IN)  :: S(NTH,NK)      ! wind-input source term Sin
+    REAL, INTENT(IN)  :: CINV(NK)       ! inverse phase speed
+    REAL, INTENT(IN)  :: SIG(NK)        ! relative frequencies
+    REAL, INTENT(IN)  :: DSII(NK)       ! frequency bandwidths
+    REAL, INTENT(OUT) :: TAUNWX, TAUNWY ! stress components (wave->atmos)
     !
     !/    --- local parameters (in order of appearance) ------------------ /
 #ifdef W3_S
@@ -1229,7 +1229,7 @@ CONTAINS
     !
     !/
     IMPLICIT NONE
-    INTEGER , INTENT(IN) :: X0, X1, DX
+    INTEGER, INTENT(IN) :: X0, X1, DX
 
     INTEGER, ALLOCATABLE :: IX(:)
     INTEGER              :: N
@@ -1287,9 +1287,9 @@ CONTAINS
     !/
     USE CONSTANTS , ONLY : GRAV, DWAT    ! gravity, density of water
     IMPLICIT NONE
-    REAL , INTENT(IN) :: SDENSIG(:)    ! Sin(sigma) in [m2/rad-Hz]
-    REAL , INTENT(IN) :: CINV(:)       ! inverse phase speed
-    REAL , INTENT(IN) :: DSII(:)       ! freq. bandwidths in [radians]
+    REAL, INTENT(IN) :: SDENSIG(:)    ! Sin(sigma) in [m2/rad-Hz]
+    REAL, INTENT(IN) :: CINV(:)       ! inverse phase speed
+    REAL, INTENT(IN) :: DSII(:)       ! freq. bandwidths in [radians]
 
     REAL              :: TAU_WINDS     ! wind stress
     !

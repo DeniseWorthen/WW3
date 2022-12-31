@@ -2922,12 +2922,12 @@ CONTAINS
     INTEGER,      INTENT(INOUT), POINTER :: IS(:)
     INTEGER,      INTENT(INOUT), POINTER :: JS(:)
     REAL(4),      INTENT(INOUT), POINTER :: CS(:)
-    REAL(4),      INTENT(IN) , OPTIONAL  :: EPS
-    REAL(4),      INTENT(IN) , OPTIONAL  :: DCIN
-    REAL(4),      INTENT(IN) , OPTIONAL  :: WDTH
-    LOGICAL,      INTENT(IN) , OPTIONAL  :: MASK(:,:)
-    INTEGER,      INTENT(IN) , OPTIONAL  :: NMSK
-    LOGICAL,      INTENT(IN) , OPTIONAL  :: DEBUG
+    REAL(4),      INTENT(IN), OPTIONAL  :: EPS
+    REAL(4),      INTENT(IN), OPTIONAL  :: DCIN
+    REAL(4),      INTENT(IN), OPTIONAL  :: WDTH
+    LOGICAL,      INTENT(IN), OPTIONAL  :: MASK(:,:)
+    INTEGER,      INTENT(IN), OPTIONAL  :: NMSK
+    LOGICAL,      INTENT(IN), OPTIONAL  :: DEBUG
 
     !     Local parameters
     REAL(8) :: LEPS, LDCIN, LWDTH=ZERO
@@ -3016,12 +3016,12 @@ CONTAINS
     INTEGER,      INTENT(INOUT), POINTER :: IS(:)
     INTEGER,      INTENT(INOUT), POINTER :: JS(:)
     REAL(8),      INTENT(INOUT), POINTER :: CS(:)
-    REAL(8),      INTENT(IN) , OPTIONAL  :: EPS
-    REAL(8),      INTENT(IN) , OPTIONAL  :: DCIN
-    REAL(8),      INTENT(IN) , OPTIONAL  :: WDTH
-    LOGICAL,      INTENT(IN) , OPTIONAL  :: MASK(:,:)
-    INTEGER,      INTENT(IN) , OPTIONAL  :: NMSK
-    LOGICAL,      INTENT(IN) , OPTIONAL  :: DEBUG
+    REAL(8),      INTENT(IN), OPTIONAL  :: EPS
+    REAL(8),      INTENT(IN), OPTIONAL  :: DCIN
+    REAL(8),      INTENT(IN), OPTIONAL  :: WDTH
+    LOGICAL,      INTENT(IN), OPTIONAL  :: MASK(:,:)
+    INTEGER,      INTENT(IN), OPTIONAL  :: NMSK
+    LOGICAL,      INTENT(IN), OPTIONAL  :: DEBUG
 
     !     Local parameters
     LOGICAL, PARAMETER :: LCMP = .TRUE.
@@ -7629,14 +7629,14 @@ CONTAINS
   SUBROUTINE GETPQR( XT, YT, XS, YS, PR, QR, EPS, DEBUG )
     !     *** INTERNAL SUBROUTINE ***
     !     Compute source grid cell-relative coordinates (PR,QR) for target point (XT,YT)
-    REAL(8), INTENT(IN)            :: XT
-    REAL(8), INTENT(IN)            :: YT
-    REAL(8), INTENT(IN)            :: XS(4)
-    REAL(8), INTENT(IN)            :: YS(4)
-    REAL(8), INTENT(OUT)           :: PR
-    REAL(8), INTENT(OUT)           :: QR
-    REAL(8), INTENT(IN),  OPTIONAL :: EPS
-    LOGICAL, INTENT(IN) , OPTIONAL :: DEBUG
+    REAL(8), INTENT(IN)           :: XT
+    REAL(8), INTENT(IN)           :: YT
+    REAL(8), INTENT(IN)           :: XS(4)
+    REAL(8), INTENT(IN)           :: YS(4)
+    REAL(8), INTENT(OUT)          :: PR
+    REAL(8), INTENT(OUT)          :: QR
+    REAL(8), INTENT(IN), OPTIONAL :: EPS
+    LOGICAL, INTENT(IN), OPTIONAL :: DEBUG
 
     !     Local parameters
     INTEGER, PARAMETER :: MAX_ITER = 10
@@ -8779,11 +8779,11 @@ CONTAINS
     !     dlam/dq = dx/dq*dlam/dx + dy/dq*dlam/dy
     !     dphi/dq = dx/dq*dphi/dx + dy/dq*dphi/dy
     !
-    REAL(8),INTENT(IN)  :: LAM0, C0
-    INTEGER,INTENT(IN)  :: IHEM
-    REAL(8),INTENT(IN)  :: LAM, PHI
-    REAL(8),INTENT(IN)  :: DXDP, DYDP
-    REAL(8),INTENT(OUT) :: DLAMDP, DPHIDP
+    REAL(8), INTENT(IN)  :: LAM0, C0
+    INTEGER, INTENT(IN)  :: IHEM
+    REAL(8), INTENT(IN)  :: LAM, PHI
+    REAL(8), INTENT(IN)  :: DXDP, DYDP
+    REAL(8), INTENT(OUT) :: DLAMDP, DPHIDP
 
     !     Local parameters
     REAL(8), PARAMETER :: SMALL = 1D-6
@@ -8835,11 +8835,11 @@ CONTAINS
     !     dlam/dq = dx/dq*dlam/dx + dy/dq*dlam/dy
     !     dphi/dq = dx/dq*dphi/dx + dy/dq*dphi/dy
     !
-    REAL(8),INTENT(IN)  :: LAM0, C0
-    INTEGER,INTENT(IN)  :: IHEM
-    REAL(8),INTENT(IN)  :: LAM, PHI
-    REAL(8),INTENT(IN)  :: DXDQ, DYDQ
-    REAL(8),INTENT(OUT) :: DLAMDQ, DPHIDQ
+    REAL(8), INTENT(IN)  :: LAM0, C0
+    INTEGER, INTENT(IN)  :: IHEM
+    REAL(8), INTENT(IN)  :: LAM, PHI
+    REAL(8), INTENT(IN)  :: DXDQ, DYDQ
+    REAL(8), INTENT(OUT) :: DLAMDQ, DPHIDQ
 
     !     Local parameters
     REAL(8), PARAMETER :: SMALL = 1D-6
@@ -9334,9 +9334,9 @@ CONTAINS
   !/
   SUBROUTINE GET_FDW2( N, M, K, C )
     !     *** INTERNAL SUBROUTINE ***
-    INTEGER,INTENT(IN)  :: N, M
-    INTEGER,INTENT(OUT) :: K(0:N,0:N)
-    REAL(8),INTENT(OUT) :: C(0:N,0:N)
+    INTEGER, INTENT(IN)  :: N, M
+    INTEGER, INTENT(OUT) :: K(0:N,0:N)
+    REAL(8), INTENT(OUT) :: C(0:N,0:N)
     INTEGER :: I, J
     REAL(8) :: A(0:N), B(0:N,0:M)
 
@@ -9357,9 +9357,9 @@ CONTAINS
   !/
   SUBROUTINE GET_FDW3( N, M, K, C )
     !     *** INTERNAL SUBROUTINE ***
-    INTEGER,INTENT(IN)  :: N, M
-    INTEGER,INTENT(OUT) :: K(0:N,0:N,1:N)
-    REAL(8),INTENT(OUT) :: C(0:N,0:N,1:N)
+    INTEGER, INTENT(IN)  :: N, M
+    INTEGER, INTENT(OUT) :: K(0:N,0:N,1:N)
+    REAL(8), INTENT(OUT) :: C(0:N,0:N,1:N)
     INTEGER :: L, I, J
     REAL(8) :: A(0:N), B(0:N,0:M)
 

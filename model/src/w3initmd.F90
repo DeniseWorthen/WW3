@@ -453,17 +453,17 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER ,           INTENT(IN)           :: IMOD, MDS(13), MTRACE(2)
-    INTEGER ,           INTENT(IN)           :: ODAT(40),NPT, IPRT(6)
-    INTEGER ,           INTENT(IN)           :: MPI_COMM
-    LOGICAL ,           INTENT(IN)           :: IsMulti
-    REAL ,              INTENT(INOUT)        :: XPT(NPT), YPT(NPT)
-    LOGICAL ,           INTENT(INOUT)        :: FLGRD(NOGRP,NGRPP), FLGD(NOGRP)
-    LOGICAL ,           INTENT(INOUT)        :: FLGR2(NOGRP,NGRPP), FLG2(NOGRP)
-    LOGICAL ,           INTENT(INOUT)        :: PRTFRM
-    CHARACTER,          INTENT(IN)           :: FEXT*(*)
-    CHARACTER(LEN=40) , INTENT(IN)           :: PNAMES(NPT)
-    LOGICAL ,           INTENT(IN), OPTIONAL :: FLAGSTIDEIN(4)
+    INTEGER,           INTENT(IN)           :: IMOD, MDS(13), MTRACE(2)
+    INTEGER,           INTENT(IN)           :: ODAT(40),NPT, IPRT(6)
+    INTEGER,           INTENT(IN)           :: MPI_COMM
+    LOGICAL,           INTENT(IN)           :: IsMulti
+    REAL,              INTENT(INOUT)        :: XPT(NPT), YPT(NPT)
+    LOGICAL,           INTENT(INOUT)        :: FLGRD(NOGRP,NGRPP), FLGD(NOGRP)
+    LOGICAL,           INTENT(INOUT)        :: FLGR2(NOGRP,NGRPP), FLG2(NOGRP)
+    LOGICAL,           INTENT(INOUT)        :: PRTFRM
+    CHARACTER,         INTENT(IN)           :: FEXT*(*)
+    CHARACTER(LEN=40), INTENT(IN)           :: PNAMES(NPT)
+    LOGICAL,           INTENT(IN), OPTIONAL :: FLAGSTIDEIN(4)
 
     !/
     !/ ------------------------------------------------------------------- /
@@ -1768,7 +1768,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER , INTENT(IN) :: IMOD
+    INTEGER, INTENT(IN) :: IMOD
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2144,7 +2144,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER , INTENT(IN) :: IMOD
+    INTEGER, INTENT(IN) :: IMOD
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

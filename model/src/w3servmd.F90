@@ -131,7 +131,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, NMAX
+    INTEGER, INTENT(IN) :: NDS, NMAX
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -193,8 +193,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(INOUT)  :: IENT
-    CHARACTER, INTENT(IN)   :: SNAME*(*)
+    INTEGER,   INTENT(INOUT) :: IENT
+    CHARACTER, INTENT(IN)    :: SNAME*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -270,8 +270,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDSI, NDSE
-    CHARACTER, INTENT(IN)   :: CHCKC*1
+    INTEGER,   INTENT(IN) :: NDSI, NDSE
+    CHARACTER, INTENT(IN) :: CHCKC*1
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -382,9 +382,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MSEA, NSEA, MX, MY, MAPSF(MSEA,2)
-    REAL, INTENT(IN)        :: S(MSEA)
-    REAL, INTENT(OUT)       :: XY(MX,MY)
+    INTEGER, INTENT(IN)  :: MSEA, NSEA, MX, MY, MAPSF(MSEA,2)
+    REAL,    INTENT(IN)  :: S(MSEA)
+    REAL,    INTENT(OUT) :: XY(MX,MY)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -474,7 +474,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: F, ALFA, FP, YLN, SIGA, SIGB
+    REAL, INTENT(IN) :: F, ALFA, FP, YLN, SIGA, SIGB
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -571,7 +571,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: LO1, LA1, LO2, LA2
+    REAL, INTENT(IN) :: LO1, LA1, LO2, LA2
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -635,7 +635,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    CHARACTER, INTENT(OUT)  :: STRNG*10
+    CHARACTER, INTENT(OUT) :: STRNG*10
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -797,7 +797,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN) :: IEXIT
+    INTEGER,      INTENT(IN)           :: IEXIT
     INTEGER,      INTENT(IN), OPTIONAL :: UNIT
     CHARACTER(*), INTENT(IN), OPTIONAL :: MSG
     CHARACTER(*), INTENT(IN), OPTIONAL :: FILE
@@ -892,9 +892,9 @@ CONTAINS
     !   This routine is distinct from W3ACTURN since orders spectrum as freq, dirn
     !
     ! Subroutine arguments
-    INTEGER, INTENT(IN) :: NFreq, NDirc         ! No. freq and dirn bins
-    REAL,    INTENT(IN) :: Alpha                ! Turning angle (degrees)
-    REAL, INTENT(INOUT) :: Spectr(NFreq,NDirc)  ! Wave spectrum in/out
+    INTEGER, INTENT(IN)    :: NFreq, NDirc         ! No. freq and dirn bins
+    REAL,    INTENT(IN)    :: Alpha                ! Turning angle (degrees)
+    REAL,    INTENT(INOUT) :: Spectr(NFreq,NDirc)  ! Wave spectrum in/out
 
     ! Local variables
     INTEGER :: ii, jj, kk, nsft
@@ -980,9 +980,9 @@ CONTAINS
     !   Routine is distinct from W3SPECTN since orders spectrum as dirn, freq
     !
     ! Subroutine arguments
-    INTEGER, INTENT(IN) :: NFreq, NDirc          ! No. freq and dirn bins
-    REAL,    INTENT(IN) :: Alpha                 ! Turning angle (degrees)
-    REAL, INTENT(INOUT) :: Spectr(NDirc, NFreq)  ! Wave action in/out
+    INTEGER, INTENT(IN)    :: NFreq, NDirc          ! No. freq and dirn bins
+    REAL,    INTENT(IN)    :: Alpha                 ! Turning angle (degrees)
+    REAL,    INTENT(INOUT) :: Spectr(NDirc, NFreq)  ! Wave action in/out
 
     ! Local variables
     INTEGER :: ii, jj, kk, nsft
@@ -1352,10 +1352,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN) :: NSEA        ! Number of sea points
-    REAL,    INTENT(IN) :: AnglD(NSEA) ! Turning angle (degrees)
-    LOGICAL, INTENT(IN) :: Degrees     ! Use degrees or radians
-    REAL, INTENT(INOUT) :: THETA(NSEA) ! Direction seapoint array
+    INTEGER, INTENT(IN)    :: NSEA        ! Number of sea points
+    REAL,    INTENT(IN)    :: AnglD(NSEA) ! Turning angle (degrees)
+    LOGICAL, INTENT(IN)    :: Degrees     ! Use degrees or radians
+    REAL,    INTENT(INOUT) :: THETA(NSEA) ! Direction seapoint array
     !
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1406,9 +1406,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN) :: NSEA        ! Number of sea points
-    REAL,    INTENT(IN) :: AnglD(NSEA) ! Turning angle (degrees)
-    REAL, INTENT(INOUT) :: XVEC(NSEA), YVEC(NSEA)
+    INTEGER, INTENT(IN)    :: NSEA        ! Number of sea points
+    REAL,    INTENT(IN)    :: AnglD(NSEA) ! Turning angle (degrees)
+    REAL,    INTENT(INOUT) :: XVEC(NSEA), YVEC(NSEA)
     !
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1462,10 +1462,11 @@ CONTAINS
     !       TAB      Str   O   Array of strings
     !     ----------------------------------------------------------------
     !
-    CHARACTER(LEN=*), intent(IN)         :: STRING
-    CHARACTER(LEN=100), intent(INOUT)    :: TAB(*)
-    INTEGER                              :: cnt, I
-    CHARACTER(LEN=1024)                  :: tmp_str, ori_str
+    CHARACTER(LEN=*),   intent(IN)    :: STRING
+    CHARACTER(LEN=100), intent(INOUT) :: TAB(*)
+
+    INTEGER             :: cnt, I
+    CHARACTER(LEN=1024) :: tmp_str, ori_str
 
     ! initializes arrays
     ori_str=ADJUSTL(TRIM(STRING))
@@ -1838,13 +1839,13 @@ CONTAINS
   SUBROUTINE DIAGONALIZE(a1,d,v,nrot)
     !*********************************************************************
     INTEGER,                          INTENT(out)   :: nrot
-    DOUBLE PRECISION, DIMENSION(:)  , INTENT(OUT)   ::d
-    DOUBLE PRECISION, DIMENSION(:,:), INTENT(IN)    ::a1  ! Modified from INOUT to IN by F.A. on 2018/01/21
-    DOUBLE PRECISION, DIMENSION(:,:), INTENT(OUT)   ::v
+    DOUBLE PRECISION, DIMENSION(:),   INTENT(OUT)   :: d
+    DOUBLE PRECISION, DIMENSION(:,:), INTENT(IN)    :: a1  ! Modified from INOUT to IN by F.A. on 2018/01/21
+    DOUBLE PRECISION, DIMENSION(:,:), INTENT(OUT)   :: v
 
     INTEGER    i,j,ip,iq,n
     DOUBLE PRECISION       c,g,h,s,sm,t,tau,theta,tresh
-    DOUBLE PRECISION    , DIMENSION(size(d)) ::b,z
+    DOUBLE PRECISION   , DIMENSION(size(d)) ::b,z
     DOUBLE PRECISION, DIMENSION(size(d),size(d)) :: a
     LOGICAL, DIMENSION(size(d),size(d)) :: upper_triangle
 
@@ -1909,6 +1910,7 @@ CONTAINS
   CONTAINS
     SUBROUTINE ROTATE(X1,X2)
       DOUBLE PRECISION, DIMENSION(:), INTENT(INOUT) :: X1,X2
+
       DOUBLE PRECISION, DIMENSION(size(X1)) :: MEM
       MEM(:)=X1(:)
       X1(:)=X1(:)-s*(X2(:)+X1(:)*tau)
@@ -1957,11 +1959,11 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS , ONLY : RADE, UNDEF
-    REAL, INTENT(INOUT)             :: U(NSEA), V(NSEA)
-    INTEGER, INTENT(IN)             :: NSEA
-    REAL, INTENT(OUT), OPTIONAL     :: MAG(NSEA), DIR(NSEA)
-    REAL, INTENT(IN), OPTIONAL      :: TOLERANCE
-    CHARACTER, INTENT(IN), OPTIONAL :: CONV
+    REAL,      INTENT(INOUT)         :: U(NSEA), V(NSEA)
+    INTEGER,   INTENT(IN)            :: NSEA
+    REAL,      INTENT(OUT), OPTIONAL :: MAG(NSEA), DIR(NSEA)
+    REAL,      INTENT(IN),  OPTIONAL :: TOLERANCE
+    CHARACTER, INTENT(IN),  OPTIONAL :: CONV
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !
@@ -2032,8 +2034,8 @@ CONTAINS
 #ifdef W3_MEMCHECK
     USE MallocInfo_m
 #endif
-    integer          , intent(in) :: iun
-    character(len=*) , intent(in) :: msg
+    integer,          intent(in) :: iun
+    character(len=*), intent(in) :: msg
 
 #ifdef W3_MEMCHECK
     ! local variables

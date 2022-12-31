@@ -201,17 +201,17 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL ,    INTENT(IN)  :: A(NTH, NK) ! N(θ, k)
-    REAL ,    INTENT(IN)  :: CG(NK)     ! Cg(k)
-    REAL ,    INTENT(IN)  :: WN(NK)     ! WN(k)
-    REAL ,    INTENT(IN)  :: FMEAN      ! 1/T_{0, -1}
-    INTEGER , INTENT(IN)  :: T1ABS(2)   ! Absol. t1
-    REAL ,    INTENT(IN)  :: U10        ! Wind velocity
-    REAL ,    INTENT(IN)  :: UDIR       ! φ (in rad)
-    INTEGER , INTENT(IN)  :: JSEA       ! Local sea point count
-    REAL ,    INTENT(OUT) :: S(NTH,NK)  ! Snl
-    REAL ,    INTENT(OUT) :: D(NTH,NK)  ! Dnl
-    REAL ,    INTENT(OUT) :: KURT       ! Kurtosis
+    REAL,    INTENT(IN)  :: A(NTH, NK) ! N(θ, k)
+    REAL,    INTENT(IN)  :: CG(NK)     ! Cg(k)
+    REAL,    INTENT(IN)  :: WN(NK)     ! WN(k)
+    REAL,    INTENT(IN)  :: FMEAN      ! 1/T_{0, -1}
+    INTEGER, INTENT(IN)  :: T1ABS(2)   ! Absol. t1
+    REAL,    INTENT(IN)  :: U10        ! Wind velocity
+    REAL,    INTENT(IN)  :: UDIR       ! φ (in rad)
+    INTEGER, INTENT(IN)  :: JSEA       ! Local sea point count
+    REAL,    INTENT(OUT) :: S(NTH,NK)  ! Snl
+    REAL,    INTENT(OUT) :: D(NTH,NK)  ! Dnl
+    REAL,    INTENT(OUT) :: KURT       ! Kurtosis
 
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -603,12 +603,12 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL , INTENT(IN) :: A(NTH, NK) ! N(θ, k)
-    REAL , INTENT(IN) :: CG(NK)     ! Cg(k)
-    REAL , INTENT(IN) :: WN(NK)     ! WN(k)
-    REAL , INTENT(IN) :: DPT        ! water depth
-    REAL , INTENT(IN) :: U10        ! wind velocity
-    REAL , INTENT(IN) :: UDIR       ! wind dirc. (φ in rad)
+    REAL, INTENT(IN) :: A(NTH, NK) ! N(θ, k)
+    REAL, INTENT(IN) :: CG(NK)     ! Cg(k)
+    REAL, INTENT(IN) :: WN(NK)     ! WN(k)
+    REAL, INTENT(IN) :: DPT        ! water depth
+    REAL, INTENT(IN) :: U10        ! wind velocity
+    REAL, INTENT(IN) :: UDIR       ! wind dirc. (φ in rad)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -900,9 +900,9 @@ CONTAINS
     !/
     IMPLICIT NONE
     !
-    INTEGER , INTENT(IN) :: NK, NTH        ! # OF FREQ. & DIRC.
-    REAL ,    INTENT(IN) :: ARR2D(NK, NTH)
-    LOGICAL              :: HasNaN
+    INTEGER, INTENT(IN) :: NK, NTH        ! # OF FREQ. & DIRC.
+    REAL,    INTENT(IN) :: ARR2D(NK, NTH)
+    LOGICAL             :: HasNaN
     !/
     HasNaN = .TRUE.
     !

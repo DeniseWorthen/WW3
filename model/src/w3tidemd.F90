@@ -98,11 +98,11 @@ MODULE W3TIDEMD
   CHARACTER*5,    ALLOCATABLE   :: KONCO_CON(:)
   INTEGER, ALLOCATABLE, PRIVATE :: II(:),JJ(:),KK(:),LL(:),MM(:),NN(:),NJ(:)
   REAL, ALLOCATABLE             :: SEMI(:),COEF_CON(:)
-  REAL , ALLOCATABLE            :: V_ARG(:,:),F_ARG(:,:),U_ARG(:,:)
+  REAL, ALLOCATABLE            :: V_ARG(:,:),F_ARG(:,:),U_ARG(:,:)
   REAL                          :: EE(180),PH(180)
   INTEGER                       :: LDEL(180),MDEL(180),NDEL(180),IR(180)
   ! these two index table are used in VUF ...
-  INTEGER , ALLOCATABLE         :: TIDE_INDEXJ(:),TIDE_INDEXJK(:)
+  INTEGER, ALLOCATABLE         :: TIDE_INDEXJ(:),TIDE_INDEXJK(:)
   !
   ! Parameters for tidal analysis
   !
@@ -146,13 +146,13 @@ CONTAINS
 
     IMPLICIT NONE
     !
-    CHARACTER*256 ,   INTENT(IN) :: filename
-    INTEGER ,         INTENT(IN) :: LP, NDEF, IMAX(NDEF)
-    INTEGER(KIND=4) , INTENT(IN) :: KD1,KD2
-    CHARACTER*4  ,    INTENT(IN) :: ITZ
-    REAL(KIND=8) ,    INTENT(IN) :: RMSR0(NDEF)
-    REAL(KIND=8) ,    INTENT(IN) :: SDEV0(NDEF), SDEV(NDEF), RMSR(NDEF), RESMAX(NDEF), RMSRP(NDEF)
-    REAL         ,    INTENT(IN) :: RES(NDEF), SSQ(NDEF), XLAT,XLON
+    CHARACTER*256,   INTENT(IN) :: filename
+    INTEGER,         INTENT(IN) :: LP, NDEF, IMAX(NDEF)
+    INTEGER(KIND=4), INTENT(IN) :: KD1,KD2
+    CHARACTER*4 ,    INTENT(IN) :: ITZ
+    REAL(KIND=8),    INTENT(IN) :: RMSR0(NDEF)
+    REAL(KIND=8),    INTENT(IN) :: SDEV0(NDEF), SDEV(NDEF), RMSR(NDEF), RESMAX(NDEF), RMSRP(NDEF)
+    REAL,            INTENT(IN) :: RES(NDEF), SSQ(NDEF), XLAT,XLON
     !
     INTEGER                       :: IDEF, I, K, K2, L, I1, INFTOT
     INTEGER                       :: ID1,IM1,IY1,ID2,IM2,IY2
@@ -299,8 +299,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    CHARACTER(LEN=100) , INTENT(IN) :: LIST(70)
-    INTEGER ,           INTENT(OUT) :: INDS(70), TIDE_PRMF
+    CHARACTER(LEN=100), INTENT(IN)  :: LIST(70)
+    INTEGER,            INTENT(OUT) :: INDS(70), TIDE_PRMF
 
     INTEGER J, FOUND
 #ifdef W3_S
@@ -531,11 +531,11 @@ CONTAINS
   SUBROUTINE SETVUF_FAST(h,pp,s,p,enp,dh,dpp,ds,dp,dnp,tau,XLAT,F,U,V)
     !      setvuf calculates the V,u,f values at time hr for all constituents
     IMPLICIT NONE
-    REAL ,         INTENT(IN)  :: XLAT
-    REAL(KIND=8) , INTENT(IN)  :: h,pp,s,p,enp,dh,dpp,ds,dp,dnp,tau
-    INTEGER , PARAMETER        :: NTIL=44
-    REAL ,         INTENT(OUT) :: F(NTIL),U(NTIL),V(NTIL)
-    REAL                       :: FA(170),UA(170),VA(170)
+    REAL,         INTENT(IN)  :: XLAT
+    REAL(KIND=8), INTENT(IN)  :: h,pp,s,p,enp,dh,dpp,ds,dp,dnp,tau
+    INTEGER, PARAMETER        :: NTIL=44
+    REAL,         INTENT(OUT) :: F(NTIL),U(NTIL),V(NTIL)
+    REAL                      :: FA(170),UA(170),VA(170)
     !
     !   Local variables
     !
@@ -670,8 +670,8 @@ CONTAINS
   !/ ------------------------------------------------------------------- /
   SUBROUTINE TIDE_READ_SETTINGS(filename,fnam6,fnam7,fnam8,fnam9,fnam11)
     IMPLICIT NONE
-    CHARACTER*256 , INTENT(IN)  :: filename
-    CHARACTER*256 , INTENT(OUT) :: fnam6,fnam7,fnam8,fnam9,fnam11
+    CHARACTER*256, INTENT(IN)  :: filename
+    CHARACTER*256, INTENT(OUT) :: fnam6,fnam7,fnam8,fnam9,fnam11
 
     INTEGER KIN
 
@@ -717,12 +717,12 @@ CONTAINS
     ! Parameters for reading KR1
     IMPLICIT NONE
 
-    INTEGER ,         INTENT(IN)  :: KR1, LP
-    CHARACTER*256 ,   INTENT(IN)  :: filename
-    INTEGER(KIND=4) , INTENT(OUT) :: KD1, KD2
-    INTEGER        ,  INTENT(OUT) :: NDEF,ITREND
-    REAL ,            INTENT(OUT) :: XLON, XLAT
-    CHARACTER*4 ,     INTENT(OUT) :: ITZ
+    INTEGER,         INTENT(IN)  :: KR1, LP
+    CHARACTER*256,   INTENT(IN)  :: filename
+    INTEGER(KIND=4), INTENT(OUT) :: KD1, KD2
+    INTEGER,         INTENT(OUT) :: NDEF,ITREND
+    REAL,            INTENT(OUT) :: XLON, XLAT
+    CHARACTER*4,     INTENT(OUT) :: ITZ
     !
     INTEGER                   :: I, IY
     INTEGER       ID1,IM1,IY1,ID2,IM2,IY2,IC1,IC2
@@ -844,10 +844,10 @@ CONTAINS
     !
     IMPLICIT NONE
     !
-    INTEGER ,         INTENT(IN)  :: KR2, NDEF
-    CHARACTER*256 ,   INTENT(IN)  :: filename
-    INTEGER(KIND=4) , INTENT(IN)  :: KD1,KD2
-    INTEGER(KIND=4) , INTENT(OUT) :: TIDE_NTI
+    INTEGER,         INTENT(IN)  :: KR2, NDEF
+    CHARACTER*256,   INTENT(IN)  :: filename
+    INTEGER(KIND=4), INTENT(IN)  :: KD1,KD2
+    INTEGER(KIND=4), INTENT(OUT) :: TIDE_NTI
     !
     INTEGER                       :: I, idd,imm,icc,iyy,ihh,imin,isec,iy
     REAL, ALLOCATABLE             :: TIDE_DATATMP(:,:)
@@ -924,8 +924,8 @@ CONTAINS
     !      Nautical Almanac (1961)
     !
     implicit none
-    REAL(KIND=8) , INTENT(IN)  :: d1
-    REAL(KIND=8) , INTENT(OUT) :: h,pp,s,p,np,dh,dpp,ds,dp,dnp
+    REAL(KIND=8), INTENT(IN)  :: d1
+    REAL(KIND=8), INTENT(OUT) :: h,pp,s,p,np,dh,dpp,ds,dp,dnp
     !
     !   Local variables
     !
@@ -1285,8 +1285,8 @@ CONTAINS
     ! Should be removed : same is now in W3TIMEMD
     !*********************************************************************
     IMPLICIT NONE
-    INTEGER(KIND=4) , INTENT(in)  :: julian
-    INTEGER(KIND=4) , INTENT(out) :: id,mm,iyyy
+    INTEGER(KIND=4), INTENT(in)  :: julian
+    INTEGER(KIND=4), INTENT(out) :: id,mm,iyyy
 
     INTEGER(KIND=4), PARAMETER :: IGREG=2299161
     INTEGER(KIND=4) ja,jalpha,jb,jc,jd,je
@@ -1359,13 +1359,13 @@ CONTAINS
     integer, parameter        :: nwt=302      ! make nwt > expected value of N2
 
     ! I/O VARIABLES
-    integer ,          intent(IN)    :: ic, m, n, N2, mm
-    real ,             intent(IN)    :: toler
-    real ,             intent(INOUT) :: q(mm,N2), ssq, res
-    integer ,          intent(INOUT) :: jc
-    double precision , intent(INOUT) :: sig(mm)
-    double precision , intent(OUT)   :: u(mm,N2),v(N2,N2),cov(N2,N2)
-    double precision , intent(OUT)   :: w(N2),b(mm),p(N2)
+    integer,          intent(IN)    :: ic, m, n, N2, mm
+    real,             intent(IN)    :: toler
+    real,             intent(INOUT) :: q(mm,N2), ssq, res
+    integer,          intent(INOUT) :: jc
+    double precision, intent(INOUT) :: sig(mm)
+    double precision, intent(OUT)   :: u(mm,N2),v(N2,N2),cov(N2,N2)
+    double precision, intent(OUT)   :: w(N2),b(mm),p(N2)
 
     ! LOCAL VARIABLES
     double precision          :: wti(nwt)
@@ -1711,9 +1711,9 @@ CONTAINS
     !
     IMPLICIT NONE
     !
-    character*5 ,  INTENT(IN)  :: KONX
-    REAL(KIND=8) , INTENT(OUT) :: Vx,ux,FX
-    INTEGER ,      INTENT(IN)  :: ITIME
+    character*5,  INTENT(IN)  :: KONX
+    REAL(KIND=8), INTENT(OUT) :: Vx,ux,FX
+    INTEGER,      INTENT(IN)  :: ITIME
 
     INTEGER          :: K
 
@@ -1748,7 +1748,7 @@ CONTAINS
 
     IMPLICIT NONE
 
-    CHARACTER*256 , INTENT(IN) :: filename
+    CHARACTER*256, INTENT(IN) :: filename
 
     INTEGER                  :: J, J1, JBASE, J4, K, K1, JL, JLM, KR
 
@@ -1893,9 +1893,9 @@ CONTAINS
 
     IMPLICIT NONE
 
-    REAL(KIND=8) , INTENT(IN) :: hr
-    REAL ,         INTENT(IN) :: XLAT
-    INTEGER ,      INTENT(IN) :: ITIME
+    REAL(KIND=8), INTENT(IN) :: hr
+    REAL,         INTENT(IN) :: XLAT
+    INTEGER,      INTENT(IN) :: ITIME
 
     !
     !   Local variables
@@ -2120,12 +2120,12 @@ CONTAINS
     !
     IMPLICIT NONE
 
-    INTEGER ,         INTENT(IN)  :: NDEF, ITREND, ITEST
-    INTEGER(KIND=4) , INTENT(IN)  :: KD1, KD2, IX, IY
-    REAL ,            INTENT(IN)  :: XLON, XLAT
-    REAL(KIND=8) ,    INTENT(OUT) :: SDEV0(NDEF), RMSR0(NDEF), RMSR(NDEF), RESMAX(NDEF)
-    REAL ,            INTENT(OUT) :: SSQ(NDEF), RES(NDEF)
-    INTEGER ,         INTENT(OUT) :: IMAX(NDEF)
+    INTEGER,         INTENT(IN)  :: NDEF, ITREND, ITEST
+    INTEGER(KIND=4), INTENT(IN)  :: KD1, KD2, IX, IY
+    REAL,            INTENT(IN)  :: XLON, XLAT
+    REAL(KIND=8),    INTENT(OUT) :: SDEV0(NDEF), RMSR0(NDEF), RMSR(NDEF), RESMAX(NDEF)
+    REAL,            INTENT(OUT) :: SSQ(NDEF), RES(NDEF)
+    INTEGER,         INTENT(OUT) :: IMAX(NDEF)
     !
     INTEGER                     :: I, I1, I2, I21, II1, IDEF, ICODE,  INFLAG,  &
          J, INFTOT, IREP, J2, JCODE, JJ1, K, K2, KH1,     &
@@ -2513,11 +2513,11 @@ CONTAINS
     !
     IMPLICIT NONE
     !
-    INTEGER ,      INTENT(IN)  :: itrend, NDEF, N
-    REAL(KIND=8) , INTENT(IN)  :: HOURS(N)
-    REAL ,         INTENT(IN)  :: XLAT, DATAIN(N,NDEF)
-    REAL(KIND=8) , INTENT(OUT) :: SDEV(NDEF),RMSR(NDEF)
-    REAL ,         INTENT(OUT) :: PREDICTED(N,NDEF), RESID(N,NDEF)
+    INTEGER,      INTENT(IN)  :: itrend, NDEF, N
+    REAL(KIND=8), INTENT(IN)  :: HOURS(N)
+    REAL,         INTENT(IN)  :: XLAT, DATAIN(N,NDEF)
+    REAL(KIND=8), INTENT(OUT) :: SDEV(NDEF),RMSR(NDEF)
+    REAL,         INTENT(OUT) :: PREDICTED(N,NDEF), RESID(N,NDEF)
     !
     INTEGER                        :: IDEF, I, K, K2
     INTEGER                        :: J, M
@@ -2571,10 +2571,10 @@ CONTAINS
     !
     IMPLICIT NONE
     !
-    INTEGER ,      INTENT(IN)  :: itrend, NDEF, N
-    REAL(KIND=8) , INTENT(IN)  :: TIDE_HOURS(N)
-    REAL ,         INTENT(IN)  :: XLAT
-    REAL ,         INTENT(OUT) :: PREDICTED(N,NDEF)
+    INTEGER,      INTENT(IN)  :: itrend, NDEF, N
+    REAL(KIND=8), INTENT(IN)  :: TIDE_HOURS(N)
+    REAL,         INTENT(IN)  :: XLAT
+    REAL,         INTENT(OUT) :: PREDICTED(N,NDEF)
     !
     INTEGER                        :: IDEF, I, K, K2
     INTEGER                        :: J

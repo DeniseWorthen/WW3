@@ -6459,7 +6459,7 @@ contains
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    real   , parameter :: zero  = 0.0
+    real , parameter :: zero  = 0.0
     logical, save :: firstCall = .true.
     integer :: isea, jsea
     real    :: emean, fmean, fmean1, wnmean, amax, ustar, ustdr, &

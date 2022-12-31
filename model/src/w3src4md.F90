@@ -248,15 +248,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL ,    INTENT(IN)    :: A(NTH,NK), CG(NK), WN(NK), U, UDIR
+    REAL,    INTENT(IN)    :: A(NTH,NK), CG(NK), WN(NK), U, UDIR
 #ifdef W3_FLX5
-    REAL ,    INTENT(IN)    :: TAUA, TAUADIR, DAIR
+    REAL,    INTENT(IN)    :: TAUA, TAUADIR, DAIR
 #endif
-    REAL ,    INTENT(IN)    :: TAUWX, TAUWY
-    LOGICAL , INTENT(IN)    :: LLWS(NSPEC)
-    REAL ,    INTENT(INOUT) :: USTAR ,USDIR
-    REAL ,    INTENT(OUT)   :: EMEAN, FMEAN, FMEAN1, WNMEAN, AMAX
-    REAL ,    INTENT(OUT)   :: CD, Z0, CHARN, FMEANWS, DLWMEAN
+    REAL,    INTENT(IN)    :: TAUWX, TAUWY
+    LOGICAL, INTENT(IN)    :: LLWS(NSPEC)
+    REAL,    INTENT(INOUT) :: USTAR, USDIR
+    REAL,    INTENT(OUT)   :: EMEAN, FMEAN, FMEAN1, WNMEAN, AMAX
+    REAL,    INTENT(OUT)   :: CD, Z0, CHARN, FMEANWS, DLWMEAN
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -533,12 +533,12 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL ,    INTENT(IN)  :: A(NSPEC), BRLAMBDA(NSPEC)
-    REAL ,    INTENT(IN)  :: CG(NK), K(NSPEC),Z0,U, CD
-    REAL ,    INTENT(IN)  :: USTAR, USDIR, AS, DRAT
-    REAL ,    INTENT(OUT) :: S(NSPEC), D(NSPEC), TAUWX, TAUWY, TAUWNX, TAUWNY
-    LOGICAL , INTENT(OUT) :: LLWS(NSPEC)
-    INTEGER , INTENT(IN)  :: IX, IY
+    REAL,    INTENT(IN)  :: A(NSPEC), BRLAMBDA(NSPEC)
+    REAL,    INTENT(IN)  :: CG(NK), K(NSPEC),Z0,U, CD
+    REAL,    INTENT(IN)  :: USTAR, USDIR, AS, DRAT
+    REAL,    INTENT(OUT) :: S(NSPEC), D(NSPEC), TAUWX, TAUWY, TAUWNX, TAUWNY
+    LOGICAL, INTENT(OUT) :: LLWS(NSPEC)
+    INTEGER, INTENT(IN)  :: IX, IY
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -550,7 +550,7 @@ CONTAINS
     REAL                    :: FACLN1, FACLN2, LAMBDA
     REAL                    :: COSU, SINU, TAUX, TAUY, USDIRP, USTP
     REAL                    :: TAUPX, TAUPY, UST2, TAUW, TAUWB
-    REAL   , PARAMETER      :: EPS1 = 0.00001, EPS2 = 0.000001
+    REAL  , PARAMETER      :: EPS1 = 0.00001, EPS2 = 0.000001
     REAL                    :: Usigma           !standard deviation of U due to gustiness
     REAL                    :: USTARsigma       !standard deviation of USTAR due to gustiness
     REAL                    :: CM,UCN,ZCN, &
@@ -956,18 +956,18 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    LOGICAL , INTENT(IN) :: FLTABS
+    LOGICAL, INTENT(IN) :: FLTABS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    INTEGER  SDSNTH, ITH, I_INT, J_INT, IK, IK2, ITH2 , IS, IS2
+    INTEGER  SDSNTH, ITH, I_INT, J_INT, IK, IK2, ITH2, IS, IS2
     INTEGER  IKL, ID, ICON, IKD, IKHS, IKH, TOTO
     REAL     C, C2
     REAL     DIFF1, DIFF2, BINF, BSUP, CGG, PROF
     REAL     KIK, DHS, KD, KHS, KH, XT, GAM, DKH, PR, W, EPS
     REAL     DKD
-    REAL, DIMENSION(:,:)   , ALLOCATABLE :: SIGTAB
-    REAL, DIMENSION(:,:)   , ALLOCATABLE :: K1, K2
+    REAL, DIMENSION(:,:)  , ALLOCATABLE :: SIGTAB
+    REAL, DIMENSION(:,:)  , ALLOCATABLE :: K1, K2
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1768,7 +1768,7 @@ CONTAINS
     USE W3ODATMD  , ONLY : NDST
 #endif
     IMPLICIT NONE
-    REAL, intent(in) :: WINDSPEED,TAUW
+    REAL, intent(in)  :: WINDSPEED, TAUW
     REAL, intent(out) :: USTAR, Z0, CHARN
     ! local variables
     REAL SQRTCDM1
@@ -1944,11 +1944,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER , OPTIONAL, INTENT(IN)  :: IX, IY
-    REAL ,              INTENT(IN)  :: A(NSPEC), K(NK), CG(NK)
-    REAL ,              INTENT(IN)  :: DEPTH, DAIR, USTAR, USDIR, DLWMEAN
-    REAL ,              INTENT(OUT) :: SRHS(NSPEC), DDIAG(NSPEC), BRLAMBDA(NSPEC)
-    REAL ,              INTENT(OUT) :: WHITECAP(1:4)
+    INTEGER, OPTIONAL, INTENT(IN)  :: IX, IY
+    REAL,              INTENT(IN)  :: A(NSPEC), K(NK), CG(NK)
+    REAL,              INTENT(IN)  :: DEPTH, DAIR, USTAR, USDIR, DLWMEAN
+    REAL,              INTENT(OUT) :: SRHS(NSPEC), DDIAG(NSPEC), BRLAMBDA(NSPEC)
+    REAL,              INTENT(OUT) :: WHITECAP(1:4)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
