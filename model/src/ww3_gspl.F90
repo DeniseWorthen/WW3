@@ -2669,8 +2669,8 @@ CONTAINS
     !/ Local parameters
     !/
     INTEGER                 :: NSMALL, IGMIN(NG), NNEXT, JG, IGADD
-         IGTEST, FREE(NG), NFREE, NBIG, IGB
-         MX, MY, NX0, NXN, NY0, NYN, JX
+    INTEGER                 :: IGTEST, FREE(NG), NFREE, NBIG, IGB
+    INTEGER                 :: MX, MY, NX0, NXN, NY0, NYN, JX
 #ifdef W3_T5
     INTEGER                 :: NXNT
 #endif

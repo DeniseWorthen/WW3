@@ -5401,7 +5401,7 @@ CONTAINS
     !
     TYPE STORE
       INTEGER                           :: NTOT, NFIN
-      INTEGER, POINTER                  :: ICVBP(:), MSDBP(:), ISS(:), JSS(:
+      INTEGER, POINTER                  :: ICVBP(:), MSDBP(:), ISS(:), JSS(:)
       INTEGER, POINTER                  :: JCVBP(:), IPCVB(:), IPS(:), ITG(:)
       LOGICAL, POINTER                  :: FLA(:)
       LOGICAL                           :: INIT

@@ -2716,7 +2716,7 @@ CONTAINS
     !
     CHARACTER   :: way *1
     INTEGER     :: horizStepCount, vertStepCount
-         vertBorder, horizBorder, stepCount
+    INTEGER     :: vertBorder, horizBorder, stepCount
 
     INTENT (IN) vertBorder, horizBorder
     INTENT (OUT) stepCount

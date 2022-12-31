@@ -119,22 +119,22 @@ PROGRAM WW3_SYSTRK
   REAL              :: dlon, dlat, lonprt, latprt
   REAL              :: dt
   REAL              :: minlon, maxlon, minlat, maxlat
-  INTEGER           :: mxcwtmycwt
+  INTEGER           :: mxcwt, mycwt
 #ifdef W3_MPI
-  INTEGER           :: ranknprocierr
+  INTEGER           :: rank, nproc, ierr
   CHARACTER         :: rankstr*4
 #endif
 
   !     For point output (bilinear interpolation)
-  REAL              :: hsprt(10),tpprt(10),dirprt(10)
-  REAL              :: BL_hsprt(10),BR_hsprt(10),TR_hsprt(10),TL_hsprt(10)
-  REAL              :: BL_tpprt(10),BR_tpprt(10),TR_tpprt(10),TL_tpprt(10)
-  REAL              :: BL_dirprt(10),BR_dirprt(10),TR_dirprt(10),TL_dirprt(10)
-  REAL              :: BL_dirx,BR_dirx,TR_dirx,TL_dirx
-  REAL              :: BL_diry,BR_diry,TR_diry,TL_diry
-  REAL              :: BL_lonprt,BR_lonprt,TR_lonprt,TL_lonprt
-  REAL              :: BL_latprt,BR_latprt,TR_latprt,TL_latprt
-  REAL              :: tuBL_WBR_WTR_WTL_W
+  REAL              :: hsprt(10), tpprt(10), dirprt(10)
+  REAL              :: BL_hsprt(10), BR_hsprt(10), TR_hsprt(10), TL_hsprt(10)
+  REAL              :: BL_tpprt(10), BR_tpprt(10), TR_tpprt(10), TL_tpprt(10)
+  REAL              :: BL_dirprt(10), BR_dirprt(10), TR_dirprt(10), TL_dirprt(10)
+  REAL              :: BL_dirx, BR_dirx, TR_dirx, TL_dirx
+  REAL              :: BL_diry, BR_diry, TR_diry, TL_diry
+  REAL              :: BL_lonprt, BR_lonprt, TR_lonprt, TL_lonprt
+  REAL              :: BL_latprt, BR_latprt, TR_latprt, TL_latprt
+  REAL              :: t, u, BL_W, BR_W, TR_W, TL_W
   REAL              :: PI
   PARAMETER  (PI = 3.1416)
   !

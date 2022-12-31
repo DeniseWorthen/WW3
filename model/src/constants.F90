@@ -260,7 +260,7 @@ CONTAINS
     ! ACM Libraries
     ! ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     IMPLICIT NONE
-    DOUBLE PRECISION :: X, Y, X2, Y2, RE0, IM0, RE1, IM
+    DOUBLE PRECISION :: X, Y, X2, Y2, RE0, IM0, RE1, IM1
     DOUBLE PRECISION :: R1, R2, T1, T2, P1, P2, RTERM, ITERM, L
     DOUBLE PRECISION, PARAMETER, DIMENSION(8) :: EXSQ = &
          (/ 0.5641003087264D0,0.4120286874989D0,0.1584889157959D0, &
