@@ -168,7 +168,7 @@ CONTAINS
     !/
     USE CONSTANTS
     !
-    USE W3PARTMD , ONLY :  W3PART
+    USE W3PARTMD , ONLY : W3PART
 #ifdef W3_S
     USE W3SERVMD , ONLY : STRACE
 #endif
@@ -479,8 +479,8 @@ CONTAINS
     REAL, POINTER           :: DTP(:,:)
     !
     TYPE PROCS
-      INTEGER , POINTER :: ICPRT(:,:)
-      REAL ,    POINTER :: DTPRT(:,:)
+      INTEGER, POINTER :: ICPRT(:,:)
+      REAL,    POINTER :: DTPRT(:,:)
     END TYPE PROCS
     !
     TYPE(PROCS), TARGET, ALLOCATABLE :: PROC(:)
