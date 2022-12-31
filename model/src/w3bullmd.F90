@@ -172,9 +172,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER , INTENT(IN)     :: NPART, DIMXP, IOUT
-    INTEGER , INTENT(INOUT)  :: TIMEV(2)
-    REAL ,    INTENT(IN)     :: UABS, UD, XPART(DIMP,0:DIMXP)
+    INTEGER, INTENT(IN)     :: NPART, DIMXP, IOUT
+    INTEGER, INTENT(INOUT)  :: TIMEV(2)
+    REAL,    INTENT(IN)     :: UABS, UD, XPART(DIMP,0:DIMXP)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

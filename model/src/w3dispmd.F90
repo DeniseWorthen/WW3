@@ -161,8 +161,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: SI, H
-    REAL, INTENT(OUT)       :: K, CG
+    REAL, INTENT(IN)  :: SI, H
+    REAL, INTENT(OUT) :: K, CG
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -257,10 +257,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NMAX
-    INTEGER, INTENT(OUT)    :: ICON
-    REAL, INTENT(IN)        :: W, H, EPS
-    REAL, INTENT(OUT)       :: CG, K
+    INTEGER, INTENT(IN)  :: NMAX
+    INTEGER, INTENT(OUT) :: ICON
+    REAL,    INTENT(IN)  :: W, H, EPS
+    REAL,    INTENT(OUT) :: CG, K
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -418,8 +418,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: SI, H
-    REAL, INTENT(OUT)       :: K, CG
+    REAL, INTENT(IN)  :: SI, H
+    REAL, INTENT(OUT) :: K, CG
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -527,8 +527,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: SIG, DW
-    REAL, INTENT(OUT)       :: WNL, CGL
+    REAL, INTENT(IN)  :: SIG, DW
+    REAL, INTENT(OUT) :: WNL, CGL
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -791,9 +791,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
 
-    REAL   , INTENT(IN)  :: H_ICE, H_WDEPTH, SIGMA(NK)
-    REAL   , INTENT(IN)  :: VISC    ! in m2/sec
-    REAL   , INTENT(OUT) :: K_SOLUTION(NK) ,CG(NK) ,ALPHA(NK)
+    REAL, INTENT(IN)  :: H_ICE, H_WDEPTH, SIGMA(NK)
+    REAL, INTENT(IN)  :: VISC    ! in m2/sec
+    REAL, INTENT(OUT) :: K_SOLUTION(NK), CG(NK), ALPHA(NK)
 
     !/
     !/ ------------------------------------------------------------------- /
@@ -1054,10 +1054,10 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL   , INTENT(IN)  :: H_ICE,H_WDEPTH,KWN
-    REAL   , INTENT(IN)  :: VISC    ! in m2/sec
+    REAL,    INTENT(IN)  :: H_ICE, H_WDEPTH, KWN
+    REAL,    INTENT(IN)  :: VISC    ! in m2/sec
     LOGICAL, INTENT(IN)  :: GET_CG
-    REAL   , INTENT(OUT) :: FREQ,CG,ALPHA
+    REAL,    INTENT(OUT) :: FREQ, CG, ALPHA
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

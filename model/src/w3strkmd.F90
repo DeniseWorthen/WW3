@@ -2949,7 +2949,7 @@ CONTAINS
     INTEGER     :: i, j, maxI, maxJ, ngbrExt, maxSys
     REAL        :: perKnob ,dirKnob, hsKnob
 
-    INTENT (IN) i, j, maxI, maxJ, ngbrExt, perKnob ,dirKnob
+    INTENT (IN) i, j, maxI, maxJ, ngbrExt, perKnob, dirKnob
     INTENT (IN OUT) wsdat, maxSys
     !
     !     Local variables
@@ -3254,7 +3254,7 @@ CONTAINS
     REAL         :: perKnob ,dirKnob, hsKnob
 
     INTENT (IN) maxPts, maxI, maxJ, hsKnob, combine
-    INTENT (IN OUT) wsdat, maxSys                                       !In the Matlab code maxSys is only input ???
+    INTENT (IN OUT) wsdat, maxSys !In the Matlab code maxSys is only input ???
     !      INTENT (OUT) sys
     !
     !     Local variables
@@ -4725,9 +4725,9 @@ CONTAINS
     !     OUTARRAY  REAL    ARR  output   Output array (sorted)
     !     OUTSIZE   INTEGER      output   Size of output array (number of unique elements)
     !
-    INTEGER , INTENT(IN)  :: INSIZE
-    INTEGER , INTENT(OUT) :: OUTSIZE
-    REAL ,    INTENT(IN)  :: INARRAY(INSIZE)
+    INTEGER, INTENT(IN)  :: INSIZE
+    INTEGER, INTENT(OUT) :: OUTSIZE
+    REAL,    INTENT(IN)  :: INARRAY(INSIZE)
 
     REAL, POINTER :: OUTARRAY(:)
     !
@@ -5640,8 +5640,8 @@ CONTAINS
     !
     IMPLICIT NONE
     !/
-    INTEGER , INTENT(IN)    :: LO,HI
-    REAL ,    INTENT(INOUT) :: ARRAY(:),IDX(:)
+    INTEGER, INTENT(IN)    :: LO,HI
+    REAL,    INTENT(INOUT) :: ARRAY(:),IDX(:)
     !/
     !     Local variables
     !     ----------------------------------------------------------------
@@ -5765,8 +5765,8 @@ CONTAINS
     !
     IMPLICIT NONE
     !/
-    INTEGER , INTENT(IN)    :: LO,HI
-    REAL ,    INTENT(INOUT) :: ARRAY(:),IDX(:)
+    INTEGER, INTENT(IN)    :: LO,HI
+    REAL,    INTENT(INOUT) :: ARRAY(:),IDX(:)
     !/
     !     Local variables
     !     ----------------------------------------------------------------
@@ -5875,8 +5875,8 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
-    INTEGER(KIND=4) , INTENT(IN) :: INT4
-    INTEGER(KIND=4)              :: INT4SWP
+    INTEGER(KIND=4), INTENT(IN) :: INT4
+    INTEGER(KIND=4)             :: INT4SWP
     !/
     !     Local variables
     !     ----------------------------------------------------------------

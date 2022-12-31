@@ -95,8 +95,8 @@ MODULE W3SNLSMD
   !/ ------------------------------------------------------------------- /
   !/
   INTEGER, PRIVATE, PARAMETER :: NKD = 100
-  REAL,    PRIVATE, PARAMETER :: KDMIN = 0.25 ,  KDMAX = 10.
-  REAL,    PRIVATE            :: SITMIN, XSIT
+  REAL, PRIVATE, PARAMETER    :: KDMIN = 0.25,  KDMAX = 10.
+  REAL, PRIVATE               :: SITMIN, XSIT
   !
   REAL,             PARAMETER :: ABMAX = 0.25
   !
@@ -622,8 +622,8 @@ CONTAINS
       !/
       !/ Parameter list
       !/
-      REAL , INTENT(OUT) :: PSPC(0:NTH+1,0:NFR+2)
-      REAL , INTENT(OUT) :: SPEC(0:NTH+1,0:NFR+2)
+      REAL, INTENT(OUT) :: PSPC(0:NTH+1,0:NFR+2)
+      REAL, INTENT(OUT) :: SPEC(0:NTH+1,0:NFR+2)
       !/
       !/ Local parameters
       !/

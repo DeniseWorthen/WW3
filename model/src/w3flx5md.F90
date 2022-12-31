@@ -208,11 +208,11 @@ CONTAINS
     !/
     REAL, INTENT(IN)        :: ZWND, U10, U10D, TAUA, TAUADIR, RHOAIR
     REAL, INTENT(OUT)       :: UST, USTD, Z0, CD, CHARN
-    REAL                    :: UNZ, SQRTCDM1
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
+    REAL :: UNZ, SQRTCDM1
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
 #endif

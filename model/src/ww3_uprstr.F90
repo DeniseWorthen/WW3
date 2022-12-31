@@ -2206,9 +2206,9 @@ CONTAINS
     !
     !/
     REAL, DIMENSION(:, :), INTENT(IN) :: RDA_A
-    CHARACTER(*)         , INTENT(IN) :: FILENAME
+    CHARACTER(*),          INTENT(IN) :: FILENAME
 
-    INTEGER            :: IB_I, IB_J, IL_IOS !
+    INTEGER :: IB_I, IB_J, IL_IOS
     INTEGER, PARAMETER :: IP_FID = 123
     !
     OPEN( UNIT = IP_FID, FILE = FILENAME, STATUS = 'REPLACE', &

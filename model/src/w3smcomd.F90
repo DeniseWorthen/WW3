@@ -817,9 +817,9 @@ CONTAINS
 
     IMPLICIT NONE
 
-    REAL, INTENT(IN)  :: S(:)
-    REAL, INTENT(OUT) :: XY(NXO,NYO)
-    LOGICAL, OPTIONAL :: DIR
+    REAL,    INTENT(IN)           :: S(:)
+    REAL,    INTENT(OUT)          :: XY(NXO,NYO)
+    LOGICAL, INTENT(IN), OPTIONAL :: DIR
 
     LOGICAL :: DIRN
     INTEGER :: ISEA

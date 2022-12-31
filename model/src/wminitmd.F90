@@ -440,10 +440,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER ,       INTENT(IN)           :: IDSI, IDSO, IDSS, IDST, IDSE
-    INTEGER ,       INTENT(IN)           :: MPI_COMM
-    CHARACTER*(*) , INTENT(IN)           :: IFNAME
-    CHARACTER*(*) , INTENT(IN), OPTIONAL :: PREAMB
+    INTEGER,       INTENT(IN)           :: IDSI, IDSO, IDSS, IDST, IDSE
+    INTEGER,       INTENT(IN)           :: MPI_COMM
+    CHARACTER*(*), INTENT(IN)           :: IFNAME
+    CHARACTER*(*), INTENT(IN), OPTIONAL :: PREAMB
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -510,8 +510,8 @@ CONTAINS
 
     TYPE OT2TPE
       INTEGER                      :: NPTS
-      REAL ,              POINTER  :: X(:), Y(:)
-      CHARACTER(LEN=40) , POINTER  :: PNAMES(:)
+      REAL,              POINTER   :: X(:), Y(:)
+      CHARACTER(LEN=40), POINTER   :: PNAMES(:)
     END TYPE OT2TPE
     !
     TYPE(OT2TPE),      ALLOCATABLE :: OT2(:)
@@ -3760,10 +3760,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER ,       INTENT(IN)           :: IDSI, IDSO, IDSS, IDST, IDSE
-    INTEGER ,       INTENT(IN)           :: MPI_COMM
-    CHARACTER*(*) , INTENT(IN)           :: IFNAME
-    CHARACTER*(*) , INTENT(IN), OPTIONAL :: PREAMB
+    INTEGER,       INTENT(IN)           :: IDSI, IDSO, IDSS, IDST, IDSE
+    INTEGER,       INTENT(IN)           :: MPI_COMM
+    CHARACTER*(*), INTENT(IN)           :: IFNAME
+    CHARACTER*(*), INTENT(IN), OPTIONAL :: PREAMB
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

@@ -654,29 +654,29 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER , INTENT(IN)    :: srce_call, IT, ISEA, JSEA, IX, IY, IMOD
-    REAL ,    intent(in)    :: SPECOLD(NSPEC), CLATSL
-    REAL,     INTENT(OUT)   :: VSIO(NSPEC), VDIO(NSPEC)
-    LOGICAL , INTENT(OUT)   :: SHAVEIO
-    REAL ,    INTENT(IN)    :: D_INP, U10ABS
-    REAL ,    INTENT(IN)    :: U10DIR, AS, CX, CY, DTG, D50,PSIC
-    REAL ,    INTENT(IN)    :: ICE, ICEH
+    INTEGER, INTENT(IN)    :: srce_call, IT, ISEA, JSEA, IX, IY, IMOD
+    REAL,    intent(in)    :: SPECOLD(NSPEC), CLATSL
+    REAL,    INTENT(OUT)   :: VSIO(NSPEC), VDIO(NSPEC)
+    LOGICAL, INTENT(OUT)   :: SHAVEIO
+    REAL,    INTENT(IN)    :: D_INP, U10ABS
+    REAL,    INTENT(IN)    :: U10DIR, AS, CX, CY, DTG, D50,PSIC
+    REAL,    INTENT(IN)    :: ICE, ICEH
 #ifdef W3_FLX5
-    REAL ,    INTENT(IN)    :: TAUA, TAUADIR
+    REAL,    INTENT(IN)    :: TAUA, TAUADIR
 #endif
-    INTEGER , INTENT(IN)    :: REFLED(6)
-    REAL ,    INTENT(IN)    :: REFLEC(4), DELX, DELY, DELA
-    REAL ,    INTENT(IN)    :: TRNX, TRNY, BERG, ICEDMAX, DAIR
-    REAL ,    INTENT(INOUT) :: WN1(NK), CG1(NK)
-    REAL ,    INTENT(INOUT) :: SPEC(NSPEC), ALPHA(NK), USTAR
-    REAL ,    INTENT(INOUT) :: USTDIR, FPI, TAUOX, TAUOY
-    REAL ,    INTENT(INOUT) :: TAUWX, TAUWY, PHIAW, PHIOC, PHICE
-    REAL ,    INTENT(INOUT) :: CHARN, TWS, BEDFORM(3), PHIBBL
-    REAL ,    INTENT(INOUT) :: TAUBBL(2), TAUICE(2), WHITECAP(4)
-    REAL ,    INTENT(INOUT) :: TAUWIX, TAUWIY, TAUWNX, TAUWNY
-    REAL ,    INTENT(INOUT) :: ICEF, TAUOCX, TAUOCY, WNMEAN
-    REAL ,    INTENT(OUT)   :: DTDYN, FCUT
-    REAL ,    INTENT(IN)    :: COEF
+    INTEGER, INTENT(IN)    :: REFLED(6)
+    REAL,    INTENT(IN)    :: REFLEC(4), DELX, DELY, DELA
+    REAL,    INTENT(IN)    :: TRNX, TRNY, BERG, ICEDMAX, DAIR
+    REAL,    INTENT(INOUT) :: WN1(NK), CG1(NK)
+    REAL,    INTENT(INOUT) :: SPEC(NSPEC), ALPHA(NK), USTAR
+    REAL,    INTENT(INOUT) :: USTDIR, FPI, TAUOX, TAUOY
+    REAL,    INTENT(INOUT) :: TAUWX, TAUWY, PHIAW, PHIOC, PHICE
+    REAL,    INTENT(INOUT) :: CHARN, TWS, BEDFORM(3), PHIBBL
+    REAL,    INTENT(INOUT) :: TAUBBL(2), TAUICE(2), WHITECAP(4)
+    REAL,    INTENT(INOUT) :: TAUWIX, TAUWIY, TAUWNX, TAUWNY
+    REAL,    INTENT(INOUT) :: ICEF, TAUOCX, TAUOCY, WNMEAN
+    REAL,    INTENT(OUT)   :: DTDYN, FCUT
+    REAL,    INTENT(IN)    :: COEF
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2417,8 +2417,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL , INTENT(IN)  :: A(NSPEC), CG(NK), S(NSPEC)
-    REAL , INTENT(OUT) :: FPI
+    REAL, INTENT(IN)  :: A(NSPEC), CG(NK), S(NSPEC)
+    REAL, INTENT(OUT) :: FPI
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2540,8 +2540,8 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    REAL , INTENT(IN)    :: SPEC(NSPEC)
-    REAL , INTENT(INOUT) :: VS(NSPEC), VD(NSPEC)
+    REAL, INTENT(IN)    :: SPEC(NSPEC)
+    REAL, INTENT(INOUT) :: VS(NSPEC), VD(NSPEC)
 
     INTEGER :: ISP, ITH, IK, IS
 
@@ -2629,8 +2629,8 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    REAL , INTENT(IN)    :: SPEC(NSPEC)
-    REAL , INTENT(INOUT) :: VS(NSPEC), VD(NSPEC)
+    REAL, INTENT(IN)    :: SPEC(NSPEC)
+    REAL, INTENT(INOUT) :: VS(NSPEC), VD(NSPEC)
 
     INTEGER :: ISP, ITH, IK, IS
 #ifdef W3_S

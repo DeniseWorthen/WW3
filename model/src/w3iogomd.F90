@@ -239,9 +239,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER , INTENT(IN)     :: NDSO, NDSEN
-    LOGICAL , INTENT(INOUT)  :: FLGRD(NOGRP,NGRPP), FLGD(NOGRP)
-    LOGICAL , INTENT(INOUT)  :: FLGR2(NOGRP,NGRPP), FLG2(NOGRP)
+    INTEGER, INTENT(IN)     :: NDSO, NDSEN
+    LOGICAL, INTENT(INOUT)  :: FLGRD(NOGRP,NGRPP), FLGD(NOGRP)
+    LOGICAL, INTENT(INOUT)  :: FLGR2(NOGRP,NGRPP), FLG2(NOGRP)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -409,11 +409,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER , INTENT(IN)  :: NDSI, NDSO, NDSS, NDSEN, IAPROC, NAPOUT
-    INTEGER , INTENT(OUT) :: IERR
-    CHARACTER(LEN=1)      :: COMSTR
-    LOGICAL , INTENT(OUT) :: FLG2D(NOGRP,NGRPP), FLG1D(NOGRP)
-    CHARACTER(LEN=100)    :: OUT_NAMES(100), TESTSTR
+    INTEGER, INTENT(IN)  :: NDSI, NDSO, NDSS, NDSEN, IAPROC, NAPOUT
+    INTEGER, INTENT(OUT) :: IERR
+    CHARACTER(LEN=1)     :: COMSTR
+    LOGICAL, INTENT(OUT) :: FLG2D(NOGRP,NGRPP), FLG1D(NOGRP)
+    CHARACTER(LEN=100)   :: OUT_NAMES(100), TESTSTR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -659,11 +659,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER ,         INTENT(IN)  :: NDSO, NDSS, NDSEN, IAPROC, NAPOUT
-    CHARACTER(1024) , INTENT(IN)  :: FLDOUT
-    INTEGER ,         INTENT(OUT) :: IERR
-    LOGICAL ,         INTENT(OUT) :: FLG2D(NOGRP,NGRPP), FLG1D(NOGRP)
-    CHARACTER(LEN=100)            :: OUT_NAMES(100), TESTSTR
+    INTEGER,         INTENT(IN)  :: NDSO, NDSS, NDSEN, IAPROC, NAPOUT
+    CHARACTER(1024), INTENT(IN)  :: FLDOUT
+    INTEGER,         INTENT(OUT) :: IERR
+    LOGICAL,         INTENT(OUT) :: FLG2D(NOGRP,NGRPP), FLG1D(NOGRP)
+    CHARACTER(LEN=100)           :: OUT_NAMES(100), TESTSTR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -790,9 +790,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    CHARACTER(LEN=*) , INTENT(IN)  :: FLD
-    INTEGER ,          INTENT(IN)  :: IAPROC, NAPOUT, NDSEN
-    INTEGER ,          INTENT(OUT) :: I, J
+    CHARACTER(LEN=*), INTENT(IN)  :: FLD
+    INTEGER,          INTENT(IN)  :: IAPROC, NAPOUT, NDSEN
+    INTEGER,          INTENT(OUT) :: I, J
 
     I = -1
     J = -1
@@ -1308,8 +1308,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL ,    INTENT(IN) :: A(NTH,NK,0:NSEAL)
-    LOGICAL , INTENT(IN) :: FLPART, FLOUTG, FLOUTG2
+    REAL,    INTENT(IN) :: A(NTH,NK,0:NSEAL)
+    LOGICAL, INTENT(IN) :: FLPART, FLOUTG, FLOUTG2
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2515,11 +2515,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER ,   INTENT(INOUT)        :: IOTST
-    INTEGER ,   INTENT(IN)           :: NDSOG
-    INTEGER ,   INTENT(IN), OPTIONAL :: IMOD
-    CHARACTER , INTENT(IN)           :: INXOUT*(*)
-    CHARACTER(LEN=15)                :: TIMETAG
+    INTEGER,   INTENT(INOUT)        :: IOTST
+    INTEGER,   INTENT(IN)           :: NDSOG
+    INTEGER,   INTENT(IN), OPTIONAL :: IMOD
+    CHARACTER, INTENT(IN)           :: INXOUT*(*)
+    CHARACTER(LEN=15)               :: TIMETAG
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -3796,8 +3796,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL ,    INTENT(IN) :: A(NTH,NK,0:NSEAL)
-    INTEGER , INTENT(IN) :: USS_SWITCH
+    REAL,    INTENT(IN) :: A(NTH,NK,0:NSEAL)
+    INTEGER, INTENT(IN) :: USS_SWITCH
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -4033,7 +4033,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL , INTENT(IN) :: A  (NTH, NK, 0:NSEAL)
+    REAL, INTENT(IN) :: A (NTH, NK, 0:NSEAL)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
