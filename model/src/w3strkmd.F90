@@ -2949,7 +2949,7 @@ CONTAINS
     INTEGER     :: i, j, maxI, maxJ, ngbrExt, maxSys
     REAL        :: perKnob ,dirKnob, hsKnob
 
-    INTENT (IN) i, j, maxI, maxJ, ngbrExt, perKnob ,dirKnob
+    INTENT (IN) i, j, maxI, maxJ, ngbrExt, perKnob, dirKnob
     INTENT (IN OUT) wsdat, maxSys
     !
     !     Local variables

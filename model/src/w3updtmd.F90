@@ -3225,13 +3225,13 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
+    REAL,      INTENT(IN)  :: ZZ(NSEA)
+    CHARACTER, INTENT(IN)  :: ZUNIT*(*)
+    REAL,      INTENT(OUT) :: DZZDX(NY,NX), DZZDY(NY,NX)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    REAL, INTENT(IN)        :: ZZ(NSEA)
-    CHARACTER, INTENT(IN)   :: ZUNIT*(*)
-    REAL, INTENT(OUT)       :: DZZDX(NY,NX), DZZDY(NY,NX)
     INTEGER                 :: ISEA, IX, IY, IXP, IXM, IYP, IYM
 #ifdef W3_T
     INTEGER                 :: ISX, ISY, MAPOUT(NX,NY)

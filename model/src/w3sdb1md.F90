@@ -165,11 +165,11 @@ CONTAINS
     REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC)
     REAL, INTENT(IN)        :: CG(NK)
     LOGICAL, INTENT(OUT)    :: LBREAK
-    INTEGER                 :: ITH, IK, IWB
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
+    INTEGER                 :: ITH, IK, IWB
     INTEGER                 :: IS
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0

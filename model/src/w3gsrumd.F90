@@ -2456,12 +2456,12 @@ CONTAINS
     INTEGER,     INTENT(OUT)             :: IS(4)
     INTEGER,     INTENT(OUT)             :: JS(4)
     REAL(4),     INTENT(OUT)             :: RW(4)
-    REAL(4),     INTENT(IN)   , OPTIONAL :: EPS
-    REAL(4),     INTENT(IN)   , OPTIONAL :: DCIN
-    LOGICAL,     INTENT(IN)   , OPTIONAL :: MASK(:,:)
-    INTEGER,     INTENT(OUT)  , OPTIONAL :: MSKC
+    REAL(4),     INTENT(IN),    OPTIONAL :: EPS
+    REAL(4),     INTENT(IN),    OPTIONAL :: DCIN
+    LOGICAL,     INTENT(IN),    OPTIONAL :: MASK(:,:)
+    INTEGER,     INTENT(OUT),   OPTIONAL :: MSKC
     INTEGER,     INTENT(INOUT), OPTIONAL :: NNBR
-    LOGICAL,     INTENT(IN)   , OPTIONAL :: DEBUG
+    LOGICAL,     INTENT(IN),    OPTIONAL :: DEBUG
 
     !     Local parameters
     REAL(8) :: XT8, YT8, RW8(4), EPS8, DCIN8
@@ -2505,12 +2505,12 @@ CONTAINS
     INTEGER,     INTENT(OUT)             :: IS(4)
     INTEGER,     INTENT(OUT)             :: JS(4)
     REAL(8),     INTENT(OUT)             :: RW(4)
-    REAL(8),     INTENT(IN)   , OPTIONAL :: EPS
-    REAL(8),     INTENT(IN)   , OPTIONAL :: DCIN
-    LOGICAL,     INTENT(IN)   , OPTIONAL :: MASK(:,:)
-    INTEGER,     INTENT(OUT)  , OPTIONAL :: MSKC
+    REAL(8),     INTENT(IN),    OPTIONAL :: EPS
+    REAL(8),     INTENT(IN),    OPTIONAL :: DCIN
+    LOGICAL,     INTENT(IN),    OPTIONAL :: MASK(:,:)
+    INTEGER,     INTENT(OUT),   OPTIONAL :: MSKC
     INTEGER,     INTENT(INOUT), OPTIONAL :: NNBR
-    LOGICAL,     INTENT(IN)   , OPTIONAL :: DEBUG
+    LOGICAL,     INTENT(IN),    OPTIONAL :: DEBUG
 
     !     Local parameters
     REAL(8), PARAMETER :: BIG = 1D16

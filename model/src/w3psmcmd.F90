@@ -3723,7 +3723,7 @@ CONTAINS
 
     INTEGER, INTENT(IN)                 :: IMOD, NC
     INTEGER, INTENT(in),  Dimension(NC) :: IDCl        ! Automatic array
-    REAL   , INTENT(out), Dimension(NC) :: XLon, YLat
+    REAL,    INTENT(out), Dimension(NC) :: XLon, YLat
     !/ ------------------------------------------------------------------- /
     ! Local variables.
 
@@ -3863,7 +3863,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     ! Iuput/Output variables
     INTEGER, INTENT(IN)                 :: IMOD, NC
-    REAL   , INTENT(in),  Dimension(NC) :: XLon, YLat
+    REAL,    INTENT(in),  Dimension(NC) :: XLon, YLat
     INTEGER, INTENT(out), Dimension(NC) :: IDCl
     !/ ------------------------------------------------------------------- /
     ! Local variables

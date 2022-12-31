@@ -3130,11 +3130,11 @@ CONTAINS
     !/ Parameter list
     !/
     INTEGER, INTENT(IN)     :: IMOD, MTRI, MX, COUNTOTA, NNZ, NDSE, NDST
-    INTEGER                 :: IAPROC = 1
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
+    INTEGER                 :: IAPROC = 1
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
     CALL STRACE (IENT, 'W3DIMUG')

@@ -80,6 +80,8 @@ MODULE W3SIC3MD
   !/
   !/ ------------------------------------------------------------------- /
   !/
+  ! module default
+  implicit none
   PUBLIC  ::  W3SIC3, W3IC3WNCG_V1, W3IC3WNCG_CHENG
   PRIVATE ::  WN_CMPLX_V1, WN_CMPLX_HF
   PRIVATE ::  CMPLX_ROOT_MULLER_V1, CMPLX_ROOT_MULLER_CHENG
@@ -1879,8 +1881,8 @@ CONTAINS
     !/
     REAL, INTENT(IN)    :: ICE1, ICE2, ICE3, ICE4, DPT
     REAL, INTENT(INOUT) :: WN_R(:),WN_I(:),CG(:)
-    REAL, ALLOCATABLE   :: SIGMA(:)
     !
+    REAL, ALLOCATABLE   :: SIGMA(:)
     INTEGER     :: I, I1, I2, IK, KL,KU, ITKNUM
     COMPLEX(8)  :: WNCOMPLEX, X0,X1,X2, WNR, WNL
     REAL(8)     :: DEPTH, HICE, NU, DICE, ES_MOD, RR, K_OCEAN, &
@@ -2471,9 +2473,9 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    REAL, INTENT(IN)  :: SIGMA(1:N),WN_R(1:N)
-    REAL, INTENT(OUT) :: CG(1:N)
-    INTEGER           :: N
+    REAL,    INTENT(IN)  :: SIGMA(1:N),WN_R(1:N)
+    REAL,    INTENT(OUT) :: CG(1:N)
+    INTEGER, INTENT(IN)  :: N
     !/ LOCAL variables
     INTEGER           :: IK, M
     REAL              :: CG1,CG2,CG3,CG0(1:N)
@@ -2892,7 +2894,7 @@ CONTAINS
     COMPLEX(8), INTENT(IN) :: WN
     REAL(8),    INTENT(IN) :: SIGMA, ES, NU, DICE, HICE, DEPTH
     COMPLEX(8)             :: FUNC1,AA(4,4)                   ! RESULT
-    INTEGER                  :: JUDGE
+    INTEGER                :: JUDGE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

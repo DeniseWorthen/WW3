@@ -817,7 +817,7 @@ CONTAINS
     INTEGER(KIND=4),    INTENT(in)  :: julian
     INTEGER(KIND=4),    INTENT(out) :: id,mm,iyyy
     INTEGER(KIND=4), PARAMETER :: IGREG=2299161
-    INTEGER(KIND=4) ja,jalpha,jb,jc,jd,je
+    INTEGER(KIND=4) :: ja,jalpha,jb,jc,jd,je
     if (julian.GE.IGREG) THEN
       jalpha=INT(((julian-1867216)-0.25)/36524.25)
       ja=julian+1+jalpha-INT(0.25*jalpha)

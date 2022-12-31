@@ -213,6 +213,7 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
+    INTEGER, INTENT(in) :: IMOD
     !!      INCLUDE "mpif.h"
     INTEGER :: istat
     INTEGER :: I, J, IBND_MAP, ISEA, IP, IX, JSEA, nb
@@ -221,7 +222,6 @@ CONTAINS
     INTEGER, ALLOCATABLE :: NSEAL_arr(:)
     INTEGER :: IERR_MPI
     INTEGER :: IScal(1)
-    INTEGER, INTENT(in) :: IMOD
     INTEGER :: IK, ISP
     INTEGER IK0, ISP0, ITH
     REAL :: eSIG, eFR
@@ -454,8 +454,9 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    INTEGER :: IBND_MAP, ISEA, JSEA, IX, IP, IP_glob
+
     INTEGER, INTENT(in) :: IMOD
+    INTEGER :: IBND_MAP, ISEA, JSEA, IX, IP, IP_glob
     INTEGER :: Status(NX), istat
     REAL :: rtmp(nseal)
 #ifdef W3_S
@@ -570,8 +571,9 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    INTEGER             :: IBND_MAP, ISEA, JSEA, IX, IP, IP_glob
+
     INTEGER, INTENT(in) :: IMOD
+    INTEGER             :: IBND_MAP, ISEA, JSEA, IX, IP, IP_glob
     INTEGER             :: Status(NX), istat
     REAL                :: rtmp(nseal)
 #ifdef W3_S
@@ -699,11 +701,11 @@ CONTAINS
     INTEGER, INTENT(IN)     :: ISP
     REAL, INTENT(IN)        :: FACX, FACY, DTG, VGX, VGY
     LOGICAL, INTENT(IN)     :: LCALC
-    LOGICAL                 :: SCHEME
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local PARAMETERs
     !/
+    LOGICAL                 :: SCHEME
     INTEGER                 :: ITH, IK, ISEA
     INTEGER                 :: I, J, IE, IBND_MAP
     INTEGER                 :: IP_glob
@@ -1464,9 +1466,9 @@ CONTAINS
 
     INCLUDE "mpif.h"
     CHARACTER(*), INTENT(in) :: string
-    REAL VcollExp(1)
-    REAL rVect(1)
-    INTEGER iProc, ierr
+    REAL :: VcollExp(1)
+    REAL :: rVect(1)
+    INTEGER :: iProc, ierr
     WRITE(740+IAPROC,*) 'TEST_MPI_STATUS, at string=', string
     FLUSH(740+IAPROC)
     IF (IAPROC .gt. NAPROC) THEN
@@ -1765,7 +1767,7 @@ CONTAINS
     CHARACTER(*), INTENT(in) :: string
     LOGICAL :: CheckUncovered = .FALSE.
     LOGICAL :: PrintFullValue = .FALSE.
-    REAL*8 V8(NSEAL)
+    REAL*8 :: V8(NSEAL)
     V8 = DBLE(V)
     CALL SCAL_INTEGRAL_PRINT_GENERAL(V8, string, NSEAL, CheckUncovered, PrintFullValue)
   END SUBROUTINE SCAL_INTEGRAL_PRINT_R4
@@ -1988,9 +1990,9 @@ CONTAINS
     USE W3ODATMD , only : IAPROC
     USE W3GDATMD , only : NSPEC
 
-    INTEGER maxidx
     REAL, INTENT(in) :: FIELD(NSPEC,NSEAL)
     CHARACTER(*), INTENT(in) :: string
+    INTEGER :: maxidx
     LOGICAL :: PrintMinISP = .FALSE.
     LOGICAL :: LocalizeMaximum = .FALSE.
     maxidx = NSEAL
@@ -2061,18 +2063,18 @@ CONTAINS
     REAL, INTENT(in) :: TheARR(NSPEC, npa)
     LOGICAL, INTENT(in) :: PrintMinISP, LocalizeMaximum
     !
-    REAL Vcoll(NSPEC,NX), VcollExp(NSPEC*NX), rVect(NSPEC*NX)
-    REAL CoherencyError_Max, CoherencyError_Sum
-    REAL eVal1, eVal2, eErr
-    INTEGER LocateMax_I, LocateMax_ISP
-    INTEGER rStatus(NX), Status(NX)
-    INTEGER JSEA, ISEA, iProc, I, IX, ierr, ISP, IP, IP_glob
+    REAL :: Vcoll(NSPEC,NX), VcollExp(NSPEC*NX), rVect(NSPEC*NX)
+    REAL :: CoherencyError_Max, CoherencyError_Sum
+    REAL :: eVal1, eVal2, eErr
+    INTEGER :: LocateMax_I, LocateMax_ISP
+    INTEGER :: rStatus(NX), Status(NX)
+    INTEGER :: JSEA, ISEA, iProc, I, IX, ierr, ISP, IP, IP_glob
     REAL :: mval, eVal, eSum
     REAL :: TheMax, TheSum, TheNb, TheAvg
     REAL :: eFact, Threshold
     LOGICAL :: IsFirst
-    INTEGER nbIncorr, n_control
-    INTEGER ITH, IK
+    INTEGER :: nbIncorr, n_control
+    INTEGER :: ITH, IK
     INTEGER :: TEST_IP = 46
     INTEGER :: TEST_ISP = 370
     IF (IAPROC .gt. NAPROC) THEN
@@ -2757,8 +2759,8 @@ CONTAINS
     USE YOWNODEPOOL , only : NP
 
     CHARACTER(*), INTENT(in) :: string
-    REAL TotalSumDMM, eDMM, sumDMM
-    INTEGER IP, IK, ISEA
+    REAL :: TotalSumDMM, eDMM, sumDMM
+    INTEGER :: IP, IK, ISEA
     WRITE(740+IAPROC,*) 'PRINT_WN_STATISTIC'
     TotalSumDMM=0
     DO ISEA=1,NSEAL
@@ -2844,14 +2846,14 @@ CONTAINS
     CHARACTER(*), INTENT(in) :: eFile
     REAL, INTENT(in) :: TheARR(NSPEC, npa)
     !
-    REAL Vcoll(NSPEC,NX), VcollExp(NSPEC*NX), rVect(NSPEC*NX)
-    REAL CoherencyError, eVal1, eVal2, eErr
-    INTEGER rStatus(NX), Status(NX)
-    INTEGER JSEA, ISEA, iProc, I, IX, ierr, ISP, IP, IP_glob
-    INTEGER nbIncorr
-    INTEGER ITH, IK
-    INTEGER fhndl
-    REAL eSum
+    REAL :: Vcoll(NSPEC,NX), VcollExp(NSPEC*NX), rVect(NSPEC*NX)
+    REAL :: CoherencyError, eVal1, eVal2, eErr
+    INTEGER :: rStatus(NX), Status(NX)
+    INTEGER :: JSEA, ISEA, iProc, I, IX, ierr, ISP, IP, IP_glob
+    INTEGER :: nbIncorr
+    INTEGER :: ITH, IK
+    INTEGER :: fhndl
+    REAL :: eSum
     IF (IAPROC .gt. NAPROC) THEN
       RETURN
     END IF
@@ -2968,8 +2970,8 @@ CONTAINS
     USE W3ODATMD    , only : IAPROC
 
     CHARACTER(*), INTENT(in) :: string
-    INTEGER J, IP, JP, I, ISP
-    REAL TheSum1, TheSum2
+    INTEGER :: J, IP, JP, I, ISP
+    REAL :: TheSum1, TheSum2
     J = 0
     TheSum1=0
     DO IP = 1, npa
@@ -4492,8 +4494,8 @@ CONTAINS
     USE W3ADATMD    , only : CG, DW
 
     REAL, INTENT(in) :: DTG
-    INTEGER IP, IP_glob, ITH, IK
-    INTEGER ISEA, ISP
+    INTEGER :: IP, IP_glob, ITH, IK
+    INTEGER :: ISEA, ISP
     REAL ::  eSI
     REAL  :: B_SIG(NSPEC), B_THE(NSPEC)
     REAL  :: CP_SIG(NSPEC), CM_SIG(NSPEC)
@@ -4647,8 +4649,8 @@ CONTAINS
 
     REAL, INTENT(in) :: DTG
     REAL, INTENT(inout) :: ASPAR_DIAG_LOCAL(nspec,NSEAL)
-    INTEGER IP, IP_glob, ITH, IK
-    INTEGER ISEA, ISP
+    INTEGER :: IP, IP_glob, ITH, IK
+    INTEGER :: ISEA, ISP
     REAL ::  eSI
     REAL  :: B_SIG(NSPEC), B_THE(NSPEC)
     REAL  :: CP_SIG(NSPEC), CM_SIG(NSPEC)
@@ -4818,8 +4820,8 @@ CONTAINS
     REAL, INTENT(in) :: DTG
     REAL, PARAMETER :: COEF4 = 5.0E-07
     REAL, PARAMETER :: FACDAM = 1
-    INTEGER JSEA, IP, IP_glob, ISEA
-    INTEGER IK, ITH, ISP, IS0
+    INTEGER :: JSEA, IP, IP_glob, ISEA
+    INTEGER :: IK, ITH, ISP, IS0
     LOGICAL :: LBREAK
     REAL ::  eSI, eVS, eVD, SIDT
     REAL :: DEPTH, DAM(NSPEC), RATIO, MAXDAC, VSDB(NSPEC), VDDB(NSPEC)
@@ -4986,8 +4988,8 @@ CONTAINS
     REAL, INTENT(inout) :: ASPAR_DIAG_LOCAL(:,:)
     REAL, PARAMETER :: COEF4 = 5.0E-07
     REAL, PARAMETER :: FACDAM = 1
-    INTEGER JSEA, IP, IP_glob, ISEA
-    INTEGER IK, ITH, ISP, IS0
+    INTEGER :: JSEA, IP, IP_glob, ISEA
+    INTEGER :: IK, ITH, ISP, IS0
     LOGICAL :: LBREAK
     REAL ::  eSI, eVS, eVD, SIDT
     REAL :: DEPTH, DAM(NSPEC), RATIO, MAXDAC, VSDB(NSPEC), VDDB(NSPEC)
@@ -5429,6 +5431,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
+    INTEGER, INTENT(in)    :: IP
+    REAL,    INTENT(in)    :: ACOLD(NSPEC)
+    REAL,    INTENT(inout) :: ACLOC(NSPEC)
+    REAL,    INTENT(in)    :: DTG
     !/ ------------------------------------------------------------------- /
     !/ Local PARAMETERs
     !/
@@ -5438,10 +5444,6 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    INTEGER, INTENT(in) :: IP
-    REAL, INTENT(in) :: ACOLD(NSPEC)
-    REAL, INTENT(inout) :: ACLOC(NSPEC)
-    REAL, INTENT(in) :: DTG
     INTEGER :: MELIM = 1
     REAL :: LIMFAK = 0.1
     REAL :: CONST, SND, eWN, eWK, eWKpow
@@ -7498,7 +7500,7 @@ CONTAINS
     !/
     INTEGER, INTENT(IN) :: IMOD
 
-    INTEGER istat
+    INTEGER :: istat
     IF (IMEM == 1) THEN
       ALLOCATE(ASPAR_JAC(NSPEC, PDLIB_NNZ), stat=istat)
       if(istat /= 0) CALL PDLIB_ABORT(9)

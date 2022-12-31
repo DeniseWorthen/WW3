@@ -364,6 +364,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
+    REAL,    INTENT(IN)    :: CG(NK), WN(NK), DEPTH, A(NSPEC), D50
+    REAL,    INTENT(IN)    :: PSIC
+    INTEGER, INTENT(IN)    :: IX, IY
+    REAL,    INTENT(OUT)   :: S(NSPEC), D(NSPEC), TAUBBL(2)
+    REAL,    INTENT(INOUT) :: BEDFORM(3)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -373,11 +378,7 @@ CONTAINS
 #endif
     !/
     LOGICAL, SAVE           :: FIRST = .TRUE.
-    REAL, INTENT(IN)        :: CG(NK), WN(NK), DEPTH, A(NSPEC), D50
-    REAL, INTENT(IN)        :: PSIC
-    INTEGER, INTENT(IN)     :: IX, IY
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC), TAUBBL(2)
-    REAL, INTENT(INOUT)     :: BEDFORM(3)
+
     REAL                    :: CBETA(NK)
     REAL :: UORB2,UORB,AORB, EBX, EBY, AX, AY, LX, LY
     REAL :: CONST2, TEMP2

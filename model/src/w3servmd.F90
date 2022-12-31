@@ -1843,8 +1843,8 @@ CONTAINS
     DOUBLE PRECISION, DIMENSION(:,:), INTENT(IN)    :: a1  ! Modified from INOUT to IN by F.A. on 2018/01/21
     DOUBLE PRECISION, DIMENSION(:,:), INTENT(OUT)   :: v
 
-    INTEGER    i,j,ip,iq,n
-    DOUBLE PRECISION       c,g,h,s,sm,t,tau,theta,tresh
+    INTEGER :: i,j,ip,iq,n
+    DOUBLE PRECISION :: c,g,h,s,sm,t,tau,theta,tresh
     DOUBLE PRECISION   , DIMENSION(size(d)) ::b,z
     DOUBLE PRECISION, DIMENSION(size(d),size(d)) :: a
     LOGICAL, DIMENSION(size(d),size(d)) :: upper_triangle
