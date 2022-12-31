@@ -125,6 +125,7 @@ CONTAINS
 #ifdef W3_S
     USE W3SERVMD , ONLY : STRACE
 #endif
+    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -133,7 +134,6 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    IMPLICIT NONE
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
 #endif
