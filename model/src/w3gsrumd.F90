@@ -311,12 +311,12 @@ MODULE W3GSRUMD
   !/   the seam at j = UBY.  The j-index closure for i' in [LBX,UBX] and j' > UBY
   !/   is computed as i = UBX + LBX - i' and j = 2*UBY - j' + 1.
   !/
-  INTEGER , PARAMETER, PUBLIC :: ICLO_NONE = -1
-  INTEGER , PARAMETER, PUBLIC :: ICLO_SMPL =  2
-  INTEGER , PARAMETER, PUBLIC :: ICLO_GRDI =  ICLO_SMPL
-  INTEGER , PARAMETER, PUBLIC :: ICLO_GRDJ =  3
-  INTEGER , PARAMETER, PUBLIC :: ICLO_TRDL =  6
-  INTEGER , PARAMETER, PUBLIC :: ICLO_TRPL =  8
+  INTEGER, PARAMETER, PUBLIC :: ICLO_NONE = -1
+  INTEGER, PARAMETER, PUBLIC :: ICLO_SMPL =  2
+  INTEGER, PARAMETER, PUBLIC :: ICLO_GRDI =  ICLO_SMPL
+  INTEGER, PARAMETER, PUBLIC :: ICLO_GRDJ =  3
+  INTEGER, PARAMETER, PUBLIC :: ICLO_TRDL =  6
+  INTEGER, PARAMETER, PUBLIC :: ICLO_TRPL =  8
   !/
   !/ Public grid-search-utility type
   !/ This is an opaque type -- that is, it's internals are private and only
@@ -328,8 +328,8 @@ MODULE W3GSRUMD
   END TYPE T_GSU
   !/
   !/ Private grid-search-utility class
-  !/
-  TYPE :: CLASS_GSU
+                                                   !/
+  TYPE                   :: CLASS_GSU
     LOGICAL              :: IJG                    ! grid array ordering flag: T = (NX,NY), F = (NY,NX)
     LOGICAL              :: LLG                    ! spherical coordinate flag of associated grid
     INTEGER              :: ICLO                   ! parameter indicating type of index space closure
@@ -343,8 +343,8 @@ MODULE W3GSRUMD
     INTEGER              :: LBX, LBY               ! lower-bounds of associated grid
     INTEGER              :: UBX, UBY               ! upper-bounds of associated grid
     INTEGER              :: NX, NY                 ! dimensions of associated grid
-    REAL(4) ,    POINTER :: XG4(:,:), YG4(:,:)     ! coordinates of associated grid (r4)
-    REAL(8) ,    POINTER :: XG8(:,:), YG8(:,:)     ! coordinates of associated grid (r8)
+    REAL(4),     POINTER :: XG4(:,:), YG4(:,:)     ! coordinates of associated grid (r4)
+    REAL(8),     POINTER :: XG8(:,:), YG8(:,:)     ! coordinates of associated grid (r8)
     TYPE(T_NNS), POINTER :: NNP                    ! nearest-neighbor point search indices object
     INTEGER              :: NBX, NBY               ! number of buckets in each spatial direction
     REAL(8)              :: DXB, DYB               ! spatial extent of each search bucket
@@ -352,65 +352,65 @@ MODULE W3GSRUMD
     TYPE(T_BKT), POINTER :: B(:,:)                 ! array of search buckets
     TYPE(T_NNS), POINTER :: NNB                    ! nearest-neighbor bucket search indices object
   END TYPE CLASS_GSU
- !/
- !/ Private search bucket type
- !/
-  TYPE :: T_BKT
-    INTEGER              :: N     ! number of cells in bucket
-    INTEGER ,    POINTER :: I(:)  ! i-index of cell c
-    INTEGER ,    POINTER :: J(:)  ! j-index of cell c
+                                                   !/
+                                                   !/ Private search bucket type
+                                                   !/
+  TYPE                   :: T_BKT
+    INTEGER              :: N                      ! number of cells in bucket
+    INTEGER,     POINTER :: I(:)                   ! i-index of cell c
+    INTEGER,     POINTER :: J(:)                   ! j-index of cell c
   END TYPE T_BKT
- !/
- !/ Public nearest-neighbor grid-point search type
- !/
+                                                   !/
+                                                   !/ Public nearest-neighbor grid-point search type
+                                                   !/
   TYPE, PUBLIC           :: T_NNS
-    INTEGER              :: NLVL  ! number of nnbr levels
-    INTEGER              :: NNBR  ! total number of nnbr's
-    INTEGER ,    POINTER :: N1(:) ! starting nearest-nbr loop index for level l
-    INTEGER ,    POINTER :: N2(:) ! ending nearest-nbr loop index for level l
-    INTEGER ,    POINTER :: DI(:) ! i-index delta for nearest-nbr n
-    INTEGER ,    POINTER :: DJ(:) ! j-index delta for nearest-nbr n
+    INTEGER              :: NLVL                   ! number of nnbr levels
+    INTEGER              :: NNBR                   ! total number of nnbr's
+    INTEGER,     POINTER :: N1(:)                  ! starting nearest-nbr loop index for level l
+    INTEGER,     POINTER :: N2(:)                  ! ending nearest-nbr loop index for level l
+    INTEGER,     POINTER :: DI(:)                  ! i-index delta for nearest-nbr n
+    INTEGER,     POINTER :: DJ(:)                  ! j-index delta for nearest-nbr n
   END TYPE T_NNS
- !/
- !/ Private module parameters
- !/
-  REAL(8), PARAMETER :: PI = 3.14159265358979323846D0
-  REAL(8), PARAMETER :: PI2 = 2D0*PI
-  REAL(8), PARAMETER :: PI3H = 3D0*PI/2D0
-  REAL(8), PARAMETER :: PIO2 = PI/2D0
-  REAL(8), PARAMETER :: PIO4 = PI/4D0
-  REAL(8), PARAMETER :: D2R = PI/180D0
-  REAL(8), PARAMETER :: R2D = 1D0/D2R
-  REAL(8), PARAMETER :: D360 = 360D0
-  REAL(8), PARAMETER :: D270 = 270D0
-  REAL(8), PARAMETER :: D180 = 180D0
-  REAL(8), PARAMETER :: D90  =  90D0
-  REAL(8), PARAMETER :: ZERO = 0.0D0
-  REAL(8), PARAMETER :: HALF = 0.5D0
-  REAL(8), PARAMETER :: ONE  = 1.0D0
-  REAL(8), PARAMETER :: TWO  = 2.0D0
-  REAL(8), PARAMETER :: FOUR = 4.0D0
+                                                   !/
+                                                   !/ Private module parameters
+                                                   !/
+  REAL(8), PARAMETER     :: PI = 3.14159265358979323846D0
+  REAL(8), PARAMETER     :: PI2 = 2D0*PI
+  REAL(8), PARAMETER     :: PI3H = 3D0*PI/2D0
+  REAL(8), PARAMETER     :: PIO2 = PI/2D0
+  REAL(8), PARAMETER     :: PIO4 = PI/4D0
+  REAL(8), PARAMETER     :: D2R = PI/180D0
+  REAL(8), PARAMETER     :: R2D = 1D0/D2R
+  REAL(8), PARAMETER     :: D360 = 360D0
+  REAL(8), PARAMETER     :: D270 = 270D0
+  REAL(8), PARAMETER     :: D180 = 180D0
+  REAL(8), PARAMETER     :: D90  =  90D0
+  REAL(8), PARAMETER     :: ZERO = 0.0D0
+  REAL(8), PARAMETER     :: HALF = 0.5D0
+  REAL(8), PARAMETER     :: ONE  = 1.0D0
+  REAL(8), PARAMETER     :: TWO  = 2.0D0
+  REAL(8), PARAMETER     :: FOUR = 4.0D0
 #if defined(COAMPS)
-  REAL(8), PARAMETER :: REARTH = 6371229.D0
+  REAL(8), PARAMETER     :: REARTH = 6371229.D0
 #else
-  REAL(8), PARAMETER :: REARTH = 4.D7/PI2      !this gives D2M = 111111.111111
+  REAL(8), PARAMETER     :: REARTH = 4.D7/PI2      !this gives D2M = 111111.111111
 #endif
-  REAL(8), PARAMETER :: D2M  = REARTH*D2R
-  REAL(8), PARAMETER :: M2D  = 1D0/D2M
+  REAL(8), PARAMETER     :: D2M  = REARTH*D2R
+  REAL(8), PARAMETER     :: M2D  = 1D0/D2M
   !     Default small non-zero tolerance used to check if
   !     target point is in domain and for point coincidence.
-  REAL(8), PARAMETER :: EPS_DEFAULT  = 1.0D-6
+  REAL(8), PARAMETER     :: EPS_DEFAULT  = 1.0D-6
   !     Distance (deg) from pole to consider a cell "near the pole"
-  REAL(8), PARAMETER :: NEAR_POLE = 10.0D0
+  REAL(8), PARAMETER     :: NEAR_POLE = 10.0D0
   !     Default number of grid cells (in each direction) per search bucket.
-  INTEGER , PARAMETER :: NCB_DEFAULT = 10
+  INTEGER, PARAMETER     :: NCB_DEFAULT = 10
   !     Default maximum number of nearest-neighbor grid point search levels.
-  INTEGER , PARAMETER :: NNP_DEFAULT = 2
+  INTEGER, PARAMETER     :: NNP_DEFAULT = 2
   !     Max number of non-empty levels for bucket search when target point
   !     is outside source domain
-  INTEGER , PARAMETER :: MAX_FNCL_LEVEL = 3
+  INTEGER, PARAMETER     :: MAX_FNCL_LEVEL = 3
   !     Default finite-difference order
-  INTEGER , PARAMETER :: NFD_DEFAULT = 4
+  INTEGER, PARAMETER     :: NFD_DEFAULT = 4
   !/
   !/ Module Interfaces
   !/

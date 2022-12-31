@@ -511,9 +511,9 @@ CONTAINS
     CHARACTER(LEN=8)        :: WORDS(6)
 
     TYPE OT2TPE
-      INTEGER                     :: NPTS
-      REAL ,              POINTER :: X(:), Y(:)
-      CHARACTER(LEN=40) , POINTER :: PNAMES(:)
+      INTEGER                    :: NPTS
+      REAL,              POINTER :: X(:), Y(:)
+      CHARACTER(LEN=40), POINTER :: PNAMES(:)
     END TYPE OT2TPE
     !
     TYPE(OT2TPE), ALLOCATABLE    :: OT2(:)

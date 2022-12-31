@@ -314,23 +314,23 @@ MODULE W3ODATMD
   !/
   !/ Module private variable for checking error returns
   !/
-  INTEGER , PRIVATE :: ISTAT
+  INTEGER, PRIVATE :: ISTAT
   !/
   !/ Conventional declarations
   !/
   INTEGER :: NOUTP = -1, IOUTP = -1, IOSTYP = 1
  !
-  INTEGER , PARAMETER :: NOGRP = 10
-  INTEGER , PARAMETER :: NGRPP = 20
-  INTEGER , PARAMETER :: DIMP = 15
-  INTEGER             :: NOGE(NOGRP)
-  INTEGER             :: NOTYPE
-  INTEGER , PARAMETER :: NOEXTR=  2
-  CHARACTER(LEN=20)   :: IDOUT(NOGRP,NGRPP)
-  CHARACTER(LEN=80)   :: FNMPRE = './'
+  INTEGER, PARAMETER :: NOGRP = 10
+  INTEGER, PARAMETER :: NGRPP = 20
+  INTEGER, PARAMETER :: DIMP = 15
+  INTEGER            :: NOGE(NOGRP)
+  INTEGER            :: NOTYPE
+  INTEGER, PARAMETER :: NOEXTR=  2
+  CHARACTER(LEN=20)  :: IDOUT(NOGRP,NGRPP)
+  CHARACTER(LEN=80)  :: FNMPRE = './'
   !Moved UNDEF to constants and included above
-  !REAL               :: UNDEF = -999.9
-  LOGICAL             :: UNIPTS = .FALSE., UPPROC = .FALSE.
+  !REAL              :: UNDEF = -999.9
+  LOGICAL            :: UNIPTS = .FALSE., UPPROC = .FALSE.
   !/
   !/ Set NOGE and IDOUT identifiers in W3NOUT
   !/
@@ -340,7 +340,7 @@ MODULE W3ODATMD
     INTEGER                    :: IPASS1
 #ifdef W3_MPI
     INTEGER                    :: NRQGO, NRQGO2
-    INTEGER ,          POINTER :: IRQGO(:), IRQGO2(:)
+    INTEGER,           POINTER :: IRQGO(:), IRQGO2(:)
 #endif
     LOGICAL                    :: FLOGRD(NOGRP,NGRPP), FLOGD(NOGRP)
     LOGICAL                    :: FLOGR2(NOGRP,NGRPP), FLOG2(NOGRP)
@@ -353,16 +353,16 @@ MODULE W3ODATMD
 #ifdef W3_MPI
     INTEGER                    :: NRQPO, NRQPO2
 #endif
-    INTEGER ,          POINTER :: IPTINT(:,:,:), IL(:), IW(:), II(:)
+    INTEGER,           POINTER :: IPTINT(:,:,:), IL(:), IW(:), II(:)
 #ifdef W3_MPI
-    INTEGER ,          POINTER :: IRQPO1(:), IRQPO2(:)
+    INTEGER,           POINTER :: IRQPO1(:), IRQPO2(:)
 #endif
-    REAL ,             POINTER :: PTLOC(:,:), PTIFAC(:,:), DPO(:), WAO(:), WDO(:), ASO(:)
+    REAL,              POINTER :: PTLOC(:,:), PTIFAC(:,:), DPO(:), WAO(:), WDO(:), ASO(:)
 #ifdef W3_FLX5
-    REAL ,             POINTER :: TAUAO(:), TAUDO(:), DAIRO(:)
+    REAL,              POINTER :: TAUAO(:), TAUDO(:), DAIRO(:)
 #endif
-    REAL ,             POINTER :: CAO(:), CDO(:), ICEO(:), ICEHO(:), ICEFO(:), SPCO(:,:)
-    REAL ,             POINTER :: ZET_SETO(:)  ! For the wave setup.
+    REAL,              POINTER :: CAO(:), CDO(:), ICEO(:), ICEHO(:), ICEFO(:), SPCO(:,:)
+    REAL,              POINTER :: ZET_SETO(:)  ! For the wave setup.
 
     CHARACTER(LEN=40), POINTER :: PTNME(:)
     CHARACTER(LEN=13), POINTER :: GRDID(:)
@@ -376,10 +376,10 @@ MODULE W3ODATMD
     INTEGER                    :: IPASS3
 #ifdef W3_MPI
     INTEGER                    :: IT0PNT, IT0TRK, IT0PRT, NRQTR
-    INTEGER ,          POINTER :: IRQTR(:)
+    INTEGER,           POINTER :: IRQTR(:)
 #endif
     LOGICAL                    :: O3INIT, STOP
-    LOGICAL ,          POINTER :: MASK1(:,:), MASK2(:,:)
+    LOGICAL,           POINTER :: MASK1(:,:), MASK2(:,:)
     CHARACTER(LEN=32), POINTER :: TRCKID(:,:)
   END TYPE OTYPE3
   !/
@@ -387,8 +387,8 @@ MODULE W3ODATMD
     INTEGER                    :: IFILE4
 #ifdef W3_MPI
     INTEGER                    :: NRQRS, NBLKRS, RSBLKS
-    INTEGER ,          POINTER :: IRQRS(:), IRQRSS(:)
-    REAL ,             POINTER :: VAAUX(:,:,:)
+    INTEGER,           POINTER :: IRQRS(:), IRQRSS(:)
+    REAL,              POINTER :: VAAUX(:,:,:)
 #endif
   END TYPE OTYPE4
   !/
@@ -397,24 +397,24 @@ MODULE W3ODATMD
 #ifdef W3_MPI
     INTEGER                    :: NRQBP = 0, NRQBP2 = 0
 #endif
-    INTEGER ,          POINTER :: IPBPI(:,:), ISBPI(:), IPBPO(:,:), ISBPO(:)
+    INTEGER,           POINTER :: IPBPI(:,:), ISBPI(:), IPBPO(:,:), ISBPO(:)
 #ifdef W3_MPI
-    INTEGER ,          POINTER :: IRQBP1(:), IRQBP2(:)
+    INTEGER,           POINTER :: IRQBP1(:), IRQBP2(:)
 #endif
     REAL                       :: XFRI, FR1I, TH1I
-    REAL ,             POINTER :: XBPI(:), YBPI(:), RDBPI(:,:)
-    REAL ,             POINTER :: XBPO(:), YBPO(:), RDBPO(:,:)
-    REAL ,             POINTER :: ABPI0(:,:), ABPIN(:,:), ABPOS(:,:)
-    REAL ,             POINTER :: BBPI0(:,:), BBPIN(:,:)
+    REAL,              POINTER :: XBPI(:), YBPI(:), RDBPI(:,:)
+    REAL,              POINTER :: XBPO(:), YBPO(:), RDBPO(:,:)
+    REAL,              POINTER :: ABPI0(:,:), ABPIN(:,:), ABPOS(:,:)
+    REAL,              POINTER :: BBPI0(:,:), BBPIN(:,:)
     LOGICAL                    :: O5INI1, O5INI2, O5INI3, O5INI4
     LOGICAL                    :: FLBPI, FLBPO, FILER, FILEW, FILED, SPCONV
   END TYPE OTYPE5
   !/
   TYPE OTYPE6
     INTEGER                    :: IPASS6, IHMAX, IX0, IXN, IXS, IY0, IYN, IYS
-    INTEGER ,          POINTER :: ICPRT(:,:)
+    INTEGER,           POINTER :: ICPRT(:,:)
     REAL                       :: HSPMIN, WSMULT, WSCUT
-    REAL ,             POINTER :: DTPRT(:,:)
+    REAL,              POINTER :: DTPRT(:,:)
     LOGICAL                    :: FLFORM, FLCOMB, O6INIT
     INTEGER                    :: PTMETH   ! C. Bunney; Partitioning method
     REAL                       :: PTFCUT   ! C. Bunney; Part. 5 freq cut
@@ -447,104 +447,104 @@ MODULE W3ODATMD
   !/
   !/ Data aliasses for structure OUTPUT
   !/
-  INTEGER ,           POINTER :: NDSO, NDSE, NDST, SCREEN
-  INTEGER ,           POINTER :: NTPROC, NAPROC, IAPROC, NAPLOG
-  Integer ,           POINTER :: NAPOUT, NAPERR, NAPFLD, NAPPNT
-  INTEGER ,           POINTER :: NAPTRK, NAPRST, NAPBPT, NAPPRT
-  INTEGER ,           POINTER :: NOSWLL
+  INTEGER,           POINTER :: NDSO, NDSE, NDST, SCREEN
+  INTEGER,           POINTER :: NTPROC, NAPROC, IAPROC, NAPLOG
+  Integer,           POINTER :: NAPOUT, NAPERR, NAPFLD, NAPPNT
+  INTEGER,           POINTER :: NAPTRK, NAPRST, NAPBPT, NAPPRT
+  INTEGER,           POINTER :: NOSWLL
 #ifdef W3_NL5
-  INTEGER ,           POINTER :: TOSNL5(:)
+  INTEGER,           POINTER :: TOSNL5(:)
 #endif
-  INTEGER ,           POINTER :: TOFRST(:), TONEXT(:,:), TOLAST(:,:)
-  INTEGER ,           POINTER :: TBPI0(:), TBPIN(:), NDS(:)
-  INTEGER ,           POINTER :: OFILES(:)
-  REAL ,              POINTER :: DTOUT(:)
-  LOGICAL ,           POINTER :: FLOUT(:)
+  INTEGER,           POINTER :: TOFRST(:), TONEXT(:,:), TOLAST(:,:)
+  INTEGER,           POINTER :: TBPI0(:), TBPIN(:), NDS(:)
+  INTEGER,           POINTER :: OFILES(:)
+  REAL,              POINTER :: DTOUT(:)
+  LOGICAL,           POINTER :: FLOUT(:)
   !/
   !/ Data aliasses for substructures for output types
   !/ Type 1 ...
   !/
-  INTEGER ,           POINTER :: IPASS1
+  INTEGER,           POINTER :: IPASS1
 #ifdef W3_MPI
-  INTEGER ,           POINTER :: NRQGO, NRQGO2
-  INTEGER ,           POINTER :: IRQGO(:), IRQGO2(:)
+  INTEGER,           POINTER :: NRQGO, NRQGO2
+  INTEGER,           POINTER :: IRQGO(:), IRQGO2(:)
 #endif
-  LOGICAL ,           POINTER :: FLOGRD(:,:), FLOGR2(:,:)
-  LOGICAL ,           POINTER :: FLOGRR(:,:),FLOGD(:), FLOG2(:)
-  LOGICAL ,           POINTER :: FLOGR(:), WRITE1
+  LOGICAL,           POINTER :: FLOGRD(:,:), FLOGR2(:,:)
+  LOGICAL,           POINTER :: FLOGRR(:,:),FLOGD(:), FLOG2(:)
+  LOGICAL,           POINTER :: FLOGR(:), WRITE1
   !/
   !/ Type 2 ...
   !/
-  INTEGER ,           POINTER :: IPASS2, NOPTS
+  INTEGER,           POINTER :: IPASS2, NOPTS
 #ifdef W3_MPI
-  INTEGER ,           POINTER :: NRQPO, NRQPO2
+  INTEGER,           POINTER :: NRQPO, NRQPO2
 #endif
-  INTEGER ,           POINTER :: IPTINT(:,:,:), IL(:), IW(:), II(:)
+  INTEGER,           POINTER :: IPTINT(:,:,:), IL(:), IW(:), II(:)
 #ifdef W3_MPI
-  INTEGER ,           POINTER :: IRQPO1(:), IRQPO2(:)
+  INTEGER,           POINTER :: IRQPO1(:), IRQPO2(:)
 #endif
-  REAL ,              POINTER :: PTLOC(:,:), PTIFAC(:,:)
-  REAL ,              POINTER :: DPO(:), WAO(:), WDO(:), ASO(:)
+  REAL,              POINTER :: PTLOC(:,:), PTIFAC(:,:)
+  REAL,              POINTER :: DPO(:), WAO(:), WDO(:), ASO(:)
 #ifdef W3_FLX5
-  REAL ,              POINTER :: TAUAO(:), TAUDO(:), DAIRO(:)
+  REAL,              POINTER :: TAUAO(:), TAUDO(:), DAIRO(:)
 #endif
-  REAL ,              POINTER :: CAO(:), CDO(:), ICEO(:), ICEHO(:)
-  REAL ,              POINTER :: ICEFO(:), SPCO(:,:)
-  REAL ,              POINTER :: ZET_SETO(:)
+  REAL,              POINTER :: CAO(:), CDO(:), ICEO(:), ICEHO(:)
+  REAL,              POINTER :: ICEFO(:), SPCO(:,:)
+  REAL,              POINTER :: ZET_SETO(:)
   !
-  CHARACTER(LEN=40) , POINTER :: PTNME(:)
-  CHARACTER(LEN=13) , POINTER :: GRDID(:)
-  LOGICAL ,           POINTER :: O2INIT
+  CHARACTER(LEN=40), POINTER :: PTNME(:)
+  CHARACTER(LEN=13), POINTER :: GRDID(:)
+  LOGICAL,           POINTER :: O2INIT
 #ifdef W3_MPI
-  LOGICAL ,           POINTER :: O2IRQI
+  LOGICAL,           POINTER :: O2IRQI
 #endif
   !/
   !/ Type 3 ...
   !/
-  INTEGER ,           POINTER :: IPASS3
+  INTEGER,           POINTER :: IPASS3
 #ifdef W3_MPI
-  INTEGER ,           POINTER :: IT0PNT, IT0TRK, IT0PRT, NRQTR
-  INTEGER ,           POINTER :: IRQTR(:)
+  INTEGER,           POINTER :: IT0PNT, IT0TRK, IT0PRT, NRQTR
+  INTEGER,           POINTER :: IRQTR(:)
 #endif
-  LOGICAL ,           POINTER :: O3INIT, STOP
-  LOGICAL ,           POINTER :: MASK1(:,:), MASK2(:,:)
-  CHARACTER(LEN=32),  POINTER :: TRCKID(:,:)
+  LOGICAL,           POINTER :: O3INIT, STOP
+  LOGICAL,           POINTER :: MASK1(:,:), MASK2(:,:)
+  CHARACTER(LEN=32), POINTER :: TRCKID(:,:)
   !/
   !/ Type 4 ...
   !/
-  INTEGER ,           POINTER :: IFILE4
+  INTEGER,           POINTER :: IFILE4
 #ifdef W3_MPI
-  INTEGER ,           POINTER :: NRQRS, NBLKRS, RSBLKS
-  INTEGER ,           POINTER :: IRQRS(:), IRQRSS(:)
-  REAL ,              POINTER :: VAAUX(:,:,:)
+  INTEGER,           POINTER :: NRQRS, NBLKRS, RSBLKS
+  INTEGER,           POINTER :: IRQRS(:), IRQRSS(:)
+  REAL,              POINTER :: VAAUX(:,:,:)
 #endif
   !/
   !/ Type 5 ...
   !/
-  INTEGER ,           POINTER :: NBI, NBI2, NFBPO, NKI, NTHI
-  INTEGER ,           POINTER :: NBO(:), NBO2(:), NDSL(:)
+  INTEGER,           POINTER :: NBI, NBI2, NFBPO, NKI, NTHI
+  INTEGER,           POINTER :: NBO(:), NBO2(:), NDSL(:)
 #ifdef W3_MPI
-  INTEGER ,           POINTER :: NRQBP, NRQBP2
+  INTEGER,           POINTER :: NRQBP, NRQBP2
 #endif
-  INTEGER ,           POINTER :: IPBPI(:,:), ISBPI(:), IPBPO(:,:), ISBPO(:)
+  INTEGER,           POINTER :: IPBPI(:,:), ISBPI(:), IPBPO(:,:), ISBPO(:)
 #ifdef W3_MPI
-  INTEGER ,           POINTER :: IRQBP1(:), IRQBP2(:)
+  INTEGER,           POINTER :: IRQBP1(:), IRQBP2(:)
 #endif
-  REAL ,              POINTER :: XFRI, FR1I, TH1I
-  REAL ,              POINTER :: XBPI(:), YBPI(:), RDBPI(:,:)
-  REAL ,              POINTER :: XBPO(:), YBPO(:), RDBPO(:,:)
-  REAL ,              POINTER :: ABPI0(:,:), ABPIN(:,:), ABPOS(:,:)
-  REAL ,              POINTER :: BBPI0(:,:), BBPIN(:,:)
-  LOGICAL ,           POINTER :: O5INI1, O5INI2, O5INI3, O5INI4
-  LOGICAL ,           POINTER :: FLBPI, FLBPO, FILER, FILEW, FILED, SPCONV
+  REAL,              POINTER :: XFRI, FR1I, TH1I
+  REAL,              POINTER :: XBPI(:), YBPI(:), RDBPI(:,:)
+  REAL,              POINTER :: XBPO(:), YBPO(:), RDBPO(:,:)
+  REAL,              POINTER :: ABPI0(:,:), ABPIN(:,:), ABPOS(:,:)
+  REAL,              POINTER :: BBPI0(:,:), BBPIN(:,:)
+  LOGICAL,           POINTER :: O5INI1, O5INI2, O5INI3, O5INI4
+  LOGICAL,           POINTER :: FLBPI, FLBPO, FILER, FILEW, FILED, SPCONV
   !/
   !/ Type 6 ...
   !/
-  INTEGER ,           POINTER :: IPASS6, IHMAX, IX0, IXN, IXS, IY0, IYN, IYS, ICPRT(:,:)
-  REAL ,              POINTER :: HSPMIN, WSMULT, WSCUT, DTPRT(:,:)
-  LOGICAL ,           POINTER :: FLFORM, FLCOMB, O6INIT
-  INTEGER ,           POINTER :: PTMETH   ! C. Bunney; Partitioning method
-  REAL,               POINTER :: PTFCUT   ! C. Bunney; Part. 5 freq cut
+  INTEGER,           POINTER :: IPASS6, IHMAX, IX0, IXN, IXS, IY0, IYN, IYS, ICPRT(:,:)
+  REAL,              POINTER :: HSPMIN, WSMULT, WSCUT, DTPRT(:,:)
+  LOGICAL,           POINTER :: FLFORM, FLCOMB, O6INIT
+  INTEGER,           POINTER :: PTMETH   ! C. Bunney; Partitioning method
+  REAL,              POINTER :: PTFCUT   ! C. Bunney; Part. 5 freq cut
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /

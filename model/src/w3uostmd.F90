@@ -73,12 +73,12 @@ MODULE W3UOSTMD
 
 
   TYPE UOST_SOURCETERM
-    REAL , ALLOCATABLE   :: COSTH(:), SINTH(:)
-    REAL                 :: GAMMAUP = 10
-    REAL                 :: GAMMADOWN = 20
+    REAL, ALLOCATABLE   :: COSTH(:), SINTH(:)
+    REAL                :: GAMMAUP = 10
+    REAL                :: GAMMADOWN = 20
     ! griddata is a pointer to the grid actually computed
-    TYPE(GRID) , POINTER :: GRD
-    TYPE(SGRD) , POINTER :: SGD
+    TYPE(GRID), POINTER :: GRD
+    TYPE(SGRD), POINTER :: SGD
   CONTAINS
     !PROCEDURE, PASS, PRIVATE :: COMPUTE_PSI => UOST_SOURCETERM_COMPUTE_PSI
 
@@ -87,9 +87,9 @@ MODULE W3UOSTMD
     !compute_se: estimates the shadow effect (private method)
     PROCEDURE, PASS, PRIVATE :: COMPUTE_SE => UOST_SOURCETERM_COMPUTE_SE
     !compute: estimates the whole dissipation
-    PROCEDURE, PASS :: COMPUTE => UOST_SOURCETERM_COMPUTE
+    PROCEDURE, PASS          :: COMPUTE => UOST_SOURCETERM_COMPUTE
     !setgrid: sets grd pointer and computes some cached structures
-    PROCEDURE, PASS :: SETGRID => UOST_SOURCETERM_SETGRID
+    PROCEDURE, PASS          :: SETGRID => UOST_SOURCETERM_SETGRID
   END TYPE UOST_SOURCETERM
 
   ! srctrm: global singleton source term

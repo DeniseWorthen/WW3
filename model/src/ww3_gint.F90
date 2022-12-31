@@ -134,14 +134,14 @@ PROGRAM W3GRID_INTERP
   !/
   TYPE GR_WT
     INTEGER                  :: NP
-    INTEGER ,    ALLOCATABLE :: IP(:), JP(:)
-    REAL ,       ALLOCATABLE :: WT(:)
+    INTEGER,     ALLOCATABLE :: IP(:), JP(:)
+    REAL,        ALLOCATABLE :: WT(:)
     REAL                     :: AR
   END TYPE GR_WT
   !
   TYPE GR_INT
     INTEGER                  :: NGRDS
-    INTEGER ,    ALLOCATABLE :: GDID(:)
+    INTEGER,     ALLOCATABLE :: GDID(:)
     TYPE(GR_WT), ALLOCATABLE :: IND_WTS(:)
   END TYPE GR_INT
   !/
@@ -149,6 +149,7 @@ PROGRAM W3GRID_INTERP
   !/
 
   TYPE(GR_INT), TARGET, ALLOCATABLE :: GR_INTS(:)
+
   INTEGER                 :: I, J, IERR, NG, IG, JG, ISEA, IX, IY, IXT
   INTEGER                 :: IYT, NS, COUNTF, COUNTG, NOSWLL_MIN, ITOUT
   INTEGER                 :: NDSM, NDSI, NDSE, NDSO, NDSTRC, NTRACE, IOTST
