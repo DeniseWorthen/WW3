@@ -2255,6 +2255,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
+    !TODO: are these in,out or inout?
     REAL(8)       :: SIGMA,SIGMAM1,ES_MOD,NU,DICE,HICE,DEPTH
     COMPLEX(8)    :: WN_O, WNM1, WNM2, WN0, WN1,WN2
     COMPLEX(8), INTENT(OUT) :: WN ! RESULT

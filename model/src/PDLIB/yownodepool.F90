@@ -78,12 +78,12 @@ module yowNodepool
   !> coordinates of the local +  ghost nodes. range [1:npa]
   real(rkind), public, target, allocatable :: x(:), y(:), z(:)
   real(rkind), public, target, allocatable :: PDLIB_SI(:), PDLIB_TRIA(:), PDLIB_TRIA03(:), PDLIB_IEN(:,:)
-  integer, public, target, allocatable :: PDLIB_CCON(:), PDLIB_IA(:), PDLIB_JA(:)
-  integer, public, target, allocatable :: PDLIB_IA_P(:), PDLIB_JA_P(:), PDLIB_JA_IE(:,:,:)
-  integer, public, target, allocatable :: PDLIB_POS_CELL(:), PDLIB_IE_CELL(:)
-  integer, public, target, allocatable :: PDLIB_IE_CELL2(:,:), PDLIB_POS_CELL2(:,:)
-  integer, public, target, allocatable :: PDLIB_POSI(:,:), PDLIB_I_DIAG(:)
-  integer, public, target, allocatable :: ListNP(:), ListNPA(:), ListIPLG(:)
+  integer,     public, target, allocatable :: PDLIB_CCON(:), PDLIB_IA(:), PDLIB_JA(:)
+  integer,     public, target, allocatable :: PDLIB_IA_P(:), PDLIB_JA_P(:), PDLIB_JA_IE(:,:,:)
+  integer,     public, target, allocatable :: PDLIB_POS_CELL(:), PDLIB_IE_CELL(:)
+  integer,     public, target, allocatable :: PDLIB_IE_CELL2(:,:), PDLIB_POS_CELL2(:,:)
+  integer,     public, target, allocatable :: PDLIB_POSI(:,:), PDLIB_I_DIAG(:)
+  integer,     public, target, allocatable :: ListNP(:), ListNPA(:), ListIPLG(:)
 
   !> number of nodes, global
   integer, public :: np_global = 0

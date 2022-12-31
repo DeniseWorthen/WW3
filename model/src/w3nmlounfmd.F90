@@ -141,14 +141,14 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                         :: NDSI
-    CHARACTER*(*), INTENT(IN)                   :: INFILE
-    TYPE(NML_FIELD_T), INTENT(INOUT)            :: NML_FIELD
-    TYPE(NML_FILE_T), INTENT(INOUT)             :: NML_FILE
-    TYPE(NML_SMC_T), INTENT(INOUT)              :: NML_SMC
-    INTEGER, INTENT(OUT)                        :: IERR
+    INTEGER,           INTENT(IN)    :: NDSI
+    CHARACTER*(*),     INTENT(IN)    :: INFILE
+    TYPE(NML_FIELD_T), INTENT(INOUT) :: NML_FIELD
+    TYPE(NML_FILE_T),  INTENT(INOUT) :: NML_FILE
+    TYPE(NML_SMC_T),   INTENT(INOUT) :: NML_SMC
+    INTEGER,           INTENT(OUT)   :: IERR
 #ifdef W3_S
-    INTEGER, SAVE                             :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -263,15 +263,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                 :: NDSI
-    TYPE(NML_FIELD_T), INTENT(INOUT)    :: NML_FIELD
+    INTEGER,           INTENT(IN)    :: NDSI
+    TYPE(NML_FIELD_T), INTENT(INOUT) :: NML_FIELD
 
     ! locals
-    INTEGER                                :: IERR
+    INTEGER :: IERR
     TYPE(NML_FIELD_T) :: FIELD
     NAMELIST /FIELD_NML/ FIELD
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -384,15 +384,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                 :: NDSI
-    TYPE(NML_FILE_T), INTENT(INOUT)     :: NML_FILE
+    INTEGER,          INTENT(IN)    :: NDSI
+    TYPE(NML_FILE_T), INTENT(INOUT) :: NML_FILE
 
     ! locals
-    INTEGER                                :: IERR
+    INTEGER :: IERR
     TYPE(NML_FILE_T) :: FILE
     NAMELIST /FILE_NML/ FILE
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -492,15 +492,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                 :: NDSI
-    TYPE(NML_SMC_T), INTENT(INOUT)      :: NML_SMC
+    INTEGER,         INTENT(IN)    :: NDSI
+    TYPE(NML_SMC_T), INTENT(INOUT) :: NML_SMC
 
     ! locals
-    INTEGER                                :: IERR
+    INTEGER :: IERR
     TYPE(NML_SMC_T) :: SMC
     NAMELIST /SMC_NML/ SMC
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -601,7 +601,7 @@ CONTAINS
 
     TYPE(NML_FIELD_T), INTENT(IN) :: NML_FIELD
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -703,7 +703,7 @@ CONTAINS
 
     TYPE(NML_FILE_T), INTENT(IN) :: NML_FILE
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -791,7 +791,7 @@ CONTAINS
 
     TYPE(NML_SMC_T), INTENT(IN) :: NML_SMC
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S

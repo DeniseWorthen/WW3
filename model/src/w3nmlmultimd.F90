@@ -282,17 +282,17 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                       :: MPI_COMM, NDSI
-    CHARACTER*(*), INTENT(IN)                 :: INFILE
-    TYPE(NML_DOMAIN_T), INTENT(OUT)           :: NML_DOMAIN
-    INTEGER, INTENT(OUT)                      :: IERR
+    INTEGER,            INTENT(IN)  :: MPI_COMM, NDSI
+    CHARACTER*(*),      INTENT(IN)  :: INFILE
+    TYPE(NML_DOMAIN_T), INTENT(OUT) :: NML_DOMAIN
+    INTEGER,            INTENT(OUT) :: IERR
 
     ! locals
 #ifdef W3_MPI
-    INTEGER                                 :: IERR_MPI
+    INTEGER :: IERR_MPI
 #endif
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -435,23 +435,23 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                       :: MPI_COMM, NDSI
-    CHARACTER*(*), INTENT(IN)                 :: INFILE
-    TYPE(NML_DOMAIN_T), INTENT(INOUT)         :: NML_DOMAIN
-    TYPE(NML_INPUT_GRID_T), INTENT(INOUT)     :: NML_INPUT_GRID(:)
-    TYPE(NML_MODEL_GRID_T), INTENT(INOUT)     :: NML_MODEL_GRID(:)
-    TYPE(NML_OUTPUT_TYPE_T), INTENT(INOUT)    :: NML_OUTPUT_TYPE(:)
-    TYPE(NML_OUTPUT_DATE_T), INTENT(INOUT)    :: NML_OUTPUT_DATE(:)
-    TYPE(NML_HOMOG_COUNT_T), INTENT(INOUT)    :: NML_HOMOG_COUNT
-    TYPE(NML_HOMOG_INPUT_T), ALLOCATABLE, INTENT(INOUT)    :: NML_HOMOG_INPUT(:)
-    INTEGER, INTENT(OUT)                      :: IERR
+    INTEGER,                              INTENT(IN)    :: MPI_COMM, NDSI
+    CHARACTER*(*),                        INTENT(IN)    :: INFILE
+    TYPE(NML_DOMAIN_T),                   INTENT(INOUT) :: NML_DOMAIN
+    TYPE(NML_INPUT_GRID_T),               INTENT(INOUT) :: NML_INPUT_GRID(:)
+    TYPE(NML_MODEL_GRID_T),               INTENT(INOUT) :: NML_MODEL_GRID(:)
+    TYPE(NML_OUTPUT_TYPE_T),              INTENT(INOUT) :: NML_OUTPUT_TYPE(:)
+    TYPE(NML_OUTPUT_DATE_T),              INTENT(INOUT) :: NML_OUTPUT_DATE(:)
+    TYPE(NML_HOMOG_COUNT_T),              INTENT(INOUT) :: NML_HOMOG_COUNT
+    TYPE(NML_HOMOG_INPUT_T), ALLOCATABLE, INTENT(INOUT) :: NML_HOMOG_INPUT(:)
+    INTEGER,                              INTENT(OUT)   :: IERR
 
     ! locals
 #ifdef W3_MPI
-    INTEGER                                 :: IERR_MPI
+    INTEGER :: IERR_MPI
 #endif
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -586,15 +586,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)               :: NDSI
-    TYPE(NML_DOMAIN_T), INTENT(OUT)   :: NML_DOMAIN
+    INTEGER,            INTENT(IN)  :: NDSI
+    TYPE(NML_DOMAIN_T), INTENT(OUT) :: NML_DOMAIN
 
     ! locals
-    INTEGER                   :: IERR
+    INTEGER :: IERR
     TYPE(NML_DOMAIN_T) :: DOMAIN
     NAMELIST /DOMAIN_NML/ DOMAIN
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -721,7 +721,7 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)               :: NDSI, NRINP
+    INTEGER,                INTENT(IN)    :: NDSI, NRINP
     TYPE(NML_INPUT_GRID_T), INTENT(INOUT) :: NML_INPUT_GRID(NRINP)
 
     ! locals
@@ -730,7 +730,7 @@ CONTAINS
     TYPE(NML_INPUT_GRID_T) :: INPUT(MAX_NRINP)
     NAMELIST /INPUT_GRID_NML/ INPUT
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -875,7 +875,7 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)               :: NDSI, NRGRD
+    INTEGER,                INTENT(IN)    :: NDSI, NRGRD
     TYPE(NML_MODEL_GRID_T), INTENT(INOUT) :: NML_MODEL_GRID(NRGRD)
 
     ! locals
@@ -884,7 +884,7 @@ CONTAINS
     TYPE(NML_MODEL_GRID_T) :: MODEL(MAX_NRGRD)
     NAMELIST /MODEL_GRID_NML/ MODEL
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -1033,7 +1033,7 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                :: NDSI, NRGRD
+    INTEGER,                 INTENT(IN)    :: NDSI, NRGRD
     TYPE(NML_OUTPUT_TYPE_T), INTENT(INOUT) :: NML_OUTPUT_TYPE(NRGRD)
 
     ! locals
@@ -1043,7 +1043,7 @@ CONTAINS
     TYPE(NML_OUTPUT_TYPE_T)   :: ITYPE(MAX_NRGRD)
     NAMELIST /OUTPUT_TYPE_NML/ ALLTYPE, ITYPE
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -1201,7 +1201,7 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                :: NDSI, NRGRD
+    INTEGER,                 INTENT(IN)    :: NDSI, NRGRD
     TYPE(NML_OUTPUT_DATE_T), INTENT(INOUT) :: NML_OUTPUT_DATE(NRGRD)
 
     ! locals
@@ -1211,7 +1211,7 @@ CONTAINS
     TYPE(NML_OUTPUT_DATE_T)   :: IDATE(MAX_NRGRD)
     NAMELIST /OUTPUT_DATE_NML/ ALLDATE, IDATE
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -1391,9 +1391,9 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                      :: NDSI
-    TYPE(NML_HOMOG_COUNT_T), INTENT(OUT)  :: NML_HOMOG_COUNT
-    TYPE(NML_HOMOG_INPUT_T), ALLOCATABLE, INTENT(OUT)   :: NML_HOMOG_INPUT(:)
+    INTEGER,                              INTENT(IN)  :: NDSI
+    TYPE(NML_HOMOG_COUNT_T),              INTENT(OUT) :: NML_HOMOG_COUNT
+    TYPE(NML_HOMOG_INPUT_T), ALLOCATABLE, INTENT(OUT) :: NML_HOMOG_INPUT(:)
 
     ! locals
     INTEGER                   :: IERR, I
@@ -1402,7 +1402,7 @@ CONTAINS
     TYPE(NML_HOMOG_INPUT_T), ALLOCATABLE   :: HOMOG_INPUT(:)
     NAMELIST /HOMOG_INPUT_NML/   HOMOG_INPUT
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -1537,7 +1537,7 @@ CONTAINS
 
     TYPE(NML_DOMAIN_T), INTENT(IN) :: NML_DOMAIN
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -1638,13 +1638,13 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)            :: NRINP
+    INTEGER,                INTENT(IN) :: NRINP
     TYPE(NML_INPUT_GRID_T), INTENT(IN) :: NML_INPUT_GRID(NRINP)
 
     ! locals
-    INTEGER              :: I
+    INTEGER :: I
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -1755,13 +1755,13 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)            :: NRGRD
+    INTEGER,                INTENT(IN) :: NRGRD
     TYPE(NML_MODEL_GRID_T), INTENT(IN) :: NML_MODEL_GRID(NRGRD)
 
     ! locals
-    INTEGER              :: I
+    INTEGER :: I
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -1879,13 +1879,13 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)             :: NRGRD
+    INTEGER,                 INTENT(IN) :: NRGRD
     TYPE(NML_OUTPUT_TYPE_T), INTENT(IN) :: NML_OUTPUT_TYPE(NRGRD)
 
     ! locals
-    INTEGER              :: I
+    INTEGER :: I
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -1995,13 +1995,13 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)             :: NRGRD
+    INTEGER,                 INTENT(IN) :: NRGRD
     TYPE(NML_OUTPUT_DATE_T), INTENT(IN) :: NML_OUTPUT_DATE(NRGRD)
 
     ! locals
-    INTEGER              :: I
+    INTEGER :: I
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -2118,13 +2118,13 @@ CONTAINS
 
     IMPLICIT NONE
 
-    TYPE(NML_HOMOG_COUNT_T), INTENT(IN)  :: NML_HOMOG_COUNT
+    TYPE(NML_HOMOG_COUNT_T), INTENT(IN) :: NML_HOMOG_COUNT
     TYPE(NML_HOMOG_INPUT_T), INTENT(IN) :: NML_HOMOG_INPUT(NML_HOMOG_COUNT%N_TOT)
 
     ! locals
-    INTEGER              :: I
+    INTEGER :: I
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S

@@ -115,13 +115,13 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                         :: NDSI
-    CHARACTER*(*), INTENT(IN)                   :: INFILE
-    TYPE(NML_RESTART_T), INTENT(INOUT)          :: NML_RESTART
-    TYPE(NML_UPDATE_T), INTENT(INOUT)           :: NML_UPDATE
-    INTEGER, INTENT(OUT)                        :: IERR
+    INTEGER,             INTENT(IN)    :: NDSI
+    CHARACTER*(*),       INTENT(IN)    :: INFILE
+    TYPE(NML_RESTART_T), INTENT(INOUT) :: NML_RESTART
+    TYPE(NML_UPDATE_T),  INTENT(INOUT) :: NML_UPDATE
+    INTEGER,             INTENT(OUT)   :: IERR
 #ifdef W3_S
-    INTEGER, SAVE                             :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -228,15 +228,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                 :: NDSI
-    TYPE(NML_RESTART_T), INTENT(INOUT)    :: NML_RESTART
+    INTEGER,             INTENT(IN)    :: NDSI
+    TYPE(NML_RESTART_T), INTENT(INOUT) :: NML_RESTART
 
     ! locals
-    INTEGER                                :: IERR
+    INTEGER :: IERR
     TYPE(NML_RESTART_T) :: RESTART
     NAMELIST /RESTART_NML/ RESTART
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -331,15 +331,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                 :: NDSI
-    TYPE(NML_UPDATE_T), INTENT(INOUT)   :: NML_UPDATE
+    INTEGER,            INTENT(IN)    :: NDSI
+    TYPE(NML_UPDATE_T), INTENT(INOUT) :: NML_UPDATE
 
     ! locals
-    INTEGER                                :: IERR
+    INTEGER :: IERR
     TYPE(NML_UPDATE_T) :: UPDATE
     NAMELIST /UPDATE_NML/ UPDATE
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -439,7 +439,7 @@ CONTAINS
 
     TYPE(NML_RESTART_T), INTENT(IN) :: NML_RESTART
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -522,7 +522,7 @@ CONTAINS
 
     TYPE(NML_UPDATE_T), INTENT(IN) :: NML_UPDATE
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
