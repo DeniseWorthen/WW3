@@ -1320,8 +1320,8 @@ CONTAINS
     ! 10. Source code :
     !
     !/
-    REAL, INTENT(INOUT)  :: PRCNTG
-    REAL, INTENT(IN )    :: PRCNTG_CAP
+    REAL, INTENT(INOUT) :: PRCNTG
+    REAL, INTENT(IN)    :: PRCNTG_CAP
     ! local
     CHARACTER(12), PARAMETER :: MYNAME='CHECK_PRCNTG'
 #ifdef W3_T
@@ -1764,7 +1764,7 @@ CONTAINS
     REAL,                  INTENT(OUT) :: HSIG1p, HSIGwp, HSIGsp
     INTEGER,               INTENT(IN)  :: ISEA1p
     REAL,                  INTENT(IN)  :: WS, WD
-    REAL, DIMENSION(:),    INTENT(IN)  :: VA1p
+    REAL,    DIMENSION(:), INTENT(IN)  :: VA1p
     INTEGER, DIMENSION(:), INTENT(OUT) :: VAMAPWS ! Wind-sea id for spectral bins
 
     REAL                     :: RELWS, ETOTw, ETOTs, EwI, EsI

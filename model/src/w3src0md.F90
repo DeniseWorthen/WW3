@@ -159,8 +159,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NTH,NK), CG(NK), WN(NK)
-    REAL, INTENT(OUT)       :: EMEAN, FMEAN, WNMEAN, AMAX
+    REAL, INTENT(IN)  :: A(NTH,NK), CG(NK), WN(NK)
+    REAL, INTENT(OUT) :: EMEAN, FMEAN, WNMEAN, AMAX
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

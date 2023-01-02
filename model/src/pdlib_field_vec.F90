@@ -103,8 +103,9 @@ CONTAINS
     USE W3ODATMD , ONLY : NOGRP, NGRPP
     USE W3GDATMD , ONLY : E3DF, P2MSF, NK
     IMPLICIT NONE
-    INTEGER, INTENT(OUT)    :: TheSize
-    LOGICAL                 :: FLGRDALL(NOGRP,NGRPP)
+    INTEGER, INTENT(OUT) :: TheSize
+
+    LOGICAL :: FLGRDALL(NOGRP,NGRPP)
     INTEGER :: IH, I, J, K, IK
     !/
     !/ ------------------------------------------------------------------- /

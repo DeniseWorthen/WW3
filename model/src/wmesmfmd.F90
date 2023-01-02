@@ -404,7 +404,8 @@ contains
     !/
     implicit none
     type(ESMF_GridComp) :: gcomp
-    integer,intent(out) :: rc
+
+    integer, intent(out) :: rc
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -578,7 +579,8 @@ contains
     type(ESMF_State)    :: impState
     type(ESMF_State)    :: expState
     type(ESMF_Clock)    :: extClock
-    integer,intent(out) :: rc
+
+    integer, intent(out) :: rc
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -748,7 +750,8 @@ contains
     type(ESMF_State)    :: impState
     type(ESMF_State)    :: expState
     type(ESMF_Clock)    :: extClock
-    integer,intent(out) :: rc
+
+    integer, intent(out) :: rc
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1486,7 +1489,8 @@ contains
     type(ESMF_State)    :: impState
     type(ESMF_State)    :: expState
     type(ESMF_Clock)    :: extClock
-    integer,intent(out) :: rc
+
+    integer, intent(out) :: rc
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1828,7 +1832,8 @@ contains
     !/
     implicit none
     type(ESMF_GridComp) :: gcomp
-    integer,intent(out) :: rc
+
+    integer, intent(out) :: rc
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2053,7 +2058,8 @@ contains
     !/
     implicit none
     type(ESMF_GridComp) :: gcomp
-    integer,intent(out) :: rc
+
+    integer, intent(out) :: rc
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2277,7 +2283,8 @@ contains
     !/
     implicit none
     type(ESMF_GridComp) :: gcomp
-    integer,intent(out) :: rc
+
+    integer, intent(out) :: rc
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2483,7 +2490,8 @@ contains
 #endif
     implicit none
     type(ESMF_GridComp) :: gcomp
-    integer,intent(out) :: rc
+
+    integer, intent(out) :: rc
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2869,7 +2877,8 @@ contains
     !/
     implicit none
     type(ESMF_GridComp) :: gcomp
-    integer,intent(out) :: rc
+
+    integer, intent(out) :: rc
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -3103,7 +3112,8 @@ contains
     !/
     implicit none
     type(ESMF_GridComp) :: gcomp
-    integer,intent(out) :: rc
+
+    integer, intent(out) :: rc
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -3568,7 +3578,8 @@ contains
     !/
     implicit none
     type(ESMF_GridComp) :: gcomp
-    integer,intent(out) :: rc
+
+    integer, intent(out) :: rc
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -4195,7 +4206,8 @@ contains
     !/
     implicit none
     type(ESMF_GridComp) :: gcomp
-    integer,intent(out) :: rc
+
+    integer, intent(out) :: rc
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -4621,7 +4633,8 @@ contains
     !/
     implicit none
     type(ESMF_GridComp) :: gcomp
-    integer,intent(out) :: rc
+
+    integer, intent(out) :: rc
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -5351,9 +5364,9 @@ contains
     !/ Parameter list
     !/
     implicit none
-    type(ESMF_Field), intent(inout)  :: impField
-    type(ESMF_Field), intent(in)     :: mbgField
-    type(ESMF_Field), intent(in)     :: bmskField
+    type(ESMF_Field),  intent(inout) :: impField
+    type(ESMF_Field),  intent(in)    :: mbgField
+    type(ESMF_Field),  intent(in)    :: bmskField
     integer, optional, intent(inout) :: rc
     !/
     !/ ------------------------------------------------------------------- /
@@ -7761,12 +7774,12 @@ contains
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    character(len=3), intent(inout)  :: idfld
-    type(ESMF_Field), intent(inout)  :: fldwx
-    type(ESMF_Field), intent(inout)  :: fldwy
-    integer, intent(in)              :: time0(2)
-    integer, intent(in)              :: timen(2)
-    integer, intent(inout), optional :: rc
+    character(len=3), intent(inout)           :: idfld
+    type(ESMF_Field), intent(inout)           :: fldwx
+    type(ESMF_Field), intent(inout)           :: fldwy
+    integer,          intent(in)              :: time0(2)
+    integer,          intent(in)              :: timen(2)
+    integer,          intent(inout), optional :: rc
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

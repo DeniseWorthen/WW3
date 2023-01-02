@@ -74,6 +74,7 @@ contains
     integer, intent(in) :: INE_global(3,MNE)
     integer, intent(in) :: secDim
     integer, intent(in) :: MPIcomm
+
     integer :: istat, memunit
 
     ! note: myrank=0 until after initMPI is called, so only rank=0 file
@@ -177,8 +178,9 @@ contains
   SUBROUTINE REAL_MPI_BARRIER_PDLIB(TheComm, string)
 
     INCLUDE "mpif.h"
-    integer, intent(in) :: TheComm
+    integer,      intent(in) :: TheComm
     character(*), intent(in) :: string
+
     integer NbProc, eRank
     integer :: istatus(MPI_STATUS_SIZE)
     integer ierr, iField(1), iProc
@@ -213,6 +215,7 @@ contains
     use MPI
 
     integer, intent(in) :: MPIcomm
+
     logical :: flag
     integer :: ierr
 #ifdef W3_DEBUGINIT
@@ -345,6 +348,7 @@ contains
     use yowSidepool    , only : ns, ns_global
 
     integer, intent(in) :: INE_global(3,ne_global)
+
     integer :: i, j, stat
     type(t_Node), pointer :: node
     integer JPREV, JNEXT
@@ -1357,8 +1361,9 @@ contains
     !   An element crossing the dateline has, e.g. a node with lon < 180
     !   and another 2 with lon > -180
 
-    REAL(rkind),  INTENT(IN)  :: RX1, RX2, RX3
-    LOGICAL, INTENT(OUT) :: CROSSES_DATELINE
+    REAL(rkind), INTENT(IN)  :: RX1, RX2, RX3
+    LOGICAL,     INTENT(OUT) :: CROSSES_DATELINE
+
     INTEGER :: R1GT180, R2GT180, R3GT180
     R1GT180 = MERGE(1, 0, ABS(RX1).GT.180)
     R2GT180 = MERGE(1, 0, ABS(RX2).GT.180)
@@ -1377,6 +1382,7 @@ contains
     !            this requirement
 
     REAL(rkind), INTENT(INOUT) :: DXP
+
     IF (DXP .le. -180) THEN
       DXP=DXP + 360
     END IF

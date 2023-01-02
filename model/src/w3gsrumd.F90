@@ -328,7 +328,7 @@ MODULE W3GSRUMD
   END TYPE T_GSU
   !/
   !/ Private grid-search-utility class
-                                                   !/
+  !/
   TYPE                   :: CLASS_GSU
     LOGICAL              :: IJG                    ! grid array ordering flag: T = (NX,NY), F = (NY,NX)
     LOGICAL              :: LLG                    ! spherical coordinate flag of associated grid
@@ -352,17 +352,17 @@ MODULE W3GSRUMD
     TYPE(T_BKT), POINTER :: B(:,:)                 ! array of search buckets
     TYPE(T_NNS), POINTER :: NNB                    ! nearest-neighbor bucket search indices object
   END TYPE CLASS_GSU
-                                                   !/
-                                                   !/ Private search bucket type
-                                                   !/
+  !/
+  !/ Private search bucket type
+  !/
   TYPE                   :: T_BKT
     INTEGER              :: N                      ! number of cells in bucket
     INTEGER,     POINTER :: I(:)                   ! i-index of cell c
     INTEGER,     POINTER :: J(:)                   ! j-index of cell c
   END TYPE T_BKT
-                                                   !/
-                                                   !/ Public nearest-neighbor grid-point search type
-                                                   !/
+  !/
+  !/ Public nearest-neighbor grid-point search type
+  !/
   TYPE, PUBLIC           :: T_NNS
     INTEGER              :: NLVL                   ! number of nnbr levels
     INTEGER              :: NNBR                   ! total number of nnbr's
@@ -371,9 +371,9 @@ MODULE W3GSRUMD
     INTEGER,     POINTER :: DI(:)                  ! i-index delta for nearest-nbr n
     INTEGER,     POINTER :: DJ(:)                  ! j-index delta for nearest-nbr n
   END TYPE T_NNS
-                                                   !/
-                                                   !/ Private module parameters
-                                                   !/
+  !/
+  !/ Private module parameters
+  !/
   REAL(8), PARAMETER     :: PI = 3.14159265358979323846D0
   REAL(8), PARAMETER     :: PI2 = 2D0*PI
   REAL(8), PARAMETER     :: PI3H = 3D0*PI/2D0
@@ -2920,12 +2920,12 @@ CONTAINS
     INTEGER,      INTENT(INOUT), POINTER :: IS(:)
     INTEGER,      INTENT(INOUT), POINTER :: JS(:)
     REAL(4),      INTENT(INOUT), POINTER :: CS(:)
-    REAL(4),      INTENT(IN), OPTIONAL  :: EPS
-    REAL(4),      INTENT(IN), OPTIONAL  :: DCIN
-    REAL(4),      INTENT(IN), OPTIONAL  :: WDTH
-    LOGICAL,      INTENT(IN), OPTIONAL  :: MASK(:,:)
-    INTEGER,      INTENT(IN), OPTIONAL  :: NMSK
-    LOGICAL,      INTENT(IN), OPTIONAL  :: DEBUG
+    REAL(4),      INTENT(IN), OPTIONAL   :: EPS
+    REAL(4),      INTENT(IN), OPTIONAL   :: DCIN
+    REAL(4),      INTENT(IN), OPTIONAL   :: WDTH
+    LOGICAL,      INTENT(IN), OPTIONAL   :: MASK(:,:)
+    INTEGER,      INTENT(IN), OPTIONAL   :: NMSK
+    LOGICAL,      INTENT(IN), OPTIONAL   :: DEBUG
 
     !     Local parameters
     REAL(8) :: LEPS, LDCIN, LWDTH=ZERO
@@ -3014,12 +3014,12 @@ CONTAINS
     INTEGER,      INTENT(INOUT), POINTER :: IS(:)
     INTEGER,      INTENT(INOUT), POINTER :: JS(:)
     REAL(8),      INTENT(INOUT), POINTER :: CS(:)
-    REAL(8),      INTENT(IN), OPTIONAL  :: EPS
-    REAL(8),      INTENT(IN), OPTIONAL  :: DCIN
-    REAL(8),      INTENT(IN), OPTIONAL  :: WDTH
-    LOGICAL,      INTENT(IN), OPTIONAL  :: MASK(:,:)
-    INTEGER,      INTENT(IN), OPTIONAL  :: NMSK
-    LOGICAL,      INTENT(IN), OPTIONAL  :: DEBUG
+    REAL(8),      INTENT(IN), OPTIONAL   :: EPS
+    REAL(8),      INTENT(IN), OPTIONAL   :: DCIN
+    REAL(8),      INTENT(IN), OPTIONAL   :: WDTH
+    LOGICAL,      INTENT(IN), OPTIONAL   :: MASK(:,:)
+    INTEGER,      INTENT(IN), OPTIONAL   :: NMSK
+    LOGICAL,      INTENT(IN), OPTIONAL   :: DEBUG
 
     !     Local parameters
     LOGICAL, PARAMETER :: LCMP = .TRUE.
@@ -4715,7 +4715,7 @@ CONTAINS
     REAL(4), INTENT(IN)            :: DPDY(LBI(1):UBI(1),LBI(2):UBI(2))
     REAL(4), INTENT(IN)            :: DQDX(LBI(1):UBI(1),LBI(2):UBI(2))
     REAL(4), INTENT(IN)            :: DQDY(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(4), INTENT(IN)            :: F(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(4), INTENT(IN)            ::    F(LBI(1):UBI(1),LBI(2):UBI(2))
     REAL(4), INTENT(OUT)           :: DFDX(LBO(1):UBO(1),LBO(2):UBO(2))
     REAL(4), INTENT(OUT)           :: DFDY(LBO(1):UBO(1),LBO(2):UBO(2))
     LOGICAL, INTENT(IN),  OPTIONAL :: MASK(LBI(1):UBI(1),LBI(2):UBI(2))
@@ -7134,10 +7134,10 @@ CONTAINS
     INTEGER, INTENT(IN)           :: ICLO
     INTEGER, INTENT(IN)           :: LB(2)
     INTEGER, INTENT(IN)           :: UB(2)
-    REAL(4), TARGET,     OPTIONAL :: XG4(LB(1):UB(1),LB(2):UB(2))
-    REAL(4), TARGET,     OPTIONAL :: YG4(LB(1):UB(1),LB(2):UB(2))
-    REAL(8), TARGET,     OPTIONAL :: XG8(LB(1):UB(1),LB(2):UB(2))
-    REAL(8), TARGET,     OPTIONAL :: YG8(LB(1):UB(1),LB(2):UB(2))
+    REAL(4), TARGET, OPTIONAL     :: XG4(LB(1):UB(1),LB(2):UB(2))
+    REAL(4), TARGET, OPTIONAL     :: YG4(LB(1):UB(1),LB(2):UB(2))
+    REAL(8), TARGET, OPTIONAL     :: XG8(LB(1):UB(1),LB(2):UB(2))
+    REAL(8), TARGET, OPTIONAL     :: YG8(LB(1):UB(1),LB(2):UB(2))
     LOGICAL, INTENT(IN), OPTIONAL :: BBOX_ONLY
     INTEGER, INTENT(IN), OPTIONAL :: NCB
     INTEGER, INTENT(IN), OPTIONAL :: NNP
@@ -9332,9 +9332,11 @@ CONTAINS
   !/
   SUBROUTINE GET_FDW2( N, M, K, C )
     !     *** INTERNAL SUBROUTINE ***
+
     INTEGER, INTENT(IN)  :: N, M
     INTEGER, INTENT(OUT) :: K(0:N,0:N)
     REAL(8), INTENT(OUT) :: C(0:N,0:N)
+
     INTEGER :: I, J
     REAL(8) :: A(0:N), B(0:N,0:M)
 
@@ -9358,6 +9360,7 @@ CONTAINS
     INTEGER, INTENT(IN)  :: N, M
     INTEGER, INTENT(OUT) :: K(0:N,0:N,1:N)
     REAL(8), INTENT(OUT) :: C(0:N,0:N,1:N)
+
     INTEGER :: L, I, J
     REAL(8) :: A(0:N), B(0:N,0:M)
 

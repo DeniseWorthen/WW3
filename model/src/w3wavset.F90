@@ -182,6 +182,7 @@ CONTAINS
     !
     REAL(8), INTENT(IN)  :: VAR(npa)
     REAL(8), INTENT(OUT) :: DVDX(npa), DVDY(npa)
+
     INTEGER           :: NI(3)
     INTEGER           :: IE, I1, I2, I3, IP
     REAL(8)           :: DEDY(3),DEDX(3)
@@ -304,6 +305,7 @@ CONTAINS
 
     REAL(8), INTENT(IN)  :: VAR(npa)
     REAL(8), INTENT(OUT) :: DVDX(npa), DVDY(npa)
+
     INTEGER           :: NI(3)
     INTEGER           :: IE, I1, I2, I3, IP, IX
     REAL(8)           :: DEDY(3),DEDX(3)
@@ -439,6 +441,7 @@ CONTAINS
 
     REAL(8), INTENT(IN)  :: VAR(npa)
     REAL(8), INTENT(OUT) :: DVDX(npa), DVDY(npa)
+
     CALL DIFFERENTIATE_XYDIR_MAPSTA(VAR, DVDX, DVDY)
     !      CALL DIFFERENTIATE_XYDIR_NATIVE(VAR, DVDX, DVDY)
   END SUBROUTINE DIFFERENTIATE_XYDIR
@@ -530,6 +533,7 @@ CONTAINS
 #endif
     !
     real(8), intent(out) :: F_X(npa), F_Y(npa), DWNX(npa)
+
     REAL(8) :: h
     REAL(8) :: SXX_X, SXX_Y
     REAL(8) :: SXY_X, SXY_Y
@@ -677,8 +681,9 @@ CONTAINS
     CALL STRACE (IENT, 'VA_SETUP_IOBPD')
 #endif
     !
-    INTEGER, intent(in) :: IE, I1
+    INTEGER, intent(in)    :: IE, I1
     REAL(8), intent(inout) :: UGRAD, VGRAD
+
     REAL(8) :: h
     integer I2, I3, IP1, IP2, IP3
     INTEGER :: POS_TRICK(3,2)
@@ -787,7 +792,8 @@ CONTAINS
     real(8), intent(out) :: ASPAR(PDLIB_NNZ)
     real(8), intent(out) :: B(npa)
     integer, intent(in)  :: ACTIVE(npa)
-    integer, intent(out)  :: ACTIVESEC(npa)
+    integer, intent(out) :: ACTIVESEC(npa)
+
     INTEGER :: POS_TRICK(3,2), POS_SHIFT(3,3)
     integer I1, I2, I3, IP1, IP2, IP3
     integer IDX, IDX1, IDX2, IDX3
@@ -964,10 +970,11 @@ CONTAINS
     CALL STRACE (IENT, 'VA_SETUP_IOBPD')
 #endif
     !
-    REAL(8), intent(in) :: ASPAR(PDLIB_NNZ)
-    REAL(8), intent(in) :: TheIn(npa)
+    REAL(8), intent(in)  :: ASPAR(PDLIB_NNZ)
+    REAL(8), intent(in)  :: TheIn(npa)
     REAL(8), intent(out) :: TheOut(npa)
-    INTEGER, intent(IN) :: ACTIVE(npa), ACTIVESEC(npa)
+    INTEGER, intent(IN)  :: ACTIVE(npa), ACTIVESEC(npa)
+
     REAL(8) :: ListDiag(npa)
     integer IP, J1, J, JP, J2
     REAL(8) :: eCoeff
@@ -1096,10 +1103,11 @@ CONTAINS
     CALL STRACE (IENT, 'VA_SETUP_IOBPD')
 #endif
     !
-    REAL(8), intent(in) :: ASPAR(PDLIB_NNZ)
-    REAL(8), intent(in) :: TheIn(npa)
+    REAL(8), intent(in)  :: ASPAR(PDLIB_NNZ)
+    REAL(8), intent(in)  :: TheIn(npa)
     REAL(8), intent(out) :: TheOut(npa)
-    INTEGER, intent(in) :: ACTIVE(npa), ACTIVESEC(npa)
+    INTEGER, intent(in)  :: ACTIVE(npa), ACTIVESEC(npa)
+
     integer IP, J, JP
     REAL(8) :: eCoeff
     TheOut=0
@@ -1199,8 +1207,9 @@ CONTAINS
     CALL STRACE (IENT, 'VA_SETUP_IOBPD')
 #endif
     !
-    real(8), intent(in) :: V1(npa), V2(npa)
+    real(8), intent(in)    :: V1(npa), V2(npa)
     real(8), intent(inout) :: eScal
+
     integer :: IP, myrank, myproc
     real(8) :: rScal(1), lScal(1)
     integer iProc
@@ -1310,10 +1319,11 @@ CONTAINS
     CALL STRACE (IENT, 'VA_SETUP_IOBPD')
 #endif
     !
-    real(8), intent(in) :: ASPAR(PDLIB_NNZ)
-    real(8), intent(in) :: B(npa)
+    real(8), intent(in)  :: ASPAR(PDLIB_NNZ)
+    real(8), intent(in)  :: B(npa)
     real(8), intent(out) :: TheOut(npa)
-    integer, intent(in) :: ACTIVE(npa), ACTIVESEC(npa)
+    integer, intent(in)  :: ACTIVE(npa), ACTIVESEC(npa)
+
     real(8) :: V_X(npa), V_R(npa), V_Z(npa), V_P(npa), V_Y(npa)
     real(8) :: uO, uN, alphaV, h1, h2
     real(8) :: eNorm, beta
@@ -1490,6 +1500,7 @@ CONTAINS
 #endif
     !
     real(8), intent(inout) :: TheVar(npa)
+
     real(8) :: SUM_SI_Var, SUM_SI, TheMean
     INTEGER IP, ierr
     real(8) :: eVect(2), rVect(2)
@@ -1610,8 +1621,9 @@ CONTAINS
     CALL STRACE (IENT, 'VA_SETUP_IOBPD')
 #endif
     !
-    REAL*8, INTENT(in) :: DWNX(npa)
+    REAL*8,  INTENT(in)  :: DWNX(npa)
     INTEGER, INTENT(out) :: ACTIVE(npa)
+
     INTEGER IP, eAct
 #ifdef W3_DEBUGSTP
     INTEGER nbActive
@@ -1873,6 +1885,7 @@ CONTAINS
 #endif
     !
     integer, intent(in) :: IMOD
+
     integer IN, ISEA, nbEdge
     integer IX, IY, idx
     integer NeighMat(4,2)
@@ -2041,9 +2054,10 @@ CONTAINS
     CALL STRACE (IENT, 'VA_SETUP_IOBPD')
 #endif
     !
-    REAL(8), intent(in) :: ASPAR(NNZ)
-    REAL(8), intent(in) :: TheIn(NSEA)
+    REAL(8), intent(in)  :: ASPAR(NNZ)
+    REAL(8), intent(in)  :: TheIn(NSEA)
     REAL(8), intent(out) :: TheOut(NSEA)
+
     integer IP, J, JP
     REAL(8) :: eCoeff
     TheOut=0
@@ -2136,9 +2150,10 @@ CONTAINS
     CALL STRACE (IENT, 'VA_SETUP_IOBPD')
 #endif
     !
-    REAL(8), intent(in) :: ASPAR(PDLIB_NNZ)
-    REAL(8), intent(in) :: TheIn(NSEA)
+    REAL(8), intent(in)  :: ASPAR(PDLIB_NNZ)
+    REAL(8), intent(in)  :: TheIn(NSEA)
     REAL(8), intent(out) :: TheOut(NSEA)
+
     integer IP, J1, J, JP, J2
     REAL(8) :: eCoeff
     INTEGER :: ThePrecond = 0
@@ -2253,9 +2268,10 @@ CONTAINS
     CALL STRACE (IENT, 'VA_SETUP_IOBPD')
 #endif
     !
+    real(8), intent(out) :: SXX_t(NSEA), SXY_t(NSEA), SYY_t(NSEA)
+
     integer ISEA, JSEA
     integer ierr
-    real(8), intent(out) :: SXX_t(NSEA), SXY_t(NSEA), SYY_t(NSEA)
     real(8) :: SXX_p(NSEAL), SXY_p(NSEAL), SYY_p(NSEAL)
     real(8), allocatable :: rVect(:)
     integer IPROC, NSEAL_loc
@@ -2380,8 +2396,9 @@ CONTAINS
     CALL STRACE (IENT, 'VA_SETUP_IOBPD')
 #endif
     !
-    real(8), intent(in) :: SXX_t(NSEA), SXY_t(NSEA), SYY_t(NSEA)
+    real(8), intent(in)  :: SXX_t(NSEA), SXY_t(NSEA), SYY_t(NSEA)
     real(8), intent(out) :: FX(NSEA), FY(NSEA)
+
     REAL(8) :: h
     REAL(8) :: SXX_X, SXX_Y
     REAL(8) :: SXY_X, SXY_Y
@@ -2533,8 +2550,9 @@ CONTAINS
     CALL STRACE (IENT, 'VA_SETUP_IOBPD')
 #endif
     !
-    INTEGER, intent(in) :: IEDGE, ISEA
+    INTEGER, intent(in)    :: IEDGE, ISEA
     REAL(8), intent(inout) :: UGRAD, VGRAD, dist
+
     REAL(8) :: h
     integer I2, I3, IP1, IP2, IP3
     integer IX1, IY1, IX2, IY2
@@ -2644,6 +2662,7 @@ CONTAINS
     real(8), intent(in)  :: FX(NSEA), FY(NSEA)
     real(8), intent(out) :: ASPAR(PDLIB_NNZ)
     real(8), intent(out) :: B(NX)
+
     INTEGER :: POS_TRICK(3,2), POS_SHIFT(3,3)
     integer I1, I2, I3, IP1, IP2, IP3
     integer IDX, IDX1, IDX2, IDX3
@@ -2756,8 +2775,9 @@ CONTAINS
     CALL STRACE (IENT, 'VA_SETUP_IOBPD')
 #endif
     !
-    real(8), intent(in) :: V1(NX), V2(NX)
+    real(8), intent(in)    :: V1(NX), V2(NX)
     real(8), intent(inout) :: eScal
+
     integer IP
     eScal=0
     DO IP=1,NX
@@ -2845,9 +2865,10 @@ CONTAINS
     CALL STRACE (IENT, 'VA_SETUP_IOBPD')
 #endif
     !
-    real(8), intent(in) :: ASPAR(PDLIB_NNZ)
-    real(8), intent(in) :: B(NX)
+    real(8), intent(in)  :: ASPAR(PDLIB_NNZ)
+    real(8), intent(in)  :: B(NX)
     real(8), intent(out) :: TheOut(NX)
+
     real(8) :: V_X(NX), V_R(NX), V_Z(NX), V_P(NX), V_Y(NX)
     real(8) :: uO, uN, alphaV, h1, h2
     real(8) :: eNorm, beta
@@ -2967,6 +2988,7 @@ CONTAINS
 #endif
     !
     real(8), intent(inout) :: TheVar(NX)
+
     real(8) :: SUM_SI_Var, SUM_SI, TheMean
     INTEGER IP
     SUM_SI_Var=0

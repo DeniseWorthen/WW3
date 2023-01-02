@@ -1297,7 +1297,8 @@ end subroutine t2netcdf
 !>
 subroutine check(status)
   use netcdf
-  integer, intent ( in) :: status
+  integer, intent (in) :: status
+
   if(status /= nf90_noerr) then
     write(6,996)
 996 FORMAT (/' *** WAVEWATCH III ERROR IN WW3_SYSTRK:'/           &

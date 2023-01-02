@@ -1842,7 +1842,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MDSO, NRGRD, TSYNC(2), GRSTAT(NRGRD)
+    INTEGER, INTENT(IN) :: MDSO, NRGRD, TSYNC(2), GRSTAT(NRGRD)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

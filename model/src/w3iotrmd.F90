@@ -257,8 +257,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDSINP, NDSOUT, IMOD
-    REAL, INTENT(IN)        :: A(NTH,NK,0:NSEAL)
+    INTEGER, INTENT(IN) :: NDSINP, NDSOUT, IMOD
+    REAL,    INTENT(IN) :: A(NTH,NK,0:NSEAL)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

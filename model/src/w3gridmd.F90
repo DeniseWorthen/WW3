@@ -7139,9 +7139,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS
-    CHARACTER, INTENT(IN)   :: NAME*4
-    CHARACTER, INTENT(OUT)  :: STATUS*20
+    INTEGER,   INTENT(IN)  :: NDS
+    CHARACTER, INTENT(IN)  :: NAME*4
+    CHARACTER, INTENT(OUT) :: STATUS*20
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

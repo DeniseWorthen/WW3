@@ -162,6 +162,7 @@ CONTAINS
     INTEGER,          INTENT(IN) :: IGRID
     CHARACTER(LEN=*), INTENT(IN) :: FILELOCAL, FILESHADOW
     REAL,             INTENT(IN) :: LOCALFACTOR, SHADOWFACTOR
+
     TYPE(GRID), POINTER :: GRD
     TYPE(SGRD), POINTER :: SGD
     REAL                :: CGMAX, MINSIZE
@@ -506,12 +507,12 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
 
-    CHARACTER(*) , INTENT(IN)    :: FILENAME
-    REAL ,         INTENT(IN)    :: MULTFACTOR
-    INTEGER ,      INTENT(IN)    :: FILEUNIT, NX, NY, NK, NTH
-    INTEGER*1 ,    INTENT(INOUT) :: ALPHAMTX(:,:,:,:), BETAMTX(:,:,:,:)
-    REAL*4 ,       INTENT(INOUT) ::  CELLSIZE(:,:,:)
-    LOGICAL ,      INTENT(INOUT) ::  ISOBSTRUCTED(:,:)
+    CHARACTER(*), INTENT(IN)    :: FILENAME
+    REAL,         INTENT(IN)    :: MULTFACTOR
+    INTEGER,      INTENT(IN)    :: FILEUNIT, NX, NY, NK, NTH
+    INTEGER*1,    INTENT(INOUT) :: ALPHAMTX(:,:,:,:), BETAMTX(:,:,:,:)
+    REAL*4,       INTENT(INOUT) :: CELLSIZE(:,:,:)
+    LOGICAL,      INTENT(INOUT) :: ISOBSTRUCTED(:,:)
 
     CHARACTER(LEN=600) :: LINE
     INTEGER            :: FIOSTAT
@@ -643,7 +644,7 @@ CONTAINS
     TYPE(GRID), TARGET,     INTENT(IN)    :: GRD
     TYPE(SGRD), TARGET,     INTENT(IN)    :: SGD
 
-    INTEGER       :: ITH, NTH
+    INTEGER :: ITH, NTH
 #ifdef W3_S
     INTEGER, SAVE :: IENT = 0
 #endif
@@ -735,7 +736,8 @@ CONTAINS
 
     REAL, INTENT(IN)  :: U10ABS, U10DIR, CGABS, CGDIR, DT
     REAL, INTENT(OUT) :: PSI
-    REAL              :: THDELTA, CP, WA
+
+    REAL :: THDELTA, CP, WA
 #ifdef W3_S
     INTEGER, SAVE     :: IENT = 0
 #endif

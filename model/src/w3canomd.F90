@@ -201,11 +201,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL , INTENT(INOUT)     :: E(NSPEC)
-    REAL , INTENT(IN)        :: DEPTH
-    REAL , INTENT(IN)        :: WN(NK)
-    REAL , INTENT(IN)        :: CG(NK)
-    INTEGER , INTENT(IN)     :: IACTION
+    REAL,    INTENT(INOUT) :: E(NSPEC)
+    REAL,    INTENT(IN)    :: DEPTH
+    REAL,    INTENT(IN)    :: WN(NK)
+    REAL,    INTENT(IN)    :: CG(NK)
+    INTEGER, INTENT(IN)    :: IACTION
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -357,12 +357,13 @@ CONTAINS
     !
     IMPLICIT NONE
 
-    REAL , INTENT(IN)    :: F1(NANG,NFRE)
-    REAL , INTENT(OUT)   :: F3(NANG,NFRE)
-    INTEGER , INTENT(IN) :: NFRE,NANG,NFREH, NANGH
-    REAL , INTENT(IN)    :: DFIM(NFRE),FR(NFRE), TH(NANG), DELTH
-    REAL , INTENT(IN)    :: DPTH, SIGM
+    REAL,    INTENT(IN)  :: F1(NANG,NFRE)
+    REAL,    INTENT(OUT) :: F3(NANG,NFRE)
 
+    INTEGER, INTENT(IN)  :: NFRE,NANG,NFREH, NANGH
+
+    REAL,    INTENT(IN)  :: DFIM(NFRE),FR(NFRE), TH(NANG), DELTH
+    REAL,    INTENT(IN)  :: DPTH, SIGM
 
     LOGICAL            :: FRSTIME,DOUBLEP
     INTEGER            :: MDW,M,K, K0,M0,MP,KP,MM,KM,KL,KLL,ML,JD

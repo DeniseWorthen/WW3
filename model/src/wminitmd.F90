@@ -520,27 +520,27 @@ CONTAINS
     !/
 
     DATA IDFLDS / 'ice param. 1 ' , 'ice param. 2 ' ,               &
-         'ice param. 3 ' , 'ice param. 4 ' ,               &
-         'ice param. 5 ' ,                                 &
-         'mud density  ' , 'mud thkness  ' ,               &
-         'mud viscos.  ' ,                                 &
-         'water levels ' , 'currents     ' ,               &
-         'winds        ' , 'ice fields   ' ,               &
-         'momentum     ' , 'air density  ' ,               &
-         'mean param.  ' , '1D spectra   ' ,               &
-         '2D spectra   ' /
+                  'ice param. 3 ' , 'ice param. 4 ' ,               &
+                  'ice param. 5 ' ,                                 &
+                  'mud density  ' , 'mud thkness  ' ,               &
+                  'mud viscos.  ' ,                                 &
+                  'water levels ' , 'currents     ' ,               &
+                  'winds        ' , 'ice fields   ' ,               &
+                  'momentum     ' , 'air density  ' ,               &
+                  'mean param.  ' , '1D spectra   ' ,               &
+                  '2D spectra   ' /
     !
     DATA IDOTYP / 'Fields of mean wave parameters' ,                &
-         'Point output                  ' ,                &
-         'Track point output            ' ,                &
-         'Restart files                 ' ,                &
-         'Nesting data                  ' ,                &
-         'Separated wave field data     ' ,                &
-         'Fields for coupling           ' ,                &
-         'Restart files second request  '/
+                  'Point output                  ' ,                &
+                  'Track point output            ' ,                &
+                  'Restart files                 ' ,                &
+                  'Nesting data                  ' ,                &
+                  'Separated wave field data     ' ,                &
+                  'Fields for coupling           ' ,                &
+                  'Restart files second request  '/
     !
     DATA IDSTR  / 'LEV', 'CUR', 'WND', 'ICE', 'TAU', 'RHO',         &
-         'DT0', 'DT1', 'DT2' /
+                  'DT0', 'DT1', 'DT2' /
     !
     DATA YESXX  / 'YES/--' /
     DATA XXXNO  / '---/NO' /

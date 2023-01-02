@@ -2257,6 +2257,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
+    !TODO: are these in,out or inout?
     REAL(8)                 :: SIGMA,SIGMAM1,ES_MOD,NU,DICE,HICE,DEPTH
     COMPLEX(8)              :: WN_O, WNM1, WNM2, WN0, WN1,WN2
     COMPLEX(8), INTENT(OUT) :: WN ! RESULT
@@ -2501,6 +2502,7 @@ CONTAINS
   ! numerically smooth WN_R and WN_I by linear interpolation
   SUBROUTINE SMOOTH_K(WN_R,WN_I,SIGMA,N,SWITCHID)
     REAL, INTENT(IN)  :: SIGMA(N)
+    !TODO: are these in,out or inout?
     REAL              :: WN_R(N), WN_I(N),DIFF(N),REMOVEID(N)
     INTEGER           :: N,I,J,SWITCHID
     !

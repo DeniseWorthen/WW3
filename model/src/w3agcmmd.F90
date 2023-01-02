@@ -293,9 +293,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)              :: ID_LCOMM
-    CHARACTER(LEN=3), INTENT(IN)     :: IDFLD
-    REAL, INTENT(INOUT)              :: FXN(:,:), FYN(:,:), FAN(:,:)
+    INTEGER,          INTENT(IN)    :: ID_LCOMM
+    CHARACTER(LEN=3), INTENT(IN)    :: IDFLD
+    REAL,             INTENT(INOUT) :: FXN(:,:), FYN(:,:), FAN(:,:)
     !
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

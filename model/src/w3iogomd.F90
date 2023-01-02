@@ -239,9 +239,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDSO, NDSEN
-    LOGICAL, INTENT(INOUT)  :: FLGRD(NOGRP,NGRPP), FLGD(NOGRP)
-    LOGICAL, INTENT(INOUT)  :: FLGR2(NOGRP,NGRPP), FLG2(NOGRP)
+    INTEGER, INTENT(IN)    :: NDSO, NDSEN
+    LOGICAL, INTENT(INOUT) :: FLGRD(NOGRP,NGRPP), FLGD(NOGRP)
+    LOGICAL, INTENT(INOUT) :: FLGR2(NOGRP,NGRPP), FLG2(NOGRP)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -663,7 +663,6 @@ CONTAINS
     CHARACTER(1024), INTENT(IN)  :: FLDOUT
     INTEGER,         INTENT(OUT) :: IERR
     LOGICAL,         INTENT(OUT) :: FLG2D(NOGRP,NGRPP), FLG1D(NOGRP)
-    CHARACTER(LEN=100)           :: OUT_NAMES(100), TESTSTR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -672,6 +671,7 @@ CONTAINS
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
 #endif
+    CHARACTER(LEN=100) :: OUT_NAMES(100), TESTSTR
     LOGICAL             :: FLT
     !/
     !/ ------------------------------------------------------------------- /
@@ -2519,7 +2519,6 @@ CONTAINS
     INTEGER,   INTENT(IN)           :: NDSOG
     INTEGER,   INTENT(IN), OPTIONAL :: IMOD
     CHARACTER, INTENT(IN)           :: INXOUT*(*)
-    CHARACTER(LEN=15)               :: TIMETAG
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

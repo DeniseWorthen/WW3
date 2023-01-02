@@ -174,9 +174,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: ZWIND, DEPTH, FP, U, UDIR
-    REAL, INTENT(INOUT)     :: UST
-    REAL, INTENT(OUT)       :: USTD, Z0, CD
+    REAL, INTENT(IN)    :: ZWIND, DEPTH, FP, U, UDIR
+    REAL, INTENT(INOUT) :: UST
+    REAL, INTENT(OUT)   :: USTD, Z0, CD
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

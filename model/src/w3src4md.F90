@@ -1767,7 +1767,9 @@ CONTAINS
 #ifdef W3_T
     USE W3ODATMD  , ONLY : NDST
 #endif
+
     IMPLICIT NONE
+
     REAL, intent(in)  :: WINDSPEED, TAUW
     REAL, intent(out) :: USTAR, Z0, CHARN
 

@@ -1929,7 +1929,7 @@ CONTAINS
 #endif
     !
 #ifdef W3_T
-    WRITE (NDST,9000) NDSM, NDST, NDSE, MX, MY, NX, NY, ILAND
+    WRITE (NDST,9000) NDSM, NDST, NDSE, MX, MY, NX, NY, ILAND, &
          MXI, MYI, NXI, NYI, CLOSED
 #endif
     !

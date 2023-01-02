@@ -503,9 +503,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)       :: NCTYPE, MK, MTH
-    CHARACTER(30), INTENT(IN) :: FILEPREFIX, STRSTOPDATE
-    INTEGER, INTENT(INOUT)    :: NCID, S3
+    INTEGER,       INTENT(IN)    :: NCTYPE, MK, MTH
+    CHARACTER(30), INTENT(IN)    :: FILEPREFIX, STRSTOPDATE
+    INTEGER,       INTENT(INOUT) :: NCID, S3
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -795,13 +795,13 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)               :: NCTYPE
-    CHARACTER*(*), INTENT(IN)         :: NCFILE
-    INTEGER, INTENT(IN)               :: DIMLN(:)
-    INTEGER, INTENT(OUT)              :: DIMID(:), VARID(:), NCID
+    INTEGER,       INTENT(IN)  :: NCTYPE
+    CHARACTER*(*), INTENT(IN)  :: NCFILE
+    INTEGER,       INTENT(IN)  :: DIMLN(:)
+    INTEGER,       INTENT(OUT) :: DIMID(:), VARID(:), NCID
+
     INTEGER                           :: IRET
     INTEGER                           :: DEFLATE=1
-
     !
     ! Creation in netCDF3 or netCDF4
     !

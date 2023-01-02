@@ -742,8 +742,8 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL, INTENT(IN)      :: HICE, IVISC, RHOI, ISMODG, HWAT, WT
-    REAL, INTENT(OUT)     :: WNR, WNI
+    REAL, INTENT(IN)  :: HICE, IVISC, RHOI, ISMODG, HWAT, WT
+    REAL, INTENT(OUT) :: WNR, WNI
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

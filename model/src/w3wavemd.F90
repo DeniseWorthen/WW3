@@ -3653,8 +3653,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MAPSTA(NY*NX)
-    LOGICAL, INTENT(OUT)    :: FLAG0
+    INTEGER, INTENT(IN)  :: MAPSTA(NY*NX)
+    LOGICAL, INTENT(OUT) :: FLAG0
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

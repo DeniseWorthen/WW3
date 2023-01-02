@@ -556,7 +556,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)  :: IMOD
+    INTEGER, INTENT(IN) :: IMOD
     !/
     !/ Local parameters
     !/

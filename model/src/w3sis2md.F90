@@ -1153,9 +1153,8 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL, INTENT(IN)     :: ICEH
-    REAL, INTENT(INOUT)  :: WN_I(:), DAMPING(:), CG_I(:)
-
+    REAL, INTENT(IN)    :: ICEH
+    REAL, INTENT(INOUT) :: WN_I(:), DAMPING(:), CG_I(:)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1377,7 +1376,6 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     REAL, INTENT(IN) :: ICEDMIN, ICEDMAX, FRAGILITY
-    REAL             :: W3FSD_DAVE,  W3FSD_DAVE2
 
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1385,6 +1383,7 @@ CONTAINS
     !
     ! analytic solution, if the FSD is given by P(x) = x^(-1-gam) for icedmin <= x <= icedmax and 0 elsewhere
     !
+    REAL            :: W3FSD_DAVE,  W3FSD_DAVE2
     REAL            :: GAM, MR, R, DENOM, ICEDMAXL
     REAL, PARAMETER :: xi = 2
     !

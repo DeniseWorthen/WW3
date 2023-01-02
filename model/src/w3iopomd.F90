@@ -1137,10 +1137,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)           :: NDSOP
-    INTEGER, INTENT(OUT)          :: IOTST
-    INTEGER, INTENT(IN), OPTIONAL :: IMOD
-    CHARACTER, INTENT(IN)         :: INXOUT*(*)
+    INTEGER,   INTENT(IN)           :: NDSOP
+    INTEGER,   INTENT(OUT)          :: IOTST
+    INTEGER,   INTENT(IN), OPTIONAL :: IMOD
+    CHARACTER, INTENT(IN)           :: INXOUT*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ local parameters

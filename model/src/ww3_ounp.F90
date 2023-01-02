@@ -1597,7 +1597,6 @@ CONTAINS
     INTEGER, INTENT(IN) :: I, NCID, NREQ, INDREQ(NREQ)
     LOGICAL, INTENT(IN) :: ORDER
 
-
     !/ Local parameters
     !/
     INTEGER          :: J, J1, I1, I2, ISP, IKM
@@ -3062,12 +3061,12 @@ CONTAINS
     implicit none
 
 
-    INTEGER, INTENT(IN)               :: ITYPE,OTYPE,NCTYPE, ONE, TWO
-    CHARACTER*(128), INTENT(IN)       :: NCFILE
-    INTEGER, INTENT(IN)               :: DIMLN(5)
-    INTEGER, INTENT(OUT)              :: DIMID(7), VARID(28),NCID
-    LOGICAL, INTENT(IN), OPTIONAL     :: FLSRCE(7)
-    INTEGER, INTENT(IN), OPTIONAL     :: NCVARTYPE
+    INTEGER,         INTENT(IN)           :: ITYPE,OTYPE,NCTYPE, ONE, TWO
+    CHARACTER*(128), INTENT(IN)           :: NCFILE
+    INTEGER,         INTENT(IN)           :: DIMLN(5)
+    INTEGER,         INTENT(OUT)          :: DIMID(7), VARID(28),NCID
+    LOGICAL,         INTENT(IN), OPTIONAL :: FLSRCE(7)
+    INTEGER,         INTENT(IN), OPTIONAL :: NCVARTYPE
 
     ! local parameters
     INTEGER                           :: IRET

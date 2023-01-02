@@ -242,9 +242,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)                    :: NPT
-    REAL, INTENT(IN), OPTIONAL             :: XPT(NPT), YPT(NPT)
-    CHARACTER(LEN=40),INTENT(IN), OPTIONAL :: PNAMES(NPT)
+    INTEGER,           INTENT(IN)           :: NPT
+    REAL,              INTENT(IN), OPTIONAL :: XPT(NPT), YPT(NPT)
+    CHARACTER(LEN=40), INTENT(IN), OPTIONAL :: PNAMES(NPT)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -740,7 +740,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: TOUT(2)
+    INTEGER, INTENT(IN) :: TOUT(2)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

@@ -677,8 +677,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    !     INTEGER, INTENT(IN)      :: IHMAX, IMI(NSPEC)
-    !     INTEGER, INTENT(IN)      :: IMD(NSPEC)
+    !     INTEGER, INTENT(IN) :: IHMAX, IMI(NSPEC)
+    !     INTEGER, INTENT(IN) :: IMD(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

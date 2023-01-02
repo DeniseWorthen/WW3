@@ -157,8 +157,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: ZWND, U10, U10D
-    REAL, INTENT(OUT)       :: UST, USTD, Z0, CD
+    REAL, INTENT(IN)  :: ZWND, U10, U10D
+    REAL, INTENT(OUT) :: UST, USTD, Z0, CD
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
