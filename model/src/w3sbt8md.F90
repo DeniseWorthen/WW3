@@ -153,10 +153,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)    :: H_WDEPTH ! water depth
-    REAL, INTENT(IN)    :: AC(NSPEC) ! action density
-    INTEGER, INTENT(IN) :: IX, IY
-    REAL, INTENT(OUT)   :: S(NSPEC), D(NSPEC)
+    REAL,    INTENT(IN)  :: H_WDEPTH ! water depth
+    REAL,    INTENT(IN)  :: AC(NSPEC) ! action density
+    INTEGER, INTENT(IN)  :: IX, IY
+    REAL,    INTENT(OUT) :: S(NSPEC), D(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -456,8 +456,9 @@ CONTAINS
   !/ ------------------------------------------------------------------- /
 
   SUBROUTINE CSINH(C,CS)
-    COMPLEX, INTENT(IN) ::  C
+    COMPLEX, INTENT(IN)  :: C
     COMPLEX, INTENT(OUT) :: CS
+
     X = REAL(C)
     Y = AIMAG(C)
     CS = CMPLX(SINH(X) * COS(Y), SIN(Y) * COSH(X))
@@ -467,8 +468,9 @@ CONTAINS
   !/ ------------------------------------------------------------------- /
 
   SUBROUTINE CCOSH(C,CC)
-    COMPLEX, INTENT(IN) ::  C
+    COMPLEX, INTENT(IN)  :: C
     COMPLEX, INTENT(OUT) :: CC
+
     X = REAL(C)
     Y = AIMAG(C)
     CC = CMPLX(COSH(X) * COS(Y), SIN(Y) * SINH(X))

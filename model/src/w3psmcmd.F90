@@ -1424,6 +1424,7 @@ CONTAINS
     INTEGER, INTENT( IN) :: NVA, NVB
     REAL,    INTENT( IN) :: CF(-9:NCel), VC(-9:NCel), AKDif, FTS
     REAL,    INTENT(Out) :: VFLY(NVFc), FV(NVFc), FY(NVFc)
+
     INTEGER ::  i, j, k, L, M, N, ij
     REAL:: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6, CNST8
 
@@ -1661,6 +1662,7 @@ CONTAINS
     INTEGER, INTENT( IN) :: NVA, NVB
     REAL,    INTENT( IN) :: CF(-9:NCel), VC(-9:NCel), AKDif
     REAL,    INTENT(Out) :: VFLY(NVFc), FV(NVFc), FY(NVFc)
+
     INTEGER ::  i, j, k, L, M, N, ij
     REAL :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6, CNST8
 
@@ -1920,6 +1922,7 @@ CONTAINS
     INTEGER, INTENT( IN) :: NVA, NVB
     REAL,    INTENT( IN) :: CF(-9:NCel), VC(-9:NCel), AKDif, FTS
     REAL,    INTENT(Out) :: VFLY(NVFc), FV(NVFc), FY(NVFc)
+
     INTEGER ::  i, j, k, L, M, N, ij
     REAL:: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6,  &
          CNST7, CNST8, CNST9
@@ -2714,6 +2717,7 @@ CONTAINS
     IMPLICIT NONE
     REAL, INTENT(IN)    ::  CoRfr(NTH, NK)
     REAL, INTENT(INOUT) :: SpeTHK(NTH, NK)
+
     INTEGER ::  I, J, K, L, M, N
     REAL, Dimension(NTH) :: SpeGCT, Spectr
     REAL :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
@@ -2819,6 +2823,7 @@ CONTAINS
     IMPLICIT NONE
     REAL, INTENT(IN)    ::  CoRfr(NTH, 0:NK), DKC(0:NK+1), DKS(-1:NK+1)
     REAL, INTENT(INOUT) :: SpeTHK(NTH, NK)
+
     INTEGER ::  I, J, K, L, M, N
     REAL, Dimension(-1:NK+2) :: SpeRfr, Spectr, SpeFlx
     REAL :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6

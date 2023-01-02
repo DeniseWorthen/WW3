@@ -44,8 +44,8 @@ contains
     use MPI
     implicit none
 
-    character(*),optional,intent(in) :: string !string to print
-    integer,optional,intent(in) :: error       !mpi errorcode
+    character(*), optional, intent(in) :: string !string to print
+    integer,      optional, intent(in) :: error  !mpi errorcode
     integer :: ierr,i
     logical :: lopen
     integer :: sl

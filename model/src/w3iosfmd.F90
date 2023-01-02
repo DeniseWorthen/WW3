@@ -189,7 +189,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD
+    INTEGER, INTENT(IN) :: IMOD
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -460,7 +460,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDSPT, IMOD
+    INTEGER, INTENT(IN) :: NDSPT, IMOD
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

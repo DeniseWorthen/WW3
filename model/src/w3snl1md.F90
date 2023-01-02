@@ -289,8 +289,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NSPEC), CG(NK), KDMEAN
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC)
+    REAL, INTENT(IN)  :: A(NSPEC), CG(NK), KDMEAN
+    REAL, INTENT(OUT) :: S(NSPEC), D(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -556,7 +556,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD
+    INTEGER, INTENT(IN) :: IMOD
     !/
     !/ Local parameters
     !/

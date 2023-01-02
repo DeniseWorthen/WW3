@@ -759,11 +759,11 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL, INTENT(IN)        :: A(NSPEC), DEPTH, CICE, ICEH, ICEDMAX
-    INTEGER, INTENT(IN)     :: IX, IY
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC), DISSIP(NSPEC), R(NK)
-    REAL, INTENT(INOUT)     :: ICEF
-    REAL, INTENT(IN)        :: WN(NK), CG(NK), WN_R(NK), CG_ICE(NK)
+    REAL,    INTENT(IN)    :: A(NSPEC), DEPTH, CICE, ICEH, ICEDMAX
+    INTEGER, INTENT(IN)    :: IX, IY
+    REAL,    INTENT(OUT)   :: S(NSPEC), D(NSPEC), DISSIP(NSPEC), R(NK)
+    REAL,    INTENT(INOUT) :: ICEF
+    REAL,    INTENT(IN)    :: WN(NK), CG(NK), WN_R(NK), CG_ICE(NK)
 
     !/
     !/ ------------------------------------------------------------------- /
@@ -1153,8 +1153,8 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL, INTENT(IN)        :: ICEH
-    REAL, INTENT(INOUT)  :: WN_I(:), DAMPING(:), CG_I(:)
+    REAL, INTENT(IN)    :: ICEH
+    REAL, INTENT(INOUT) :: WN_I(:), DAMPING(:), CG_I(:)
 
     !/
     !/ ------------------------------------------------------------------- /
@@ -1260,8 +1260,8 @@ CONTAINS
 
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL, INTENT(IN) :: VISC_RP, ICEH, SIGMA
-    double COMPLEX, INTENT(IN) :: GUESS
+    REAL,           INTENT(IN)    :: VISC_RP, ICEH, SIGMA
+    double COMPLEX, INTENT(IN)    :: GUESS
     double COMPLEX, intent(INOUT) :: X
 
     !/ ------------------------------------------------------------------- /
@@ -1377,7 +1377,6 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     REAL, INTENT(IN) :: ICEDMIN, ICEDMAX, FRAGILITY
-    REAL             :: W3FSD_DAVE,  W3FSD_DAVE2
 
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1385,7 +1384,8 @@ CONTAINS
     !
     ! analytic solution, if the FSD is given by P(x) = x^(-1-gam) for icedmin <= x <= icedmax and 0 elsewhere
     !
-    REAL                    :: GAM, MR, R, DENOM, ICEDMAXL
+    REAL :: W3FSD_DAVE,  W3FSD_DAVE2
+    REAL :: GAM, MR, R, DENOM, ICEDMAXL
     REAL, PARAMETER :: xi = 2
     !
     ICEDMAXL=MAX(ICEDMIN*1.01,ICEDMAX)
@@ -1472,7 +1472,7 @@ CONTAINS
 
     IMPLICIT NONE
 
-    REAL, INTENT(IN) :: VISC_RP, ICEH, SIGMA
+    REAL,           INTENT(IN) :: VISC_RP, ICEH, SIGMA
     DOUBLE COMPLEX, INTENT(IN) :: WN_GUESS
 
     !/
@@ -1575,7 +1575,7 @@ CONTAINS
 
     IMPLICIT NONE
 
-    REAL, INTENT(IN) :: VISC_RP, ICEH, SIGMA
+    REAL,           INTENT(IN) :: VISC_RP, ICEH, SIGMA
     DOUBLE COMPLEX, INTENT(IN) :: WN_GUESS
 
     !/

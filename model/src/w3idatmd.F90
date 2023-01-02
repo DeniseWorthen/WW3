@@ -344,7 +344,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDSE, NDST
+    INTEGER, INTENT(IN) :: NDSE, NDST
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -509,8 +509,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, NDSE, NDST
-    LOGICAL, INTENT(IN), OPTIONAL     :: FLAGSTIDEIN(4)
+    INTEGER, INTENT(IN)           :: IMOD, NDSE, NDST
+    LOGICAL, INTENT(IN), OPTIONAL :: FLAGSTIDEIN(4)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -883,7 +883,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, NDSE, NDST
+    INTEGER, INTENT(IN) :: IMOD, NDSE, NDST
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

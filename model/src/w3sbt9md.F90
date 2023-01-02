@@ -439,24 +439,24 @@ CONTAINS
     IMPLICIT NONE
 
     ! INPUT VARIABLES :
-    REAL, INTENT(IN)  ::  SIGMA   ! radian frequency (rad)
-    REAL, INTENT(IN)  ::  H_WDEPTH! water depth, denoted "h" in Ng (m)
-    REAL, INTENT(IN)  ::  DTILDE  ! normalized mud depth = mud depth / sbltm,
-    ! delta is the sblt= sqrt(2*visc/sigma)
-    REAL, INTENT(IN)  ::  ZETA    ! this is zeta as used in Ng pg. 238. it is
-    ! the ratio of stokes' boundary layer
-    ! thicknesses, or sbltm/delta_w
-    REAL, INTENT(IN)  ::  GAMMA   ! this is the gamma used in Ng pg. 238.
-    ! this is density(water)/density(mud)
-    REAL, INTENT(IN)  ::  SBLTM   ! sbltm is what you get if you calculate
-    ! sblt using the viscosity of the mud,
-    ! sbltm=sqrt(2*visc_m/sigma)
-    ! .....also delta_m
-    REAL, INTENT(IN)  :: WK       ! unmuddy wavenumber
+    REAL, INTENT(IN)  ::  SIGMA    ! radian frequency (rad)
+    REAL, INTENT(IN)  ::  H_WDEPTH ! water depth, denoted "h" in Ng (m)
+    REAL, INTENT(IN)  ::  DTILDE   ! normalized mud depth = mud depth / sbltm,
+                                   ! delta is the sblt= sqrt(2*visc/sigma)
+    REAL, INTENT(IN)  ::  ZETA     ! this is zeta as used in Ng pg. 238. it is
+                                   ! the ratio of stokes' boundary layer
+                                   ! thicknesses, or sbltm/delta_w
+    REAL, INTENT(IN)  ::  GAMMA    ! this is the gamma used in Ng pg. 238.
+                                   ! this is density(water)/density(mud)
+    REAL, INTENT(IN)  ::  SBLTM    ! sbltm is what you get if you calculate
+                                   ! sblt using the viscosity of the mud,
+                                   ! sbltm=sqrt(2*visc_m/sigma)
+                                   ! .....also delta_m
+    REAL, INTENT(IN)  :: WK        ! unmuddy wavenumber
 
-    ! OUTPUT VARIABLES :
-    REAL, INTENT(OUT)  :: WKDR    ! muddy wavenumber
-    REAL, INTENT(OUT)  :: DISS    ! dissipation rate
+                                   ! OUTPUT VARIABLES :
+    REAL, INTENT(OUT) :: WKDR      ! muddy wavenumber
+    REAL, INTENT(OUT) :: DISS      ! dissipation rate
 
     ! LOCAL VARIABLES :
     REAL    :: B1  !  an Ng coefficient
@@ -508,6 +508,7 @@ CONTAINS
     REAL, INTENT(IN)  ::  H_WDEPTH
     REAL, INTENT(IN)  ::  SND2
     REAL, INTENT(OUT) ::  ND
+
     REAL    :: FAC1       ! LOCAL
     REAL    :: FAC2       ! LOCAL
     REAL    :: FAC3       ! LOCAL

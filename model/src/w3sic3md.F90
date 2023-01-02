@@ -2498,6 +2498,7 @@ CONTAINS
   ! numerically smooth WN_R and WN_I by linear interpolation
   SUBROUTINE SMOOTH_K(WN_R,WN_I,SIGMA,N,SWITCHID)
     REAL, INTENT(IN)  :: SIGMA(N)
+    !TODO: are these in,out or inout?
     REAL              :: WN_R(N), WN_I(N),DIFF(N),REMOVEID(N)
     INTEGER           :: N,I,J,SWITCHID
     !

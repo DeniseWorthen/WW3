@@ -148,8 +148,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: K(NK), FHIGH, USTAR, USDIR
-    REAL, INTENT(OUT)       :: S(NTH,NK)
+    REAL, INTENT(IN)  :: K(NK), FHIGH, USTAR, USDIR
+    REAL, INTENT(OUT) :: S(NTH,NK)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

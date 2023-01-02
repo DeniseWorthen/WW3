@@ -577,6 +577,7 @@ CONTAINS
     !/
     !
     integer*2, intent(out) :: STATUS(NX)
+
     INTEGER :: COLLECTED(NX), NEXTVERT(NX), PREVVERT(NX)
     INTEGER :: ISFINISHED, INEXT, IPREV
     INTEGER :: IPNEXT, IPPREV, ZNEXT, IP, I, IE
@@ -840,9 +841,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(INOUT)  :: TMPSTA(NY,NX)
-    REAL,    INTENT(IN)     :: ZBIN(NY,NX)
-    REAL,    INTENT(IN)     :: ZLIM
+    INTEGER, INTENT(INOUT) :: TMPSTA(NY,NX)
+    REAL,    INTENT(IN)    :: ZBIN(NY,NX)
+    REAL,    INTENT(IN)    :: ZLIM
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

@@ -1221,17 +1221,16 @@ CONTAINS
   SUBROUTINE W3EQTOLL( PHI_EQ, LAMBDA_EQ, PHI, LAMBDA,   &
        &                 ANGLED, PHI_POLE, LAMBDA_POLE, POINTS )
 
-    INTEGER:: POINTS      !IN  Number of points to be processed
+    INTEGER,                 intent(in)  :: POINTS      !IN  Number of points to be processed
 
-    REAL :: PHI_POLE,   & !IN  Latitude of equatorial lat-lon pole
-         &        LAMBDA_POLE   !IN  Longitude of equatorial lat-lon pole
+    REAL,                    intent(in)  :: PHI_POLE    !IN  Latitude of equatorial lat-lon pole
+    REAL,                    intent(in)  :: LAMBDA_POLE !IN  Longitude of equatorial lat-lon pole
 
-    REAL, DIMENSION(POINTS) ::         &
-         &        PHI,       & !OUT Latitude
-         &        LAMBDA,    & !OUT Longitude (0 =< LON < 360)
-         &        ANGLED,    & !OUT turning angle in deg for standard wind
-         &        LAMBDA_EQ, & !IN  Longitude in equatorial lat-lon coords
-         &        PHI_EQ       !IN  Latitude in equatorial lat-lon coords
+    REAL, DIMENSION(POINTS), intent(out) :: PHI         !OUT Latitude
+    REAL, DIMENSION(POINTS), intent(out) :: LAMBDA      !OUT Longitude (0 =< LON < 360)
+    REAL, DIMENSION(POINTS), intent(out) :: ANGLED      !OUT turning angle in deg for standard wind
+    REAL, DIMENSION(POINTS), intent(in)  :: LAMBDA_EQ   !IN  Longitude in equatorial lat-lon coords
+    REAL, DIMENSION(POINTS), intent(in)  :: PHI_EQ      !IN  Latitude in equatorial lat-lon coords
 
     ! Local varables:------------------------------------------------------
     REAL(KIND=8) :: E_LAMBDA, E_PHI, A_LAMBDA, A_PHI,                 &
@@ -1498,6 +1497,7 @@ CONTAINS
   !/ ------------------------------------------------------------------- /
   SUBROUTINE STR_TO_UPPER(STR)
     character(*), intent(inout) :: str
+
     integer :: i
 
     DO i = 1, len(str)

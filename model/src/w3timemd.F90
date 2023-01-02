@@ -136,8 +136,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(INOUT)  :: TIME(2)
-    REAL, INTENT(IN)        :: DTIME
+    INTEGER, INTENT(INOUT) :: TIME(2)
+    REAL,    INTENT(IN)    :: DTIME
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -249,7 +249,7 @@ CONTAINS
       !/ ------------------------------------------------------------------- /
       !/ Parameter list
       !/
-      INTEGER, INTENT(IN)     :: NYMD, M
+      INTEGER, INTENT(IN) :: NYMD, M
       !/
       !/ ------------------------------------------------------------------- /
       !/ Local parameters
@@ -388,7 +388,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: TIME1(2), TIME2(2)
+    INTEGER, INTENT(IN) :: TIME1(2), TIME2(2)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -510,7 +510,7 @@ CONTAINS
       !/ ------------------------------------------------------------------- /
       !/ Parameter list
       !/
-      INTEGER, INTENT(IN)     :: NYMD
+      INTEGER, INTENT(IN) :: NYMD
       !/
       !/ ------------------------------------------------------------------- /
       !/ Local parameters
@@ -639,7 +639,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: T1(8), T2(8)
+    INTEGER, INTENT(IN) :: T1(8), T2(8)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -719,8 +719,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: TIME(2)
-    CHARACTER, INTENT(OUT)  :: DTME21*23
+    INTEGER,   INTENT(IN)  :: TIME(2)
+    CHARACTER, INTENT(OUT) :: DTME21*23
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -768,7 +768,7 @@ CONTAINS
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
-    INTEGER(KIND=4),    INTENT(in)  :: id,mm,iyyy
+    INTEGER(KIND=4), INTENT(in) :: id,mm,iyyy
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -814,8 +814,9 @@ CONTAINS
     ! See numerical recipes 2nd ed. The order of month and day have been swapped!
     !
     !/
-    INTEGER(KIND=4),    INTENT(in)  :: julian
-    INTEGER(KIND=4),    INTENT(out) :: id,mm,iyyy
+    INTEGER(KIND=4), INTENT(in)  :: julian
+    INTEGER(KIND=4), INTENT(out) :: id,mm,iyyy
+
     INTEGER(KIND=4), PARAMETER :: IGREG=2299161
     INTEGER(KIND=4) :: ja,jalpha,jb,jc,jd,je
     if (julian.GE.IGREG) THEN
@@ -1044,7 +1045,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(OUT)       :: PTIME
+    REAL, INTENT(OUT) :: PTIME
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1112,9 +1113,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER,INTENT(IN)            :: TIME(2)  ! array like 'YYYYMMDD HHMMSS'
-    INTEGER,INTENT(OUT)           :: DAT(8)   ! array like returned by DATE_AND_TIME(3f)
-    INTEGER,INTENT(OUT)           :: IERR     ! Error return, 0 for successful execution
+    INTEGER, INTENT(IN)  :: TIME(2)  ! array like 'YYYYMMDD HHMMSS'
+    INTEGER, INTENT(OUT) :: DAT(8)   ! array like returned by DATE_AND_TIME(3f)
+    INTEGER, INTENT(OUT) :: IERR     ! Error return, 0 for successful execution
     ! Otherwise return 1
     !/
     !/ ------------------------------------------------------------------- /
@@ -1193,9 +1194,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER,INTENT(IN)            :: DAT(8)   ! array like returned by DATE_AND_TIME(3f)
-    INTEGER,INTENT(OUT)           :: TIME(2)  ! array like 'YYYYMMDD HHMMSS'
-    INTEGER,INTENT(OUT)           :: IERR     ! Error return, 0 for successful execution
+    INTEGER, INTENT(IN)  :: DAT(8)   ! array like returned by DATE_AND_TIME(3f)
+    INTEGER, INTENT(OUT) :: TIME(2)  ! array like 'YYYYMMDD HHMMSS'
+    INTEGER, INTENT(OUT) :: IERR     ! Error return, 0 for successful execution
     ! Otherwise return 1
     !/
     !/ ------------------------------------------------------------------- /
@@ -1281,9 +1282,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER,INTENT(IN)            :: DAT(8)   ! array like returned by DATE_AND_TIME(3f)
-    DOUBLE PRECISION,INTENT(OUT)  :: JULIAN   ! Julian Day (non-negative, but may be non-integer)
-    INTEGER,INTENT(OUT)           :: IERR     ! Error return, 0 for successful execution
+    INTEGER,          INTENT(IN)  :: DAT(8)   ! array like returned by DATE_AND_TIME(3f)
+    DOUBLE PRECISION, INTENT(OUT) :: JULIAN   ! Julian Day (non-negative, but may be non-integer)
+    INTEGER,          INTENT(OUT) :: IERR     ! Error return, 0 for successful execution
     ! -1=invalid year,-2=invalid month,-3=invalid day,
     ! -4=invalid date (29th Feb, non leap-year)
     !/
@@ -1394,9 +1395,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    DOUBLE PRECISION,INTENT(IN)   :: JULIAN   ! Julian Day (non-negative, but may be non-integer)
-    INTEGER,INTENT(OUT)           :: DAT(8)   ! array like returned by DATE_AND_TIME(3f)
-    INTEGER,INTENT(OUT)           :: IERR     ! Error return, 0 for successful execution
+    DOUBLE PRECISION, INTENT(IN)  :: JULIAN   ! Julian Day (non-negative, but may be non-integer)
+    INTEGER,          INTENT(OUT) :: DAT(8)   ! array like returned by DATE_AND_TIME(3f)
+    INTEGER,          INTENT(OUT) :: IERR     ! Error return, 0 for successful execution
     ! Otherwise returnb 1
     !/
     !/ ------------------------------------------------------------------- /
@@ -1537,7 +1538,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: T1(8), T2(8)
+    INTEGER, INTENT(IN) :: T1(8), T2(8)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1638,7 +1639,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: T1(8), T2(8)
+    INTEGER, INTENT(IN) :: T1(8), T2(8)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1742,9 +1743,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    CHARACTER(*),INTENT(IN)       :: UNITS    ! Units attribute
-    INTEGER,INTENT(OUT)           :: DAT(8)   ! array like returned by DATE_AND_TIME(3f)
-    INTEGER,INTENT(OUT)           :: IERR     ! Error return, 0 for successful execution
+    CHARACTER(*), INTENT(IN)  :: UNITS    ! Units attribute
+    INTEGER,      INTENT(OUT) :: DAT(8)   ! array like returned by DATE_AND_TIME(3f)
+    INTEGER,      INTENT(OUT) :: IERR     ! Error return, 0 for successful execution
     ! Otherwise returnb 1
     !/
     !/ ------------------------------------------------------------------- /
@@ -1989,8 +1990,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER,INTENT(IN)            :: TIME(2)  ! array like 'YYYYMMDD HHMMSS'
-    CHARACTER(LEN=32),INTENT(OUT) :: ISODT    ! ISO date time
+    INTEGER,           INTENT(IN)  :: TIME(2)  ! array like 'YYYYMMDD HHMMSS'
+    CHARACTER(LEN=32), INTENT(OUT) :: ISODT    ! ISO date time
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

@@ -1685,7 +1685,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: ND
+    INTEGER, INTENT(IN) :: ND
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2154,7 +2154,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    LOGICAL, INTENT(INOUT)  :: OK
+    LOGICAL, INTENT(INOUT) :: OK
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2327,8 +2327,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: FRAC
-    LOGICAL, INTENT(INOUT)  :: OK
+    REAL,    INTENT(IN)    :: FRAC
+    LOGICAL, INTENT(INOUT) :: OK
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

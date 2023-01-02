@@ -698,9 +698,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: ISP
-    REAL, INTENT(IN)        :: FACX, FACY, DTG, VGX, VGY
-    LOGICAL, INTENT(IN)     :: LCALC
+    INTEGER, INTENT(IN) :: ISP
+    REAL,    INTENT(IN) :: FACX, FACY, DTG, VGX, VGY
+    LOGICAL, INTENT(IN) :: LCALC
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local PARAMETERs
@@ -924,20 +924,20 @@ CONTAINS
     USE W3PARALL          , only : ONESIXTH, ZERO, THR
     USE yowRankModule     , only : IPGL_npa
 
-    INTEGER, INTENT(IN)    :: ISP  ! Actual Frequency/Wavenumber,
-    ! actual Wave Direction
-    REAL,    INTENT(IN)    :: DT   ! Time intervall for which the
-    ! advection should be computed
-    ! for the given velocity field
-    REAL,    INTENT(IN)    :: C(npa,2)  ! Velocity field in it's
-    ! X- and Y- Components,
-    REAL,    INTENT(INOUT) :: AC(npa)   ! Wave Action before and
-    ! after advection
-    REAL,    INTENT(IN)    :: RD10, RD20  ! Time interpolation
-    ! coefficients for boundary
-    ! conditions
-    LOGICAL, INTENT(IN)    :: LCALC  ! Switch for the calculation of
-    ! the max. Global Time step
+    INTEGER, INTENT(IN)    :: ISP        ! Actual Frequency/Wavenumber,
+                                         ! actual Wave Direction
+    REAL,    INTENT(IN)    :: DT         ! Time intervall for which the
+                                         ! advection should be computed
+                                         ! for the given velocity field
+    REAL,    INTENT(IN)    :: C(npa,2)   ! Velocity field in it's
+                                         ! X- and Y- Components,
+    REAL,    INTENT(INOUT) :: AC(npa)    ! Wave Action before and
+                                         ! after advection
+    REAL,    INTENT(IN)    :: RD10, RD20 ! Time interpolation
+                                         ! coefficients for boundary
+                                         ! conditions
+    LOGICAL, INTENT(IN)    :: LCALC      ! Switch for the calculation of
+                                         ! the max. Global Time step
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
 #endif
@@ -1250,20 +1250,20 @@ CONTAINS
     USE W3PARALL          , only : ONESIXTH, THR, ZERO
     USE yowRankModule     , only : IPGL_npa
 
-    INTEGER, INTENT(IN)    :: ISP  ! Actual Frequency/Wavenumber,
-    ! actual Wave Direction
-    REAL,    INTENT(IN)    :: DT   ! Time interval for which the
-    ! advection should be computed
-    ! for the given velocity field
-    REAL,    INTENT(IN)    :: C(npa,2)  ! Velocity field in its
-    ! X- and Y- Components,
-    REAL,    INTENT(INOUT) :: AC(npa)   ! Wave Action before and
-    ! after advection
-    REAL,    INTENT(IN)    :: RD10, RD20   ! Time interpolation
-    ! coefficients for boundary
-    ! conditions
-    LOGICAL, INTENT(IN)    :: LCALC   ! Switch for the calculation of
-    ! the max. Global Time step
+    INTEGER, INTENT(IN)    :: ISP        ! Actual Frequency/Wavenumber,
+                                         ! actual Wave Direction
+    REAL,    INTENT(IN)    :: DT         ! Time interval for which the
+                                         ! advection should be computed
+                                         ! for the given velocity field
+    REAL,    INTENT(IN)    :: C(npa,2)   ! Velocity field in its
+                                         ! X- and Y- Components,
+    REAL,    INTENT(INOUT) :: AC(npa)    ! Wave Action before and
+                                         ! after advection
+    REAL,    INTENT(IN)    :: RD10, RD20 ! Time interpolation
+                                         ! coefficients for boundary
+                                         ! conditions
+    LOGICAL, INTENT(IN)    :: LCALC      ! Switch for the calculation of
+                                         ! the max. Global Time step
 #ifdef W3_REF1
     INTEGER(KIND=1)    :: IOBPDR_LOC(NPA)
 #endif
@@ -1555,11 +1555,11 @@ CONTAINS
 
     INCLUDE "mpif.h"
     !
-    REAL*8, INTENT(in) :: V(NSEAL)
+    REAL*8,       INTENT(in) :: V(NSEAL)
     CHARACTER(*), INTENT(in) :: string
-    INTEGER, INTENT(IN) :: maxidx
-    LOGICAL, INTENT(in) :: CheckUncovered
-    LOGICAL, INTENT(in) :: PrintFullValue
+    INTEGER,      INTENT(IN) :: maxidx
+    LOGICAL,      INTENT(in) :: CheckUncovered
+    LOGICAL,      INTENT(in) :: PrintFullValue
     !
     REAL*8, allocatable :: Vcoll(:)
     INTEGER, allocatable :: Status(:)
@@ -1706,7 +1706,7 @@ CONTAINS
 
     USE W3GDATMD , only : NSEAL
 
-    REAL*8, INTENT(in) :: V(NSEAL)
+    REAL*8,       INTENT(in) :: V(NSEAL)
     CHARACTER(*), INTENT(in) :: string
     REAL*8 :: V8(NSEAL)
     LOGICAL :: CheckUncovered = .FALSE.
@@ -1763,7 +1763,7 @@ CONTAINS
 
     USE W3GDATMD , only : NSEAL
 
-    REAL, INTENT(in) :: V(NSEAL)
+    REAL,         INTENT(in) :: V(NSEAL)
     CHARACTER(*), INTENT(in) :: string
     LOGICAL :: CheckUncovered = .FALSE.
     LOGICAL :: PrintFullValue = .FALSE.
@@ -1825,7 +1825,7 @@ CONTAINS
     USE YOWNODEPOOL , only : np, npa
 
     CHARACTER(*), INTENT(in) :: string
-    INTEGER, INTENT(in) :: choice
+    INTEGER,      INTENT(in) :: choice
     REAL :: FIELD(NSPEC,NSEAL)
     INTEGER ISPEC, JSEA, maxidx
     LOGICAL :: PrintMinISP = .FALSE.
@@ -1896,9 +1896,9 @@ CONTAINS
     USE W3GDATMD    , only : NSPEC, GRIDS, GTYPE, UNGTYPE
     USE YOWNODEPOOL , only : npa, np, iplg
 
-    INTEGER, INTENT(in) :: IMOD
+    INTEGER,      INTENT(in) :: IMOD
     CHARACTER(*), INTENT(in) :: string
-    INTEGER, INTENT(in) :: choice
+    INTEGER,      INTENT(in) :: choice
     REAL :: FIELD(NSPEC,NSEAL)
     INTEGER ISPEC, JSEA, IP_glob, maxidx
     LOGICAL :: PrintMinISP = .FALSE.
@@ -1990,7 +1990,7 @@ CONTAINS
     USE W3ODATMD , only : IAPROC
     USE W3GDATMD , only : NSPEC
 
-    REAL, INTENT(in) :: FIELD(NSPEC,NSEAL)
+    REAL,         INTENT(in) :: FIELD(NSPEC,NSEAL)
     CHARACTER(*), INTENT(in) :: string
     INTEGER :: maxidx
     LOGICAL :: PrintMinISP = .FALSE.
@@ -2059,9 +2059,9 @@ CONTAINS
 
     INCLUDE "mpif.h"
     CHARACTER(*), INTENT(in) :: string
-    INTEGER, INTENT(in) :: maxidx
-    REAL, INTENT(in) :: TheARR(NSPEC, npa)
-    LOGICAL, INTENT(in) :: PrintMinISP, LocalizeMaximum
+    INTEGER,      INTENT(in) :: maxidx
+    REAL,         INTENT(in) :: TheARR(NSPEC, npa)
+    LOGICAL,      INTENT(in) :: PrintMinISP, LocalizeMaximum
     !
     REAL :: Vcoll(NSPEC,NX), VcollExp(NSPEC*NX), rVect(NSPEC*NX)
     REAL :: CoherencyError_Max, CoherencyError_Sum
@@ -2262,8 +2262,8 @@ CONTAINS
     USE W3GDATMD    , only : NSPEC
     USE YOWNODEPOOL , only : npa
     CHARACTER(*), INTENT(in) :: string
-    INTEGER, INTENT(in) :: maxidx
-    REAL, INTENT(in) :: TheARR(NSPEC, npa)
+    INTEGER,      INTENT(in) :: maxidx
+    REAL,         INTENT(in) :: TheARR(NSPEC, npa)
     REAL*8 :: TheARR_red(npa)
     !      LOGICAL :: FULL_NSPEC = .FALSE.
     !      LOGICAL :: PrintMinISP = .FALSE.
@@ -2358,20 +2358,20 @@ CONTAINS
     use yowExchangeModule , only : PDLIB_exchange1DREAL
     USE yowRankModule     , only : IPGL_npa
 
-    INTEGER, INTENT(IN)    :: ISP   ! Actual Frequency/Wavenumber,
-    ! actual Wave Direction
-    REAL,    INTENT(IN)    :: DT    ! Time intervall for which the
-    ! advection should be computed
-    ! for the given velocity field
+    INTEGER, INTENT(IN)    :: ISP        ! Actual Frequency/Wavenumber,
+                                         ! actual Wave Direction
+    REAL,    INTENT(IN)    :: DT         ! Time intervall for which the
+                                         ! advection should be computed
+                                         ! for the given velocity field
     REAL,    INTENT(IN)    :: C(npa,2)   ! Velocity field in its
-    ! X- and Y- Components,
+                                         ! X- and Y- Components,
     REAL,    INTENT(INOUT) :: AC(npa)    ! Wave Action before and after
-    ! advection
-    REAL,    INTENT(IN)    :: RD10, RD20  ! Time interpolation
-    ! coefficients for boundary
-    ! condition
-    LOGICAL, INTENT(IN)    :: LCALC  ! Switch for the calculation of
-    ! the max. Global Time step
+                                         ! advection
+    REAL,    INTENT(IN)    :: RD10, RD20 ! Time interpolation
+                                         ! coefficients for boundary
+                                         ! condition
+    LOGICAL, INTENT(IN)    :: LCALC      ! Switch for the calculation of
+                                         ! the max. Global Time step
     INTEGER :: IP, IE, POS, IT, I1, I2, I3, I, J, ITH, IK
     INTEGER :: IBI, NI(3), JX
     REAL    :: RD1, RD2
@@ -2625,7 +2625,7 @@ CONTAINS
     USE W3GDATMD , only : B_JGS_USE_JACOBI
 
     INTEGER, INTENT(IN) :: IMOD
-    REAL, INTENT(IN)        :: FACX, FACY, DTG, VGX, VGY
+    REAL,    INTENT(IN) :: FACX, FACY, DTG, VGX, VGY
 #ifdef W3_DEBUGSOLVER
     WRITE(740+IAPROC,*) 'B_JGS_USE_JACOBI=', B_JGS_USE_JACOBI
     FLUSH(740+IAPROC)
@@ -2694,7 +2694,7 @@ CONTAINS
     USE W3GDATMD , only : B_JGS_USE_JACOBI
 
     INTEGER, INTENT(IN) :: IMOD
-    REAL, INTENT(IN) :: FACX, FACY, DTG, VGX, VGY
+    REAL,    INTENT(IN) :: FACX, FACY, DTG, VGX, VGY
     Print *, 'Before PDLIB_EXPLICIT_BLOCK'
     CALL PDLIB_EXPLICIT_BLOCK(IMOD, FACX, FACY, DTG, VGX, VGY)
     !/
@@ -2844,7 +2844,7 @@ CONTAINS
 
     INCLUDE "mpif.h"
     CHARACTER(*), INTENT(in) :: eFile
-    REAL, INTENT(in) :: TheARR(NSPEC, npa)
+    REAL,         INTENT(in) :: TheARR(NSPEC, npa)
     !
     REAL :: Vcoll(NSPEC,NX), VcollExp(NSPEC*NX), rVect(NSPEC*NX)
     REAL :: CoherencyError, eVal1, eVal2, eErr
@@ -3061,8 +3061,9 @@ CONTAINS
     USE W3SERVMD , only : STRACE
 #endif
     !
-    REAL, INTENT(IN)        :: A(NTH,NK), CG(NK), WN(NK)
-    REAL, INTENT(OUT)       :: EMEAN, FMEAN, WNMEAN, AMAX
+    REAL, INTENT(IN)  :: A(NTH,NK), CG(NK), WN(NK)
+    REAL, INTENT(OUT) :: EMEAN, FMEAN, WNMEAN, AMAX
+
     INTEGER                 :: IK, ITH
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
@@ -3219,6 +3220,7 @@ CONTAINS
     USE W3STR1MD
 #endif
     REAL, INTENT(in) :: DTG, FACX, FACY, VGX, VGY
+
     INTEGER :: IP, ISP, ISEA, IP_glob
     INTEGER :: idx, IS
     INTEGER :: I, J, ITH, IK, J2
@@ -3443,6 +3445,7 @@ CONTAINS
     USE W3STR1MD
 #endif
     REAL, INTENT(in) :: DTG, FACX, FACY, VGX, VGY
+
     INTEGER :: IP, ISP, ISEA, IP_glob
     INTEGER :: idx, IS
     INTEGER :: I, J, ITH, IK, J2
@@ -3684,6 +3687,7 @@ CONTAINS
     USE W3STR1MD
 #endif
     REAL, INTENT(in) :: DTG, FACX, FACY, VGX, VGY
+
     INTEGER :: IP, ISP, ISEA, IP_glob
     INTEGER :: idx, IS
     INTEGER :: I, J, ITH, IK, J2
@@ -3886,10 +3890,11 @@ CONTAINS
 #ifdef W3_TR1
     USE W3STR1MD
 #endif
-    INTEGER, INTENT(IN) :: IP
+    INTEGER, INTENT(IN)    :: IP
     INTEGER, INTENT(INOUT) :: J
-    REAL, INTENT(in) :: DTG, FACX, FACY, VGX, VGY
-    REAL, INTENT(out) :: ASPAR_DIAG_LOCAL(NSPEC), B_JAC_LOCAL(NSPEC), ASPAR_OFF_DIAG_LOCAL(NSPEC)
+    REAL,    INTENT(in)    :: DTG, FACX, FACY, VGX, VGY
+    REAL,    INTENT(out)   :: ASPAR_DIAG_LOCAL(NSPEC), B_JAC_LOCAL(NSPEC), ASPAR_OFF_DIAG_LOCAL(NSPEC)
+
     INTEGER :: ISP, ISEA, IP_glob, IPP1, IPP2
     INTEGER :: idx, IS, IP1, IP2
     INTEGER :: I, ITH, IK, J2
@@ -4088,9 +4093,9 @@ CONTAINS
 #ifdef W3_TR1
     USE W3STR1MD
 #endif
-    INTEGER, INTENT(IN) :: IP
-    REAL, INTENT(in) :: DTG, FACX, FACY, VGX, VGY
-    REAL, INTENT(out) :: ASPAR_DIAG_LOCAL(NSPEC), B_JAC_LOCAL(NSPEC), ASPAR_OFF_DIAG_LOCAL(NSPEC)
+    INTEGER, INTENT(IN)  :: IP
+    REAL,    INTENT(in)  :: DTG, FACX, FACY, VGX, VGY
+    REAL,    INTENT(out) :: ASPAR_DIAG_LOCAL(NSPEC), B_JAC_LOCAL(NSPEC), ASPAR_OFF_DIAG_LOCAL(NSPEC)
     !
     INTEGER :: IP1, IP2
     INTEGER :: ITH, IK
@@ -4323,7 +4328,7 @@ CONTAINS
     USE W3STR1MD
 #endif
     INTEGER, INTENT(IN) :: IE
-    REAL, INTENT(in) :: DTG, FACX, FACY, VGX, VGY
+    REAL,    INTENT(in) :: DTG, FACX, FACY, VGX, VGY
     !
     INTEGER :: IP, IP1, IP2
     INTEGER :: ITH, IK
@@ -4494,6 +4499,7 @@ CONTAINS
     USE W3ADATMD    , only : CG, DW
 
     REAL, INTENT(in) :: DTG
+
     INTEGER :: IP, IP_glob, ITH, IK
     INTEGER :: ISEA, ISP
     REAL ::  eSI
@@ -4647,8 +4653,9 @@ CONTAINS
     USE W3PARALL    , only : PROP_REFRACTION_PR3, PROP_REFRACTION_PR1, PROP_FREQ_SHIFT, PROP_FREQ_SHIFT_M2, ZERO, IMEM
     USE W3ADATMD    , only : CG, DW
 
-    REAL, INTENT(in) :: DTG
+    REAL, INTENT(in)    :: DTG
     REAL, INTENT(inout) :: ASPAR_DIAG_LOCAL(nspec,NSEAL)
+
     INTEGER :: IP, IP_glob, ITH, IK
     INTEGER :: ISEA, ISP
     REAL ::  eSI
@@ -4818,6 +4825,7 @@ CONTAINS
     USE constants   , only : TPI, TPIINV, GRAV
 
     REAL, INTENT(in) :: DTG
+
     REAL, PARAMETER :: COEF4 = 5.0E-07
     REAL, PARAMETER :: FACDAM = 1
     INTEGER :: JSEA, IP, IP_glob, ISEA
@@ -4984,8 +4992,9 @@ CONTAINS
     USE W3WDATMD    , only : VA, VSTOT, VDTOT, SHAVETOT
     USE constants   , only : TPI, TPIINV, GRAV
 
-    REAL, INTENT(in) :: DTG
+    REAL, INTENT(in)    :: DTG
     REAL, INTENT(inout) :: ASPAR_DIAG_LOCAL(:,:)
+
     REAL, PARAMETER :: COEF4 = 5.0E-07
     REAL, PARAMETER :: FACDAM = 1
     INTEGER :: JSEA, IP, IP_glob, ISEA
@@ -5587,7 +5596,7 @@ CONTAINS
     USE W3DISPMD          , only : WAVNU_LOCAL
 
     INTEGER, INTENT(IN) :: IMOD
-    REAL, INTENT(IN) :: FACX, FACY, DTG, VGX, VGY
+    REAL,    INTENT(IN) :: FACX, FACY, DTG, VGX, VGY
     !
     INTEGER :: IP, ISP, ITH, IK, JSEA, ISEA, IP_glob
     INTEGER :: myrank
@@ -6436,8 +6445,8 @@ CONTAINS
     USE W3PARALL          , only : JX_TO_JSEA
     USE W3GDATMD          , only : B_JGS_NLEVEL
     !
-    INTEGER, INTENT(IN)     :: IMOD
-    REAL, INTENT(IN)        :: FACX, FACY, DTG, VGX, VGY
+    INTEGER, INTENT(IN) :: IMOD
+    REAL,    INTENT(IN) :: FACX, FACY, DTG, VGX, VGY
     !
     INTEGER :: IP, ISP, ITH, IK, JSEA, ISEA, IP_glob, IE, IPOS
     ! for the exchange

@@ -194,8 +194,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NTH,NK), CG(NK), DEPTH
-    REAL, INTENT(OUT)       :: S(NTH,NK), D(NTH,NK)
+    REAL, INTENT(IN)  :: A(NTH,NK), CG(NK), DEPTH
+    REAL, INTENT(OUT) :: S(NTH,NK), D(NTH,NK)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

@@ -1192,9 +1192,12 @@ CONTAINS
     !-----------------------------------------------------------------------------!
     USE CONSTANTS , ONLY : GRAV
     USE W3GDATMD  , ONLY : ZZWND, AALPHA
+
     IMPLICIT NONE
+
     REAL, intent(in)  :: WINDSPEED,TAUW
     REAL, intent(out) :: USTAR, Z0, CHARN
+
     ! local variables
     REAL SQRTCDM1
     REAL X,XI,DELI1,DELI2,XJ,delj1,delj2

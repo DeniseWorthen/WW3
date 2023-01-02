@@ -646,14 +646,14 @@ contains
     !/
     implicit none
     !
-    integer,         intent(in)  :: ns     ! length of 1D wavenumber
+ integer,            intent(in)  :: ns     ! length of 1D wavenumber
                                            ! vector, ns = nk * nth
     real,            intent(in)  :: kx(ns)
     real,            intent(in)  :: ky(ns) ! (kx, ky) components
     real,            intent(in)  :: om(ns) ! ω or σ
     real,            intent(in)  :: oml    ! cut-off value λc for the
                                            ! quasi-resonant criterion 2)
-    !
+                                           !
     integer(kind=8), intent(out) :: nnz    ! total number of quartets
                                            ! i.e., nonzero values
                                            ! in the large-sparse matrix
@@ -922,12 +922,12 @@ contains
     !/
     implicit none
     !
-    integer,        intent(in)  :: nrow               ! # of rows of sparse matrix
-    integer(kind=8), intent(in) :: nnz                ! # of nonzero elements
-    integer,        intent(in)  :: ir(nnz)            ! COO row
-    integer,        intent(in)  :: jc(nnz)            ! COO col
-    integer,        intent(out) :: ind_translate(nnz) ! indices from COO to CSR
-    integer,        intent(out) :: iao(nrow+1)        ! CSR iao
+    integer,         intent(in)  :: nrow               ! # of rows of sparse matrix
+    integer(kind=8), intent(in)  :: nnz                ! # of nonzero elements
+    integer,         intent(in)  :: ir(nnz)            ! COO row
+    integer,         intent(in)  :: jc(nnz)            ! COO col
+    integer,         intent(out) :: ind_translate(nnz) ! indices from COO to CSR
+    integer,         intent(out) :: iao(nrow+1)        ! CSR iao
     !
     ! Local parameters
     integer              :: i, j, k, k0, iad

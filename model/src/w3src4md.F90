@@ -1767,9 +1767,12 @@ CONTAINS
 #ifdef W3_T
     USE W3ODATMD  , ONLY : NDST
 #endif
+
     IMPLICIT NONE
+
     REAL, intent(in)  :: WINDSPEED, TAUW
     REAL, intent(out) :: USTAR, Z0, CHARN
+
     ! local variables
     REAL SQRTCDM1
     REAL XI,DELI1,DELI2,XJ,delj1,delj2

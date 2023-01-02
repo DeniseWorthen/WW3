@@ -713,9 +713,9 @@ CONTAINS
     IMPLICIT NONE
 
     ! Input parameters:
-    REAL, INTENT(IN)    :: S(:)        ! Inupt array
-    REAL, INTENT(OUT)   :: XY(NXO,NYO) ! Output data
-    LOGICAL, INTENT(IN) :: DIRN        ! Directional field?
+    REAL,    INTENT(IN)  :: S(:)        ! Inupt array
+    REAL,    INTENT(OUT) :: XY(NXO,NYO) ! Output data
+    LOGICAL, INTENT(IN)  :: DIRN        ! Directional field?
 
     ! Local parameters
     INTEGER           :: I, J, IX, IY, ISEA, ISMC
@@ -765,9 +765,9 @@ CONTAINS
     IMPLICIT NONE
 
     ! Input parameters:
-    REAL, INTENT(IN)    :: S(:)        ! Input array
-    REAL, INTENT(OUT)   :: XY(NXO,NYO) ! Output array
-    LOGICAL, INTENT(IN) :: DIRN        ! Directional field?
+    REAL,    INTENT(IN)  :: S(:)        ! Input array
+    REAL,    INTENT(OUT) :: XY(NXO,NYO) ! Output array
+    LOGICAL, INTENT(IN)  :: DIRN        ! Directional field?
 
     ! Locals
     INTEGER           :: I, J, IX, IY, ISEA, ISMC

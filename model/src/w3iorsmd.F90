@@ -343,11 +343,11 @@ CONTAINS
     !/
     ! TODO: NDSR is an argument; why has the intent(in) been removed?
     !      INTEGER, INTENT(IN)           :: NDSR
-    INTEGER                       :: NDSR
-    INTEGER, INTENT(IN), OPTIONAL :: IMOD
-    REAL, INTENT(INOUT)           :: DUMFPI
-    CHARACTER, INTENT(IN)         :: INXOUT*(*)
-    LOGICAL, INTENT(IN),OPTIONAL  :: FLRSTRT
+    INTEGER                         :: NDSR
+    INTEGER,   INTENT(IN), OPTIONAL :: IMOD
+    REAL,      INTENT(INOUT)        :: DUMFPI
+    CHARACTER, INTENT(IN)           :: INXOUT*(*)
+    LOGICAL,   INTENT(IN), OPTIONAL :: FLRSTRT
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

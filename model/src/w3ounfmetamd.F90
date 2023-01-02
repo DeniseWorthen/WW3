@@ -316,7 +316,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
 
-    LOGICAL, INTENT(IN), OPTIONAL  :: VEC
+    LOGICAL, INTENT(IN), OPTIONAL :: VEC
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -514,11 +514,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)       :: NDMI
-    CHARACTER(*), INTENT(OUT) :: BUF
-    INTEGER, INTENT(INOUT)    :: ILINE
-    LOGICAL, INTENT(OUT)      :: EOF
-    LOGICAL, INTENT(OUT), OPTIONAL :: NEW_SECTION
+    INTEGER,      INTENT(IN)            :: NDMI
+    CHARACTER(*), INTENT(OUT)           :: BUF
+    INTEGER,      INTENT(INOUT)         :: ILINE
+    LOGICAL,      INTENT(OUT)           :: EOF
+    LOGICAL,      INTENT(OUT), OPTIONAL :: NEW_SECTION
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
@@ -946,9 +946,9 @@ CONTAINS
 
     IMPLICIT NONE
 
-    CHARACTER(*), INTENT(IN) :: BUF
-    INTEGER, INTENT(IN) :: ILINE
-    INTEGER, INTENT(OUT) :: IFI, IFJ, IFC
+    CHARACTER(*), INTENT(IN)  :: BUF
+    INTEGER,      INTENT(IN)  :: ILINE
+    INTEGER,      INTENT(OUT) :: IFI, IFJ, IFC
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
@@ -1076,9 +1076,9 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
-    INTEGER, INTENT(IN)                  :: NDMI
+    INTEGER,      INTENT(IN)             :: NDMI
     TYPE(META_T), INTENT(INOUT), POINTER :: META
-    INTEGER, INTENT(INOUT)               :: ILINE
+    INTEGER,      INTENT(INOUT)          :: ILINE
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !
@@ -1264,7 +1264,7 @@ CONTAINS
     IMPLICIT NONE
 
     CHARACTER(*), INTENT(IN)  :: BUF
-    INTEGER, INTENT(IN)       :: ILINE
+    INTEGER,      INTENT(IN)  :: ILINE
     CHARACTER(*), INTENT(OUT) :: ATTV, ATT_TYPE
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1371,9 +1371,9 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
-    INTEGER, INTENT(IN)               :: NDMI
-    INTEGER, INTENT(INOUT)            :: ILINE
-    TYPE(META_LIST_T), INTENT(INOUT)  :: METALIST
+    INTEGER,           INTENT(IN)    :: NDMI
+    INTEGER,           INTENT(INOUT) :: ILINE
+    TYPE(META_LIST_T), INTENT(INOUT) :: METALIST
 
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1476,8 +1476,8 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
-    INTEGER, INTENT(IN)     :: NDMI
-    INTEGER, INTENT(INOUT)  :: ILINE
+    INTEGER, INTENT(IN)    :: NDMI
+    INTEGER, INTENT(INOUT) :: ILINE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1642,7 +1642,7 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
-    INTEGER, INTENT(IN) :: IFI, IFJ
+    INTEGER, INTENT(IN)           :: IFI, IFJ
     INTEGER, INTENT(IN), OPTIONAL :: ICOMP, IPART
     !/
     !/ ------------------------------------------------------------------- /
@@ -1752,8 +1752,8 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
-    INTEGER, INTENT(IN)               :: NDMI
-    INTEGER, INTENT(INOUT)            :: ILINE
+    INTEGER, INTENT(IN)    :: NDMI
+    INTEGER, INTENT(INOUT) :: ILINE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1928,7 +1928,7 @@ CONTAINS
     IMPLICIT NONE
 
     TYPE(META_T), INTENT(INOUT) :: META
-    INTEGER, INTENT(IN) :: IPART
+    INTEGER,      INTENT(IN)    :: IPART
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2009,7 +2009,7 @@ CONTAINS
     IMPLICIT NONE
 
     CHARACTER(LEN=*), INTENT(INOUT) :: INSTR
-    INTEGER, INTENT(IN) :: IPART
+    INTEGER,          INTENT(IN)    :: IPART
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2141,9 +2141,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN) :: NCID, VARID
-    TYPE(META_T), INTENT(IN) :: META
-    INTEGER, INTENT(OUT) :: ERR
+    INTEGER,      INTENT(IN)  :: NCID, VARID
+    TYPE(META_T), INTENT(IN)  :: META
+    INTEGER,      INTENT(OUT) :: ERR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2270,7 +2270,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN) :: NCID
+    INTEGER, INTENT(IN)  :: NCID
     INTEGER, INTENT(OUT) :: ERR
     !/
     !/ ------------------------------------------------------------------- /
@@ -2319,9 +2319,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN) :: NCID, VARID
-    TYPE(META_LIST_T), INTENT(IN) :: METALIST
-    INTEGER, INTENT(OUT) :: ERR
+    INTEGER,           INTENT(IN)  :: NCID, VARID
+    TYPE(META_LIST_T), INTENT(IN)  :: METALIST
+    INTEGER,           INTENT(OUT) :: ERR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
