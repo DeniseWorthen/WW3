@@ -645,7 +645,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDSE, NDST
+    INTEGER, INTENT(IN) :: NDSE, NDST
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -854,7 +854,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)           :: IMOD, NDSE, NDST, J
+    INTEGER, INTENT(IN) :: IMOD, NDSE, NDST, J
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1055,7 +1055,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)           :: IMOD, NDSE, NDST
+    INTEGER, INTENT(IN) :: IMOD, NDSE, NDST
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1224,7 +1224,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, NDSE, NDST
+    INTEGER, INTENT(IN) :: IMOD, NDSE, NDST
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1378,13 +1378,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    integer, intent(in) :: ISEA, J
+    integer, intent(in)  :: ISEA, J
     integer, intent(out) :: JSEA, ISPROC
-    integer nb
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
+
+    integer nb
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
 #endif

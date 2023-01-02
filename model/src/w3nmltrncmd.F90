@@ -114,13 +114,13 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                         :: NDSI
-    CHARACTER*(*), INTENT(IN)                   :: INFILE
-    TYPE(NML_TRACK_T), INTENT(INOUT)            :: NML_TRACK
-    TYPE(NML_FILE_T), INTENT(INOUT)             :: NML_FILE
-    INTEGER, INTENT(OUT)                        :: IERR
+    INTEGER,           INTENT(IN)    :: NDSI
+    CHARACTER*(*),     INTENT(IN)    :: INFILE
+    TYPE(NML_TRACK_T), INTENT(INOUT) :: NML_TRACK
+    TYPE(NML_FILE_T),  INTENT(INOUT) :: NML_FILE
+    INTEGER,           INTENT(OUT)   :: IERR
 #ifdef W3_S
-    INTEGER, SAVE                             :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -230,15 +230,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                 :: NDSI
-    TYPE(NML_TRACK_T), INTENT(INOUT)    :: NML_TRACK
-    INTEGER                             :: IERR
+    INTEGER,           INTENT(IN)    :: NDSI
+    TYPE(NML_TRACK_T), INTENT(INOUT) :: NML_TRACK
 
+    INTEGER :: IERR
     ! locals
     TYPE(NML_TRACK_T) :: TRACK
     NAMELIST /TRACK_NML/ TRACK
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -336,15 +336,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                 :: NDSI
-    TYPE(NML_FILE_T), INTENT(INOUT)     :: NML_FILE
-    INTEGER                             :: IERR
+    INTEGER,          INTENT(IN)    :: NDSI
+    TYPE(NML_FILE_T), INTENT(INOUT) :: NML_FILE
 
+    INTEGER :: IERR
     ! locals
     TYPE(NML_FILE_T) :: FILE
     NAMELIST /FILE_NML/ FILE
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -443,7 +443,7 @@ CONTAINS
 
     TYPE(NML_TRACK_T), INTENT(IN) :: NML_TRACK
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -535,7 +535,7 @@ CONTAINS
 
     TYPE(NML_FILE_T), INTENT(IN) :: NML_FILE
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S

@@ -251,11 +251,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)           :: NDSB
-    INTEGER, INTENT(INOUT)        :: TIME1(2)
-    INTEGER, INTENT(OUT)          :: TIME2(2), IOTST
-    INTEGER, INTENT(IN), OPTIONAL :: IMOD
-    CHARACTER, INTENT(IN)         :: INXOUT*(*)
+    INTEGER,   INTENT(IN)           :: NDSB
+    INTEGER,   INTENT(INOUT)        :: TIME1(2)
+    INTEGER,   INTENT(OUT)          :: TIME2(2), IOTST
+    INTEGER,   INTENT(IN), OPTIONAL :: IMOD
+    CHARACTER, INTENT(IN)           :: INXOUT*(*)
     !/
     !/
     !/ ------------------------------------------------------------------- /

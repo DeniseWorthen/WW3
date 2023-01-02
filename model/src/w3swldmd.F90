@@ -332,8 +332,8 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL, INTENT(IN)    :: A(NSPEC), CG(NK), WN(NK)
-    REAL, INTENT(OUT)   :: S(NSPEC), D(NSPEC)
+    REAL, INTENT(IN)  :: A(NSPEC), CG(NK), WN(NK)
+    REAL, INTENT(OUT) :: S(NSPEC), D(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -446,8 +446,10 @@ CONTAINS
     !
     !/
     IMPLICIT NONE
+
     INTEGER, INTENT(IN)  :: X0, X1, DX
     INTEGER, ALLOCATABLE :: IX(:)
+
     INTEGER              :: N
     INTEGER              :: I
     !

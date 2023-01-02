@@ -150,10 +150,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: ISP
-    REAL, INTENT(IN)        :: FACX, FACY, DTG, VGX, VGY
-    REAL, INTENT(INOUT)     :: VQ(1-NY:NY*(NX+2))
-    LOGICAL, INTENT(IN)     :: LCALC
+    INTEGER, INTENT(IN)    :: ISP
+    REAL,    INTENT(IN)    :: FACX, FACY, DTG, VGX, VGY
+    REAL,    INTENT(INOUT) :: VQ(1-NY:NY*(NX+2))
+    LOGICAL, INTENT(IN)    :: LCALC
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -360,9 +360,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: ISEA, NKCFL, MAPFS(NY*NX)
-    REAL, INTENT(IN)        :: FACX, FACY, DT, VGX, VGY
-    REAL, INTENT(INOUT)     :: CFLXYMAX
+    INTEGER, INTENT(IN)    :: ISEA, NKCFL, MAPFS(NY*NX)
+    REAL,    INTENT(IN)    :: FACX, FACY, DT, VGX, VGY
+    REAL,    INTENT(INOUT) :: CFLXYMAX
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -539,12 +539,13 @@ USE W3GDATMD, ONLY : IOBPA, FSBCCFL
 #endif
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)    :: ISP                   ! Actual Frequency/Wavenumber, actual Wave Direction
-    REAL,    INTENT(IN)    :: DT                    ! Time intervall for which the advection should be computed for the given velocity field
-    REAL,    INTENT(IN)    :: C(:,:)                ! Velocity field in it's X- and Y- Components,
-    DOUBLE PRECISION, INTENT(INOUT):: AC(:)         ! Wave Action before and after advection
-    REAL,    INTENT(IN)    :: RD10, RD20            ! Time interpolation coefficients for boundary conditions
-    LOGICAL, INTENT(IN)    :: LCALC                 ! Switch for the calculation of the max. Global Time step
+    INTEGER,          INTENT(IN)    :: ISP        ! Actual Frequency/Wavenumber, actual Wave Direction
+    REAL,             INTENT(IN)    :: DT         ! Time intervall for which the advection should be
+                                                  ! computed for the given velocity field
+    REAL,             INTENT(IN)    :: C(:,:)     ! Velocity field in it's X- and Y- Components,
+    DOUBLE PRECISION, INTENT(INOUT) :: AC(:)      ! Wave Action before and after advection
+    REAL,             INTENT(IN)    :: RD10, RD20 ! Time interpolation coefficients for boundary conditions
+    LOGICAL,          INTENT(IN)    :: LCALC      ! Switch for the calculation of the max. Global Time step
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -782,12 +783,13 @@ USE W3GDATMD, ONLY : IOBPA, FSBCCFL
 #endif
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)    :: ISP                   ! Actual Frequency/Wavenumber, actual Wave Direction
-    REAL,    INTENT(IN)    :: DT                    ! Time intervall for which the advection should be computed for the given velocity field
-    REAL,    INTENT(IN)    :: C(:,:)              ! Velocity field in it's X- and Y- Components,
-    DOUBLE PRECISION,INTENT(INOUT) :: AC(:)         ! Wave Action before and after advection
-    REAL,    INTENT(IN)    :: RD10, RD20            ! Time interpolation coefficients for boundary conditions
-    LOGICAL, INTENT(IN)    :: LCALC                 ! Switch for the calculation of the max. Global Time step
+    INTEGER,          INTENT(IN)    :: ISP        ! Actual Frequency/Wavenumber, actual Wave Direction
+    REAL,             INTENT(IN)    :: DT         ! Time intervall for which the advection should be
+                                                  ! computed for the given velocity field
+    REAL,             INTENT(IN)    :: C(:,:)     ! Velocity field in it's X- and Y- Components,
+    DOUBLE PRECISION, INTENT(INOUT) :: AC(:)      ! Wave Action before and after advection
+    REAL,             INTENT(IN)    :: RD10, RD20 ! Time interpolation coefficients for boundary conditions
+    LOGICAL,          INTENT(IN)    :: LCALC      ! Switch for the calculation of the max. Global Time step
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -1037,12 +1039,13 @@ USE W3GDATMD, ONLY : IOBPA, FSBCCFL
 #endif
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)    :: ISP                   ! Actual Frequency/Wavenumber, actual Wave Direction
-    REAL,    INTENT(IN)    :: DT                    ! Time intervall for which the advection should be computed for the given velocity field
-    REAL,    INTENT(IN)    :: C(:,:)              ! Velocity field in it's X- and Y- Components,
-    DOUBLE PRECISION,INTENT(INOUT) :: AC(:)         ! Wave Action before and after advection
-    REAL,    INTENT(IN)    :: RD10, RD20            ! Time interpolation coefficients for boundary conditions
-    LOGICAL, INTENT(IN)    :: LCALC                 ! Switch for the calculation of the max. Global Time step
+    INTEGER,          INTENT(IN)    :: ISP        ! Actual Frequency/Wavenumber, actual Wave Direction
+    REAL,             INTENT(IN)    :: DT         ! Time intervall for which the advection should be
+                                                  ! computed for the given velocity field
+    REAL,             INTENT(IN)    :: C(:,:)     ! Velocity field in it's X- and Y- Components,
+    DOUBLE PRECISION, INTENT(INOUT) :: AC(:)      ! Wave Action before and after advection
+    REAL,             INTENT(IN)    :: RD10, RD20 ! Time interpolation coefficients for boundary conditions
+    LOGICAL,          INTENT(IN)    :: LCALC      ! Switch for the calculation of the max. Global Time step
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -1338,12 +1341,13 @@ USE W3GDATMD, ONLY : IOBPA, FSBCCFL
 #endif
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)    :: ISP                   ! Actual Frequency/Wavenumber, actual Wave Direction
-    REAL,    INTENT(IN)    :: DT                    ! Time intervall for which the advection should be computed for the given velocity field
-    REAL,    INTENT(IN)    :: C(:,:)              ! Velocity field in it's X- and Y- Components,
-    DOUBLE PRECISION,    INTENT(INOUT) :: AC(:)               ! Wave Action before and after advection
-    REAL,    INTENT(IN)    :: RD10, RD20            ! Time interpolation coefficients for boundary condition
-    LOGICAL, INTENT(IN)    :: LCALC                 ! Switch for the calculation of the max. Global Time step
+    INTEGER,          INTENT(IN)    :: ISP        ! Actual Frequency/Wavenumber, actual Wave Direction
+    REAL,             INTENT(IN)    :: DT         ! Time intervall for which the advection should be
+                                                  ! computed for the given velocity field
+    REAL,             INTENT(IN)    :: C(:,:)     ! Velocity field in it's X- and Y- Components,
+    DOUBLE PRECISION, INTENT(INOUT) :: AC(:)      ! Wave Action before and after advection
+    REAL,             INTENT(IN)    :: RD10, RD20 ! Time interpolation coefficients for boundary condition
+    LOGICAL,          INTENT(IN)    :: LCALC      ! Switch for the calculation of the max. Global Time step
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list

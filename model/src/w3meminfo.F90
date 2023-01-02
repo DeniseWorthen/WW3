@@ -157,6 +157,7 @@ contains
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
+    type(MallInfo_t), intent(out) :: malinfo
     !/ ------------------------------------------------------------------- /
     !/ Local PARAMETERs
     !/
@@ -169,7 +170,6 @@ contains
 #ifdef W3_S
     CALL STRACE (IENT, 'W3XXXX')
 #endif
-    type(MallInfo_t), intent(out) :: malinfo
     malinfo = mallinfo()
   end subroutine getMallocInfo
 
@@ -226,6 +226,8 @@ contains
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
+    integer,          intent(in) :: ihdnl
+    type(MallInfo_t), intent(in) :: malinfo
     !/ ------------------------------------------------------------------- /
     !/ Local PARAMETERs
     !/
@@ -240,8 +242,6 @@ contains
 #endif
     real :: ib2m
     integer(8) :: vmsize, vmRSS
-    integer, intent(in)          :: ihdnl
-    type(MallInfo_t), intent(in) :: malinfo
 
 
     if (ihdnl .lt. 1) stop 'ihndl not set'

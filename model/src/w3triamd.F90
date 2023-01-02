@@ -211,8 +211,8 @@ CONTAINS
     !/
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)                :: NDS
-    CHARACTER(60), INTENT(IN)          :: FNAME
+    INTEGER,       INTENT(IN) :: NDS
+    CHARACTER(60), INTENT(IN) :: FNAME
     !/
     !/ local parameters
     !/
@@ -466,8 +466,8 @@ CONTAINS
     !/
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)                :: NDS
-    CHARACTER(60), INTENT(IN)          :: FNAME
+    INTEGER,       INTENT(IN) :: NDS
+    CHARACTER(60), INTENT(IN) :: FNAME
     !/
     !/ local parameters
     !/
@@ -577,6 +577,7 @@ CONTAINS
     !/
     !
     integer*2, intent(out) :: STATUS(NX)
+
     INTEGER :: COLLECTED(NX), NEXTVERT(NX), PREVVERT(NX)
     INTEGER :: ISFINISHED, INEXT, IPREV
     INTEGER :: IPNEXT, IPPREV, ZNEXT, IP, I, IE
@@ -725,10 +726,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)                :: NDS
-    CHARACTER(60), INTENT(IN) :: FNAME
-    INTEGER, INTENT(INOUT)    :: TMPSTA(NY,NX)
-    LOGICAL, INTENT(OUT)      :: UGOBCOK
+    INTEGER,       INTENT(IN)    :: NDS
+    CHARACTER(60), INTENT(IN)    :: FNAME
+    INTEGER,       INTENT(INOUT) :: TMPSTA(NY,NX)
+    LOGICAL,       INTENT(OUT)   :: UGOBCOK
     !/
     !/ local parameters
     !/
@@ -840,16 +841,16 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(INOUT)  :: TMPSTA(NY,NX)
-#ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
-#endif
-    REAL   , INTENT(IN)     :: ZBIN(NY,NX)
-    REAL   , INTENT(IN)     :: ZLIM
+    INTEGER, INTENT(INOUT) :: TMPSTA(NY,NX)
+    REAL,    INTENT(IN)    :: ZBIN(NY,NX)
+    REAL,    INTENT(IN)    :: ZLIM
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
+#ifdef W3_S
+    INTEGER, SAVE           :: IENT = 0
+#endif
     INTEGER                 ::  IBC, IX
     INTEGER                 ::  MASK(NX)
     INTEGER*2               ::  STATUS(NX)
@@ -1191,7 +1192,7 @@ CONTAINS
 
     !/ parameter list
 
-    INTEGER,INTENT(IN) :: TRIGPTEMP(:,:)
+    INTEGER, INTENT(IN) :: TRIGPTEMP(:,:)
     !/ ------------------------------------------------------------------- /
     !/ local parameter
 
@@ -1716,11 +1717,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     ! Parameter list
 
-    INTEGER, INTENT(IN)            :: IMOD
-    DOUBLE PRECISION, INTENT(IN)   :: XTIN, YTIN
-    INTEGER, INTENT(OUT)           :: itout
-    INTEGER, INTENT(OUT)           :: IS(4), JS(4)
-    REAL, INTENT(OUT)              :: RW(4)
+    INTEGER,          INTENT(IN)  :: IMOD
+    DOUBLE PRECISION, INTENT(IN)  :: XTIN, YTIN
+    INTEGER,          INTENT(OUT) :: itout
+    INTEGER,          INTENT(OUT) :: IS(4), JS(4)
+    REAL,             INTENT(OUT) :: RW(4)
     !/ ------------------------------------------------------------------- /
     !local parameters
 
@@ -1920,11 +1921,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     ! Parameter list
 
-    INTEGER, INTENT(IN)            :: IMOD, FORCE
-    DOUBLE PRECISION, INTENT(IN)            :: XTIN, YTIN
-    INTEGER, INTENT(OUT)           :: itout
-    INTEGER, INTENT(OUT)           :: IS(4), JS(4)
-    REAL, INTENT(OUT)              :: RW(4)
+    INTEGER,          INTENT(IN)  :: IMOD, FORCE
+    DOUBLE PRECISION, INTENT(IN)  :: XTIN, YTIN
+    INTEGER,          INTENT(OUT) :: itout
+    INTEGER,          INTENT(OUT) :: IS(4), JS(4)
+    REAL,             INTENT(OUT) :: RW(4)
     !/ ------------------------------------------------------------------- /
     !local parameters
 
@@ -2101,8 +2102,8 @@ CONTAINS
     IMPLICIT NONE
 
 
-    REAL, INTENT(IN)     :: PARAM(0:NSEA)
-    REAL, INTENT(OUT)  :: DIFFX(:,:), DIFFY(:,:)
+    REAL, INTENT(IN)  :: PARAM(0:NSEA)
+    REAL, INTENT(OUT) :: DIFFX(:,:), DIFFY(:,:)
 
     ! local parameters
 
@@ -2241,8 +2242,8 @@ CONTAINS
     USE W3GDATMD , ONLY : NX, XGRD, YGRD, MAPSTA, MAPFS, MAPSF
 
 
-    REAL, INTENT(IN)         :: DISTMIN
-    LOGICAL, INTENT(INOUT)         :: FLOK
+    REAL,    INTENT(IN)    :: DISTMIN
+    LOGICAL, INTENT(INOUT) :: FLOK
 
     INTEGER                   :: I, J, JMEMO, IS, IX,  N, IX1(NBI)
     REAL                      :: DIST, DIST0
@@ -2387,7 +2388,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)   :: MASK(NX)
+    INTEGER,   INTENT(IN)   :: MASK(NX)
     INTEGER*2, INTENT(OUT)  :: STATUS(NX)
     !
     INTEGER :: COLLECTED(NX), NEXTVERT(NX), PREVVERT(NX)
@@ -2539,6 +2540,10 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
+    INTEGER,   INTENT(IN)    :: MNP, MNE, TRIGP(3,MNE)
+    INTEGER*2, INTENT(INOUT) :: IOBP(MNP)
+    INTEGER,   INTENT(INOUT) :: NEIGHBOR_PREV(MNP)
+    INTEGER,   INTENT(INOUT) :: NEIGHBOR_NEXT(MNP)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local PARAMETERs
@@ -2547,10 +2552,6 @@ CONTAINS
     INTEGER, SAVE           :: IENT = 0
 #endif
 
-    INTEGER, INTENT(IN)             :: MNP, MNE, TRIGP(3,MNE)
-    INTEGER*2, INTENT(INOUT)        :: IOBP(MNP)
-    INTEGER, INTENT(INOUT)          :: NEIGHBOR_PREV(MNP)
-    INTEGER, INTENT(INOUT)          :: NEIGHBOR_NEXT(MNP)
 
     INTEGER, POINTER :: STATUS(:)
     INTEGER, POINTER :: COLLECTED(:)
@@ -2777,6 +2778,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
+    INTEGER, INTENT(IN)  :: I
+    INTEGER, INTENT(OUT) :: INEXT, IPREV
     !/ ------------------------------------------------------------------- /
     !/ Local PARAMETERs
     !/
@@ -2786,8 +2789,6 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    INTEGER, INTENT(IN)  :: I
-    INTEGER, INTENT(OUT) :: INEXT, IPREV
 #ifdef W3_S
     CALL STRACE (IENT, 'TRIANG_INDEXES')
 #endif
@@ -3204,9 +3205,9 @@ CONTAINS
     !     Parameter list
     !     ----------------------------------------------------------------
     IMPLICIT NONE
-    INTEGER, INTENT(IN) :: I1, I2, I3
-    DOUBLE PRECISION, INTENT(IN) :: XGRD(:,:), YGRD(:,:)
-    REAL*8, INTENT(OUT) :: PT(3,2)
+    INTEGER,          INTENT(IN)  :: I1, I2, I3
+    DOUBLE PRECISION, INTENT(IN)  :: XGRD(:,:), YGRD(:,:)
+    REAL*8,           INTENT(OUT) :: PT(3,2)
     !     ----------------------------------------------------------------
     !
     !     Local variables.

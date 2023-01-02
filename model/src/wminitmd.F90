@@ -440,9 +440,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)        :: IDSI, IDSO, IDSS, IDST, IDSE,     &
-         MPI_COMM
-    CHARACTER*(*), INTENT(IN)  :: IFNAME
+    INTEGER,       INTENT(IN)           :: IDSI, IDSO, IDSS, IDST, IDSE
+    INTEGER,       INTENT(IN)           :: MPI_COMM
+    CHARACTER*(*), INTENT(IN)           :: IFNAME
     CHARACTER*(*), INTENT(IN), OPTIONAL :: PREAMB
     !/
     !/ ------------------------------------------------------------------- /
@@ -3762,9 +3762,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)        :: IDSI, IDSO, IDSS, IDST, IDSE,     &
-         MPI_COMM
-    CHARACTER*(*), INTENT(IN)  :: IFNAME
+    INTEGER,       INTENT(IN)           :: IDSI, IDSO, IDSS, IDST, IDSE
+    INTEGER,       INTENT(IN)           :: MPI_COMM
+    CHARACTER*(*), INTENT(IN)           :: IFNAME
     CHARACTER*(*), INTENT(IN), OPTIONAL :: PREAMB
     !/
     !/ ------------------------------------------------------------------- /

@@ -234,10 +234,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NSP, NFR1, NTH1, NFR2, NTH2, NDST, NDSE
-    REAL, INTENT(IN)        :: SP1(NTH1,NFR1,NSP), XF1, FR1, TH1,   &
-         XF2, FR2, TH2, FTL
-    REAL, INTENT(OUT)       :: SP2(NTH2,NFR2,NSP)
+    INTEGER, INTENT(IN)  :: NSP, NFR1, NTH1, NFR2, NTH2, NDST, NDSE
+    REAL,    INTENT(IN)  :: SP1(NTH1,NFR1,NSP), XF1, FR1, TH1
+    REAL,    INTENT(IN)  :: XF2, FR2, TH2, FTL
+    REAL,    INTENT(OUT) :: SP2(NTH2,NFR2,NSP)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

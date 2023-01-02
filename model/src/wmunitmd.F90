@@ -187,7 +187,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDSE, NDST
+    INTEGER, INTENT(IN) :: NDSE, NDST
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -397,7 +397,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, IREQ
+    INTEGER, INTENT(IN) :: NDS, IREQ
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -557,12 +557,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDSE, NDST, NDS
-    LOGICAL, INTENT(IN)     :: FLAG
-    CHARACTER(LEN=3), INTENT(IN), OPTIONAL ::                       &
-         TYPE
-    CHARACTER*(*), INTENT(IN), OPTIONAL ::                          &
-         NAME, DESC
+    INTEGER,          INTENT(IN)           :: NDSE, NDST, NDS
+    LOGICAL,          INTENT(IN)           :: FLAG
+    CHARACTER(LEN=3), INTENT(IN), OPTIONAL :: TYPE
+    CHARACTER*(*),    INTENT(IN), OPTIONAL :: NAME, DESC
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -730,10 +728,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)           :: NDSE, NDST
-    INTEGER, INTENT(OUT)          :: NDS
-    CHARACTER(LEN=3), INTENT(IN)  :: TYPE
-    INTEGER, INTENT(IN), OPTIONAL :: NR
+    INTEGER,          INTENT(IN)           :: NDSE, NDST
+    INTEGER,          INTENT(OUT)          :: NDS
+    CHARACTER(LEN=3), INTENT(IN)           :: TYPE
+    INTEGER,          INTENT(IN), OPTIONAL :: NR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -897,7 +895,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)           :: NDSE, NDST, NDS
+    INTEGER, INTENT(IN) :: NDSE, NDST, NDS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

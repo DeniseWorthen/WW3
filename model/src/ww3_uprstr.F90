@@ -1256,8 +1256,8 @@ CONTAINS
     ! 10. Source code :
     !
     !/
-    REAL, INTENT(IN) :: PRCNTG
-    REAL, DIMENSION(:), INTENT(INOUT)  :: VATMP
+    REAL,               INTENT(IN)    :: PRCNTG
+    REAL, DIMENSION(:), INTENT(INOUT) :: VATMP
     !
     VATMP = (PRCNTG**2)*VATMP
     !
@@ -1320,8 +1320,8 @@ CONTAINS
     ! 10. Source code :
     !
     !/
-    REAL, INTENT(INOUT)  ::    PRCNTG
-    REAL, INTENT(IN   )  ::    PRCNTG_CAP
+    REAL, INTENT(INOUT) :: PRCNTG
+    REAL, INTENT(IN)    :: PRCNTG_CAP
     ! local
     CHARACTER(12), PARAMETER :: MYNAME='CHECK_PRCNTG'
 #ifdef W3_T
@@ -1413,8 +1413,8 @@ CONTAINS
     !
     !/
     REAL, DIMENSION(:,:), INTENT(OUT) :: UPDPRCNT
-    CHARACTER(*), INTENT(IN) :: FLNMCOR
-    LOGICAL, INTENT(IN) :: SMCGRD
+    CHARACTER(*),         INTENT(IN)  :: FLNMCOR
+    LOGICAL,              INTENT(IN)  :: SMCGRD
     ! Local Variables
     INTEGER            :: I, J, IERR
     INTEGER            :: K, L, M, N
@@ -1535,8 +1535,8 @@ CONTAINS
     !
     !/
     REAL, DIMENSION(:,:), INTENT(OUT) :: UPDPRCNT, WSPD, WDIR
-    CHARACTER(*), INTENT(IN) :: FLNMCOR
-    LOGICAL, INTENT(IN) :: SMCGRD
+    CHARACTER(*),         INTENT(IN)  :: FLNMCOR
+    LOGICAL,              INTENT(IN)  :: SMCGRD
     ! Local Variables
     INTEGER            :: I, J, IERR
     INTEGER            :: K, L, M, N
@@ -1662,10 +1662,11 @@ CONTAINS
     ! 10. Source code :
     !
     !/
-    REAL, INTENT(OUT) :: HSIG1p
-    INTEGER, INTENT(IN) :: ISEA1p
+    REAL,               INTENT(OUT) :: HSIG1p
+    INTEGER,            INTENT(IN)  :: ISEA1p
     REAL, DIMENSION(:), INTENT(IN)  :: VA1p
-    CHARACTER(25),PARAMETER :: myname='SWH_RSRT_1p'
+
+    CHARACTER(25), PARAMETER :: myname='SWH_RSRT_1p'
     !
 #ifdef W3_FT
     WRITE (NDSO,*)' '
@@ -1760,11 +1761,12 @@ CONTAINS
     USE W3GDATMD , ONLY : TH
     USE W3ODATMD , ONLY : WSMULT !same wind sea cut-off factor for sea/swell outputs
     !
-    REAL, INTENT(OUT) :: HSIG1p, HSIGwp, HSIGsp
-    INTEGER, INTENT(IN) :: ISEA1p
-    REAL, INTENT(IN) :: WS, WD
-    REAL, DIMENSION(:), INTENT(IN)  :: VA1p
+    REAL,                  INTENT(OUT) :: HSIG1p, HSIGwp, HSIGsp
+    INTEGER,               INTENT(IN)  :: ISEA1p
+    REAL,                  INTENT(IN)  :: WS, WD
+    REAL,    DIMENSION(:), INTENT(IN)  :: VA1p
     INTEGER, DIMENSION(:), INTENT(OUT) :: VAMAPWS ! Wind-sea id for spectral bins
+
     REAL :: RELWS, ETOTw, ETOTs, EwI, EsI
     CHARACTER(25),PARAMETER :: myname='SWH_RSRT_1pw'
     !
@@ -1873,8 +1875,8 @@ CONTAINS
     USE CONSTANTS , ONLY : TPI
     !
     REAL, DIMENSION(:,:), INTENT(OUT) :: SPD, DCART
-    REAL, DIMENSION(:,:), INTENT(IN) :: UVEC, VVEC
-    LOGICAL, INTENT(IN) :: SMCGRD
+    REAL, DIMENSION(:,:), INTENT(IN)  :: UVEC, VVEC
+    LOGICAL,              INTENT(IN)  :: SMCGRD
     !
 #ifdef W3_T
     WRITE (NDSO,*) trim(myname), ' starts'
@@ -1962,10 +1964,11 @@ CONTAINS
     ! 10. Source code :
     !
     !/
-    REAL, DIMENSION(:), INTENT(INOUT)  :: VATMP
-    INTEGER, DIMENSION(:), INTENT(IN) :: VAMAPWS
-    REAL, INTENT(IN) :: PRCNTG
-    CHARACTER(25),PARAMETER :: myname='UPDTWSPEC'
+    REAL,    DIMENSION(:), INTENT(INOUT) :: VATMP
+    INTEGER, DIMENSION(:), INTENT(IN)    :: VAMAPWS
+    REAL,                  INTENT(IN)    :: PRCNTG
+
+    CHARACTER(25), PARAMETER :: myname='UPDTWSPEC'
     !
 #ifdef W3_T
     WRITE (NDSO,*) trim(myname), ' starts'
@@ -2043,12 +2046,13 @@ CONTAINS
     ! 10. Source code :
     !
     !/
-    REAL, DIMENSION(:), INTENT(INOUT)  :: VATMP
-    INTEGER, DIMENSION(:), INTENT(IN) :: VAMAPWS
-    REAL, INTENT(IN) :: PRCNTG
-    INTEGER, INTENT(IN) :: ISEA1p
-    LOGICAL, INTENT(IN) :: ADJALL
-    CHARACTER(25),PARAMETER :: myname='UPDTWSPECF'
+    REAL,    DIMENSION(:), INTENT(INOUT) :: VATMP
+    INTEGER, DIMENSION(:), INTENT(IN)    :: VAMAPWS
+    REAL,                  INTENT(IN)    :: PRCNTG
+    INTEGER,               INTENT(IN)    :: ISEA1p
+    LOGICAL,               INTENT(IN)    :: ADJALL
+
+    CHARACTER(25), PARAMETER :: myname='UPDTWSPECF'
     REAL :: FFAC, SIGSHFT, FDM1, FDM2, WN1, CG1, WN2, CG2
     INTEGER :: LPF, M1, M2
     REAL, ALLOCATABLE :: VASHFT(:)
@@ -2202,8 +2206,9 @@ CONTAINS
     !
     !/
     REAL, DIMENSION(:, :), INTENT(IN) :: RDA_A
-    CHARACTER(*)         , INTENT(IN) :: FILENAME
-    INTEGER IB_I, IB_J, IL_IOS
+    CHARACTER(*),          INTENT(IN) :: FILENAME
+
+    INTEGER :: IB_I, IB_J, IL_IOS
     INTEGER, PARAMETER :: IP_FID = 123
     !
     OPEN( UNIT = IP_FID, FILE = FILENAME, STATUS = 'REPLACE', &

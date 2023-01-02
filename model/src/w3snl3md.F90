@@ -346,8 +346,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)   :: A(NTH,NFR), CG(NFR), WN(NFR), DEPTH
-    REAL, INTENT(OUT)  :: S(NTH,NFR), D(NTH,NFR)
+    REAL, INTENT(IN)  :: A(NTH,NFR), CG(NFR), WN(NFR), DEPTH
+    REAL, INTENT(OUT) :: S(NTH,NFR), D(NTH,NFR)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -666,7 +666,7 @@ CONTAINS
       !/
       !/ Parameter list
       !/
-      REAL, INTENT(OUT)       :: SPEC(1-NTHMAX:NTH+NTHMAX,NFRMIN:NFRMAX)
+      REAL, INTENT(OUT) :: SPEC(1-NTHMAX:NTH+NTHMAX,NFRMIN:NFRMAX)
       !/
       !/ Local parameters
       !/
@@ -740,8 +740,8 @@ CONTAINS
       !/
       !/ Parameter list
       !/
-      REAL, INTENT(IN)      :: ARIN(NTH,NFRCUT)
-      REAL, INTENT(OUT)     :: AROUT(1-NTHMAX:NTH+NTHMAX,NFRMIN:NFRCUT)
+      REAL, INTENT(IN)  :: ARIN(NTH,NFRCUT)
+      REAL, INTENT(OUT) :: AROUT(1-NTHMAX:NTH+NTHMAX,NFRMIN:NFRCUT)
       !/
       !/ Local parameters
       !/
@@ -1556,7 +1556,7 @@ CONTAINS
       !/
       !/ Parameter list
       !/
-      REAL, INTENT(IN)        :: MU, THETA
+      REAL, INTENT(IN) :: MU, THETA
       !/
       !/ Local parameters
       !/
@@ -1624,7 +1624,7 @@ CONTAINS
       !/
       !/ Parameter list
       !/
-      REAL, INTENT(IN)        :: MU, THETA
+      REAL, INTENT(IN) :: MU, THETA
       !/
       !/ Local parameters
       !/

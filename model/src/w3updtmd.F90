@@ -264,7 +264,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    LOGICAL, INTENT(IN)     :: FLFRST
+    LOGICAL, INTENT(IN) :: FLFRST
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -596,8 +596,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: VGX, VGY
-    LOGICAL, INTENT(IN)     :: FLFRST
+    REAL,    INTENT(IN) :: VGX, VGY
+    LOGICAL, INTENT(IN) :: FLFRST
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -908,7 +908,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    LOGICAL, INTENT(IN)     :: FLFRST
+    LOGICAL, INTENT(IN) :: FLFRST
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -1136,7 +1136,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(OUT)       :: A(NTH,NK,0:NSEAL)
+    REAL, INTENT(OUT) :: A(NTH,NK,0:NSEAL)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local variables
@@ -1574,7 +1574,7 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    LOGICAL, INTENT(IN)     :: FLFRST
+    LOGICAL, INTENT(IN) :: FLFRST
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local variables
@@ -1686,7 +1686,7 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    LOGICAL, INTENT(IN)     :: FLFRST
+    LOGICAL, INTENT(IN) :: FLFRST
     !/
     !/
     !/ ------------------------------------------------------------------- /
@@ -1845,7 +1845,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(INOUT)     :: VA(NSPEC,0:NSEALM)
+    REAL, INTENT(INOUT) :: VA(NSPEC,0:NSEALM)
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -2128,7 +2128,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(INOUT)     :: A(NTH,NK,0:NSEAL), VA(NSPEC,0:NSEAL)
+    REAL, INTENT(INOUT) :: A(NTH,NK,0:NSEAL), VA(NSPEC,0:NSEAL)
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -2626,7 +2626,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    LOGICAL, INTENT(IN)     :: FLFRST
+    LOGICAL, INTENT(IN) :: FLFRST
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -2807,7 +2807,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: TRNX(NY*NX), TRNY(NY*NX)
+    REAL, INTENT(IN) :: TRNX(NY*NX), TRNY(NY*NX)
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -3225,13 +3225,13 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
+    REAL,      INTENT(IN)  :: ZZ(NSEA)
+    CHARACTER, INTENT(IN)  :: ZUNIT*(*)
+    REAL,      INTENT(OUT) :: DZZDX(NY,NX), DZZDY(NY,NX)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    REAL, INTENT(IN)        :: ZZ(NSEA)
-    CHARACTER, INTENT(IN)   :: ZUNIT*(*)
-    REAL, INTENT(OUT)       :: DZZDX(NY,NX), DZZDY(NY,NX)
     INTEGER                 :: ISEA, IX, IY, IXP, IXM, IYP, IYM
 #ifdef W3_T
     INTEGER                 :: ISX, ISY, MAPOUT(NX,NY)

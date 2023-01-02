@@ -217,10 +217,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NTH,NK), CG(NK), WN(NK), DEPTH,    &
-         FPI, U, USTAR
-    REAL, INTENT(OUT)       :: EMEAN, FMEAN, WNMEAN, AMAX,          &
-         ALFA(NK), FP
+    REAL, INTENT(IN)  :: A(NTH,NK), CG(NK), WN(NK), DEPTH
+    REAL, INTENT(IN)  :: FPI, U, USTAR
+    REAL, INTENT(OUT) :: EMEAN, FMEAN, WNMEAN, AMAX
+    REAL, INTENT(OUT) :: ALFA(NK), FP
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -406,9 +406,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NSPEC), CG(NK), K(NSPEC), U, UDIR, &
-         CD, Z0
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC), FPI
+    REAL, INTENT(IN)  :: A(NSPEC), CG(NK), K(NSPEC), U, UDIR
+    REAL, INTENT(IN)  :: CD, Z0
+    REAL, INTENT(OUT) :: S(NSPEC), D(NSPEC), FPI
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -674,9 +674,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NTH,NK), CG(NK), K(NK), FPI,       &
-         USTAR, ALFA(NK)
-    REAL, INTENT(OUT)       :: S(NTH,NK), D(NTH,NK)
+    REAL, INTENT(IN)  :: A(NTH,NK), CG(NK), K(NK), FPI
+    REAL, INTENT(IN)  :: USTAR, ALFA(NK)
+    REAL, INTENT(OUT) :: S(NTH,NK), D(NTH,NK)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1139,8 +1139,8 @@ CONTAINS
       !/ ------------------------------------------------------------------- /
       !/ Parameter list
       !/
-      INTEGER, INTENT(IN)     :: NDST
-      REAL, INTENT(IN)        :: OMA, CL
+      INTEGER, INTENT(IN) :: NDST
+      REAL,    INTENT(IN) :: OMA, CL
       !/
       !/ ------------------------------------------------------------------- /
       !/ Local parameters

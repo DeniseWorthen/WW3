@@ -159,17 +159,17 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IX ! Local grid number
-    REAL, INTENT(IN)        :: A(NSPEC)
-    REAL, INTENT(INOUT)     :: EMEAN, FMEAN, WNMEAN, DEPTH
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC)
-    REAL, INTENT(IN)        :: CG(NK)
-    LOGICAL, INTENT(OUT)    :: LBREAK
-    INTEGER                 :: ITH, IK, IWB
+    INTEGER, INTENT(IN)    :: IX ! Local grid number
+    REAL,    INTENT(IN)    :: A(NSPEC)
+    REAL,    INTENT(INOUT) :: EMEAN, FMEAN, WNMEAN, DEPTH
+    REAL,    INTENT(OUT)   :: S(NSPEC), D(NSPEC)
+    REAL,    INTENT(IN)    :: CG(NK)
+    LOGICAL, INTENT(OUT)   :: LBREAK
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
+    INTEGER                 :: ITH, IK, IWB
     INTEGER                 :: IS
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0

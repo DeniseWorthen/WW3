@@ -154,8 +154,8 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL, INTENT(IN)        :: A(NSPEC), ICE
-    REAL, INTENT(OUT)       :: S(NSPEC)
+    REAL, INTENT(IN)  :: A(NSPEC), ICE
+    REAL, INTENT(OUT) :: S(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

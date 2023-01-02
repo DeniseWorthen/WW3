@@ -263,9 +263,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)          :: NPT, IMOD
-    REAL, INTENT(INOUT)          :: XPT(NPT), YPT(NPT)
-    CHARACTER(LEN=40),INTENT(IN) :: PNAMES(NPT)
+    INTEGER,           INTENT(IN)    :: NPT, IMOD
+    REAL,              INTENT(INOUT) :: XPT(NPT), YPT(NPT)
+    CHARACTER(LEN=40), INTENT(IN)    :: PNAMES(NPT)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -732,7 +732,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NTH,NK,0:NSEAL)
+    REAL, INTENT(IN) :: A(NTH,NK,0:NSEAL)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1138,10 +1138,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)           :: NDSOP
-    INTEGER, INTENT(OUT)          :: IOTST
-    INTEGER, INTENT(IN), OPTIONAL :: IMOD
-    CHARACTER, INTENT(IN)         :: INXOUT*(*)
+    INTEGER,   INTENT(IN)           :: NDSOP
+    INTEGER,   INTENT(OUT)          :: IOTST
+    INTEGER,   INTENT(IN), OPTIONAL :: IMOD
+    CHARACTER, INTENT(IN)           :: INXOUT*(*)
     !/
     !/ ------------------------------------------------------------------- /
     !/ local parameters

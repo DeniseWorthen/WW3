@@ -736,7 +736,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDSE, NDST
+    INTEGER, INTENT(IN) :: NDSE, NDST
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1521,8 +1521,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)           :: IMOD, NDSE, NDST
-    LOGICAL, INTENT(IN)           :: OUTFLAGS(NOGRP,NGRPP)
+    INTEGER, INTENT(IN) :: IMOD, NDSE, NDST
+    LOGICAL, INTENT(IN) :: OUTFLAGS(NOGRP,NGRPP)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2442,7 +2442,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)           :: IMOD, NDSE, NDST, NSP, NSPX
+    INTEGER, INTENT(IN) :: IMOD, NDSE, NDST, NSP, NSPX
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2657,7 +2657,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, NDSE, NDST
+    INTEGER, INTENT(IN) :: IMOD, NDSE, NDST
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -3081,7 +3081,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, NDSE, NDST
+    INTEGER, INTENT(IN) :: IMOD, NDSE, NDST
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

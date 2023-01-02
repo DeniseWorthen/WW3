@@ -106,10 +106,10 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                         :: NDSI       !< input file unit
-    CHARACTER*(*), INTENT(IN)                   :: INFILE     !< input file name
-    TYPE(NML_BOUND_T), INTENT(INOUT)            :: NML_BOUND  !< bound structure
-    INTEGER, INTENT(OUT)                        :: IERR       !< error code
+    INTEGER,           INTENT(IN)    :: NDSI       !< input file unit
+    CHARACTER*(*),     INTENT(IN)    :: INFILE     !< input file name
+    TYPE(NML_BOUND_T), INTENT(INOUT) :: NML_BOUND  !< bound structure
+    INTEGER,           INTENT(OUT)   :: IERR       !< error code
     !/S      INTEGER, SAVE                             :: IENT = 0   !< strace error code
 
     IERR = 0
@@ -211,11 +211,11 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                 :: NDSI        !< namelist file unit
-    TYPE(NML_BOUND_T), INTENT(INOUT)    :: NML_BOUND   !< bound structure
+    INTEGER,           INTENT(IN)    :: NDSI        !< namelist file unit
+    TYPE(NML_BOUND_T), INTENT(INOUT) :: NML_BOUND   !< bound structure
 
     ! locals
-    INTEGER                   :: IERR                  !< error code
+    INTEGER :: IERR                  !< error code
     TYPE(NML_BOUND_T) :: BOUND                         !< bound structure
     NAMELIST /BOUND_NML/ BOUND                         !< boudn namelist
     !/S      INTEGER, SAVE                           :: IENT = 0       !< strace error code

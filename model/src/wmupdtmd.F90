@@ -201,8 +201,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD
-    INTEGER, INTENT(INOUT)  :: TDATA(2)
+    INTEGER, INTENT(IN)    :: IMOD
+    INTEGER, INTENT(INOUT) :: TDATA(2)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -607,9 +607,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)          :: IMOD, J
-    INTEGER, INTENT(OUT)         :: IERR
-    CHARACTER(LEN=3), INTENT(IN) :: IDSTR
+    INTEGER,          INTENT(IN)  :: IMOD, J
+    INTEGER,          INTENT(OUT) :: IERR
+    CHARACTER(LEN=3), INTENT(IN)  :: IDSTR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -955,8 +955,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, J, JMOD
-    INTEGER, INTENT(OUT)    :: IERR
+    INTEGER, INTENT(IN)  :: IMOD, J, JMOD
+    INTEGER, INTENT(OUT) :: IERR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1398,11 +1398,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, JMOD, CONSTP
-    REAL, INTENT(OUT)       :: VX(NX,NY), VY(NX,NY)
-    REAL, INTENT(IN)        :: VXI(GRIDS(JMOD)%NX,GRIDS(JMOD)%NY),  &
-         VYI(GRIDS(JMOD)%NX,GRIDS(JMOD)%NY),  &
-         UNDEF
+    INTEGER, INTENT(IN)  :: IMOD, JMOD, CONSTP
+    REAL,    INTENT(OUT) :: VX(NX,NY), VY(NX,NY)
+    REAL,    INTENT(IN)  :: VXI(GRIDS(JMOD)%NX,GRIDS(JMOD)%NY)
+    REAL,    INTENT(IN)  :: VYI(GRIDS(JMOD)%NX,GRIDS(JMOD)%NY)
+    REAL,    INTENT(IN)  :: UNDEF
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2076,10 +2076,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, JMOD
-    REAL, INTENT(OUT)       :: FD(NX,NY)
-    REAL, INTENT(IN)        :: FDI(GRIDS(JMOD)%NX,GRIDS(JMOD)%NY),  &
-         UNDEF
+    INTEGER, INTENT(IN)  :: IMOD, JMOD
+    REAL,    INTENT(OUT) :: FD(NX,NY)
+    REAL,    INTENT(IN)  :: FDI(GRIDS(JMOD)%NX,GRIDS(JMOD)%NY)
+    REAL,    INTENT(IN)  :: UNDEF
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2684,10 +2684,10 @@ CONTAINS
     !
     !  7. Source code :
 
-    INTEGER, INTENT(IN) :: LENGTH
-    REAL, DIMENSION(LENGTH), INTENT(IN) :: ARRAY
-    REAL, INTENT(IN) :: VALUE
-    REAL, INTENT(IN), OPTIONAL :: DELTA
+    INTEGER,                 INTENT(IN)           :: LENGTH
+    REAL, DIMENSION(LENGTH), INTENT(IN)           :: ARRAY
+    REAL,                    INTENT(IN)           :: VALUE
+    REAL,                    INTENT(IN), OPTIONAL :: DELTA
 
     INTEGER :: XYCURVISEARCH
 
@@ -2823,12 +2823,13 @@ CONTAINS
     ! BY XARRAY WITH DIMENSION X_LEN
     ! AND THE GRID Y VALUES SPECIFIED BY YARRAY WITH DIMENSION Y_LEN
     !
-    INTEGER, INTENT(IN) :: X_LEN, Y_LEN
-    REAL, DIMENSION(X_LEN), INTENT(IN) :: XARRAY
-    REAL, DIMENSION(Y_LEN), INTENT(IN) :: YARRAY
-    REAL, DIMENSION(X_LEN, Y_LEN), INTENT(IN) :: FUNC
-    REAL, INTENT(IN) :: X,Y
-    REAL, INTENT(IN), OPTIONAL :: DELTA
+    INTEGER,                       INTENT(IN)           :: X_LEN, Y_LEN
+    REAL, DIMENSION(X_LEN),        INTENT(IN)           :: XARRAY
+    REAL, DIMENSION(Y_LEN),        INTENT(IN)           :: YARRAY
+    REAL, DIMENSION(X_LEN, Y_LEN), INTENT(IN)           :: FUNC
+    REAL,                          INTENT(IN)           :: X,Y
+    REAL,                          INTENT(IN), OPTIONAL :: DELTA
+
     REAL :: DENOM, X1, X2, Y1, Y2
     INTEGER :: INX,JNX
 
@@ -2962,13 +2963,13 @@ CONTAINS
     !
     ! 10. Source code :
     !
-    INTEGER, INTENT(IN) :: X_LEN, Y_LEN
-    REAL, DIMENSION(X_LEN), INTENT(IN) :: XARRAY
-    REAL, DIMENSION(Y_LEN), INTENT(IN) :: YARRAY
-    REAL, DIMENSION(X_LEN, Y_LEN), INTENT(IN) :: FUNC1, FUNC2
-    REAL, INTENT(IN) :: X,Y
-    REAL, INTENT(IN), OPTIONAL :: DELTA
-    REAL, INTENT(OUT) :: VAL1,VAL2
+    INTEGER,                       INTENT(IN)           :: X_LEN, Y_LEN
+    REAL, DIMENSION(X_LEN),        INTENT(IN)           :: XARRAY
+    REAL, DIMENSION(Y_LEN),        INTENT(IN)           :: YARRAY
+    REAL, DIMENSION(X_LEN, Y_LEN), INTENT(IN)           :: FUNC1, FUNC2
+    REAL,                          INTENT(IN)           :: X,Y
+    REAL,                          INTENT(IN), OPTIONAL :: DELTA
+    REAL,                          INTENT(OUT)          :: VAL1,VAL2
 
     REAL :: DENOM, X1, X2, Y1, Y2,C1,C2,C3,C4
     INTEGER :: INX,JNX

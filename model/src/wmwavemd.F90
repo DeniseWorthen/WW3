@@ -260,7 +260,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: TEND(2,NRGRD)
+    INTEGER, INTENT(IN) :: TEND(2,NRGRD)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1842,7 +1842,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MDSO, NRGRD, TSYNC(2), GRSTAT(NRGRD)
+    INTEGER, INTENT(IN) :: MDSO, NRGRD, TSYNC(2), GRSTAT(NRGRD)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2029,8 +2029,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NR, IMOD, NMOD, ID
-    INTEGER, INTENT(INOUT)  :: DATA(NR)
+    INTEGER, INTENT(IN)    :: NR, IMOD, NMOD, ID
+    INTEGER, INTENT(INOUT) :: DATA(NR)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2216,7 +2216,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, NMOD, ID
+    INTEGER, INTENT(IN) :: IMOD, NMOD, ID
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

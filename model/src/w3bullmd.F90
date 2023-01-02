@@ -171,6 +171,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
+    INTEGER, INTENT(IN)    :: NPART, DIMXP, IOUT
+    INTEGER, INTENT(INOUT) :: TIMEV(2)
+    REAL,    INTENT(IN)    :: UABS, UD, XPART(DIMP,0:DIMXP)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -190,10 +193,8 @@ CONTAINS
     PARAMETER     ( DDMMAX =  15.   )
     PARAMETER     ( DDWMAX =  30.   )
     PARAMETER     ( AGEMIN =   0.8  )
-    INTEGER, INTENT(IN)     :: NPART, DIMXP, IOUT
-    INTEGER, INTENT(INOUT)  :: TIMEV(2)
-    REAL, INTENT(IN)        :: UABS,    &
-         UD, XPART(DIMP,0:DIMXP)
+
+
     INTEGER                 :: IPG1,IPI(NPMAX), ILEN(NPMAX), IP,     &
          IPNOW, IFLD, INOTAB, IPNT, ITAB,      &
          DOUTP, FCSTI, NZERO

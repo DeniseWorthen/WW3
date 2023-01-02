@@ -170,13 +170,13 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: CG(NK), WN(NK), DEPTH, EMEAN, FMEAN
-    REAL, INTENT(INOUT)     :: A(NSPEC)
-    REAL, INTENT(IN)        :: CX1, CY1, DT
-    INTEGER, INTENT(IN)     :: REFLD(6), IX, IY
-    REAL, INTENT(IN)        :: REFLC(4), TRNX, &
-         TRNY, BERG
-    REAL, INTENT(OUT)       :: S(NSPEC)
+    REAL,    INTENT(IN)    :: CG(NK), WN(NK), DEPTH, EMEAN, FMEAN
+    REAL,    INTENT(INOUT) :: A(NSPEC)
+    REAL,    INTENT(IN)    :: CX1, CY1, DT
+    INTEGER, INTENT(IN)    :: REFLD(6), IX, IY
+    REAL,    INTENT(IN)    :: REFLC(4), TRNX
+    REAL,    INTENT(IN)    :: TRNY, BERG
+    REAL,    INTENT(OUT)   :: S(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

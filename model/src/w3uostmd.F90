@@ -736,6 +736,7 @@ CONTAINS
 
     REAL, INTENT(IN) :: U10ABS, U10DIR, CGABS, CGDIR, DT
     REAL, INTENT(OUT) :: PSI
+
     REAL :: THDELTA, CP, WA
 #ifdef W3_S
     INTEGER, SAVE           :: IENT   = 0

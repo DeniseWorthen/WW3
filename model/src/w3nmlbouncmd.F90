@@ -108,12 +108,12 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                         :: NDSI
-    CHARACTER*(*), INTENT(IN)                   :: INFILE
-    TYPE(NML_BOUND_T), INTENT(INOUT)            :: NML_BOUND
-    INTEGER, INTENT(OUT)                        :: IERR
+    INTEGER,           INTENT(IN)    :: NDSI
+    CHARACTER*(*),     INTENT(IN)    :: INFILE
+    TYPE(NML_BOUND_T), INTENT(INOUT) :: NML_BOUND
+    INTEGER,           INTENT(OUT)   :: IERR
 #ifdef W3_S
-    INTEGER, SAVE                             :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -219,15 +219,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                 :: NDSI
-    TYPE(NML_BOUND_T), INTENT(INOUT)    :: NML_BOUND
+    INTEGER,           INTENT(IN)    :: NDSI
+    TYPE(NML_BOUND_T), INTENT(INOUT) :: NML_BOUND
 
     ! locals
-    INTEGER                   :: IERR
+    INTEGER :: IERR
     TYPE(NML_BOUND_T) :: BOUND
     NAMELIST /BOUND_NML/ BOUND
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -329,7 +329,7 @@ CONTAINS
 
     TYPE(NML_BOUND_T), INTENT(IN) :: NML_BOUND
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S

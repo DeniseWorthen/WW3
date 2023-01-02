@@ -219,12 +219,12 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NTH,NK), CG(NK), WN(NK), U, UDIR
-    REAL, INTENT(IN)        :: TAUWX, TAUWY
-    LOGICAL, INTENT(IN)     :: LLWS(NSPEC)
-    REAL, INTENT(INOUT)     :: USTAR ,USDIR
-    REAL, INTENT(OUT)       :: EMEAN, FMEAN, FMEANS, WNMEAN, AMAX,  &
-         CD, Z0, CHARN, FMEANWS
+    REAL,    INTENT(IN)    :: A(NTH,NK), CG(NK), WN(NK), U, UDIR
+    REAL,    INTENT(IN)    :: TAUWX, TAUWY
+    LOGICAL, INTENT(IN)    :: LLWS(NSPEC)
+    REAL,    INTENT(INOUT) :: USTAR, USDIR
+    REAL,    INTENT(OUT)   :: EMEAN, FMEAN, FMEANS, WNMEAN, AMAX
+    REAL,    INTENT(OUT)   :: CD, Z0, CHARN, FMEANWS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -493,12 +493,12 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NSPEC)
-    REAL, INTENT(IN)        :: CG(NK), K(NSPEC),Z0,U, CD
-    REAL, INTENT(IN)        :: USTAR, USDIR, AS, DRAT, ICE       !/Stefan: ICE is DUMMY argument; remove later.
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC), TAUWX, TAUWY, TAUWNX, TAUWNY
-    LOGICAL, INTENT(OUT)    :: LLWS(NSPEC)
-    INTEGER, INTENT(IN)     :: IX, IY
+    REAL,    INTENT(IN)  :: A(NSPEC)
+    REAL,    INTENT(IN)  :: CG(NK), K(NSPEC),Z0,U, CD
+    REAL,    INTENT(IN)  :: USTAR, USDIR, AS, DRAT, ICE       !/Stefan: ICE is DUMMY argument; remove later.
+    REAL,    INTENT(OUT) :: S(NSPEC), D(NSPEC), TAUWX, TAUWY, TAUWNX, TAUWNY
+    LOGICAL, INTENT(OUT) :: LLWS(NSPEC)
+    INTEGER, INTENT(IN)  :: IX, IY
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -509,7 +509,7 @@ CONTAINS
 #endif
     REAL                    :: COSU, SINU, TAUX, TAUY
     REAL                    :: UST2, TAUW, TAUWB
-    REAL   , PARAMETER      :: EPS1 = 0.00001, EPS2 = 0.000001
+    REAL  , PARAMETER      :: EPS1 = 0.00001, EPS2 = 0.000001
 #ifdef W3_STAB3
     REAL                    :: Usigma           !standard deviation of U due to gustiness
     REAL                    :: USTARsigma       !standard deviation of USTAR due to gustiness
@@ -1192,9 +1192,12 @@ CONTAINS
     !-----------------------------------------------------------------------------!
     USE CONSTANTS , ONLY : GRAV
     USE W3GDATMD  , ONLY : ZZWND, AALPHA
+
     IMPLICIT NONE
-    REAL, intent(in) :: WINDSPEED,TAUW
+
+    REAL, intent(in)  :: WINDSPEED,TAUW
     REAL, intent(out) :: USTAR, Z0, CHARN
+
     ! local variables
     REAL SQRTCDM1
     REAL X,XI,DELI1,DELI2,XJ,delj1,delj2
@@ -1349,10 +1352,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NSPEC), K(NK), CG(NK),                     &
-         DEPTH, USTAR, USDIR, EMEAN, FMEAN, WNMEAN
-    INTEGER, INTENT(IN)     :: IX, IY
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC)
+    REAL,    INTENT(IN)  :: A(NSPEC), K(NK), CG(NK)
+    REAL,    INTENT(IN)  :: DEPTH, USTAR, USDIR, EMEAN, FMEAN, WNMEAN
+    INTEGER, INTENT(IN)  :: IX, IY
+    REAL,    INTENT(OUT) :: S(NSPEC), D(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

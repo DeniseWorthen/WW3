@@ -74,9 +74,9 @@ contains
     use yowDatapool , only : myrank, nTasks
     use yowNodepool , only : t_Node, nodes_global
     implicit none
-    integer, intent(in) :: ele_in(3)
+    integer, intent(in)           :: ele_in(3)
     integer, intent(in), optional :: rank
-    logical :: belongTo
+    logical                       :: belongTo
 
     integer :: myDomainID
     integer :: nodes(3)

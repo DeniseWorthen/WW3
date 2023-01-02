@@ -258,9 +258,9 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL, INTENT(IN)        :: CG(NK),   A(NSPEC), DEPTH
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC)
-    INTEGER, INTENT(IN)     :: IX, IY
+    REAL,    INTENT(IN)  :: CG(NK),   A(NSPEC), DEPTH
+    REAL,    INTENT(OUT) :: S(NSPEC), D(NSPEC)
+    INTEGER, INTENT(IN)  :: IX, IY
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
