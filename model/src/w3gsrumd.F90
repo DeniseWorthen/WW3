@@ -329,88 +329,88 @@ MODULE W3GSRUMD
   !/
   !/ Private grid-search-utility class
   !/
-  TYPE :: CLASS_GSU
-    LOGICAL :: IJG  ! grid array ordering flag: T = (NX,NY), F = (NY,NX)
-    LOGICAL :: LLG  ! spherical coordinate flag of associated grid
-    INTEGER :: ICLO ! parameter indicating type of index space closure
-    ! this flag must be set by the user
-    LOGICAL :: LCLO ! flag indicating longitudinal periodicity
-    ! this flag is calculated internally
-    ! LLG & ICLO != ICLO_NONE => LCLO = T
-    LOGICAL :: L360 ! flag indicating longitude range:
-    !   T = [0:360],  F = [-180:180]
-    INTEGER :: GKIND  ! kind (precision: 4 or 8) of associated grid
-    INTEGER :: LBX, LBY ! lower-bounds of associated grid
-    INTEGER :: UBX, UBY ! upper-bounds of associated grid
-    INTEGER :: NX, NY   ! dimensions of associated grid
-    REAL(4), POINTER :: XG4(:,:), YG4(:,:) ! coordinates of associated grid (r4)
-    REAL(8), POINTER :: XG8(:,:), YG8(:,:) ! coordinates of associated grid (r8)
-    TYPE(T_NNS), POINTER :: NNP  ! nearest-neighbor point search indices object
-    INTEGER :: NBX, NBY  ! number of buckets in each spatial direction
-    REAL(8) :: DXB, DYB  ! spatial extent of each search bucket
-    REAL(8) :: XMIN, YMIN, XMAX, YMAX ! bounding box of search domain
-    TYPE(T_BKT), POINTER :: B(:,:) ! array of search buckets
-    TYPE(T_NNS), POINTER :: NNB  ! nearest-neighbor bucket search indices object
+  TYPE                   :: CLASS_GSU
+    LOGICAL              :: IJG                    ! grid array ordering flag: T = (NX,NY), F = (NY,NX)
+    LOGICAL              :: LLG                    ! spherical coordinate flag of associated grid
+    INTEGER              :: ICLO                   ! parameter indicating type of index space closure
+                                                   ! this flag must be set by the user
+    LOGICAL              :: LCLO                   ! flag indicating longitudinal periodicity
+                                                   ! this flag is calculated internally
+                                                   ! LLG & ICLO != ICLO_NONE => LCLO = T
+    LOGICAL              :: L360                   ! flag indicating longitude range:
+                                                   !   T = [0:360],  F = [-180:180]
+    INTEGER              :: GKIND                  ! kind (precision: 4 or 8) of associated grid
+    INTEGER              :: LBX, LBY               ! lower-bounds of associated grid
+    INTEGER              :: UBX, UBY               ! upper-bounds of associated grid
+    INTEGER              :: NX, NY                 ! dimensions of associated grid
+    REAL(4),     POINTER :: XG4(:,:), YG4(:,:)     ! coordinates of associated grid (r4)
+    REAL(8),     POINTER :: XG8(:,:), YG8(:,:)     ! coordinates of associated grid (r8)
+    TYPE(T_NNS), POINTER :: NNP                    ! nearest-neighbor point search indices object
+    INTEGER              :: NBX, NBY               ! number of buckets in each spatial direction
+    REAL(8)              :: DXB, DYB               ! spatial extent of each search bucket
+    REAL(8)              :: XMIN, YMIN, XMAX, YMAX ! bounding box of search domain
+    TYPE(T_BKT), POINTER :: B(:,:)                 ! array of search buckets
+    TYPE(T_NNS), POINTER :: NNB                    ! nearest-neighbor bucket search indices object
   END TYPE CLASS_GSU
   !/
   !/ Private search bucket type
   !/
-  TYPE :: T_BKT
-    INTEGER :: N  ! number of cells in bucket
-    INTEGER, POINTER :: I(:)  ! i-index of cell c
-    INTEGER, POINTER :: J(:)  ! j-index of cell c
+  TYPE                   :: T_BKT
+    INTEGER              :: N                      ! number of cells in bucket
+    INTEGER,     POINTER :: I(:)                   ! i-index of cell c
+    INTEGER,     POINTER :: J(:)                   ! j-index of cell c
   END TYPE T_BKT
   !/
   !/ Public nearest-neighbor grid-point search type
   !/
-  TYPE, PUBLIC :: T_NNS
-    INTEGER :: NLVL  ! number of nnbr levels
-    INTEGER :: NNBR  ! total number of nnbr's
-    INTEGER, POINTER :: N1(:)  ! starting nearest-nbr loop index for level l
-    INTEGER, POINTER :: N2(:)  ! ending nearest-nbr loop index for level l
-    INTEGER, POINTER :: DI(:)  ! i-index delta for nearest-nbr n
-    INTEGER, POINTER :: DJ(:)  ! j-index delta for nearest-nbr n
+  TYPE, PUBLIC           :: T_NNS
+    INTEGER              :: NLVL                   ! number of nnbr levels
+    INTEGER              :: NNBR                   ! total number of nnbr's
+    INTEGER,     POINTER :: N1(:)                  ! starting nearest-nbr loop index for level l
+    INTEGER,     POINTER :: N2(:)                  ! ending nearest-nbr loop index for level l
+    INTEGER,     POINTER :: DI(:)                  ! i-index delta for nearest-nbr n
+    INTEGER,     POINTER :: DJ(:)                  ! j-index delta for nearest-nbr n
   END TYPE T_NNS
   !/
   !/ Private module parameters
   !/
-  REAL(8), PARAMETER :: PI = 3.14159265358979323846D0
-  REAL(8), PARAMETER :: PI2 = 2D0*PI
-  REAL(8), PARAMETER :: PI3H = 3D0*PI/2D0
-  REAL(8), PARAMETER :: PIO2 = PI/2D0
-  REAL(8), PARAMETER :: PIO4 = PI/4D0
-  REAL(8), PARAMETER :: D2R = PI/180D0
-  REAL(8), PARAMETER :: R2D = 1D0/D2R
-  REAL(8), PARAMETER :: D360 = 360D0
-  REAL(8), PARAMETER :: D270 = 270D0
-  REAL(8), PARAMETER :: D180 = 180D0
-  REAL(8), PARAMETER :: D90  =  90D0
-  REAL(8), PARAMETER :: ZERO = 0.0D0
-  REAL(8), PARAMETER :: HALF = 0.5D0
-  REAL(8), PARAMETER :: ONE  = 1.0D0
-  REAL(8), PARAMETER :: TWO  = 2.0D0
-  REAL(8), PARAMETER :: FOUR = 4.0D0
+  REAL(8), PARAMETER     :: PI = 3.14159265358979323846D0
+  REAL(8), PARAMETER     :: PI2 = 2D0*PI
+  REAL(8), PARAMETER     :: PI3H = 3D0*PI/2D0
+  REAL(8), PARAMETER     :: PIO2 = PI/2D0
+  REAL(8), PARAMETER     :: PIO4 = PI/4D0
+  REAL(8), PARAMETER     :: D2R = PI/180D0
+  REAL(8), PARAMETER     :: R2D = 1D0/D2R
+  REAL(8), PARAMETER     :: D360 = 360D0
+  REAL(8), PARAMETER     :: D270 = 270D0
+  REAL(8), PARAMETER     :: D180 = 180D0
+  REAL(8), PARAMETER     :: D90  =  90D0
+  REAL(8), PARAMETER     :: ZERO = 0.0D0
+  REAL(8), PARAMETER     :: HALF = 0.5D0
+  REAL(8), PARAMETER     :: ONE  = 1.0D0
+  REAL(8), PARAMETER     :: TWO  = 2.0D0
+  REAL(8), PARAMETER     :: FOUR = 4.0D0
 #if defined(COAMPS)
-  REAL(8), PARAMETER :: REARTH = 6371229.D0
+  REAL(8), PARAMETER     :: REARTH = 6371229.D0
 #else
-  REAL(8), PARAMETER :: REARTH = 4.D7/PI2 !this gives D2M = 111111.111111
+  REAL(8), PARAMETER     :: REARTH = 4.D7/PI2      !this gives D2M = 111111.111111
 #endif
-  REAL(8), PARAMETER :: D2M  = REARTH*D2R
-  REAL(8), PARAMETER :: M2D  = 1D0/D2M
+  REAL(8), PARAMETER     :: D2M  = REARTH*D2R
+  REAL(8), PARAMETER     :: M2D  = 1D0/D2M
   !     Default small non-zero tolerance used to check if
   !     target point is in domain and for point coincidence.
-  REAL(8), PARAMETER :: EPS_DEFAULT  = 1.0D-6
+  REAL(8), PARAMETER     :: EPS_DEFAULT  = 1.0D-6
   !     Distance (deg) from pole to consider a cell "near the pole"
-  REAL(8), PARAMETER :: NEAR_POLE = 10.0D0
+  REAL(8), PARAMETER     :: NEAR_POLE = 10.0D0
   !     Default number of grid cells (in each direction) per search bucket.
-  INTEGER, PARAMETER :: NCB_DEFAULT = 10
+  INTEGER, PARAMETER     :: NCB_DEFAULT = 10
   !     Default maximum number of nearest-neighbor grid point search levels.
-  INTEGER, PARAMETER :: NNP_DEFAULT = 2
+  INTEGER, PARAMETER     :: NNP_DEFAULT = 2
   !     Max number of non-empty levels for bucket search when target point
   !     is outside source domain
-  INTEGER, PARAMETER :: MAX_FNCL_LEVEL = 3
+  INTEGER, PARAMETER     :: MAX_FNCL_LEVEL = 3
   !     Default finite-difference order
-  INTEGER, PARAMETER :: NFD_DEFAULT = 4
+  INTEGER, PARAMETER     :: NFD_DEFAULT = 4
   !/
   !/ Module Interfaces
   !/
@@ -525,14 +525,6 @@ CONTAINS
   !/
   !/ =================================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -625,12 +617,12 @@ CONTAINS
   FUNCTION W3GSUC_PTR_R4( IJG, LLG, ICLO, XG, YG, &
        NCB, NNP, DEBUG ) RESULT(GSU)
     !     Single precision pointer interface
-    TYPE(T_GSU)         :: GSU
-    LOGICAL, INTENT(IN) :: IJG
-    LOGICAL, INTENT(IN) :: LLG
-    INTEGER, INTENT(IN) :: ICLO
-    REAL(4), POINTER    :: XG(:,:)
-    REAL(4), POINTER    :: YG(:,:)
+    TYPE(T_GSU)                   :: GSU
+    LOGICAL, INTENT(IN)           :: IJG
+    LOGICAL, INTENT(IN)           :: LLG
+    INTEGER, INTENT(IN)           :: ICLO
+    REAL(4), POINTER              :: XG(:,:)
+    REAL(4), POINTER              :: YG(:,:)
     INTEGER, INTENT(IN), OPTIONAL :: NCB
     INTEGER, INTENT(IN), OPTIONAL :: NNP
     LOGICAL, INTENT(IN), OPTIONAL :: DEBUG
@@ -654,12 +646,12 @@ CONTAINS
   FUNCTION W3GSUC_PTR_R8( IJG, LLG, ICLO, XG, YG, &
        NCB, NNP, DEBUG ) RESULT(GSU)
     !     Double precision pointer interface
-    TYPE(T_GSU)         :: GSU
-    LOGICAL, INTENT(IN) :: IJG
-    LOGICAL, INTENT(IN) :: LLG
-    INTEGER, INTENT(IN) :: ICLO
-    REAL(8), POINTER    :: XG(:,:)
-    REAL(8), POINTER    :: YG(:,:)
+    TYPE(T_GSU)                   :: GSU
+    LOGICAL, INTENT(IN)           :: IJG
+    LOGICAL, INTENT(IN)           :: LLG
+    INTEGER, INTENT(IN)           :: ICLO
+    REAL(8), POINTER              :: XG(:,:)
+    REAL(8), POINTER              :: YG(:,:)
     INTEGER, INTENT(IN), OPTIONAL :: NCB
     INTEGER, INTENT(IN), OPTIONAL :: NNP
     LOGICAL, INTENT(IN), OPTIONAL :: DEBUG
@@ -683,14 +675,14 @@ CONTAINS
   FUNCTION W3GSUC_TGT_R4( IJG, LLG, ICLO, LB, UB, XG, YG, &
        NCB, NNP, DEBUG ) RESULT(GSU)
     !     Single precision target interface
-    TYPE(T_GSU)         :: GSU
-    LOGICAL, INTENT(IN) :: IJG
-    LOGICAL, INTENT(IN) :: LLG
-    INTEGER, INTENT(IN) :: ICLO
-    INTEGER, INTENT(IN) :: LB(2)
-    INTEGER, INTENT(IN) :: UB(2)
-    REAL(4), TARGET     :: XG(LB(1):UB(1),LB(2):UB(2))
-    REAL(4), TARGET     :: YG(LB(1):UB(1),LB(2):UB(2))
+    TYPE(T_GSU)                   :: GSU
+    LOGICAL, INTENT(IN)           :: IJG
+    LOGICAL, INTENT(IN)           :: LLG
+    INTEGER, INTENT(IN)           :: ICLO
+    INTEGER, INTENT(IN)           :: LB(2)
+    INTEGER, INTENT(IN)           :: UB(2)
+    REAL(4), TARGET               :: XG(LB(1):UB(1),LB(2):UB(2))
+    REAL(4), TARGET               :: YG(LB(1):UB(1),LB(2):UB(2))
     INTEGER, INTENT(IN), OPTIONAL :: NCB
     INTEGER, INTENT(IN), OPTIONAL :: NNP
     LOGICAL, INTENT(IN), OPTIONAL :: DEBUG
@@ -711,14 +703,14 @@ CONTAINS
   FUNCTION W3GSUC_TGT_R8( IJG, LLG, ICLO, LB, UB, XG, YG, &
        NCB, NNP, DEBUG ) RESULT(GSU)
     !     Double precision target interface
-    TYPE(T_GSU)         :: GSU
-    LOGICAL, INTENT(IN) :: IJG
-    LOGICAL, INTENT(IN) :: LLG
-    INTEGER, INTENT(IN) :: ICLO
-    INTEGER, INTENT(IN) :: LB(2)
-    INTEGER, INTENT(IN) :: UB(2)
-    REAL(8), TARGET     :: XG(LB(1):UB(1),LB(2):UB(2))
-    REAL(8), TARGET     :: YG(LB(1):UB(1),LB(2):UB(2))
+    TYPE(T_GSU)                   :: GSU
+    LOGICAL, INTENT(IN)           :: IJG
+    LOGICAL, INTENT(IN)           :: LLG
+    INTEGER, INTENT(IN)           :: ICLO
+    INTEGER, INTENT(IN)           :: LB(2)
+    INTEGER, INTENT(IN)           :: UB(2)
+    REAL(8), TARGET               :: XG(LB(1):UB(1),LB(2):UB(2))
+    REAL(8), TARGET               :: YG(LB(1):UB(1),LB(2):UB(2))
     INTEGER, INTENT(IN), OPTIONAL :: NCB
     INTEGER, INTENT(IN), OPTIONAL :: NNP
     LOGICAL, INTENT(IN), OPTIONAL :: DEBUG
@@ -736,14 +728,6 @@ CONTAINS
   !/
   !/ End of W3GSUC ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -826,14 +810,6 @@ CONTAINS
   !/
   !/ End of W3GSUD ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -882,7 +858,7 @@ CONTAINS
   !/ ------------------------------------------------------------------- /
   !/
   SUBROUTINE W3GSUP( GSU, IUNIT, LFULL )
-    TYPE(T_GSU), INTENT(IN) :: GSU
+    TYPE(T_GSU),       INTENT(IN) :: GSU
     INTEGER, OPTIONAL, INTENT(IN) :: IUNIT
     LOGICAL, OPTIONAL, INTENT(IN) :: LFULL
 
@@ -998,14 +974,6 @@ CONTAINS
   !/
   !/ End of W3GSUP ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -1080,8 +1048,8 @@ CONTAINS
   !/ ------------------------------------------------------------------- /
   !/
   SUBROUTINE W3BBOX_GSU( GSU, XMIN, YMIN, XMAX, YMAX )
-    TYPE(T_GSU), INTENT(IN) :: GSU
-    REAL(8), INTENT(OUT)    :: XMIN, YMIN, XMAX, YMAX
+    TYPE(T_GSU), INTENT(IN)  :: GSU
+    REAL(8),     INTENT(OUT) :: XMIN, YMIN, XMAX, YMAX
 
     !     Local parameters
 #ifdef W3_S
@@ -1112,12 +1080,12 @@ CONTAINS
   !/
   SUBROUTINE W3BBOX_GRD_PTR_R4( IJG, LLG, ICLO, XG, YG, &
        XMIN, YMIN, XMAX, YMAX )
-    LOGICAL, INTENT(IN)     :: IJG
-    LOGICAL, INTENT(IN)     :: LLG
-    INTEGER, INTENT(IN)     :: ICLO
-    REAL(4), POINTER        :: XG(:,:)
-    REAL(4), POINTER        :: YG(:,:)
-    REAL(8), INTENT(OUT)    :: XMIN, YMIN, XMAX, YMAX
+    LOGICAL, INTENT(IN)  :: IJG
+    LOGICAL, INTENT(IN)  :: LLG
+    INTEGER, INTENT(IN)  :: ICLO
+    REAL(4), POINTER     :: XG(:,:)
+    REAL(4), POINTER     :: YG(:,:)
+    REAL(8), INTENT(OUT) :: XMIN, YMIN, XMAX, YMAX
 
     !     Local parameters
     TYPE(T_GSU) :: GSU
@@ -1145,12 +1113,12 @@ CONTAINS
   !/
   SUBROUTINE W3BBOX_GRD_PTR_R8( IJG, LLG, ICLO, XG, YG, &
        XMIN, YMIN, XMAX, YMAX )
-    LOGICAL, INTENT(IN)     :: IJG
-    LOGICAL, INTENT(IN)     :: LLG
-    INTEGER, INTENT(IN)     :: ICLO
-    REAL(8), POINTER        :: XG(:,:)
-    REAL(8), POINTER        :: YG(:,:)
-    REAL(8), INTENT(OUT)    :: XMIN, YMIN, XMAX, YMAX
+    LOGICAL, INTENT(IN)  :: IJG
+    LOGICAL, INTENT(IN)  :: LLG
+    INTEGER, INTENT(IN)  :: ICLO
+    REAL(8), POINTER     :: XG(:,:)
+    REAL(8), POINTER     :: YG(:,:)
+    REAL(8), INTENT(OUT) :: XMIN, YMIN, XMAX, YMAX
 
     !     Local parameters
     TYPE(T_GSU) :: GSU
@@ -1178,13 +1146,13 @@ CONTAINS
   !/
   SUBROUTINE W3BBOX_GRD_TGT_R4( IJG, LLG, ICLO, LB, UB, XG, YG, &
        XMIN, YMIN, XMAX, YMAX )
-    LOGICAL, INTENT(IN)     :: IJG
-    LOGICAL, INTENT(IN)     :: LLG
-    INTEGER, INTENT(IN)     :: ICLO
-    INTEGER, INTENT(IN)     :: LB(2), UB(2)
-    REAL(4), TARGET         :: XG(LB(1):UB(1),LB(2):UB(2))
-    REAL(4), TARGET         :: YG(LB(1):UB(1),LB(2):UB(2))
-    REAL(8), INTENT(OUT)    :: XMIN, YMIN, XMAX, YMAX
+    LOGICAL, INTENT(IN)  :: IJG
+    LOGICAL, INTENT(IN)  :: LLG
+    INTEGER, INTENT(IN)  :: ICLO
+    INTEGER, INTENT(IN)  :: LB(2), UB(2)
+    REAL(4), TARGET      :: XG(LB(1):UB(1),LB(2):UB(2))
+    REAL(4), TARGET      :: YG(LB(1):UB(1),LB(2):UB(2))
+    REAL(8), INTENT(OUT) :: XMIN, YMIN, XMAX, YMAX
 
     !     Local parameters
     TYPE(T_GSU) :: GSU
@@ -1209,13 +1177,13 @@ CONTAINS
   !/
   SUBROUTINE W3BBOX_GRD_TGT_R8( IJG, LLG, ICLO, LB, UB, XG, YG, &
        XMIN, YMIN, XMAX, YMAX )
-    LOGICAL, INTENT(IN)     :: IJG
-    LOGICAL, INTENT(IN)     :: LLG
-    INTEGER, INTENT(IN)     :: ICLO
-    INTEGER, INTENT(IN)     :: LB(2), UB(2)
-    REAL(8), TARGET         :: XG(LB(1):UB(1),LB(2):UB(2))
-    REAL(8), TARGET         :: YG(LB(1):UB(1),LB(2):UB(2))
-    REAL(8), INTENT(OUT)    :: XMIN, YMIN, XMAX, YMAX
+    LOGICAL, INTENT(IN)  :: IJG
+    LOGICAL, INTENT(IN)  :: LLG
+    INTEGER, INTENT(IN)  :: ICLO
+    INTEGER, INTENT(IN)  :: LB(2), UB(2)
+    REAL(8), TARGET      :: XG(LB(1):UB(1),LB(2):UB(2))
+    REAL(8), TARGET      :: YG(LB(1):UB(1),LB(2):UB(2))
+    REAL(8), INTENT(OUT) :: XMIN, YMIN, XMAX, YMAX
 
     !     Local parameters
     TYPE(T_GSU) :: GSU
@@ -1238,14 +1206,6 @@ CONTAINS
   !/
   !/ End of W3BBOX ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -1328,16 +1288,16 @@ CONTAINS
   FUNCTION W3GFCL_R4( GSU, XT, YT, IS, JS, XS, YS, &
        POLE, EPS, FNCL, DEBUG ) RESULT(INGRID)
     !     Single precision interface
-    LOGICAL                 :: INGRID
-    TYPE(T_GSU), INTENT(IN) :: GSU
-    REAL(4), INTENT(INOUT)  :: XT
-    REAL(4), INTENT(INOUT)  :: YT
-    INTEGER, INTENT(INOUT)  :: IS(4), JS(4)
-    REAL(4), INTENT(INOUT)  :: XS(4), YS(4)
-    LOGICAL, INTENT(OUT),OPTIONAL :: POLE
-    REAL(4), INTENT(IN), OPTIONAL :: EPS
-    LOGICAL, INTENT(IN), OPTIONAL :: FNCL
-    LOGICAL, INTENT(IN), OPTIONAL :: DEBUG
+    LOGICAL                            :: INGRID
+    TYPE(T_GSU), INTENT(IN)            :: GSU
+    REAL(4),     INTENT(INOUT)         :: XT
+    REAL(4),     INTENT(INOUT)         :: YT
+    INTEGER,     INTENT(INOUT)         :: IS(4), JS(4)
+    REAL(4),     INTENT(INOUT)         :: XS(4), YS(4)
+    LOGICAL,     INTENT(OUT), OPTIONAL :: POLE
+    REAL(4),     INTENT(IN),  OPTIONAL :: EPS
+    LOGICAL,     INTENT(IN),  OPTIONAL :: FNCL
+    LOGICAL,     INTENT(IN),  OPTIONAL :: DEBUG
 
     !     Local parameters
     REAL(8) :: XT8, YT8, XS8(4), YS8(4), EPS8
@@ -1369,16 +1329,16 @@ CONTAINS
   FUNCTION W3GFCL_R8( GSU, XT, YT, IS, JS, XS, YS, &
        POLE, EPS, FNCL, DEBUG ) RESULT(INGRID)
     !     Double precision interface
-    LOGICAL                 :: INGRID
-    TYPE(T_GSU), INTENT(IN) :: GSU
-    REAL(8), INTENT(INOUT)  :: XT
-    REAL(8), INTENT(INOUT)  :: YT
-    INTEGER, INTENT(INOUT)  :: IS(4), JS(4)
-    REAL(8), INTENT(INOUT)  :: XS(4), YS(4)
-    LOGICAL, INTENT(OUT),OPTIONAL :: POLE
-    REAL(8), INTENT(IN), OPTIONAL :: EPS
-    LOGICAL, INTENT(IN), OPTIONAL :: FNCL
-    LOGICAL, INTENT(IN), OPTIONAL :: DEBUG
+    LOGICAL                            :: INGRID
+    TYPE(T_GSU), INTENT(IN)            :: GSU
+    REAL(8),     INTENT(INOUT)         :: XT
+    REAL(8),     INTENT(INOUT)         :: YT
+    INTEGER,     INTENT(INOUT)         :: IS(4), JS(4)
+    REAL(8),     INTENT(INOUT)         :: XS(4), YS(4)
+    LOGICAL,     INTENT(OUT), OPTIONAL :: POLE
+    REAL(8),     INTENT(IN),  OPTIONAL :: EPS
+    LOGICAL,     INTENT(IN),  OPTIONAL :: FNCL
+    LOGICAL,     INTENT(IN),  OPTIONAL :: DEBUG
 
     !     Local parameters
     REAL(8) :: LEPS
@@ -1670,14 +1630,6 @@ CONTAINS
   !/
   !/ End of W3GFCL ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -1755,15 +1707,15 @@ CONTAINS
   FUNCTION W3GFCD_R4( GSU, XT, YT, IS, JS, XS, YS, &
        POLE, EPS, DEBUG ) RESULT(INGRID)
     !     Single precision interface
-    LOGICAL                 :: INGRID
-    TYPE(T_GSU), INTENT(IN) :: GSU
-    REAL(4), INTENT(INOUT)  :: XT
-    REAL(4), INTENT(INOUT)  :: YT
-    INTEGER, INTENT(INOUT)  :: IS(4), JS(4)
-    REAL(4), INTENT(INOUT)  :: XS(4), YS(4)
-    LOGICAL, INTENT(OUT),OPTIONAL :: POLE
-    REAL(4), INTENT(IN), OPTIONAL :: EPS
-    LOGICAL, INTENT(IN), OPTIONAL :: DEBUG
+    LOGICAL                            :: INGRID
+    TYPE(T_GSU), INTENT(IN)            :: GSU
+    REAL(4),     INTENT(INOUT)         :: XT
+    REAL(4),     INTENT(INOUT)         :: YT
+    INTEGER,     INTENT(INOUT)         :: IS(4), JS(4)
+    REAL(4),     INTENT(INOUT)         :: XS(4), YS(4)
+    LOGICAL,     INTENT(OUT), OPTIONAL :: POLE
+    REAL(4),     INTENT(IN),  OPTIONAL :: EPS
+    LOGICAL,     INTENT(IN),  OPTIONAL :: DEBUG
 
     !     Local parameters
     REAL(8) :: XT8, YT8, XS8(4), YS8(4), EPS8
@@ -1795,15 +1747,15 @@ CONTAINS
   FUNCTION W3GFCD_R8( GSU, XT, YT, IS, JS, XS, YS, &
        POLE, EPS, DEBUG ) RESULT(INGRID)
     !     Double precision interface
-    LOGICAL                 :: INGRID
-    TYPE(T_GSU), INTENT(IN) :: GSU
-    REAL(8), INTENT(INOUT)  :: XT
-    REAL(8), INTENT(INOUT)  :: YT
-    INTEGER, INTENT(INOUT)  :: IS(4), JS(4)
-    REAL(8), INTENT(INOUT)  :: XS(4), YS(4)
-    LOGICAL, INTENT(OUT),OPTIONAL :: POLE
-    REAL(8), INTENT(IN), OPTIONAL :: EPS
-    LOGICAL, INTENT(IN), OPTIONAL :: DEBUG
+    LOGICAL                            :: INGRID
+    TYPE(T_GSU), INTENT(IN)            :: GSU
+    REAL(8),     INTENT(INOUT)         :: XT
+    REAL(8),     INTENT(INOUT)         :: YT
+    INTEGER,     INTENT(INOUT)         :: IS(4), JS(4)
+    REAL(8),     INTENT(INOUT)         :: XS(4), YS(4)
+    LOGICAL,     INTENT(OUT), OPTIONAL :: POLE
+    REAL(8),     INTENT(IN),  OPTIONAL :: EPS
+    LOGICAL,     INTENT(IN),  OPTIONAL :: DEBUG
 
     !     Local parameters
     REAL(8) :: LEPS
@@ -1960,14 +1912,6 @@ CONTAINS
   !/
   !/ End of W3GFCD ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -2038,14 +1982,14 @@ CONTAINS
   FUNCTION W3GFPT_R4( GSU, XTIN, YTIN, IX, IY, EPS, DCIN, DEBUG ) &
        RESULT(INGRID)
     !     Single precision interface
-    LOGICAL                 :: INGRID
-    TYPE(T_GSU), INTENT(IN) :: GSU
-    REAL(4), INTENT(IN)     :: XTIN
-    REAL(4), INTENT(IN)     :: YTIN
-    INTEGER, INTENT(OUT)    :: IX, IY
-    REAL(4), INTENT(IN), OPTIONAL :: EPS
-    REAL(4), INTENT(IN), OPTIONAL :: DCIN
-    LOGICAL, INTENT(IN), OPTIONAL :: DEBUG
+    LOGICAL                           :: INGRID
+    TYPE(T_GSU), INTENT(IN)           :: GSU
+    REAL(4),     INTENT(IN)           :: XTIN
+    REAL(4),     INTENT(IN)           :: YTIN
+    INTEGER,     INTENT(OUT)          :: IX, IY
+    REAL(4),     INTENT(IN), OPTIONAL :: EPS
+    REAL(4),     INTENT(IN), OPTIONAL :: DCIN
+    LOGICAL,     INTENT(IN), OPTIONAL :: DEBUG
 
     !     Local parameters
     REAL(8) :: XT8, YT8, EPS8, DCIN8
@@ -2078,14 +2022,14 @@ CONTAINS
   FUNCTION W3GFPT_R8( GSU, XTIN, YTIN, IX, IY, EPS, DCIN, DEBUG ) &
        RESULT(INGRID)
     !     Single precision interface
-    LOGICAL                 :: INGRID
-    TYPE(T_GSU), INTENT(IN) :: GSU
-    REAL(8), INTENT(IN)     :: XTIN
-    REAL(8), INTENT(IN)     :: YTIN
-    INTEGER, INTENT(OUT)    :: IX, IY
-    REAL(8), INTENT(IN), OPTIONAL :: EPS
-    REAL(8), INTENT(IN), OPTIONAL :: DCIN
-    LOGICAL, INTENT(IN), OPTIONAL :: DEBUG
+    LOGICAL                           :: INGRID
+    TYPE(T_GSU), INTENT(IN)           :: GSU
+    REAL(8),     INTENT(IN)           :: XTIN
+    REAL(8),     INTENT(IN)           :: YTIN
+    INTEGER,     INTENT(OUT)          :: IX, IY
+    REAL(8),     INTENT(IN), OPTIONAL :: EPS
+    REAL(8),     INTENT(IN), OPTIONAL :: DCIN
+    LOGICAL,     INTENT(IN), OPTIONAL :: DEBUG
 
     !     Local parameters
     REAL(8), PARAMETER :: BIG = 1D16
@@ -2193,14 +2137,6 @@ CONTAINS
   !/
   !/ End of W3GFPT ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -2276,15 +2212,15 @@ CONTAINS
   FUNCTION W3GFIJ_R4( GSU, XTIN, YTIN, IX, JX, EPS, DCIN, DEBUG ) &
        RESULT(INGRID)
     !     Single precision interface
-    LOGICAL                 :: INGRID
-    TYPE(T_GSU), INTENT(IN) :: GSU
-    REAL(4), INTENT(IN)     :: XTIN
-    REAL(4), INTENT(IN)     :: YTIN
-    REAL(4), INTENT(OUT)    :: IX
-    REAL(4), INTENT(OUT)    :: JX
-    REAL(4), INTENT(IN), OPTIONAL :: EPS
-    REAL(4), INTENT(IN), OPTIONAL :: DCIN
-    LOGICAL, INTENT(IN), OPTIONAL :: DEBUG
+    LOGICAL                           :: INGRID
+    TYPE(T_GSU), INTENT(IN)           :: GSU
+    REAL(4),     INTENT(IN)           :: XTIN
+    REAL(4),     INTENT(IN)           :: YTIN
+    REAL(4),     INTENT(OUT)          :: IX
+    REAL(4),     INTENT(OUT)          :: JX
+    REAL(4),     INTENT(IN), OPTIONAL :: EPS
+    REAL(4),     INTENT(IN), OPTIONAL :: DCIN
+    LOGICAL,     INTENT(IN), OPTIONAL :: DEBUG
 
     !     Local parameters
     REAL(8) :: XT8, YT8, IX8, JX8, EPS8, DCIN8
@@ -2320,15 +2256,15 @@ CONTAINS
   FUNCTION W3GFIJ_R8( GSU, XTIN, YTIN, IX, JX, EPS, DCIN, DEBUG ) &
        RESULT(INGRID)
     !     Double precision interface
-    LOGICAL                 :: INGRID
-    TYPE(T_GSU), INTENT(IN) :: GSU
-    REAL(8), INTENT(IN)     :: XTIN
-    REAL(8), INTENT(IN)     :: YTIN
-    REAL(8), INTENT(OUT)    :: IX
-    REAL(8), INTENT(OUT)    :: JX
-    REAL(8), INTENT(IN), OPTIONAL :: EPS
-    REAL(8), INTENT(IN), OPTIONAL :: DCIN
-    LOGICAL, INTENT(IN), OPTIONAL :: DEBUG
+    LOGICAL                           :: INGRID
+    TYPE(T_GSU), INTENT(IN)           :: GSU
+    REAL(8),     INTENT(IN)           :: XTIN
+    REAL(8),     INTENT(IN)           :: YTIN
+    REAL(8),     INTENT(OUT)          :: IX
+    REAL(8),     INTENT(OUT)          :: JX
+    REAL(8),     INTENT(IN), OPTIONAL :: EPS
+    REAL(8),     INTENT(IN), OPTIONAL :: DCIN
+    LOGICAL,     INTENT(IN), OPTIONAL :: DEBUG
 
     !     Local parameters
     REAL(8) :: LEPS, LDCIN
@@ -2422,14 +2358,6 @@ CONTAINS
   !/
   !/ End of W3GFIJ ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -2521,19 +2449,19 @@ CONTAINS
   FUNCTION W3GRMP_R4( GSU, XTIN, YTIN, IS, JS, RW, EPS, &
        DCIN, MASK, MSKC, NNBR, DEBUG ) RESULT(INGRID)
     !     Single precision interface
-    LOGICAL                 :: INGRID
-    TYPE(T_GSU), INTENT(IN) :: GSU
-    REAL(4), INTENT(IN)     :: XTIN
-    REAL(4), INTENT(IN)     :: YTIN
-    INTEGER, INTENT(OUT)    :: IS(4)
-    INTEGER, INTENT(OUT)    :: JS(4)
-    REAL(4), INTENT(OUT)    :: RW(4)
-    REAL(4), INTENT(IN)   , OPTIONAL :: EPS
-    REAL(4), INTENT(IN)   , OPTIONAL :: DCIN
-    LOGICAL, INTENT(IN)   , OPTIONAL :: MASK(:,:)
-    INTEGER, INTENT(OUT)  , OPTIONAL :: MSKC
-    INTEGER, INTENT(INOUT), OPTIONAL :: NNBR
-    LOGICAL, INTENT(IN)   , OPTIONAL :: DEBUG
+    LOGICAL                               :: INGRID
+    TYPE(T_GSU), INTENT(IN)               :: GSU
+    REAL(4),     INTENT(IN)               :: XTIN
+    REAL(4),     INTENT(IN)               :: YTIN
+    INTEGER,     INTENT(OUT)              :: IS(4)
+    INTEGER,     INTENT(OUT)              :: JS(4)
+    REAL(4),     INTENT(OUT)              :: RW(4)
+    REAL(4),     INTENT(IN)    , OPTIONAL :: EPS
+    REAL(4),     INTENT(IN)    , OPTIONAL :: DCIN
+    LOGICAL,     INTENT(IN)    , OPTIONAL :: MASK(:,:)
+    INTEGER,     INTENT(OUT)   , OPTIONAL :: MSKC
+    INTEGER,     INTENT(INOUT) , OPTIONAL :: NNBR
+    LOGICAL,     INTENT(IN)    , OPTIONAL :: DEBUG
 
     !     Local parameters
     REAL(8) :: XT8, YT8, RW8(4), EPS8, DCIN8
@@ -2570,19 +2498,19 @@ CONTAINS
   FUNCTION W3GRMP_R8( GSU, XTIN, YTIN, IS, JS, RW, EPS, &
        DCIN, MASK, MSKC, NNBR, DEBUG ) RESULT(INGRID)
     !     Double precision interface
-    LOGICAL                 :: INGRID
-    TYPE(T_GSU), INTENT(IN) :: GSU
-    REAL(8), INTENT(IN)     :: XTIN
-    REAL(8), INTENT(IN)     :: YTIN
-    INTEGER, INTENT(OUT)    :: IS(4)
-    INTEGER, INTENT(OUT)    :: JS(4)
-    REAL(8), INTENT(OUT)    :: RW(4)
-    REAL(8), INTENT(IN)   , OPTIONAL :: EPS
-    REAL(8), INTENT(IN)   , OPTIONAL :: DCIN
-    LOGICAL, INTENT(IN)   , OPTIONAL :: MASK(:,:)
-    INTEGER, INTENT(OUT)  , OPTIONAL :: MSKC
-    INTEGER, INTENT(INOUT), OPTIONAL :: NNBR
-    LOGICAL, INTENT(IN)   , OPTIONAL :: DEBUG
+    LOGICAL                               :: INGRID
+    TYPE(T_GSU), INTENT(IN)               :: GSU
+    REAL(8),     INTENT(IN)               :: XTIN
+    REAL(8),     INTENT(IN)               :: YTIN
+    INTEGER,     INTENT(OUT)              :: IS(4)
+    INTEGER,     INTENT(OUT)              :: JS(4)
+    REAL(8),     INTENT(OUT)              :: RW(4)
+    REAL(8),     INTENT(IN)    , OPTIONAL :: EPS
+    REAL(8),     INTENT(IN)    , OPTIONAL :: DCIN
+    LOGICAL,     INTENT(IN)    , OPTIONAL :: MASK(:,:)
+    INTEGER,     INTENT(OUT)   , OPTIONAL :: MSKC
+    INTEGER,     INTENT(INOUT) , OPTIONAL :: NNBR
+    LOGICAL,     INTENT(IN)    , OPTIONAL :: DEBUG
 
     !     Local parameters
     REAL(8), PARAMETER :: BIG = 1D16
@@ -2896,14 +2824,6 @@ CONTAINS
   !/
   !/ End of W3GRMP ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -2993,21 +2913,21 @@ CONTAINS
   FUNCTION W3GRMC_R4( GSU, XTIN, YTIN, RTYP, NS, IS, JS, CS, EPS, &
        DCIN, WDTH, MASK, NMSK, DEBUG ) RESULT(INGRID)
     !     Single precision interface
-    LOGICAL                 :: INGRID
-    TYPE(T_GSU), INTENT(IN) :: GSU
-    REAL(4), INTENT(IN)     :: XTIN
-    REAL(4), INTENT(IN)     :: YTIN
-    CHARACTER(6), INTENT(IN):: RTYP
-    INTEGER, INTENT(OUT)    :: NS
-    INTEGER, INTENT(INOUT), POINTER :: IS(:)
-    INTEGER, INTENT(INOUT), POINTER :: JS(:)
-    REAL(4), INTENT(INOUT), POINTER :: CS(:)
-    REAL(4), INTENT(IN)   , OPTIONAL :: EPS
-    REAL(4), INTENT(IN)   , OPTIONAL :: DCIN
-    REAL(4), INTENT(IN)   , OPTIONAL :: WDTH
-    LOGICAL, INTENT(IN)   , OPTIONAL :: MASK(:,:)
-    INTEGER, INTENT(IN)   , OPTIONAL :: NMSK
-    LOGICAL, INTENT(IN)   , OPTIONAL :: DEBUG
+    LOGICAL                               :: INGRID
+    TYPE(T_GSU),  INTENT(IN)              :: GSU
+    REAL(4),      INTENT(IN)              :: XTIN
+    REAL(4),      INTENT(IN)              :: YTIN
+    CHARACTER(6), INTENT(IN)              :: RTYP
+    INTEGER,      INTENT(OUT)             :: NS
+    INTEGER,      INTENT(INOUT), POINTER  :: IS(:)
+    INTEGER,      INTENT(INOUT), POINTER  :: JS(:)
+    REAL(4),      INTENT(INOUT), POINTER  :: CS(:)
+    REAL(4),      INTENT(IN)   , OPTIONAL :: EPS
+    REAL(4),      INTENT(IN)   , OPTIONAL :: DCIN
+    REAL(4),      INTENT(IN)   , OPTIONAL :: WDTH
+    LOGICAL,      INTENT(IN)   , OPTIONAL :: MASK(:,:)
+    INTEGER,      INTENT(IN)   , OPTIONAL :: NMSK
+    LOGICAL,      INTENT(IN)   , OPTIONAL :: DEBUG
 
     !     Local parameters
     REAL(8) :: LEPS, LDCIN, LWDTH=ZERO
@@ -3087,21 +3007,21 @@ CONTAINS
   FUNCTION W3GRMC_R8( GSU, XTIN, YTIN, RTYP, NS, IS, JS, CS, EPS, &
        DCIN, WDTH, MASK, NMSK, DEBUG ) RESULT(INGRID)
     !     Double precision interface
-    LOGICAL                 :: INGRID
-    TYPE(T_GSU), INTENT(IN) :: GSU
-    REAL(8), INTENT(IN)     :: XTIN
-    REAL(8), INTENT(IN)     :: YTIN
-    CHARACTER(6), INTENT(IN):: RTYP
-    INTEGER, INTENT(OUT)    :: NS
-    INTEGER, INTENT(INOUT), POINTER :: IS(:)
-    INTEGER, INTENT(INOUT), POINTER :: JS(:)
-    REAL(8), INTENT(INOUT), POINTER :: CS(:)
-    REAL(8), INTENT(IN)   , OPTIONAL :: EPS
-    REAL(8), INTENT(IN)   , OPTIONAL :: DCIN
-    REAL(8), INTENT(IN)   , OPTIONAL :: WDTH
-    LOGICAL, INTENT(IN)   , OPTIONAL :: MASK(:,:)
-    INTEGER, INTENT(IN)   , OPTIONAL :: NMSK
-    LOGICAL, INTENT(IN)   , OPTIONAL :: DEBUG
+    LOGICAL                               :: INGRID
+    TYPE(T_GSU),  INTENT(IN)              :: GSU
+    REAL(8),      INTENT(IN)              :: XTIN
+    REAL(8),      INTENT(IN)              :: YTIN
+    CHARACTER(6), INTENT(IN)              :: RTYP
+    INTEGER,      INTENT(OUT)             :: NS
+    INTEGER,      INTENT(INOUT), POINTER  :: IS(:)
+    INTEGER,      INTENT(INOUT), POINTER  :: JS(:)
+    REAL(8),      INTENT(INOUT), POINTER  :: CS(:)
+    REAL(8),      INTENT(IN)   , OPTIONAL :: EPS
+    REAL(8),      INTENT(IN)   , OPTIONAL :: DCIN
+    REAL(8),      INTENT(IN)   , OPTIONAL :: WDTH
+    LOGICAL,      INTENT(IN)   , OPTIONAL :: MASK(:,:)
+    INTEGER,      INTENT(IN)   , OPTIONAL :: NMSK
+    LOGICAL,      INTENT(IN)   , OPTIONAL :: DEBUG
 
     !     Local parameters
     LOGICAL, PARAMETER :: LCMP = .TRUE.
@@ -3488,14 +3408,6 @@ CONTAINS
   !/
   !/ End of W3GRMC ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -3576,12 +3488,12 @@ CONTAINS
   FUNCTION W3CKCL_R4( LLG, XT, YT, NS, XS, YS, POLE, EPS, DEBUG ) &
        RESULT(INCELL)
     !     Single precision interface
-    LOGICAL                :: INCELL
-    LOGICAL, INTENT(IN)    :: LLG
-    REAL(4), INTENT(INOUT) :: XT, YT
-    INTEGER, INTENT(IN)    :: NS
-    REAL(4), INTENT(INOUT) :: XS(NS), YS(NS)
-    LOGICAL, INTENT(OUT)   :: POLE
+    LOGICAL                       :: INCELL
+    LOGICAL, INTENT(IN)           :: LLG
+    REAL(4), INTENT(INOUT)        :: XT, YT
+    INTEGER, INTENT(IN)           :: NS
+    REAL(4), INTENT(INOUT)        :: XS(NS), YS(NS)
+    LOGICAL, INTENT(OUT)          :: POLE
     REAL(4), INTENT(IN), OPTIONAL :: EPS
     LOGICAL, INTENT(IN), OPTIONAL :: DEBUG
 
@@ -3615,12 +3527,12 @@ CONTAINS
   FUNCTION W3CKCL_R8( LLG, XT, YT, NS, XS, YS, POLE, EPS, DEBUG ) &
        RESULT(INCELL)
     !     Double precision interface
-    LOGICAL                :: INCELL
-    LOGICAL, INTENT(IN)    :: LLG
-    REAL(8), INTENT(INOUT) :: XT, YT
-    INTEGER, INTENT(IN)    :: NS
-    REAL(8), INTENT(INOUT) :: XS(NS), YS(NS)
-    LOGICAL, INTENT(OUT)   :: POLE
+    LOGICAL                       :: INCELL
+    LOGICAL, INTENT(IN)           :: LLG
+    REAL(8), INTENT(INOUT)        :: XT, YT
+    INTEGER, INTENT(IN)           :: NS
+    REAL(8), INTENT(INOUT)        :: XS(NS), YS(NS)
+    LOGICAL, INTENT(OUT)          :: POLE
     REAL(8), INTENT(IN), OPTIONAL :: EPS
     LOGICAL, INTENT(IN), OPTIONAL :: DEBUG
 
@@ -3841,14 +3753,6 @@ CONTAINS
   !/
   !/ End of W3CKCL ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -4020,15 +3924,15 @@ CONTAINS
        DPDX, DPDY, DQDX, DQDY, &
        COSA, COSC, SINC, ANGL, RC )
     !     Single precision interface
-    LOGICAL, INTENT(IN)   :: IJG
-    LOGICAL, INTENT(IN)   :: LLG
-    INTEGER, INTENT(IN)   :: ICLO
-    LOGICAL, INTENT(IN)   :: PTILED, QTILED
-    INTEGER, INTENT(IN)   :: PRANGE(2), QRANGE(2)
-    INTEGER, INTENT(IN)   :: LBI(2), UBI(2)
-    INTEGER, INTENT(IN)   :: LBO(2), UBO(2)
-    REAL(4), INTENT(IN)   :: X(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(4), INTENT(IN)   :: Y(LBI(1):UBI(1),LBI(2):UBI(2))
+    LOGICAL, INTENT(IN)            :: IJG
+    LOGICAL, INTENT(IN)            :: LLG
+    INTEGER, INTENT(IN)            :: ICLO
+    LOGICAL, INTENT(IN)            :: PTILED, QTILED
+    INTEGER, INTENT(IN)            :: PRANGE(2), QRANGE(2)
+    INTEGER, INTENT(IN)            :: LBI(2), UBI(2)
+    INTEGER, INTENT(IN)            :: LBO(2), UBO(2)
+    REAL(4), INTENT(IN)            :: X(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(4), INTENT(IN)            :: Y(LBI(1):UBI(1),LBI(2):UBI(2))
     LOGICAL, INTENT(IN),  OPTIONAL :: MASK(LBI(1):UBI(1),LBI(2):UBI(2))
     INTEGER, INTENT(IN),  OPTIONAL :: NFD
     LOGICAL, INTENT(IN),  OPTIONAL :: SPHERE
@@ -4373,15 +4277,15 @@ CONTAINS
        DPDX, DPDY, DQDX, DQDY, &
        COSA, COSC, SINC, ANGL, RC )
     !     Double precision interface
-    LOGICAL, INTENT(IN)   :: IJG
-    LOGICAL, INTENT(IN)   :: LLG
-    INTEGER, INTENT(IN)   :: ICLO
-    LOGICAL, INTENT(IN)   :: PTILED, QTILED
-    INTEGER, INTENT(IN)   :: PRANGE(2), QRANGE(2)
-    INTEGER, INTENT(IN)   :: LBI(2), UBI(2)
-    INTEGER, INTENT(IN)   :: LBO(2), UBO(2)
-    REAL(8), INTENT(IN)   :: X(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(8), INTENT(IN)   :: Y(LBI(1):UBI(1),LBI(2):UBI(2))
+    LOGICAL, INTENT(IN)            :: IJG
+    LOGICAL, INTENT(IN)            :: LLG
+    INTEGER, INTENT(IN)            :: ICLO
+    LOGICAL, INTENT(IN)            :: PTILED, QTILED
+    INTEGER, INTENT(IN)            :: PRANGE(2), QRANGE(2)
+    INTEGER, INTENT(IN)            :: LBI(2), UBI(2)
+    INTEGER, INTENT(IN)            :: LBO(2), UBO(2)
+    REAL(8), INTENT(IN)            :: X(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(8), INTENT(IN)            :: Y(LBI(1):UBI(1),LBI(2):UBI(2))
     LOGICAL, INTENT(IN),  OPTIONAL :: MASK(LBI(1):UBI(1),LBI(2):UBI(2))
     INTEGER, INTENT(IN),  OPTIONAL :: NFD
     LOGICAL, INTENT(IN),  OPTIONAL :: SPHERE
@@ -4718,14 +4622,6 @@ CONTAINS
   !/
   !/ End of W3CGDM ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -4810,20 +4706,20 @@ CONTAINS
        DPDX, DPDY, DQDX, DQDY, &
        F, DFDX, DFDY, MASK, RC )
     !     Single precision interface
-    INTEGER, INTENT(IN)   :: NFD
-    LOGICAL, INTENT(IN)   :: IJG
-    INTEGER, INTENT(IN)   :: ICLO
-    LOGICAL, INTENT(IN)   :: PTILED, QTILED
-    INTEGER, INTENT(IN)   :: PRANGE(2), QRANGE(2)
-    INTEGER, INTENT(IN)   :: LBI(2), UBI(2)
-    INTEGER, INTENT(IN)   :: LBO(2), UBO(2)
-    REAL(4), INTENT(IN)   :: DPDX(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(4), INTENT(IN)   :: DPDY(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(4), INTENT(IN)   :: DQDX(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(4), INTENT(IN)   :: DQDY(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(4), INTENT(IN)   ::    F(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(4), INTENT(OUT)  :: DFDX(LBO(1):UBO(1),LBO(2):UBO(2))
-    REAL(4), INTENT(OUT)  :: DFDY(LBO(1):UBO(1),LBO(2):UBO(2))
+    INTEGER, INTENT(IN)            :: NFD
+    LOGICAL, INTENT(IN)            :: IJG
+    INTEGER, INTENT(IN)            :: ICLO
+    LOGICAL, INTENT(IN)            :: PTILED, QTILED
+    INTEGER, INTENT(IN)            :: PRANGE(2), QRANGE(2)
+    INTEGER, INTENT(IN)            :: LBI(2), UBI(2)
+    INTEGER, INTENT(IN)            :: LBO(2), UBO(2)
+    REAL(4), INTENT(IN)            :: DPDX(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(4), INTENT(IN)            :: DPDY(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(4), INTENT(IN)            :: DQDX(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(4), INTENT(IN)            :: DQDY(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(4), INTENT(IN)            ::    F(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(4), INTENT(OUT)           :: DFDX(LBO(1):UBO(1),LBO(2):UBO(2))
+    REAL(4), INTENT(OUT)           :: DFDY(LBO(1):UBO(1),LBO(2):UBO(2))
     LOGICAL, INTENT(IN),  OPTIONAL :: MASK(LBI(1):UBI(1),LBI(2):UBI(2))
     INTEGER, INTENT(OUT), OPTIONAL :: RC
 
@@ -4931,20 +4827,20 @@ CONTAINS
        DPDX, DPDY, DQDX, DQDY, &
        F, DFDX, DFDY, MASK, RC )
     !     Double precision interface
-    INTEGER, INTENT(IN)   :: NFD
-    LOGICAL, INTENT(IN)   :: IJG
-    INTEGER, INTENT(IN)   :: ICLO
-    LOGICAL, INTENT(IN)   :: PTILED, QTILED
-    INTEGER, INTENT(IN)   :: PRANGE(2), QRANGE(2)
-    INTEGER, INTENT(IN)   :: LBI(2), UBI(2)
-    INTEGER, INTENT(IN)   :: LBO(2), UBO(2)
-    REAL(8), INTENT(IN)   :: DPDX(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(8), INTENT(IN)   :: DPDY(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(8), INTENT(IN)   :: DQDX(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(8), INTENT(IN)   :: DQDY(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(8), INTENT(IN)   ::    F(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(8), INTENT(OUT)  :: DFDX(LBO(1):UBO(1),LBO(2):UBO(2))
-    REAL(8), INTENT(OUT)  :: DFDY(LBO(1):UBO(1),LBO(2):UBO(2))
+    INTEGER, INTENT(IN)            :: NFD
+    LOGICAL, INTENT(IN)            :: IJG
+    INTEGER, INTENT(IN)            :: ICLO
+    LOGICAL, INTENT(IN)            :: PTILED, QTILED
+    INTEGER, INTENT(IN)            :: PRANGE(2), QRANGE(2)
+    INTEGER, INTENT(IN)            :: LBI(2), UBI(2)
+    INTEGER, INTENT(IN)            :: LBO(2), UBO(2)
+    REAL(8), INTENT(IN)            :: DPDX(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(8), INTENT(IN)            :: DPDY(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(8), INTENT(IN)            :: DQDX(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(8), INTENT(IN)            :: DQDY(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(8), INTENT(IN)            ::    F(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(8), INTENT(OUT)           :: DFDX(LBO(1):UBO(1),LBO(2):UBO(2))
+    REAL(8), INTENT(OUT)           :: DFDY(LBO(1):UBO(1),LBO(2):UBO(2))
     LOGICAL, INTENT(IN),  OPTIONAL :: MASK(LBI(1):UBI(1),LBI(2):UBI(2))
     INTEGER, INTENT(OUT), OPTIONAL :: RC
 
@@ -5047,14 +4943,6 @@ CONTAINS
   !/
   !/ End of W3GRD0 ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -5141,20 +5029,20 @@ CONTAINS
        DPDX, DPDY, DQDX, DQDY, &
        VX, VY, DIVV, MASK, RC )
     !     Single precision interface
-    INTEGER, INTENT(IN)   :: NFD
-    LOGICAL, INTENT(IN)   :: IJG
-    INTEGER, INTENT(IN)   :: ICLO
-    LOGICAL, INTENT(IN)   :: PTILED, QTILED
-    INTEGER, INTENT(IN)   :: PRANGE(2), QRANGE(2)
-    INTEGER, INTENT(IN)   :: LBI(2), UBI(2)
-    INTEGER, INTENT(IN)   :: LBO(2), UBO(2)
-    REAL(4), INTENT(IN)   :: DPDX(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(4), INTENT(IN)   :: DPDY(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(4), INTENT(IN)   :: DQDX(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(4), INTENT(IN)   :: DQDY(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(4), INTENT(IN)   ::   VX(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(4), INTENT(IN)   ::   VY(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(4), INTENT(OUT)  :: DIVV(LBO(1):UBO(1),LBO(2):UBO(2))
+    INTEGER, INTENT(IN)            :: NFD
+    LOGICAL, INTENT(IN)            :: IJG
+    INTEGER, INTENT(IN)            :: ICLO
+    LOGICAL, INTENT(IN)            :: PTILED, QTILED
+    INTEGER, INTENT(IN)            :: PRANGE(2), QRANGE(2)
+    INTEGER, INTENT(IN)            :: LBI(2), UBI(2)
+    INTEGER, INTENT(IN)            :: LBO(2), UBO(2)
+    REAL(4), INTENT(IN)            :: DPDX(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(4), INTENT(IN)            :: DPDY(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(4), INTENT(IN)            :: DQDX(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(4), INTENT(IN)            :: DQDY(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(4), INTENT(IN)            ::   VX(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(4), INTENT(IN)            ::   VY(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(4), INTENT(OUT)           :: DIVV(LBO(1):UBO(1),LBO(2):UBO(2))
     LOGICAL, INTENT(IN),  OPTIONAL :: MASK(LBI(1):UBI(1),LBI(2):UBI(2))
     INTEGER, INTENT(OUT), OPTIONAL :: RC
 
@@ -5265,20 +5153,20 @@ CONTAINS
        DPDX, DPDY, DQDX, DQDY, &
        VX, VY, DIVV, MASK, RC )
     !     Double precision interface
-    INTEGER, INTENT(IN)   :: NFD
-    LOGICAL, INTENT(IN)   :: IJG
-    INTEGER, INTENT(IN)   :: ICLO
-    LOGICAL, INTENT(IN)   :: PTILED, QTILED
-    INTEGER, INTENT(IN)   :: PRANGE(2), QRANGE(2)
-    INTEGER, INTENT(IN)   :: LBI(2), UBI(2)
-    INTEGER, INTENT(IN)   :: LBO(2), UBO(2)
-    REAL(8), INTENT(IN)   :: DPDX(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(8), INTENT(IN)   :: DPDY(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(8), INTENT(IN)   :: DQDX(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(8), INTENT(IN)   :: DQDY(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(8), INTENT(IN)   ::   VX(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(8), INTENT(IN)   ::   VY(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(8), INTENT(OUT)  :: DIVV(LBO(1):UBO(1),LBO(2):UBO(2))
+    INTEGER, INTENT(IN)            :: NFD
+    LOGICAL, INTENT(IN)            :: IJG
+    INTEGER, INTENT(IN)            :: ICLO
+    LOGICAL, INTENT(IN)            :: PTILED, QTILED
+    INTEGER, INTENT(IN)            :: PRANGE(2), QRANGE(2)
+    INTEGER, INTENT(IN)            :: LBI(2), UBI(2)
+    INTEGER, INTENT(IN)            :: LBO(2), UBO(2)
+    REAL(8), INTENT(IN)            :: DPDX(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(8), INTENT(IN)            :: DPDY(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(8), INTENT(IN)            :: DQDX(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(8), INTENT(IN)            :: DQDY(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(8), INTENT(IN)            ::   VX(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(8), INTENT(IN)            ::   VY(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(8), INTENT(OUT)           :: DIVV(LBO(1):UBO(1),LBO(2):UBO(2))
     LOGICAL, INTENT(IN),  OPTIONAL :: MASK(LBI(1):UBI(1),LBI(2):UBI(2))
     INTEGER, INTENT(OUT), OPTIONAL :: RC
 
@@ -5384,14 +5272,6 @@ CONTAINS
   !/
   !/ End of W3DIV1 ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -5481,22 +5361,22 @@ CONTAINS
        DPDX, DPDY, DQDX, DQDY, &
        SXX, SYY, SXY, DSX, DSY, MASK, RC )
     !     Single precision interface
-    INTEGER, INTENT(IN)   :: NFD
-    LOGICAL, INTENT(IN)   :: IJG
-    INTEGER, INTENT(IN)   :: ICLO
-    LOGICAL, INTENT(IN)   :: PTILED, QTILED
-    INTEGER, INTENT(IN)   :: PRANGE(2), QRANGE(2)
-    INTEGER, INTENT(IN)   :: LBI(2), UBI(2)
-    INTEGER, INTENT(IN)   :: LBO(2), UBO(2)
-    REAL(4), INTENT(IN)   :: DPDX(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(4), INTENT(IN)   :: DPDY(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(4), INTENT(IN)   :: DQDX(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(4), INTENT(IN)   :: DQDY(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(4), INTENT(IN)   ::  SXX(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(4), INTENT(IN)   ::  SYY(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(4), INTENT(IN)   ::  SXY(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(4), INTENT(OUT)  ::  DSX(LBO(1):UBO(1),LBO(2):UBO(2))
-    REAL(4), INTENT(OUT)  ::  DSY(LBO(1):UBO(1),LBO(2):UBO(2))
+    INTEGER, INTENT(IN)            :: NFD
+    LOGICAL, INTENT(IN)            :: IJG
+    INTEGER, INTENT(IN)            :: ICLO
+    LOGICAL, INTENT(IN)            :: PTILED, QTILED
+    INTEGER, INTENT(IN)            :: PRANGE(2), QRANGE(2)
+    INTEGER, INTENT(IN)            :: LBI(2), UBI(2)
+    INTEGER, INTENT(IN)            :: LBO(2), UBO(2)
+    REAL(4), INTENT(IN)            :: DPDX(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(4), INTENT(IN)            :: DPDY(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(4), INTENT(IN)            :: DQDX(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(4), INTENT(IN)            :: DQDY(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(4), INTENT(IN)            ::  SXX(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(4), INTENT(IN)            ::  SYY(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(4), INTENT(IN)            ::  SXY(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(4), INTENT(OUT)           ::  DSX(LBO(1):UBO(1),LBO(2):UBO(2))
+    REAL(4), INTENT(OUT)           ::  DSY(LBO(1):UBO(1),LBO(2):UBO(2))
     LOGICAL, INTENT(IN),  OPTIONAL :: MASK(LBI(1):UBI(1),LBI(2):UBI(2))
     INTEGER, INTENT(OUT), OPTIONAL :: RC
 
@@ -5611,22 +5491,22 @@ CONTAINS
        DPDX, DPDY, DQDX, DQDY, &
        SXX, SYY, SXY, DSX, DSY, MASK, RC )
     !     Double precision interface
-    INTEGER, INTENT(IN)   :: NFD
-    LOGICAL, INTENT(IN)   :: IJG
-    INTEGER, INTENT(IN)   :: ICLO
-    LOGICAL, INTENT(IN)   :: PTILED, QTILED
-    INTEGER, INTENT(IN)   :: PRANGE(2), QRANGE(2)
-    INTEGER, INTENT(IN)   :: LBI(2), UBI(2)
-    INTEGER, INTENT(IN)   :: LBO(2), UBO(2)
-    REAL(8), INTENT(IN)   :: DPDX(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(8), INTENT(IN)   :: DPDY(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(8), INTENT(IN)   :: DQDX(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(8), INTENT(IN)   :: DQDY(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(8), INTENT(IN)   ::  SXX(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(8), INTENT(IN)   ::  SYY(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(8), INTENT(IN)   ::  SXY(LBI(1):UBI(1),LBI(2):UBI(2))
-    REAL(8), INTENT(OUT)  ::  DSX(LBO(1):UBO(1),LBO(2):UBO(2))
-    REAL(8), INTENT(OUT)  ::  DSY(LBO(1):UBO(1),LBO(2):UBO(2))
+    INTEGER, INTENT(IN)            :: NFD
+    LOGICAL, INTENT(IN)            :: IJG
+    INTEGER, INTENT(IN)            :: ICLO
+    LOGICAL, INTENT(IN)            :: PTILED, QTILED
+    INTEGER, INTENT(IN)            :: PRANGE(2), QRANGE(2)
+    INTEGER, INTENT(IN)            :: LBI(2), UBI(2)
+    INTEGER, INTENT(IN)            :: LBO(2), UBO(2)
+    REAL(8), INTENT(IN)            :: DPDX(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(8), INTENT(IN)            :: DPDY(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(8), INTENT(IN)            :: DQDX(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(8), INTENT(IN)            :: DQDY(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(8), INTENT(IN)            ::  SXX(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(8), INTENT(IN)            ::  SYY(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(8), INTENT(IN)            ::  SXY(LBI(1):UBI(1),LBI(2):UBI(2))
+    REAL(8), INTENT(OUT)           ::  DSX(LBO(1):UBO(1),LBO(2):UBO(2))
+    REAL(8), INTENT(OUT)           ::  DSY(LBO(1):UBO(1),LBO(2):UBO(2))
     LOGICAL, INTENT(IN),  OPTIONAL :: MASK(LBI(1):UBI(1),LBI(2):UBI(2))
     INTEGER, INTENT(OUT), OPTIONAL :: RC
 
@@ -5736,14 +5616,6 @@ CONTAINS
   !/
   !/ End of W3DIV2 ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -5878,14 +5750,6 @@ CONTAINS
   !/
   !/ End of W3DIST ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -5942,9 +5806,9 @@ CONTAINS
   !/
   SUBROUTINE W3SPLX_0D_R4( LAM0, PHI0, C0, LAM, PHI, X, Y )
     !     Single precision point interface
-    REAL(4), INTENT(IN) :: LAM0, PHI0, C0
-    REAL(4), INTENT(IN) :: LAM, PHI
-    REAL(4), INTENT(OUT):: X, Y
+    REAL(4), INTENT(IN)  :: LAM0, PHI0, C0
+    REAL(4), INTENT(IN)  :: LAM, PHI
+    REAL(4), INTENT(OUT) :: X, Y
 
     !     Local parameters
     REAL(8) :: K, K0, CLAM, SLAM, CPHI0, CPHI, SPHI0, SPHI
@@ -5970,9 +5834,9 @@ CONTAINS
   !/
   SUBROUTINE W3SPLX_0D_R8( LAM0, PHI0, C0, LAM, PHI, X, Y )
     !     Double precision point interface
-    REAL(8), INTENT(IN) :: LAM0, PHI0, C0
-    REAL(8), INTENT(IN) :: LAM, PHI
-    REAL(8), INTENT(OUT):: X, Y
+    REAL(8), INTENT(IN)  :: LAM0, PHI0, C0
+    REAL(8), INTENT(IN)  :: LAM, PHI
+    REAL(8), INTENT(OUT) :: X, Y
 
     !     Local parameters
     REAL(8) :: K, K0, CLAM, SLAM, CPHI0, CPHI, SPHI0, SPHI
@@ -5998,9 +5862,9 @@ CONTAINS
   !/
   SUBROUTINE W3SPLX_1D_R4( LAM0, PHI0, C0, LAM, PHI, X, Y )
     !     Single precision 1D array interface
-    REAL(4), INTENT(IN) :: LAM0, PHI0, C0
-    REAL(4), INTENT(IN) :: LAM(:), PHI(:)
-    REAL(4), INTENT(OUT):: X(:), Y(:)
+    REAL(4), INTENT(IN)  :: LAM0, PHI0, C0
+    REAL(4), INTENT(IN)  :: LAM(:), PHI(:)
+    REAL(4), INTENT(OUT) :: X(:), Y(:)
 
     !     Local parameters
     INTEGER :: I
@@ -6019,9 +5883,9 @@ CONTAINS
   !/
   SUBROUTINE W3SPLX_1D_R8( LAM0, PHI0, C0, LAM, PHI, X, Y )
     !     Double precision 1D array interface
-    REAL(8), INTENT(IN) :: LAM0, PHI0, C0
-    REAL(8), INTENT(IN) :: LAM(:), PHI(:)
-    REAL(8), INTENT(OUT):: X(:), Y(:)
+    REAL(8), INTENT(IN)  :: LAM0, PHI0, C0
+    REAL(8), INTENT(IN)  :: LAM(:), PHI(:)
+    REAL(8), INTENT(OUT) :: X(:), Y(:)
 
     !     Local parameters
     INTEGER :: I
@@ -6040,9 +5904,9 @@ CONTAINS
   !/
   SUBROUTINE W3SPLX_2D_R4( LAM0, PHI0, C0, LAM, PHI, X, Y )
     !     Single precision 2D array interface
-    REAL(4), INTENT(IN) :: LAM0, PHI0, C0
-    REAL(4), INTENT(IN) :: LAM(:,:), PHI(:,:)
-    REAL(4), INTENT(OUT):: X(:,:), Y(:,:)
+    REAL(4), INTENT(IN)  :: LAM0, PHI0, C0
+    REAL(4), INTENT(IN)  :: LAM(:,:), PHI(:,:)
+    REAL(4), INTENT(OUT) :: X(:,:), Y(:,:)
 
     !     Local parameters
     INTEGER :: I, J
@@ -6063,9 +5927,9 @@ CONTAINS
   !/
   SUBROUTINE W3SPLX_2D_R8( LAM0, PHI0, C0, LAM, PHI, X, Y )
     !     Double precision 2D array interface
-    REAL(8), INTENT(IN) :: LAM0, PHI0, C0
-    REAL(8), INTENT(IN) :: LAM(:,:), PHI(:,:)
-    REAL(8), INTENT(OUT):: X(:,:), Y(:,:)
+    REAL(8), INTENT(IN)  :: LAM0, PHI0, C0
+    REAL(8), INTENT(IN)  :: LAM(:,:), PHI(:,:)
+    REAL(8), INTENT(OUT) :: X(:,:), Y(:,:)
 
     !     Local parameters
     INTEGER :: I, J
@@ -6084,14 +5948,6 @@ CONTAINS
   !/
   !/ End of W3SPLX ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -6148,9 +6004,9 @@ CONTAINS
   !/
   SUBROUTINE W3SPXL_0D_R4( LAM0, PHI0, C0, X, Y, LAM, PHI )
     !     Single precision point interface
-    REAL(4), INTENT(IN) :: LAM0, PHI0, C0
-    REAL(4), INTENT(IN) :: X, Y
-    REAL(4), INTENT(OUT):: LAM, PHI
+    REAL(4), INTENT(IN)  :: LAM0, PHI0, C0
+    REAL(4), INTENT(IN)  :: X, Y
+    REAL(4), INTENT(OUT) :: LAM, PHI
 
     !     Local parameters
     REAL(8) :: K0, RHO, C, COSC, SINC, CPHI0, SPHI0
@@ -6175,9 +6031,9 @@ CONTAINS
   !/
   SUBROUTINE W3SPXL_0D_R8( LAM0, PHI0, C0, X, Y, LAM, PHI )
     !     Double precision point interface
-    REAL(8), INTENT(IN) :: LAM0, PHI0, C0
-    REAL(8), INTENT(IN) :: X, Y
-    REAL(8), INTENT(OUT):: LAM, PHI
+    REAL(8), INTENT(IN)  :: LAM0, PHI0, C0
+    REAL(8), INTENT(IN)  :: X, Y
+    REAL(8), INTENT(OUT) :: LAM, PHI
 
     !     Local parameters
     REAL(8) :: K0, RHO, C, COSC, SINC, CPHI0, SPHI0
@@ -6202,9 +6058,9 @@ CONTAINS
   !/
   SUBROUTINE W3SPXL_1D_R4( LAM0, PHI0, C0, X, Y, LAM, PHI )
     !     Single precision 1D array interface
-    REAL(4), INTENT(IN) :: LAM0, PHI0, C0
-    REAL(4), INTENT(IN) :: X(:), Y(:)
-    REAL(4), INTENT(OUT):: LAM(:), PHI(:)
+    REAL(4), INTENT(IN)  :: LAM0, PHI0, C0
+    REAL(4), INTENT(IN)  :: X(:), Y(:)
+    REAL(4), INTENT(OUT) :: LAM(:), PHI(:)
 
     !     Local parameters
     INTEGER :: I
@@ -6223,9 +6079,9 @@ CONTAINS
   !/
   SUBROUTINE W3SPXL_1D_R8( LAM0, PHI0, C0, X, Y, LAM, PHI )
     !     Double precision 1D array interface
-    REAL(8), INTENT(IN) :: LAM0, PHI0, C0
-    REAL(8), INTENT(IN) :: X(:), Y(:)
-    REAL(8), INTENT(OUT):: LAM(:), PHI(:)
+    REAL(8), INTENT(IN)  :: LAM0, PHI0, C0
+    REAL(8), INTENT(IN)  :: X(:), Y(:)
+    REAL(8), INTENT(OUT) :: LAM(:), PHI(:)
 
     !     Local parameters
     INTEGER :: I
@@ -6244,9 +6100,9 @@ CONTAINS
   !/
   SUBROUTINE W3SPXL_2D_R4( LAM0, PHI0, C0, X, Y, LAM, PHI )
     !     Single precision 2D array interface
-    REAL(4), INTENT(IN) :: LAM0, PHI0, C0
-    REAL(4), INTENT(IN) :: X(:,:), Y(:,:)
-    REAL(4), INTENT(OUT):: LAM(:,:), PHI(:,:)
+    REAL(4), INTENT(IN)  :: LAM0, PHI0, C0
+    REAL(4), INTENT(IN)  :: X(:,:), Y(:,:)
+    REAL(4), INTENT(OUT) :: LAM(:,:), PHI(:,:)
 
     !     Local parameters
     INTEGER :: I, J
@@ -6267,9 +6123,9 @@ CONTAINS
   !/
   SUBROUTINE W3SPXL_2D_R8( LAM0, PHI0, C0, X, Y, LAM, PHI )
     !     Double precision 2D array interface
-    REAL(8), INTENT(IN) :: LAM0, PHI0, C0
-    REAL(8), INTENT(IN) :: X(:,:), Y(:,:)
-    REAL(8), INTENT(OUT):: LAM(:,:), PHI(:,:)
+    REAL(8), INTENT(IN)  :: LAM0, PHI0, C0
+    REAL(8), INTENT(IN)  :: X(:,:), Y(:,:)
+    REAL(8), INTENT(OUT) :: LAM(:,:), PHI(:,:)
 
     !     Local parameters
     INTEGER :: I, J
@@ -6288,14 +6144,6 @@ CONTAINS
   !/
   !/ End of W3SPXL ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -6349,9 +6197,9 @@ CONTAINS
   !/
   SUBROUTINE W3TRLL_0D_R4( LAM0, PHI0, LAM1, PHI1, LAM, PHI )
     !     Single precision point interface
-    REAL(4), INTENT(IN) :: LAM0, PHI0
-    REAL(4), INTENT(IN) :: LAM1, PHI1
-    REAL(4), INTENT(OUT):: LAM, PHI
+    REAL(4), INTENT(IN)  :: LAM0, PHI0
+    REAL(4), INTENT(IN)  :: LAM1, PHI1
+    REAL(4), INTENT(OUT) :: LAM, PHI
 
     !     Local parameters
     REAL(8) :: CLAM, SLAM, CALP, SALP, CPHI, SPHI
@@ -6375,9 +6223,9 @@ CONTAINS
   !/
   SUBROUTINE W3TRLL_0D_R8( LAM0, PHI0, LAM1, PHI1, LAM, PHI )
     !     Double precision point interface
-    REAL(8), INTENT(IN) :: LAM0, PHI0
-    REAL(8), INTENT(IN) :: LAM1, PHI1
-    REAL(8), INTENT(OUT):: LAM, PHI
+    REAL(8), INTENT(IN)  :: LAM0, PHI0
+    REAL(8), INTENT(IN)  :: LAM1, PHI1
+    REAL(8), INTENT(OUT) :: LAM, PHI
 
     !     Local parameters
     REAL(8) :: CLAM, SLAM, CALP, SALP, CPHI, SPHI
@@ -6401,9 +6249,9 @@ CONTAINS
   !/
   SUBROUTINE W3TRLL_1D_R4( LAM0, PHI0, LAM1, PHI1, LAM, PHI )
     !     Single precision 1D array interface
-    REAL(4), INTENT(IN) :: LAM0, PHI0
-    REAL(4), INTENT(IN) :: LAM1(:), PHI1(:)
-    REAL(4), INTENT(OUT):: LAM(:), PHI(:)
+    REAL(4), INTENT(IN)  :: LAM0, PHI0
+    REAL(4), INTENT(IN)  :: LAM1(:), PHI1(:)
+    REAL(4), INTENT(OUT) :: LAM(:), PHI(:)
 
     !     Local parameters
     INTEGER :: I
@@ -6422,9 +6270,9 @@ CONTAINS
   !/
   SUBROUTINE W3TRLL_1D_R8( LAM0, PHI0, LAM1, PHI1, LAM, PHI )
     !     Double precision 1D array interface
-    REAL(8), INTENT(IN) :: LAM0, PHI0
-    REAL(8), INTENT(IN) :: LAM1(:), PHI1(:)
-    REAL(8), INTENT(OUT):: LAM(:), PHI(:)
+    REAL(8), INTENT(IN)  :: LAM0, PHI0
+    REAL(8), INTENT(IN)  :: LAM1(:), PHI1(:)
+    REAL(8), INTENT(OUT) :: LAM(:), PHI(:)
 
     !     Local parameters
     INTEGER :: I
@@ -6443,9 +6291,9 @@ CONTAINS
   !/
   SUBROUTINE W3TRLL_2D_R4( LAM0, PHI0, LAM1, PHI1, LAM, PHI )
     !     Single precision 2D array interface
-    REAL(4), INTENT(IN) :: LAM0, PHI0
-    REAL(4), INTENT(IN) :: LAM1(:,:), PHI1(:,:)
-    REAL(4), INTENT(OUT):: LAM(:,:), PHI(:,:)
+    REAL(4), INTENT(IN)  :: LAM0, PHI0
+    REAL(4), INTENT(IN)  :: LAM1(:,:), PHI1(:,:)
+    REAL(4), INTENT(OUT) :: LAM(:,:), PHI(:,:)
 
     !     Local parameters
     INTEGER :: I, J
@@ -6466,9 +6314,9 @@ CONTAINS
   !/
   SUBROUTINE W3TRLL_2D_R8( LAM0, PHI0, LAM1, PHI1, LAM, PHI )
     !     Double precision 2D array interface
-    REAL(8), INTENT(IN) :: LAM0, PHI0
-    REAL(8), INTENT(IN) :: LAM1(:,:), PHI1(:,:)
-    REAL(8), INTENT(OUT):: LAM(:,:), PHI(:,:)
+    REAL(8), INTENT(IN)  :: LAM0, PHI0
+    REAL(8), INTENT(IN)  :: LAM1(:,:), PHI1(:,:)
+    REAL(8), INTENT(OUT) :: LAM(:,:), PHI(:,:)
 
     !     Local parameters
     INTEGER :: I, J
@@ -6487,14 +6335,6 @@ CONTAINS
   !/
   !/ End of W3TRLL ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -6598,14 +6438,6 @@ CONTAINS
   !/
   !/ End of W3LLAZ ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -6748,14 +6580,6 @@ CONTAINS
   !/
   !/ End of W3FDWT ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -6880,14 +6704,6 @@ CONTAINS
   !/
   !/ End of W3NNSC ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -6959,14 +6775,6 @@ CONTAINS
   !/
   !/ End of W3NNSD ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -7009,7 +6817,7 @@ CONTAINS
   !/ ------------------------------------------------------------------- /
   !/
   SUBROUTINE W3NNSP(NNS, IUNIT)
-    TYPE(T_NNS), INTENT(IN) :: NNS
+    TYPE(T_NNS),       INTENT(IN) :: NNS
     INTEGER, OPTIONAL, INTENT(IN) :: IUNIT
 
     !     Local parameters
@@ -7036,14 +6844,6 @@ CONTAINS
   !/
   !/ End of W3NNSP ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -7141,14 +6941,6 @@ CONTAINS
   !/
   !/ End of W3SORT ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -7254,14 +7046,6 @@ CONTAINS
   !/
   !/ End of W3ISRT ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ =================================================================== /
   !/
@@ -7337,14 +7121,6 @@ CONTAINS
   !/
   !/ End of W3INAN ===================================================== /
   !/
-
-
-
-
-
-
-
-
   !/
   !/ Internal Support Routines ========================================= /
   !/
@@ -7354,12 +7130,12 @@ CONTAINS
   FUNCTION GSU_CREATE( IJG, LLG, ICLO, LB, UB, XG4, YG4, XG8, YG8, &
        BBOX_ONLY, NCB, NNP, DEBUG ) RESULT(GSU)
     !     *** INTERNAL SUBROUTINE ***
-    TYPE(T_GSU)         :: GSU
-    LOGICAL, INTENT(IN) :: IJG
-    LOGICAL, INTENT(IN) :: LLG
-    INTEGER, INTENT(IN) :: ICLO
-    INTEGER, INTENT(IN) :: LB(2)
-    INTEGER, INTENT(IN) :: UB(2)
+    TYPE(T_GSU)                   :: GSU
+    LOGICAL, INTENT(IN)           :: IJG
+    LOGICAL, INTENT(IN)           :: LLG
+    INTEGER, INTENT(IN)           :: ICLO
+    INTEGER, INTENT(IN)           :: LB(2)
+    INTEGER, INTENT(IN)           :: UB(2)
     REAL(4), TARGET, OPTIONAL     :: XG4(LB(1):UB(1),LB(2):UB(2))
     REAL(4), TARGET, OPTIONAL     :: YG4(LB(1):UB(1),LB(2):UB(2))
     REAL(8), TARGET, OPTIONAL     :: XG8(LB(1):UB(1),LB(2):UB(2))
@@ -7853,12 +7629,12 @@ CONTAINS
   SUBROUTINE GETPQR( XT, YT, XS, YS, PR, QR, EPS, DEBUG )
     !     *** INTERNAL SUBROUTINE ***
     !     Compute source grid cell-relative coordinates (PR,QR) for target point (XT,YT)
-    REAL(8), INTENT(IN)   :: XT
-    REAL(8), INTENT(IN)   :: YT
-    REAL(8), INTENT(IN)   :: XS(4)
-    REAL(8), INTENT(IN)   :: YS(4)
-    REAL(8), INTENT(OUT)  :: PR
-    REAL(8), INTENT(OUT)  :: QR
+    REAL(8), INTENT(IN)            :: XT
+    REAL(8), INTENT(IN)            :: YT
+    REAL(8), INTENT(IN)            :: XS(4)
+    REAL(8), INTENT(IN)            :: YS(4)
+    REAL(8), INTENT(OUT)           :: PR
+    REAL(8), INTENT(OUT)           :: QR
     REAL(8), INTENT(IN),  OPTIONAL :: EPS
     LOGICAL, INTENT(IN) , OPTIONAL :: DEBUG
 
@@ -7967,11 +7743,11 @@ CONTAINS
     !     (I,J) = lower-left corner point of grid cell containing target point
     !     (PR,QR) = cell-relative coordinate of target point
     !     Double precision interface
-    TYPE(T_GSU), INTENT(IN) :: GSU
-    INTEGER, INTENT(IN)  :: I, J
-    REAL(8), INTENT(IN)  :: PR, QR
-    LOGICAL, INTENT(IN)  :: LCMP
-    INTEGER, INTENT(OUT) :: NS
+    TYPE(T_GSU),      INTENT(IN)    :: GSU
+    INTEGER,          INTENT(IN)    :: I, J
+    REAL(8),          INTENT(IN)    :: PR, QR
+    LOGICAL,          INTENT(IN)    :: LCMP
+    INTEGER,          INTENT(OUT)   :: NS
     LOGICAL, POINTER, INTENT(INOUT) :: LS(:)
     INTEGER, POINTER, INTENT(INOUT) :: IS(:), JS(:)
     REAL(8), POINTER, INTENT(INOUT) :: CS(:)
@@ -8065,11 +7841,11 @@ CONTAINS
     !     Compute bicubic remap factors for a given point (P,Q)
     !     (I,J) = lower-left corner point of grid cell containing target point
     !     (PR,QR) = cell-relative coordinate of target point
-    TYPE(T_GSU), INTENT(IN) :: GSU
-    INTEGER, INTENT(IN)  :: I, J
-    REAL(8), INTENT(IN)  :: PR, QR
-    LOGICAL, INTENT(IN)  :: LCMP
-    INTEGER, INTENT(OUT) :: NS
+    TYPE(T_GSU),      INTENT(IN)    :: GSU
+    INTEGER,          INTENT(IN)    :: I, J
+    REAL(8),          INTENT(IN)    :: PR, QR
+    LOGICAL,          INTENT(IN)    :: LCMP
+    INTEGER,          INTENT(OUT)   :: NS
     LOGICAL, POINTER, INTENT(INOUT) :: LS(:)
     INTEGER, POINTER, INTENT(INOUT) :: IS(:), JS(:)
     REAL(8), POINTER, INTENT(INOUT) :: CS(:)
@@ -8294,12 +8070,12 @@ CONTAINS
     !     (I,J) = lower-left corner point of grid cell containing target point
     !     (PR,QR) = cell-relative coordinate of target point
     !     Double precision interface
-    TYPE(T_GSU), INTENT(IN) :: GSU
-    INTEGER, INTENT(IN)  :: I, J
-    REAL(8), INTENT(IN)  :: PR, QR
-    REAL(8), INTENT(IN)  :: WIDTH
-    LOGICAL, INTENT(IN)  :: LCMP
-    INTEGER, INTENT(OUT) :: NS
+    TYPE(T_GSU),      INTENT(IN)    :: GSU
+    INTEGER,          INTENT(IN)    :: I, J
+    REAL(8),          INTENT(IN)    :: PR, QR
+    REAL(8),          INTENT(IN)    :: WIDTH
+    LOGICAL,          INTENT(IN)    :: LCMP
+    INTEGER,          INTENT(OUT)   :: NS
     LOGICAL, POINTER, INTENT(INOUT) :: LS(:)
     INTEGER, POINTER, INTENT(INOUT) :: IS(:), JS(:)
     REAL(8), POINTER, INTENT(INOUT) :: CS(:)
@@ -8412,17 +8188,17 @@ CONTAINS
        LB, UB, P, Q, DXDP, DYDP, MASK, &
        X4, Y4, X8, Y8, RC )
     !     *** INTERNAL SUBROUTINE ***
-    INTEGER, INTENT(IN)   :: N
-    INTEGER, INTENT(IN)   :: K(0:N,0:N,1:N)
-    REAL(8), INTENT(IN)   :: C(0:N,0:N,1:N)
-    LOGICAL, INTENT(IN)   :: IJG
-    LOGICAL, INTENT(IN)   :: LLG
-    INTEGER, INTENT(IN)   :: ICLO
-    LOGICAL, INTENT(IN)   :: PTILED, QTILED
-    INTEGER, INTENT(IN)   :: PRANGE(2), QRANGE(2)
-    INTEGER, INTENT(IN)   :: LB(2), UB(2)
-    INTEGER, INTENT(IN)   :: P, Q
-    REAL(8), INTENT(OUT)  :: DXDP, DYDP
+    INTEGER, INTENT(IN)            :: N
+    INTEGER, INTENT(IN)            :: K(0:N,0:N,1:N)
+    REAL(8), INTENT(IN)            :: C(0:N,0:N,1:N)
+    LOGICAL, INTENT(IN)            :: IJG
+    LOGICAL, INTENT(IN)            :: LLG
+    INTEGER, INTENT(IN)            :: ICLO
+    LOGICAL, INTENT(IN)            :: PTILED, QTILED
+    INTEGER, INTENT(IN)            :: PRANGE(2), QRANGE(2)
+    INTEGER, INTENT(IN)            :: LB(2), UB(2)
+    INTEGER, INTENT(IN)            :: P, Q
+    REAL(8), INTENT(OUT)           :: DXDP, DYDP
     LOGICAL, INTENT(IN),  OPTIONAL :: MASK(LB(1):UB(1),LB(2):UB(2))
     REAL(4), INTENT(IN),  OPTIONAL :: X4(LB(1):UB(1),LB(2):UB(2))
     REAL(4), INTENT(IN),  OPTIONAL :: Y4(LB(1):UB(1),LB(2):UB(2))
@@ -8695,17 +8471,17 @@ CONTAINS
        LB, UB, P, Q, DXDQ, DYDQ, MASK, &
        X4, Y4, X8, Y8, RC )
     !     *** INTERNAL SUBROUTINE ***
-    INTEGER, INTENT(IN)   :: N
-    INTEGER, INTENT(IN)   :: K(0:N,0:N,1:N)
-    REAL(8), INTENT(IN)   :: C(0:N,0:N,1:N)
-    LOGICAL, INTENT(IN)   :: IJG
-    LOGICAL, INTENT(IN)   :: LLG
-    INTEGER, INTENT(IN)   :: ICLO
-    LOGICAL, INTENT(IN)   :: PTILED, QTILED
-    INTEGER, INTENT(IN)   :: PRANGE(2), QRANGE(2)
-    INTEGER, INTENT(IN)   :: LB(2), UB(2)
-    INTEGER, INTENT(IN)   :: P, Q
-    REAL(8), INTENT(OUT)  :: DXDQ, DYDQ
+    INTEGER, INTENT(IN)            :: N
+    INTEGER, INTENT(IN)            :: K(0:N,0:N,1:N)
+    REAL(8), INTENT(IN)            :: C(0:N,0:N,1:N)
+    LOGICAL, INTENT(IN)            :: IJG
+    LOGICAL, INTENT(IN)            :: LLG
+    INTEGER, INTENT(IN)            :: ICLO
+    LOGICAL, INTENT(IN)            :: PTILED, QTILED
+    INTEGER, INTENT(IN)            :: PRANGE(2), QRANGE(2)
+    INTEGER, INTENT(IN)            :: LB(2), UB(2)
+    INTEGER, INTENT(IN)            :: P, Q
+    REAL(8), INTENT(OUT)           :: DXDQ, DYDQ
     LOGICAL, INTENT(IN),  OPTIONAL :: MASK(LB(1):UB(1),LB(2):UB(2))
     REAL(4), INTENT(IN),  OPTIONAL :: X4(LB(1):UB(1),LB(2):UB(2))
     REAL(4), INTENT(IN),  OPTIONAL :: Y4(LB(1):UB(1),LB(2):UB(2))
@@ -9003,11 +8779,11 @@ CONTAINS
     !     dlam/dq = dx/dq*dlam/dx + dy/dq*dlam/dy
     !     dphi/dq = dx/dq*dphi/dx + dy/dq*dphi/dy
     !
-    REAL(8),INTENT(IN) :: LAM0, C0
-    INTEGER,INTENT(IN) :: IHEM
-    REAL(8),INTENT(IN) :: LAM, PHI
-    REAL(8),INTENT(IN) :: DXDP, DYDP
-    REAL(8),INTENT(OUT):: DLAMDP, DPHIDP
+    REAL(8),INTENT(IN)  :: LAM0, C0
+    INTEGER,INTENT(IN)  :: IHEM
+    REAL(8),INTENT(IN)  :: LAM, PHI
+    REAL(8),INTENT(IN)  :: DXDP, DYDP
+    REAL(8),INTENT(OUT) :: DLAMDP, DPHIDP
 
     !     Local parameters
     REAL(8), PARAMETER :: SMALL = 1D-6
@@ -9059,11 +8835,11 @@ CONTAINS
     !     dlam/dq = dx/dq*dlam/dx + dy/dq*dlam/dy
     !     dphi/dq = dx/dq*dphi/dx + dy/dq*dphi/dy
     !
-    REAL(8),INTENT(IN) :: LAM0, C0
-    INTEGER,INTENT(IN) :: IHEM
-    REAL(8),INTENT(IN) :: LAM, PHI
-    REAL(8),INTENT(IN) :: DXDQ, DYDQ
-    REAL(8),INTENT(OUT):: DLAMDQ, DPHIDQ
+    REAL(8),INTENT(IN)  :: LAM0, C0
+    INTEGER,INTENT(IN)  :: IHEM
+    REAL(8),INTENT(IN)  :: LAM, PHI
+    REAL(8),INTENT(IN)  :: DXDQ, DYDQ
+    REAL(8),INTENT(OUT) :: DLAMDQ, DPHIDQ
 
     !     Local parameters
     REAL(8), PARAMETER :: SMALL = 1D-6
@@ -9108,15 +8884,15 @@ CONTAINS
        NSDQ, ISDQ, JSDQ, CSDQ, &
        MASK, RC )
     !     *** INTERNAL SUBROUTINE ***
-    INTEGER, INTENT(IN)   :: N
-    INTEGER, INTENT(IN)   :: K(0:N,0:N,1:N)
-    REAL(8), INTENT(IN)   :: C(0:N,0:N,1:N)
-    LOGICAL, INTENT(IN)   :: IJG
-    INTEGER, INTENT(IN)   :: ICLO
-    LOGICAL, INTENT(IN)   :: PTILED, QTILED
-    INTEGER, INTENT(IN)   :: PRANGE(2), QRANGE(2)
-    INTEGER, INTENT(IN)   :: LB(2), UB(2)
-    INTEGER, INTENT(IN)   :: P, Q
+    INTEGER, INTENT(IN)            :: N
+    INTEGER, INTENT(IN)            :: K(0:N,0:N,1:N)
+    REAL(8), INTENT(IN)            :: C(0:N,0:N,1:N)
+    LOGICAL, INTENT(IN)            :: IJG
+    INTEGER, INTENT(IN)            :: ICLO
+    LOGICAL, INTENT(IN)            :: PTILED, QTILED
+    INTEGER, INTENT(IN)            :: PRANGE(2), QRANGE(2)
+    INTEGER, INTENT(IN)            :: LB(2), UB(2)
+    INTEGER, INTENT(IN)            :: P, Q
     REAL(4), INTENT(IN),  OPTIONAL :: F4(LB(1):UB(1),LB(2):UB(2))
     REAL(8), INTENT(IN),  OPTIONAL :: F8(LB(1):UB(1),LB(2):UB(2))
     REAL(8), INTENT(OUT), OPTIONAL :: DFDP, DFDQ
@@ -9558,9 +9334,9 @@ CONTAINS
   !/
   SUBROUTINE GET_FDW2( N, M, K, C )
     !     *** INTERNAL SUBROUTINE ***
-    INTEGER,INTENT(IN) :: N, M
-    INTEGER,INTENT(OUT):: K(0:N,0:N)
-    REAL(8),INTENT(OUT):: C(0:N,0:N)
+    INTEGER,INTENT(IN)  :: N, M
+    INTEGER,INTENT(OUT) :: K(0:N,0:N)
+    REAL(8),INTENT(OUT) :: C(0:N,0:N)
     INTEGER :: I, J
     REAL(8) :: A(0:N), B(0:N,0:M)
 
@@ -9581,9 +9357,9 @@ CONTAINS
   !/
   SUBROUTINE GET_FDW3( N, M, K, C )
     !     *** INTERNAL SUBROUTINE ***
-    INTEGER,INTENT(IN) :: N, M
-    INTEGER,INTENT(OUT):: K(0:N,0:N,1:N)
-    REAL(8),INTENT(OUT):: C(0:N,0:N,1:N)
+    INTEGER,INTENT(IN)  :: N, M
+    INTEGER,INTENT(OUT) :: K(0:N,0:N,1:N)
+    REAL(8),INTENT(OUT) :: C(0:N,0:N,1:N)
     INTEGER :: L, I, J
     REAL(8) :: A(0:N), B(0:N,0:M)
 
@@ -9609,14 +9385,6 @@ CONTAINS
   !/ End Internal Support Routines ===================================== /
   !/
   !/
-
-
-
-
-
-
-
-
 #ifndef ENABLE_WW3
   !/
   !/ Local routines for use outside of WW3 ============================= /
@@ -9640,14 +9408,6 @@ CONTAINS
   !/ End local routines for use outside of WW3 ========================= /
   !/
 #endif
-
-
-
-
-
-
-
-
   !/
   !/ End of module W3GSRUMD ============================================ /
   !/

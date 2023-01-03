@@ -309,7 +309,8 @@ MODULE W3ODATMD
   !  7. Source code :
   !
   !/ ------------------------------------------------------------------- /
-  USE CONSTANTS, ONLY : UNDEF
+
+  USE CONSTANTS , ONLY : UNDEF
 
   ! module default
   IMPLICIT NONE
@@ -318,137 +319,131 @@ MODULE W3ODATMD
   !/
   !/ Module private variable for checking error returns
   !/
-  INTEGER, PRIVATE        :: ISTAT
+  INTEGER, PRIVATE :: ISTAT
   !/
   !/ Conventional declarations
   !/
-  INTEGER                 :: NOUTP = -1, IOUTP = -1, IOSTYP = 1
-  !
-  INTEGER, PARAMETER      :: NOGRP = 10
-  INTEGER, PARAMETER      :: NGRPP = 20
-  INTEGER, PARAMETER      :: DIMP = 15
-  INTEGER                 :: NOGE(NOGRP)
-  INTEGER                 :: NOTYPE
-  INTEGER, PARAMETER      :: NOEXTR=  2
-  CHARACTER(LEN=20)       :: IDOUT(NOGRP,NGRPP)
-  CHARACTER(LEN=80)       :: FNMPRE = './'
+  INTEGER :: NOUTP = -1, IOUTP = -1, IOSTYP = 1
+ !
+  INTEGER, PARAMETER :: NOGRP = 10
+  INTEGER, PARAMETER :: NGRPP = 20
+  INTEGER, PARAMETER :: DIMP = 15
+  INTEGER            :: NOGE(NOGRP)
+  INTEGER            :: NOTYPE
+  INTEGER, PARAMETER :: NOEXTR=  2
+  CHARACTER(LEN=20)  :: IDOUT(NOGRP,NGRPP)
+  CHARACTER(LEN=80)  :: FNMPRE = './'
   !Moved UNDEF to constants and included above
-  !REAL                    :: UNDEF = -999.9
-  LOGICAL                 :: UNIPTS = .FALSE., UPPROC = .FALSE.
+  !REAL              :: UNDEF = -999.9
+  LOGICAL            :: UNIPTS = .FALSE., UPPROC = .FALSE.
   !/
   !/ Set NOGE and IDOUT identifiers in W3NOUT
   !/
   !/ Data structures
   !/
   TYPE OTYPE1
-    INTEGER               :: IPASS1
+    INTEGER                    :: IPASS1
 #ifdef W3_MPI
-    INTEGER               :: NRQGO, NRQGO2
-    INTEGER, POINTER      :: IRQGO(:), IRQGO2(:)
+    INTEGER                    :: NRQGO, NRQGO2
+    INTEGER,           POINTER :: IRQGO(:), IRQGO2(:)
 #endif
-    LOGICAL               :: FLOGRD(NOGRP,NGRPP), FLOGD(NOGRP),   &
-         FLOGR2(NOGRP,NGRPP), FLOG2(NOGRP),   &
-         FLOGRR(NOGRP,NGRPP), FLOGR(NOGRP),   &
-         WRITE1
+    LOGICAL                    :: FLOGRD(NOGRP,NGRPP), FLOGD(NOGRP)
+    LOGICAL                    :: FLOGR2(NOGRP,NGRPP), FLOG2(NOGRP)
+    LOGICAL                    :: FLOGRR(NOGRP,NGRPP), FLOGR(NOGRP)
+    LOGICAL                    :: WRITE1
   END TYPE OTYPE1
   !/
   TYPE OTYPE2
-    INTEGER               :: IPASS2, NOPTS
+    INTEGER                    :: IPASS2, NOPTS
 #ifdef W3_MPI
-    INTEGER               :: NRQPO, NRQPO2
+    INTEGER                    :: NRQPO, NRQPO2
 #endif
-    INTEGER, POINTER      :: IPTINT(:,:,:), IL(:), IW(:), II(:)
+    INTEGER,           POINTER :: IPTINT(:,:,:), IL(:), IW(:), II(:)
 #ifdef W3_MPI
-    INTEGER, POINTER      :: IRQPO1(:), IRQPO2(:)
+    INTEGER,           POINTER :: IRQPO1(:), IRQPO2(:)
 #endif
-    REAL, POINTER         :: PTLOC(:,:), PTIFAC(:,:),             &
-         DPO(:), WAO(:), WDO(:), ASO(:),      &
+    REAL,              POINTER :: PTLOC(:,:), PTIFAC(:,:), DPO(:), WAO(:), WDO(:), ASO(:)
 #ifdef W3_FLX5
-         TAUAO(:), TAUDO(:), DAIRO(:),        &
+    REAL,              POINTER :: TAUAO(:), TAUDO(:), DAIRO(:)
 #endif
-         CAO(:), CDO(:), ICEO(:), ICEHO(:),   &
-         ICEFO(:), SPCO(:,:)
-    REAL, POINTER         :: ZET_SETO(:)  ! For the wave setup.
+    REAL,              POINTER :: CAO(:), CDO(:), ICEO(:), ICEHO(:), ICEFO(:), SPCO(:,:)
+    REAL,              POINTER :: ZET_SETO(:)  ! For the wave setup.
 
     CHARACTER(LEN=40), POINTER :: PTNME(:)
     CHARACTER(LEN=13), POINTER :: GRDID(:)
-    LOGICAL               :: O2INIT
+    LOGICAL                    :: O2INIT
 #ifdef W3_MPI
-    LOGICAL               :: O2IRQI
+    LOGICAL                    :: O2IRQI
 #endif
   END TYPE OTYPE2
   !/
   TYPE OTYPE3
-    INTEGER               :: IPASS3
+    INTEGER                    :: IPASS3
 #ifdef W3_MPI
-    INTEGER               :: IT0PNT, IT0TRK, IT0PRT, NRQTR
-    INTEGER, POINTER      :: IRQTR(:)
+    INTEGER                    :: IT0PNT, IT0TRK, IT0PRT, NRQTR
+    INTEGER,           POINTER :: IRQTR(:)
 #endif
-    LOGICAL               :: O3INIT, STOP
-    LOGICAL, POINTER      :: MASK1(:,:), MASK2(:,:)
-    CHARACTER(LEN=32), POINTER  :: TRCKID(:,:)
+    LOGICAL                    :: O3INIT, STOP
+    LOGICAL,           POINTER :: MASK1(:,:), MASK2(:,:)
+    CHARACTER(LEN=32), POINTER :: TRCKID(:,:)
   END TYPE OTYPE3
   !/
   TYPE OTYPE4
-    INTEGER               :: IFILE4
+    INTEGER                    :: IFILE4
 #ifdef W3_MPI
-    INTEGER               :: NRQRS, NBLKRS, RSBLKS
-    INTEGER, POINTER      :: IRQRS(:), IRQRSS(:)
-    REAL, POINTER         :: VAAUX(:,:,:)
+    INTEGER                    :: NRQRS, NBLKRS, RSBLKS
+    INTEGER,           POINTER :: IRQRS(:), IRQRSS(:)
+    REAL,              POINTER :: VAAUX(:,:,:)
 #endif
   END TYPE OTYPE4
   !/
   TYPE OTYPE5
-    INTEGER               :: NBI, NBI2, NFBPO, NBO(0:9),          &
-         NBO2(0:9), NDSL(9), NKI, NTHI
+    INTEGER                    :: NBI, NBI2, NFBPO, NBO(0:9), NBO2(0:9), NDSL(9), NKI, NTHI
 #ifdef W3_MPI
-    INTEGER               :: NRQBP = 0, NRQBP2 = 0
+    INTEGER                    :: NRQBP = 0, NRQBP2 = 0
 #endif
-    INTEGER, POINTER      :: IPBPI(:,:), ISBPI(:),                &
-         IPBPO(:,:), ISBPO(:)
+    INTEGER,           POINTER :: IPBPI(:,:), ISBPI(:), IPBPO(:,:), ISBPO(:)
 #ifdef W3_MPI
-    INTEGER, POINTER      :: IRQBP1(:), IRQBP2(:)
+    INTEGER,           POINTER :: IRQBP1(:), IRQBP2(:)
 #endif
-    REAL                  :: XFRI, FR1I, TH1I
-    REAL, POINTER         :: XBPI(:), YBPI(:), RDBPI(:,:),        &
-         XBPO(:), YBPO(:), RDBPO(:,:),        &
-         ABPI0(:,:), ABPIN(:,:), ABPOS(:,:),  &
-         BBPI0(:,:), BBPIN(:,:)
-    LOGICAL               :: O5INI1, O5INI2, O5INI3, O5INI4
-    LOGICAL               :: FLBPI, FLBPO, FILER, FILEW, FILED,   &
-         SPCONV
+    REAL                       :: XFRI, FR1I, TH1I
+    REAL,              POINTER :: XBPI(:), YBPI(:), RDBPI(:,:)
+    REAL,              POINTER :: XBPO(:), YBPO(:), RDBPO(:,:)
+    REAL,              POINTER :: ABPI0(:,:), ABPIN(:,:), ABPOS(:,:)
+    REAL,              POINTER :: BBPI0(:,:), BBPIN(:,:)
+    LOGICAL                    :: O5INI1, O5INI2, O5INI3, O5INI4
+    LOGICAL                    :: FLBPI, FLBPO, FILER, FILEW, FILED, SPCONV
   END TYPE OTYPE5
   !/
   TYPE OTYPE6
-    INTEGER               :: IPASS6, IHMAX, IX0, IXN, IXS,        &
-         IY0, IYN, IYS
-    INTEGER, POINTER      :: ICPRT(:,:)
-    REAL                  :: HSPMIN, WSMULT, WSCUT
-    REAL, POINTER         :: DTPRT(:,:)
-    LOGICAL               :: FLFORM, FLCOMB, O6INIT
-    INTEGER               :: PTMETH   ! C. Bunney; Partitioning method
-    REAL                  :: PTFCUT   ! C. Bunney; Part. 5 freq cut
+    INTEGER                    :: IPASS6, IHMAX, IX0, IXN, IXS, IY0, IYN, IYS
+    INTEGER,           POINTER :: ICPRT(:,:)
+    REAL                       :: HSPMIN, WSMULT, WSCUT
+    REAL,              POINTER :: DTPRT(:,:)
+    LOGICAL                    :: FLFORM, FLCOMB, O6INIT
+    INTEGER                    :: PTMETH   ! C. Bunney; Partitioning method
+    REAL                       :: PTFCUT   ! C. Bunney; Part. 5 freq cut
   END TYPE OTYPE6
   !/
   TYPE OUTPUT
-    INTEGER               :: NDSO, NDSE, NDST, SCREEN
-    INTEGER               :: NTPROC, NAPROC, IAPROC, NAPLOG,      &
-         NAPOUT, NAPERR, NAPFLD, NAPPNT,      &
-         NAPTRK, NAPRST, NAPBPT, NAPPRT
-    INTEGER               :: NOSWLL
+    INTEGER                    :: NDSO, NDSE, NDST, SCREEN
+    INTEGER                    :: NTPROC, NAPROC, IAPROC, NAPLOG
+    INTEGER                    :: NAPOUT, NAPERR, NAPFLD, NAPPNT
+    INTEGER                    :: NAPTRK, NAPRST, NAPBPT, NAPPRT
+    INTEGER                    :: NOSWLL
 #ifdef W3_NL5
-    INTEGER               :: TOSNL5(2)
+    INTEGER                    :: TOSNL5(2)
 #endif
-    INTEGER               :: TOFRST(2), TONEXT(2,8), TOLAST(2,8), &
-         TBPI0(2), TBPIN(2), NDS(13), OFILES(7)
-    REAL                  :: DTOUT(8)
-    LOGICAL               :: FLOUT(8)
-    TYPE(OTYPE1)          :: OUT1
-    TYPE(OTYPE2)          :: OUT2
-    TYPE(OTYPE3)          :: OUT3
-    TYPE(OTYPE4)          :: OUT4
-    TYPE(OTYPE5)          :: OUT5
-    TYPE(OTYPE6)          :: OUT6
+    INTEGER                    :: TOFRST(2), TONEXT(2,8), TOLAST(2,8)
+    INTEGER                    :: TBPI0(2), TBPIN(2), NDS(13), OFILES(7)
+    REAL                       :: DTOUT(8)
+    LOGICAL                    :: FLOUT(8)
+    TYPE(OTYPE1)               :: OUT1
+    TYPE(OTYPE2)               :: OUT2
+    TYPE(OTYPE3)               :: OUT3
+    TYPE(OTYPE4)               :: OUT4
+    TYPE(OTYPE5)               :: OUT5
+    TYPE(OTYPE6)               :: OUT6
   END TYPE OUTPUT
   !/
   !/ Data storage
@@ -457,125 +452,123 @@ MODULE W3ODATMD
   !/
   !/ Data aliasses for structure OUTPUT
   !/
-  INTEGER, POINTER        :: NDSO, NDSE, NDST, SCREEN
-  INTEGER, POINTER        :: NTPROC, NAPROC, IAPROC, NAPLOG,      &
-       NAPOUT, NAPERR, NAPFLD, NAPPNT,      &
-       NAPTRK, NAPRST, NAPBPT, NAPPRT
-  INTEGER, POINTER        :: NOSWLL
+  INTEGER,           POINTER :: NDSO, NDSE, NDST, SCREEN
+  INTEGER,           POINTER :: NTPROC, NAPROC, IAPROC, NAPLOG
+  Integer,           POINTER :: NAPOUT, NAPERR, NAPFLD, NAPPNT
+  INTEGER,           POINTER :: NAPTRK, NAPRST, NAPBPT, NAPPRT
+  INTEGER,           POINTER :: NOSWLL
 #ifdef W3_NL5
-  INTEGER, POINTER        :: TOSNL5(:)
+  INTEGER,           POINTER :: TOSNL5(:)
 #endif
-  INTEGER, POINTER        :: TOFRST(:), TONEXT(:,:), TOLAST(:,:), &
-       TBPI0(:), TBPIN(:), NDS(:)
-  INTEGER, POINTER        :: OFILES(:)
-  REAL, POINTER           :: DTOUT(:)
-  LOGICAL, POINTER        :: FLOUT(:)
+  INTEGER,           POINTER :: TOFRST(:), TONEXT(:,:), TOLAST(:,:)
+  INTEGER,           POINTER :: TBPI0(:), TBPIN(:), NDS(:)
+  INTEGER,           POINTER :: OFILES(:)
+  REAL,              POINTER :: DTOUT(:)
+  LOGICAL,           POINTER :: FLOUT(:)
   !/
   !/ Data aliasses for substructures for output types
   !/ Type 1 ...
   !/
-  INTEGER, POINTER        :: IPASS1
+  INTEGER,           POINTER :: IPASS1
 #ifdef W3_MPI
-  INTEGER, POINTER        :: NRQGO, NRQGO2
-  INTEGER, POINTER        :: IRQGO(:), IRQGO2(:)
+  INTEGER,           POINTER :: NRQGO, NRQGO2
+  INTEGER,           POINTER :: IRQGO(:), IRQGO2(:)
 #endif
-  LOGICAL, POINTER        :: FLOGRD(:,:), FLOGR2(:,:),            &
-       FLOGRR(:,:),FLOGD(:), FLOG2(:),      &
-       FLOGR(:), WRITE1
+  LOGICAL,           POINTER :: FLOGRD(:,:), FLOGR2(:,:)
+  LOGICAL,           POINTER :: FLOGRR(:,:),FLOGD(:), FLOG2(:)
+  LOGICAL,           POINTER :: FLOGR(:), WRITE1
   !/
   !/ Type 2 ...
   !/
-  INTEGER, POINTER        :: IPASS2, NOPTS
+  INTEGER,           POINTER :: IPASS2, NOPTS
 #ifdef W3_MPI
-  INTEGER, POINTER        :: NRQPO, NRQPO2
+  INTEGER,           POINTER :: NRQPO, NRQPO2
 #endif
-  INTEGER, POINTER        :: IPTINT(:,:,:), IL(:), IW(:), II(:)
+  INTEGER,           POINTER :: IPTINT(:,:,:), IL(:), IW(:), II(:)
 #ifdef W3_MPI
-  INTEGER, POINTER        :: IRQPO1(:), IRQPO2(:)
+  INTEGER,           POINTER :: IRQPO1(:), IRQPO2(:)
 #endif
-  REAL, POINTER           :: PTLOC(:,:), PTIFAC(:,:),             &
-       DPO(:), WAO(:), WDO(:), ASO(:),      &
+  REAL,              POINTER :: PTLOC(:,:), PTIFAC(:,:)
+  REAL,              POINTER :: DPO(:), WAO(:), WDO(:), ASO(:)
 #ifdef W3_FLX5
-       TAUAO(:), TAUDO(:), DAIRO(:),        &
+  REAL,              POINTER :: TAUAO(:), TAUDO(:), DAIRO(:)
 #endif
-       CAO(:), CDO(:), ICEO(:), ICEHO(:),   &
-       ICEFO(:), SPCO(:,:)
-  REAL, POINTER           :: ZET_SETO(:)
+  REAL,              POINTER :: CAO(:), CDO(:), ICEO(:), ICEHO(:)
+  REAL,              POINTER :: ICEFO(:), SPCO(:,:)
+  REAL,              POINTER :: ZET_SETO(:)
   !
   CHARACTER(LEN=40), POINTER :: PTNME(:)
   CHARACTER(LEN=13), POINTER :: GRDID(:)
-  LOGICAL, POINTER        :: O2INIT
+  LOGICAL,           POINTER :: O2INIT
 #ifdef W3_MPI
-  LOGICAL, POINTER      :: O2IRQI
+  LOGICAL,           POINTER :: O2IRQI
 #endif
   !/
   !/ Type 3 ...
   !/
-  INTEGER, POINTER        :: IPASS3
+  INTEGER,           POINTER :: IPASS3
 #ifdef W3_MPI
-  INTEGER, POINTER        :: IT0PNT, IT0TRK, IT0PRT, NRQTR
-  INTEGER, POINTER        :: IRQTR(:)
+  INTEGER,           POINTER :: IT0PNT, IT0TRK, IT0PRT, NRQTR
+  INTEGER,           POINTER :: IRQTR(:)
 #endif
-  LOGICAL, POINTER        :: O3INIT, STOP
-  LOGICAL, POINTER        :: MASK1(:,:), MASK2(:,:)
-  CHARACTER(LEN=32), POINTER   :: TRCKID(:,:)
+  LOGICAL,           POINTER :: O3INIT, STOP
+  LOGICAL,           POINTER :: MASK1(:,:), MASK2(:,:)
+  CHARACTER(LEN=32), POINTER :: TRCKID(:,:)
   !/
   !/ Type 4 ...
   !/
-  INTEGER, POINTER        :: IFILE4
+  INTEGER,           POINTER :: IFILE4
 #ifdef W3_MPI
-  INTEGER, POINTER        :: NRQRS, NBLKRS, RSBLKS
-  INTEGER, POINTER        :: IRQRS(:), IRQRSS(:)
-  REAL, POINTER           :: VAAUX(:,:,:)
+  INTEGER,           POINTER :: NRQRS, NBLKRS, RSBLKS
+  INTEGER,           POINTER :: IRQRS(:), IRQRSS(:)
+  REAL,              POINTER :: VAAUX(:,:,:)
 #endif
   !/
   !/ Type 5 ...
   !/
-  INTEGER, POINTER        :: NBI, NBI2, NFBPO, NKI, NTHI
-  INTEGER, POINTER        :: NBO(:), NBO2(:), NDSL(:)
+  INTEGER,           POINTER :: NBI, NBI2, NFBPO, NKI, NTHI
+  INTEGER,           POINTER :: NBO(:), NBO2(:), NDSL(:)
 #ifdef W3_MPI
-  INTEGER, POINTER        :: NRQBP, NRQBP2
+  INTEGER,           POINTER :: NRQBP, NRQBP2
 #endif
-  INTEGER, POINTER        :: IPBPI(:,:), ISBPI(:),                &
-       IPBPO(:,:), ISBPO(:)
+  INTEGER,           POINTER :: IPBPI(:,:), ISBPI(:), IPBPO(:,:), ISBPO(:)
 #ifdef W3_MPI
-  INTEGER, POINTER        :: IRQBP1(:), IRQBP2(:)
+  INTEGER,           POINTER :: IRQBP1(:), IRQBP2(:)
 #endif
-  REAL, POINTER           :: XFRI, FR1I, TH1I
-  REAL, POINTER           :: XBPI(:), YBPI(:), RDBPI(:,:),        &
-       XBPO(:), YBPO(:), RDBPO(:,:),        &
-       ABPI0(:,:), ABPIN(:,:), ABPOS(:,:),  &
-       BBPI0(:,:), BBPIN(:,:)
-  LOGICAL, POINTER        :: O5INI1, O5INI2, O5INI3, O5INI4
-  LOGICAL, POINTER        :: FLBPI, FLBPO, FILER, FILEW, FILED,   &
-       SPCONV
+  REAL,              POINTER :: XFRI, FR1I, TH1I
+  REAL,              POINTER :: XBPI(:), YBPI(:), RDBPI(:,:)
+  REAL,              POINTER :: XBPO(:), YBPO(:), RDBPO(:,:)
+  REAL,              POINTER :: ABPI0(:,:), ABPIN(:,:), ABPOS(:,:)
+  REAL,              POINTER :: BBPI0(:,:), BBPIN(:,:)
+  LOGICAL,           POINTER :: O5INI1, O5INI2, O5INI3, O5INI4
+  LOGICAL,           POINTER :: FLBPI, FLBPO, FILER, FILEW, FILED, SPCONV
   !/
   !/ Type 6 ...
   !/
-  INTEGER, POINTER        :: IPASS6, IHMAX, IX0, IXN, IXS,        &
-       IY0, IYN, IYS, ICPRT(:,:)
-  REAL, POINTER           :: HSPMIN, WSMULT, WSCUT, DTPRT(:,:)
-  LOGICAL, POINTER        :: FLFORM, FLCOMB, O6INIT
-  INTEGER, POINTER        :: PTMETH   ! C. Bunney; Partitioning method
-  REAL, POINTER           :: PTFCUT   ! C. Bunney; Part. 5 freq cut
-  character(len=8)   :: runtype = ''                 !< @public the run type (startup,branch,continue)
-  character(len=256) :: initfile = ''                !< @public name of wave initial condition file
-                                                     !! if runtype is startup or branch run, then initfile is used
-  logical            :: use_user_histname = .false.  !<@public logical flag for user set history filenames
-  logical            :: use_user_restname = .false.  !<@public logical flag for user set restart filenames
-  character(len=512) :: user_histfname = ''          !<@public user history filename prefix, timestring
-                                                     !! YYYY-MM-DD-SSSSS will be appended
-  character(len=512) :: user_restfname = ''          !<@public user restart filename prefix, timestring
-                                                     !! YYYY-MM-DD-SSSSS will be appended
-  logical            :: histwr = .false.             !<@public logical to trigger history write
-                                                     !! if true => write history file (snapshot)
-  logical            :: rstwr = .false.              !<@public logical to trigger restart write
-                                                     !! if true => write restart
-  logical            :: user_netcdf_grdout = .false. !<@public logical flag to use netCDF for gridded
-                                                     !! field output
-  character(len= 36) :: time_origin = ''             !< @public the time_origin used for netCDF output
-  character(len= 36) :: calendar_name = ''           !< @public the calendar used for netCDF output
-  integer(kind=8)    :: elapsed_secs = 0             !< @public the time in seconds from the time_origin
+  INTEGER,           POINTER :: IPASS6, IHMAX, IX0, IXN, IXS, IY0, IYN, IYS, ICPRT(:,:)
+  REAL,              POINTER :: HSPMIN, WSMULT, WSCUT, DTPRT(:,:)
+  LOGICAL,           POINTER :: FLFORM, FLCOMB, O6INIT
+  INTEGER,           POINTER :: PTMETH   ! C. Bunney; Partitioning method
+  REAL,              POINTER :: PTFCUT   ! C. Bunney; Part. 5 freq cut
+
+  character(len=8)           :: runtype = ''                 !< @public the run type (startup,branch,continue)
+  character(len=256)         :: initfile = ''                !< @public name of wave initial condition file
+                                                             !! if runtype is startup or branch run, then initfile is used
+  logical                    :: use_user_histname = .false.  !<@public logical flag for user set history filenames
+  logical                    :: use_user_restname = .false.  !<@public logical flag for user set restart filenames
+  character(len=512)         :: user_histfname = ''          !<@public user history filename prefix, timestring
+                                                             !! YYYY-MM-DD-SSSSS will be appended
+  character(len=512)         :: user_restfname = ''          !<@public user restart filename prefix, timestring
+                                                             !! YYYY-MM-DD-SSSSS will be appended
+  logical                    :: histwr = .false.             !<@public logical to trigger history write
+                                                             !! if true => write history file (snapshot)
+  logical                    :: rstwr = .false.              !<@public logical to trigger restart write
+                                                             !! if true => write restart
+  logical                    :: user_netcdf_grdout = .false. !<@public logical flag to use netCDF for gridded
+                                                             !! field output
+  character(len= 36)         :: time_origin = ''             !< @public the time_origin used for netCDF output
+  character(len= 36)         :: calendar_name = ''           !< @public the calendar used for netCDF output
+  integer(kind=8)            :: elapsed_secs = 0             !< @public the time in seconds from the time_origin
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /

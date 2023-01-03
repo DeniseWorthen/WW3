@@ -380,195 +380,180 @@ MODULE W3ADATMD
     !
     ! The grid
     !
-    REAL, POINTER         :: CG(:,:), WN(:,:)
+    REAL,    POINTER :: CG(:,:), WN(:,:)
 #ifdef W3_IC3
-    REAL, POINTER         :: IC3WN_R(:,:), IC3WN_I(:,:), IC3CG(:,:)
+    REAL,    POINTER :: IC3WN_R(:,:), IC3WN_I(:,:), IC3CG(:,:)
 #endif
     !
     ! Arrays for processing model input
     !
-    REAL, POINTER         :: CA0(:), CAI(:), CD0(:), CDI(:),      &
-         UA0(:), UAI(:), UD0(:), UDI(:),      &
-         MA0(:), MAI(:), RA0(:), RAI(:),      &
-         MD0(:), MDI(:), AS0(:), ASI(:),      &
-         ATRNX(:,:), ATRNY(:,:)
+    REAL,    POINTER :: CA0(:), CAI(:), CD0(:), CDI(:)
+    REAL,    POINTER :: UA0(:), UAI(:), UD0(:), UDI(:)
+    REAL,    POINTER :: MA0(:), MAI(:), RA0(:), RAI(:)
+    REAL,    POINTER :: MD0(:), MDI(:), AS0(:), ASI(:)
+    REAL,    POINTER :: ATRNX(:,:), ATRNY(:,:)
     !
     ! Output fields group 1)
     !
-    REAL, POINTER         :: DW(:), UA(:), UD(:), U10(:), U10D(:),&
-         AS(:), CX(:), CY(:), TAUA(:), TAUADIR(:)
+    REAL,    POINTER :: DW(:), UA(:), UD(:), U10(:), U10D(:)
+    REAL,    POINTER :: AS(:), CX(:), CY(:), TAUA(:), TAUADIR(:)
     !
     ! Output fields group 2)
     !
-    REAL, POINTER         :: HS(:),  WLM(:),  T02(:), T0M1(:),   &
-         T01 (:),  FP0(:),  THM(:),          &
-         THS(:),  THP0(:),                   &
-         HSIG(:), STMAXE(:), STMAXD(:),      &
-         HMAXE(:), HCMAXE(:), HMAXD(:),      &
-         HCMAXD(:), QP(:), WBT(:), WNMEAN(:)
-    REAL, POINTER         :: XHS(:), XWLM(:), XT02(:), XT0M1(:),  &
-         XT01 (:), XFP0(:), XTHM(:),          &
-         XTHS(:), XTHP0(:),                   &
-         XHSIG(:), XSTMAXE(:), XSTMAXD(:),    &
-         XHMAXE(:), XHCMAXE(:), XHMAXD(:),    &
-         XHCMAXD(:), XQP(:), XWBT(:),         &
-         XWNMEAN(:)
+    REAL,    POINTER :: HS(:),  WLM(:),  T02(:), T0M1(:)
+    REAL,    POINTER :: T01 (:), FP0(:),  THM(:)
+    REAL,    POINTER :: THS(:),  THP0(:)
+    REAL,    POINTER :: HSIG(:), STMAXE(:), STMAXD(:)
+    REAL,    POINTER :: HMAXE(:), HCMAXE(:), HMAXD(:)
+    REAL,    POINTER :: HCMAXD(:), QP(:), WBT(:), WNMEAN(:)
+    REAL,    POINTER :: XHS(:), XWLM(:), XT02(:), XT0M1(:)
+    REAL,    POINTER :: XT01 (:), XFP0(:), XTHM(:)
+    REAL,    POINTER :: XTHS(:), XTHP0(:)
+    REAL,    POINTER :: XHSIG(:), XSTMAXE(:), XSTMAXD(:)
+    REAL,    POINTER :: XHMAXE(:), XHCMAXE(:), XHMAXD(:)
+    REAL,    POINTER :: XHCMAXD(:), XQP(:), XWBT(:)
+    REAL,    POINTER :: XWNMEAN(:)
     !
     ! Output fields group 3)
     !
-    REAL, POINTER         ::  EF(:,:),  TH1M(:,:),  STH1M(:,:),   &
-         TH2M(:,:),  STH2M(:,:) !, WN(:,:)
-    REAL, POINTER         ::  XEF(:,:),  XTH1M(:,:),  XSTH1M(:,:),&
-         XTH2M(:,:),  XSTH2M(:,:) !, XWN(:,:)
+    REAL,    POINTER :: EF(:,:),  TH1M(:,:),  STH1M(:,:), TH2M(:,:),  STH2M(:,:)      !,  WN(:,:)
+    REAL,    POINTER :: XEF(:,:),  XTH1M(:,:),  XSTH1M(:,:), XTH2M(:,:),  XSTH2M(:,:) !, XWN(:,:)
     !
     ! Output fields group 4)
     !
-    REAL, POINTER         :: PHS(:,:),  PTP(:,:),  PLP(:,:),      &
-         PDIR(:,:),  PSI(:,:),  PWS(:,:),     &
-         PWST(:),  PNR(:), PGW(:,:),          &
-         PTHP0(:,:), PQP(:,:), PPE(:,:),      &
-         PSW(:,:), PTM1(:,:), PT1(:,:),       &
-         PT2(:,:), PEP(:,:)
-    REAL, POINTER         :: XPHS(:,:), XPTP(:,:), XPLP(:,:),     &
-         XPDIR(:,:), XPSI(:,:), XPWS(:,:),    &
-         XPWST(:), XPNR(:), XPGW(:,:),        &
-         XPTHP0(:,:), XPQP(:,:), XPPE(:,:),   &
-         XPSW(:,:), XPTM1(:,:), XPT1(:,:),    &
-         XPT2(:,:), XPEP(:,:)
+    REAL,    POINTER :: PHS(:,:),  PTP(:,:),  PLP(:,:)
+    REAL,    POINTER :: PDIR(:,:),  PSI(:,:),  PWS(:,:)
+    REAL,    POINTER :: PWST(:),  PNR(:), PGW(:,:)
+    REAL,    POINTER :: PTHP0(:,:), PQP(:,:), PPE(:,:)
+    REAL,    POINTER :: PSW(:,:), PTM1(:,:), PT1(:,:)
+    REAL,    POINTER :: PT2(:,:), PEP(:,:)
+    REAL,    POINTER :: XPHS(:,:), XPTP(:,:), XPLP(:,:)
+    REAL,    POINTER :: XPDIR(:,:), XPSI(:,:), XPWS(:,:)
+    REAL,    POINTER :: XPWST(:), XPNR(:), XPGW(:,:)
+    REAL,    POINTER :: XPTHP0(:,:), XPQP(:,:), XPPE(:,:)
+    REAL,    POINTER :: XPSW(:,:), XPTM1(:,:), XPT1(:,:)
+    REAL,    POINTER :: XPT2(:,:), XPEP(:,:)
     !
     ! Output fields group 5)
     !
-    REAL, POINTER         ::  CHARN(:),  CGE(:),  PHIAW(:),       &
-         TAUWIX(:),  TAUWIY(:),  TAUWNX(:),  &
-         TAUWNY(:),  WHITECAP(:,:), TWS(:)
-    REAL, POINTER         :: XCHARN(:), XCGE(:), XPHIAW(:),       &
-         XTAUWIX(:), XTAUWIY(:), XTAUWNX(:),  &
-         XTAUWNY(:), XWHITECAP(:,:), XTWS(:)
+    REAL,    POINTER :: CHARN(:),  CGE(:),  PHIAW(:)
+    REAL,    POINTER :: TAUWIX(:),  TAUWIY(:),  TAUWNX(:)
+    REAL,    POINTER :: TAUWNY(:),  WHITECAP(:,:), TWS(:)
+    REAL,    POINTER :: XCHARN(:), XCGE(:), XPHIAW(:)
+    REAL,    POINTER :: XTAUWIX(:), XTAUWIY(:), XTAUWNX(:)
+    REAL,    POINTER :: XTAUWNY(:), XWHITECAP(:,:), XTWS(:)
     !
     ! Output fields group 6)
     !
-    REAL, POINTER         ::  SXX(:),  SYY(:),  SXY(:),  TAUOX(:),&
-         TAUOY(:),  BHD(:),  PHIOC(:),       &
-         TUSX(:),  TUSY(:),  USSX(:),        &
-         USSY(:), TAUOCX(:), TAUOCY(:),      &
-         PRMS(:),  TPMS(:), PHICE(:),        &
-         TAUICE(:,:)
-    REAL, POINTER         ::  P2SMS(:,:),  US3D(:,:), USSP(:,:)
-    REAL, POINTER         :: XSXX(:), XSYY(:), XSXY(:), XTAUOX(:),&
-         XTAUOY(:), XBHD(:), XPHIOC(:),       &
-         XTUSX(:), XTUSY(:), XUSSX(:),        &
-         XUSSY(:), XTAUOCX(:), XTAUOCY(:),    &
-         XPRMS(:), XTPMS(:), XPHICE(:),       &
-         XTAUICE(:,:)
-    REAL, POINTER         :: XP2SMS(:,:), XUS3D(:,:), XUSSP(:,:)
+    REAL,    POINTER :: SXX(:),  SYY(:),  SXY(:),  TAUOX(:)
+    REAL,    POINTER :: TAUOY(:),  BHD(:),  PHIOC(:)
+    REAL,    POINTER :: TUSX(:),  TUSY(:),  USSX(:)
+    REAL,    POINTER :: USSY(:), TAUOCX(:), TAUOCY(:)
+    REAL,    POINTER :: PRMS(:),  TPMS(:), PHICE(:), TAUICE(:,:)
+
+    REAL,    POINTER ::  P2SMS(:,:),  US3D(:,:), USSP(:,:)
+    REAL,    POINTER :: XSXX(:), XSYY(:), XSXY(:), XTAUOX(:)
+    REAL,    POINTER :: XTAUOY(:), XBHD(:), XPHIOC(:)
+    REAL,    POINTER :: XTUSX(:), XTUSY(:), XUSSX(:)
+    REAL,    POINTER :: XUSSY(:), XTAUOCX(:), XTAUOCY(:)
+    REAL,    POINTER :: XPRMS(:), XTPMS(:), XPHICE(:), XTAUICE(:,:)
+    REAL,    POINTER :: XP2SMS(:,:), XUS3D(:,:), XUSSP(:,:)
 #ifdef W3_CESMCOUPLED
-    REAL, POINTER         ::  XLANGMT(:)
+    REAL,    POINTER :: XLANGMT(:)
 #endif
     !
     ! Output fields group 7)
     !
-    REAL, POINTER         ::  ABA(:),  ABD(:),  UBA(:),  UBD(:),  &
-         BEDFORMS(:,:),  PHIBBL(:),          &
-         TAUBBL(:,:)
-    REAL, POINTER         :: XABA(:), XABD(:), XUBA(:), XUBD(:),  &
-         XBEDFORMS(:,:), XPHIBBL(:),          &
-         XTAUBBL(:,:)
+    REAL,    POINTER ::  ABA(:),  ABD(:),  UBA(:),  UBD(:)
+    REAL,    POINTER :: BEDFORMS(:,:),  PHIBBL(:), TAUBBL(:,:)
+    REAL,    POINTER :: XABA(:), XABD(:), XUBA(:), XUBD(:)
+    REAL,    POINTER :: XBEDFORMS(:,:), XPHIBBL(:), XTAUBBL(:,:)
     !
     ! Output fields group 8)
     !
-    REAL, POINTER         ::  MSSX(:),  MSSY(:),  MSSD(:),        &
-         MSCX(:),  MSCY(:),  MSCD(:)
-    REAL, POINTER         ::  XMSSX(:), XMSSY(:), XMSSD(:),       &
-         XMSCX(:), XMSCY(:), XMSCD(:)
+    REAL,    POINTER ::  MSSX(:),  MSSY(:),  MSSD(:),  MSCX(:),  MSCY(:),  MSCD(:)
+    REAL,    POINTER :: XMSSX(:), XMSSY(:), XMSSD(:), XMSCX(:), XMSCY(:), XMSCD(:)
     !
     ! Output fields group 9)
     !
-    REAL, POINTER         ::  DTDYN(:),  FCUT(:),  CFLXYMAX(:),   &
-         CFLTHMAX(:),  CFLKMAX(:)
-    REAL, POINTER         :: XDTDYN(:), XFCUT(:), XCFLXYMAX(:),   &
-         XCFLTHMAX(:), XCFLKMAX(:)
+    REAL,    POINTER :: DTDYN(:),  FCUT(:),  CFLXYMAX(:), CFLTHMAX(:),  CFLKMAX(:)
+    REAL,    POINTER :: XDTDYN(:), XFCUT(:), XCFLXYMAX(:), XCFLTHMAX(:), XCFLKMAX(:)
     !
     ! Output fields group 10)
     !
-    REAL, POINTER         ::  USERO(:,:)
-    REAL, POINTER         :: XUSERO(:,:)
+    REAL,    POINTER ::  USERO(:,:)
+    REAL,    POINTER :: XUSERO(:,:)
 #ifdef W3_CESMCOUPLED
     ! Output fileds for Langmuir mixing in group
-    REAL, POINTER         :: LANGMT(:), LAPROJ(:), LASL(:),       &
-         LASLPJ(:), LAMULT(:), ALPHAL(:),     &
-         ALPHALS(:), USSXH(:), USSYH(:)
+    REAL,    POINTER :: LANGMT(:), LAPROJ(:), LASL(:)
+    REAL,    POINTER :: LASLPJ(:), LAMULT(:), ALPHAL(:)
+    REAL,    POINTER :: ALPHALS(:), USSXH(:), USSYH(:)
 #endif
     !
     ! Spatial derivatives
     !
-    REAL, POINTER         :: DDDX(:,:), DDDY(:,:), DCXDX(:,:),    &
-         DCYDX(:,:), DCXDY(:,:), DCYDY(:,:)
-    REAL, POINTER         :: DCDX(:,:,:), DCDY(:,:,:)
+    REAL,    POINTER :: DDDX(:,:), DDDY(:,:), DCXDX(:,:)
+    REAL,    POINTER :: DCYDX(:,:), DCXDY(:,:), DCYDY(:,:)
+    REAL,    POINTER :: DCDX(:,:,:), DCDY(:,:,:)
 #ifdef W3_SMC
-    REAL, POINTER         :: DHDX(:), DHDY(:), DHLMT(:,:)
+    REAL,    POINTER :: DHDX(:), DHDY(:), DHLMT(:,:)
 #endif
     !
 #ifdef W3_PR1
-    INTEGER, POINTER      :: IS0(:), IS2(:)
-    REAL, POINTER         :: FACVX(:), FACVY(:)
+    INTEGER, POINTER :: IS0(:), IS2(:)
+    REAL,    POINTER :: FACVX(:), FACVY(:)
 #endif
     !
 #ifdef W3_PR2
-    INTEGER               :: NMX0, NMX1, NMX2, NMY0, NMY1, NMY2,  &
-         NACT, NMXY
-    INTEGER, POINTER      :: MAPX2(:), MAPY2(:), MAPAXY(:),       &
-         MAPXY(:), MAPTH2(:), MAPWN2(:)
+    INTEGER          :: NMX0, NMX1, NMX2, NMY0, NMY1, NMY2, NACT, NMXY
+    INTEGER, POINTER :: MAPX2(:), MAPY2(:), MAPAXY(:), MAPXY(:), MAPTH2(:), MAPWN2(:)
 #endif
     !
 #ifdef W3_PR3
-    INTEGER               :: NMX0, NMX1, NMX2, NMY0, NMY1, NMY2,  &
-         NACT, NCENT
-    INTEGER, POINTER      :: MAPX2(:), MAPY2(:), MAPAXY(:),       &
-         MAPCXY(:), MAPTH2(:), MAPWN2(:)
-    LOGICAL, POINTER      :: MAPTRN(:)
+    INTEGER          :: NMX0, NMX1, NMX2, NMY0, NMY1, NMY2, NACT, NCENT
+    INTEGER, POINTER :: MAPX2(:), MAPY2(:), MAPAXY(:), MAPCXY(:), MAPTH2(:), MAPWN2(:)
+    LOGICAL, POINTER :: MAPTRN(:)
 #endif
     !
     ! Warning Defined but not set if UGTYPE .EQ. .T.
-    INTEGER, POINTER      :: ITER(:,:)
+    INTEGER, POINTER :: ITER(:,:)
     !
 #ifdef W3_NL1
-    INTEGER               :: NFR, NFRHGH, NFRCHG, NSPECX, NSPECY
-    INTEGER, POINTER      :: IP11(:), IP12(:), IP13(:), IP14(:),  &
-         IM11(:), IM12(:), IM13(:), IM14(:),  &
-         IP21(:), IP22(:), IP23(:), IP24(:),  &
-         IM21(:), IM22(:), IM23(:), IM24(:),  &
-         IC11(:), IC12(:), IC21(:), IC22(:),  &
-         IC31(:), IC32(:), IC41(:), IC42(:),  &
-         IC51(:), IC52(:), IC61(:), IC62(:),  &
-         IC71(:), IC72(:), IC81(:), IC82(:)
-    REAL                  :: DAL1, DAL2, DAL3,                    &
-         AWG1, AWG2, AWG3, AWG4, AWG5, AWG6,  &
-         AWG7, AWG8, SWG1, SWG2, SWG3, SWG4,  &
-         SWG5, SWG6, SWG7, SWG8
-    REAL, POINTER         :: AF11(:)
-    LOGICAL               :: NLINIT
+    INTEGER          :: NFR, NFRHGH, NFRCHG, NSPECX, NSPECY
+    INTEGER, POINTER :: IP11(:), IP12(:), IP13(:), IP14(:)
+    INTEGER, POINTER :: IM11(:), IM12(:), IM13(:), IM14(:)
+    INTEGER, POINTER :: IP21(:), IP22(:), IP23(:), IP24(:)
+    INTEGER, POINTER :: IM21(:), IM22(:), IM23(:), IM24(:)
+    INTEGER, POINTER :: IC11(:), IC12(:), IC21(:), IC22(:)
+    INTEGER, POINTER :: IC31(:), IC32(:), IC41(:), IC42(:)
+    INTEGER, POINTER :: IC51(:), IC52(:), IC61(:), IC62(:)
+    INTEGER, POINTER :: IC71(:), IC72(:), IC81(:), IC82(:)
+    REAL             :: DAL1, DAL2, DAL3
+    REAL             :: AWG1, AWG2, AWG3, AWG4, AWG5, AWG6
+    REAL             :: AWG7, AWG8, SWG1, SWG2, SWG3, SWG4
+    REAL             :: SWG5, SWG6, SWG7, SWG8
+    REAL,    POINTER :: AF11(:)
+    LOGICAL          :: NLINIT
 #endif
     !
-    INTEGER, POINTER      :: IAPPRO(:)
+    INTEGER, POINTER :: IAPPRO(:)
 #ifdef W3_MPI
-    INTEGER               :: MPI_COMM_WAVE, MPI_COMM_WCMP,        &
-         WW3_FIELD_VEC, WW3_SPEC_VEC,         &
-         NRQSG1 = 0, NRQSG2, IBFLOC, ISPLOC,  &
-         NSPLOC
+    INTEGER          :: MPI_COMM_WAVE, MPI_COMM_WCMP, WW3_FIELD_VEC, WW3_SPEC_VEC
+    INTEGER          :: NRQSG1 = 0, NRQSG2, IBFLOC, ISPLOC, NSPLOC
 #endif
 #ifdef W3_PDLIB
-    INTEGER               :: NBFIELD, PDLIB_MPI_TYPE
+    INTEGER          :: NBFIELD, PDLIB_MPI_TYPE
 #endif
 #ifdef W3_MPI
-    INTEGER               :: BSTAT(MPIBUF), BISPL(MPIBUF)
-    INTEGER, POINTER      :: IRQSG1(:,:), IRQSG2(:,:)
-    REAL, POINTER         :: GSTORE(:,:), SSTORE(:,:)
+    INTEGER          :: BSTAT(MPIBUF), BISPL(MPIBUF)
+    INTEGER, POINTER :: IRQSG1(:,:), IRQSG2(:,:)
+    REAL,    POINTER :: GSTORE(:,:), SSTORE(:,:)
 #endif
-    REAL, POINTER         :: SPPNT(:,:,:)
+    REAL,    POINTER :: SPPNT(:,:,:)
     !
-    INTEGER               :: ITIME, IPASS, IDLAST, NSEALM
-    REAL, POINTER         :: ALPHA(:,:)
-    LOGICAL               :: AINIT, AINIT2, FL_ALL, FLCOLD, FLIWND
+    INTEGER          :: ITIME, IPASS, IDLAST, NSEALM
+    REAL,    POINTER :: ALPHA(:,:)
+    LOGICAL          :: AINIT, AINIT2, FL_ALL, FLCOLD, FLIWND
     !
   END TYPE WADAT
   !/
@@ -579,125 +564,115 @@ MODULE W3ADATMD
   !/ Data aliases for structure WADAT(S)
   !/
 #ifdef W3_CESMCOUPLED
-  REAL, POINTER           :: LANGMT(:), LAPROJ(:), ALPHAL(:),      &
-       ALPHALS(:), LAMULT(:), LASL(:),       &
-       LASLPJ(:), USSXH(:), USSYH(:)
+  REAL,    POINTER :: LANGMT(:), LAPROJ(:), ALPHAL(:)
+  REAL,    POINTER :: ALPHALS(:), LAMULT(:), LASL(:)
+  REAL,    POINTER :: LASLPJ(:), USSXH(:), USSYH(:)
 #endif
-  REAL, POINTER           :: CG(:,:), WN(:,:)
-  REAL, POINTER           :: IC3WN_R(:,:), IC3WN_I(:,:), IC3CG(:,:)
+  REAL,    POINTER :: CG(:,:), WN(:,:)
+  REAL,    POINTER :: IC3WN_R(:,:), IC3WN_I(:,:), IC3CG(:,:)
   !
-  REAL, POINTER           :: CA0(:), CAI(:), CD0(:), CDI(:),      &
-       UA0(:), UAI(:), UD0(:), UDI(:),      &
-       MA0(:), MAI(:), RA0(:), RAI(:),      &
-       MD0(:), MDI(:), AS0(:), ASI(:),      &
-       ATRNX(:,:), ATRNY(:,:)
+  REAL,    POINTER :: CA0(:), CAI(:), CD0(:), CDI(:)
+  REAL,    POINTER :: UA0(:), UAI(:), UD0(:), UDI(:)
+  REAL,    POINTER :: MA0(:), MAI(:), RA0(:), RAI(:)
+  REAL,    POINTER :: MD0(:), MDI(:), AS0(:), ASI(:)
+  REAL,    POINTER :: ATRNX(:,:), ATRNY(:,:)
   !
-  REAL, POINTER           :: DW(:), UA(:), UD(:), U10(:), U10D(:),&
-       AS(:), CX(:), CY(:), TAUA(:), TAUADIR(:)
+  REAL,    POINTER :: DW(:), UA(:), UD(:), U10(:), U10D(:)
+  REAL,    POINTER :: AS(:), CX(:), CY(:), TAUA(:), TAUADIR(:)
   !
-  REAL, POINTER           :: HS(:), WLM(:),  T02(:), T0M1(:),     &
-       T01 (:), FP0(:), THM(:), THS(:),     &
-       THP0(:), HSIG(:),                    &
-       STMAXE(:), STMAXD(:), HMAXE(:),      &
-       HCMAXE(:), HMAXD(:), HCMAXD(:),      &
-       QP(:), WBT(:), WNMEAN(:)
+  REAL,    POINTER :: HS(:), WLM(:),  T02(:), T0M1(:)
+  REAL,    POINTER :: T01 (:), FP0(:), THM(:), THS(:)
+  REAL,    POINTER :: THP0(:), HSIG(:)
+  REAL,    POINTER :: STMAXE(:), STMAXD(:), HMAXE(:)
+  REAL,    POINTER :: HCMAXE(:), HMAXD(:), HCMAXD(:)
+  REAL,    POINTER :: QP(:), WBT(:), WNMEAN(:)
   !
-  REAL, POINTER           :: EF(:,:), TH1M(:,:), STH1M(:,:),      &
-       TH2M(:,:), STH2M(:,:)
+  REAL,    POINTER :: EF(:,:), TH1M(:,:), STH1M(:,:), TH2M(:,:), STH2M(:,:)
   !
-  REAL, POINTER           :: PHS(:,:), PTP(:,:), PLP(:,:),        &
-       PDIR(:,:), PSI(:,:), PWS(:,:),       &
-       PWST(:), PNR(:), PGW(:,:), PSW(:,:), &
-       PTHP0(:,:), PQP(:,:), PPE(:,:),      &
-       PTM1(:,:), PT1(:,:), PT2(:,:),PEP(:,:)
+  REAL,    POINTER :: PHS(:,:), PTP(:,:), PLP(:,:)
+  REAL,    POINTER :: PDIR(:,:), PSI(:,:), PWS(:,:)
+  REAL,    POINTER :: PWST(:), PNR(:), PGW(:,:), PSW(:,:)
+  REAL,    POINTER :: PTHP0(:,:), PQP(:,:), PPE(:,:)
+  REAL,    POINTER :: PTM1(:,:), PT1(:,:), PT2(:,:),PEP(:,:)
   !
-  REAL, POINTER           :: CHARN(:), CGE(:), PHIAW(:),          &
-       TAUWIX(:), TAUWIY(:), TAUWNX(:),     &
-       TAUWNY(:), WHITECAP(:,:), TWS(:)
+  REAL,    POINTER :: CHARN(:), CGE(:), PHIAW(:)
+  REAL,    POINTER :: TAUWIX(:), TAUWIY(:), TAUWNX(:)
+  REAL,    POINTER :: TAUWNY(:), WHITECAP(:,:), TWS(:)
   !
-  REAL, POINTER           :: SXX(:), SYY(:), SXY(:), TAUOX(:),    &
-       TAUOY(:), BHD(:), PHIOC(:),          &
-       TUSX(:), TUSY(:), USSX(:), USSY(:),  &
-       TAUOCX(:), TAUOCY(:), PRMS(:),       &
-       TPMS(:), PHICE(:), TAUICE(:,:)
-  REAL, POINTER           :: P2SMS(:,:), US3D(:,:), USSP(:,:)
+  REAL,    POINTER :: SXX(:), SYY(:), SXY(:), TAUOX(:)
+  REAL,    POINTER :: TAUOY(:), BHD(:), PHIOC(:)
+  REAL,    POINTER :: TUSX(:), TUSY(:), USSX(:), USSY(:)
+  REAL,    POINTER :: TAUOCX(:), TAUOCY(:), PRMS(:)
+  REAL,    POINTER :: TPMS(:), PHICE(:), TAUICE(:,:)
+  REAL,    POINTER :: P2SMS(:,:), US3D(:,:), USSP(:,:)
   !
-  REAL, POINTER           :: ABA(:), ABD(:), UBA(:), UBD(:),      &
-       BEDFORMS(:,:), PHIBBL(:), TAUBBL(:,:)
+  REAL,    POINTER :: ABA(:), ABD(:), UBA(:), UBD(:), BEDFORMS(:,:), PHIBBL(:), TAUBBL(:,:)
   !
-  REAL, POINTER           :: MSSX(:), MSSY(:), MSSD(:),           &
-       MSCX(:), MSCY(:), MSCD(:)
+  REAL,    POINTER :: MSSX(:), MSSY(:), MSSD(:), MSCX(:), MSCY(:), MSCD(:)
   !
-  REAL, POINTER           :: DTDYN(:), FCUT(:), CFLXYMAX(:),      &
-       CFLTHMAX(:), CFLKMAX(:)
+  REAL,    POINTER :: DTDYN(:), FCUT(:), CFLXYMAX(:), CFLTHMAX(:), CFLKMAX(:)
   !
-  REAL, POINTER           :: USERO(:,:)
+  REAL,    POINTER :: USERO(:,:)
   !
-  !     REAL, POINTER           :: TAUWX(:), TAUWY(:)
   !
-  REAL, POINTER           :: DDDX(:,:), DDDY(:,:), DCXDX(:,:),    &
-       DCYDX(:,:), DCXDY(:,:), DCYDY(:,:)
-  REAL, POINTER           :: DCDX(:,:,:), DCDY(:,:,:)
+  REAL,    POINTER :: DDDX(:,:), DDDY(:,:), DCXDX(:,:)
+  REAL,    POINTER :: DCYDX(:,:), DCXDY(:,:), DCYDY(:,:)
+  REAL,    POINTER :: DCDX(:,:,:), DCDY(:,:,:)
 #ifdef W3_SMC
-  REAL, POINTER         :: DHDX(:), DHDY(:), DHLMT(:,:)
+  REAL,    POINTER :: DHDX(:), DHDY(:), DHLMT(:,:)
 #endif
   !
 #ifdef W3_PR1
-  INTEGER, POINTER        :: IS0(:), IS2(:)
-  REAL, POINTER           :: FACVX(:), FACVY(:)
+  INTEGER, POINTER :: IS0(:), IS2(:)
+  REAL,    POINTER :: FACVX(:), FACVY(:)
 #endif
   !
 #ifdef W3_PR2
-  INTEGER, POINTER        :: NMX0, NMX1, NMX2, NMY0, NMY1, NMY2,  &
-       NACT, NMXY
-  INTEGER, POINTER        :: MAPX2(:), MAPY2(:), MAPAXY(:),       &
-       MAPXY(:), MAPTH2(:), MAPWN2(:)
+  INTEGER, POINTER :: NMX0, NMX1, NMX2, NMY0, NMY1, NMY2, NACT, NMXY
+  INTEGER, POINTER :: MAPX2(:), MAPY2(:), MAPAXY(:)
+  INTEGER, POINTER :: MAPXY(:), MAPTH2(:), MAPWN2(:)
 #endif
   !
 #ifdef W3_PR3
-  INTEGER, POINTER        :: NMX0, NMX1, NMX2, NMY0, NMY1, NMY2,  &
-       NACT, NCENT
-  INTEGER, POINTER        :: MAPX2(:), MAPY2(:), MAPAXY(:),       &
-       MAPCXY(:), MAPTH2(:), MAPWN2(:)
-  LOGICAL, POINTER        :: MAPTRN(:)
+  INTEGER, POINTER :: NMX0, NMX1, NMX2, NMY0, NMY1, NMY2, NACT, NCENT
+  INTEGER, POINTER :: MAPX2(:), MAPY2(:), MAPAXY(:), MAPCXY(:), MAPTH2(:), MAPWN2(:)
+  LOGICAL, POINTER :: MAPTRN(:)
 #endif
   !
-  INTEGER, POINTER        :: ITER(:,:)
+  INTEGER, POINTER :: ITER(:,:)
   !
 #ifdef W3_NL1
-  INTEGER, POINTER        :: NFR, NFRHGH, NFRCHG, NSPECX, NSPECY
-  INTEGER, POINTER        :: IP11(:), IP12(:), IP13(:), IP14(:),  &
-       IM11(:), IM12(:), IM13(:), IM14(:),  &
-       IP21(:), IP22(:), IP23(:), IP24(:),  &
-       IM21(:), IM22(:), IM23(:), IM24(:),  &
-       IC11(:), IC12(:), IC21(:), IC22(:),  &
-       IC31(:), IC32(:), IC41(:), IC42(:),  &
-       IC51(:), IC52(:), IC61(:), IC62(:),  &
-       IC71(:), IC72(:), IC81(:), IC82(:)
-  REAL, POINTER           :: DAL1, DAL2, DAL3,                    &
-       AWG1, AWG2, AWG3, AWG4, AWG5, AWG6,  &
-       AWG7, AWG8, SWG1, SWG2, SWG3, SWG4,  &
-       SWG5, SWG6, SWG7, SWG8
-  REAL, POINTER           :: AF11(:)
-  LOGICAL, POINTER        :: NLINIT
+  INTEGER, POINTER :: NFR, NFRHGH, NFRCHG, NSPECX, NSPECY
+  INTEGER, POINTER :: IP11(:), IP12(:), IP13(:), IP14(:)
+  INTEGER, POINTER :: IM11(:), IM12(:), IM13(:), IM14(:)
+  INTEGER, POINTER :: IP21(:), IP22(:), IP23(:), IP24(:)
+  INTEGER, POINTER :: IM21(:), IM22(:), IM23(:), IM24(:)
+  INTEGER, POINTER :: IC11(:), IC12(:), IC21(:), IC22(:)
+  INTEGER, POINTER :: IC31(:), IC32(:), IC41(:), IC42(:)
+  INTEGER, POINTER :: IC51(:), IC52(:), IC61(:), IC62(:)
+  INTEGER, POINTER :: IC71(:), IC72(:), IC81(:), IC82(:)
+  REAL,    POINTER :: DAL1, DAL2, DAL3
+  REAL,    POINTER :: AWG1, AWG2, AWG3, AWG4, AWG5, AWG6
+  REAL,    POINTER :: AWG7, AWG8, SWG1, SWG2, SWG3, SWG4
+  REAL,    POINTER :: SWG5, SWG6, SWG7, SWG8
+  REAL,    POINTER :: AF11(:)
+  LOGICAL, POINTER :: NLINIT
 #endif
   !
-  INTEGER, POINTER        :: IAPPRO(:)
+  INTEGER, POINTER :: IAPPRO(:)
 #ifdef W3_MPI
-  INTEGER, POINTER        :: MPI_COMM_WAVE, MPI_COMM_WCMP,        &
-       WW3_FIELD_VEC, WW3_SPEC_VEC,         &
-       NRQSG1, NRQSG2, IBFLOC, ISPLOC,      &
-       NSPLOC
-  INTEGER, POINTER        :: BSTAT(:), BISPL(:)
-  INTEGER, POINTER        :: IRQSG1(:,:), IRQSG2(:,:)
-  REAL, POINTER           :: GSTORE(:,:), SSTORE(:,:)
+  INTEGER, POINTER :: MPI_COMM_WAVE, MPI_COMM_WCMP, WW3_FIELD_VEC, WW3_SPEC_VEC
+  INTEGER, POINTER :: NRQSG1, NRQSG2, IBFLOC, ISPLOC, NSPLOC
+  INTEGER, POINTER :: BSTAT(:), BISPL(:)
+  INTEGER, POINTER :: IRQSG1(:,:), IRQSG2(:,:)
+  REAL,    POINTER :: GSTORE(:,:), SSTORE(:,:)
 #endif
-  REAL, POINTER           :: SPPNT(:,:,:)
+  REAL,    POINTER :: SPPNT(:,:,:)
   !
-  INTEGER, POINTER        :: ITIME, IPASS, IDLAST, NSEALM
-  REAL, POINTER           :: ALPHA(:,:)
-  LOGICAL, POINTER        :: AINIT, AINIT2, FL_ALL, FLCOLD, FLIWND
-  !/
+  INTEGER, POINTER :: ITIME, IPASS, IDLAST, NSEALM
+  REAL,    POINTER :: ALPHA(:,:)
+  LOGICAL, POINTER :: AINIT, AINIT2, FL_ALL, FLCOLD, FLIWND
+ !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
   !>
@@ -956,11 +931,11 @@ CONTAINS
     !/ Local parameters
     !/
     INTEGER                 :: JGRID, NXXX, NSEAL_tmp
+    integer :: memunit
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
     CALL STRACE (IENT, 'W3DIMA')
 #endif
-    integer :: memunit
     !
     ! -------------------------------------------------------------------- /
     ! 1.  Test input and module status
@@ -1584,11 +1559,11 @@ CONTAINS
     !/ Local parameters
     !/
     INTEGER                 :: JGRID, NXXX, I
+    integer :: memunit
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
     CALL STRACE (IENT, 'W3XDMA')
 #endif
-    integer :: memunit
     !
     ! -------------------------------------------------------------------- /
     ! 1.  Test input and module status
