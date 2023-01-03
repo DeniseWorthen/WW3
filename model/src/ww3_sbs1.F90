@@ -430,8 +430,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS
-    INTEGER, INTENT(OUT)    :: TIME(2)
+    INTEGER, INTENT(IN)  :: NDS
+    INTEGER, INTENT(OUT) :: TIME(2)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -528,8 +528,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDS, TIME(2), NX, NY
-    LOGICAL, INTENT(IN)     :: REWIND
+    INTEGER, INTENT(IN) :: NDS, TIME(2), NX, NY
+    LOGICAL, INTENT(IN) :: REWIND
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

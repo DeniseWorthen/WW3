@@ -1620,8 +1620,8 @@ CONTAINS
     !!
     !!    Parameter list
     !!    --------------
-    real,    intent(in)  :: dep
-    real,    intent(in)  :: wka1(nrng), cgnrng1  !* Use new names locally
+    real,    intent(in) :: dep
+    real,    intent(in) :: wka1(nrng), cgnrng1  !* Use new names locally
     !!    -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !!    ------------------------------------------------------------------
     !!
@@ -2144,8 +2144,8 @@ CONTAINS
     !!
     !!    Parameter list
     !!    --------------
-    real,    intent(in)  :: dep
-    real,    intent(in)  :: wk1x,wk1y, wk3x,wk3y
+    real,    intent(in) :: dep
+    real,    intent(in) :: wk1x,wk1y, wk3x,wk3y
     !!    -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !!    ------------------------------------------------------------------
     !!
@@ -2439,8 +2439,8 @@ CONTAINS
     !!
     !!    Parameter list
     !!    --------------
-    real,    intent(in)  :: dep
-    real,    intent(in)  :: wk1x,wk1y, wk3x,wk3y
+    real,    intent(in) :: dep
+    real,    intent(in) :: wk1x,wk1y, wk3x,wk3y
     !!    -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !!    ------------------------------------------------------------------
     !!
@@ -3379,12 +3379,12 @@ CONTAINS
     !!    Parameter list
     !!    --------------
     !!op2 Bash; new for optsa2
-    integer, intent(in)  :: nrmn, nrmx, nbins
+    integer, intent(in) :: nrmn, nrmx, nbins
     !!    ------------------------------------------------------------ !!op2
     !!
-    integer, intent(in)  :: npk
-    real,    intent(in)  :: fpk
-    real,    intent(in)  :: wka(nrng),   cga(nrng)
+    integer, intent(in) :: npk
+    real,    intent(in) :: fpk
+    real,    intent(in) :: wka(nrng),   cga(nrng)
     !!    ------------------------------------------------------------------
     !!
     !!
@@ -3906,8 +3906,8 @@ CONTAINS
     !!
     !!    Parameter list
     !!    --------------
-    real,    intent(in)  :: pha(nrng)
-    integer, intent(in)  :: ialt
+    real,    intent(in) :: pha(nrng)
+    integer, intent(in) :: ialt
     !!    -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !!    ------------------------------------------------------------------
     !!
@@ -4539,8 +4539,8 @@ CONTAINS
     !!
     !!    Parameter list
     !!    --------------
-    real,    intent(in)  :: pha(nrng)
-    integer, intent(in)  :: ialt
+    real,    intent(in) :: pha(nrng)
+    integer, intent(in) :: ialt
     !!    -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !!    ------------------------------------------------------------------
     !!
@@ -5096,7 +5096,7 @@ CONTAINS
     !!
     !!    Parameter list
     !!    --------------
-    REAL,    INTENT(INOUT)  :: X(nrng,nang)
+    REAL,    INTENT(INOUT) :: X(nrng,nang)
     !!    -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !!    ------------------------------------------------------------------
     !!
@@ -5347,7 +5347,7 @@ CONTAINS
     !!
     !!    Parameter list
     !!    --------------
-    real,    intent(in)  :: f, dep
+    real,    intent(in) :: f, dep
     !!
     !!    Local variables
     !!    ---------------
@@ -5458,7 +5458,7 @@ CONTAINS
     !!
     !!    Parameter list
     !!    --------------
-    real,    intent(in)  :: f, dep, cvel
+    real,    intent(in) :: f, dep, cvel
     !!
     !!    Local variables
     !!    ---------------

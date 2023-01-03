@@ -180,7 +180,7 @@ contains
   subroutine insertConnNode(this, ind)
     implicit none
     class(t_Node) :: this
-    integer    , intent(in), optional :: ind
+    integer, intent(in), optional :: ind
     integer :: i
     type(t_Node), pointer :: node
 

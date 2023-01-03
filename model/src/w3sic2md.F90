@@ -301,13 +301,13 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL, INTENT(IN)       :: A(NSPEC), DEPTH, ICEH
-    REAL, INTENT(IN)       :: CG(NK),   WN(NK)
-    REAL, INTENT(OUT)      :: S(NSPEC), D(NSPEC)
-    REAL, INTENT(IN)       :: ALPHA(NK) ! exponential (spatial) decay rate for energy (1/m)
-    INTEGER, INTENT(IN)    :: IX, IY
-    REAL, INTENT(IN)       :: WN_R(NK), CG_ICE(NK), R(NK)
-    REAL, INTENT(IN)       :: ICEF ! Hypothesis: friction does not occur for broken ice
+    REAL,    INTENT(IN)  :: A(NSPEC), DEPTH, ICEH
+    REAL,    INTENT(IN)  :: CG(NK),   WN(NK)
+    REAL,    INTENT(OUT) :: S(NSPEC), D(NSPEC)
+    REAL,    INTENT(IN)  :: ALPHA(NK) ! exponential (spatial) decay rate for energy (1/m)
+    INTEGER, INTENT(IN)  :: IX, IY
+    REAL,    INTENT(IN)  :: WN_R(NK), CG_ICE(NK), R(NK)
+    REAL,    INTENT(IN)  :: ICEF      ! Hypothesis: friction does not occur for broken ice
 
     !/
     !/ ------------------------------------------------------------------- /

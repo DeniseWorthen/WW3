@@ -209,11 +209,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: RECL(3), NDAT(3)
-    REAL, INTENT(IN)        :: DATA0(RECL(1),NDAT(1))
-    REAL, INTENT(IN)        :: DATA1(RECL(2),NDAT(2))
-    REAL, INTENT(IN)        :: DATA2(RECL(3),NDAT(3))
-    LOGICAL, INTENT(IN)     :: DASFLAG(3)
+    INTEGER, INTENT(IN) :: RECL(3), NDAT(3)
+    REAL,    INTENT(IN) :: DATA0(RECL(1),NDAT(1))
+    REAL,    INTENT(IN) :: DATA1(RECL(2),NDAT(2))
+    REAL,    INTENT(IN) :: DATA2(RECL(3),NDAT(3))
+    LOGICAL, INTENT(IN) :: DASFLAG(3)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters :

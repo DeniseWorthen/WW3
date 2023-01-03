@@ -368,31 +368,31 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                         :: NDSI
-    CHARACTER*(*), INTENT(IN)                   :: INFILE
-    TYPE(NML_SPECTRUM_T), INTENT(INOUT)         :: NML_SPECTRUM
-    TYPE(NML_RUN_T), INTENT(INOUT)              :: NML_RUN
-    TYPE(NML_TIMESTEPS_T), INTENT(INOUT)        :: NML_TIMESTEPS
-    TYPE(NML_GRID_T), INTENT(INOUT)             :: NML_GRID
-    TYPE(NML_RECT_T), INTENT(INOUT)             :: NML_RECT
-    TYPE(NML_CURV_T), INTENT(INOUT)             :: NML_CURV
-    TYPE(NML_UNST_T), INTENT(INOUT)             :: NML_UNST
-    TYPE(NML_SMC_T), INTENT(INOUT)              :: NML_SMC
-    TYPE(NML_DEPTH_T), INTENT(INOUT)            :: NML_DEPTH
-    TYPE(NML_MASK_T), INTENT(INOUT)             :: NML_MASK
-    TYPE(NML_OBST_T), INTENT(INOUT)             :: NML_OBST
-    TYPE(NML_SLOPE_T), INTENT(INOUT)            :: NML_SLOPE
-    TYPE(NML_SED_T), INTENT(INOUT)              :: NML_SED
-    TYPE(NML_INBND_COUNT_T), INTENT(INOUT)      :: NML_INBND_COUNT
-    TYPE(NML_INBND_POINT_T), ALLOCATABLE, INTENT(INOUT)      :: NML_INBND_POINT(:)
-    TYPE(NML_EXCL_COUNT_T), INTENT(INOUT)       :: NML_EXCL_COUNT
-    TYPE(NML_EXCL_POINT_T), ALLOCATABLE, INTENT(INOUT)       :: NML_EXCL_POINT(:)
-    TYPE(NML_EXCL_BODY_T), ALLOCATABLE, INTENT(INOUT)        :: NML_EXCL_BODY(:)
-    TYPE(NML_OUTBND_COUNT_T), INTENT(INOUT)     :: NML_OUTBND_COUNT
-    TYPE(NML_OUTBND_LINE_T), ALLOCATABLE, INTENT(INOUT)      :: NML_OUTBND_LINE(:)
-    INTEGER, INTENT(OUT)                        :: IERR
+    INTEGER,                              INTENT(IN)    :: NDSI
+    CHARACTER*(*),                        INTENT(IN)    :: INFILE
+    TYPE(NML_SPECTRUM_T),                 INTENT(INOUT) :: NML_SPECTRUM
+    TYPE(NML_RUN_T),                      INTENT(INOUT) :: NML_RUN
+    TYPE(NML_TIMESTEPS_T),                INTENT(INOUT) :: NML_TIMESTEPS
+    TYPE(NML_GRID_T),                     INTENT(INOUT) :: NML_GRID
+    TYPE(NML_RECT_T),                     INTENT(INOUT) :: NML_RECT
+    TYPE(NML_CURV_T),                     INTENT(INOUT) :: NML_CURV
+    TYPE(NML_UNST_T),                     INTENT(INOUT) :: NML_UNST
+    TYPE(NML_SMC_T),                      INTENT(INOUT) :: NML_SMC
+    TYPE(NML_DEPTH_T),                    INTENT(INOUT) :: NML_DEPTH
+    TYPE(NML_MASK_T),                     INTENT(INOUT) :: NML_MASK
+    TYPE(NML_OBST_T),                     INTENT(INOUT) :: NML_OBST
+    TYPE(NML_SLOPE_T),                    INTENT(INOUT) :: NML_SLOPE
+    TYPE(NML_SED_T),                      INTENT(INOUT) :: NML_SED
+    TYPE(NML_INBND_COUNT_T),              INTENT(INOUT) :: NML_INBND_COUNT
+    TYPE(NML_INBND_POINT_T), ALLOCATABLE, INTENT(INOUT) :: NML_INBND_POINT(:)
+    TYPE(NML_EXCL_COUNT_T),               INTENT(INOUT) :: NML_EXCL_COUNT
+    TYPE(NML_EXCL_POINT_T),  ALLOCATABLE, INTENT(INOUT) :: NML_EXCL_POINT(:)
+    TYPE(NML_EXCL_BODY_T),   ALLOCATABLE, INTENT(INOUT) :: NML_EXCL_BODY(:)
+    TYPE(NML_OUTBND_COUNT_T),             INTENT(INOUT) :: NML_OUTBND_COUNT
+    TYPE(NML_OUTBND_LINE_T), ALLOCATABLE, INTENT(INOUT) :: NML_OUTBND_LINE(:)
+    INTEGER,                              INTENT(OUT)   :: IERR
 #ifdef W3_S
-    INTEGER, SAVE                             :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -558,11 +558,11 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                 :: NDSI
+    INTEGER,              INTENT(IN)    :: NDSI
     TYPE(NML_SPECTRUM_T), INTENT(INOUT) :: NML_SPECTRUM
 
     ! locals
-    INTEGER                   :: IERR
+    INTEGER :: IERR
     TYPE(NML_SPECTRUM_T) :: SPECTRUM
     NAMELIST /SPECTRUM_NML/ SPECTRUM
 #ifdef W3_S
@@ -665,15 +665,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)            :: NDSI
+    INTEGER,         INTENT(IN)    :: NDSI
     TYPE(NML_RUN_T), INTENT(INOUT) :: NML_RUN
 
     ! locals
-    INTEGER                   :: IERR
+    INTEGER :: IERR
     TYPE(NML_RUN_T) :: RUN
     NAMELIST /RUN_NML/ RUN
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -773,15 +773,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                  :: NDSI
+    INTEGER,               INTENT(IN)    :: NDSI
     TYPE(NML_TIMESTEPS_T), INTENT(INOUT) :: NML_TIMESTEPS
 
     ! locals
-    INTEGER                   :: IERR
+    INTEGER :: IERR
     TYPE(NML_TIMESTEPS_T) :: TIMESTEPS
     NAMELIST /TIMESTEPS_NML/ TIMESTEPS
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -880,15 +880,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                  :: NDSI
-    TYPE(NML_GRID_T), INTENT(INOUT)      :: NML_GRID
+    INTEGER,          INTENT(IN)    :: NDSI
+    TYPE(NML_GRID_T), INTENT(INOUT) :: NML_GRID
 
     ! locals
-    INTEGER                   :: IERR
+    INTEGER :: IERR
     TYPE(NML_GRID_T) :: GRID
     NAMELIST /GRID_NML/ GRID
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -989,15 +989,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                  :: NDSI
-    TYPE(NML_RECT_T), INTENT(INOUT)      :: NML_RECT
+    INTEGER,          INTENT(IN)    :: NDSI
+    TYPE(NML_RECT_T), INTENT(INOUT) :: NML_RECT
 
     ! locals
-    INTEGER                   :: IERR
+    INTEGER :: IERR
     TYPE(NML_RECT_T) :: RECT
     NAMELIST /RECT_NML/ RECT
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -1099,15 +1099,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                  :: NDSI
-    TYPE(NML_CURV_T), INTENT(INOUT)      :: NML_CURV
+    INTEGER,          INTENT(IN)    :: NDSI
+    TYPE(NML_CURV_T), INTENT(INOUT) :: NML_CURV
 
     ! locals
-    INTEGER                   :: IERR
+    INTEGER :: IERR
     TYPE(NML_CURV_T) :: CURV
     NAMELIST /CURV_NML/ CURV
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -1221,15 +1221,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                  :: NDSI
-    TYPE(NML_UNST_T), INTENT(INOUT)      :: NML_UNST
+    INTEGER,          INTENT(IN)    :: NDSI
+    TYPE(NML_UNST_T), INTENT(INOUT) :: NML_UNST
 
     ! locals
-    INTEGER                   :: IERR
+    INTEGER :: IERR
     TYPE(NML_UNST_T) :: UNST
     NAMELIST /UNST_NML/ UNST
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -1331,15 +1331,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                  :: NDSI
-    TYPE(NML_SMC_T), INTENT(INOUT)       :: NML_SMC
+    INTEGER,         INTENT(IN)    :: NDSI
+    TYPE(NML_SMC_T), INTENT(INOUT) :: NML_SMC
 
     ! locals
-    INTEGER                   :: IERR
+    INTEGER :: IERR
     TYPE(NML_SMC_T) :: SMC
     NAMELIST /SMC_NML/ SMC
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -1481,15 +1481,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                  :: NDSI
-    TYPE(NML_DEPTH_T), INTENT(INOUT)     :: NML_DEPTH
+    INTEGER,           INTENT(IN)    :: NDSI
+    TYPE(NML_DEPTH_T), INTENT(INOUT) :: NML_DEPTH
 
     ! locals
-    INTEGER                   :: IERR
+    INTEGER :: IERR
     TYPE(NML_DEPTH_T) :: DEPTH
     NAMELIST /DEPTH_NML/ DEPTH
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -1590,15 +1590,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                  :: NDSI
-    TYPE(NML_MASK_T), INTENT(INOUT)      :: NML_MASK
+    INTEGER,          INTENT(IN)    :: NDSI
+    TYPE(NML_MASK_T), INTENT(INOUT) :: NML_MASK
 
     ! locals
-    INTEGER                   :: IERR
+    INTEGER :: IERR
     TYPE(NML_MASK_T) :: MASK
     NAMELIST /MASK_NML/ MASK
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -1700,15 +1700,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                  :: NDSI
-    TYPE(NML_OBST_T), INTENT(INOUT)      :: NML_OBST
+    INTEGER,          INTENT(IN)    :: NDSI
+    TYPE(NML_OBST_T), INTENT(INOUT) :: NML_OBST
 
     ! locals
-    INTEGER                   :: IERR
+    INTEGER :: IERR
     TYPE(NML_OBST_T) :: OBST
     NAMELIST /OBST_NML/ OBST
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -1810,15 +1810,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                  :: NDSI
-    TYPE(NML_SLOPE_T), INTENT(INOUT)     :: NML_SLOPE
+    INTEGER,           INTENT(IN)    :: NDSI
+    TYPE(NML_SLOPE_T), INTENT(INOUT) :: NML_SLOPE
 
     ! locals
-    INTEGER                   :: IERR
+    INTEGER :: IERR
     TYPE(NML_SLOPE_T) :: SLOPE
     NAMELIST /SLOPE_NML/ SLOPE
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -1851,10 +1851,6 @@ CONTAINS
   END SUBROUTINE READ_SLOPE_NML
 
   !/ ------------------------------------------------------------------- /
-
-
-
-
 
   !/ ------------------------------------------------------------------- /
 
@@ -1921,15 +1917,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                  :: NDSI
-    TYPE(NML_SED_T), INTENT(INOUT)       :: NML_SED
+    INTEGER,         INTENT(IN)    :: NDSI
+    TYPE(NML_SED_T), INTENT(INOUT) :: NML_SED
 
     ! locals
-    INTEGER                   :: IERR
+    INTEGER :: IERR
     TYPE(NML_SED_T) :: SED
     NAMELIST /SED_NML/ SED
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -1962,9 +1958,6 @@ CONTAINS
   END SUBROUTINE READ_SED_NML
 
   !/ ------------------------------------------------------------------- /
-
-
-
 
 
   !/ ------------------------------------------------------------------- /
@@ -2033,18 +2026,18 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                      :: NDSI
-    TYPE(NML_INBND_COUNT_T), INTENT(INOUT)   :: NML_INBND_COUNT
-    TYPE(NML_INBND_POINT_T), ALLOCATABLE, INTENT(INOUT)   :: NML_INBND_POINT(:)
+    INTEGER,                              INTENT(IN)    :: NDSI
+    TYPE(NML_INBND_COUNT_T),              INTENT(INOUT) :: NML_INBND_COUNT
+    TYPE(NML_INBND_POINT_T), ALLOCATABLE, INTENT(INOUT) :: NML_INBND_POINT(:)
 
     ! locals
-    INTEGER                   :: IERR, I
+    INTEGER :: IERR, I
     TYPE(NML_INBND_COUNT_T) :: INBND_COUNT
     NAMELIST /INBND_COUNT_NML/ INBND_COUNT
     TYPE(NML_INBND_POINT_T), ALLOCATABLE :: INBND_POINT(:)
     NAMELIST /INBND_POINT_NML/ INBND_POINT
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -2167,13 +2160,13 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                      :: NDSI
-    TYPE(NML_EXCL_COUNT_T), INTENT(INOUT)    :: NML_EXCL_COUNT
-    TYPE(NML_EXCL_POINT_T), ALLOCATABLE, INTENT(INOUT)   :: NML_EXCL_POINT(:)
-    TYPE(NML_EXCL_BODY_T), ALLOCATABLE, INTENT(INOUT)    :: NML_EXCL_BODY(:)
+    INTEGER,                             INTENT(IN)    :: NDSI
+    TYPE(NML_EXCL_COUNT_T),              INTENT(INOUT) :: NML_EXCL_COUNT
+    TYPE(NML_EXCL_POINT_T), ALLOCATABLE, INTENT(INOUT) :: NML_EXCL_POINT(:)
+    TYPE(NML_EXCL_BODY_T),  ALLOCATABLE, INTENT(INOUT) :: NML_EXCL_BODY(:)
 
     ! locals
-    INTEGER                   :: IERR, J, K
+    INTEGER :: IERR, J, K
     TYPE(NML_EXCL_COUNT_T) :: EXCL_COUNT
     NAMELIST /EXCL_COUNT_NML/ EXCL_COUNT
     TYPE(NML_EXCL_POINT_T), ALLOCATABLE :: EXCL_POINT(:)
@@ -2326,19 +2319,19 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                      :: NDSI
-    TYPE(NML_OUTBND_COUNT_T), INTENT(INOUT)    :: NML_OUTBND_COUNT
-    TYPE(NML_OUTBND_LINE_T), ALLOCATABLE, INTENT(INOUT)   :: NML_OUTBND_LINE(:)
+    INTEGER,                              INTENT(IN)    :: NDSI
+    TYPE(NML_OUTBND_COUNT_T),             INTENT(INOUT) :: NML_OUTBND_COUNT
+    TYPE(NML_OUTBND_LINE_T), ALLOCATABLE, INTENT(INOUT) :: NML_OUTBND_LINE(:)
 
     ! locals
-    INTEGER                   :: IERR, I
+    INTEGER :: IERR, I
     TYPE(NML_OUTBND_COUNT_T) :: OUTBND_COUNT
     NAMELIST /OUTBND_COUNT_NML/ OUTBND_COUNT
     TYPE(NML_OUTBND_LINE_T), ALLOCATABLE :: OUTBND_LINE(:)
     NAMELIST /OUTBND_LINE_NML/ OUTBND_LINE
 
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -2460,7 +2453,7 @@ CONTAINS
 
     TYPE(NML_SPECTRUM_T), INTENT(IN) :: NML_SPECTRUM
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -2550,7 +2543,7 @@ CONTAINS
 
     TYPE(NML_RUN_T), INTENT(IN) :: NML_RUN
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -2641,7 +2634,7 @@ CONTAINS
 
     TYPE(NML_TIMESTEPS_T), INTENT(IN) :: NML_TIMESTEPS
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -2730,7 +2723,7 @@ CONTAINS
 
     TYPE(NML_GRID_T), INTENT(IN) :: NML_GRID
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -2821,7 +2814,7 @@ CONTAINS
 
     TYPE(NML_RECT_T), INTENT(IN) :: NML_RECT
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -2914,7 +2907,7 @@ CONTAINS
 
     TYPE(NML_CURV_T), INTENT(IN) :: NML_CURV
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -3020,7 +3013,7 @@ CONTAINS
 
     TYPE(NML_UNST_T), INTENT(IN) :: NML_UNST
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -3114,7 +3107,7 @@ CONTAINS
 
     TYPE(NML_SMC_T), INTENT(IN) :: NML_SMC
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -3251,7 +3244,7 @@ CONTAINS
 
     TYPE(NML_DEPTH_T), INTENT(IN) :: NML_DEPTH
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -3345,7 +3338,7 @@ CONTAINS
 
     TYPE(NML_MASK_T), INTENT(IN) :: NML_MASK
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -3440,7 +3433,7 @@ CONTAINS
 
     TYPE(NML_OBST_T), INTENT(IN) :: NML_OBST
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -3537,7 +3530,7 @@ CONTAINS
 
     TYPE(NML_SLOPE_T), INTENT(IN) :: NML_SLOPE
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -3635,7 +3628,7 @@ CONTAINS
 
     TYPE(NML_SED_T), INTENT(IN) :: NML_SED
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -3734,9 +3727,9 @@ CONTAINS
     TYPE(NML_INBND_POINT_T), INTENT(IN) :: NML_INBND_POINT(NML_INBND_COUNT%N_POINT)
 
     ! locals
-    INTEGER              :: I
+    INTEGER :: I
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -3836,12 +3829,12 @@ CONTAINS
 
     TYPE(NML_EXCL_COUNT_T), INTENT(IN) :: NML_EXCL_COUNT
     TYPE(NML_EXCL_POINT_T), INTENT(IN) :: NML_EXCL_POINT(NML_EXCL_COUNT%N_POINT)
-    TYPE(NML_EXCL_BODY_T), INTENT(IN)  :: NML_EXCL_BODY(NML_EXCL_COUNT%N_BODY)
+    TYPE(NML_EXCL_BODY_T),  INTENT(IN) :: NML_EXCL_BODY(NML_EXCL_COUNT%N_BODY)
 
     ! locals
-    INTEGER              :: I
+    INTEGER :: I
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -3950,12 +3943,12 @@ CONTAINS
     IMPLICIT NONE
 
     TYPE(NML_OUTBND_COUNT_T), INTENT(IN) :: NML_OUTBND_COUNT
-    TYPE(NML_OUTBND_LINE_T), INTENT(IN)  :: NML_OUTBND_LINE(NML_OUTBND_COUNT%N_LINE)
+    TYPE(NML_OUTBND_LINE_T),  INTENT(IN) :: NML_OUTBND_LINE(NML_OUTBND_COUNT%N_LINE)
 
     ! locals
-    INTEGER              :: I
+    INTEGER :: I
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S

@@ -5382,7 +5382,7 @@ CONTAINS
          IP, NP, ICROOT, JCROOT, IEER
 
 #ifdef W3_MPI
-    INTEGER, Dimension(MPI_STATUS_SIZE):: MPIState
+    INTEGER, Dimension(MPI_STATUS_SIZE) :: MPIState
 #endif
 
 #ifdef W3_S

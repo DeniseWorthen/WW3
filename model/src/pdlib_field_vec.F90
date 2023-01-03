@@ -103,9 +103,10 @@ CONTAINS
     USE W3ODATMD , ONLY : NOGRP, NGRPP
     USE W3GDATMD , ONLY : E3DF, P2MSF, NK
     IMPLICIT NONE
-    INTEGER, INTENT(OUT)    :: TheSize
-    LOGICAL                 :: FLGRDALL(NOGRP,NGRPP)
-    INTEGER IH, I, J, K, IK
+    INTEGER, INTENT(OUT) :: TheSize
+
+    LOGICAL :: FLGRDALL(NOGRP,NGRPP)
+    INTEGER :: IH, I, J, K, IK
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -455,6 +456,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
+    INTEGER, intent(in) :: NDREAD
+    !/
     !/ ------------------------------------------------------------------- /
     !/ Local PARAMETERs
     !/
@@ -465,22 +468,21 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/
     !
-    INTEGER, intent(in) :: NDREAD
-    INTEGER iBlock, iFirst, iEnd, len, i, IB, iProc
-    INTEGER NREC, ISEA, JSEA, ierr
-    INTEGER nbBlock, IBELONG
+    INTEGER :: iBlock, iFirst, iEnd, len, i, IB, iProc
+    INTEGER :: NREC, ISEA, JSEA, ierr
+    INTEGER :: nbBlock, IBELONG
     INTEGER :: BlockSize
     REAL, allocatable :: ArrSend(:,:)
     REAL, allocatable :: DataRead(:,:)
-    integer(KIND=8) RPOS
-    integer LRECL
+    integer(KIND=8) :: RPOS
+    integer :: LRECL
     INTEGER, PARAMETER      :: LRB = 4
-    INTEGER NBLKRSloc, RSBLKSloc
-    integer eArr(1)
-    integer IERR_MPI, istat
-    integer IPloc, IPglob, pos
-    integer NbMatch, idx
-    integer ListFirst(NAPROC)
+    INTEGER :: NBLKRSloc, RSBLKSloc
+    integer :: eArr(1)
+    integer :: IERR_MPI, istat
+    integer :: IPloc, IPglob, pos
+    integer :: NbMatch, idx
+    integer :: ListFirst(NAPROC)
 #ifdef W3_S
     CALL STRACE (IENT, 'VA_SETUP_IOBPD')
 #endif
@@ -854,7 +856,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD
+    INTEGER, INTENT(IN) :: IMOD
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

@@ -333,9 +333,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: CG(NK), WN(NK), A(NSPEC), DEPTH
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC)
-    INTEGER, INTENT(IN)     :: IX, IY
+    REAL,    INTENT(IN)  :: CG(NK), WN(NK), A(NSPEC), DEPTH
+    REAL,    INTENT(OUT) :: S(NSPEC), D(NSPEC)
+    INTEGER, INTENT(IN)  :: IX, IY
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
@@ -576,9 +576,9 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL, INTENT(INOUT)   :: WN_R(:), WN_I(:)
-    REAL, INTENT(IN)      :: CG(:)
-    REAL, INTENT(IN)      :: HICE, IVISC, RHOI, ISMODG, HWAT
+    REAL, INTENT(INOUT) :: WN_R(:), WN_I(:)
+    REAL, INTENT(IN)    :: CG(:)
+    REAL, INTENT(IN)    :: HICE, IVISC, RHOI, ISMODG, HWAT
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -742,8 +742,8 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL, INTENT(IN)      :: HICE, IVISC, RHOI, ISMODG, HWAT, WT
-    REAL, INTENT(OUT)     :: WNR, WNI
+    REAL, INTENT(IN)  :: HICE, IVISC, RHOI, ISMODG, HWAT, WT
+    REAL, INTENT(OUT) :: WNR, WNI
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1050,7 +1050,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     INTEGER, INTENT(IN)    :: NMAT
-    REAL, INTENT(INOUT)    :: MATRIX(NMAT, NMAT)
+    REAL,    INTENT(INOUT) :: MATRIX(NMAT, NMAT)
     !/ ------------------------------------------------------------------- /
     !/ Local parameter
 #ifdef W3_S
@@ -1225,9 +1225,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)  :: NMAT
-    REAL, INTENT(INOUT)  :: HMAT(NMAT, NMAT)
-    REAL, INTENT(OUT)    :: EIGR(NMAT), EIGI(NMAT)
+    INTEGER, INTENT(IN)    :: NMAT
+    REAL,    INTENT(INOUT) :: HMAT(NMAT, NMAT)
+    REAL,    INTENT(OUT)   :: EIGR(NMAT), EIGI(NMAT)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1539,9 +1539,9 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    INTEGER, INTENT(IN)   :: NPC
-    REAL, INTENT(IN)      :: PCVEC(NPC)
-    REAL, INTENT(OUT)     :: RTRL(NPC-1), RTIM(NPC-1)
+    INTEGER, INTENT(IN)  :: NPC
+    REAL,    INTENT(IN)  :: PCVEC(NPC)
+    REAL,    INTENT(OUT) :: RTRL(NPC-1), RTIM(NPC-1)
     !/
     !/
     !/ ------------------------------------------------------------------- /
@@ -1700,9 +1700,9 @@ CONTAINS
     !/ Parameter list
     !     COMPLEX(KDPC), INTENT(IN)     :: K, C1
     !     REAL(KDP), INTENT(IN)         :: C2, H
-    COMPLEX(KDPC), INTENT(IN)     :: K, C1, C2
-    REAL(KDP), INTENT(IN)         :: H
-    COMPLEX(KDPC)                 :: NR_CORR
+    COMPLEX(KDPC), INTENT(IN) :: K, C1, C2
+    REAL(KDP),     INTENT(IN) :: H
+    COMPLEX(KDPC)             :: NR_CORR
     !/
     !/
     !/ ------------------------------------------------------------------- /
@@ -1851,9 +1851,9 @@ CONTAINS
     !/
     !     COMPLEX(KDPC), INTENT(IN)     :: C1, GUESS
     !     REAL(KDP), INTENT(IN)         :: C2, H
-    COMPLEX(KDPC), INTENT(IN)     :: C1, GUESS, C2
-    REAL(KDP), INTENT(IN)         :: H
-    COMPLEX(KDPC)                 :: NR_ROOT
+    COMPLEX(KDPC), INTENT(IN) :: C1, GUESS, C2
+    REAL(KDP),     INTENT(IN) :: H
+    COMPLEX(KDPC)             :: NR_ROOT
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

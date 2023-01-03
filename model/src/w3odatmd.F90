@@ -643,7 +643,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NDSERR, NDSTST
+    INTEGER, INTENT(IN) :: NDSERR, NDSTST
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1041,7 +1041,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)           :: IMOD, NDSE, NDST, NPT
+    INTEGER, INTENT(IN) :: IMOD, NDSE, NDST, NPT
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1235,7 +1235,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)           :: IMOD, NDSE, NDST
+    INTEGER, INTENT(IN) :: IMOD, NDSE, NDST
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1403,7 +1403,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)           :: IMOD, NDSE, NDST, IBLOCK
+    INTEGER, INTENT(IN) :: IMOD, NDSE, NDST, IBLOCK
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1605,7 +1605,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, NDSERR, NDSTST
+    INTEGER, INTENT(IN) :: IMOD, NDSERR, NDSTST
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

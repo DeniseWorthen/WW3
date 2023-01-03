@@ -206,13 +206,13 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: ZWND, U10, U10D, TAUA, TAUADIR, RHOAIR
-    REAL, INTENT(OUT)       :: UST, USTD, Z0, CD, CHARN
-    REAL                    :: UNZ, SQRTCDM1
+    REAL, INTENT(IN)  :: ZWND, U10, U10D, TAUA, TAUADIR, RHOAIR
+    REAL, INTENT(OUT) :: UST, USTD, Z0, CD, CHARN
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
+    REAL :: UNZ, SQRTCDM1
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
 #endif

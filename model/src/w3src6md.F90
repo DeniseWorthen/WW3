@@ -197,8 +197,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: A(NTH,NK), CG(NK), WN(NK)
-    REAL, INTENT(OUT)       :: EMEAN, FMEAN, WNMEAN, AMAX, FP
+    REAL, INTENT(IN)  :: A(NTH,NK), CG(NK), WN(NK)
+    REAL, INTENT(OUT) :: EMEAN, FMEAN, WNMEAN, AMAX, FP
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -387,10 +387,10 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
-    REAL, INTENT(IN)       :: A (NSPEC), CG(NK), WN2(NSPEC)
-    REAL, INTENT(IN)       :: UABS, USTAR, USDIR, CD, DAIR
-    REAL, INTENT(OUT)      :: TAUWX, TAUWY, TAUNWX, TAUNWY
-    REAL, INTENT(OUT)      :: S(NSPEC), D(NSPEC)
+    REAL, INTENT(IN)  :: A (NSPEC), CG(NK), WN2(NSPEC)
+    REAL, INTENT(IN)  :: UABS, USTAR, USDIR, CD, DAIR
+    REAL, INTENT(OUT) :: TAUWX, TAUWY, TAUNWX, TAUNWY
+    REAL, INTENT(OUT) :: S(NSPEC), D(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1229,7 +1229,8 @@ CONTAINS
     !
     !/
     IMPLICIT NONE
-    INTEGER, INTENT(IN)  :: X0, X1, DX
+    INTEGER, INTENT(IN) :: X0, X1, DX
+
     INTEGER, ALLOCATABLE :: IX(:)
     INTEGER              :: N
     INTEGER              :: I
@@ -1286,9 +1287,10 @@ CONTAINS
     !/
     USE CONSTANTS , ONLY : GRAV, DWAT    ! gravity, density of water
     IMPLICIT NONE
-    REAL, INTENT(IN)  :: SDENSIG(:)    ! Sin(sigma) in [m2/rad-Hz]
-    REAL, INTENT(IN)  :: CINV(:)       ! inverse phase speed
-    REAL, INTENT(IN)  :: DSII(:)       ! freq. bandwidths in [radians]
+    REAL, INTENT(IN) :: SDENSIG(:)    ! Sin(sigma) in [m2/rad-Hz]
+    REAL, INTENT(IN) :: CINV(:)       ! inverse phase speed
+    REAL, INTENT(IN) :: DSII(:)       ! freq. bandwidths in [radians]
+
     REAL              :: TAU_WINDS     ! wind stress
     !
     TAU_WINDS = GRAV * DWAT * SUM(SDENSIG*CINV*DSII)

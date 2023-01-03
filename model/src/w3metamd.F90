@@ -185,7 +185,7 @@ CONTAINS
     IMPLICIT NONE
 
     TYPE(META_LIST_T), INTENT(INOUT) :: LIST
-    TYPE(META_PAIR_T), INTENT(IN) :: META
+    TYPE(META_PAIR_T), INTENT(IN)    :: META
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
@@ -227,8 +227,8 @@ CONTAINS
     IMPLICIT NONE
 
     TYPE(META_LIST_T), INTENT(INOUT) :: LIST
-    CHARACTER(*), INTENT(IN)         :: ATTNAME
-    REAL, INTENT(IN)                 :: RVAL
+    CHARACTER(*),      INTENT(IN)    :: ATTNAME
+    REAL,              INTENT(IN)    :: RVAL
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
@@ -256,8 +256,8 @@ CONTAINS
     IMPLICIT NONE
 
     TYPE(META_LIST_T), INTENT(INOUT) :: LIST
-    CHARACTER(*), INTENT(IN)         :: ATTNAME
-    INTEGER, INTENT(IN)              :: IVAL
+    CHARACTER(*),      INTENT(IN)    :: ATTNAME
+    INTEGER,           INTENT(IN)    :: IVAL
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
@@ -285,7 +285,7 @@ CONTAINS
     IMPLICIT NONE
 
     TYPE(META_LIST_T), INTENT(INOUT) :: LIST
-    CHARACTER(*), INTENT(IN)         :: ATTNAME, SVAL
+    CHARACTER(*),      INTENT(IN)    :: ATTNAME, SVAL
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
@@ -312,10 +312,10 @@ CONTAINS
   SUBROUTINE META_LIST_FIND_ATTR(LIST, ATTN, META, ERR)
     IMPLICIT NONE
 
-    TYPE(META_LIST_T), INTENT(IN)           :: LIST
-    CHARACTER(*), INTENT(IN)                :: ATTN
+    TYPE(META_LIST_T),          INTENT(IN)  :: LIST
+    CHARACTER(*),               INTENT(IN)  :: ATTN
     TYPE(META_PAIR_T), POINTER, INTENT(OUT) :: META
-    INTEGER, INTENT(OUT)                    :: ERR
+    INTEGER,                    INTENT(OUT) :: ERR
 
     ERR = 0
 
@@ -354,13 +354,14 @@ CONTAINS
 
     IMPLICIT NONE
 
-    TYPE(META_LIST_T), INTENT(IN)           :: LIST
-    CHARACTER(*), INTENT(IN)                :: ATTN
-    LOGICAL                                 :: FOUND
+    TYPE(META_LIST_T), INTENT(IN) :: LIST
+    CHARACTER(*),      INTENT(IN) :: ATTN
+
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
     TYPE(META_PAIR_T), POINTER :: P
+    LOGICAL :: FOUND
 
     FOUND = .FALSE.
 

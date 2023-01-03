@@ -1640,10 +1640,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, MX, MY, MSEA, NDSE, NDST
+    INTEGER, INTENT(IN) :: IMOD, MX, MY, MSEA, NDSE, NDST
 #ifdef W3_SMC
-    INTEGER, INTENT(IN)     :: MCel, MUFc, MVFc, MRLv, MBSMC
-    INTEGER, INTENT(IN)     :: MARC, MBAC, MSPEC
+    INTEGER, INTENT(IN) :: MCel, MUFc, MVFc, MRLv, MBSMC
+    INTEGER, INTENT(IN) :: MARC, MBAC, MSPEC
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -1973,7 +1973,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, MK, MTH, NDSE, NDST
+    INTEGER, INTENT(IN) :: IMOD, MK, MTH, NDSE, NDST
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2204,7 +2204,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, NDSE, NDST
+    INTEGER, INTENT(IN) :: IMOD, NDSE, NDST
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2899,7 +2899,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, NDSE, NDST
+    INTEGER, INTENT(IN) :: IMOD, NDSE, NDST
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -3129,12 +3129,12 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: IMOD, MTRI, MX, COUNTOTA, NNZ, NDSE, NDST
-    INTEGER                 :: IAPROC = 1
+    INTEGER, INTENT(IN) :: IMOD, MTRI, MX, COUNTOTA, NNZ, NDSE, NDST
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
+    INTEGER                 :: IAPROC = 1
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
     CALL STRACE (IENT, 'W3DIMUG')

@@ -113,10 +113,11 @@ CONTAINS
 
     IMPLICIT NONE
 
-    REAL, INTENT(IN)        :: s1,s2,theta,DEPTH
-    REAL                    :: Df1f2theta,WN1,WN2
-    REAL                    :: k1,k2,co,cok1,cok2,k3,C1,C2,C3,C4
-    REAL                    :: C1b,s3,sk2,g2,g
+    REAL, INTENT(IN) :: s1,s2,theta,DEPTH
+
+    REAL :: Df1f2theta,WN1,WN2
+    REAL :: k1,k2,co,cok1,cok2,k3,C1,C2,C3,C4
+    REAL :: C1b,s3,sk2,g2,g
 
     k1=WN1
     k2=WN2
@@ -221,11 +222,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(INOUT)     :: E(NSPEC)
-    REAL, INTENT(IN)        :: DEPTH
-    REAL, INTENT(IN)        :: WN(NK)
-    REAL, INTENT(IN)        :: CG(NK)
-    INTEGER, INTENT(IN)     :: IACTION
+    REAL,    INTENT(INOUT) :: E(NSPEC)
+    REAL,    INTENT(IN)    :: DEPTH
+    REAL,    INTENT(IN)    :: WN(NK)
+    REAL,    INTENT(IN)    :: CG(NK)
+    INTEGER, INTENT(IN)    :: IACTION
 
     !*****************************************************************************
     ! Computes the "second order spectrum" (only difference interaction, not sum)

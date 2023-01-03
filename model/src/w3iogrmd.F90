@@ -313,8 +313,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)             :: NDSM
-    INTEGER, INTENT(IN), OPTIONAL   :: IMOD
+    INTEGER,   INTENT(IN)           :: NDSM
+    INTEGER,   INTENT(IN), OPTIONAL :: IMOD
     CHARACTER, INTENT(IN)           :: INXOUT*(*)
     CHARACTER, INTENT(IN), OPTIONAL :: FEXT*(*)
     !/

@@ -377,10 +377,10 @@ CONTAINS
     !     Note: Variables wsdat, sysA and maxSys have IN/OUT intent so that they
     !     can be manipulated outside of this subroutine, e.g. re-indexing of
     !     systems and groups during the simulation.
-    INTENT (IN)  intype, tmax, tcur, filename, paramFile, &
-         minlon, maxlon, minlat, maxlat, &
-         hsKnob, wetPts, seedLat, seedLon, &
-         dirKnob, perKnob, dirTimeKnob, tpTimeKnob
+    INTENT (IN)  intype, tmax, tcur, filename, paramFile
+    INTENT (IN) minlon, maxlon, minlat, maxlat
+    INTENT (IN) hsKnob, wetPts, seedLat, seedLon
+    INTENT (IN) dirKnob, perKnob, dirTimeKnob, tpTimeKnob
     INTENT (OUT) maxGroup
     !      INTENT (IN OUT) wsdat, sysA, maxSys
     !
@@ -2949,7 +2949,7 @@ CONTAINS
     INTEGER     :: i, j, maxI, maxJ, ngbrExt, maxSys
     REAL        :: perKnob ,dirKnob, hsKnob
 
-    INTENT (IN) i, j, maxI, maxJ, ngbrExt, perKnob ,dirKnob
+    INTENT (IN) i, j, maxI, maxJ, ngbrExt, perKnob, dirKnob
     INTENT (IN OUT) wsdat, maxSys
     !
     !     Local variables
@@ -3254,7 +3254,7 @@ CONTAINS
     REAL         :: perKnob ,dirKnob, hsKnob
 
     INTENT (IN) maxPts, maxI, maxJ, hsKnob, combine
-    INTENT (IN OUT) wsdat, maxSys                                       !In the Matlab code maxSys is only input ???
+    INTENT (IN OUT) wsdat, maxSys !In the Matlab code maxSys is only input ???
     !      INTENT (OUT) sys
     !
     !     Local variables
@@ -4727,7 +4727,8 @@ CONTAINS
     !
     INTEGER, INTENT(IN)  :: INSIZE
     INTEGER, INTENT(OUT) :: OUTSIZE
-    REAL, INTENT(IN)     :: INARRAY(INSIZE)
+    REAL,    INTENT(IN)  :: INARRAY(INSIZE)
+
     REAL, POINTER        :: OUTARRAY(:)
     !
     !     Local variables
@@ -5639,8 +5640,8 @@ CONTAINS
     !
     IMPLICIT NONE
     !/
-    INTEGER, INTENT(IN) :: LO,HI
-    REAL,INTENT(INOUT)  :: ARRAY(:),IDX(:)
+    INTEGER, INTENT(IN)    :: LO,HI
+    REAL,    INTENT(INOUT) :: ARRAY(:),IDX(:)
     !/
     !     Local variables
     !     ----------------------------------------------------------------
@@ -5764,8 +5765,8 @@ CONTAINS
     !
     IMPLICIT NONE
     !/
-    INTEGER, INTENT(IN) :: LO,HI
-    REAL,INTENT(INOUT)  :: ARRAY(:),IDX(:)
+    INTEGER, INTENT(IN)    :: LO,HI
+    REAL,    INTENT(INOUT) :: ARRAY(:),IDX(:)
     !/
     !     Local variables
     !     ----------------------------------------------------------------
@@ -5874,8 +5875,8 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
-    INTEGER(KIND=4), INTENT(IN)  :: INT4
-    INTEGER(KIND=4)              :: INT4SWP
+    INTEGER(KIND=4), INTENT(IN) :: INT4
+    INTEGER(KIND=4)             :: INT4SWP
     !/
     !     Local variables
     !     ----------------------------------------------------------------

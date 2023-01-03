@@ -131,7 +131,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !
     ! * Argument
-    INTEGER, INTENT(OUT) :: ID_LCOMM                   ! Model local communicator
+    INTEGER, INTENT(OUT) :: ID_LCOMM ! Model local communicator
     !
     !----------------------------------------------------------------------
     ! * Executable part
@@ -421,8 +421,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)                          :: NDSO
-    CHARACTER(LEN=1024), INTENT(IN)              :: RCV_STR,SND_STR
+    INTEGER,             INTENT(IN) :: NDSO
+    CHARACTER(LEN=1024), INTENT(IN) :: RCV_STR,SND_STR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -605,10 +605,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)   :: ID_NB                         ! Number of the field to be send
-    INTEGER, INTENT(IN)   :: ID_TIME                       ! Atmosphere time-step in seconds
-    REAL(KIND=8), DIMENSION(:,:), INTENT(IN) :: RDA_FIELD  ! Coupling field array to be send
-    LOGICAL, INTENT(OUT)  :: LD_ACTION                     ! Action performed
+    INTEGER,                      INTENT(IN)  :: ID_NB     ! Number of the field to be send
+    INTEGER,                      INTENT(IN)  :: ID_TIME   ! Atmosphere time-step in seconds
+    REAL(KIND=8), DIMENSION(:,:), INTENT(IN)  :: RDA_FIELD ! Coupling field array to be send
+    LOGICAL,                      INTENT(OUT) :: LD_ACTION ! Action performed
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -676,10 +676,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)   :: ID_NB                          ! Number of the field to be received
-    INTEGER, INTENT(IN)   :: ID_TIME                        ! Ocean time-step in seconds
-    REAL(KIND=8), DIMENSION(:,:), INTENT(OUT) :: RDA_FIELD    ! Coupling field array to be received
-    LOGICAL, INTENT(OUT)  :: LD_ACTION                      ! Action performed
+    INTEGER,                      INTENT(IN)  :: ID_NB     ! Number of the field to be received
+    INTEGER,                      INTENT(IN)  :: ID_TIME   ! Ocean time-step in seconds
+    REAL(KIND=8), DIMENSION(:,:), INTENT(OUT) :: RDA_FIELD ! Coupling field array to be received
+    LOGICAL,                      INTENT(OUT) :: LD_ACTION ! Action performed
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -807,10 +807,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    TYPE(CPL_FIELD), DIMENSION(IP_MAXFLD), INTENT (INOUT)   :: RCV, SND
-    INTEGER, INTENT(INOUT)                                  :: ID_NB_RCV, ID_NB_SND
-    INTEGER, INTENT(IN)                                     :: NDSO
-    CHARACTER(LEN=1024), INTENT(IN)                         :: RCV_STR, SND_STR
+    TYPE(CPL_FIELD), DIMENSION(IP_MAXFLD), INTENT (INOUT) :: RCV, SND
+    INTEGER,                               INTENT(INOUT)  :: ID_NB_RCV, ID_NB_SND
+    INTEGER,                               INTENT(IN)     :: NDSO
+    CHARACTER(LEN=1024),                   INTENT(IN)     :: RCV_STR, SND_STR
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

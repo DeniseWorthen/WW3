@@ -152,16 +152,16 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                         :: NDSI
-    CHARACTER*(*), INTENT(IN)                   :: INFILE
-    TYPE(NML_POINT_T), INTENT(INOUT)            :: NML_POINT
-    TYPE(NML_FILE_T), INTENT(INOUT)             :: NML_FILE
-    TYPE(NML_SPECTRA_T), INTENT(INOUT)          :: NML_SPECTRA
-    TYPE(NML_PARAM_T), INTENT(INOUT)            :: NML_PARAM
-    TYPE(NML_SOURCE_T), INTENT(INOUT)           :: NML_SOURCE
-    INTEGER, INTENT(OUT)                        :: IERR
+    INTEGER,             INTENT(IN)    :: NDSI
+    CHARACTER*(*),       INTENT(IN)    :: INFILE
+    TYPE(NML_POINT_T),   INTENT(INOUT) :: NML_POINT
+    TYPE(NML_FILE_T),    INTENT(INOUT) :: NML_FILE
+    TYPE(NML_SPECTRA_T), INTENT(INOUT) :: NML_SPECTRA
+    TYPE(NML_PARAM_T),   INTENT(INOUT) :: NML_PARAM
+    TYPE(NML_SOURCE_T),  INTENT(INOUT) :: NML_SOURCE
+    INTEGER,             INTENT(OUT)   :: IERR
 #ifdef W3_S
-    INTEGER, SAVE                             :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -283,15 +283,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                 :: NDSI
-    TYPE(NML_POINT_T), INTENT(INOUT)    :: NML_POINT
+    INTEGER,           INTENT(IN)    :: NDSI
+    TYPE(NML_POINT_T), INTENT(INOUT) :: NML_POINT
 
     ! locals
-    INTEGER                                :: IERR
+    INTEGER :: IERR
     TYPE(NML_POINT_T) :: POINT
     NAMELIST /POINT_NML/ POINT
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -394,15 +394,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                 :: NDSI
-    TYPE(NML_FILE_T), INTENT(INOUT)     :: NML_FILE
+    INTEGER,          INTENT(IN)    :: NDSI
+    TYPE(NML_FILE_T), INTENT(INOUT) :: NML_FILE
 
     ! locals
-    INTEGER                                :: IERR
+    INTEGER :: IERR
     TYPE(NML_FILE_T) :: FILE
     NAMELIST /FILE_NML/ FILE
 #ifdef W3_S
-    INTEGER, SAVE                       :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -499,15 +499,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                 :: NDSI
-    TYPE(NML_SPECTRA_T), INTENT(INOUT)  :: NML_SPECTRA
+    INTEGER,             INTENT(IN)    :: NDSI
+    TYPE(NML_SPECTRA_T), INTENT(INOUT) :: NML_SPECTRA
 
     ! locals
-    INTEGER                                :: IERR
+    INTEGER :: IERR
     TYPE(NML_SPECTRA_T) :: SPECTRA
     NAMELIST /SPECTRA_NML/ SPECTRA
 #ifdef W3_S
-    INTEGER, SAVE                       :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -605,15 +605,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                 :: NDSI
-    TYPE(NML_PARAM_T), INTENT(INOUT)    :: NML_PARAM
+    INTEGER,           INTENT(IN)    :: NDSI
+    TYPE(NML_PARAM_T), INTENT(INOUT) :: NML_PARAM
 
     ! locals
-    INTEGER                                :: IERR
+    INTEGER :: IERR
     TYPE(NML_PARAM_T) :: PARAM
     NAMELIST /PARAM_NML/ PARAM
 #ifdef W3_S
-    INTEGER, SAVE                       :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -706,15 +706,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                 :: NDSI
-    TYPE(NML_SOURCE_T), INTENT(INOUT)   :: NML_SOURCE
+    INTEGER,            INTENT(IN)    :: NDSI
+    TYPE(NML_SOURCE_T), INTENT(INOUT) :: NML_SOURCE
 
     ! locals
-    INTEGER                                :: IERR
+    INTEGER :: IERR
     TYPE(NML_SOURCE_T) :: SOURCE
     NAMELIST /SOURCE_NML/ SOURCE
 #ifdef W3_S
-    INTEGER, SAVE                       :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -822,7 +822,7 @@ CONTAINS
 
     TYPE(NML_POINT_T), INTENT(IN) :: NML_POINT
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -919,7 +919,7 @@ CONTAINS
 
     TYPE(NML_FILE_T), INTENT(IN) :: NML_FILE
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -1004,7 +1004,7 @@ CONTAINS
 
     TYPE(NML_SPECTRA_T), INTENT(IN) :: NML_SPECTRA
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -1091,7 +1091,7 @@ CONTAINS
 
     TYPE(NML_PARAM_T), INTENT(IN) :: NML_PARAM
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -1172,7 +1172,7 @@ CONTAINS
 
     TYPE(NML_SOURCE_T), INTENT(IN) :: NML_SOURCE
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S

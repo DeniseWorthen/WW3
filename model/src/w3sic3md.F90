@@ -80,6 +80,8 @@ MODULE W3SIC3MD
   !/
   !/ ------------------------------------------------------------------- /
   !/
+  ! module default
+  implicit none
   PUBLIC  ::  W3SIC3, W3IC3WNCG_V1, W3IC3WNCG_CHENG
   PRIVATE ::  WN_CMPLX_V1, WN_CMPLX_HF
   PRIVATE ::  CMPLX_ROOT_MULLER_V1, CMPLX_ROOT_MULLER_CHENG
@@ -358,9 +360,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: CG(NK),  WN(NK), A(NSPEC), DEPTH
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC)
-    INTEGER, INTENT(IN)     :: IX, IY
+    REAL,    INTENT(IN)  :: CG(NK),  WN(NK), A(NSPEC), DEPTH
+    REAL,    INTENT(OUT) :: S(NSPEC), D(NSPEC)
+    INTEGER, INTENT(IN)  :: IX, IY
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -739,8 +741,8 @@ CONTAINS
     !/
     IMPLICIT NONE
     !/
-    REAL, INTENT(INOUT):: WN_R(:),WN_I(:),CG(:)
-    REAL, INTENT(IN)   :: ICE1, ICE2, ICE3, ICE4, DPT
+    REAL, INTENT(INOUT) :: WN_R(:),WN_I(:),CG(:)
+    REAL, INTENT(IN)    :: ICE1, ICE2, ICE3, ICE4, DPT
 
     INTEGER            :: IK, KL,KU
     REAL, ALLOCATABLE  :: SIGMA(:),CG_IC3(:)
@@ -1184,10 +1186,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    DOUBLE COMPLEX                :: P3                     ! RESULT
-    DOUBLE COMPLEX, INTENT(IN)    :: X0,X1,X2
-    DOUBLE PRECISION, INTENT(IN)  :: SIGMA,ES,NU,DICE,HICE,DEPTH
-    INTEGER, INTENT(IN)           :: JUDGE
+    DOUBLE COMPLEX               :: P3                     ! RESULT
+    DOUBLE COMPLEX,   INTENT(IN) :: X0,X1,X2
+    DOUBLE PRECISION, INTENT(IN) :: SIGMA,ES,NU,DICE,HICE,DEPTH
+    INTEGER,          INTENT(IN) :: JUDGE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1353,9 +1355,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)          :: JUDGE
+    INTEGER,          INTENT(IN) :: JUDGE
     DOUBLE PRECISION, INTENT(IN) :: SIGMA,ES,NU,DICE,HICE,DEPTH
-    DOUBLE COMPLEX, INTENT(IN)   :: X
+    DOUBLE COMPLEX,   INTENT(IN) :: X
     DOUBLE COMPLEX               :: FZHAO  ! RESULT
     !/
     !/ ------------------------------------------------------------------- /
@@ -1440,9 +1442,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    DOUBLE COMPLEX, INTENT(IN)    :: WN
-    DOUBLE PRECISION, INTENT(IN)  :: SIGMA, DEPTH
-    DOUBLE COMPLEX                :: FUNC0                 ! RESULT
+    DOUBLE COMPLEX,   INTENT(IN) :: WN
+    DOUBLE PRECISION, INTENT(IN) :: SIGMA, DEPTH
+    DOUBLE COMPLEX               :: FUNC0                 ! RESULT
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1541,7 +1543,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    DOUBLE COMPLEX, INTENT(IN)   :: WN
+    DOUBLE COMPLEX,   INTENT(IN) :: WN
     DOUBLE PRECISION, INTENT(IN) :: SIGMA, ES, NU, DICE, HICE, DEPTH
     DOUBLE COMPLEX               :: FUNC1                   ! RESULT
     !/
@@ -1667,7 +1669,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)        :: N
+    INTEGER,        INTENT(IN) :: N
     DOUBLE COMPLEX, INTENT(IN) :: AA(N,N)
     DOUBLE COMPLEX             :: DET                       ! RESULT
     !/
@@ -1877,10 +1879,10 @@ CONTAINS
     !/
     IMPLICIT NONE
     !/
-    REAL, INTENT(IN)   :: ICE1, ICE2, ICE3, ICE4, DPT
-    REAL, INTENT(INOUT):: WN_R(:),WN_I(:),CG(:)
-    REAL, ALLOCATABLE  :: SIGMA(:)
+    REAL, INTENT(IN)    :: ICE1, ICE2, ICE3, ICE4, DPT
+    REAL, INTENT(INOUT) :: WN_R(:),WN_I(:),CG(:)
     !
+    REAL, ALLOCATABLE   :: SIGMA(:)
     INTEGER     :: I, I1, I2, IK, KL,KU, ITKNUM
     COMPLEX(8)  :: WNCOMPLEX, X0,X1,X2, WNR, WNL
     REAL(8)     :: DEPTH, HICE, NU, DICE, ES_MOD, RR, K_OCEAN, &
@@ -2111,8 +2113,8 @@ CONTAINS
     !/
     IMPLICIT NONE
     !/
-    REAL, INTENT(INOUT):: WN_R(0:NK+1),WN_I(0:NK+1), CG(0:NK+1)
-    REAL, INTENT(IN)   :: ICE1, ICE2, ICE3, ICE4, DPT
+    REAL, INTENT(INOUT) :: WN_R(0:NK+1),WN_I(0:NK+1), CG(0:NK+1)
+    REAL, INTENT(IN)    :: ICE1, ICE2, ICE3, ICE4, DPT
 
     INTEGER            :: IK, KL,KU,IX,NUM,SWITCHID
     REAL               :: K_OCEAN,CG_OCEAN
@@ -2253,9 +2255,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
+    !TODO: are these in,out or inout?
     REAL(8)       :: SIGMA,SIGMAM1,ES_MOD,NU,DICE,HICE,DEPTH
     COMPLEX(8)    :: WN_O, WNM1, WNM2, WN0, WN1,WN2
-    COMPLEX(8),INTENT(OUT) :: WN ! RESULT
+    COMPLEX(8), INTENT(OUT) :: WN ! RESULT
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2471,9 +2474,9 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    REAL, INTENT(IN)  :: SIGMA(1:N),WN_R(1:N)
-    REAL, INTENT(OUT) :: CG(1:N)
-    INTEGER           :: N
+    REAL,    INTENT(IN)  :: SIGMA(1:N),WN_R(1:N)
+    REAL,    INTENT(OUT) :: CG(1:N)
+    INTEGER, INTENT(IN)  :: N
     !/ LOCAL variables
     INTEGER           :: IK, M
     REAL              :: CG1,CG2,CG3,CG0(1:N)
@@ -2495,6 +2498,7 @@ CONTAINS
   ! numerically smooth WN_R and WN_I by linear interpolation
   SUBROUTINE SMOOTH_K(WN_R,WN_I,SIGMA,N,SWITCHID)
     REAL, INTENT(IN)  :: SIGMA(N)
+    !TODO: are these in,out or inout?
     REAL              :: WN_R(N), WN_I(N),DIFF(N),REMOVEID(N)
     INTEGER           :: N,I,J,SWITCHID
     !
@@ -2619,10 +2623,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    COMPLEX(8)            :: P3                     ! RESULT
-    COMPLEX(8), INTENT(IN):: X0,X1,X2
-    REAL(8), INTENT(IN)   :: SIGMA,ES,NU,DICE,HICE,DEPTH
-    INTEGER, INTENT(IN)   :: JUDGE
+    COMPLEX(8)             :: P3                     ! RESULT
+    COMPLEX(8), INTENT(IN) :: X0,X1,X2
+    REAL(8),    INTENT(IN) :: SIGMA,ES,NU,DICE,HICE,DEPTH
+    INTEGER,    INTENT(IN) :: JUDGE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -2793,9 +2797,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER,INTENT(IN)           :: JUDGE
+    INTEGER,          INTENT(IN) :: JUDGE
     DOUBLE PRECISION, INTENT(IN) :: SIGMA,ES,NU,DICE,HICE,DEPTH
-    DOUBLE COMPLEX, INTENT(IN)   :: X
+    DOUBLE COMPLEX,   INTENT(IN) :: X
     DOUBLE COMPLEX               :: FZHAO  ! RESULT
     !/
     !/ ------------------------------------------------------------------- /
@@ -2889,10 +2893,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    COMPLEX(8), INTENT(IN)   :: WN
-    REAL(8), INTENT(IN)      :: SIGMA, ES, NU, DICE, HICE, DEPTH
-    COMPLEX(8)               :: FUNC1,AA(4,4)                   ! RESULT
-    INTEGER                  :: JUDGE
+    COMPLEX(8), INTENT(IN) :: WN
+    REAL(8),    INTENT(IN) :: SIGMA, ES, NU, DICE, HICE, DEPTH
+    COMPLEX(8)             :: FUNC1,AA(4,4)                   ! RESULT
+    INTEGER                :: JUDGE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -3047,9 +3051,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    COMPLEX(8), INTENT(IN)   :: WN
-    REAL(8), INTENT(IN)      :: SIGMA, ES, NU, DICE, HICE, DEPTH
-    COMPLEX(8)               :: FUNC1                   ! RESULT
+    COMPLEX(8), INTENT(IN) :: WN
+    REAL(8),    INTENT(IN) :: SIGMA, ES, NU, DICE, HICE, DEPTH
+    COMPLEX(8)             :: FUNC1                   ! RESULT
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

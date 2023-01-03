@@ -125,19 +125,19 @@ CONTAINS
 #ifdef W3_S
     USE W3SERVMD , ONLY : STRACE
 #endif
+    IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
+    REAL(8), intent(out) :: eTime
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    IMPLICIT NONE
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
 #endif
-    INTEGER mpimode
-    REAL(8), intent(out) :: eTime
+    INTEGER :: mpimode
 #ifdef W3_MPI
     REAL(8) mpi_wtime
 #endif
@@ -211,6 +211,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
+    character(*), intent(in) :: string
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
@@ -220,7 +221,6 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !
-    character(*), intent(in) :: string
     REAL(8) :: eTime
 #ifdef W3_S
     CALL STRACE (IENT, 'PRINT_MY_TIME')
@@ -294,6 +294,9 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
+    REAL,    intent(out) :: CAD(NSPEC)
+    INTEGER, intent(in)  :: ISEA
+    REAL,    intent(in)  :: DTG
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -305,9 +308,6 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/
     !/
-    REAL, intent(out) :: CAD(NSPEC)
-    INTEGER, intent(in) :: ISEA
-    REAL, intent(in) :: DTG
     INTEGER :: ISP, IK, ITH, IX, IY
     REAL :: FRK(NK), FRG(NK), DSDD(0:NK+1)
     REAL :: FACTH, DCXY, DCYX, DCXXYY, DTTST
@@ -443,16 +443,16 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
+    REAL,    intent(out) :: CAD(NSPEC)
+    INTEGER, intent(in)  :: ISEA, IP
+    REAL,    intent(in)  :: DTG
+    logical, intent(in)  :: DoLimiter
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
 #endif
-    REAL, intent(out) :: CAD(NSPEC)
-    INTEGER, intent(in) :: ISEA, IP
-    REAL, intent(in) :: DTG
-    logical, intent(in) :: DoLimiter
     INTEGER :: ISP, IK, ITH, IX, IY
     REAL :: FRK(NK), FRG(NK), DSDD(0:NK+1)
     REAL :: FACTH, DCXY, DCYX, DCXXYY, DTTST
@@ -586,16 +586,16 @@ CONTAINS
     IMPLICIT NONE
     !/ Parameter list
     !/
+    INTEGER, intent(in)  :: ISEA, IP
+    REAL,    intent(out) :: DMM(0:NK2)
+    REAL,    intent(in)  :: DTG
+    REAL,    intent(out) :: CAS(NSPEC)
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
 #endif
-    INTEGER, intent(in) :: ISEA, IP
-    REAL, intent(out) :: DMM(0:NK2)
-    REAL, intent(in) :: DTG
-    REAL, intent(out) :: CAS(NSPEC)
     REAL :: DB(NK2), DSDD(0:NK+1)
     REAL :: eDCXDX, eDCXDY, eDCYDX, eDCYDY, eCX, eCY, eDDDX, EDDDY
     REAL :: DCXX, DCXYYX, DCYY, FKD, FACK
@@ -726,6 +726,10 @@ CONTAINS
 
     IMPLICIT NONE
 
+    INTEGER, intent(in)  :: ISEA, IP
+    REAL,    intent(out) :: CWNB_M2(1-NTH:NSPEC)
+    REAL,    intent(out) :: DWNI_M2(NK)
+    REAL,    intent(in)  :: DTG
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
@@ -733,10 +737,6 @@ CONTAINS
     INTEGER, SAVE           :: IENT = 0
 #endif
 
-    INTEGER, intent(in) :: ISEA, IP
-    REAL, intent(out) :: CWNB_M2(1-NTH:NSPEC)
-    REAL, intent(out) :: DWNI_M2(NK)
-    REAL, intent(in) :: DTG
     !
     REAL :: eDCXDX, eDCXDY, eDCYDX, eDCYDY, eCX, eCY, eDDDX, EDDDY
     REAL :: DCXX, DCXYYX, DCYY, FKD, FACK
@@ -1099,6 +1099,8 @@ CONTAINS
     IMPLICIT NONE
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
+    INTEGER, intent(in)  :: ISEA
+    INTEGER, intent(out) :: JSEA, ISPROC
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1108,9 +1110,7 @@ CONTAINS
 #endif
     !/
     !/ ------------------------------------------------------------------- /
-    INTEGER, intent(in) :: ISEA
-    INTEGER, intent(out) :: JSEA, ISPROC
-    INTEGER IP_glob
+    INTEGER :: IP_glob
 #ifdef W3_S
     CALL STRACE (IENT, 'INIT_GET_JSEA_ISPROC')
 #endif
@@ -1196,6 +1196,8 @@ CONTAINS
     IMPLICIT NONE
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
+    INTEGER, intent(in)  :: ISEA
+    INTEGER, intent(out) :: JSEA, IBELONG
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1206,9 +1208,7 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    INTEGER, intent(in) :: ISEA
-    INTEGER, intent(out) :: JSEA, IBELONG
-    INTEGER ISPROC, IX, JX
+    INTEGER :: ISPROC, IX, JX
 #ifdef W3_S
     CALL STRACE (IENT, 'GET_JSEA_IBELONG')
 #endif
@@ -1329,11 +1329,11 @@ CONTAINS
     USE YOWNODEPOOL , ONLY : iplg
 #endif
     IMPLICIT NONE
+    INTEGER, intent(in)  :: JSEA
+    INTEGER, intent(out) :: ISEA
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
 #endif
-    INTEGER, intent(in) :: JSEA
-    INTEGER, intent(out) :: ISEA
 #ifdef W3_S
     CALL STRACE (IENT, 'INIT_GET_ISEA')
 #endif
@@ -1427,6 +1427,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
+    REAL*8, intent(inout) :: TheVar(NX)
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
@@ -1439,10 +1440,10 @@ CONTAINS
 #ifdef W3_MPI
     INCLUDE "mpif.h"
 #endif
-    INTEGER ISEA, JSEA, Status(NX), rStatus(NX)
-    INTEGER IPROC, I, ierr, IP, IX, IP_glob
-    REAL*8, intent(inout) :: TheVar(NX)
-    REAL*8  rVect(NX)
+    INTEGER :: ISEA, JSEA, Status(NX), rStatus(NX)
+    INTEGER :: IPROC, I, ierr, IP, IX, IP_glob
+
+    REAL*8  :: rVect(NX)
     Status=0
 #ifdef W3_S
     CALL STRACE (IENT, 'SYNCHRONIZE_GLOBAL_ARRAY')

@@ -821,7 +821,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: NX, NY, NSEA
+    INTEGER, INTENT(IN) :: NX, NY, NSEA
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

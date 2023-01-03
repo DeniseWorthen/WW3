@@ -3084,8 +3084,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: ISPEC
-    REAL, INTENT(OUT)       :: FIELD(1-NY:NY*(NX+2))
+    INTEGER, INTENT(IN)  :: ISPEC
+    REAL,    INTENT(OUT) :: FIELD(1-NY:NY*(NX+2))
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -3400,8 +3400,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: ISPEC, MAPSTA(NY*NX)
-    REAL, INTENT(IN)        :: FIELD(1-NY:NY*(NX+2))
+    INTEGER, INTENT(IN) :: ISPEC, MAPSTA(NY*NX)
+    REAL,    INTENT(IN) :: FIELD(1-NY:NY*(NX+2))
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -3683,8 +3683,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)     :: MAPSTA(NY*NX)
-    LOGICAL, INTENT(OUT)    :: FLAG0
+    INTEGER, INTENT(IN)  :: MAPSTA(NY*NX)
+    LOGICAL, INTENT(OUT) :: FLAG0
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

@@ -257,22 +257,22 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                       :: MPI_COMM, NDSI
-    CHARACTER*(*), INTENT(IN)                 :: INFILE
-    TYPE(NML_DOMAIN_T), INTENT(INOUT)         :: NML_DOMAIN
-    TYPE(NML_INPUT_T), INTENT(INOUT)          :: NML_INPUT
-    TYPE(NML_OUTPUT_TYPE_T), INTENT(INOUT)    :: NML_OUTPUT_TYPE
-    TYPE(NML_OUTPUT_DATE_T), INTENT(INOUT)    :: NML_OUTPUT_DATE
-    TYPE(NML_HOMOG_COUNT_T), INTENT(INOUT)   :: NML_HOMOG_COUNT
-    TYPE(NML_HOMOG_INPUT_T), ALLOCATABLE, INTENT(INOUT)    :: NML_HOMOG_INPUT(:)
-    INTEGER, INTENT(OUT)                      :: IERR
+    INTEGER,                              INTENT(IN)    :: MPI_COMM, NDSI
+    CHARACTER*(*),                        INTENT(IN)    :: INFILE
+    TYPE(NML_DOMAIN_T),                   INTENT(INOUT) :: NML_DOMAIN
+    TYPE(NML_INPUT_T),                    INTENT(INOUT) :: NML_INPUT
+    TYPE(NML_OUTPUT_TYPE_T),              INTENT(INOUT) :: NML_OUTPUT_TYPE
+    TYPE(NML_OUTPUT_DATE_T),              INTENT(INOUT) :: NML_OUTPUT_DATE
+    TYPE(NML_HOMOG_COUNT_T),              INTENT(INOUT) :: NML_HOMOG_COUNT
+    TYPE(NML_HOMOG_INPUT_T), ALLOCATABLE, INTENT(INOUT) :: NML_HOMOG_INPUT(:)
+    INTEGER,                              INTENT(OUT)   :: IERR
 
     ! locals
 #ifdef W3_MPI
-    INTEGER                                 :: IERR_MPI
+    INTEGER :: IERR_MPI
 #endif
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
     logical                                 :: is_open
 
@@ -405,15 +405,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)               :: NDSI
-    TYPE(NML_DOMAIN_T), INTENT(OUT)   :: NML_DOMAIN
+    INTEGER,            INTENT(IN)  :: NDSI
+    TYPE(NML_DOMAIN_T), INTENT(OUT) :: NML_DOMAIN
 
     ! locals
-    INTEGER                                :: IERR
+    INTEGER :: IERR
     TYPE(NML_DOMAIN_T) :: DOMAIN
     NAMELIST /DOMAIN_NML/ DOMAIN
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -523,15 +523,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                :: NDSI
-    TYPE(NML_INPUT_T), INTENT(INOUT)   :: NML_INPUT
+    INTEGER,           INTENT(IN)    :: NDSI
+    TYPE(NML_INPUT_T), INTENT(INOUT) :: NML_INPUT
 
     ! locals
-    INTEGER                                :: IERR
+    INTEGER :: IERR
     TYPE(NML_INPUT_T) :: INPUT
     NAMELIST /INPUT_NML/ INPUT
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -649,15 +649,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                    :: NDSI
+    INTEGER,                 INTENT(IN)    :: NDSI
     TYPE(NML_OUTPUT_TYPE_T), INTENT(INOUT) :: NML_OUTPUT_TYPE
 
     ! locals
-    INTEGER                                :: IERR
+    INTEGER :: IERR
     TYPE(NML_OUTPUT_TYPE_T) :: TYPE
     NAMELIST /OUTPUT_TYPE_NML/ TYPE
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -774,15 +774,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                    :: NDSI
+    INTEGER,                 INTENT(IN)    :: NDSI
     TYPE(NML_OUTPUT_DATE_T), INTENT(INOUT) :: NML_OUTPUT_DATE
 
     ! locals
-    INTEGER                                :: IERR
+    INTEGER :: IERR
     TYPE(NML_OUTPUT_DATE_T) :: DATE
     NAMELIST /OUTPUT_DATE_NML/ DATE
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -910,18 +910,18 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                    :: NDSI
-    TYPE(NML_HOMOG_COUNT_T), INTENT(OUT)   :: NML_HOMOG_COUNT
-    TYPE(NML_HOMOG_INPUT_T), ALLOCATABLE, INTENT(OUT)   :: NML_HOMOG_INPUT(:)
+    INTEGER,                              INTENT(IN)  :: NDSI
+    TYPE(NML_HOMOG_COUNT_T),              INTENT(OUT) :: NML_HOMOG_COUNT
+    TYPE(NML_HOMOG_INPUT_T), ALLOCATABLE, INTENT(OUT) :: NML_HOMOG_INPUT(:)
 
     ! locals
-    INTEGER                   :: IERR, I
+    INTEGER :: IERR, I
     TYPE(NML_HOMOG_COUNT_T)  :: HOMOG_COUNT
     NAMELIST /HOMOG_COUNT_NML/  HOMOG_COUNT
     TYPE(NML_HOMOG_INPUT_T), ALLOCATABLE   :: HOMOG_INPUT(:)
     NAMELIST /HOMOG_INPUT_NML/   HOMOG_INPUT
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -1069,7 +1069,7 @@ CONTAINS
 
     TYPE(NML_DOMAIN_T), INTENT(IN) :: NML_DOMAIN
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -1164,7 +1164,7 @@ CONTAINS
 
     ! locals
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -1273,7 +1273,7 @@ CONTAINS
 
     ! locals
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -1381,7 +1381,7 @@ CONTAINS
 
     ! locals
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -1499,9 +1499,9 @@ CONTAINS
     TYPE(NML_HOMOG_INPUT_T), INTENT(IN) :: NML_HOMOG_INPUT(NML_HOMOG_COUNT%N_TOT)
 
     ! locals
-    INTEGER              :: I
+    INTEGER :: I
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S

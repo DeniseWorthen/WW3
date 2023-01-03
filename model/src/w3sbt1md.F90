@@ -146,8 +146,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: CG(NK), WN(NK), DEPTH, A(NSPEC)
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC)
+    REAL, INTENT(IN)  :: CG(NK), WN(NK), DEPTH, A(NSPEC)
+    REAL, INTENT(OUT) :: S(NSPEC), D(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

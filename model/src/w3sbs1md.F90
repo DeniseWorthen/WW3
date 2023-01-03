@@ -194,11 +194,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    REAL, INTENT(IN)        :: CG(NK), WN(NK), DEPTH
-    REAL, INTENT(IN)        :: A(NTH,NK)
-    REAL, INTENT(IN)        :: CX1, CY1
-    REAL, INTENT(OUT)       :: TAUSCX, TAUSCY
-    REAL, INTENT(OUT)       :: S(NSPEC), D(NSPEC)
+    REAL, INTENT(IN)  :: CG(NK), WN(NK), DEPTH
+    REAL, INTENT(IN)  :: A(NTH,NK)
+    REAL, INTENT(IN)  :: CX1, CY1
+    REAL, INTENT(OUT) :: TAUSCX, TAUSCY
+    REAL, INTENT(OUT) :: S(NSPEC), D(NSPEC)
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -535,7 +535,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)        :: inistep
+    INTEGER, INTENT(IN) :: inistep
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters

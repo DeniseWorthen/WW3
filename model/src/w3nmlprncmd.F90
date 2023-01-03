@@ -146,13 +146,13 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                         :: NDSI
-    CHARACTER*(*), INTENT(IN)                   :: INFILE
-    TYPE(NML_FORCING_T), INTENT(INOUT)          :: NML_FORCING
-    TYPE(NML_FILE_T), INTENT(INOUT)             :: NML_FILE
-    INTEGER, INTENT(OUT)                        :: IERR
+    INTEGER,             INTENT(IN)    :: NDSI
+    CHARACTER*(*),       INTENT(IN)    :: INFILE
+    TYPE(NML_FORCING_T), INTENT(INOUT) :: NML_FORCING
+    TYPE(NML_FILE_T),    INTENT(INOUT) :: NML_FILE
+    INTEGER,             INTENT(OUT)   :: IERR
 #ifdef W3_S
-    INTEGER, SAVE                             :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -262,15 +262,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                 :: NDSI
-    TYPE(NML_FORCING_T), INTENT(INOUT)  :: NML_FORCING
+    INTEGER,             INTENT(IN)    :: NDSI
+    TYPE(NML_FORCING_T), INTENT(INOUT) :: NML_FORCING
 
     ! locals
-    INTEGER                                :: IERR
+    INTEGER :: IERR
     TYPE(NML_FORCING_T) :: FORCING
     NAMELIST /FORCING_NML/ FORCING
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -401,15 +401,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)                 :: NDSI
-    TYPE(NML_FILE_T), INTENT(INOUT)     :: NML_FILE
+    INTEGER,          INTENT(IN)    :: NDSI
+    TYPE(NML_FILE_T), INTENT(INOUT) :: NML_FILE
 
     ! locals
-    INTEGER                                :: IERR
+    INTEGER :: IERR
     TYPE(NML_FILE_T) :: FILE
     NAMELIST /FILE_NML/ FILE
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
     IERR = 0
@@ -513,7 +513,7 @@ CONTAINS
 
     TYPE(NML_FORCING_T), INTENT(IN) :: NML_FORCING
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
@@ -625,7 +625,7 @@ CONTAINS
 
     TYPE(NML_FILE_T), INTENT(IN) :: NML_FILE
 #ifdef W3_S
-    INTEGER, SAVE                           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
 #ifdef W3_S
