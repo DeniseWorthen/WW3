@@ -1000,75 +1000,75 @@ CONTAINS
     !/
     !/ Local Parameters
     !/
-    INTEGER       :: ISEA, GSEA, IG, IGRID, IPTS, IGX, IGY, IX,    &
-         IY, ISWLL, ICAP, IBED, IFREQ, IK, INRST
-    INTEGER       :: MAPINT, MAPICE, MAPDRY, MAPMSK, MAPLND,       &
-         NMAPICE, NMAPDRY, NMAPMSK, NMAPLND,           &
-         LMAPICE, LMAPDRY, LMAPMSK, LMAPLND,           &
-         MAPICET, MAPDRYT, MAPMSKT, MAPLNDT
-    INTEGER       :: SUMGRD
-    REAL          :: VAR1, VAR2, WT
+    INTEGER :: ISEA, GSEA, IG, IGRID, IPTS, IGX, IGY, IX
+    INTEGER :: IY, ISWLL, ICAP, IBED, IFREQ, IK, INRST
+    INTEGER :: MAPINT, MAPICE, MAPDRY, MAPMSK, MAPLND
+    INTEGER :: NMAPICE, NMAPDRY, NMAPMSK, NMAPLND
+    INTEGER :: LMAPICE, LMAPDRY, LMAPMSK, LMAPLND
+    INTEGER :: MAPICET, MAPDRYT, MAPMSKT, MAPLNDT
+    INTEGER :: SUMGRD
+    REAL    :: VAR1, VAR2, WT
     ! Local group 1 variables
-    REAL          :: DWAUX, CXAUX, CYAUX, UAAUX, UDAUX, ASAUX,     &
-         WLVAUX, ICEAUX, ICEHAUX, ICEFAUX, BERGAUX,    &
-         SED_D50AUX, RHOAIRAUX, TAUAAUX, TAUADIRAUX,   &
-         SUMWT1(NOGE(1))
+    REAL    :: DWAUX, CXAUX, CYAUX, UAAUX, UDAUX, ASAUX
+    REAL    :: WLVAUX, ICEAUX, ICEHAUX, ICEFAUX, BERGAUX
+    REAL    :: SED_D50AUX, RHOAIRAUX, TAUAAUX, TAUADIRAUX
+    REAL    :: SUMWT1(NOGE(1))
     ! Local group 2 variables
-    REAL          :: HSAUX, WLMAUX, T02AUX, T0M1AUX, T01AUX,       &
-         FP0AUX, THMAUX1, THMAUX2, THSAUX, THP0AUX1,   &
-         THP0AUX2, HSIGAUX, STMAXEAUX,STMAXDAUX,       &
-         HMAXEAUX, HCMAXEAUX, HMAXDAUX, HCMAXDAUX,     &
-         WBTAUX, WNMEANAUX, SUMWT2(NOGE(2))
+    REAL    :: HSAUX, WLMAUX, T02AUX, T0M1AUX, T01AUX
+    REAL    :: FP0AUX, THMAUX1, THMAUX2, THSAUX, THP0AUX1
+    REAL    :: THP0AUX2, HSIGAUX, STMAXEAUX,STMAXDAUX
+    REAL    :: HMAXEAUX, HCMAXEAUX, HMAXDAUX, HCMAXDAUX
+    REAL    :: WBTAUX, WNMEANAUX, SUMWT2(NOGE(2))
     ! Local group 3 variables
-    REAL          :: EFAUX(E3DF(2,1):E3DF(3,1)),                   &
-         TH1MAUX(E3DF(2,2):E3DF(3,2)),                 &
-         STH1MAUX(E3DF(2,3):E3DF(3,3)),                &
-         TH2MAUX(E3DF(2,4):E3DF(3,4)),                 &
-         STH2MAUX(E3DF(2,5):E3DF(3,5)), WNAUX(1:NK),   &
-         SUMWT3A(E3DF(2,1):E3DF(3,1)),                 &
-         SUMWT3B(E3DF(2,2):E3DF(3,2)),                 &
-         SUMWT3C(E3DF(2,3):E3DF(3,3)),                 &
-         SUMWT3D(E3DF(2,4):E3DF(3,4)),                 &
-         SUMWT3E(E3DF(2,5):E3DF(3,5)),                 &
-         SUMWT3F(1:NK)
+    REAL    :: EFAUX(E3DF(2,1):E3DF(3,1))
+    REAL    :: TH1MAUX(E3DF(2,2):E3DF(3,2))
+    REAL    :: STH1MAUX(E3DF(2,3):E3DF(3,3))
+    REAL    :: TH2MAUX(E3DF(2,4):E3DF(3,4))
+    REAL    :: STH2MAUX(E3DF(2,5):E3DF(3,5)), WNAUX(1:NK)
+    REAL    :: SUMWT3A(E3DF(2,1):E3DF(3,1))
+    REAL    :: SUMWT3B(E3DF(2,2):E3DF(3,2))
+    REAL    :: SUMWT3C(E3DF(2,3):E3DF(3,3))
+    REAL    :: SUMWT3D(E3DF(2,4):E3DF(3,4))
+    REAL    :: SUMWT3E(E3DF(2,5):E3DF(3,5))
+    REAL    :: SUMWT3F(1:NK)
     ! Local group 4 variables
-    REAL          :: PHSAUX(0:NOSWLL_MIN), PTPAUX(0:NOSWLL_MIN),   &
-         PLPAUX(0:NOSWLL_MIN), PSIAUX(0:NOSWLL_MIN),   &
-         PWSAUX(0:NOSWLL_MIN), PDIRAUX1(0:NOSWLL_MIN), &
-         PWSTAUX, PDIRAUX2(0:NOSWLL_MIN),              &
-         PTHP0AUX1(0:NOSWLL_MIN),                      &
-         PTHP0AUX2(0:NOSWLL_MIN),                      &
-         PQPAUX(0:NOSWLL_MIN), PPEAUX(0:NOSWLL_MIN),   &
-         PGWAUX(0:NOSWLL_MIN), PSWAUX(0:NOSWLL_MIN),   &
-         PTM1AUX(0:NOSWLL_MIN), PT1AUX(0:NOSWLL_MIN), &
-         PT2AUX(0:NOSWLL_MIN), PEPAUX(0:NOSWLL_MIN),   &
-         SUMWT4(NOGE(4),0:NOSWLL_MIN)
+    REAL    :: PHSAUX(0:NOSWLL_MIN), PTPAUX(0:NOSWLL_MIN)
+    REAL    :: PLPAUX(0:NOSWLL_MIN), PSIAUX(0:NOSWLL_MIN)
+    REAL    :: PWSAUX(0:NOSWLL_MIN), PDIRAUX1(0:NOSWLL_MIN)
+    REAL    :: PWSTAUX, PDIRAUX2(0:NOSWLL_MIN)
+    REAL    :: PTHP0AUX1(0:NOSWLL_MIN)
+    REAL    :: PTHP0AUX2(0:NOSWLL_MIN)
+    REAL    :: PQPAUX(0:NOSWLL_MIN), PPEAUX(0:NOSWLL_MIN)
+    REAL    :: PGWAUX(0:NOSWLL_MIN), PSWAUX(0:NOSWLL_MIN)
+    REAL    :: PTM1AUX(0:NOSWLL_MIN), PT1AUX(0:NOSWLL_MIN)
+    REAL    :: PT2AUX(0:NOSWLL_MIN), PEPAUX(0:NOSWLL_MIN)
+    REAL    :: SUMWT4(NOGE(4),0:NOSWLL_MIN)
     ! Local group 5 variables
-    REAL          :: USTAUX1, USTAUX2, CHARNAUX, CGEAUX,           &
-         PHIAWAUX, TAUWIXAUX, TAUWIYAUX, TAUWNXAUX,    &
-         TAUWNYAUX, WHITECAPAUX(4), SUMWT5(NOGE(5)),   &
-         SUMWTC(4)
+    REAL    :: USTAUX1, USTAUX2, CHARNAUX, CGEAUX
+    REAL    :: PHIAWAUX, TAUWIXAUX, TAUWIYAUX, TAUWNXAUX
+    REAL    :: TAUWNYAUX, WHITECAPAUX(4), SUMWT5(NOGE(5))
+    REAL    :: SUMWTC(4)
     ! Local group 6 variables
-    REAL          :: SXXAUX, SYYAUX, SXYAUX, TAUOXAUX, TAUOYAUX,   &
-         BHDAUX, PHIOCAUX, TUSXAUX, TUSYAUX, USSXAUX,  &
-         USSYAUX, PRMSAUX, TPMSAUX, SUMWT6(NOGE(6)),   &
-         TAUICEAUX(2), PHICEAUX,                       &
-         TAUOCXAUX, TAUOCYAUX,                         &
-         US3DAUX(2*NK), SUMWT68(2*NK),                 &
-         P2SMSAUX(P2MSF(2):P2MSF(3)),                  &
-         SUMWT69(P2MSF(2):P2MSF(3)),                   &
-         USSPAUX(2*NK), SUMWT612(2*NK)
+    REAL    :: SXXAUX, SYYAUX, SXYAUX, TAUOXAUX, TAUOYAUX
+    REAL    :: BHDAUX, PHIOCAUX, TUSXAUX, TUSYAUX, USSXAUX
+    REAL    :: USSYAUX, PRMSAUX, TPMSAUX, SUMWT6(NOGE(6))
+    REAL    :: TAUICEAUX(2), PHICEAUX
+    REAL    :: TAUOCXAUX, TAUOCYAUX
+    REAL    :: US3DAUX(2*NK), SUMWT68(2*NK)
+    REAL    :: P2SMSAUX(P2MSF(2):P2MSF(3))
+    REAL    :: SUMWT69(P2MSF(2):P2MSF(3))
+    REAL    :: USSPAUX(2*NK), SUMWT612(2*NK)
     ! Local Group 7 variables
-    REAL          :: ABAAUX, ABDAUX, UBAAUX, UBDAUX, PHIBBLAUX,    &
-         BEDFORMSAUX(3), TAUBBLAUX(2),                 &
-         SUMWT7(NOGE(7)), SUMWTB(3)
+    REAL    :: ABAAUX, ABDAUX, UBAAUX, UBDAUX, PHIBBLAUX
+    REAL    :: BEDFORMSAUX(3), TAUBBLAUX(2)
+    REAL    :: SUMWT7(NOGE(7)), SUMWTB(3)
     ! Local group 8 variables
-    REAL          :: MSSXAUX, MSSYAUX, MSCXAUX, MSCYAUX, MSSDAUX1, &
-         MSSDAUX2, MSCDAUX1, MSCDAUX2, QPAUX,          &
-         SUMWT8(NOGE(8))
+    REAL    :: MSSXAUX, MSSYAUX, MSCXAUX, MSCYAUX, MSSDAUX1
+    REAL    :: MSSDAUX2, MSCDAUX1, MSCDAUX2, QPAUX
+    REAL    :: SUMWT8(NOGE(8))
     !/
-    LOGICAL       :: ACTIVE
-    LOGICAL       :: USEGRID(NGRD)
+    LOGICAL :: ACTIVE
+    LOGICAL :: USEGRID(NGRD)
     !/
     !
     !-------------------------------------------------------------------

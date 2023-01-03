@@ -71,9 +71,8 @@ MODULE W3IOTRMD
   !/ Private parameter statements (ID strings)
   !/
   CHARACTER(LEN=10), PARAMETER, PRIVATE :: VERTRK = '2018-06-08'
-  CHARACTER(LEN=34), PARAMETER, PRIVATE ::                        &
-       IDSTRI = 'WAVEWATCH III TRACK LOCATIONS DATA', &
-       IDSTRO = 'WAVEWATCH III TRACK OUTPUT SPECTRA'
+  CHARACTER(LEN=34), PARAMETER, PRIVATE :: IDSTRI = 'WAVEWATCH III TRACK LOCATIONS DATA'
+  CHARACTER(LEN=34), PARAMETER, PRIVATE :: IDSTRO = 'WAVEWATCH III TRACK OUTPUT SPECTRA'
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
@@ -265,11 +264,11 @@ CONTAINS
     !/ Local parameters
     !/
     INTEGER, PARAMETER      :: OTYPE = 3
-    INTEGER                 :: NDSTI, NDSTO, ISPROC, IERR,          &
-         IK, ITH, IX, IY, TIMEB(2), TIMEE(2), &
-         TTIME(2), IX1, IX2, IY1, IY2,        &
-         IXX(4), IYY(4), I, J, ISEA, JSEA,    &
-         TOLAST(2)
+    INTEGER                 :: NDSTI, NDSTO, ISPROC, IERR
+    INTEGER                 :: IK, ITH, IX, IY, TIMEB(2), TIMEE(2)
+    INTEGER                 :: TTIME(2), IX1, IX2, IY1, IY2
+    INTEGER                 :: IXX(4), IYY(4), I, J, ISEA, JSEA
+    INTEGER                 :: TOLAST(2)
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
 #endif
@@ -283,9 +282,9 @@ CONTAINS
     INTEGER                 :: IT, IROOT, IFROM, IERR_MPI
     INTEGER, ALLOCATABLE    :: STATUS(:,:)
 #endif
-    REAL                    :: XN, YN, XT, YT, RD, X, Y, WX, WY,    &
-         SPEC(NK,NTH), FACTOR, ASPTRK(NTH,NK),&
-         DTOUT, XX(4), YY(4)
+    REAL                    :: XN, YN, XT, YT, RD, X, Y, WX, WY
+    REAL                    :: SPEC(NK,NTH), FACTOR, ASPTRK(NTH,NK)
+    REAL                    :: DTOUT, XX(4), YY(4)
     REAL, SAVE              :: RDCHCK = 0.05, RTCHCK = 0.05
     LOGICAL                 :: FORMI, FLAG1, FLAG2, INGRID
     CHARACTER               :: TRCKT*32, LINE*1024, TSTSTR*3, IDTST*34
@@ -297,8 +296,8 @@ CONTAINS
     CHARACTER(LEN=1)        :: MAPSTR(NX)
 #endif
     !
-    EQUIVALENCE                (IXX(1),IX1) , (IXX(2),IX2) ,        &
-         (IYY(1),IY1) , (IYY(3),IY2)
+    EQUIVALENCE (IXX(1),IX1) , (IXX(2),IX2)
+    EQUIVALENCE (IYY(1),IY1) , (IYY(3),IY2)
     !/
     !/ ------------------------------------------------------------------- /
     !/

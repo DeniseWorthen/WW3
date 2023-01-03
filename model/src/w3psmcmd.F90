@@ -279,28 +279,28 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: ITH, IK, NTLOC, ITLOC, ISEA, IXY,    &
-         IY, IY0, IP, IBI, LvR
-    INTEGER                 :: i, j, k, L, M, N, LL, MM, NN, LMN,   &
-         iuf, juf, ivf, jvf, icl, jcl
+    INTEGER                  :: ITH, IK, NTLOC, ITLOC, ISEA, IXY
+    INTEGER                  :: IY, IY0, IP, IBI, LvR
+    INTEGER                  :: i, j, k, L, M, N, LL, MM, NN, LMN
+    INTEGER                  :: iuf, juf, ivf, jvf, icl, jcl
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE            :: IENT = 0
 #endif
-    REAL                    :: CG0, CGA, CGN, CGX, CGY, FMR, RD1,   &
-         RD2, CXMIN, CXMAX, CYMIN, CYMAX,     &
-         CXC, CYC, DTLDX, DTLDY
-    REAL                    :: DTLOC, CGCOS, CGSIN, FUTRN, FVTRN,   &
-         DFRR, DX0I, DY0I, CGD, DSSD,         &
-         DNND, DCELL, XWIND, TFAC, DSS, DNN
-    REAL                    :: PCArea, ARCTH
-    LOGICAL                 :: YFIRST
+    REAL                     :: CG0, CGA, CGN, CGX, CGY, FMR, RD1
+    REAL                     :: RD2, CXMIN, CXMAX, CYMIN, CYMAX
+    REAL                     :: CXC, CYC, DTLDX, DTLDY
+    REAL                     :: DTLOC, CGCOS, CGSIN, FUTRN, FVTRN
+    REAL                     :: DFRR, DX0I, DY0I, CGD, DSSD
+    REAL                     :: DNND, DCELL, XWIND, TFAC, DSS, DNN
+    REAL                     :: PCArea, ARCTH
+    LOGICAL                  :: YFIRST
     !/
     !/ Automatic work arrays
     !
-    REAL, Dimension(-9:NCel) ::  FCNt, AFCN, BCNt, UCFL, VCFL, CQ,  &
-         CQA, CXTOT, CYTOT
-    REAL, Dimension(   NUFc) ::  FUMD, FUDIFX, ULCFLX
-    REAL, Dimension(   NVFc) ::  FVMD, FVDIFY, VLCFLY
+    REAL, Dimension(-9:NCel) :: FCNt, AFCN, BCNt, UCFL, VCFL, CQ
+    REAL, Dimension(-9:NCel) :: CQA, CXTOT, CYTOT
+    REAL, Dimension(   NUFc) :: FUMD, FUDIFX, ULCFLX
+    REAL, Dimension(   NVFc) :: FVMD, FVDIFY, VLCFLY
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -1097,16 +1097,16 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER    :: ITH, IK, ISP
-    REAL       :: FGC, FKD, FKS, FRK(NK), FRG(NK), DDNorm(NTH),     &
-         FKC(NTH), VQ(NSPEC), VCFLT(NSPEC), DEPTH30,       &
-         DB(0:NK+1), DM(-1:NK+1), CFLK(NTH,0:NK),          &
-         !Li   For new refraction scheme using Cg.  JGLi26Jul2011
-         !                   DPH2K(0:NK+1), SNH2K(0:NK+1)
-         !Li   For old refraction scheme using phase speed.  JGLi26Jul2011
-         SIGSNH(0:NK+1)
+    INTEGER       :: ITH, IK, ISP
+    REAL          :: FGC, FKD, FKS, FRK(NK), FRG(NK), DDNorm(NTH)
+    REAL          :: FKC(NTH), VQ(NSPEC), VCFLT(NSPEC), DEPTH30
+    REAL          :: DB(0:NK+1), DM(-1:NK+1), CFLK(NTH,0:NK)
+    !Li   For new refraction scheme using Cg.  JGLi26Jul2011
+    !                   DPH2K(0:NK+1), SNH2K(0:NK+1)
+    !Li   For old refraction scheme using phase speed.  JGLi26Jul2011
+    REAL          :: SIGSNH(0:NK+1)
 #ifdef W3_S
-    INTEGER, SAVE       :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -1426,7 +1426,7 @@ CONTAINS
     REAL,    INTENT(Out) :: VFLY(NVFc), FV(NVFc), FY(NVFc)
 
     INTEGER ::  i, j, k, L, M, N, ij
-    REAL:: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6, CNST8
+    REAL    :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6, CNST8
 
     !     Notice an extra side length L is multiplied to mid-flux to give correct
     !     proportion of flux into the cells.  This length will be removed by the
@@ -1554,8 +1554,8 @@ CONTAINS
     REAL,    INTENT( IN) :: CF(-9:NCel), UC(-9:NCel), AKDif
     REAL,    INTENT(Out) :: UFLX(NUFc), FU(NUFc), FX(NUFc)
     !
-    INTEGER ::  i, j, k, L, M, N, ij
-    REAL :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
+    INTEGER :: i, j, k, L, M, N, ij
+    REAL    :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
 
     !      Two layer of boundary cells are added to each boundary cell face
     !      with all boundary cell values CF(-9:0)=0.0.
@@ -1664,7 +1664,8 @@ CONTAINS
     REAL,    INTENT(Out) :: VFLY(NVFc), FV(NVFc), FY(NVFc)
 
     INTEGER ::  i, j, k, L, M, N, ij
-    REAL :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6, CNST8
+    REAL    :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6, CNST8
+
 
     !     Notice an extra side length L is multiplied to mid-flux to give correct
     !     proportion of flux into the cells.  This length will be removed by the
@@ -1768,9 +1769,9 @@ CONTAINS
     REAL,    INTENT( IN) :: CF(-9:NCel), UC(-9:NCel), AKDif, FTS
     REAL,    INTENT(Out) :: UFLX(NUFc), FU(NUFc), FX(NUFc)
     !
-    INTEGER ::  i, j, k, L, M, N, ij
-    REAL    :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6,  &
-         CNST7, CNST8, CNST9
+    INTEGER :: i, j, k, L, M, N, ij
+    REAL    :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
+    REAL    :: CNST7, CNST8, CNST9
 
     !     Two layer of boundary cells are added to each boundary cell face
     !     with all boundary cell values CF(-9:0)=0.0.
@@ -1919,13 +1920,14 @@ CONTAINS
     USE W3ODATMD , ONLY : NDSE, NDST
 
     IMPLICIT NONE
-    INTEGER, INTENT( IN) :: NVA, NVB
-    REAL,    INTENT( IN) :: CF(-9:NCel), VC(-9:NCel), AKDif, FTS
-    REAL,    INTENT(Out) :: VFLY(NVFc), FV(NVFc), FY(NVFc)
 
-    INTEGER ::  i, j, k, L, M, N, ij
-    REAL:: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6,  &
-         CNST7, CNST8, CNST9
+    INTEGER , INTENT( IN) :: NVA, NVB
+    REAL ,    INTENT( IN) :: CF(-9:NCel), VC(-9:NCel), AKDif, FTS
+    REAL ,    INTENT(Out) :: VFLY(NVFc), FV(NVFc), FY(NVFc)
+
+    INTEGER :: i, j, k, L, M, N, ij
+    REAL    :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
+    REAL    :: CNST7, CNST8, CNST9
 
     !     Notice an extra side length L is multiplied to mid-flux to give correct
     !     proportion of flux into the cells.  This length will be removed by the
@@ -2085,9 +2087,9 @@ CONTAINS
     REAL,    INTENT( IN) :: CF(-9:NCel), UC(-9:NCel), AKDif
     REAL,    INTENT(Out) :: UFLX(NUFc), FU(NUFc), FX(NUFc)
     !
-    INTEGER ::  i, j, k, L, M, N, ij
-    REAL:: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6, &
-         CNST7, CNST8, CNST9
+    INTEGER :: i, j, k, L, M, N, ij
+    REAL    :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
+    REAL    :: CNST7, CNST8, CNST9
     !    Two layer of boundary cells are added to each boundary cell face
     !    with all boundary cell values CF(-9:0)=0.0.
 
@@ -2211,12 +2213,14 @@ CONTAINS
     USE W3ODATMD , ONLY : NDSE, NDST
 
     IMPLICIT NONE
+
     INTEGER, INTENT( IN) :: NVA, NVB
     REAL,    INTENT( IN) :: CF(-9:NCel), VC(-9:NCel), AKDif
     REAL,    INTENT(Out) :: VFLY(NVFc), FV(NVFc), FY(NVFc)
-    INTEGER ::  i, j, k, L, M, N, ij
-    REAL :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6, &
-         CNST7, CNST8, CNST9
+
+    INTEGER :: i, j, k, L, M, N, ij
+    REAL    :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
+    REAL    :: CNST7, CNST8, CNST9
 
     !     Notice an extra side length L is multiplied to mid-flux to give correct
     !     proportion of flux into the cells.  This length will be removed by the
@@ -2351,8 +2355,8 @@ CONTAINS
     INTEGER, INTENT( IN) :: L0r1
     !
     INTEGER :: I, J, K, L, M, N
-    REAL :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
-    REAL :: DX0I, DY0I
+    REAL    :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
+    REAL    :: DX0I, DY0I
 
     !     Use a few working arrays
     REAL,  Dimension(-9:NSEA) :: CVF, AUN, AVN
@@ -2554,9 +2558,8 @@ CONTAINS
     IMPLICIT NONE
     REAL, INTENT(INOUT) :: CVQ(-9:NSEA)
     !
-    INTEGER :: I, J, K, L, M, N
-    REAL :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
-
+    INTEGER                  :: I, J, K, L, M, N
+    REAL                     :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
     !     Use a few working arrays
     REAL, Dimension(-9:NSEA) :: CVF, AUN, AVN
 
@@ -2715,13 +2718,13 @@ CONTAINS
     USE W3GDATMD , ONLY : NK, NTH, DTH, CTMAX
 
     IMPLICIT NONE
-    REAL, INTENT(IN)    ::  CoRfr(NTH, NK)
-    REAL, INTENT(INOUT) :: SpeTHK(NTH, NK)
 
-    INTEGER ::  I, J, K, L, M, N
+    REAL , INTENT(IN)    ::  CoRfr(NTH, NK)
+    REAL , INTENT(INOUT) :: SpeTHK(NTH, NK)
+
+    INTEGER              ::  I, J, K, L, M, N
     REAL, Dimension(NTH) :: SpeGCT, Spectr
-    REAL :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
-
+    REAL                 :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
     !     Loop through NK spectral bins.
     DO n=1, NK
 
@@ -2821,12 +2824,14 @@ CONTAINS
     USE W3GDATMD , ONLY : NK, NK2, NTH, DTH, XFR, CTMAX
 
     IMPLICIT NONE
-    REAL, INTENT(IN)    ::  CoRfr(NTH, 0:NK), DKC(0:NK+1), DKS(-1:NK+1)
+
+    REAL, INTENT(IN)    :: CoRfr(NTH, 0:NK), DKC(0:NK+1), DKS(-1:NK+1)
     REAL, INTENT(INOUT) :: SpeTHK(NTH, NK)
 
-    INTEGER ::  I, J, K, L, M, N
+
+    INTEGER                  ::  I, J, K, L, M, N
     REAL, Dimension(-1:NK+2) :: SpeRfr, Spectr, SpeFlx
-    REAL :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
+    REAL                     :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
 
     CNST=XFR**(-7)
 
@@ -2908,8 +2913,8 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER :: I, J, K, L, M, N
-    REAL :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
+    INTEGER               :: I, J, K, L, M, N
+    REAL                  :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
     REAL, Dimension(NSEA) :: HCel, GrHx, GrHy
     !     REAL, Dimension(-9:NSEA) :: HCel
 
@@ -3052,8 +3057,8 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER :: I, J, K, L, M, N
-    REAL :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
+    INTEGER               :: I, J, K, L, M, N
+    REAL                  :: CNST, CNST0, CNST1, CNST2, CNST3, CNST4, CNST5, CNST6
     REAL, Dimension(NSEA) :: CXCY, GrHx, GrHy
     !     REAL, Dimension(-9:NSEA) :: CXCY
 
@@ -3298,15 +3303,15 @@ CONTAINS
     !/ Local parameters
     !/
 #ifdef W3_SHRD
-    INTEGER                 :: ISEA, IXY
+    INTEGER       :: ISEA, IXY
 #endif
 #ifdef W3_MPI
-    INTEGER                 :: STATUS(MPI_STATUS_SIZE,NSPEC),  &
-         IOFF, IERR_MPI, JSEA, ISEA,     &
-         IXY, IS0, IB0, NPST, J
+    INTEGER       :: STATUS(MPI_STATUS_SIZE,NSPEC)
+    INTEGER       :: IOFF, IERR_MPI, JSEA, ISEA
+    INTEGER       :: IXY, IS0, IB0, NPST, J
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT
+    INTEGER, SAVE :: IENT
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -3529,18 +3534,18 @@ CONTAINS
     !/ Local parameters
     !/
 #ifdef W3_SHRD
-    INTEGER                 :: ISEA, IXY
+    INTEGER       :: ISEA, IXY
 #endif
 #ifdef W3_MPI
-    INTEGER                 :: ISEA, IXY, IOFF, IERR_MPI, J,   &
-         STATUS(MPI_STATUS_SIZE,NSPEC),  &
-         JSEA, IB0
+    INTEGER       :: ISEA, IXY, IOFF, IERR_MPI, J
+    INTEGER       :: STATUS(MPI_STATUS_SIZE,NSPEC)
+    INTEGER       :: JSEA, IB0
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT
+    INTEGER, SAVE :: IENT
 #endif
 #ifdef W3_MPI
-    LOGICAL                 :: DONE
+    LOGICAL       :: DONE
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -3732,10 +3737,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     ! Local variables.
 
-    REAL       :: XI0, YJ0, DXG, DYG, DX1, DY1
-    INTEGER    :: I1, I3, J2, J4, MRF, ij, ijp, NSEM
+    REAL    :: XI0, YJ0, DXG, DYG, DX1, DY1
+    INTEGER :: I1, I3, J2, J4, MRF, ij, ijp, NSEM
 #ifdef W3_S
-    INTEGER    ::  IENT = 0
+    INTEGER ::  IENT = 0
     CALL STRACE (IENT, 'W3SMCELL')
 #endif
 
@@ -3873,10 +3878,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     ! Local variables
     INTEGER, Dimension(NC) :: IX1, JY1
-    REAL       :: XI0, YJ0, DXG, DYG, DX1, DY1, XLow(NC)
-    INTEGER    :: I1, I3, J2, J4, ij, ijp, MRF, NSEM, NFund
+    REAL                   :: XI0, YJ0, DXG, DYG, DX1, DY1, XLow(NC)
+    INTEGER                :: I1, I3, J2, J4, ij, ijp, MRF, NSEM, NFund
 #ifdef W3_S
-    INTEGER    ::  IENT = 0
+    INTEGER                ::  IENT = 0
     CALL STRACE (IENT, 'W3SMCGMP')
 #endif
 

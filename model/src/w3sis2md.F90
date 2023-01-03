@@ -75,19 +75,19 @@ MODULE W3SIS2MD
   !/
   !/ ------------------------------------------------------------------- /
   !/
-  INTEGER ,    PARAMETER             :: NTHICK = 20, NICED = 500
-  REAL, PARAMETER                    :: FRAGILITY = 0.9
-  REAL                               :: THICK1 = 0.1, DTHICK = 0.25
-  REAL                               :: ICEDMIN      ! minimum floe diameter
-  REAL                               :: ICEDAVETAB(NICED)
-  REAL, DIMENSION(:)   , ALLOCATABLE :: SIS2ALPHAS(:,:),SIS2ALPHA2(:,:)
-  DOUBLE PRECISION, ALLOCATABLE,DIMENSION(:,:)     :: IS2EIGVEC, IS2SCATMAT
-  DOUBLE PRECISION    , ALLOCATABLE,DIMENSION(:)   :: IS2EIGVAL
-  PRIVATE :: SIS2ALPHAS, SIS2ALPHA2
-  PUBLIC :: IS2EIGVEC, IS2EIGVAL
+  INTEGER , PARAMETER                                :: NTHICK = 20, NICED = 500
+  REAL, PARAMETER                                    :: FRAGILITY = 0.9
+  REAL                                               :: THICK1 = 0.1, DTHICK = 0.25
+  REAL                                               :: ICEDMIN      ! minimum floe diameter
+  REAL                                               :: ICEDAVETAB(NICED)
+  REAL, DIMENSION(:)   , ALLOCATABLE                 :: SIS2ALPHAS(:,:),SIS2ALPHA2(:,:)
+  DOUBLE PRECISION,      ALLOCATABLE, DIMENSION(:,:) :: IS2EIGVEC, IS2SCATMAT
+  DOUBLE PRECISION     , ALLOCATABLE, DIMENSION(:)   :: IS2EIGVAL
+  PRIVATE                                            :: SIS2ALPHAS, SIS2ALPHA2
+  PUBLIC                                             :: IS2EIGVEC, IS2EIGVAL
   !
-  PUBLIC :: W3SIS2, INSIS2, W3RPWNICE
-  PRIVATE :: FINDROOTS_NR, W3FSD_DAVE, FUNCD_FVAL, FUNCD_FDERIV
+  PUBLIC                                             :: W3SIS2, INSIS2, W3RPWNICE
+  PRIVATE                                            :: FINDROOTS_NR, W3FSD_DAVE, FUNCD_FVAL, FUNCD_FDERIV
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
@@ -163,12 +163,12 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: I, J, K, IND, NFTAB, NROT
-    REAL                    :: SIS1HTABLE(20), SIS1FTABLE(25)
-    REAL                    :: SIS1ALPHATABLE(NTHICK,25), X
-    REAL                    :: SIS1ALPHATABLE2(NTHICK,25)
+    INTEGER       :: I, J, K, IND, NFTAB, NROT
+    REAL          :: SIS1HTABLE(20), SIS1FTABLE(25)
+    REAL          :: SIS1ALPHATABLE(NTHICK,25), X
+    REAL          :: SIS1ALPHATABLE2(NTHICK,25)
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -770,26 +770,26 @@ CONTAINS
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE       :: IENT = 0
 #endif
-    INTEGER                 :: IK, IKP1, IKM1, ITH, ITH2, IS, IS2, IND1, IND2
-    REAL                    :: W
-    INTEGER                 :: IKBREAK, NSUM
-    LOGICAL                 :: BRK_CRIT_W(NK), BRK_CRIT
-    REAL                    :: ALPHA, STRAIN_C, WAMP(NK), D_FLEX_FAIL,             &
-         SMOOTHD, TAU_D, S_D(NK), ALPHA_D, DELTA_D,B_COLE,    &
-         DMAX, S_ATT, FACTOR, BETA
-    REAL                    :: ICEDAVE(NK), CURVTOSTRAIN, CREEPFAC, MP2, B, ICEF_CREEP
-    REAL                    :: SUMALLDIR, SUMA, SUME, CURVSPEC(NK), ESPEC(NK),STRAIN
-    REAL, PARAMETER         :: YOUNG = 5.49E+9   ! Young modulus
-    REAL, PARAMETER         :: POISSON = 0.3     ! Poisson Ratio
-    REAL                    :: SIGMA_C
-    REAL, PARAMETER         :: DENS = 1025.0     ! ice density
-    REAL                    :: GAMMA_TOY
-    REAL, DIMENSION(NK)        :: WN_I, WN_RP, WSQ, WLG, WLG_I, CG_I,   &
-         CURV, CGRATIO, CG_EFF, DUMMY, ALPHA_DISP
+    INTEGER             :: IK, IKP1, IKM1, ITH, ITH2, IS, IS2, IND1, IND2
+    REAL                :: W
+    INTEGER             :: IKBREAK, NSUM
+    LOGICAL             :: BRK_CRIT_W(NK), BRK_CRIT
+    REAL                :: ALPHA, STRAIN_C, WAMP(NK), D_FLEX_FAIL
+    REAL                :: SMOOTHD, TAU_D, S_D(NK), ALPHA_D, DELTA_D,B_COLE
+    REAL                :: DMAX, S_ATT, FACTOR, BETA
+    REAL                :: ICEDAVE(NK), CURVTOSTRAIN, CREEPFAC, MP2, B, ICEF_CREEP
+    REAL                :: SUMALLDIR, SUMA, SUME, CURVSPEC(NK), ESPEC(NK),STRAIN
+    REAL, PARAMETER     :: YOUNG = 5.49E+9   ! Young modulus
+    REAL, PARAMETER     :: POISSON = 0.3     ! Poisson Ratio
+    REAL                :: SIGMA_C
+    REAL, PARAMETER     :: DENS = 1025.0     ! ice density
+    REAL                :: GAMMA_TOY
+    REAL, DIMENSION(NK) :: WN_I, WN_RP, WSQ, WLG, WLG_I, CG_I
+    REAL, DIMENSION(NK) :: CURV, CGRATIO, CG_EFF, DUMMY, ALPHA_DISP
 #ifdef W3_T
-    REAL                    :: SOUT(NK,NTH)
+    REAL                :: SOUT(NK,NTH)
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -1155,14 +1155,13 @@ CONTAINS
     !/ Parameter list
     REAL, INTENT(IN)    :: ICEH
     REAL, INTENT(INOUT) :: WN_I(:), DAMPING(:), CG_I(:)
-
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    DOUBLE COMPLEX :: WN_ROOT, GS1
-    INTEGER :: IK
-    REAL :: FLEX_RIGID
+    DOUBLE COMPLEX  :: WN_ROOT, GS1
+    INTEGER         :: IK
+    REAL            :: FLEX_RIGID
     REAL, PARAMETER :: VISC_RP = 10
     REAL, PARAMETER :: DENS = 1025.0
     REAL, PARAMETER :: DENS_ICE = 922.5
@@ -1267,11 +1266,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    double complex :: FVAL, FDERIV, DX, X0
+    double complex     :: FVAL, FDERIV, DX, X0
     INTEGER, PARAMETER :: MAXIT = 300
-    REAL, PARAMETER :: TOL = 1E-9
-    INTEGER :: J
-    LOGICAL ::  UNFINISHED_ROOTS
+    REAL, PARAMETER    :: TOL = 1E-9
+    INTEGER            :: J
+    LOGICAL            ::  UNFINISHED_ROOTS
 
     X0 = GUESS
     UNFINISHED_ROOTS = .TRUE.
@@ -1384,8 +1383,8 @@ CONTAINS
     !
     ! analytic solution, if the FSD is given by P(x) = x^(-1-gam) for icedmin <= x <= icedmax and 0 elsewhere
     !
-    REAL :: W3FSD_DAVE,  W3FSD_DAVE2
-    REAL :: GAM, MR, R, DENOM, ICEDMAXL
+    REAL            :: W3FSD_DAVE,  W3FSD_DAVE2
+    REAL            :: GAM, MR, R, DENOM, ICEDMAXL
     REAL, PARAMETER :: xi = 2
     !
     ICEDMAXL=MAX(ICEDMIN*1.01,ICEDMAX)
@@ -1479,8 +1478,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    REAL :: ALP, FLEX_RIGID, GAMMA, C5, DRAFT, DENS_GRAV
-    double complex :: C1, FVAL
+    REAL            :: ALP, FLEX_RIGID, GAMMA, C5, DRAFT, DENS_GRAV
+    double complex  :: C1, FVAL
 
     REAL, PARAMETER :: DENS = 1025.0
     REAL, PARAMETER :: DENS_ICE = 922.5
@@ -1582,8 +1581,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    REAL :: ALP, FLEX_RIGID, GAMMA, C5, DRAFT, DENS_GRAV
-    double complex :: C1, FDERIV
+    REAL            :: ALP, FLEX_RIGID, GAMMA, C5, DRAFT, DENS_GRAV
+    double complex  :: C1, FDERIV
 
     REAL, PARAMETER :: DENS = 1025.0
     REAL, PARAMETER :: DENS_ICE = 922.5

@@ -389,7 +389,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: ISEA, IX, IY
+    INTEGER :: ISEA, IX, IY
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -479,8 +479,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    REAL                    :: SIG, A, B, C
-    REAL, SAVE              :: EPS=1.E-4, EXPMIN=-180.
+    REAL       :: SIG, A, B, C
+    REAL, SAVE :: EPS=1.E-4, EXPMIN=-180.
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -899,6 +899,7 @@ CONTAINS
     ! Local variables
     INTEGER :: ii, jj, kk, nsft
     REAL    :: Ddirc, frac, CNST
+
     REAL, Dimension(NFreq)       ::  Wrkfrq, Tmpfrq
     REAL, Dimension(NFreq,NDirc) ::  Wrkspc
 
@@ -987,6 +988,7 @@ CONTAINS
     ! Local variables
     INTEGER :: ii, jj, kk, nsft
     REAL    :: Ddirc, frac, CNST
+
     REAL, Dimension(NFreq)       ::  Wrkfrq, Tmpfrq
     REAL, Dimension(NDirc,NFreq) ::  Wrkspc
 
@@ -1094,8 +1096,8 @@ CONTAINS
     REAL,    intent(out), DIMENSION(POINTS) :: PHI_EQ      !OUT Latitude in equatorial lat-lon coords
 
     ! Define local varables:-----------------------------------------------
-    REAL(KIND=8) :: A_LAMBDA, A_PHI, E_LAMBDA, E_PHI, SIN_PHI_POLE, COS_PHI_POLE, &
-         TERM1, TERM2, ARG, LAMBDA_ZERO, LAMBDA_POLE_KEEP
+    REAL(KIND=8) :: A_LAMBDA, A_PHI, E_LAMBDA, E_PHI, SIN_PHI_POLE, COS_PHI_POLE
+    REAL(KIND=8) :: TERM1, TERM2, ARG, LAMBDA_ZERO, LAMBDA_POLE_KEEP
     INTEGER      :: I
 
     REAL(KIND=8), PARAMETER :: SMALL=1.0E-6
@@ -1233,9 +1235,9 @@ CONTAINS
     REAL, DIMENSION(POINTS), intent(in)  :: PHI_EQ      !IN  Latitude in equatorial lat-lon coords
 
     ! Local varables:------------------------------------------------------
-    REAL(KIND=8) :: E_LAMBDA, E_PHI, A_LAMBDA, A_PHI,                 &
-         SIN_PHI_POLE, COS_PHI_POLE,                       &
-         TERM1, TERM2, ARG, LAMBDA_ZERO
+    REAL(KIND=8) :: E_LAMBDA, E_PHI, A_LAMBDA, A_PHI
+    REAL(KIND=8) :: SIN_PHI_POLE, COS_PHI_POLE
+    REAL(KIND=8) :: TERM1, TERM2, ARG, LAMBDA_ZERO
     INTEGER :: I
 
     REAL(KIND=8), PARAMETER :: SMALL=1.0E-6
@@ -1562,14 +1564,14 @@ CONTAINS
     !           IF-THEN-ELSE-ENDIF.  (RWC, WRB)
     !***END PROLOGUE  SSORT
     !     .. Scalar Arguments ..
-    INTEGER KFLAG, N
+    INTEGER :: KFLAG, N
     !     .. Array Arguments ..
-    REAL*4 X(*), Y(*)
+    REAL*4  :: X(*), Y(*)
     !     .. Local Scalars ..
-    REAL*4 R, T, TT, TTY, TY
-    INTEGER I, IJ, J, K, KK, L, M, NN
+    REAL*4  :: R, T, TT, TTY, TY
+    INTEGER :: I, IJ, J, K, KK, L, M, NN
     !     .. Local Arrays ..
-    INTEGER IL(21), IU(21)
+    INTEGER :: IL(21), IU(21)
     !     .. External Subroutines ..
     !     None
     !     .. Intrinsic Functions ..
@@ -1967,10 +1969,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !
-    REAL :: TOL, SGN, OFFSET, TMP
+    REAL      :: TOL, SGN, OFFSET, TMP
     CHARACTER :: DIRCONV
-    INTEGER :: ISEA
-    LOGICAL :: INPLACE
+    INTEGER   :: ISEA
+    LOGICAL   :: INPLACE
 
     DIRCONV = 'N'
     TOL = 1.0

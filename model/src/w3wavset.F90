@@ -538,8 +538,8 @@ CONTAINS
     REAL(8) :: SXX_X, SXX_Y
     REAL(8) :: SXY_X, SXY_Y
     REAL(8) :: SYY_X, SYY_Y
-    INTEGER I, IP, IX
-    INTEGER JSEA, ISEA
+    INTEGER :: I, IP, IX
+    INTEGER :: JSEA, ISEA
     real(8) :: U_X1(npa), U_Y1(npa)
     real(8) :: U_X2(npa), U_Y2(npa)
     real(8) :: SXX_p(npa), SXY_p(npa), SYY_p(npa)
@@ -685,7 +685,7 @@ CONTAINS
     REAL(8), intent(inout) :: UGRAD, VGRAD
 
     REAL(8) :: h
-    integer I2, I3, IP1, IP2, IP3
+    integer :: I2, I3, IP1, IP2, IP3
     INTEGER :: POS_TRICK(3,2)
     POS_TRICK(1,1) = 2
     POS_TRICK(1,2) = 3
@@ -795,16 +795,16 @@ CONTAINS
     integer, intent(out) :: ACTIVESEC(npa)
 
     INTEGER :: POS_TRICK(3,2), POS_SHIFT(3,3)
-    integer I1, I2, I3, IP1, IP2, IP3
-    integer IDX, IDX1, IDX2, IDX3
-    INTEGER IE, IP, I, J, K, IPp, JPp
+    integer :: I1, I2, I3, IP1, IP2, IP3
+    integer :: IDX, IDX1, IDX2, IDX3
+    INTEGER :: IE, IP, I, J, K, IPp, JPp
     real(8) :: eDep, eFX, eFY, eScal, eFact, eArea
     real(8) :: UGRAD, VGRAD, UGRAD1, VGRAD1
     real(8) :: eOff
-    logical DoPrintOut
-    INTEGER sumActive
-    INTEGER LIDX(2), KIDX(2), jdx
-    INTEGER IPglob1, IPglob2, IPglob3
+    logical :: DoPrintOut
+    INTEGER :: sumActive
+    INTEGER :: LIDX(2), KIDX(2), jdx
+    INTEGER :: IPglob1, IPglob2, IPglob3
     POS_TRICK(1,1) = 2
     POS_TRICK(1,2) = 3
     POS_TRICK(2,1) = 3
@@ -976,7 +976,7 @@ CONTAINS
     INTEGER, intent(IN)  :: ACTIVE(npa), ACTIVESEC(npa)
 
     REAL(8) :: ListDiag(npa)
-    integer IP, J1, J, JP, J2
+    integer :: IP, J1, J, JP, J2
     REAL(8) :: eCoeff
     INTEGER :: ThePrecond = 2
     IF (ThePrecond .eq. 0) THEN
@@ -1108,7 +1108,7 @@ CONTAINS
     REAL(8), intent(out) :: TheOut(npa)
     INTEGER, intent(in)  :: ACTIVE(npa), ACTIVESEC(npa)
 
-    integer IP, J, JP
+    integer :: IP, J, JP
     REAL(8) :: eCoeff
     TheOut=0
     DO IP=1,npa
@@ -1212,8 +1212,8 @@ CONTAINS
 
     integer :: IP, myrank, myproc
     real(8) :: rScal(1), lScal(1)
-    integer iProc
-    integer ierr
+    integer :: iProc
+    integer :: ierr
     CALL MPI_COMM_RANK(MPI_COMM_WCMP, myrank, ierr)
     CALL MPI_COMM_SIZE(MPI_COMM_WCMP, myproc, ierr)
     lScal=0
@@ -1328,7 +1328,7 @@ CONTAINS
     real(8) :: uO, uN, alphaV, h1, h2
     real(8) :: eNorm, beta
     real(8) :: SOLVERTHR
-    integer IP, nbIter
+    integer :: IP, nbIter
     SOLVERTHR=SOLVERTHR_STP
 
 #ifdef W3_DEBUGSTP
@@ -1502,9 +1502,9 @@ CONTAINS
     real(8), intent(inout) :: TheVar(npa)
 
     real(8) :: SUM_SI_Var, SUM_SI, TheMean
-    INTEGER IP, ierr
+    INTEGER :: IP, ierr
     real(8) :: eVect(2), rVect(2)
-    integer iProc
+    integer :: iProc
     SUM_SI_Var=0
     SUM_SI=0
     DO IP=1,np
@@ -1624,9 +1624,9 @@ CONTAINS
     REAL*8,  INTENT(in)  :: DWNX(npa)
     INTEGER, INTENT(out) :: ACTIVE(npa)
 
-    INTEGER IP, eAct
+    INTEGER :: IP, eAct
 #ifdef W3_DEBUGSTP
-    INTEGER nbActive
+    INTEGER :: nbActive
     nbActive=0
 #endif
     DO IP=1,NPA
@@ -1735,7 +1735,7 @@ CONTAINS
     REAL(8) :: ZETA_WORK(npa), ZETA_WORK_ALL(NX)
     REAL(8) :: F_X(npa), F_Y(npa), DWNX(npa)
     REAL(8) :: ASPAR(PDLIB_NNZ), B(npa)
-    INTEGER I, ISEA, JSEA, IX, IP, IP_glob
+    INTEGER :: I, ISEA, JSEA, IX, IP, IP_glob
     INTEGER :: ACTIVE(npa), ACTIVESEC(npa)
     !   ZETA_SETUP is allocated on 1:NSEA
     !   ZETA_WORK is on 1:npa
@@ -1886,12 +1886,12 @@ CONTAINS
     !
     integer, intent(in) :: IMOD
 
-    integer IN, ISEA, nbEdge
-    integer IX, IY, idx
-    integer NeighMat(4,2)
+    integer              :: IN, ISEA, nbEdge
+    integer              :: IX, IY, idx
+    integer              :: NeighMat(4,2)
     integer, allocatable :: STAT_SeaLand(:,:)
     integer, allocatable :: EDGES(:,:)
-    integer IXN, JXN, JSEA, J
+    integer              :: IXN, JXN, JSEA, J
     !
     allocate(GRIDS(IMOD)%NEIGH(NSEA,4))
     GRIDS(IMOD)%NEIGH=0
@@ -2058,7 +2058,7 @@ CONTAINS
     REAL(8), intent(in)  :: TheIn(NSEA)
     REAL(8), intent(out) :: TheOut(NSEA)
 
-    integer IP, J, JP
+    integer :: IP, J, JP
     REAL(8) :: eCoeff
     TheOut=0
     DO IP=1,NSEA
@@ -2154,7 +2154,7 @@ CONTAINS
     REAL(8), intent(in)  :: TheIn(NSEA)
     REAL(8), intent(out) :: TheOut(NSEA)
 
-    integer IP, J1, J, JP, J2
+    integer :: IP, J1, J, JP, J2
     REAL(8) :: eCoeff
     INTEGER :: ThePrecond = 0
     IF (ThePrecond .eq. 0) THEN
@@ -2270,11 +2270,12 @@ CONTAINS
     !
     real(8), intent(out) :: SXX_t(NSEA), SXY_t(NSEA), SYY_t(NSEA)
 
-    integer ISEA, JSEA
-    integer ierr
-    real(8) :: SXX_p(NSEAL), SXY_p(NSEAL), SYY_p(NSEAL)
+    integer              :: ISEA, JSEA
+    integer              :: ierr
+    real(8)              :: SXX_p(NSEAL), SXY_p(NSEAL), SYY_p(NSEAL)
     real(8), allocatable :: rVect(:)
-    integer IPROC, NSEAL_loc
+    integer              :: IPROC, NSEAL_loc
+
     DO ISEA=1,NSEAL
       SXX_p(ISEA)=SXX(ISEA)
       SXY_p(ISEA)=SXY(ISEA)
@@ -2405,10 +2406,10 @@ CONTAINS
     REAL(8) :: SYY_X, SYY_Y
     REAL(8) :: eFX, eFY
     REAL(8) :: UGRAD, VGRAD
-    INTEGER IE, I1, I2, I3, IP1, IP2, IP3
-    integer ISEA, JSEA1, JSEA2, JSEA3, JSEA4
-    integer NeighMat(4,2)
-    real(8) dist_X, dist_Y
+    INTEGER :: IE, I1, I2, I3, IP1, IP2, IP3
+    integer :: ISEA, JSEA1, JSEA2, JSEA3, JSEA4
+    integer :: NeighMat(4,2)
+    real(8) :: dist_X, dist_Y
     !
     NeighMat(1,1)=1
     NeighMat(1,2)=0
@@ -2554,10 +2555,10 @@ CONTAINS
     REAL(8), intent(inout) :: UGRAD, VGRAD, dist
 
     REAL(8) :: h
-    integer I2, I3, IP1, IP2, IP3
-    integer IX1, IY1, IX2, IY2
-    integer ISEA1, ISEA2
-    REAL(8) deltaX, deltaY
+    integer :: I2, I3, IP1, IP2, IP3
+    integer :: IX1, IY1, IX2, IY2
+    integer :: ISEA1, ISEA2
+    REAL(8) :: deltaX, deltaY
     !
     ISEA1=EDGES(IEDGE,1)
     ISEA2=EDGES(IEDGE,2)
@@ -2664,13 +2665,13 @@ CONTAINS
     real(8), intent(out) :: B(NX)
 
     INTEGER :: POS_TRICK(3,2), POS_SHIFT(3,3)
-    integer I1, I2, I3, IP1, IP2, IP3
-    integer IDX, IDX1, IDX2, IDX3
-    INTEGER IE, IP, I, J, K, IPp, JPp
+    integer :: I1, I2, I3, IP1, IP2, IP3
+    integer :: IDX, IDX1, IDX2, IDX3
+    INTEGER :: IE, IP, I, J, K, IPp, JPp
     real(8) :: eDep, eFX, eFY, eScal, eFact, eLen
     real(8) :: UGRAD, VGRAD, UGRAD1, VGRAD1, dist1, dist2
-    INTEGER LIDX(2), KIDX(2), jdx
-    INTEGER ISEAREL, JSEAREL, ISEA, JSEA, IEDGE
+    INTEGER :: LIDX(2), KIDX(2), jdx
+    INTEGER :: ISEAREL, JSEAREL, ISEA, JSEA, IEDGE
     !
     ASPAR=0
     B=0
@@ -2778,7 +2779,7 @@ CONTAINS
     real(8), intent(in)    :: V1(NX), V2(NX)
     real(8), intent(inout) :: eScal
 
-    integer IP
+    integer :: IP
     eScal=0
     DO IP=1,NX
       eScal=eScal + V1(IP)*V2(IP)
@@ -2873,7 +2874,7 @@ CONTAINS
     real(8) :: uO, uN, alphaV, h1, h2
     real(8) :: eNorm, beta
     real(8) :: SOLVERTHR
-    integer IP, nbIter
+    integer :: IP, nbIter
     SOLVERTHR=0.00000001
     nbIter=0
     V_X=0
@@ -2990,7 +2991,7 @@ CONTAINS
     real(8), intent(inout) :: TheVar(NX)
 
     real(8) :: SUM_SI_Var, SUM_SI, TheMean
-    INTEGER IP
+    INTEGER :: IP
     SUM_SI_Var=0
     SUM_SI=0
     DO IP=1,NX
@@ -3089,9 +3090,10 @@ CONTAINS
     REAL(8) :: ZETA_WORK(NSEA)
     REAL(8) :: F_X(NSEA), F_Y(NSEA)
     REAL(8) :: ASPAR(PDLIB_NNZ), B(NX)
-    INTEGER ISEA, IPROC
+    INTEGER :: ISEA, IPROC
     real(8) :: SXX_t(NSEA), SXY_t(NSEA), SYY_t(NSEA)
-    integer ierr
+    integer :: ierr
+
     CALL FD_COLLECT_SXX_XY_YY(SXX_t, SXY_t, SYY_t)
     IF (IAPROC .eq. 1) THEN
       CALL FD_COMPUTE_LH_STRESS(SXX_t, SXY_t, SYY_t, F_X, F_Y)
@@ -3189,7 +3191,7 @@ CONTAINS
     CALL STRACE (IENT, 'VA_SETUP_IOBPD')
 #endif
     !
-    INTEGER ISEA, JSEA
+    INTEGER             :: ISEA, JSEA
     REAL*8, allocatable :: ZETA_WORK(:)
 #ifdef W3_DEBUGSTP
     WRITE(740+IAPROC,*) 'NAPROC=', NAPROC

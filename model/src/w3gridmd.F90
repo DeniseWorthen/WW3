@@ -554,388 +554,388 @@ MODULE W3GRIDMD
   !/ ------------------------------------------------------------------- /
   !/ Local parameters
   !/
-  TYPE(NML_SPECTRUM_T)     :: NML_SPECTRUM
-  TYPE(NML_RUN_T)          :: NML_RUN
-  TYPE(NML_TIMESTEPS_T)    :: NML_TIMESTEPS
-  TYPE(NML_GRID_T)         :: NML_GRID
-  TYPE(NML_RECT_T)         :: NML_RECT
-  TYPE(NML_CURV_T)         :: NML_CURV
-  TYPE(NML_UNST_T)         :: NML_UNST
-  TYPE(NML_SMC_T)          :: NML_SMC
-  TYPE(NML_DEPTH_T)        :: NML_DEPTH
-  TYPE(NML_MASK_T)         :: NML_MASK
-  TYPE(NML_OBST_T)         :: NML_OBST
-  TYPE(NML_SLOPE_T)        :: NML_SLOPE
-  TYPE(NML_SED_T)          :: NML_SED
-  TYPE(NML_INBND_COUNT_T)  :: NML_INBND_COUNT
-  TYPE(NML_INBND_POINT_T), ALLOCATABLE  :: NML_INBND_POINT(:)
-  TYPE(NML_EXCL_COUNT_T)   :: NML_EXCL_COUNT
-  TYPE(NML_EXCL_POINT_T), ALLOCATABLE   :: NML_EXCL_POINT(:)
-  TYPE(NML_EXCL_BODY_T), ALLOCATABLE    :: NML_EXCL_BODY(:)
-  TYPE(NML_OUTBND_COUNT_T) :: NML_OUTBND_COUNT
-  TYPE(NML_OUTBND_LINE_T), ALLOCATABLE  :: NML_OUTBND_LINE(:)
+  TYPE(NML_SPECTRUM_T)                 :: NML_SPECTRUM
+  TYPE(NML_RUN_T)                      :: NML_RUN
+  TYPE(NML_TIMESTEPS_T)                :: NML_TIMESTEPS
+  TYPE(NML_GRID_T)                     :: NML_GRID
+  TYPE(NML_RECT_T)                     :: NML_RECT
+  TYPE(NML_CURV_T)                     :: NML_CURV
+  TYPE(NML_UNST_T)                     :: NML_UNST
+  TYPE(NML_SMC_T)                      :: NML_SMC
+  TYPE(NML_DEPTH_T)                    :: NML_DEPTH
+  TYPE(NML_MASK_T)                     :: NML_MASK
+  TYPE(NML_OBST_T)                     :: NML_OBST
+  TYPE(NML_SLOPE_T)                    :: NML_SLOPE
+  TYPE(NML_SED_T)                      :: NML_SED
+  TYPE(NML_INBND_COUNT_T)              :: NML_INBND_COUNT
+  TYPE(NML_INBND_POINT_T), ALLOCATABLE :: NML_INBND_POINT(:)
+  TYPE(NML_EXCL_COUNT_T)               :: NML_EXCL_COUNT
+  TYPE(NML_EXCL_POINT_T),  ALLOCATABLE :: NML_EXCL_POINT(:)
+  TYPE(NML_EXCL_BODY_T),   ALLOCATABLE :: NML_EXCL_BODY(:)
+  TYPE(NML_OUTBND_COUNT_T)             :: NML_OUTBND_COUNT
+  TYPE(NML_OUTBND_LINE_T), ALLOCATABLE :: NML_OUTBND_LINE(:)
   !
-  INTEGER, PARAMETER      :: NFL = 6
-  INTEGER                 :: NDSI, NDSI2, NDSS, NDSM, NDSG, NDSTR,&
-       IERR, NDSTRC, NTRACE, ITH, IK, ITH0, &
-       ISP, IYN(NFL), NRLIN, NRSRCE, NRNL,  &
-       NRBT, NRDB, NRTR, NRBS, NRPROP,      &
-       IDLA, IDFM, IX0, IXN, IX, IY, ISEA,  &
-       IDX, IXO, IDY, IYO, IBA, NBA, ILOOP, &
-       IFL, NBOTOT, NPO, IP, IX1, IX2, IY1, &
-       IY2, J, JJ, IXR(4), IYR(4), ISEAI(4),&
-       IST, NKI, NTHI, NRIC, NRIS, I, IDFT, &
-       NSTAT, NBT, NLAND, NOSW, NMAPB, IMAPB
+  INTEGER, PARAMETER   :: NFL = 6
+  INTEGER              :: NDSI, NDSI2, NDSS, NDSM, NDSG, NDSTR
+  INTEGER              :: IERR, NDSTRC, NTRACE, ITH, IK, ITH0
+  INTEGER              :: ISP, IYN(NFL), NRLIN, NRSRCE, NRNL
+  INTEGER              :: NRBT, NRDB, NRTR, NRBS, NRPROP
+  INTEGER              :: IDLA, IDFM, IX0, IXN, IX, IY, ISEA
+  INTEGER              :: IDX, IXO, IDY, IYO, IBA, NBA, ILOOP
+  INTEGER              :: IFL, NBOTOT, NPO, IP, IX1, IX2, IY1
+  INTEGER              :: IY2, J, JJ, IXR(4), IYR(4), ISEAI(4)
+  INTEGER              :: IST, NKI, NTHI, NRIC, NRIS, I, IDFT
+  INTEGER              :: NSTAT, NBT, NLAND, NOSW, NMAPB, IMAPB
 #ifdef W3_NL2
-  INTEGER            :: IDEPTH
+  INTEGER              :: IDEPTH
 #endif
 #ifdef W3_O1
-  INTEGER             :: IBI, IP0, IPN, IPH, IPI
+  INTEGER              :: IBI, IP0, IPN, IPH, IPI
 #endif
-  INTEGER                 :: NCOL =  78
+  INTEGER              :: NCOL =  78
 #ifdef W3_SMC
   !!Li     Offset to change Equator index = 0 to regular index JEQT
   !!Li     LvSMC  levels of refinded resolutions for SMC grid.
   !!Li     NBISMC number of boundary point for regional SMC grid.
   !!Li     ISHFT for SMC i-index from smc origin to regular grid west edge.
   !!Li     SMC cell only subgrid obstruction array dimensions NCObst, JObs.
-  INTEGER      :: JEQT, LvSMC, NBISMC, JS, NCObst, JObs, ISHFT
-  INTEGER      :: NGUI, NGVJ,  NAUI, NAVJ
+  INTEGER              :: JEQT, LvSMC, NBISMC, JS, NCObst, JObs, ISHFT
+  INTEGER              :: NGUI, NGVJ,  NAUI, NAVJ
 #endif
   !
 #ifdef W3_O2
-  INTEGER                 :: NMAP, IMAP
+  INTEGER              :: NMAP, IMAP
 #endif
 #ifdef W3_T
-  INTEGER                 :: IX3, IY3
+  INTEGER              :: IX3, IY3
 #endif
 #ifdef W3_T0
-  INTEGER                 :: IFILE
+  INTEGER              :: IFILE
 #endif
 #ifdef W3_S
-  INTEGER, SAVE           :: IENT = 0
+  INTEGER, SAVE        :: IENT = 0
 #endif
   !
-  INTEGER, ALLOCATABLE    :: TMPSTA(:,:), TMPMAP(:,:), READMP(:,:)
+  INTEGER, ALLOCATABLE :: TMPSTA(:,:), TMPMAP(:,:), READMP(:,:)
 #ifdef W3_T
-  INTEGER, ALLOCATABLE    :: MAPOUT(:,:)
+  INTEGER, ALLOCATABLE :: MAPOUT(:,:)
 #endif
   !
-  REAL                    :: RXFR, RFR1, SIGMA, SXFR, FACHF,      &
-       VSC, VSC0, VOF,                      &
-       ZLIM, X, Y, XP,  XO0, YO0, DXO, DYO, &
-       XO, YO, RD(4), RDTOT,                &
-       FACTOR, RTH0, FMICHE, RWNDC,         &
-       WCOR1, WCOR2
+  REAL                 :: RXFR, RFR1, SIGMA, SXFR, FACHF
+  REAL                 :: VSC, VSC0, VOF
+  REAL                 :: ZLIM, X, Y, XP,  XO0, YO0, DXO, DYO
+  REAL                 :: XO, YO, RD(4), RDTOT
+  REAL                 :: FACTOR, RTH0, FMICHE, RWNDC
+  REAL                 :: WCOR1, WCOR2
   !
-  CHARACTER(LEN=4)        :: GSTRG, CSTRG
+  CHARACTER(LEN=4)     :: GSTRG, CSTRG
   !
   ! Variables used to allow spectral output on full grid
   !
-  INTEGER                 :: P2SF,I1P2SF,I2P2SF
-  INTEGER                 :: E3D,I1E3D,I2E3D
-  INTEGER                 :: US3D,I1US3D,I2US3D,                  &
-       USSP, IUSSP,                         &
-       TH1MF, I1TH1M, I2TH1M,               &
-       STH1MF, I1STH1M, I2STH1M,            &
-       TH2MF, I1TH2M, I2TH2M,               &
-       STH2MF, I1STH2M, I2STH2M
+  INTEGER              :: P2SF,I1P2SF,I2P2SF
+  INTEGER              :: E3D,I1E3D,I2E3D
+  INTEGER              :: US3D,I1US3D,I2US3D
+  INTEGER              :: USSP, IUSSP
+  INTEGER              :: TH1MF, I1TH1M, I2TH1M
+  INTEGER              :: STH1MF, I1STH1M, I2STH1M
+  INTEGER              :: TH2MF, I1TH2M, I2TH2M
+  INTEGER              :: STH2MF, I1STH2M, I2STH2M
   ! STK_WN are the decays for Stokes drift partitions
-  REAL                    :: STK_WN(25)
+  REAL                 :: STK_WN(25)
 
   !
 #ifdef W3_LN1
-  REAL                    :: CLIN, RFPM, RFHF
+  REAL                 :: CLIN, RFPM, RFHF
 #endif
 #ifdef W3_ST1
-  REAL                    :: CINP, CDIS, APM
+  REAL                 :: CINP, CDIS, APM
 #endif
 #ifdef W3_ST2
-  REAL                    :: PHIMIN, FPIA, FPIB, DPHID
+  REAL                 :: PHIMIN, FPIA, FPIB, DPHID
 #endif
 #ifdef W3_NL1
-  REAL                    :: NLPROP
+  REAL                 :: NLPROP
 #endif
 #ifdef W3_NL2
-  REAL                    :: DPTFAC, DEPTHS(100)
+  REAL                 :: DPTFAC, DEPTHS(100)
 #endif
 #ifdef W3_NL3
-  REAL                    :: QPARMS(500)
+  REAL                 :: QPARMS(500)
 #endif
 #ifdef W3_NLS
-  REAL                    :: A34, FHFC, DNM, FC1, FC2, FC3
+  REAL                 :: A34, FHFC, DNM, FC1, FC2, FC3
 #endif
 #ifdef W3_BT1
-  REAL                    :: GAMMA
+  REAL                 :: GAMMA
 #endif
 #ifdef W3_PR2
-  REAL                    :: LATMIN
+  REAL                 :: LATMIN
 #endif
   !
 #ifdef W3_SMC
-  REAL                    :: TRNMX, TRNMY
-  INTEGER, ALLOCATABLE    :: NLvCelsk(:),  NLvUFcsk(:),  NLvVFcsk(:)
-  INTEGER, ALLOCATABLE    :: IJKCelin(:,:),IJKUFcin(:,:),IJKVFcin(:,:)
-  INTEGER, ALLOCATABLE    :: NBICelin(:),  IJKObstr(:,:)
-  REAL                    :: PoLonAC, PoLatAC
-  INTEGER, ALLOCATABLE    :: IJKCelAC(:,:),IJKUFcAC(:,:),IJKVFcAC(:,:)
-  INTEGER, ALLOCATABLE    :: IJKDep(:), IJKVFc8(:)
-  REAL,    ALLOCATABLE    :: XLONAC(:),YLATAC(:),ELONAC(:),ELATAC(:)
+  REAL                 :: TRNMX, TRNMY
+  INTEGER, ALLOCATABLE :: NLvCelsk(:),  NLvUFcsk(:),  NLvVFcsk(:)
+  INTEGER, ALLOCATABLE :: IJKCelin(:,:),IJKUFcin(:,:),IJKVFcin(:,:)
+  INTEGER, ALLOCATABLE :: NBICelin(:),  IJKObstr(:,:)
+  REAL                 :: PoLonAC, PoLatAC
+  INTEGER, ALLOCATABLE :: IJKCelAC(:,:),IJKUFcAC(:,:),IJKVFcAC(:,:)
+  INTEGER, ALLOCATABLE :: IJKDep(:), IJKVFc8(:)
+  REAL,    ALLOCATABLE :: XLONAC(:),YLATAC(:),ELONAC(:),ELATAC(:)
 #endif
   !
 #ifdef W3_RTD
-  REAL, ALLOCATABLE       :: AnglDin(:,:),StdLon(:,:),StdLat(:,:)
+  REAL,    ALLOCATABLE :: AnglDin(:,:),StdLon(:,:),StdLat(:,:)
   ! 1-dim boundary sectors
-  REAL, ALLOCATABLE       :: BDYLON(:), BDYLAT(:),                &
-       ELatbdy(:), ELonbdy(:), Anglbdy(:)
+  REAL,    ALLOCATABLE :: BDYLON(:), BDYLAT(:)
+  REAL,    ALLOCATABLE :: ELatbdy(:), ELonbdy(:), Anglbdy(:)
   ! If the destination grid for an output b.c. is rotated, its pole is:
-  REAL                    :: bPolat, bPolon
+  REAL                 :: bPolat, bPolon
   !
 #endif
-  REAL, ALLOCATABLE       :: XGRDIN(:,:), YGRDIN(:,:)
-  REAL, ALLOCATABLE       :: ZBIN(:,:), OBSX(:,:), OBSY(:,:)
-  REAL, ALLOCATABLE       :: REFD(:,:), REFD2(:,:), REFS(:,:)
+  REAL,    ALLOCATABLE :: XGRDIN(:,:), YGRDIN(:,:)
+  REAL,    ALLOCATABLE :: ZBIN(:,:), OBSX(:,:), OBSY(:,:)
+  REAL,    ALLOCATABLE :: REFD(:,:), REFD2(:,:), REFS(:,:)
 #ifdef W3_BT4
-  REAL, ALLOCATABLE  :: SED_D50FILE(:,:), SED_POROFILE(:,:)
-  LOGICAL            :: SEDMAPD50
-  REAL               :: SED_D50_UNIFORM, SED_DSTAR, RIPFAC1, &
-       RIPFAC2, RIPFAC3, RIPFAC4, SIGDEPTH, &
-       BOTROUGHMIN, BOTROUGHFAC
+  REAL,    ALLOCATABLE :: SED_D50FILE(:,:), SED_POROFILE(:,:)
+  LOGICAL              :: SEDMAPD50
+  REAL                 :: SED_D50_UNIFORM, SED_DSTAR, RIPFAC1
+  REAL                 :: RIPFAC2, RIPFAC3, RIPFAC4, SIGDEPTH
+  REAL                 :: BOTROUGHMIN, BOTROUGHFAC
 #endif
   !
-  LOGICAL                 :: FLLIN, FLINDS, FLNL, FLBT, FLDB,     &
-       FLTR, FLBS, FLPROP, FLREF,     &
-       FIRST, CONNCT, FLNEW, INGRID,FLIC,   &
-       FLIS, FLGNML
-  LOGICAL                 :: FLTC96 = .FALSE.
-  LOGICAL                 :: FLNMLO = .FALSE.
-  LOGICAL                 :: FLSTB2 = .FALSE.
-  LOGICAL                 :: FLST4  = .FALSE.
-  LOGICAL                 :: FLST6  = .FALSE.
+  LOGICAL              :: FLLIN, FLINDS, FLNL, FLBT, FLDB
+  LOGICAL              :: FLTR, FLBS, FLPROP, FLREF
+  LOGICAL              :: FIRST, CONNCT, FLNEW, INGRID,FLIC
+  LOGICAL              :: FLIS, FLGNML
+  LOGICAL              :: FLTC96 = .FALSE.
+  LOGICAL              :: FLNMLO = .FALSE.
+  LOGICAL              :: FLSTB2 = .FALSE.
+  LOGICAL              :: FLST4  = .FALSE.
+  LOGICAL              :: FLST6  = .FALSE.
 
-  REAL                    :: FACBERG, REFSLOPE
+  REAL                 :: FACBERG, REFSLOPE
 #ifdef W3_IS1
-  REAL                    :: ISC1, ISC2
+  REAL                 :: ISC1, ISC2
 #endif
 #ifdef W3_IS2
-  REAL                    :: ISC1, IS2BACKSCAT, IS2C2, IS2C3,&
-       IS2FRAGILITY, IS2DMIN, IS2DAMP, &
-       IS2CONC, IS2CREEPB, IS2CREEPC,  &
-       IS2CREEPD, IS2CREEPN, IS2BREAKE,&
-       IS2WIM1, IS2BREAKF, IS2FLEXSTR, &
-       IS2ANDISN, IS2ANDISE, IS2ANDISD
-  LOGICAL                 :: IS2BREAK, IS2DISP, IS2DUPDATE,  &
-       IS2ISOSCAT, IS2ANDISB
+  REAL                 :: ISC1, IS2BACKSCAT, IS2C2, IS2C3
+  REAL                 :: IS2FRAGILITY, IS2DMIN, IS2DAMP
+  REAL                 :: IS2CONC, IS2CREEPB, IS2CREEPC
+  REAL                 :: IS2CREEPD, IS2CREEPN, IS2BREAKE
+  REAL                 :: IS2WIM1, IS2BREAKF, IS2FLEXSTR
+  REAL                 :: IS2ANDISN, IS2ANDISE, IS2ANDISD
+  LOGICAL              :: IS2BREAK, IS2DISP, IS2DUPDATE
+  LOGICAL              :: IS2ISOSCAT, IS2ANDISB
 #endif
   !
 #ifdef W3_REF1
-  REAL                    :: REFCOAST, REFFREQ, REFMAP,     &
-       REFSUBGRID, REFRMAX, REFMAPD,  &
-       REFICEBERG, REFCOSP_STRAIGHT,  &
-       REFFREQPOW, REFUNSTSOURCE
+  REAL                 :: REFCOAST, REFFREQ, REFMAP
+  REAL                 :: REFSUBGRID, REFRMAX, REFMAPD
+  REAL                 :: REFICEBERG, REFCOSP_STRAIGHT
+  REAL                 :: REFFREQPOW, REFUNSTSOURCE
 #endif
   !
 #ifdef W3_IG1
-  LOGICAL                 :: IGSWELLMAX, IGBCOVERWRITE
-  INTEGER                 :: IGMETHOD, IGADDOUTP, IGSOURCE,      &
-       IGSOURCEATBP, IGSTERMS
-  REAL                    :: IGMAXFREQ, IGMINDEP, IGMAXDEP,      &
-       IGKDMIN, IGFIXEDDEPTH, IGEMPIRICAL
+  LOGICAL              :: IGSWELLMAX, IGBCOVERWRITE
+  INTEGER              :: IGMETHOD, IGADDOUTP, IGSOURCE
+  INTEGER              :: IGSOURCEATBP, IGSTERMS
+  REAL                 :: IGMAXFREQ, IGMINDEP, IGMAXDEP
+  REAL                 :: IGKDMIN, IGFIXEDDEPTH, IGEMPIRICAL
 #endif
   !
 #ifdef W3_IC2
-  LOGICAL                 :: IC2DISPER
-  REAL                    :: IC2TURB, IC2ROUGH, IC2REYNOLDS,      &
-       IC2SMOOTH, IC2VISC, IC2TURBS, IC2DMAX
+  LOGICAL              :: IC2DISPER
+  REAL                 :: IC2TURB, IC2ROUGH, IC2REYNOLDS
+  REAL                 :: IC2SMOOTH, IC2VISC, IC2TURBS, IC2DMAX
 #endif
 
 #ifdef W3_IC3
-  REAL                    :: IC2TURB, IC2ROUGH, IC2REYNOLDS,      &
-       IC2SMOOTH, IC2VISC, IC2TURBS,        &
-       IC3MAXTHK, IC3MAXCNC,                &
-       IC3HILIM, IC3KILIM,                  &
-       IC3VISC, IC3ELAS, IC3DENS, IC3HICE
-  LOGICAL                 :: IC3CHENG,USECGICE
+  REAL                 :: IC2TURB, IC2ROUGH, IC2REYNOLDS
+  REAL                 :: IC2SMOOTH, IC2VISC, IC2TURBS
+  REAL                 :: IC3MAXTHK, IC3MAXCNC
+  REAL                 :: IC3HILIM, IC3KILIM
+  REAL                 :: IC3VISC, IC3ELAS, IC3DENS, IC3HICE
+  LOGICAL              :: IC3CHENG,USECGICE
 #endif
 
 #ifdef W3_IC4
-  INTEGER                 :: IC4METHOD
-  REAL                    :: IC4KI(NIC4), IC4FC(NIC4)
+  INTEGER              :: IC4METHOD
+  REAL                 :: IC4KI(NIC4), IC4FC(NIC4)
 #endif
   !
 #ifdef W3_IC5
-  REAL                    :: IC5MINIG, IC5MINWT,                  &
-       IC5MAXKRATIO, IC5MAXKI, IC5MINHW,    &
-       IC5MAXITER, IC5RKICK, IC5KFILTER,    &
-       IC5VEMOD
-  CHARACTER(LEN=4)        :: IC5MSTR(3) = (/' EFS', ' RP ', ' M2 '/)
+  REAL                 :: IC5MINIG, IC5MINWT
+  REAL                 :: IC5MAXKRATIO, IC5MAXKI, IC5MINHW
+  REAL                 :: IC5MAXITER, IC5RKICK, IC5KFILTER
+  REAL                 :: IC5VEMOD
+  CHARACTER(LEN=4)     :: IC5MSTR(3) = (/' EFS', ' RP ', ' M2 '/)
 #endif
 
-  CHARACTER               :: COMSTR*1, PNAME*30, RFORM*16,        &
-       FROM*4, FNAME*60, TNAME*60, LINE*80, &
-       STATUS*20,FNAME2*60, PNAME2*40
-  CHARACTER(LEN=6)        :: YESXNO(2)
+  CHARACTER            :: COMSTR*1, PNAME*30, RFORM*16
+  CHARACTER            :: FROM*4, FNAME*60, TNAME*60, LINE*80
+  CHARACTER            :: STATUS*20,FNAME2*60, PNAME2*40
+  CHARACTER(LEN=6)     :: YESXNO(2)
 #ifdef W3_FLX3
-  CHARACTER(LEN=18)       :: TYPEID
+  CHARACTER(LEN=18)    :: TYPEID
 #endif
 
 #ifdef W3_SCRIP
-  INTEGER :: NCID
-  INTEGER :: grid_size_dimid, grid_rank_dimid, grid_corners_dimid
-  INTEGER :: grid_center_lat_varid, grid_center_lon_varid
-  INTEGER :: grid_corner_lat_varid, grid_corner_lon_varid
-  INTEGER :: grid_area_varid, grid_imask_varid
-  INTEGER :: grid_dims_varid
-  REAL (SCRIP_R8) :: CONV_DX,CONV_DY,OFFSET
+  INTEGER              :: NCID
+  INTEGER              :: grid_size_dimid, grid_rank_dimid, grid_corners_dimid
+  INTEGER              :: grid_center_lat_varid, grid_center_lon_varid
+  INTEGER              :: grid_corner_lat_varid, grid_corner_lon_varid
+  INTEGER              :: grid_area_varid, grid_imask_varid
+  INTEGER              :: grid_dims_varid
+  REAL (SCRIP_R8)      :: CONV_DX,CONV_DY,OFFSET
 #endif
 
   !/ ------------------------------------------------------------------- /
   !/ Namelists
   !/
-  INTEGER                 :: FLAGTR, IHM
-  REAL                    :: CFLTM, CICE0, CICEN, PMOVE, XFILT,    &
-       LICE, XSEED, XR, HSPM, WSM, WSC, STDX,&
-       STDY, STDT, ICEHMIN, ICEHFAC, ICEHINIT, &
-       ICESLN, ICEWIND, ICESNL, ICESDS,        &
-       ICEHDISP, ICEFDISP, ICEDDISP, BTBET
+  INTEGER            :: FLAGTR, IHM
+  REAL               :: CFLTM, CICE0, CICEN, PMOVE, XFILT
+  REAL               :: LICE, XSEED, XR, HSPM, WSM, WSC, STDX
+  REAL               :: STDY, STDT, ICEHMIN, ICEHFAC, ICEHINIT
+  REAL               :: ICESLN, ICEWIND, ICESNL, ICESDS
+  REAL               :: ICEHDISP, ICEFDISP, ICEDDISP, BTBET
   !
-  REAL(8)                 :: GSHIFT ! see notes in WMGHGH
-  LOGICAL                 :: FLC, ICEDISP, TRCKCMPR
-  INTEGER                 :: PTM   ! Partitioning method
-  REAL                    :: PTFC  ! Part. cut off freq (for method 5)
-  REAL                    :: AIRCMIN, AIRGB
-  CHARACTER               :: PMNAME*45, PMNAM2*45  ! Part. method desc.
+  REAL(8)            :: GSHIFT ! see notes in WMGHGH
+  LOGICAL            :: FLC, ICEDISP, TRCKCMPR
+  INTEGER            :: PTM   ! Partitioning method
+  REAL               :: PTFC  ! Part. cut off freq (for method 5)
+  REAL               :: AIRCMIN, AIRGB
+  CHARACTER          :: PMNAME*45, PMNAM2*45  ! Part. method desc.
 #ifdef W3_FLD1
-  INTEGER                 :: TAILTYPE
-  REAL                    :: TAILLEV, TAILT1, TAILT2
+  INTEGER            :: TAILTYPE
+  REAL               :: TAILLEV, TAILT1, TAILT2
 #endif
 #ifdef W3_FLD2
-  INTEGER                 :: TAILTYPE
-  REAL                    :: TAILLEV, TAILT1, TAILT2
+  INTEGER            :: TAILTYPE
+  REAL               :: TAILLEV, TAILT1, TAILT2
 #endif
 #ifdef W3_FLX3
-  INTEGER                 :: CTYPE
-  REAL                    :: CDMAX
+  INTEGER            :: CTYPE
+  REAL               :: CDMAX
 #endif
 #ifdef W3_FLX4
-  REAL                    :: CDFAC
+  REAL               :: CDFAC
 #endif
 #ifdef W3_ST2
-  REAL                    :: ZWND, SWELLF, STABSH, STABOF,        &
-       CNEG, CPOS, FNEG, FPOS
-  REAL                    :: SDSA0, SDSA1, SDSA2,                 &
-       SDSB0, SDSB1, SDSB2, SDSB3
+  REAL               :: ZWND, SWELLF, STABSH, STABOF
+  REAL               :: CNEG, CPOS, FNEG, FPOS
+  REAL               :: SDSA0, SDSA1, SDSA2
+  REAL               :: SDSB0, SDSB1, SDSB2, SDSB3
 #endif
 #ifdef W3_ST3
-  REAL                    :: ZWND, ALPHA0, Z0MAX, BETAMAX, SINTHP,&
-       ZALP, SWELLF, FXPM3, FXFM3,          &
-       WNMEANPTAIL, WNMEANP, STXFTF, STXFTWN
-  REAL                    :: STXFTFTAIL, SDSC1,                   &
-       SDSDELTA1, SDSDELTA2
+  REAL               :: ZWND, ALPHA0, Z0MAX, BETAMAX, SINTHP
+  REAL               :: ZALP, SWELLF, FXPM3, FXFM3
+  REAL               :: WNMEANPTAIL, WNMEANP, STXFTF, STXFTWN
+  REAL               :: STXFTFTAIL, SDSC1
+  REAL               :: SDSDELTA1, SDSDELTA2
 #endif
   !
 #ifdef W3_ST4
-  INTEGER                 :: SWELLFPAR, SDSISO, SDSBRFDF
-  REAL 		   :: SDSBCHOICE
-  REAL                    :: ZWND, ALPHA0, Z0MAX, BETAMAX, SINTHP,&
-       ZALP, Z0RAT, TAUWSHELTER, SWELLF,    &
-       SWELLF2,SWELLF3,SWELLF4, SWELLF5,    &
-       SWELLF6, SWELLF7, FXPM3, FXFM3,      &
-       WNMEANPTAIL, WNMEANP, STXFTF, STXFTFTAIL,       &
-       STXFTWN, SINBR, FXFMAGE,             &
-       SDSC2, SDSCUM, SDSC4, SDSC5, SDSC6, WHITECAPWIDTH, WHITECAPDUR, &
-       SDSSTRAIN, SDSSTRAINA, SDSSTRAIN2,   &
-       SDSBR, SDSP, SDSBT, SDS4A, SDKOF,    &
-       SDSCOS, SDSDTH, SDSBCK, SDSABK,      &
-       SDSPBK, SDSBINT, SDSHCK,             &
-       SDSBRF1,                             &
-       SDSBM0, SDSBM1, SDSBM2, SDSBM3,      &
-       SDSBM4, SDSFACMTF, SDSCUMP,  SDSNUW, &
-       SDSL, SDSMWD, SDSMWPOW, SPMSS, SDSNMTF
+  INTEGER            :: SWELLFPAR, SDSISO, SDSBRFDF
+  REAL               :: SDSBCHOICE
+  REAL               :: ZWND, ALPHA0, Z0MAX, BETAMAX, SINTHP
+  REAL               :: ZALP, Z0RAT, TAUWSHELTER, SWELLF
+  REAL               :: SWELLF2,SWELLF3,SWELLF4, SWELLF5
+  REAL               :: SWELLF6, SWELLF7, FXPM3, FXFM3
+  REAL               :: WNMEANPTAIL, WNMEANP, STXFTF, STXFTFTAIL
+  REAL               :: STXFTWN, SINBR, FXFMAGE
+  REAL               :: SDSC2, SDSCUM, SDSC4, SDSC5, SDSC6, WHITECAPWIDTH, WHITECAPDUR
+  REAL               :: SDSSTRAIN, SDSSTRAINA, SDSSTRAIN2
+  REAL               :: SDSBR, SDSP, SDSBT, SDS4A, SDKOF
+  REAL               :: SDSCOS, SDSDTH, SDSBCK, SDSABK
+  REAL               :: SDSPBK, SDSBINT, SDSHCK
+  REAL               :: SDSBRF1
+  REAL               :: SDSBM0, SDSBM1, SDSBM2, SDSBM3
+  REAL               :: SDSBM4, SDSFACMTF, SDSCUMP,  SDSNUW
+  REAL               :: SDSL, SDSMWD, SDSMWPOW, SPMSS, SDSNMTF
 #endif
   !
 #ifdef W3_ST6
-  REAL                    :: SINA0, SINWS, SINFC,                 &
-       SDSA1, SDSA2, SWLB1
-  INTEGER                 :: SDSP1, SDSP2
-  LOGICAL                 :: SDSET, CSTB1
+  REAL               :: SINA0, SINWS, SINFC
+  REAL               :: SDSA1, SDSA2, SWLB1
+  INTEGER            :: SDSP1, SDSP2
+  LOGICAL            :: SDSET, CSTB1
 #endif
   !
 #ifdef W3_NL1
-  REAL                    :: LAMBDA, KDCONV, KDMIN,               &
-       SNLCS1, SNLCS2, SNLCS3
+  REAL               :: LAMBDA, KDCONV, KDMIN
+  REAL               :: SNLCS1, SNLCS2, SNLCS3
 #endif
 #ifdef W3_NL2
-  INTEGER                 :: IQTYPE, NDEPTH
-  REAL                    :: TAILNL
+  INTEGER            :: IQTYPE, NDEPTH
+  REAL               :: TAILNL
 #endif
 #ifdef W3_NL3
-  INTEGER                 :: NQDEF
-  REAL                    :: MSC, NSC, KDFD, KDFS
+  INTEGER            :: NQDEF
+  REAL               :: MSC, NSC, KDFD, KDFS
 #endif
 #ifdef W3_NL4
-  INTEGER                 :: INDTSA, ALTLP
+  INTEGER            :: INDTSA, ALTLP
 #endif
 #ifdef W3_NL5
-  REAL                    :: NL5DPT, NL5OML
-  INTEGER                 :: NL5DIS, NL5KEV, NL5IPL, NL5PMX
+  REAL               :: NL5DPT, NL5OML
+  INTEGER            :: NL5DIS, NL5KEV, NL5IPL, NL5PMX
 #endif
 #ifdef W3_DB1
-  REAL                    :: BJALFA, BJGAM
-  LOGICAL                 :: BJFLAG
+  REAL               :: BJALFA, BJGAM
+  LOGICAL            :: BJFLAG
 #endif
 #ifdef W3_PR2
-  REAL                    :: DTIME
+  REAL               :: DTIME
 #endif
   !
 #ifdef W3_SMC
-  REAL                    :: DTIMS, CFLSM, RFMAXD, SYMR, YJ0R
-  LOGICAL                 :: UNO3, AVERG, SEAWND, Arctic
-  CHARACTER               :: PNSMC*30
+  REAL               :: DTIMS, CFLSM, RFMAXD, SYMR, YJ0R
+  LOGICAL            :: UNO3, AVERG, SEAWND, Arctic
+  CHARACTER          :: PNSMC*30
 #endif
   !
 #ifdef W3_PR3
-  REAL                    :: WDTHCG, WDTHTH
+  REAL               :: WDTHCG, WDTHTH
 #endif
-  LOGICAL :: JGS_TERMINATE_MAXITER = .TRUE.
-  LOGICAL :: JGS_TERMINATE_DIFFERENCE = .TRUE.
-  LOGICAL :: JGS_TERMINATE_NORM = .TRUE.
-  LOGICAL :: JGS_LIMITER = .FALSE.
-  LOGICAL :: JGS_BLOCK_GAUSS_SEIDEL = .TRUE.
-  LOGICAL :: JGS_USE_JACOBI = .TRUE.
-  LOGICAL :: JGS_SOURCE_NONLINEAR = .FALSE.
-  LOGICAL :: UGOBCAUTO = .FALSE.
-  LOGICAL :: UGBCCFL   = .FALSE.
-  LOGICAL :: EXPFSN    = .TRUE.
-  LOGICAL :: EXPFSPSI  = .FALSE.
-  LOGICAL :: EXPFSFCT  = .FALSE.
-  LOGICAL :: IMPFSN    = .FALSE.
-  LOGICAL :: EXPTOTAL  = .FALSE.
-  LOGICAL :: IMPTOTAL  = .FALSE.
-  LOGICAL :: IMPREFRACTION = .FALSE.
-  LOGICAL :: IMPFREQSHIFT = .FALSE.
-  LOGICAL :: IMPSOURCE = .FALSE.
-  LOGICAL :: SETUP_APPLY_WLV = .FALSE.
-  INTEGER :: JGS_MAXITER=100
-  INTEGER :: nbSel
-  INTEGER :: UNSTSCHEMES(6)
-  INTEGER :: UNSTSCHEME
-  INTEGER :: JGS_NLEVEL = 0
-  REAL*8  :: JGS_PMIN = 0.
-  REAL*8  :: JGS_DIFF_THR = 1.E-10
-  REAL*8  :: JGS_NORM_THR = 1.E-20
-  REAL*8  :: SOLVERTHR_SETUP = 1.E-20
-  REAL*8  :: CRIT_DEP_SETUP = 0.
+  LOGICAL            :: JGS_TERMINATE_MAXITER = .TRUE.
+  LOGICAL            :: JGS_TERMINATE_DIFFERENCE = .TRUE.
+  LOGICAL            :: JGS_TERMINATE_NORM = .TRUE.
+  LOGICAL            :: JGS_LIMITER = .FALSE.
+  LOGICAL            :: JGS_BLOCK_GAUSS_SEIDEL = .TRUE.
+  LOGICAL            :: JGS_USE_JACOBI = .TRUE.
+  LOGICAL            :: JGS_SOURCE_NONLINEAR = .FALSE.
+  LOGICAL            :: UGOBCAUTO = .FALSE.
+  LOGICAL            :: UGBCCFL   = .FALSE.
+  LOGICAL            :: EXPFSN    = .TRUE.
+  LOGICAL            :: EXPFSPSI  = .FALSE.
+  LOGICAL            :: EXPFSFCT  = .FALSE.
+  LOGICAL            :: IMPFSN    = .FALSE.
+  LOGICAL            :: EXPTOTAL  = .FALSE.
+  LOGICAL            :: IMPTOTAL  = .FALSE.
+  LOGICAL            :: IMPREFRACTION = .FALSE.
+  LOGICAL            :: IMPFREQSHIFT = .FALSE.
+  LOGICAL            :: IMPSOURCE = .FALSE.
+  LOGICAL            :: SETUP_APPLY_WLV = .FALSE.
+  INTEGER            :: JGS_MAXITER=100
+  INTEGER            :: nbSel
+  INTEGER            :: UNSTSCHEMES(6)
+  INTEGER            :: UNSTSCHEME
+  INTEGER            :: JGS_NLEVEL = 0
+  REAL*8             :: JGS_PMIN = 0.
+  REAL*8             :: JGS_DIFF_THR = 1.E-10
+  REAL*8             :: JGS_NORM_THR = 1.E-20
+  REAL*8             :: SOLVERTHR_SETUP = 1.E-20
+  REAL*8             :: CRIT_DEP_SETUP = 0.
   !
-  CHARACTER               :: UGOBCFILE*60
-  REAL                    :: UGOBCDEPTH
-  LOGICAL                 :: UGOBCOK
+  CHARACTER          :: UGOBCFILE*60
+  REAL               :: UGOBCDEPTH
+  LOGICAL            :: UGOBCOK
 
 #ifdef W3_RTD
-  REAL                    :: PLAT, PLON
-  LOGICAL                 :: UNROT
+  REAL               :: PLAT, PLON
+  LOGICAL            :: UNROT
   ! Poles of the output nested grids. May be a mix of rotated and standard
-  REAL, DIMENSION(9)      :: BPLAT, BPLON
+  REAL, DIMENSION(9) :: BPLAT, BPLON
 #endif
   !
 #ifdef W3_FLD1
@@ -951,26 +951,26 @@ MODULE W3GRIDMD
   NAMELIST /FLX4/ CDFAC
 #endif
 #ifdef W3_IC2
-  NAMELIST /SIC2/  IC2DISPER, IC2TURB, IC2ROUGH, IC2REYNOLDS,      &
+  NAMELIST /SIC2/  IC2DISPER, IC2TURB, IC2ROUGH, IC2REYNOLDS,            &
        IC2SMOOTH, IC2VISC, IC2TURBS, IC2DMAX
 #endif
 #ifdef W3_IC3
-  NAMELIST /SIC3/  IC3MAXTHK, IC2TURB, IC2ROUGH, IC2REYNOLDS,      &
-       IC2SMOOTH, IC2VISC, IC2TURBS, IC3MAXCNC,      &
-       IC3CHENG, USECGICE, IC3HILIM, IC3KILIM,      &
+  NAMELIST /SIC3/  IC3MAXTHK, IC2TURB, IC2ROUGH, IC2REYNOLDS,            &
+       IC2SMOOTH, IC2VISC, IC2TURBS, IC3MAXCNC,                          &
+       IC3CHENG, USECGICE, IC3HILIM, IC3KILIM,                           &
        IC3VISC, IC3ELAS, IC3DENS, IC3HICE
 #endif
 #ifdef W3_IC4
   NAMELIST /SIC4/  IC4METHOD, IC4KI, IC4FC
 #endif
 #ifdef W3_IC5
-  NAMELIST /SIC5/  IC5MINIG, IC5MINWT, IC5MAXKRATIO,        &
-       IC5MAXKI, IC5MINHW, IC5MAXITER, IC5RKICK,&
+  NAMELIST /SIC5/  IC5MINIG, IC5MINWT, IC5MAXKRATIO,                     &
+       IC5MAXKI, IC5MINHW, IC5MAXITER, IC5RKICK,                         &
        IC5KFILTER, IC5VEMOD
 #endif
 #ifdef W3_IG1
-  NAMELIST /SIG1/  IGMETHOD, IGADDOUTP, IGSOURCE, IGBCOVERWRITE,   &
-       IGMAXFREQ, IGSTERMS, IGSWELLMAX,                &
+  NAMELIST /SIG1/  IGMETHOD, IGADDOUTP, IGSOURCE, IGBCOVERWRITE,         &
+       IGMAXFREQ, IGSTERMS, IGSWELLMAX,                                  &
        IGSOURCEATBP, IGKDMIN, IGFIXEDDEPTH, IGEMPIRICAL
 #endif
 #ifdef W3_LN1
@@ -983,17 +983,17 @@ MODULE W3GRIDMD
   NAMELIST /SIN2/ ZWND, SWELLF, STABSH, STABOF, CNEG, CPOS, FNEG
 #endif
 #ifdef W3_ST3
-  NAMELIST /SIN3/ ZWND, ALPHA0, Z0MAX, BETAMAX, SINTHP, ZALP, &
+  NAMELIST /SIN3/ ZWND, ALPHA0, Z0MAX, BETAMAX, SINTHP, ZALP,            &
        SWELLF
 #endif
 #ifdef W3_ST4
-  NAMELIST /SIN4/ ZWND, ALPHA0, Z0MAX, BETAMAX, SINTHP, ZALP, &
-       TAUWSHELTER, SWELLFPAR, SWELLF,                 &
-       SWELLF2, SWELLF3, SWELLF4, SWELLF5, SWELLF6,    &
+  NAMELIST /SIN4/ ZWND, ALPHA0, Z0MAX, BETAMAX, SINTHP, ZALP,            &
+       TAUWSHELTER, SWELLFPAR, SWELLF,                                   &
+       SWELLF2, SWELLF3, SWELLF4, SWELLF5, SWELLF6,                      &
        SWELLF7, Z0RAT, SINBR
 #endif
 #ifdef W3_NL1
-  NAMELIST /SNL1/ LAMBDA, NLPROP, KDCONV, KDMIN,                  &
+  NAMELIST /SNL1/ LAMBDA, NLPROP, KDCONV, KDMIN,                         &
        SNLCS1, SNLCS2, SNLCS3
 #endif
 #ifdef W3_NL2
@@ -1020,17 +1020,17 @@ MODULE W3GRIDMD
   NAMELIST /SDS2/ SDSA0, SDSA1, SDSA2, SDSB0, SDSB1, PHIMIN
 #endif
 #ifdef W3_ST3
-  NAMELIST /SDS3/ SDSC1, WNMEANP, FXPM3, FXFM3, SDSDELTA1,        &
+  NAMELIST /SDS3/ SDSC1, WNMEANP, FXPM3, FXFM3, SDSDELTA1,               &
        SDSDELTA2
 #endif
 #ifdef W3_ST4
-  NAMELIST /SDS4/ SDSBCHOICE, WNMEANP, WNMEANPTAIL, FXPM3, FXFM3, &
-       FXFMAGE, SDSC2, SDSCUM, SDSSTRAIN, SDSSTRAINA,  &
-       SDSSTRAIN2, SDSC4, SDSFACMTF, SDSNMTF,SDSCUMP,  &
-       SDSC5, SDSC6, SDSBR, SDSBT, SDSP, SDSISO,       &
-       SDSBCK, SDSABK, SDSPBK, SDSBINT, SDSHCK,        &
-       SDSDTH, SDSCOS, SDSBRF1, SDSBRFDF,  SDSNUW,     &
-       SDSBM0, SDSBM1, SDSBM2, SDSBM3, SDSBM4,         &
+  NAMELIST /SDS4/ SDSBCHOICE, WNMEANP, WNMEANPTAIL, FXPM3, FXFM3,        &
+       FXFMAGE, SDSC2, SDSCUM, SDSSTRAIN, SDSSTRAINA,                    &
+       SDSSTRAIN2, SDSC4, SDSFACMTF, SDSNMTF,SDSCUMP,                    &
+       SDSC5, SDSC6, SDSBR, SDSBT, SDSP, SDSISO,                         &
+       SDSBCK, SDSABK, SDSPBK, SDSBINT, SDSHCK,                          &
+       SDSDTH, SDSCOS, SDSBRF1, SDSBRFDF,  SDSNUW,                       &
+       SDSBM0, SDSBM1, SDSBM2, SDSBM3, SDSBM4,                           &
        WHITECAPWIDTH, WHITECAPDUR, SDSMWD, SDSMWPOW, SDKOF
 #endif
 
@@ -1043,15 +1043,15 @@ MODULE W3GRIDMD
   NAMELIST /SBT1/ GAMMA
 #endif
 #ifdef W3_BT4
-  NAMELIST /SBT4/ SEDMAPD50, SED_D50_UNIFORM, RIPFAC1,            &
-       RIPFAC2, RIPFAC3, RIPFAC4, SIGDEPTH,            &
+  NAMELIST /SBT4/ SEDMAPD50, SED_D50_UNIFORM, RIPFAC1,                   &
+       RIPFAC2, RIPFAC3, RIPFAC4, SIGDEPTH,                              &
        BOTROUGHMIN, BOTROUGHFAC
 #endif
 #ifdef W3_DB1
   NAMELIST /SDB1/ BJALFA, BJGAM, BJFLAG
 #endif
 #ifdef W3_UOST
-  NAMELIST /UOST/ UOSTFILELOCAL, UOSTFILESHADOW,             &
+  NAMELIST /UOST/ UOSTFILELOCAL, UOSTFILESHADOW,                         &
        UOSTFACTORLOCAL, UOSTFACTORSHADOW
 #endif
   !
@@ -1062,62 +1062,62 @@ MODULE W3GRIDMD
   NAMELIST /PRO2/ CFLTM, DTIME, LATMIN
 #endif
 #ifdef W3_SMC
-  NAMELIST /PSMC/ CFLSM, DTIMS, RFMAXD, Arctic, AVERG, UNO3, &
+  NAMELIST /PSMC/ CFLSM, DTIMS, RFMAXD, Arctic, AVERG, UNO3,             &
        LvSMC, ISHFT, JEQT,   NBISMC, SEAWND
 #endif
   !
 #ifdef W3_PR3
   NAMELIST /PRO3/ CFLTM, WDTHCG, WDTHTH
 #endif
-  NAMELIST /UNST/ UGOBCAUTO, UGOBCDEPTH, UGOBCFILE,          &
-       UGBCCFL, EXPFSN, EXPFSPSI, EXPFSFCT,       &
-       IMPFSN, IMPTOTAL, EXPTOTAL,                &
-       IMPREFRACTION, IMPFREQSHIFT,               &
-       IMPSOURCE,                                 &
-       JGS_TERMINATE_MAXITER,                     &
-       JGS_TERMINATE_DIFFERENCE,                  &
-       JGS_TERMINATE_NORM,                        &
-       JGS_LIMITER,                               &
-       JGS_USE_JACOBI,                            &
-       JGS_BLOCK_GAUSS_SEIDEL,                    &
-       JGS_MAXITER,                               &
-       JGS_PMIN,                                  &
-       JGS_DIFF_THR,                              &
-       JGS_NORM_THR,                              &
-       JGS_NLEVEL,                                &
-       JGS_SOURCE_NONLINEAR,                      &
-       SETUP_APPLY_WLV, SOLVERTHR_SETUP,          &
+  NAMELIST /UNST/ UGOBCAUTO, UGOBCDEPTH, UGOBCFILE,                      &
+       UGBCCFL, EXPFSN, EXPFSPSI, EXPFSFCT,                              &
+       IMPFSN, IMPTOTAL, EXPTOTAL,                                       &
+       IMPREFRACTION, IMPFREQSHIFT,                                      &
+       IMPSOURCE,                                                        &
+       JGS_TERMINATE_MAXITER,                                            &
+       JGS_TERMINATE_DIFFERENCE,                                         &
+       JGS_TERMINATE_NORM,                                               &
+       JGS_LIMITER,                                                      &
+       JGS_USE_JACOBI,                                                   &
+       JGS_BLOCK_GAUSS_SEIDEL,                                           &
+       JGS_MAXITER,                                                      &
+       JGS_PMIN,                                                         &
+       JGS_DIFF_THR,                                                     &
+       JGS_NORM_THR,                                                     &
+       JGS_NLEVEL,                                                       &
+       JGS_SOURCE_NONLINEAR,                                             &
+       SETUP_APPLY_WLV, SOLVERTHR_SETUP,                                 &
        CRIT_DEP_SETUP
-  NAMELIST /MISC/ CICE0, CICEN, LICE, XSEED, FLAGTR, XP, XR, &
-       XFILT, PMOVE, IHM, HSPM, WSM, WSC, FLC, FMICHE, &
-       RWNDC, FACBERG, NOSW, GSHIFT, WCOR1, WCOR2,     &
-       STDX, STDY, STDT, ICEHMIN, ICEHINIT, ICEDISP,   &
-       ICESLN, ICEWIND, ICESNL, ICESDS, ICEHFAC,       &
-       ICEHDISP, ICEDDISP, ICEFDISP, CALTYPE,          &
+  NAMELIST /MISC/ CICE0, CICEN, LICE, XSEED, FLAGTR, XP, XR,             &
+       XFILT, PMOVE, IHM, HSPM, WSM, WSC, FLC, FMICHE,                   &
+       RWNDC, FACBERG, NOSW, GSHIFT, WCOR1, WCOR2,                       &
+       STDX, STDY, STDT, ICEHMIN, ICEHINIT, ICEDISP,                     &
+       ICESLN, ICEWIND, ICESNL, ICESDS, ICEHFAC,                         &
+       ICEHDISP, ICEDDISP, ICEFDISP, CALTYPE,                            &
        TRCKCMPR, PTM, PTFC, BTBET
-  NAMELIST /OUTS/ P2SF, I1P2SF, I2P2SF,                      &
-       US3D, I1US3D, I2US3D,                    &
-       USSP, IUSSP, STK_WN,                     &
-       E3D, I1E3D, I2E3D,                       &
-       TH1MF, I1TH1M, I2TH1M,                   &
-       STH1MF, I1STH1M, I2STH1M,                &
-       TH2MF, I1TH2M, I2TH2M,                   &
+  NAMELIST /OUTS/ P2SF, I1P2SF, I2P2SF,                                  &
+       US3D, I1US3D, I2US3D,                                             &
+       USSP, IUSSP, STK_WN,                                              &
+       E3D, I1E3D, I2E3D,                                                &
+       TH1MF, I1TH1M, I2TH1M,                                            &
+       STH1MF, I1STH1M, I2STH1M,                                         &
+       TH2MF, I1TH2M, I2TH2M,                                            &
        STH2MF, I1STH2M, I2STH2M
 #ifdef W3_IS1
   NAMELIST /SIS1/ ISC1, ISC2
 #endif
 #ifdef W3_IS2
-  NAMELIST /SIS2/ ISC1, IS2C2, IS2C3, IS2BACKSCAT, IS2ISOSCAT, IS2BREAK,  &
-       IS2DISP, IS2FRAGILITY, IS2CONC, IS2DMIN,    &
-       IS2DAMP, IS2DUPDATE, IS2CREEPB, IS2CREEPC,  &
-       IS2CREEPD, IS2CREEPN, IS2BREAKE, IS2BREAKF, &
-       IS2WIM1, IS2FLEXSTR, IS2ANDISB, IS2ANDISE, IS2ANDISD,   &
+  NAMELIST /SIS2/ ISC1, IS2C2, IS2C3, IS2BACKSCAT, IS2ISOSCAT, IS2BREAK, &
+       IS2DISP, IS2FRAGILITY, IS2CONC, IS2DMIN,                          &
+       IS2DAMP, IS2DUPDATE, IS2CREEPB, IS2CREEPC,                        &
+       IS2CREEPD, IS2CREEPN, IS2BREAKE, IS2BREAKF,                       &
+       IS2WIM1, IS2FLEXSTR, IS2ANDISB, IS2ANDISE, IS2ANDISD,             &
        IS2ANDISN
 #endif
 #ifdef W3_REF1
-  NAMELIST /REF1/ REFCOAST, REFFREQ, REFMAP,  REFMAPD,       &
-       REFSUBGRID, REFICEBERG,                     &
-       REFCOSP_STRAIGHT, REFSLOPE, REFRMAX,        &
+  NAMELIST /REF1/ REFCOAST, REFFREQ, REFMAP,  REFMAPD,                   &
+       REFSUBGRID, REFICEBERG,                                           &
+       REFCOSP_STRAIGHT, REFSLOPE, REFRMAX,                              &
        REFFREQPOW, REFUNSTSOURCE
 #endif
   !/

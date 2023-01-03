@@ -217,8 +217,8 @@ CONTAINS
     !/
     INTEGER, ALLOCATABLE :: MASK(:,:)
     INTEGER              :: I, IX, IY, NXW, NXE, NYS, NYN, INODE, IERR_MPI
-    REAL, ALLOCATABLE    :: LON(:,:),LAT(:,:),AREA(:,:),      &
-         CORLON(:,:,:),CORLAT(:,:,:)
+    REAL, ALLOCATABLE    :: LON(:,:),LAT(:,:),AREA(:,:)
+    REAL, ALLOCATABLE    :: CORLON(:,:,:),CORLAT(:,:,:)
     REAL                 :: FACTOR
 #ifdef W3_SMC
     REAL                 :: DLON, DLAT

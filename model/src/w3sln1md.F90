@@ -154,12 +154,12 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: ITH, IK
+    INTEGER       :: ITH, IK
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: COSU, SINU, DIRF(NTH), FAC, FF1, FF2, &
-         FFILT, RFR, WNF(NK)
+    REAL          :: COSU, SINU, DIRF(NTH), FAC, FF1, FF2
+    REAL          :: FFILT, RFR, WNF(NK)
     !/
     !/ ------------------------------------------------------------------- /
     !/

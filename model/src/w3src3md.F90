@@ -229,13 +229,13 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IS, IK, ITH
+    INTEGER       :: IS, IK, ITH
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 
-    REAL                    :: TAUW, EBAND, EMEANWS, UNZ,       &
-         EB(NK),EB2(NK),ALFA(NK)
+    REAL          :: TAUW, EBAND, EMEANWS, UNZ
+    REAL          :: EB(NK),EB2(NK),ALFA(NK)
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -503,30 +503,30 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IS,IK,ITH
+    INTEGER            :: IS,IK,ITH
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE      :: IENT = 0
 #endif
-    REAL                    :: COSU, SINU, TAUX, TAUY
-    REAL                    :: UST2, TAUW, TAUWB
-    REAL  , PARAMETER      :: EPS1 = 0.00001, EPS2 = 0.000001
+    REAL               :: COSU, SINU, TAUX, TAUY
+    REAL               :: UST2, TAUW, TAUWB
+    REAL, PARAMETER    :: EPS1 = 0.00001, EPS2 = 0.000001
 #ifdef W3_STAB3
-    REAL                    :: Usigma           !standard deviation of U due to gustiness
-    REAL                    :: USTARsigma       !standard deviation of USTAR due to gustiness
+    REAL               :: Usigma           !standard deviation of U due to gustiness
+    REAL               :: USTARsigma       !standard deviation of USTAR due to gustiness
 #endif
-    REAL                    :: CM,UCO,UCN,ZCN, &
-         Z0VISC
-    REAL XI,DELI1,DELI2
-    REAL XJ,DELJ1,DELJ2
-    REAL                    :: CONST, CONST0, CONST2, CONST3,  TAU1
-    REAL                    :: X,ZARG,ZLOG,ZBETA,UST
-    REAL COSWIND,XSTRESS,YSTRESS,TAUHF
-    REAL TEMP, TEMP2
-    INTEGER IND,J,ISTAB
-    REAL DSTAB(3,NSPEC)
-    REAL STRESSSTAB(3,2),STRESSSTABN(3,2)
+    REAL               :: CM,UCO,UCN,ZCN
+    REAL               :: Z0VISC
+    REAL               :: XI,DELI1,DELI2
+    REAL               :: XJ,DELJ1,DELJ2
+    REAL               :: CONST, CONST0, CONST2, CONST3,  TAU1
+    REAL               :: X,ZARG,ZLOG,ZBETA,UST
+    REAL               ::  COSWIND,XSTRESS,YSTRESS,TAUHF
+    REAL               :: TEMP, TEMP2
+    INTEGER            :: IND,J,ISTAB
+    REAL               :: DSTAB(3,NSPEC)
+    REAL               :: STRESSSTAB(3,2),STRESSSTABN(3,2)
 #ifdef W3_T0
-    REAL                    :: DOUT(NK,NTH)
+    REAL               :: DOUT(NK,NTH)
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -889,8 +889,8 @@ CONTAINS
     USE CONSTANTS , ONLY : GRAV
     USE W3GDATMD  , ONLY : ZZWND, AALPHA, ZZ0MAX
     IMPLICIT NONE
-    INTEGER, PARAMETER      :: NITER=10
-    REAL   , PARAMETER      :: XM=0.50, EPS1=0.00001
+    INTEGER, PARAMETER :: NITER=10
+    REAL   , PARAMETER :: XM=0.50, EPS1=0.00001
     !     VARIABLE.   TYPE.     PURPOSE.
     !      *XM*        REAL      POWER OF TAUW/TAU IN ROUGHNESS LENGTH.
     !      *XNU*       REAL      KINEMATIC VISCOSITY OF AIR.
@@ -898,9 +898,9 @@ CONTAINS
     !      *EPS1*      REAL      SMALL NUMBER TO MAKE SURE THAT A SOLUTION
     !                            IS OBTAINED IN ITERATION WITH TAU>TAUW.
     ! ----------------------------------------------------------------------
-    INTEGER I,J,ITER
-    REAL ZTAUW,UTOP,CDRAG,WCD,USTOLD,TAUOLD
-    REAL X,UST,ZZ0,ZNU,F,DELF,ZZ00
+    INTEGER :: I,J,ITER
+    REAL    :: ZTAUW,UTOP,CDRAG,WCD,USTOLD,TAUOLD
+    REAL    :: X,UST,ZZ0,ZNU,F,DELF,ZZ00
     !
     !
     DELU    = UMAX/FLOAT(JUMAX)
@@ -1039,17 +1039,17 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    REAL                    :: USTARM, ALPHAM
-    REAL                    :: CONST1, OMEGA, OMEGAC
-    REAL                    :: UST, ZZ0,OMEGACC, CM
-    INTEGER, PARAMETER      :: JTOT=250
-    REAL, ALLOCATABLE       :: W(:)
-    REAL                    :: ZX,ZARG,ZMU,ZLOG,ZZ00,ZBETA
-    REAL                    :: Y,YC,DELY
-    INTEGER                 :: I,J,K,L
-    REAL                    :: X0
+    REAL               :: USTARM, ALPHAM
+    REAL               :: CONST1, OMEGA, OMEGAC
+    REAL               :: UST, ZZ0,OMEGACC, CM
+    INTEGER, PARAMETER :: JTOT=250
+    REAL, ALLOCATABLE  :: W(:)
+    REAL               :: ZX,ZARG,ZMU,ZLOG,ZZ00,ZBETA
+    REAL               :: Y,YC,DELY
+    INTEGER            :: I,J,K,L
+    REAL               :: X0
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE      :: IENT = 0
     CALL STRACE (IENT, 'TABU_HF')
 #endif
     !
@@ -1199,10 +1199,10 @@ CONTAINS
     REAL, intent(out) :: USTAR, Z0, CHARN
 
     ! local variables
-    REAL SQRTCDM1
-    REAL X,XI,DELI1,DELI2,XJ,delj1,delj2
-    REAL UST,DELTOLD,TAUW_LOCAL
-    INTEGER IND,J
+    REAL    :: SQRTCDM1
+    REAL    :: X,XI,DELI1,DELI2,XJ,delj1,delj2 !
+    REAL    :: UST,DELTOLD,TAUW_LOCAL
+    INTEGER :: IND,J
     !
     TAUW_LOCAL=MAX(MIN(TAUW,TAUWMAX),0.)
     XI      = SQRT(TAUW_LOCAL)/DELTAUW
@@ -1360,14 +1360,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IS, IK, ITH
+    INTEGER       :: IS, IK, ITH
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: FACTOR, FACTOR2
-    REAL                    :: ALFAMEAN, WNMEAN2
+    REAL          :: FACTOR, FACTOR2
+    REAL          :: ALFAMEAN, WNMEAN2
 #ifdef W3_T0
-    REAL                    :: DOUT(NK,NTH)
+    REAL          :: DOUT(NK,NTH)
 #endif
     !/
     !/ ------------------------------------------------------------------- /

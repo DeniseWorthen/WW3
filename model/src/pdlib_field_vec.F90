@@ -676,22 +676,23 @@ CONTAINS
     !/
     !
     INTEGER, intent(in) :: NDWRITE
+
     INTEGER, PARAMETER :: BlockSize = 100000
-    REAL :: DATAwrite(NSPEC,BlockSize)
-    REAL, allocatable :: DATArecv(:,:)
-    integer ListFirst(NAPROC)
-    integer idx, idxB
-    integer len, i, IS
-    integer iBlock, iFirst, iEnd
-    integer IPglob, IPloc, pos, ISEA, nbBlock, NPAloc
-    integer ierr, istat, JSEA, NREC, iProc
-    integer NbMatch
-    INTEGER, PARAMETER      :: LRB = 4
-    INTEGER(KIND=8) RPOS
-    INTEGER LRECL
-    INTEGER IERR_MPI
-    REAL(KIND=LRB) WRITEBUFF(NSPEC)
-    REAL, allocatable :: DATAsend(:,:)
+    REAL               :: DATAwrite(NSPEC,BlockSize)
+    REAL, allocatable  :: DATArecv(:,:)
+    integer            :: ListFirst(NAPROC)
+    integer            :: idx, idxB
+    integer            :: len, i, IS
+    integer            :: iBlock, iFirst, iEnd
+    integer            :: IPglob, IPloc, pos, ISEA, nbBlock, NPAloc
+    integer            :: ierr, istat, JSEA, NREC, iProc
+    integer            :: NbMatch
+    INTEGER, PARAMETER :: LRB = 4
+    INTEGER(KIND=8)    :: RPOS
+    INTEGER            :: LRECL
+    INTEGER            :: IERR_MPI
+    REAL(KIND=LRB)     :: WRITEBUFF(NSPEC)
+    REAL, allocatable  :: DATAsend(:,:)
 #ifdef W3_S
     CALL STRACE (IENT, 'VA_SETUP_IOBPD')
 #endif
@@ -861,22 +862,22 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IK, IFJ
-    INTEGER                 :: IH, IT0, IROOT, IT, IERR, I0,   &
-         IFROM, IX(4), IY(4), IS(4),     &
-         IP(4), I, J, JSEA, ITARG, IB,   &
-         JSEA0, JSEAN, NSEAB, IBOFF,     &
-         ISEA, ISPROC, K, NRQMAX
+    INTEGER              :: IK, IFJ
+    INTEGER              :: IH, IT0, IROOT, IT, IERR, I0
+    INTEGER              :: IFROM, IX(4), IY(4), IS(4)
+    INTEGER              :: IP(4), I, J, JSEA, ITARG, IB
+    INTEGER              :: JSEA0, JSEAN, NSEAB, IBOFF
+    INTEGER              :: ISEA, ISPROC, K, NRQMAX
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT
+    INTEGER, SAVE        :: IENT
 #endif
-    LOGICAL                 :: FLGRDALL(NOGRP,NGRPP)
-    REAL, allocatable       :: ARRexch(:,:), ARRexch_loc(:,:)
-    REAL, allocatable       :: ARRtotal(:,:)
-    INTEGER, allocatable    :: ARRpos(:), ARRpos_loc(:)
-    INTEGER                 :: eEnt(1), IPROC
-    INTEGER                 :: TheSize, NSEAL_loc
-    INTEGER, SAVE           :: indexOutput
+    LOGICAL              :: FLGRDALL(NOGRP,NGRPP)
+    REAL,    allocatable :: ARRexch(:,:), ARRexch_loc(:,:)
+    REAL,    allocatable :: ARRtotal(:,:)
+    INTEGER, allocatable :: ARRpos(:), ARRpos_loc(:)
+    INTEGER              :: eEnt(1), IPROC
+    INTEGER              :: TheSize, NSEAL_loc
+    INTEGER, SAVE        :: indexOutput
     !/
     !/ ------------------------------------------------------------------- /
     !/

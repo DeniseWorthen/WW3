@@ -1385,9 +1385,9 @@ CONTAINS
     !/ Local parameters
     !/
 
-    integer nb
+    integer       :: nb
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /

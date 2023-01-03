@@ -145,86 +145,85 @@ module w3gkemd
   !
   public  :: qr_depth, qr_oml, qi_disc, qi_kev, qi_nnz, qi_interp
 
-  private :: QFunc, VpFunc, VmFunc, UFunc, TFunc,           &
-       FindQuartetNumber, FindQuartetConfig,          &
-       CooCsrInd, ASymSmatTimVec,                     &
+  private :: QFunc, VpFunc, VmFunc, UFunc, TFunc, &
+       FindQuartetNumber, FindQuartetConfig,      &
+       CooCsrInd, ASymSmatTimVec,                 &
        PrepKGrid, BiInterpWT
   !
-  private :: qs_ver, qi_lrb, qr_eps, qr_grav,               &
-       qr_pi, qr_tpi, qr_dmax, qc_iu, qs_cfg,         &
-       qr_kx, qr_ky, qr_dk, qr_om, qi_nrsm,           &
-       qi_NN, qi_PP, qi_QQ, qi_RR,                    &
-       qr_k4x, qr_k4y, qr_om4, qr_dom,                &
-       qr_TKern, qr_TKurt,                            &
-       qi_icCos, qi_irCsr, qr_sumQR, qr_sumNP,        &
+  private :: qs_ver, qi_lrb, qr_eps, qr_grav,     &
+       qr_pi, qr_tpi, qr_dmax, qc_iu, qs_cfg,     &
+       qr_kx, qr_ky, qr_dk, qr_om, qi_nrsm,       &
+       qi_NN, qi_PP, qi_QQ, qi_RR,                &
+       qr_k4x, qr_k4y, qr_om4, qr_dom,            &
+       qr_TKern, qr_TKurt,                        &
+       qi_icCos, qi_irCsr, qr_sumQR, qr_sumNP,    &
        qi_bind, qr_bwgh, qr_wn1
   !
   private :: qi_bound, qr_fpow, qr_bdry
   !
   !/ ------------------------------------------------------------------- /
-  real                       :: qr_depth                    ! Real water depth d (m)
+  real                         :: qr_depth                    ! Real water depth d (m)
 
-  real                       :: qr_oml                      ! λ cut off factor
-  ! λ ≤ 0 →  quartets far
-  ! from resonance will not
-  ! be excluded.
+  real                         :: qr_oml                      ! λ cut off factor
+                                                              ! λ ≤ 0 →  quartets far
+                                                              ! from resonance will not
+                                                              ! be excluded.
 
-  integer                    :: qi_disc                     ! Discretization of GKE
-  ! 0: continuous (like Exact-NL, WRT)
-  ! 1: discrete   (see GS13)
+  integer                      :: qi_disc                     ! Discretization of GKE
+                                                              ! 0: continuous (like Exact-NL, WRT)
+                                                              ! 1: discrete   (see GS13)
 
-  integer                    :: qi_kev                      ! Version of KE
-  ! 0: GKE
-  ! 1: KE from J03
+  integer                      :: qi_kev                      ! Version of KE
+                                                              ! 0: GKE
+                                                              ! 1: KE from J03
 
-  integer                    :: qi_interp                   ! Interp. option
-  ! 0: Nearest bin
-  ! 1: Bilinear Interp
+  integer                      :: qi_interp                   ! Interp. option
+                                                              ! 0: Nearest bin
+                                                              ! 1: Bilinear Interp
 
-  integer, parameter         :: qi_bound= 1                 ! Boundary conditions
-  ! 0: no bound
-  ! 1: tail extension
+  integer, parameter           :: qi_bound= 1                 ! Boundary conditions
+                                                              ! 0: no bound
+                                                              ! 1: tail extension
 
-  real, parameter            :: qr_fpow= -5.                ! E(f) tail power law
+  real,    parameter           :: qr_fpow= -5.                ! E(f) tail power law
+                                                              !
+  character(len=50), parameter :: qs_ver  = 'gkev0'           ! version number/str
+  integer, parameter           :: qi_lrb  = 4                 ! 4 bytes
+  real, parameter              :: qr_eps  = epsilon(100.0)    ! Smallest positive
+                                                              ! value supported by the
+                                                              ! compiler (e.g., gfortran
+                                                              ! → 1.19E-7)
+
+  real, parameter              :: qr_grav = 9.806             ! Gravational acc (m/s^2)
+  real, parameter              :: qr_pi   = 3.141592653589793 ! π
+  real, parameter              :: qr_tpi  = 2 * qr_pi         ! π * 2
+  real, parameter              :: qr_dmax = 3000.0            ! Maximum allowed water
+  complex, parameter           :: qc_iu   = (0.0, 1.0)        ! complex unit `i`
   !
-  character(len=50), parameter                              &
-       :: qs_ver  = 'gkev0'           ! version number/str
-  integer, parameter         :: qi_lrb  = 4                 ! 4 bytes
-  real, parameter            :: qr_eps  = epsilon(100.0)    ! Smallest positive
-  ! value supported by the
-  ! compiler (e.g., gfortran
-  ! → 1.19E-7)
-
-  real, parameter            :: qr_grav = 9.806             ! Gravational acc (m/s^2)
-  real, parameter            :: qr_pi   = 3.141592653589793 ! π
-  real, parameter            :: qr_tpi  = 2 * qr_pi         ! π * 2
-  real, parameter            :: qr_dmax = 3000.0            ! Maximum allowed water
-  complex, parameter         :: qc_iu   = (0.0, 1.0)        ! complex unit `i`
+  character(len=100)           :: qs_cfg                      ! File name for quartet/kernel
   !
-  character(len=100)         :: qs_cfg                      ! File name for quartet/kernel
+  real,    allocatable, save   :: qr_kx(:), qr_ky(:)          ! kx, ky (2D grid → 1D vector)
+  real,    allocatable, save   :: qr_dk(:), qr_om(:)          ! Δ\vec{k}, ω,
   !
-  real, allocatable, save    :: qr_kx(:), qr_ky(:),   &     ! kx, ky (2D grid → 1D vector)
-       qr_dk(:), qr_om(:)          ! Δ\vec{k}, ω,
-  !
-  integer(kind=8)            :: qi_nnz                      ! # of quartets
-  integer                    :: qi_nrsm                     ! # of rows of SMat
-  integer, allocatable, save :: qi_NN(:), qi_PP(:),   &     ! Index for Quartets
-       qi_QQ(:), qi_RR(:)
-  real, allocatable, save    :: qr_k4x(:), qr_k4y(:), &     ! kx, ky, ω for 4th wave
-       qr_om4(:)
-  real, allocatable, save    :: qr_dom(:),            &     ! Δω
-       qr_TKern(:),          &     ! Kernel `T`
-       qr_TKurt(:)                 ! Kurtosis `T`
-  integer, allocatable, save :: qi_icCos(:),          &     ! col index of CooCsr
-       qi_irCsr(:)                 ! row begining index of
-  ! Csr sparse matrix
-  real, allocatable, save    :: qr_sumQR(:),          &     ! Σ over Q, R
-       qr_sumNP(:, :)              ! Σ over P
-  !
-  integer, allocatable, save :: qi_bind(:, :)               ! Bilinear interp. (index and
-  real, allocatable, save    :: qr_bwgh(:, :)               ! weight)
-  real, allocatable, save    :: qr_bdry(:)                  ! Boundary weight
-  real, allocatable, save    :: qr_wn1(:)                   ! wavenumber k(nk)
+  integer(kind=8)              :: qi_nnz                      ! # of quartets
+  integer                      :: qi_nrsm                     ! # of rows of SMat
+  integer, allocatable, save   :: qi_NN(:), qi_PP(:)          ! Index for Quartets
+  integer, allocatable, save   :: qi_QQ(:), qi_RR(:)
+  real,    allocatable, save   :: qr_k4x(:), qr_k4y(:)        ! kx, ky, ω for 4th wave
+  real,    allocatable, save   :: qr_om4(:)
+  real,    allocatable, save   :: qr_dom(:)                   ! Δω
+  real,    allocatable, save   :: qr_TKern(:)                 ! Kernel `T`
+  real,    allocatable, save   :: qr_TKurt(:)                 ! Kurtosis `T`
+  integer, allocatable, save   :: qi_icCos(:)                 ! col index of CooCsr
+  integer, allocatable, save   :: qi_irCsr(:)                 ! row begining index of
+                                                              ! Csr sparse matrix
+  real,    allocatable, save   :: qr_sumQR(:)                 ! Σ over Q, R
+  real,    allocatable, save   :: qr_sumNP(:, :)              ! Σ over P
+                                                              !
+  integer, allocatable, save   :: qi_bind(:, :)               ! Bilinear interp. (index and
+  real,    allocatable, save   :: qr_bwgh(:, :)               ! weight)
+  real,    allocatable, save   :: qr_bdry(:)                  ! Boundary weight
+  real,    allocatable, save   :: qr_wn1(:)                   ! wavenumber k(nk)
   !/
   !/ ------------------------------------------------------------------- /
 contains
@@ -422,16 +421,16 @@ contains
     ! consisting of bound waves, which then decays into a different set of
     ! free waves (see J09)
     !
-    real             :: om0, om1, om2, om3, &     ! ω for 4 waves
-         om02,               &     ! ω_{0-2}
-         om13,               &     ! ω_{1-3}
-         om12,               &     ! ω_{1-2}
-         om03,               &     ! ω_{0-3}
-         om0p1,              &     ! ω_{0+1}
-         om2p3                     ! ω_{2+3}
+    real      :: om0, om1, om2, om3 ! ω for 4 waves
+    real      :: om02               ! ω_{0-2}
+    real      :: om13               ! ω_{1-3}
+    real      :: om12               ! ω_{1-2}
+    real      :: om03               ! ω_{0-3}
+    real      :: om0p1              ! ω_{0+1}
+    real      :: om2p3              ! ω_{2+3}
     !
-    real             :: L14, L23, L56,      &
-         W                         ! W^{(2)}_{1, 2, 3, 4} in J09
+    real      :: L14, L23, L56
+    real      :: W                  ! W^{(2)}_{1, 2, 3, 4} in J09
     ! or
     ! V^{(2)}_{0, 1, 2, 3} in K94
     !/
@@ -660,7 +659,7 @@ contains
                                            ! illustrated above
     !
     ! Local parameters
-    real                 :: k(ns)        ! scalar/mag k
+    real                 :: k(ns)           ! scalar/mag k
     integer              :: i1, i2, i3, i4, row, col
     real                 :: k4x, k4y, k4, om4, kmin, kmax, dom
     !/
@@ -779,7 +778,7 @@ contains
     real,            intent(out) :: om4(nnz) ! ω₄
     !
     ! Local parameters
-    real                 :: k(ns)        ! scalar/mag k
+    real                 :: k(ns)             ! scalar/mag k
     integer              :: i1, i2, i3, i4, row, col, s
     real                 :: k4xT, k4yT, k4T, om4T, kmin, kmax, dom
     !/
@@ -1232,10 +1231,10 @@ contains
     character(len=*), intent(in) :: act     ! 'read' or 'write'
     !
     ! Local parameters
-    integer                      :: ns, iq, i1, i3, icol
-    integer(kind=8)              :: rpos           ! reading position
-    integer, allocatable         :: irow_coo(:), & ! row of coo mat
-         icooTcsr(:)    ! index for coo → csr
+    integer              :: ns, iq, i1, i3, icol
+    integer(kind=8)      :: rpos             ! reading position
+    integer, allocatable :: irow_coo(:)      ! row of coo mat
+    integer, allocatable :: icooTcsr(:)      ! index for coo → csr
     !/
     ! Initilization
     ns      = nk * nth
@@ -1498,11 +1497,11 @@ contains
     real,    intent(in) :: wn(nk)  ! k
     real,    intent(in) :: th(nth) ! θ
     !
-    integer             :: iq, jkU, jk4, jk4p, jth4T, jth4, jth4p
-    real                :: dth, aRef, k4T, angR, &
-         r_jk, r_jth, delK, w_k4, w_th4
-    real                :: kmin, kmax, k4R
-    real                :: qr_kpow
+    integer :: iq, jkU, jk4, jk4p, jth4T, jth4, jth4p
+    real    :: dth, aRef, k4T, angR
+    real    :: r_jk, r_jth, delK, w_k4, w_th4
+    real    :: kmin, kmax, k4R
+    real    :: qr_kpow
     !
     ! Initialization
     qi_bind = 0
@@ -1676,21 +1675,21 @@ contains
     !
     ! Local parameters
     !
-    real                       :: DelT           ! Δt
+    real                       :: DelT         ! Δt
     logical, save              :: FlRead = .true.
     integer                    :: num_I, ns
-    real                       :: Dvk0(nk*nth),& ! Odin's discrete Cvk @ t0
-         Dvk1(nk*nth)   ! ...     @ t1
-    real, allocatable, save    :: Cvk0_R(:),   & ! C₄      @ t0
-         Cvk1_R(:)      !         @ t1
-    real, allocatable, save    :: Fnpqr0(:),   & ! C prod. @ t0
-         Fnpqr1(:),   & ! C prod. @ t1
-         Mnpqr (:)      ! δC_1/δt * δk_1
-    complex, allocatable, save :: Inpqr1(:),   & ! I(t) @ t1
-         ETau(:),     & ! exp(iΔωt)
-         EDelT(:)       ! exp(iΔωΔt)
+    real                       :: Dvk0(nk*nth) ! Odin's discrete Cvk @ t0
+    real                       :: Dvk1(nk*nth) ! ...     @ t1
+    real,    allocatable, save :: Cvk0_R(:)    ! C₄      @ t0
+    real,    allocatable, save :: Cvk1_R(:)    !         @ t1
+    real,    allocatable, save :: Fnpqr0(:)    ! C prod. @ t0
+    real,    allocatable, save :: Fnpqr1(:)    ! C prod. @ t1
+    real,    allocatable, save :: Mnpqr (:)    ! δC_1/δt * δk_1
+    complex, allocatable, save :: Inpqr1(:)    ! I(t) @ t1
+    complex, allocatable, save :: ETau(:)      ! exp(iΔωt)
+    complex, allocatable, save :: EDelT(:)     ! exp(iΔωΔt)
     !
-    real, allocatable, save    :: Mnp1D(:), Mnp2D(:, :)
+    real,    allocatable, save :: Mnp1D(:), Mnp2D(:, :)
     real                       :: SecM2          ! Second-order moment²
     !/
     !

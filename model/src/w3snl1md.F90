@@ -295,21 +295,21 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: ITH, IFR, ISP
+    INTEGER       :: ITH, IFR, ISP
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: X, X2, CONS, CONX, FACTOR,           &
-         E00, EP1, EM1, EP2, EM2,             &
-         SA1A, SA1B, SA2A, SA2B
+    REAL          :: X, X2, CONS, CONX, FACTOR
+   REAL           :: E00, EP1, EM1, EP2, EM2
+   REAL           :: SA1A, SA1B, SA2A, SA2B
 #ifdef W3_T0
-    REAL                    :: SOUT(NK,NFR), DOUT(NK,NFR)
+    REAL          :: SOUT(NK,NFR), DOUT(NK,NFR)
 #endif
-    REAL               ::  UE  (1-NTH:NSPECY), SA1 (1-NTH:NSPECX),  &
-         SA2 (1-NTH:NSPECX), DA1C(1-NTH:NSPECX),  &
-         DA1P(1-NTH:NSPECX), DA1M(1-NTH:NSPECX),  &
-         DA2C(1-NTH:NSPECX), DA2P(1-NTH:NSPECX),  &
-         DA2M(1-NTH:NSPECX), CON (      NSPEC )
+    REAL          ::  UE  (1-NTH:NSPECY), SA1 (1-NTH:NSPECX)
+    REAL          :: SA2 (1-NTH:NSPECX), DA1C(1-NTH:NSPECX)
+    REAL          :: DA1P(1-NTH:NSPECX), DA1M(1-NTH:NSPECX)
+    REAL          :: DA2C(1-NTH:NSPECX), DA2P(1-NTH:NSPECX)
+    REAL          :: DA2M(1-NTH:NSPECX), CON (      NSPEC )
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -560,19 +560,19 @@ CONTAINS
     !/
     !/ Local parameters
     !/
-    INTEGER                 :: IFR, ITH, ISP, ITHP, ITHP1, ITHM,    &
-         ITHM1,IFRP, IFRP1, IFRM, IFRM1
-    INTEGER, ALLOCATABLE    :: IF1(:), IF2(:), IF3(:), IF4(:),      &
-         IF5(:), IF6(:), IF7(:), IF8(:),      &
-         IT1(:), IT2(:), IT3(:), IT4(:),      &
-         IT5(:), IT6(:), IT7(:), IT8(:)
+    INTEGER              :: IFR, ITH, ISP, ITHP, ITHP1, ITHM
+    INTEGER              :: ITHM1,IFRP, IFRP1, IFRM, IFRM1
+    INTEGER, ALLOCATABLE :: IF1(:), IF2(:), IF3(:), IF4(:)
+    INTEGER, ALLOCATABLE :: IF5(:), IF6(:), IF7(:), IF8(:)
+    INTEGER, ALLOCATABLE :: IT1(:), IT2(:), IT3(:), IT4(:)
+    INTEGER, ALLOCATABLE :: IT5(:), IT6(:), IT7(:), IT8(:)
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE        :: IENT = 0
 #endif
-    REAL                    :: DELTH3, DELTH4, LAMM2, LAMP2, CTHP,  &
-         WTHP, WTHP1, CTHM, WTHM, WTHM1,      &
-         XFRLN, WFRP, WFRP1, WFRM, WFRM1, FR, &
-         AF11A
+    REAL                 :: DELTH3, DELTH4, LAMM2, LAMP2, CTHP
+    REAL                 :: WTHP, WTHP1, CTHM, WTHM, WTHM1
+    REAL                 :: XFRLN, WFRP, WFRP1, WFRM, WFRM1, FR
+    REAL                 :: AF11A
     !/
     !/ ------------------------------------------------------------------- /
     !/

@@ -197,55 +197,55 @@ PROGRAM W3GSPL
   !/ ------------------------------------------------------------------- /
   !/ Local parameters
   !/
-  INTEGER                 :: NDSI, NDSM, NDSTRC, NTRACE, J, IERR, &
-       NG, IX, IY, NGB, NGX, NGY, IG, IGG,  &
-       IGX, IGY, IGY0, IGYN, IGX0, IGXN,    &
-       MINGRD, MINNR, MINNXT, MINNNR,       &
-       NITMAX, IIT, INGMIN, INGMAX,         &
-       INGMNC, INGMXC, INGLAG, JJ,          &
-       NSTDLG, MSTDLG = 5, NSEAT, J1, J2,   &
-       J3, J4, J5, IDFM1, IDFM2, IDFM3,     &
-       IDLA1, IDLA2, IDLA3, VSC3, NHEXT
+  INTEGER                   :: NDSI, NDSM, NDSTRC, NTRACE, J, IERR
+  INTEGER                   :: NG, IX, IY, NGB, NGX, NGY, IG, IGG
+  INTEGER                   :: IGX, IGY, IGY0, IGYN, IGX0, IGXN
+  INTEGER                   :: MINGRD, MINNR, MINNXT, MINNNR
+  INTEGER                   :: NITMAX, IIT, INGMIN, INGMAX
+  INTEGER                   :: INGMNC, INGMXC, INGLAG, JJ
+  INTEGER                   :: NSTDLG, MSTDLG = 5, NSEAT, J1, J2
+  INTEGER                   :: J3, J4, J5, IDFM1, IDFM2, IDFM3
+  INTEGER                   :: IDLA1, IDLA2, IDLA3, VSC3, NHEXT
 #ifdef W3_S
-  INTEGER, SAVE           :: IENT = 0
+  INTEGER, SAVE             :: IENT = 0
 #endif
 #ifdef W3_O16
-  INTEGER                 :: NDSG = 35, NTGRDS = 0
+  INTEGER                   :: NDSG = 35, NTGRDS = 0
 #endif
-  INTEGER, ALLOCATABLE    :: MSPLIT(:,:), MTEMP(:,:), INGRD(:)
-  REAL                    :: RATIO1, XMEAN, STARG, STDMIN,        &
-       ZBDUM, ZBMIN, VSC1, VSC2, FRACL, FRACH
-  LOGICAL                 :: GLOBAL, OK, DONE, FRFLAG
-  LOGICAL, ALLOCATABLE    :: ISNEXT(:), SEA(:,:)
-  CHARACTER(LEN=1)        :: COMSTR
-  CHARACTER(LEN=3)        :: G0ID
-  CHARACTER(LEN=4)        :: IDGRID, IDCLSE, PTCLSE
-  CHARACTER(LEN=6)        :: NRFMT
-  CHARACTER(LEN=11)       :: FEXT, AEXT
-  CHARACTER(LEN=16)       :: RFORM1, RFORM2, RFORM3
-  CHARACTER(LEN=20)       :: FNAME, INAME
+  INTEGER, ALLOCATABLE      :: MSPLIT(:,:), MTEMP(:,:), INGRD(:)
+  REAL                      :: RATIO1, XMEAN, STARG, STDMIN
+  REAL                      :: ZBDUM, ZBMIN, VSC1, VSC2, FRACL, FRACH
+  LOGICAL                   :: GLOBAL, OK, DONE, FRFLAG
+  LOGICAL, ALLOCATABLE      :: ISNEXT(:), SEA(:,:)
+  CHARACTER(LEN=1)          :: COMSTR
+  CHARACTER(LEN=3)          :: G0ID
+  CHARACTER(LEN=4)          :: IDGRID, IDCLSE, PTCLSE
+  CHARACTER(LEN=6)          :: NRFMT
+  CHARACTER(LEN=11)         :: FEXT, AEXT
+  CHARACTER(LEN=16)         :: RFORM1, RFORM2, RFORM3
+  CHARACTER(LEN=20)         :: FNAME, INAME
   !
   TYPE STATS_GRID
-    LOGICAL               :: STRADLE, INSTAT
-    INTEGER               :: NPTS, NYL, NYH, NXL, NXH
+    LOGICAL                 :: STRADLE, INSTAT
+    INTEGER                 :: NPTS, NYL, NYH, NXL, NXH
   END TYPE STATS_GRID
   !
   TYPE STATS_MEAN
-    INTEGER               :: NMIN, NMAX
-    REAL                  :: RSTD
+    INTEGER                 :: NMIN, NMAX
+    REAL                    :: RSTD
   END TYPE STATS_MEAN
   !
   TYPE PART_GRID
-    INTEGER               :: NX, NY, NSEA
-    INTEGER, POINTER      :: MASK(:,:)
-    REAL                  :: X0, Y0, SX, SY
-    REAL, POINTER         :: ZBIN(:,:), OBSX(:,:), OBSY(:,:)
-    LOGICAL               :: GLOBAL
+    INTEGER                 :: NX, NY, NSEA
+    INTEGER,        POINTER :: MASK(:,:)
+    REAL                    :: X0, Y0, SX, SY
+    REAL,           POINTER :: ZBIN(:,:), OBSX(:,:), OBSY(:,:)
+    LOGICAL                 :: GLOBAL
   END TYPE PART_GRID
   !
   TYPE(STATS_GRID), POINTER :: GSTATS(:), GSTOLD(:)
   TYPE(STATS_MEAN)          :: MSTATS   , MSTOLD
-  TYPE(PART_GRID), POINTER  :: PGRID(:)
+  TYPE(PART_GRID),  POINTER :: PGRID(:)
   !/
   !/ ------------------------------------------------------------------- /
   !/
@@ -1326,12 +1326,12 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: NOCNT, NOCNTM, NOCNTL, NGC, NSEAC
+    INTEGER       :: NOCNT, NOCNTM, NOCNTL, NGC, NSEAC
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: SUMSQR
-    LOGICAL                 :: LEFT, RIGHT, THERE
+    REAL          :: SUMSQR
+    LOGICAL       :: LEFT, RIGHT, THERE
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -1690,15 +1690,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: NMIN, I, NDEPTH, NITT, NADD, IXL, IXR,&
-         NLEFT, NRIGHT, NXL, NXH, NYL, NYH
-    INTEGER                 :: NXYOFF = 3
-    INTEGER                 :: IIX(NSEA), IIY(NSEA), ISEA, NSEAL
+    INTEGER       :: NMIN, I, NDEPTH, NITT, NADD, IXL, IXR
+    INTEGER       :: NLEFT, NRIGHT, NXL, NXH, NYL, NYH
+    INTEGER       :: NXYOFF = 3
+    INTEGER       :: IIX(NSEA), IIY(NSEA), ISEA, NSEAL
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    LOGICAL                 :: DONE(NG), MASK(NY,NX), FLOST(NG),     &
-         XFL(NX), YFL(NY)
+    LOGICAL       :: DONE(NG), MASK(NY,NX), FLOST(NG)
+    LOGICAL       :: XFL(NX), YFL(NY)
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -2159,10 +2159,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: NX0, NXN, IXL, IXH, COUNT(-1:NG),    &
-         INEW1, INEW2, INEW
+    INTEGER       :: NX0, NXN, IXL, IXH, COUNT(-1:NG)
+    INTEGER       :: INEW1, INEW2, INEW
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -2333,16 +2333,16 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IPAVG, IPCHCK, ID, IPTOT, IX, IY,    &
-         IXL, IYL, IDL, JX, JY, KY, IPT,      &
-         IXH, IYH, I, J, K, L, IMIN, LMIN
+    INTEGER              :: IPAVG, IPCHCK, ID, IPTOT, IX, IY
+    INTEGER              :: IXL, IYL, IDL, JX, JY, KY, IPT
+    INTEGER              :: IXH, IYH, I, J, K, L, IMIN, LMIN
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE        :: IENT = 0
 #endif
-    INTEGER                 :: GMASK(NY,NX), IIX(NSEA), IIY(NSEA)
-    INTEGER, ALLOCATABLE    :: PMAP(:), INGRD(:)
-    LOGICAL                 :: PREV
-    LOGICAL,ALLOCATABLE     :: FLNEXT(:), NEXTTO(:,:)
+    INTEGER              :: GMASK(NY,NX), IIX(NSEA), IIY(NSEA)
+    INTEGER, ALLOCATABLE :: PMAP(:), INGRD(:)
+    LOGICAL              :: PREV
+    LOGICAL,ALLOCATABLE  :: FLNEXT(:), NEXTTO(:,:)
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -2668,9 +2668,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: NSMALL, IGMIN(NG), NNEXT, JG, IGADD, &
-         IGTEST, FREE(NG), NFREE, NBIG, IGB,  &
-         MX, MY, NX0, NXN, NY0, NYN, JX
+    INTEGER                 :: NSMALL, IGMIN(NG), NNEXT, JG, IGADD
+    INTEGER                 :: IGTEST, FREE(NG), NFREE, NBIG, IGB
+    INTEGER                 :: MX, MY, NX0, NXN, NY0, NYN, JX
 #ifdef W3_T5
     INTEGER                 :: NXNT
 #endif
@@ -3111,14 +3111,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: NIT, IIT,  IXL, IXH, IYL, IYH, NOCNT,&
-         NOCNTM, NOCNTL, JX, JY, ISEA, MX, MY
-    INTEGER                 :: MTMP2(NY,NX)
+    INTEGER       :: NIT, IIT,  IXL, IXH, IYL, IYH, NOCNT
+    INTEGER       :: NOCNTM, NOCNTL, JX, JY, ISEA, MX, MY
+    INTEGER       :: MTMP2(NY,NX)
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: XOFF
-    LOGICAL                 :: MASK(NY,NX), LEFT, RIGHT, THERE
+    REAL          :: XOFF
+    LOGICAL       :: MASK(NY,NX), LEFT, RIGHT, THERE
     !/
     !/ ------------------------------------------------------------------- /
     !/

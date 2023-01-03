@@ -268,20 +268,20 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    INTEGER                 :: ISEA, IX, IY
+    INTEGER         :: ISEA, IX, IY
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE   :: IENT = 0
 #endif
-    REAL                    :: D0, DN, DD, DT0N, DT0T, RD, CABS, CDIR
+    REAL            :: D0, DN, DD, DT0N, DT0T, RD, CABS, CDIR
 #ifdef W3_CRT2
-    REAL                    :: RD2, CI2
+    REAL            :: RD2, CI2
 #endif
 #ifdef W3_TIDE
-    INTEGER          :: J,K
-    INTEGER(KIND=4)  :: TIDE_KD0, INT24, INTDYS       ! "Gregorian day constant"
-    REAL             :: WCURTIDEX, WCURTIDEY, TIDE_ARGX, TIDE_ARGY
-    REAL(KIND=8)     :: d1,h,TIDE_HOUR,HH,pp,s,p,enp,dh,dpp,ds,dp,dnp,tau
-    REAL             :: FX(44),UX(44),VX(44)
+    INTEGER         :: J,K
+    INTEGER(KIND=4) :: TIDE_KD0, INT24, INTDYS       ! "Gregorian day constant"
+    REAL            :: WCURTIDEX, WCURTIDEY, TIDE_ARGX, TIDE_ARGY
+    REAL(KIND=8)    :: d1,h,TIDE_HOUR,HH,pp,s,p,enp,dh,dpp,ds,dp,dnp,tau
+    REAL            :: FX(44),UX(44),VX(44)
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -601,19 +601,19 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    INTEGER                 :: ISEA, IX, IY
+    INTEGER       :: ISEA, IX, IY
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: D0, DN, DD, DT0N, DT0T, RD, UI2,      &
-         UXR, UYR
+    REAL          :: D0, DN, DD, DT0N, DT0T, RD, UI2
+    REAL          :: UXR, UYR
 #ifdef W3_WNT2
-    REAL                    :: RD2
+    REAL          :: RD2
 #endif
 #ifdef W3_STAB2
-    REAL                    :: STAB0, STAB, THARG1, THARG2, COR1, COR2
+    REAL          :: STAB0, STAB, THARG1, THARG2, COR1, COR2
 #endif
-    REAL                    :: UDARC
+    REAL          :: UDARC
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -912,16 +912,16 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    INTEGER                 :: ISEA, IX, IY
+    INTEGER       :: ISEA, IX, IY
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: D0, DN, DD, DT0N, DT0T, RD, MI2,      &
-         MXR, MYR
+    REAL          :: D0, DN, DD, DT0N, DT0T, RD, MI2
+    REAL          :: MXR, MYR
 #ifdef W3_WNT2
-    REAL                    :: RD2
+    REAL          :: RD2
 #endif
-    REAL                    :: MDARC
+    REAL          :: MDARC
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -1141,23 +1141,23 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local variables
     !/
-    INTEGER                 :: IX, IY, ISEA, JSEA, IK, ITH, ISPROC
+    INTEGER       :: IX, IY, ISEA, JSEA, IK, ITH, ISPROC
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 #ifdef W3_T
-    INTEGER                 :: IX0, IXN, MAPOUT(NX,NY)
-    INTEGER                 :: NXP = 60
+    INTEGER       :: IX0, IXN, MAPOUT(NX,NY)
+    INTEGER       :: NXP = 60
 #endif
-    REAL                    :: ALFA(NSEAL), FP(NSEAL), YLN(NSEAL),  &
-         AA, BB, CC
-    REAL                    :: XGR, U10C, U10DIR, XSTAR, FSTAR,     &
-         GAMMA, FR, D1(NTH), D1INT, F1, F2
-    REAL                    :: ETOT, E1I
-    REAL                    :: U10MIN =  1.
-    REAL                    :: U10MAX = 20.
+    REAL          :: ALFA(NSEAL), FP(NSEAL), YLN(NSEAL)
+    REAL          :: AA, BB, CC
+    REAL          :: XGR, U10C, U10DIR, XSTAR, FSTAR
+    REAL          :: GAMMA, FR, D1(NTH), D1INT, F1, F2
+    REAL          :: ETOT, E1I
+    REAL          :: U10MIN =  1.
+    REAL          :: U10MAX = 20.
 #ifdef W3_T
-    REAL                    :: HSIG(NX,NY)
+    REAL          :: HSIG(NX,NY)
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -1395,16 +1395,16 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    INTEGER                 :: IBI, ISP, ISEA
+    INTEGER       :: IBI, ISP, ISEA
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 #ifdef W3_T0
-    REAL                    :: HS1, HS2
+    REAL          :: HS1, HS2
 #endif
 #ifdef W3_RTD
     !!    Declare a temporary spectr variable.  JGLi12Jun2012
-    REAL :: Spectr(NSPEC), AnglBP
+    REAL          :: Spectr(NSPEC), AnglBP
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -1849,12 +1849,12 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    INTEGER                 :: ISEA, JSEA, IX, IY
+    INTEGER       :: ISEA, JSEA, IX, IY
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    INTEGER                 :: MAPICE(NY,NX), ISPROC
-    LOGICAL                 :: LOCAL
+    INTEGER       :: MAPICE(NY,NX), ISPROC
+    LOGICAL       :: LOCAL
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -2132,30 +2132,30 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    INTEGER                 :: ISEA, JSEA, IX, IY, IK, I1, I2,      &
-         ISPEC, IK0, ITH
+    INTEGER         :: ISEA, JSEA, IX, IY, IK, I1, I2
+    INTEGER         :: ISPEC, IK0, ITH
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE   :: IENT = 0
 #endif
-    INTEGER                 :: MAPDRY(NY,NX), ISPROC
-    REAL                    :: DWO(NSEA), KDCHCK, WNO(0:NK+1),      &
-         CGO(0:NK+1), DEPTH,                  &
-         RDK, RD1, RD2, TA(NTH,NK),           &
-         OWN(NK), DWN(NK)
-    REAL                    :: KDMAX = 4., RDKMIN = 0.05
-    REAL                    :: WLVeff
+    INTEGER         :: MAPDRY(NY,NX), ISPROC
+    REAL            :: DWO(NSEA), KDCHCK, WNO(0:NK+1)
+    REAL            :: CGO(0:NK+1), DEPTH
+    REAL            :: RDK, RD1, RD2, TA(NTH,NK)
+    REAL            :: OWN(NK), DWN(NK)
+    REAL            :: KDMAX = 4., RDKMIN = 0.05
+    REAL            :: WLVeff
 #ifdef W3_T3
-    REAL                    :: OUT(NK,NTH)
+    REAL            :: OUT(NK,NTH)
 #endif
-    LOGICAL                 :: LOCAL
-    INTEGER                 :: IBELONG
+    LOGICAL         :: LOCAL
+    INTEGER         :: IBELONG
     !
 #ifdef W3_TIDE
-    INTEGER          :: J
-    INTEGER(KIND=4)  :: TIDE_KD0, INT24, INTDYS       ! "Gregorian day constant"
-    REAL             :: WLEVTIDE, TIDE_ARG, WLEVTIDE2(1)
-    REAL(KIND=8)     :: d1,h,TIDE_HOUR,HH,pp,s,p,enp,dh,dpp,ds,dp,dnp,tau
-    REAL             :: FX(44),UX(44),VX(44)
+    INTEGER         :: J
+    INTEGER(KIND=4) :: TIDE_KD0, INT24, INTDYS       ! "Gregorian day constant"
+    REAL            :: WLEVTIDE, TIDE_ARG, WLEVTIDE2(1)
+    REAL(KIND=8)    :: d1,h,TIDE_HOUR,HH,pp,s,p,enp,dh,dpp,ds,dp,dnp,tau
+    REAL            :: FX(44),UX(44),VX(44)
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -2630,11 +2630,11 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    INTEGER                 :: ISEA, IX, IY
+    INTEGER       :: ISEA, IX, IY
 #ifdef W3_S
-    INTEGER, SAVE            :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: DT0N, DT0T, RD
+    REAL          :: DT0N, DT0T, RD
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -2811,18 +2811,18 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !/
-    INTEGER                 :: ISEA, IX, IY, IXY, IXN, IXP, IYN, IYP
+    INTEGER       :: ISEA, IX, IY, IXY, IXN, IXP, IYN, IYP
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 #ifdef W3_T
-    INTEGER                 :: ILEV, NLEV
+    INTEGER       :: ILEV, NLEV
 #endif
 
-    REAL                    :: TRIX(NY*NX), TRIY(NY*NX), DX, DY,    &
-         LICE0, LICEN
+    REAL          :: TRIX(NY*NX), TRIY(NY*NX), DX, DY
+    REAL          :: LICE0, LICEN
 #ifdef W3_T
-    REAL                    :: LEVS(0:10)
+    REAL          :: LEVS(0:10)
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -3232,21 +3232,22 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: ISEA, IX, IY, IXP, IXM, IYP, IYM
+
+    INTEGER       :: ISEA, IX, IY, IXP, IXM, IYP, IYM
 #ifdef W3_T
-    INTEGER                 :: ISX, ISY, MAPOUT(NX,NY)
+    INTEGER       :: ISX, ISY, MAPOUT(NX,NY)
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 #ifdef W3_T
-    INTEGER, SAVE           :: NXS = 49
+    INTEGER, SAVE :: NXS = 49
 #endif
-    REAL                    :: DFAC , STX, STY
-    INTEGER                 :: IXPS,IYPS,IXMS,IYMS,IXTRPL,IXTRPLS
-    INTEGER                 :: IXSTART,IXEND
+    REAL          :: DFAC , STX, STY
+    INTEGER       :: IXPS,IYPS,IXMS,IYMS,IXTRPL,IXTRPLS
+    INTEGER       :: IXSTART,IXEND
 #ifdef W3_T
-    REAL                    :: XOUT(NX,NY)
+    REAL          :: XOUT(NX,NY)
 #endif
     !/
     !/ ------------------------------------------------------------------- /

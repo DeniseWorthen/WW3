@@ -232,54 +232,54 @@ PROGRAM W3PREP
   !/ ------------------------------------------------------------------- /
   !/ Local parameters
   !/
-  INTEGER                 :: NDSI, NDSM, NDSDAT, NDSTRC, NTRACE,  &
-       IERR, IFLD, ITYPE, J, IX, IY, NFCOMP,&
-       TIME(2), NXI, NYI, NXJ(2), NYJ(2),   &
-       NDSLL, IDLALL, IDFMLL, NDSF(2),      &
-       IDLAF(2), IDFMF(2), TIME2(2),        &
-       MXM, MYM, DATTYP, RECLDT, IDAT,      &
-       NDAT, JJ, IS(4), JS(4)
-  INTEGER                 :: NXT, NYT
-  INTEGER                 :: ILAND = -999
+  INTEGER              :: NDSI, NDSM, NDSDAT, NDSTRC, NTRACE
+  INTEGER              :: IERR, IFLD, ITYPE, J, IX, IY, NFCOMP
+  INTEGER              :: TIME(2), NXI, NYI, NXJ(2), NYJ(2)
+  INTEGER              :: NDSLL, IDLALL, IDFMLL, NDSF(2)
+  INTEGER              :: IDLAF(2), IDFMF(2), TIME2(2)
+  INTEGER              :: MXM, MYM, DATTYP, RECLDT, IDAT
+  INTEGER              :: NDAT, JJ, IS(4), JS(4)
+  INTEGER              :: NXT, NYT
+  INTEGER              :: ILAND = -999
 #ifdef W3_O15
-  INTEGER                 :: NDSTIME
+  INTEGER              :: NDSTIME
 #endif
-  INTEGER, ALLOCATABLE    :: IX21(:,:), IX22(:,:),                &
-       IY21(:,:), IY22(:,:),                &
-       JX21(:,:), JX22(:,:),                &
-       JY21(:,:), JY22(:,:), MAPOVR(:,:)
-  INTEGER, ALLOCATABLE    :: MASK(:,:)
-  TYPE(T_GSU)             :: GSI
+  INTEGER, ALLOCATABLE :: IX21(:,:), IX22(:,:)
+  INTEGER, ALLOCATABLE :: IY21(:,:), IY22(:,:)
+  INTEGER, ALLOCATABLE :: JX21(:,:), JX22(:,:)
+  INTEGER, ALLOCATABLE :: JY21(:,:), JY22(:,:), MAPOVR(:,:)
+  INTEGER, ALLOCATABLE :: MASK(:,:)
+  TYPE(T_GSU)          :: GSI
 #ifdef W3_S
-  INTEGER, SAVE           :: IENT = 0
+  INTEGER, SAVE        :: IENT = 0
 #endif
 #ifdef W3_T2
-  INTEGER                 :: IXP0, IXPN, IXPWDT = 60
+  INTEGER              :: IXP0, IXPN, IXPWDT = 60
 #endif
 #ifdef W3_T3
-  INTEGER                 :: IX0, IXN, IXWDT = 60
-  INTEGER, ALLOCATABLE    :: MAPOUT(:,:)
+  INTEGER              :: IX0, IXN, IXWDT = 60
+  INTEGER, ALLOCATABLE :: MAPOUT(:,:)
 #endif
-  REAL                    :: X0I, XNI, Y0I, YNI, SXI, SYI,        &
-       X, Y, FACTOR, EFAC, NODATA, RW(4)
-  REAL                    :: ACC = 0.05
-  REAL, ALLOCATABLE       :: RD11(:,:), RD21(:,:),                &
-       RD12(:,:), RD22(:,:),                &
-       XD11(:,:), XD21(:,:),                &
-       XD12(:,:), XD22(:,:),                &
-       FX(:,:), FY(:,:), FA(:,:),           &
-       A1(:,:), A2(:,:), A3(:,:)
-  REAL, POINTER           :: ALA(:,:), ALO(:,:)
-  REAL, ALLOCATABLE       :: XC(:,:), YC(:,:), AC(:,:), DATA(:,:)
-  LOGICAL                 :: INGRID
-  LOGICAL                 :: FLSTAB, FLBERG, CLO(2), FLTIME, FLHDR
-  INTEGER                 :: ICLO
+  REAL                 :: X0I, XNI, Y0I, YNI, SXI, SYI
+  REAL                 :: X, Y, FACTOR, EFAC, NODATA, RW(4)
+  REAL                 :: ACC = 0.05
+  REAL,    ALLOCATABLE :: RD11(:,:), RD21(:,:)
+  REAL,    ALLOCATABLE :: RD12(:,:), RD22(:,:)
+  REAL,    ALLOCATABLE :: XD11(:,:), XD21(:,:)
+  REAL,    ALLOCATABLE :: XD12(:,:), XD22(:,:)
+  REAL,    ALLOCATABLE :: FX(:,:), FY(:,:), FA(:,:)
+  REAL,    ALLOCATABLE :: A1(:,:), A2(:,:), A3(:,:)
+  REAL, POINTER        :: ALA(:,:), ALO(:,:)
+  REAL,    ALLOCATABLE :: XC(:,:), YC(:,:), AC(:,:), DATA(:,:)
+  LOGICAL              :: INGRID
+  LOGICAL              :: FLSTAB, FLBERG, CLO(2), FLTIME, FLHDR
+  INTEGER              :: ICLO
 #ifdef W3_T
-  LOGICAL                 :: FLMOD
+  LOGICAL              :: FLMOD
 #endif
-  CHARACTER               :: COMSTR*1, IDFLD*3, IDTYPE*2,         &
-       IDTIME*23, FROMLL*4, FORMLL*16,      &
-       NAMELL*65, FROMF*4, NAMEF*65
+  CHARACTER            :: COMSTR*1, IDFLD*3, IDTYPE*2
+  CHARACTER            :: IDTIME*23, FROMLL*4, FORMLL*16
+  CHARACTER               :: NAMELL*65, FROMF*4, NAMEF*65
   CHARACTER(LEN=12)       :: IDSTR1(-7:7)
   CHARACTER(LEN=15)       :: IDSTR3(3)
   CHARACTER(LEN=32)       :: FORMT(2), FORMF(2)

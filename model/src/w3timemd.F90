@@ -393,10 +393,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: NY1, ND1, NY2, ND2, NS1, NS2, NS,   &
-         ND, NST
+    INTEGER       :: NY1, ND1, NY2, ND2, NS1, NS2, NS
+    INTEGER       :: ND, NST
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /

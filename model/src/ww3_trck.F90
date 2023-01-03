@@ -90,27 +90,26 @@ PROGRAM W3TRCK
   !/ ------------------------------------------------------------------- /
   !/ Local parameters
   !/
-  CHARACTER*34, PARAMETER ::                                      &
-       IDTST  = 'WAVEWATCH III TRACK OUTPUT SPECTRA'
+  CHARACTER*34, PARAMETER :: IDTST  = 'WAVEWATCH III TRACK OUTPUT SPECTRA'
   !
-  INTEGER                 :: NDSI, NDSINP,                        &
-       NDSOUT, NDSTRC, NTRACE, NK, NTH,     &
-       NSPEC, IERR, MK, MTH,                &
-       NREC, ILOC, ISPEC, TIME(2), TTST(2), &
-       ILAST, NZERO, IK, ITH, IWZERO, ICH,  &
-       IWDTH, J
+  INTEGER                 :: NDSI, NDSINP
+  INTEGER                 :: NDSOUT, NDSTRC, NTRACE, NK, NTH
+  INTEGER                 :: NSPEC, IERR, MK, MTH
+  INTEGER                 :: NREC, ILOC, ISPEC, TIME(2), TTST(2)
+  INTEGER                 :: ILAST, NZERO, IK, ITH, IWZERO, ICH
+  INTEGER                 :: IWDTH, J
 #ifdef W3_S
-  INTEGER, SAVE           :: IENT   = 0
+  INTEGER, SAVE           :: IENT = 0
 #endif
   INTEGER                 :: LINELN = 81
-  REAL                    :: TH1, DTH, X, Y, DW, CX, CY, WX, WY,  &
-       UST, AS, VALUE
-  REAL                    :: SCALE  = 0.001
+  REAL                    :: TH1, DTH, X, Y, DW, CX, CY, WX, WY
+  REAL                    :: UST, AS, VALUE
+  REAL                    :: SCALE = 0.001
   REAL                    :: FACTOR
   REAL, ALLOCATABLE       :: SIG(:), DSIP(:), SPEC(:,:)
-  CHARACTER               :: COMSTR*1, IDSTR*34, TSTSTR*3,        &
-       STIME*23, STRING*81, EMPTY*81,       &
-       PART*9, ZEROS*9, TRCKID*32
+  CHARACTER               :: COMSTR*1, IDSTR*34, TSTSTR*3
+  CHARACTER               :: STIME*23, STRING*81, EMPTY*81
+  CHARACTER               :: PART*9, ZEROS*9, TRCKID*32
   !
   DATA EMPTY(01:40) / '                                        ' /
   DATA EMPTY(41:81) / '                                         ' /

@@ -53,60 +53,60 @@ MODULE CONSTANTS
   !     ----------------------------------------------------------------
   !/ ------------------------------------------------------------------- /
   !/
-  LOGICAL, PARAMETER :: TSTOUT = .FALSE. !< TSTOUT Flag for generation of test files.
-  !        The flag for generating test output files is included here as
-  !        it is needed in both ww3_shel and ww3_multi at the same time.
-  !        Make sure that this flag is true if you want to write to the
-  !        test output file !
-  REAL, PARAMETER :: GRAV = 9.806 !< GRAV Acc. of gravity (m/s2).
-  REAL, PARAMETER :: DWAT = 1000. !< DWAT Density of water (kg/m3).
-  REAL, PARAMETER :: DAIR = 1.225 !< DAIR Density of air (kg/m3).
-  REAL, PARAMETER :: NU_AIR = 1.4E-5 !< NU_AIR Kinematic viscosity of air (m2/s).
+  LOGICAL,       PARAMETER :: TSTOUT = .FALSE.                   !< TSTOUT Flag for generation of test files.
+                                                                 ! The flag for generating test output files is included here as
+                                                                 ! it is needed in both ww3_shel and ww3_multi at the same time.
+                                                                 ! Make sure that this flag is true if you want to write to the
+                                                                 ! test output file !
+  REAL,          PARAMETER :: GRAV = 9.806                       !< GRAV Acc. of gravity (m/s2).
+  REAL,          PARAMETER :: DWAT = 1000.                       !< DWAT Density of water (kg/m3).
+  REAL,          PARAMETER :: DAIR = 1.225                       !< DAIR Density of air (kg/m3).
+  REAL,          PARAMETER :: NU_AIR = 1.4E-5                    !< NU_AIR Kinematic viscosity of air (m2/s).
   !mdo  *** Changing nu_water to be consistent with DWAT=1000 (assumes 10degC)
   !mdo   WAS: 3.E-6
-  REAL, PARAMETER :: NU_WATER = 1.31E-6 !< NU_WATER Kinematic viscosity of water (m2/s).
-  REAL, PARAMETER :: SED_SG = 2.65 !< SED_SG Specific gravity of sediments (N.D.).
-  REAL, PARAMETER :: KAPPA = 0.40 !< KAPPA von Karman's constant (N.D.).
+  REAL,          PARAMETER :: NU_WATER = 1.31E-6                 !< NU_WATER Kinematic viscosity of water (m2/s).
+  REAL,          PARAMETER :: SED_SG = 2.65                      !< SED_SG Specific gravity of sediments (N.D.).
+  REAL,          PARAMETER :: KAPPA = 0.40                       !< KAPPA von Karman's constant (N.D.).
   !
-  REAL, PARAMETER :: PI = 3.141592653589793 !< PI Value of Pi.
-  REAL, PARAMETER :: TPI = 2.0 * PI !< TPI 2*Pi.
-  REAL, PARAMETER :: HPI = 0.5 * PI !< HPI 1/2*Pi.
-  REAL, PARAMETER :: TPIINV = 1. / TPI !< TPIINV Inverse of 2*Pi.
-  REAL, PARAMETER :: HPIINV = 1. / HPI !< HPIINV Inverse of 1/2*Pi.
-  REAL, PARAMETER :: RADE = 180. / PI !< RADE Conversion factor from radians to degrees.
-  REAL, PARAMETER :: DERA = PI / 180. !< DERA Conversion factor from degrees to radians.
+  REAL,          PARAMETER :: PI = 3.141592653589793             !< PI Value of Pi.
+  REAL,          PARAMETER :: TPI = 2.0 * PI                     !< TPI 2*Pi.
+  REAL,          PARAMETER :: HPI = 0.5 * PI                     !< HPI 1/2*Pi.
+  REAL,          PARAMETER :: TPIINV = 1. / TPI                  !< TPIINV Inverse of 2*Pi.
+  REAL,          PARAMETER :: HPIINV = 1. / HPI                  !< HPIINV Inverse of 1/2*Pi.
+  REAL,          PARAMETER :: RADE = 180. / PI                   !< RADE Conversion factor from radians to degrees.
+  REAL,          PARAMETER :: DERA = PI / 180.                   !< DERA Conversion factor from degrees to radians.
   !
-  REAL, PARAMETER :: RADIUS = 4.E7 * TPIINV !< RADIUS Radius of the earth (m).
+  REAL,          PARAMETER :: RADIUS = 4.E7 * TPIINV             !< RADIUS Radius of the earth (m).
   !
-  REAL, PARAMETER :: G2PI3I = 1. / ( GRAV**2 * TPI**3 ) !< G2PI3I Inverse of gravity^2 * (2*Pi)^3.
-  REAL, PARAMETER :: G1PI1I = 1. / ( GRAV * TPI ) !< G1PI1I Inverse of gravity * 2 * Pi.
+  REAL,          PARAMETER :: G2PI3I = 1. / ( GRAV**2 * TPI**3 ) !< G2PI3I Inverse of gravity^2 * (2*Pi)^3.
+  REAL,          PARAMETER :: G1PI1I = 1. / ( GRAV * TPI )       !< G1PI1I Inverse of gravity * 2 * Pi.
   !
-  REAL            :: UNDEF = -999.9 !< UNDEF Value for undefined variable in output.
+  REAL                     :: UNDEF = -999.9                     !< UNDEF Value for undefined variable in output.
 
-  CHARACTER(*), PARAMETER :: FILE_ENDIAN = ENDIANNESS !< FILE_ENDIAN Filled by preprocessor with 'big_endian',
-  !< 'little_endian', or 'native'.
+  CHARACTER(*),  PARAMETER :: FILE_ENDIAN = ENDIANNESS           !< FILE_ENDIAN Filled by preprocessor with 'big_endian',
+                                                                 !< 'little_endian', or 'native'.
   !
-  ! Parameters for friction factor table
+  !              Parameters for friction factor table
   !
-  INTEGER, PARAMETER :: SIZEFWTABLE=300 !< SIZEFWTABLE
-  REAL            :: FWTABLE(0:SIZEFWTABLE) !< FWTABLE
-  REAL            :: DELAB !< DELAB
-  REAL, PARAMETER :: ABMIN = -1. !< ABMIN
-  REAL, PRIVATE, PARAMETER :: ABMAX = 8. !< ABMAX
-  INTEGER, PARAMETER :: srce_direct = 0  !< srce_direct
-  INTEGER, PARAMETER :: srce_imp_post = 1 !< srce_imp_post
-  INTEGER, PARAMETER :: srce_imp_pre = 2 !< srce_imp_pre
-  INTEGER, PARAMETER :: DEBUG_NODE = 1014 !< DEBUG_NODE Node number used for debugging.
-  INTEGER, PARAMETER :: DEBUG_ELEMENT = 50 !< DEBUG_ELEMENT Element number used for debug.
-  LOGICAL            :: LPDLIB = .FALSE. !< LPDLIB Logical for using the PDLIB library.
-  LOGICAL            :: LSETUP = .FALSE. !< LSETUP Logical LSETUP is not used.
+  INTEGER,       PARAMETER :: SIZEFWTABLE=300                    !< SIZEFWTABLE
+  REAL                     :: FWTABLE(0:SIZEFWTABLE)             !< FWTABLE
+  REAL                     :: DELAB                              !< DELAB
+  REAL,          PARAMETER :: ABMIN = -1.                        !< ABMIN
+  REAL, PRIVATE, PARAMETER :: ABMAX = 8.                         !< ABMAX
+  INTEGER,       PARAMETER :: srce_direct = 0                    !< srce_direct
+  INTEGER,       PARAMETER :: srce_imp_post = 1                  !< srce_imp_post
+  INTEGER,       PARAMETER :: srce_imp_pre = 2                   !< srce_imp_pre
+  INTEGER,       PARAMETER :: DEBUG_NODE = 1014                  !< DEBUG_NODE Node number used for debugging.
+  INTEGER,       PARAMETER :: DEBUG_ELEMENT = 50                 !< DEBUG_ELEMENT Element number used for debug.
+  LOGICAL                  :: LPDLIB = .FALSE.                   !< LPDLIB Logical for using the PDLIB library.
+  LOGICAL                  :: LSETUP = .FALSE.                   !< LSETUP Logical LSETUP is not used.
   !
   ! Parameters in support of running as ESMF component
   !
   ! --- Flag indicating whether or not the model has been invoked as an
   !     ESMF Component.  This flag is set to true in the WMESMFMD ESMF
   !     module during initialization.
-  LOGICAL :: IS_ESMF_COMPONENT = .FALSE. !< IS_ESMF_COMPONENT Flag for model invoked via ESMF.
+  LOGICAL :: IS_ESMF_COMPONENT = .FALSE.                         !< IS_ESMF_COMPONENT Flag for model invoked via ESMF.
   !
 CONTAINS
   ! ----------------------------------------------------------------------
@@ -177,9 +177,9 @@ CONTAINS
     REAL   , PARAMETER      :: XM=0.50
     REAL   , PARAMETER      :: EPS1=0.00001
     ! ----------------------------------------------------------------------
-    INTEGER I,ITER
-    REAL KER, KEI
-    REAL ABR,ABRLOG,L10,FACT,FSUBW,FSUBWMEMO,dzeta0,dzeta0memo
+    INTEGER :: I,ITER
+    REAL    :: KER, KEI
+    REAL    :: ABR,ABRLOG,L10,FACT,FSUBW,FSUBWMEMO,dzeta0,dzeta0memo
     !
     DELAB   = (ABMAX-ABMIN)/REAL(SIZEFWTABLE)
     L10=ALOG(10.)
@@ -260,17 +260,17 @@ CONTAINS
     ! ACM Libraries
     ! ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     IMPLICIT NONE
-    DOUBLE PRECISION X, Y, X2, Y2, RE0, IM0, RE1, IM1, &
-         R1, R2, T1, T2, P1, P2, RTERM, ITERM, L
-    DOUBLE PRECISION , PARAMETER, DIMENSION(8) :: EXSQ = &
+    DOUBLE PRECISION :: X, Y, X2, Y2, RE0, IM0, RE1, IM1
+    DOUBLE PRECISION :: R1, R2, T1, T2, P1, P2, RTERM, ITERM, L
+    DOUBLE PRECISION, PARAMETER, DIMENSION(8) :: EXSQ = &
          (/ 0.5641003087264D0,0.4120286874989D0,0.1584889157959D0, &
          0.3078003387255D-1,0.2778068842913D-2,0.1000044412325D-3, &
          0.1059115547711D-5,0.1522475804254D-8 /)
-    DOUBLE PRECISION , PARAMETER, DIMENSION(8) :: TSQ = &
+    DOUBLE PRECISION, PARAMETER, DIMENSION(8) :: TSQ = &
          (/ 0.0D0,3.19303633920635D-1,1.29075862295915D0, &
          2.95837445869665D0,5.40903159724444D0,8.80407957805676D0, &
          1.34685357432515D1,2.02499163658709D1 /)
-    INTEGER N,M,K
+    INTEGER :: N,M,K
     ! THE ARRAYS TSQ AND EXSQ CONTAIN THE SQUARE OF THE
     ! ABSCISSAS AND THE WEIGHT FACTORS USED IN THE GAUSS-
     ! HERMITE QUADRATURE.
@@ -429,8 +429,8 @@ CONTAINS
     !**********************************************************************
     IMPLICIT NONE
 
-    DOUBLE PRECISION ZR,ZI,CYR,CYI,CYR1,CYI1
-    REAL X,KER,KEI
+    DOUBLE PRECISION :: ZR,ZI,CYR,CYI,CYR1,CYI1
+    REAL             :: X,KER,KEI
 
     ZR=X*.50D0*SQRT(2.0D0)
     ZI=ZR

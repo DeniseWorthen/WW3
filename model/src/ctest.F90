@@ -24,7 +24,7 @@ SUBROUTINE CTEST
   !/ ------------------------------------------------------------------- /
   IMPLICIT NONE
   !
-  INTEGER IENT0, IENT1
+  INTEGER :: IENT0, IENT1
   !
   ! The next line MIGHT generate a warning, depending on the compiler
   !

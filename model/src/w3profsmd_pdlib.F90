@@ -215,17 +215,17 @@ CONTAINS
     !/
     INTEGER, INTENT(in) :: IMOD
     !!      INCLUDE "mpif.h"
-    INTEGER :: istat
-    INTEGER :: I, J, IBND_MAP, ISEA, IP, IX, JSEA, nb
-    INTEGER :: IP_glob
-    INTEGER :: myrank, ierr, iproc
+    INTEGER              :: istat
+    INTEGER              :: I, J, IBND_MAP, ISEA, IP, IX, JSEA, nb
+    INTEGER              :: IP_glob
+    INTEGER              :: myrank, ierr, iproc
     INTEGER, ALLOCATABLE :: NSEAL_arr(:)
-    INTEGER :: IERR_MPI
-    INTEGER :: IScal(1)
-    INTEGER :: IK, ISP
-    INTEGER IK0, ISP0, ITH
-    REAL :: eSIG, eFR
-    REAL, PARAMETER :: COEF4 = 5.0E-7
+    INTEGER              :: IERR_MPI
+    INTEGER              :: IScal(1)
+    INTEGER              :: IK, ISP
+    INTEGER              :: IK0, ISP0, ITH
+    REAL                 :: eSIG, eFR
+    REAL, PARAMETER      :: COEF4 = 5.0E-7
 #ifdef W3_S
     CALL STRACE (IENT, 'PDLIB_INIT')
 #endif
@@ -1561,16 +1561,16 @@ CONTAINS
     LOGICAL,      INTENT(in) :: CheckUncovered
     LOGICAL,      INTENT(in) :: PrintFullValue
     !
-    REAL*8, allocatable :: Vcoll(:)
+    REAL*8,  allocatable :: Vcoll(:)
     INTEGER, allocatable :: Status(:)
-    REAL*8, allocatable :: ListVal(:)
+    REAL*8,  allocatable :: ListVal(:)
     INTEGER, allocatable :: ListIdx(:)
-    INTEGER singV(2)
-    REAL CoherencyError, eVal1, eVal2, eErr
-    INTEGER NSEAL_dist, maxidx_dist
-    INTEGER JSEA, ISEA, iProc, I, IX, ierr, ISP, IP, IP_glob
-    INTEGER nbIncorr, idx
-    INTEGER ITH, IK
+    INTEGER              :: singV(2)
+    REAL                 :: CoherencyError, eVal1, eVal2, eErr
+    INTEGER              :: NSEAL_dist, maxidx_dist
+    INTEGER              :: JSEA, ISEA, iProc, I, IX, ierr, ISP, IP, IP_glob
+    INTEGER              :: nbIncorr, idx
+    INTEGER              :: ITH, IK
 
     IF (IAPROC .gt. NAPROC) THEN
       RETURN
@@ -1826,10 +1826,12 @@ CONTAINS
 
     CHARACTER(*), INTENT(in) :: string
     INTEGER,      INTENT(in) :: choice
-    REAL :: FIELD(NSPEC,NSEAL)
-    INTEGER ISPEC, JSEA, maxidx
+
+    REAL    :: FIELD(NSPEC,NSEAL)
+    INTEGER :: ISPEC, JSEA, maxidx
     LOGICAL :: PrintMinISP = .FALSE.
     LOGICAL :: LocalizeMaximum = .FALSE.
+
     DO JSEA=1,NSEAL
       DO ISPEC=1,NSPEC
         FIELD(ISPEC,JSEA) = VAOLD(ISPEC,JSEA)
@@ -1899,12 +1901,14 @@ CONTAINS
     INTEGER,      INTENT(in) :: IMOD
     CHARACTER(*), INTENT(in) :: string
     INTEGER,      INTENT(in) :: choice
-    REAL :: FIELD(NSPEC,NSEAL)
-    INTEGER ISPEC, JSEA, IP_glob, maxidx
+
+    REAL    :: FIELD(NSPEC,NSEAL)
+    INTEGER :: ISPEC, JSEA, IP_glob, maxidx
     LOGICAL :: PrintMinISP = .FALSE.
     LOGICAL :: LocalizeMaximum = .FALSE.
     INTEGER :: TEST_IP = 46
     INTEGER :: TEST_ISP = 370
+
     IF (GRIDS(IMOD)%GTYPE .ne. UNGTYPE) THEN
       RETURN
     END IF
@@ -4828,13 +4832,13 @@ CONTAINS
 
     REAL, PARAMETER :: COEF4 = 5.0E-07
     REAL, PARAMETER :: FACDAM = 1
-    INTEGER :: JSEA, IP, IP_glob, ISEA
-    INTEGER :: IK, ITH, ISP, IS0
-    LOGICAL :: LBREAK
-    REAL ::  eSI, eVS, eVD, SIDT
-    REAL :: DEPTH, DAM(NSPEC), RATIO, MAXDAC, VSDB(NSPEC), VDDB(NSPEC)
-    REAL :: PreVS, eDam, DVS, FREQ, EMEAN, FMEAN, WNMEAN, AMAX, CG1(NK),WN1(NK),SPEC_VA(NSPEC)
-    REAL TheFactor
+    INTEGER         :: JSEA, IP, IP_glob, ISEA
+    INTEGER         :: IK, ITH, ISP, IS0
+    LOGICAL         :: LBREAK
+    REAL            ::  eSI, eVS, eVD, SIDT
+    REAL            :: DEPTH, DAM(NSPEC), RATIO, MAXDAC, VSDB(NSPEC), VDDB(NSPEC)
+    REAL            :: PreVS, eDam, DVS, FREQ, EMEAN, FMEAN, WNMEAN, AMAX, CG1(NK),WN1(NK),SPEC_VA(NSPEC)
+    REAL            :: TheFactor
 
     DO JSEA = 1, NP
 
@@ -4997,13 +5001,13 @@ CONTAINS
 
     REAL, PARAMETER :: COEF4 = 5.0E-07
     REAL, PARAMETER :: FACDAM = 1
-    INTEGER :: JSEA, IP, IP_glob, ISEA
-    INTEGER :: IK, ITH, ISP, IS0
-    LOGICAL :: LBREAK
-    REAL ::  eSI, eVS, eVD, SIDT
-    REAL :: DEPTH, DAM(NSPEC), RATIO, MAXDAC, VSDB(NSPEC), VDDB(NSPEC)
-    REAL :: PreVS, eDam, DVS, FREQ, EMEAN, FMEAN, WNMEAN, AMAX, CG1(NK),WN1(NK),SPEC_VA(NSPEC)
-    REAL TheFactor
+    INTEGER         :: JSEA, IP, IP_glob, ISEA
+    INTEGER         :: IK, ITH, ISP, IS0
+    LOGICAL         :: LBREAK
+    REAL            :: eSI, eVS, eVD, SIDT
+    REAL            :: DEPTH, DAM(NSPEC), RATIO, MAXDAC, VSDB(NSPEC), VDDB(NSPEC)
+    REAL            :: PreVS, eDam, DVS, FREQ, EMEAN, FMEAN, WNMEAN, AMAX, CG1(NK),WN1(NK),SPEC_VA(NSPEC)
+    REAL            :: TheFactor
 
     DO JSEA = 1, NP
 
@@ -5454,14 +5458,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/
     INTEGER :: MELIM = 1
-    REAL :: LIMFAK = 0.1
-    REAL :: CONST, SND, eWN, eWK, eWKpow
-    REAL :: eFact, eSPSIG
-    REAL :: NewVAL
-    REAL :: OLDAC, NEWAC, NEWDAC
-    REAL :: MAXDAC
-    REAL :: dac, limac, eDam
-    INTEGER IP_glob, ISEA
+    REAL    :: LIMFAK = 0.1
+    REAL    :: CONST, SND, eWN, eWK, eWKpow
+    REAL    :: eFact, eSPSIG
+    REAL    :: NewVAL
+    REAL    :: OLDAC, NEWAC, NEWDAC
+    REAL    :: MAXDAC
+    REAL    :: dac, limac, eDam
+    INTEGER :: IP_glob, ISEA
     INTEGER :: IK, ITH, ISP
     LOGICAL :: LLIMITER_WWM
 #ifdef W3_S
@@ -5598,56 +5602,54 @@ CONTAINS
     INTEGER, INTENT(IN) :: IMOD
     REAL,    INTENT(IN) :: FACX, FACY, DTG, VGX, VGY
     !
-    INTEGER :: IP, ISP, ITH, IK, JSEA, ISEA, IP_glob
-    INTEGER :: myrank
-    INTEGER :: nbIter, ISPnextDir, ISPprevDir
-    INTEGER :: ISPp1, ISPm1, JP, ICOUNT1, ICOUNT2
+    INTEGER            :: IP, ISP, ITH, IK, JSEA, ISEA, IP_glob
+    INTEGER            :: myrank
+    INTEGER            :: nbIter, ISPnextDir, ISPprevDir
+    INTEGER            :: ISPp1, ISPm1, JP, ICOUNT1, ICOUNT2
     ! for the exchange
-    REAL  :: CCOS, CSIN, CCURX, CCURY
-    REAL  :: eSum(NSPEC)
-    REAL  :: eA_THE, eC_THE, eA_SIG, eC_SIG, eSI
-    REAL  :: CAD(NSPEC), CAS(NSPEC), ACLOC(NSPEC)
-    REAL  :: CP_SIG(NSPEC), CM_SIG(NSPEC)
-    REAL  :: eFactM1, eFactP1
-    REAL*8  :: Sum_Prev, Sum_New, p_is_converged, DiffNew, prop_conv
-    REAL  :: Sum_L2, Sum_L2_GL
-    REAL  :: DMM(0:NK2)
-    REAL  :: eDiff(NSPEC), eProd(NSPEC)
-    REAL  :: DWNI_M2(NK), CWNB_M2(1-NTH:NSPEC)
-    REAL  :: VAnew(NSPEC), VFLWN(1-NTH:NSPEC)
-    REAL  :: VAAnew(1-NTH:NSPEC+NTH), VAAacloc(1-NTH:NSPEC+NTH)
-    REAL  :: VAinput(NSPEC), VAacloc(NSPEC), eDiffB(NSPEC),ASPAR_DIAG(NSPEC)
-    REAL  :: aspar_diag_local(nspec), aspar_off_diag_local(nspec), b_jac_local(nspec)
-    REAL  :: eDiffSing, eSumPart
-    REAL  :: eVal1, eVal2!, extmp(nspec,nseal)
-    REAL  :: eVA, CG2
-    REAL  :: CG1(0:NK+1), WN1(0:NK+1)
-    LOGICAL :: LCONVERGED(NSEAL), lexist
+    REAL               :: CCOS, CSIN, CCURX, CCURY
+    REAL               :: eSum(NSPEC)
+    REAL               :: eA_THE, eC_THE, eA_SIG, eC_SIG, eSI
+    REAL               :: CAD(NSPEC), CAS(NSPEC), ACLOC(NSPEC)
+    REAL               :: CP_SIG(NSPEC), CM_SIG(NSPEC)
+    REAL               :: eFactM1, eFactP1
+    REAL*8             :: Sum_Prev, Sum_New, p_is_converged, DiffNew, prop_conv
+    REAL               :: Sum_L2, Sum_L2_GL
+    REAL               :: DMM(0:NK2)
+    REAL               :: eDiff(NSPEC), eProd(NSPEC)
+    REAL               :: DWNI_M2(NK), CWNB_M2(1-NTH:NSPEC)
+    REAL               :: VAnew(NSPEC), VFLWN(1-NTH:NSPEC)
+    REAL               :: VAAnew(1-NTH:NSPEC+NTH), VAAacloc(1-NTH:NSPEC+NTH)
+    REAL               :: VAinput(NSPEC), VAacloc(NSPEC), eDiffB(NSPEC),ASPAR_DIAG(NSPEC)
+    REAL               :: aspar_diag_local(nspec), aspar_off_diag_local(nspec), b_jac_local(nspec)
+    REAL               :: eDiffSing, eSumPart
+    REAL               :: eVal1, eVal2!, extmp(nspec,nseal)
+    REAL               :: eVA, CG2
+    REAL               :: CG1(0:NK+1), WN1(0:NK+1)
+    LOGICAL            :: LCONVERGED(NSEAL), lexist
 #ifdef WEIGHTS
-    INTEGER :: ipiter(nseal), ipitergl(np_global), ipiterout(np_global)
+    INTEGER            :: ipiter(nseal), ipitergl(np_global), ipiterout(np_global)
 #endif
 #ifdef W3_DEBUGSRC
-    REAL :: IntDiff, eVA_w3srce, eVAsolve, SumACout
-    REAL :: SumVAin, SumVAout, SumVAw3srce, SumVS, SumVD, VS_w3srce
-    REAL    :: VAsolve(NSPEC)
-    REAL*8  :: ACsolve
-    REAL    :: eB
+    REAL               :: IntDiff, eVA_w3srce, eVAsolve, SumACout
+    REAL               :: SumVAin, SumVAout, SumVAw3srce, SumVS, SumVD, VS_w3srce
+    REAL               :: VAsolve(NSPEC)
+    REAL*8             :: ACsolve
+    REAL               :: eB
 #endif
 #ifdef W3_DEBUGSOLVERCOH
-    REAL :: TheARR(NSPEC, npa)
-    REAL :: PRE_VA(NSPEC, npa)
-    REAL :: OffDIAG(NSPEC, npa)
-    REAL*8 :: eOff(NSPEC)
-    REAL*8 :: eSum1(NSPEC), eSum2(NSPEC)
+    REAL               :: TheARR(NSPEC, npa)
+    REAL               :: PRE_VA(NSPEC, npa)
+    REAL               :: OffDIAG(NSPEC, npa)
+    REAL*8             :: eOff(NSPEC)
+    REAL*8             :: eSum1(NSPEC), eSum2(NSPEC)
 #endif
-    CHARACTER(len=128) eFile
-    INTEGER ierr, i
-    INTEGER JP_glob
-    INTEGER is_converged, itmp
-
-    integer :: testknoten = 923
-
-    LOGICAL :: LSIG = .FALSE.
+    CHARACTER(len=128) :: eFile
+    INTEGER            :: ierr, i
+    INTEGER            :: JP_glob
+    INTEGER            :: is_converged, itmp
+    integer            :: testknoten = 923
+    LOGICAL            :: LSIG = .FALSE.
 
     memunit = 50000+IAPROC
     !AR: this is missing in init ... but there is a design error in ww3_grid with FLCUR and FLLEV
@@ -6448,47 +6450,48 @@ CONTAINS
     INTEGER, INTENT(IN) :: IMOD
     REAL,    INTENT(IN) :: FACX, FACY, DTG, VGX, VGY
     !
-    INTEGER :: IP, ISP, ITH, IK, JSEA, ISEA, IP_glob, IE, IPOS
+    INTEGER            :: IP, ISP, ITH, IK, JSEA, ISEA, IP_glob, IE, IPOS
     ! for the exchange
-    REAL :: CCOS, CSIN, CCURX, CCURY
-    REAL  :: eSum(NSPEC)
-    INTEGER :: ITER_EXP(nspec)
-    INTEGER :: ISPp1, ISPm1, JP, I1, I2, I3, NI(3), IT
-    INTEGER, SAVE :: ITER_MAX
-    REAL  :: eFactM1, eFactP1
-    REAL  :: Sum_Prev, Sum_New
-    REAL  :: prop_conv, eSI, p_is_converged
-    REAL  :: Sum_L2, Sum_L2_GL
-    REAL  :: DMM(0:NK2)
-    REAL  :: DiffNew, DTMAX_GLOBAL_EXP, DTMAX_EXP
-    REAL  :: eDiff(NSPEC), eProd(NSPEC), u33(nspec,3)
-    REAL  :: DWNI_M2(NK), CWNB_M2(1-NTH:NSPEC), LAMBDA(NSPEC,3)
-    REAL  :: VAnew(NSPEC), VAold(NSPEC), REST, CFLXY, DT4AI
-    REAL  :: VAinput(NSPEC), VAacloc(NSPEC), eDiffB(NSPEC), KTMP(nspec,3), TMP(nspec)
-    REAL  :: eDiffSing, eSumPart, N(nspec,ntri), kksum(nspec,npa), ST3(nspec), utilde33(nspec)
-    REAL  :: FL11(NSPEC),FL12(NSPEC),FL21(NSPEC),FL22(NSPEC),FL31(NSPEC),FL32(NSPEC)
-    REAL  :: FL111(NSPEC), FL112(NSPEC), FL211(NSPEC), FL212(NSPEC), FL311(NSPEC), FL312(NSPEC)
-    REAL  :: KELEMGL(NSPEC,3,NTRI), FLALLGL(NSPEC,3,NTRI)
-    REAL  :: eVal1, eVal2,thr
-    REAL    :: eVA
+    REAL               :: CCOS, CSIN, CCURX, CCURY
+    REAL               :: eSum(NSPEC)
+    INTEGER            :: ITER_EXP(nspec)
+    INTEGER            :: ISPp1, ISPm1, JP, I1, I2, I3, NI(3), IT
+    INTEGER, SAVE      :: ITER_MAX
+    REAL               :: eFactM1, eFactP1
+    REAL               :: Sum_Prev, Sum_New
+    REAL               :: prop_conv, eSI, p_is_converged
+    REAL               :: Sum_L2, Sum_L2_GL
+    REAL               :: DMM(0:NK2)
+    REAL               :: DiffNew, DTMAX_GLOBAL_EXP, DTMAX_EXP
+    REAL               :: eDiff(NSPEC), eProd(NSPEC), u33(nspec,3)
+    REAL               :: DWNI_M2(NK), CWNB_M2(1-NTH:NSPEC), LAMBDA(NSPEC,3)
+    REAL               :: VAnew(NSPEC), VAold(NSPEC), REST, CFLXY, DT4AI
+    REAL               :: VAinput(NSPEC), VAacloc(NSPEC), eDiffB(NSPEC), KTMP(nspec,3), TMP(nspec)
+    REAL               :: eDiffSing, eSumPart, N(nspec,ntri), kksum(nspec,npa), ST3(nspec), utilde33(nspec)
+    REAL               :: FL11(NSPEC),FL12(NSPEC),FL21(NSPEC),FL22(NSPEC),FL31(NSPEC),FL32(NSPEC)
+    REAL               :: FL111(NSPEC), FL112(NSPEC), FL211(NSPEC), FL212(NSPEC), FL311(NSPEC), FL312(NSPEC)
+    REAL               :: KELEMGL(NSPEC,3,NTRI), FLALLGL(NSPEC,3,NTRI)
+    REAL               :: eVal1, eVal2,thr
+    REAL               :: eVA
 #ifdef W3_DEBUGSRC
-    REAL :: IntDiff, eVA_w3srce, eVAsolve, SumACout
-    REAL :: SumVAin, SumVAout, SumVAw3srce, SumVS, SumVD, VS_w3srce
-    REAL    :: VAsolve(NSPEC)
-    REAL*8  :: ACsolve
-    REAL    :: eB
+    REAL               :: IntDiff, eVA_w3srce, eVAsolve, SumACout
+    REAL               :: SumVAin, SumVAout, SumVAw3srce, SumVS, SumVD, VS_w3srce
+    REAL               :: VAsolve(NSPEC)
+    REAL*8             :: ACsolve
+    REAL               :: eB
 #endif
-    REAL  :: ASPAR_DIAG(NSPEC)
+    REAL               :: ASPAR_DIAG(NSPEC)
 #ifdef W3_DEBUGSOLVERCOH
-    REAL*8 :: PRE_VA(NSPEC, npa)
-    REAL*8 :: OffDIAG(NSPEC, npa)
-    REAL*8 :: eOff(NSPEC)
-    REAL*8 :: eSum1(NSPEC), eSum2(NSPEC)
+    REAL*8             :: PRE_VA(NSPEC, npa)
+    REAL*8             :: OffDIAG(NSPEC, npa)
+    REAL*8             :: eOff(NSPEC)
+    REAL*8             :: eSum1(NSPEC), eSum2(NSPEC)
 #endif
-    CHARACTER(len=128) eFile
-    INTEGER ierr, i
-    INTEGER JP_glob
-    INTEGER is_converged, itmp
+    CHARACTER(len=128) :: eFile
+    INTEGER            :: ierr, i
+    INTEGER            :: JP_glob
+    INTEGER            :: is_converged, itmp
+
     thr    = dble(tiny(1.))
     CCURX  = FACX
     CCURY  = FACY
@@ -6786,8 +6789,8 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !/
-    INTEGER ISP, ITH, IK, ISPprevFreq, ISPnextFreq
-    INTEGER NewISP, JTH, istat
+    INTEGER :: ISP, ITH, IK, ISPprevFreq, ISPnextFreq
+    INTEGER :: NewISP, JTH, istat
 
     POS_TRICK(1,1) = 2
     POS_TRICK(1,2) = 3
