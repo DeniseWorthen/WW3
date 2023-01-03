@@ -44,7 +44,7 @@ MODULE W3PARALL
   !
   !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-  USE W3SERVMD, ONLY: STRACE
+  USE W3SERVMD , ONLY : STRACE
 #endif
   !/
   !/ ------------------------------------------------------------------- /
@@ -123,7 +123,7 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -203,7 +203,7 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     USE W3ODATMD, ONLY : IAPROC
     IMPLICIT NONE
@@ -278,18 +278,18 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
-    USE W3GDATMD, ONLY: NK, NK2, NTH, NSPEC, SIG, DSIP, ECOS, ESIN, &
-         EC2, ESC, ES2, FACHFA, MAPWN, FLCTH, FLCK,  &
-         CTMAX, DMIN, DTH, CTHG0S, MAPSF
-    USE W3ADATMD, ONLY: CG, WN, DCXDX, DCXDY, DCYDX, DCYDY, DDDX,   &
-         DDDY, DW
+    USE W3GDATMD , ONLY : NK, NK2, NTH, NSPEC, SIG, DSIP, ECOS, ESIN
+    USE W3GDATMD , ONLY : EC2, ESC, ES2, FACHFA, MAPWN, FLCTH, FLCK
+    USE W3GDATMD , ONLY : CTMAX, DMIN, DTH, CTHG0S, MAPSF
+    USE W3ADATMD , ONLY : CG, WN, DCXDX, DCXDY, DCYDX, DCYDY, DDDX
+    USE W3ADATMD , ONLY : DDDY, DW
 #ifdef W3_REFRX
-    USE W3ADATMD, ONLY: DCDX, DCDY
+    USE W3ADATMD , ONLY : DCDX, DCDY
 #endif
-    USE W3IDATMD, ONLY: FLCUR
-    USE W3ODATMD, only : IAPROC
+    USE W3IDATMD , ONLY : FLCUR
+    USE W3ODATMD , only : IAPROC
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -428,16 +428,16 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     USE CONSTANTS, ONLY : LPDLIB
-    USE W3GDATMD, ONLY: NK, NK2, NTH, NSPEC, SIG, DSIP, ECOS, ESIN, &
-         EC2, ESC, ES2, FACHFA, MAPWN, FLCTH, FLCK,  &
-         CTMAX, DMIN, DTH, CTHG0S, MAPSF, SIG
-    USE W3ADATMD, ONLY: CG, WN, DCXDX, DCXDY, DCYDX, DCYDY, DDDX,   &
-         DDDY, DW
-    USE W3IDATMD, ONLY: FLCUR
-    USE W3ODATMD, only : IAPROC
+    USE W3GDATMD , ONLY : NK, NK2, NTH, NSPEC, SIG, DSIP, ECOS, ESIN
+    USE W3GDATMD , ONLY : EC2, ESC, ES2, FACHFA, MAPWN, FLCTH, FLCK
+    USE W3GDATMD , ONLY : CTMAX, DMIN, DTH, CTHG0S, MAPSF, SIG
+    USE W3ADATMD , ONLY : CG, WN, DCXDX, DCXDY, DCYDX, DCYDY, DDDX
+    USE W3ADATMD , ONLY : DDDY, DW
+    USE W3IDATMD , ONLY : FLCUR
+    USE W3ODATMD , only : IAPROC
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -575,14 +575,14 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
-    USE CONSTANTS, ONLY : LPDLIB
-    USE W3GDATMD, ONLY: NK, NK2, NTH, NSPEC, SIG, DSIP, ECOS, ESIN, &
-         EC2, ESC, ES2, FACHFA, MAPWN, FLCTH, FLCK,  &
-         CTMAX, DMIN, DTH, MAPSF
-    USE W3ADATMD, ONLY: CG, WN, DCXDX, DCXDY, DCYDX, DCYDY, CX, CY, DDDX, DDDY, DW
-    USE W3ODATMD, only : IAPROC
+    USE CONSTANTS , ONLY : LPDLIB
+    USE W3GDATMD , ONLY : NK, NK2, NTH, NSPEC, SIG, DSIP, ECOS, ESIN
+    USE W3GDATMD , ONLY : EC2, ESC, ES2, FACHFA, MAPWN, FLCTH, FLCK
+    USE W3GDATMD , ONLY : CTMAX, DMIN, DTH, MAPSF
+    USE W3ADATMD , ONLY : CG, WN, DCXDX, DCXDY, DCYDX, DCYDY, CX, CY, DDDX, DDDY, DW
+    USE W3ODATMD , only : IAPROC
     IMPLICIT NONE
     !/ Parameter list
     !/
@@ -715,14 +715,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
-    USE CONSTANTS, ONLY : LPDLIB
-    USE W3GDATMD, ONLY: NK, NK2, NTH, NSPEC, SIG, DSIP, ECOS, ESIN, &
-         EC2, ESC, ES2, FACHFA, MAPWN, FLCTH, FLCK,  &
-         CTMAX, DMIN, DTH, MAPSF
-    USE W3ADATMD, ONLY: CG, WN, DCXDX, DCXDY, DCYDX, DCYDY, CX, CY, DDDX, DDDY, DW
-    USE W3ODATMD, only : IAPROC
+    USE CONSTANTS , ONLY : LPDLIB
+    USE W3GDATMD , ONLY : NK, NK2, NTH, NSPEC, SIG, DSIP, ECOS, ESIN
+    USE W3GDATMD , ONLY : EC2, ESC, ES2, FACHFA, MAPWN, FLCTH, FLCK
+    USE W3GDATMD , ONLY : CTMAX, DMIN, DTH, MAPSF
+    USE W3ADATMD , ONLY : CG, WN, DCXDX, DCXDY, DCYDX, DCYDY, CX, CY, DDDX, DDDY, DW
+    USE W3ODATMD , only : IAPROC
 
     IMPLICIT NONE
 
@@ -862,16 +862,16 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD      , ONLY : STRACE
 #endif
 #ifdef W3_PDLIB
-    USE yowDatapool, only: istatus
-    USE yowNodepool, only: np_global
-    USE W3ODATMD, ONLY: NTPROC, NAPROC, IAPROC
-    USE W3GDATMD, ONLY: MAPSF, NSEA
-    USE W3ADATMD, ONLY: MPI_COMM_WAVE, MPI_COMM_WCMP
-    USE yowRankModule, only : IPGL_TO_PROC, IPGL_tot
-    USE WMMDATMD, ONLY: MDATAS
+    USE yowDatapool   , only : istatus
+    USE yowNodepool   , only : np_global
+    USE W3ODATMD      , ONLY : NTPROC, NAPROC, IAPROC
+    USE W3GDATMD      , ONLY : MAPSF, NSEA
+    USE W3ADATMD      , ONLY : MPI_COMM_WAVE, MPI_COMM_WCMP
+    USE yowRankModule , only : IPGL_TO_PROC, IPGL_tot
+    USE WMMDATMD      , ONLY : MDATAS
 #endif
     IMPLICIT NONE
 #ifdef W3_PDLIB
@@ -973,22 +973,22 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !/
     !/ ------------------------------------------------------------------- /
 #ifdef W3_PDLIB
-    use yowDatapool, only: istatus
-    use yowNodepool, only: npa
-    use yowRankModule, only : rank
-    USE W3GDATMD, ONLY: GTYPE, UNGTYPE
+    use yowDatapool   , only : istatus
+    use yowNodepool   , only : npa
+    use yowRankModule , only : rank
+    USE W3GDATMD      , ONLY : GTYPE, UNGTYPE
 #endif
 #ifdef W3_MPI
-    USE W3ADATMD, ONLY: MPI_COMM_WAVE, MPI_COMM_WCMP
+    USE W3ADATMD      , ONLY : MPI_COMM_WAVE, MPI_COMM_WCMP
 #endif
-    USE CONSTANTS, ONLY : LPDLIB
-    USE W3GDATMD, ONLY: NSEA
-    USE W3ODATMD, ONLY: NTPROC, NAPROC, IAPROC
+    USE CONSTANTS     , ONLY : LPDLIB
+    USE W3GDATMD      , ONLY : NSEA
+    USE W3ODATMD      , ONLY : NTPROC, NAPROC, IAPROC
     IMPLICIT NONE
     INTEGER, intent(out) :: NSEALout, NSEALMout
     !/ Local parameters
@@ -1086,15 +1086,15 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !/
-    USE W3ODATMD, ONLY: OUTPTS, IAPROC, NAPROC
-    USE W3GDATMD, ONLY: GTYPE, UNGTYPE, MAPSF
+    USE W3ODATMD , ONLY : OUTPTS, IAPROC, NAPROC
+    USE W3GDATMD , ONLY : GTYPE, UNGTYPE, MAPSF
     USE CONSTANTS, ONLY : LPDLIB
 #ifdef W3_PDLIB
-    USE yowRankModule, only : IPGL_TO_PROC, IPGL_tot
-    use yowNodepool, only: ipgl, iplg
+    USE yowRankModule , only : IPGL_TO_PROC, IPGL_tot
+    use yowNodepool , only : ipgl, iplg
 #endif
     IMPLICIT NONE
     !/ ------------------------------------------------------------------- /
@@ -1183,15 +1183,15 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !/
-    USE W3ODATMD, ONLY: OUTPTS, IAPROC, NAPROC
-    USE W3GDATMD, ONLY: GTYPE, UNGTYPE, MAPSF
+    USE W3ODATMD , ONLY : OUTPTS, IAPROC, NAPROC
+    USE W3GDATMD , ONLY : GTYPE, UNGTYPE, MAPSF
     USE CONSTANTS, ONLY : LPDLIB
 #ifdef W3_PDLIB
-    USE yowRankModule, only : IPGL_TO_PROC, IPGL_tot, IPGL_npa
-    use yowNodepool, only: ipgl, iplg
+    USE yowRankModule , only : IPGL_TO_PROC, IPGL_tot, IPGL_npa
+    use yowNodepool , only : ipgl, iplg
 #endif
     IMPLICIT NONE
     !/ ------------------------------------------------------------------- /
@@ -1300,14 +1300,14 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !/
-    USE W3ODATMD, ONLY: OUTPTS, IAPROC, NAPROC
-    USE W3GDATMD, ONLY: GTYPE, UNGTYPE
-    USE CONSTANTS, ONLY : LPDLIB
+    USE W3ODATMD , ONLY : OUTPTS, IAPROC, NAPROC
+    USE W3GDATMD , ONLY : GTYPE, UNGTYPE
+    USE CONSTANTS , ONLY : LPDLIB
 #ifdef W3_PDLIB
-    USE YOWNODEPOOL, ONLY: iplg
+    USE YOWNODEPOOL , ONLY : iplg
 #endif
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -1322,11 +1322,11 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !
-    USE W3ODATMD, ONLY: OUTPTS, IAPROC, NAPROC
-    USE W3GDATMD, ONLY: GTYPE, UNGTYPE
-    USE CONSTANTS, ONLY : LPDLIB
+    USE W3ODATMD , ONLY : OUTPTS, IAPROC, NAPROC
+    USE W3GDATMD , ONLY : GTYPE, UNGTYPE
+    USE CONSTANTS , ONLY : LPDLIB
 #ifdef W3_PDLIB
-    USE YOWNODEPOOL, ONLY: iplg
+    USE YOWNODEPOOL , ONLY : iplg
 #endif
     IMPLICIT NONE
 #ifdef W3_S
@@ -1412,16 +1412,16 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD    , ONLY : STRACE
 #endif
     !
-    USE W3GDATMD, ONLY: NSEAL, NSEA, NX
+    USE W3GDATMD    , ONLY : NSEAL, NSEA, NX
 #ifdef W3_PDLIB
-    USE W3ODATMD, only : IAPROC, NAPROC, NTPROC
-    USE W3ADATMD, ONLY: MPI_COMM_WCMP
-    use yowDatapool, only: rtype, istatus
-    USE yowNodepool, only: npa
-    use yowNodepool, only: iplg
+    USE W3ODATMD    , only : IAPROC, NAPROC, NTPROC
+    USE W3ADATMD    , ONLY : MPI_COMM_WCMP
+    use yowDatapool , only : rtype, istatus
+    USE yowNodepool , only : npa
+    use yowNodepool , only : iplg
 #endif
     IMPLICIT NONE
     !/ ------------------------------------------------------------------- /

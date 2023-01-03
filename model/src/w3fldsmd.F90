@@ -197,11 +197,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
     !
-    USE W3ODATMD, only : IAPROC
-    USE CONSTANTS, ONLY: file_endian
+    USE W3ODATMD  , only : IAPROC
+    USE CONSTANTS , ONLY : file_endian
 
     IMPLICIT NONE
     !/
@@ -610,7 +610,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !
 #ifdef W3_TIDE
@@ -802,7 +802,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !
 #ifdef W3_TIDE
@@ -1068,23 +1068,23 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     USE W3TIMEMD
 #ifdef W3_OASIS
-    USE W3OACPMD, ONLY: ID_OASIS_TIME, CPLT0
+    USE W3OACPMD , ONLY : ID_OASIS_TIME, CPLT0
 #endif
 #ifdef W3_OASACM
-    USE W3AGCMMD, ONLY: RCV_FIELDS_FROM_ATMOS
+    USE W3AGCMMD , ONLY : RCV_FIELDS_FROM_ATMOS
 #endif
 #ifdef W3_OASOCM
-    USE W3OGCMMD, ONLY: RCV_FIELDS_FROM_OCEAN
+    USE W3OGCMMD , ONLY : RCV_FIELDS_FROM_OCEAN
 #endif
 #ifdef W3_OASICM
-    USE W3IGCMMD, ONLY: RCV_FIELDS_FROM_ICE
+    USE W3IGCMMD , ONLY : RCV_FIELDS_FROM_ICE
 #endif
 #ifdef W3_OASIS
-    USE W3ODATMD, ONLY: DTOUT
+    USE W3ODATMD , ONLY : DTOUT
 #endif
     IMPLICIT NONE
     !/
@@ -1564,7 +1564,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     USE W3TIMEMD
     !
@@ -1886,7 +1886,7 @@ CONTAINS
     !/
     USE W3GSRUMD
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !
     IMPLICIT NONE
@@ -2243,7 +2243,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     USE W3TIMEMD
     !
@@ -2567,7 +2567,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     USE W3TIMEMD
     !

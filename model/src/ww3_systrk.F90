@@ -57,7 +57,7 @@ PROGRAM WW3_SYSTRK
   !/       No unauthorized use without permission.
   !/
   USE W3STRKMD
-  USE W3TIMEMD, ONLY: TDIFF
+  USE W3TIMEMD , ONLY : TDIFF
   IMPLICIT NONE
 #ifdef W3_MPI
 

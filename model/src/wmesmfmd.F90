@@ -174,9 +174,9 @@ module WMESMFMD
 
   ! --- WW3 modules
   use CONSTANTS
-  use WMINITMD, only: WMINIT, WMINITNML
-  use WMWAVEMD, only: WMWAVE
-  use WMFINLMD, only: WMFINL
+  use WMINITMD , only : WMINIT, WMINITNML
+  use WMWAVEMD , only : WMWAVE
+  use WMFINLMD , only : WMFINL
   use WMMDATMD
   use W3GDATMD
   use W3IDATMD
@@ -184,17 +184,17 @@ module WMESMFMD
   use W3WDATMD
   use W3ADATMD
   use W3TIMEMD
-  use WMUPDTMD, only: WMUPD2
-  use W3UPDTMD, only: W3UINI
+  use WMUPDTMD , only : WMUPD2
+  use W3UPDTMD , only : W3UINI
 #ifdef W3_ST3
-  use W3SRC3MD, only: W3SPR3
+  use W3SRC3MD , only : W3SPR3
 #endif
 #ifdef W3_ST4
-  use W3SRC4MD, only: W3SPR4
+  use W3SRC4MD , only : W3SPR4
 #endif
-  use W3IOGOMD, only: W3OUTG
+  use W3IOGOMD , only : W3OUTG
 #ifdef W3_SCRIP
-  use WMSCRPMD, only: get_scrip_info_structured
+  use WMSCRPMD , only : get_scrip_info_structured
 #endif
   !/
   !/ Specify default data typing
@@ -2479,7 +2479,7 @@ contains
     !/ Parameter list
     !/
 #ifdef W3_MPI
-    USE WMMDATMD, ONLY: IMPROC
+    USE WMMDATMD , ONLY : IMPROC
 #endif
     implicit none
     type(ESMF_GridComp) :: gcomp
@@ -4186,8 +4186,8 @@ contains
     !/ ------------------------------------------------------------------- /
     !/
 #ifdef W3_PDLIB
-    use yowNodepool, only: npa, iplg, nodes_global
-    use yowElementpool, only: ne, ielg, INE
+    use yowNodepool    , only : npa, iplg, nodes_global
+    use yowElementpool , only : ne, ielg, INE
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -4612,8 +4612,8 @@ contains
     !/ ------------------------------------------------------------------- /
     !/
 #ifdef W3_PDLIB
-    use yowNodepool, only: npa, iplg, nodes_global
-    use yowElementpool, only: ne, ielg, INE
+    use yowNodepool    , only : npa, iplg, nodes_global
+    use yowElementpool , only : ne, ielg, INE
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -5739,8 +5739,8 @@ contains
     !/ ------------------------------------------------------------------- /
     !/
 #ifdef W3_PDLIB
-    use yowNodepool, only: np, iplg
-    use yowrankModule, only: rank
+    use yowNodepool   , only : np, iplg
+    use yowrankModule , only : rank
 #endif
     !/
     implicit none
@@ -7019,7 +7019,7 @@ contains
     !/ ------------------------------------------------------------------- /
     !/
 #ifdef W3_PDLIB
-    use yowNodepool, only: np, iplg
+    use yowNodepool , only : np, iplg
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -7543,8 +7543,8 @@ contains
     !
     !/ ------------------------------------------------------------------- /
     !/
-    USE W3ADATMD, ONLY: USSP
-    USE W3IOGOMD, ONLY: CALC_U3STOKES
+    USE W3ADATMD , ONLY : USSP
+    USE W3IOGOMD , ONLY : CALC_U3STOKES
     IMPLICIT NONE
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -7755,8 +7755,8 @@ contains
     !
     !/ ------------------------------------------------------------------- /
     !/
-    USE W3FLDSMD, ONLY: W3FLDO, W3FLDG
-    USE WMUNITMD, ONLY: WMUGET, WMUSET
+    USE W3FLDSMD , ONLY : W3FLDO, W3FLDG
+    USE WMUNITMD , ONLY : WMUGET, WMUSET
     IMPLICIT NONE
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
