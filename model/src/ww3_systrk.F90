@@ -112,7 +112,7 @@ PROGRAM WW3_SYSTRK
   REAL, ALLOCATABLE ::  longitude_nc(:),latitude_nc(:)
   REAL, ALLOCATABLE ::  lonprt_nc(:),latprt_nc(:)
 #endif
-  INTEGER NTIME_NC
+  INTEGER           :: NTIME_NC
   INTEGER           :: outputType
   LOGICAL           :: outputCheck1
   DOUBLE PRECISION  :: date1, date2, tstart, tend
@@ -1359,17 +1359,17 @@ subroutine pt2netcdf(longitude,latitude,hs,tp,&
 #endif
   !
 #ifdef W3_TRKNC
-  integer :: hs_dims(hs_rank)
-  integer :: tp_dims(tp_rank)
-  integer :: dir_dims(dir_rank)
-  real :: latitude(npoints),dt
-  real :: longitude(npoints)
-  real :: hs(nsys, npoints, ntime)
-  real :: tp(nsys, npoints, ntime)
-  real :: dir(nsys, npoints, ntime)
-  integer :: iyc,imc,idc,ihc,iminc,isc,Jday,Jday0,rec
-  double precision date1,date2,timenc
-  double precision times(ntime)
+  integer          :: hs_dims(hs_rank)
+  integer          :: tp_dims(tp_rank)
+  integer          :: dir_dims(dir_rank)
+  real             :: latitude(npoints),dt
+  real             :: longitude(npoints)
+  real             :: hs(nsys, npoints, ntime)
+  real             :: tp(nsys, npoints, ntime)
+  real             :: dir(nsys, npoints, ntime)
+  integer          :: iyc,imc,idc,ihc,iminc,isc,Jday,Jday0,rec
+  double precision :: date1,date2,timenc
+  double precision :: times(ntime)
 #endif
   !
 #ifdef W3_TRKNC

@@ -2088,18 +2088,18 @@ subroutine bcgstab(n, rhs, sol, ipar, fpar, w)
   !-----------------------------------------------------------------------
   !     external routines used
   !
-  real*8 ddot
-  logical stopbis, brkdn
+  real*8  :: ddot
+  logical :: stopbis, brkdn
   external ddot, stopbis, brkdn
   !
-  real*8 one
+  real*8  :: one
   parameter(one=1.0D0)
   !
   !     local variables
   !
-  integer i
-  real*8 alpha,beta,rho,omega
-  logical lp, rp
+  integer :: i
+  real*8  :: alpha,beta,rho,omega
+  logical :: lp, rp
   save lp, rp
   !
   !     where to go
@@ -2340,9 +2340,9 @@ subroutine bcgstab(n, rhs, sol, ipar, fpar, w)
 end subroutine bcgstab
 !-----------------------------------------------------------------------
 subroutine implu(np,umm,beta,ypiv,u,permut,full)
-  real*8 umm,beta,ypiv(*),u(*),x, xpiv
-  logical full, perm, permut(*)
-  integer np,k,npm1
+  real*8  :: umm,beta,ypiv(*),u(*),x, xpiv
+  logical :: full, perm, permut(*)
+  integer :: np,k,npm1
   !-----------------------------------------------------------------------
   !     performs implicitly one step of the lu factorization of a
   !     banded hessenberg matrix.
@@ -2392,7 +2392,7 @@ subroutine uppdir(n,p,np,lbp,indp,y,u,usav,flops)
   !     banded upper triangular matrix u.  u contains the non zero
   !     elements of the column of the triangular matrix..
   !-----------------------------------------------------------------------
-  real*8 zero
+  real*8 :: zero
   parameter(zero=0.0D0)
   !
   npm1=np-1
@@ -2423,13 +2423,13 @@ end subroutine uppdir
 subroutine givens(x,y,c,s)
   implicit none
 
-  real*8   :: x,y,c,s
+  real*8 :: x,y,c,s
   !-----------------------------------------------------------------------
   !     Given x and y, this subroutine generates a Givens' rotation c, s.
   !     And apply the rotation on (x,y) ==> (sqrt(x**2 + y**2), 0).
   !     (See P 202 of "matrix computation" by Golub and van Loan.)
   !-----------------------------------------------------------------------
-  real*8   :: t,one,zero
+  real*8 :: t,one,zero
   parameter (zero=0.0D0,one=1.0D0)
   !
   if (x.eq.zero .and. y.eq.zero) then
@@ -2464,8 +2464,8 @@ end subroutine givens
 !-----------------------------------------------------------------------
 logical function stopbis(n,ipar,mvpi,fpar,r,delx,sx)
   implicit none
-  integer n,mvpi,ipar(16)
-  real*8 fpar(16), r(n), delx(n), sx, ddot
+  integer :: n,mvpi,ipar(16)
+  real*8  :: fpar(16), r(n), delx(n), sx, ddot
   external ddot
   !-----------------------------------------------------------------------
   !     function for determining the stopping criteria. return value of
@@ -2522,12 +2522,12 @@ end function stopbis
 !-----------------------------------------------------------------------
 subroutine tidycg(n,ipar,fpar,sol,delx)
   implicit none
-  integer i,n,ipar(16)
-  real*8 fpar(16),sol(n),delx(n)
+  integer :: i,n,ipar(16)
+  real*8  :: fpar(16),sol(n),delx(n)
   !-----------------------------------------------------------------------
   !     Some common operations required before terminating the CG routines
   !-----------------------------------------------------------------------
-  real*8 zero
+  real*8 :: zero
   parameter(zero=0.0D0)
   !
   if (ipar(12).ne.0) then
@@ -2556,8 +2556,8 @@ end subroutine tidycg
 !-----------------------------------------------------------------------
 logical function brkdn(alpha, ipar)
   implicit none
-  integer ipar(16)
-  real*8 alpha, beta, zero, one
+  integer :: ipar(16)
+  real*8  :: alpha, beta, zero, one
   parameter (zero=0.0D0, one=1.0D0)
   !-----------------------------------------------------------------------
   !     test whether alpha is zero or an abnormal number, if yes,
@@ -2592,13 +2592,13 @@ end function brkdn
 !-----------------------------------------------------------------------
 subroutine bisinit(ipar,fpar,wksize,dsc,lp,rp,wk)
   implicit none
-  integer i,ipar(16),wksize,dsc
-  logical lp,rp
-  real*8  fpar(16),wk(*)
+  integer :: i,ipar(16),wksize,dsc
+  logical :: lp,rp
+  real*8  :: fpar(16),wk(*)
   !-----------------------------------------------------------------------
   !     some common initializations for the iterative solvers
   !-----------------------------------------------------------------------
-  real*8 zero, one
+  real*8 :: zero, one
   parameter(zero=0.0D0, one=1.0D0)
   !
   !     ipar(1) = -2 inidcate that there are not enough space in the work
@@ -2663,9 +2663,9 @@ end subroutine bisinit
 !-----------------------------------------------------------------------
 subroutine mgsro(full,lda,n,m,ind,ops,vec,hh,ierr)
   implicit none
-  logical full
-  integer lda,m,n,ind,ierr
-  real*8  ops,hh(m),vec(lda,m)
+  logical :: full
+  integer :: lda,m,n,ind,ierr
+  real*8  :: ops,hh(m),vec(lda,m)
   !-----------------------------------------------------------------------
   !     MGSRO  -- Modified Gram-Schmidt procedure with Selective Re-
   !               Orthogonalization
@@ -2696,8 +2696,8 @@ subroutine mgsro(full,lda,n,m,ind,ops,vec,hh,ierr)
   !
   !     External routines used: real*8 ddot
   !-----------------------------------------------------------------------
-  integer i,k
-  real*8  nrm0, nrm1, fct, thr, ddot, zero, one, reorth
+  integer :: i,k
+  real*8  :: nrm0, nrm1, fct, thr, ddot, zero, one, reorth
   parameter (zero=0.0D0, one=1.0D0, reorth=0.98D0)
   external ddot
   !
@@ -2818,8 +2818,8 @@ end subroutine mgsro
 ! 1)     M A T R I X    B Y    V E C T O R     P R O D U C T S         c
 !----------------------------------------------------------------------c
 subroutine amux (n, x, y, a,ja,ia)
-  real*8  x(*), y(*), a(*)
-  integer n, ja(*), ia(*)
+  real*8  :: x(*), y(*), a(*)
+  integer :: n, ja(*), ia(*)
   !-----------------------------------------------------------------------
   !         A times a vector
   !-----------------------------------------------------------------------
@@ -2841,8 +2841,8 @@ subroutine amux (n, x, y, a,ja,ia)
   !-----------------------------------------------------------------------
   ! local variables
   !
-  real*8 t
-  integer i, k
+  real*8  :: t
+  integer :: i, k
   !-----------------------------------------------------------------------
   do i = 1,n
     !
@@ -2864,8 +2864,8 @@ subroutine amux (n, x, y, a,ja,ia)
 end subroutine amux
 !-----------------------------------------------------------------------
 subroutine amuxms (n, x, y, a,ja)
-  real*8  x(*), y(*), a(*)
-  integer n, ja(*)
+  real*8  :: x(*), y(*), a(*)
+  integer :: n, ja(*)
   !-----------------------------------------------------------------------
   !         A times a vector in MSR format
   !-----------------------------------------------------------------------
@@ -2886,7 +2886,7 @@ subroutine amuxms (n, x, y, a,ja)
   !-----------------------------------------------------------------------
   ! local variables
   !
-  integer i, k
+  integer :: i, k
   !-----------------------------------------------------------------------
   do i=1, n
     y(i) = a(i)*x(i)
@@ -2906,8 +2906,8 @@ subroutine amuxms (n, x, y, a,ja)
 end subroutine amuxms
 !-----------------------------------------------------------------------
 subroutine atmux (n, x, y, a, ja, ia)
-  real*8 x(*), y(*), a(*)
-  integer n, ia(*), ja(*)
+  real*8  :: x(*), y(*), a(*)
+  integer :: n, ia(*), ja(*)
   !-----------------------------------------------------------------------
   !         transp( A ) times a vector
   !-----------------------------------------------------------------------
@@ -2932,7 +2932,7 @@ subroutine atmux (n, x, y, a, ja, ia)
   !-----------------------------------------------------------------------
   !     local variables
   !
-  integer i, k
+  integer :: i, k
   !-----------------------------------------------------------------------
   !
   !     zero out output vector
@@ -2955,8 +2955,8 @@ subroutine atmux (n, x, y, a, ja, ia)
 end subroutine atmux
 !-----------------------------------------------------------------------
 subroutine atmuxr (m, n, x, y, a, ja, ia)
-  real*8 x(*), y(*), a(*)
-  integer m, n, ia(*), ja(*)
+  real*8  :: x(*), y(*), a(*)
+  integer :: m, n, ia(*), ja(*)
   !-----------------------------------------------------------------------
   !         transp( A ) times a vector, A can be rectangular
   !-----------------------------------------------------------------------
@@ -2981,7 +2981,7 @@ subroutine atmuxr (m, n, x, y, a, ja, ia)
   !-----------------------------------------------------------------------
   !     local variables
   !
-  integer i, k
+  integer :: i, k
   !-----------------------------------------------------------------------
   !
   !     zero out output vector
@@ -3006,8 +3006,8 @@ end subroutine atmuxr
 subroutine amuxe (n,x,y,na,ncol,a,ja)
   implicit none
 
-  integer     :: n, na, ncol, ja(na,*)
-  real*8      :: x(n), y(n), a(na,*)
+  integer :: n, na, ncol, ja(na,*)
+  real*8  :: x(n), y(n), a(na,*)
 
   !-----------------------------------------------------------------------
   !        A times a vector in Ellpack Itpack format (ELL)
@@ -3036,7 +3036,7 @@ subroutine amuxe (n,x,y,na,ncol,a,ja)
   !-----------------------------------------------------------------------
   ! local variables
   !
-  integer i, j
+  integer :: i, j
   !-----------------------------------------------------------------------
   do i=1, n
     y(i) = 0.0
@@ -3053,8 +3053,8 @@ subroutine amuxe (n,x,y,na,ncol,a,ja)
 end subroutine amuxe
 !-----------------------------------------------------------------------
 subroutine amuxd (n,x,y,diag,ndiag,idiag,ioff)
-  integer n, ndiag, idiag, ioff(idiag)
-  real*8 x(n), y(n), diag(ndiag,idiag)
+  integer :: n, ndiag, idiag, ioff(idiag)
+  real*8  :: x(n), y(n), diag(ndiag,idiag)
   !-----------------------------------------------------------------------
   !        A times a vector in Diagonal storage format (DIA)
   !-----------------------------------------------------------------------
@@ -3085,7 +3085,7 @@ subroutine amuxd (n,x,y,diag,ndiag,idiag,ioff)
   !-----------------------------------------------------------------------
   !       local variables
   !
-  integer j, k, io, i1, i2
+  integer :: j, k, io, i1, i2
   !-----------------------------------------------------------------------
   do j=1, n
     y(j) = 0.0d0
@@ -3105,8 +3105,8 @@ subroutine amuxd (n,x,y,diag,ndiag,idiag,ioff)
 end subroutine amuxd
 !-----------------------------------------------------------------------
 subroutine amuxj (n, x, y, jdiag, a, ja, ia)
-  integer n, jdiag, ja(*), ia(*)
-  real*8 x(n), y(n), a(*)
+  integer :: n, jdiag, ja(*), ia(*)
+  real*8  :: x(n), y(n), a(*)
   !-----------------------------------------------------------------------
   !        A times a vector in Jagged-Diagonal storage format (JAD)
   !-----------------------------------------------------------------------
@@ -3140,7 +3140,7 @@ subroutine amuxj (n, x, y, jdiag, a, ja, ia)
   !-----------------------------------------------------------------------
   ! local variables
   !
-  integer i, ii, k1, ilen, j
+  integer :: i, ii, k1, ilen, j
   !-----------------------------------------------------------------------
   do i=1, n
     y(i) = 0.0d0
@@ -3160,8 +3160,8 @@ end subroutine amuxj
 !-----------------------------------------------------------------------
 subroutine vbrmv(nr, nc, ia, ja, ka, a, kvstr, kvstc, x, b)
   !-----------------------------------------------------------------------
-  integer nr, nc, ia(nr+1), ja(*), ka(*), kvstr(nr+1), kvstc(*)
-  real*8  a(*), x(*), b(*)
+  integer :: nr, nc, ia(nr+1), ja(*), ka(*), kvstr(nr+1), kvstc(*)
+  real*8  :: a(*), x(*), b(*)
   !-----------------------------------------------------------------------
   !     Sparse matrix-full vector product, in VBR format.
   !-----------------------------------------------------------------------
@@ -3181,8 +3181,8 @@ subroutine vbrmv(nr, nc, ia, ja, ka, a, kvstr, kvstc, x, b)
   !
   !-----------------------------------------------------------------------
   !-----local variables
-  integer n, i, j, ii, jj, k, istart, istop
-  real*8  xjj
+  integer :: n, i, j, ii, jj, k, istart, istop
+  real*8  :: xjj
   !---------------------------------
   n = kvstc(nc+1)-1
   do i = 1, n
@@ -3213,8 +3213,8 @@ end subroutine vbrmv
 ! 2)     T R I A N G U L A R    S Y S T E M    S O L U T I O N S       c
 !----------------------------------------------------------------------c
 subroutine lsol (n,x,y,al,jal,ial)
-  integer n, jal(*),ial(n+1)
-  real*8  x(n), y(n), al(*)
+  integer :: n, jal(*),ial(n+1)
+  real*8  :: x(n), y(n), al(*)
   !-----------------------------------------------------------------------
   !   solves    L x = y ; L = lower unit triang. /  CSR format
   !-----------------------------------------------------------------------
@@ -3238,8 +3238,8 @@ subroutine lsol (n,x,y,al,jal,ial)
   !--------------------------------------------------------------------
   ! local variables
   !
-  integer k, j
-  real*8  t
+  integer :: k, j
+  real*8  :: t
   !-----------------------------------------------------------------------
   x(1) = y(1)
   do  k = 2, n
@@ -3256,8 +3256,8 @@ subroutine lsol (n,x,y,al,jal,ial)
 end subroutine lsol
 !-----------------------------------------------------------------------
 subroutine ldsol (n,x,y,al,jal)
-  integer n, jal(*)
-  real*8 x(n), y(n), al(*)
+  integer :: n, jal(*)
+  real*8  :: x(n), y(n), al(*)
   !-----------------------------------------------------------------------
   !     Solves L x = y    L = triangular. MSR format
   !-----------------------------------------------------------------------
@@ -3282,8 +3282,8 @@ subroutine ldsol (n,x,y,al,jal)
   !--------------------------------------------------------------------
   ! local variables
   !
-  integer k, j
-  real*8 t
+  integer :: k, j
+  real*8  :: t
   !-----------------------------------------------------------------------
   x(1) = y(1)*al(1)
   do  k = 2, n
@@ -3299,8 +3299,8 @@ subroutine ldsol (n,x,y,al,jal)
 end subroutine ldsol
 !-----------------------------------------------------------------------
 subroutine lsolc (n,x,y,al,jal,ial)
-  integer n, jal(*),ial(*)
-  real*8  x(n), y(n), al(*)
+  integer :: n, jal(*),ial(*)
+  real*8  :: x(n), y(n), al(*)
   !-----------------------------------------------------------------------
   !       SOLVES     L x = y ;    where L = unit lower trang. CSC format
   !-----------------------------------------------------------------------
@@ -3324,8 +3324,8 @@ subroutine lsolc (n,x,y,al,jal,ial)
   !-----------------------------------------------------------------------
   ! local variables
   !
-  integer k, j
-  real*8 t
+  integer :: k, j
+  real*8  :: t
   !-----------------------------------------------------------------------
   do k=1,n
     x(k) = y(k)
@@ -3343,8 +3343,8 @@ subroutine lsolc (n,x,y,al,jal,ial)
 end subroutine lsolc
 !-----------------------------------------------------------------------
 subroutine ldsolc (n,x,y,al,jal)
-  integer n, jal(*)
-  real*8 x(n), y(n), al(*)
+  integer :: n, jal(*)
+  real*8  :: x(n), y(n), al(*)
   !-----------------------------------------------------------------------
   !    Solves     L x = y ;    L = nonunit Low. Triang. MSC format
   !-----------------------------------------------------------------------
@@ -3370,8 +3370,8 @@ subroutine ldsolc (n,x,y,al,jal)
   !--------------------------------------------------------------------
   ! local variables
   !
-  integer k, j
-  real*8 t
+  integer :: k, j
+  real*8  :: t
   !-----------------------------------------------------------------------
   do k=1,n
     x(k) = y(k)
@@ -3390,8 +3390,8 @@ subroutine ldsolc (n,x,y,al,jal)
 end subroutine ldsolc
 !-----------------------------------------------------------------------
 subroutine ldsoll (n,x,y,al,jal,nlev,lev,ilev)
-  integer n, nlev, jal(*), ilev(nlev+1), lev(n)
-  real*8 x(n), y(n), al(*)
+  integer :: n, nlev, jal(*), ilev(nlev+1), lev(n)
+  real*8  :: x(n), y(n), al(*)
   !-----------------------------------------------------------------------
   !    Solves L x = y    L = triangular. Uses LEVEL SCHEDULING/MSR format
   !-----------------------------------------------------------------------
@@ -3416,8 +3416,8 @@ subroutine ldsoll (n,x,y,al,jal,nlev,lev,ilev)
   !-----------
   !        x = The solution of  L x = y .
   !--------------------------------------------------------------------
-  integer ii, jrow, i, k
-  real*8 t
+  integer :: ii, jrow, i, k
+  real*8  :: t
   !
   !     outer loop goes through the levels. (SEQUENTIAL loop)
   !
@@ -3442,8 +3442,8 @@ subroutine ldsoll (n,x,y,al,jal,nlev,lev,ilev)
 end subroutine ldsoll
 !-----------------------------------------------------------------------
 subroutine usol (n,x,y,au,jau,iau)
-  integer n, jau(*),iau(n+1)
-  real*8  x(n), y(n), au(*)
+  integer :: n, jau(*),iau(n+1)
+  real*8  :: x(n), y(n), au(*)
   !-----------------------------------------------------------------------
   !             Solves   U x = y    U = unit upper triangular.
   !-----------------------------------------------------------------------
@@ -3467,8 +3467,8 @@ subroutine usol (n,x,y,au,jau,iau)
   !--------------------------------------------------------------------
   ! local variables
   !
-  integer k, j
-  real*8  t
+  integer :: k, j
+  real*8  :: t
   !-----------------------------------------------------------------------
   x(n) = y(n)
   do  k = n-1,1,-1
@@ -3485,8 +3485,8 @@ subroutine usol (n,x,y,au,jau,iau)
 end subroutine usol
 !-----------------------------------------------------------------------
 subroutine udsol (n,x,y,au,jau)
-  integer n, jau(*)
-  real*8  x(n), y(n),au(*)
+  integer :: n, jau(*)
+  real*8  :: x(n), y(n),au(*)
   !-----------------------------------------------------------------------
   !             Solves   U x = y  ;   U = upper triangular in MSR format
   !-----------------------------------------------------------------------
@@ -3511,8 +3511,8 @@ subroutine udsol (n,x,y,au,jau)
   !--------------------------------------------------------------------
   ! local variables
   !
-  integer k, j
-  real*8 t
+  integer :: k, j
+  real*8  :: t
   !-----------------------------------------------------------------------
   x(n) = y(n)*au(n)
   do k = n-1,1,-1
@@ -3529,8 +3529,8 @@ subroutine udsol (n,x,y,au,jau)
 end subroutine udsol
 !-----------------------------------------------------------------------
 subroutine usolc (n,x,y,au,jau,iau)
-  real*8  x(*), y(*), au(*)
-  integer n, jau(*),iau(*)
+  real*8  :: x(*), y(*), au(*)
+  integer :: n, jau(*),iau(*)
   !-----------------------------------------------------------------------
   !       SOUVES     U x = y ;    where U = unit upper trang. CSC format
   !-----------------------------------------------------------------------
@@ -3554,8 +3554,8 @@ subroutine usolc (n,x,y,au,jau,iau)
   !-----------------------------------------------------------------------
   ! local variables
   !
-  integer k, j
-  real*8 t
+  integer :: k, j
+  real*8  :: t
   !-----------------------------------------------------------------------
   do k=1,n
     x(k) = y(k)
@@ -3573,8 +3573,8 @@ subroutine usolc (n,x,y,au,jau,iau)
 end subroutine usolc
 !-----------------------------------------------------------------------
 subroutine udsolc (n,x,y,au,jau)
-  integer n, jau(*)
-  real*8 x(n), y(n), au(*)
+  integer :: n, jau(*)
+  real*8  :: x(n), y(n), au(*)
   !-----------------------------------------------------------------------
   !    Solves     U x = y ;    U = nonunit Up. Triang. MSC format
   !-----------------------------------------------------------------------
@@ -3599,8 +3599,8 @@ subroutine udsolc (n,x,y,au,jau)
   !--------------------------------------------------------------------
   ! local variables
   !
-  integer k, j
-  real*8 t
+  integer :: k, j
+  real*8  :: t
   !-----------------------------------------------------------------------
   do k=1,n
     x(k) = y(k)
@@ -3621,8 +3621,8 @@ end subroutine udsolc
 subroutine lusol(n, y, x, alu, jlu, ju)
   implicit none
 
-  integer    :: n, jlu(*), ju(*)
-  real*8     :: x(n), y(n), alu(*)
+  integer :: n, jlu(*), ju(*)
+  real*8  :: x(n), y(n), alu(*)
 
   !-----------------------------------------------------------------------
   integer    :: i,k
@@ -3649,8 +3649,8 @@ end subroutine lusol
 subroutine lutsol(n, y, x, alu, jlu, ju)
   implicit none
 
-  integer     :: n, jlu(*), ju(*)
-  real*8      :: x(n), y(n), alu(*)
+  integer :: n, jlu(*), ju(*)
+  real*8  :: x(n), y(n), alu(*)
 
   !-----------------------------------------------------------------------
   ! local variables
@@ -3686,8 +3686,8 @@ end subroutine lutsol
 subroutine qsplit(a,ind,n,ncut)
   implicit none
 
-  integer    :: n, ind(n), ncut
-  real*8     :: a(n)
+  integer :: n, ind(n), ncut
+  real*8  :: a(n)
 
   !-----------------------------------------------------------------------
   !     does a quick-sort split of a real array.
@@ -3699,8 +3699,8 @@ subroutine qsplit(a,ind,n,ncut)
   !
   !     ind(1:n) is an integer array which permuted in the same way as a(*).
   !-----------------------------------------------------------------------
-  real*8     :: tmp, abskey
-  integer    :: itmp, first, last, j, mid
+  real*8  :: tmp, abskey
+  integer :: itmp, first, last, j, mid
   !-----
   first = 1
   last = n
@@ -3747,8 +3747,8 @@ subroutine qsplit(a,ind,n,ncut)
 end subroutine qsplit
 subroutine runrc(n,rhs,sol,ipar,fpar,wk,guess,a,ja,ia,au,jau,ju,solver)
   implicit none
-  integer n,ipar(16),ia(n+1),ja(*),ju(*),jau(*)
-  real*8 fpar(16),rhs(n),sol(n),guess(n),wk(*),a(*),au(*)
+  integer :: n,ipar(16),ia(n+1),ja(*),ju(*),jau(*)
+  real*8  :: fpar(16),rhs(n),sol(n),guess(n),wk(*),a(*),au(*)
   external solver
   !-----------------------------------------------------------------------
   !     the actual tester. It starts the iterative linear system solvers
@@ -3827,9 +3827,9 @@ end subroutine runrc
 subroutine ilut(n,a,ja,ia,lfil,droptol,alu,jlu,ju,iwk,w,jw,ierr)
   !-----------------------------------------------------------------------
   implicit none
-  integer n
-  real*8 a(*),alu(*),w(n+1),droptol
-  integer ja(*),ia(n+1),jlu(*),ju(n),jw(2*n),lfil,iwk,ierr
+  integer :: n
+  real*8  :: a(*),alu(*),w(n+1),droptol
+  integer :: ja(*),ia(n+1),jlu(*),ju(n),jw(2*n),lfil,iwk,ierr
   !----------------------------------------------------------------------*
   !                      *** ILUT preconditioner ***                     *
   !      incomplete LU factorization with dual truncation mechanism      *
@@ -3913,8 +3913,8 @@ subroutine ilut(n,a,ja,ia,lfil,droptol,alu,jlu,ju,iwk,w,jw,ierr)
   ! (however, fill-in is then mpredictible).                             *
   !----------------------------------------------------------------------*
   !     locals
-  integer ju0,k,j1,j2,j,ii,i,lenl,lenu,jj,jrow,jpos,lenn
-  real*8 tnorm, t, abs, s, fact
+  integer :: ju0,k,j1,j2,j,ii,i,lenl,lenu,jj,jrow,jpos,lenn
+  real*8  :: tnorm, t, abs, s, fact
   if (lfil .lt. 0) goto 998
   !-----------------------------------------------------------------------
   !     initialize ju0 (points to next element to be added to alu,jlu)
@@ -4177,9 +4177,9 @@ end subroutine ilut
 subroutine ilu0(n, a, ja, ia, alu, jlu, ju, iw, ierr)
 
   !implicit real*8 (a-h,o-z)
-  real*8 a(*), alu(*), tl
-  integer n, ju0, ii, jj, i, j, jcol, js, jf, jm, jrow, jw, ierr
-  integer ja(*), ia(*), ju(*), jlu(*), iw(n)
+  real*8  :: a(*), alu(*), tl
+  integer :: n, ju0, ii, jj, i, j, jcol, js, jf, jm, jrow, jw, ierr
+  integer :: ja(*), ia(*), ju(*), jlu(*), iw(n)
   !
   !-----------------------------------------------------------------------
   ju0 = n+2
@@ -4498,10 +4498,10 @@ end subroutine pgmres
 !-----------------------------------------------------------------------
 DOUBLE PRECISION FUNCTION DNRM2(N,X)
   !     .. Scalar Arguments ..
-  INTEGER N
+  INTEGER          :: N
   !     ..
   !     .. Array Arguments ..
-  DOUBLE PRECISION X(*)
+  DOUBLE PRECISION :: X(*)
   !     ..
   !
   !  Purpose
@@ -4522,12 +4522,12 @@ DOUBLE PRECISION FUNCTION DNRM2(N,X)
   !  =====================================================================
   !
   !     .. Parameters ..
-  DOUBLE PRECISION ONE,ZERO
+  DOUBLE PRECISION :: ONE,ZERO
   PARAMETER (ONE=1.0D+0,ZERO=0.0D+0)
   !     ..
   !     .. Local Scalars ..
-  DOUBLE PRECISION ABSXI,NORM,SCALE,SSQ
-  INTEGER IX
+  DOUBLE PRECISION :: ABSXI,NORM,SCALE,SSQ
+  INTEGER          :: IX
   !     ..
   !     .. Intrinsic Functions ..
   INTRINSIC ABS,SQRT
@@ -4570,9 +4570,9 @@ SUBROUTINE DLASSQ( N, X, SCALE, SUMSQ )
   ! -- LAPACK auxiliary routine (version 3.1) --
   ! Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd..
   ! November 2006
-  INTEGER N
-  DOUBLE PRECISION SCALE, SUMSQ
-  DOUBLE PRECISION X( * )
+  INTEGER          :: N
+  DOUBLE PRECISION :: SCALE, SUMSQ
+  DOUBLE PRECISION :: X( * )
   !
   ! DLASSQ returns the values scl and smsq such that
   !
@@ -4587,10 +4587,10 @@ SUBROUTINE DLASSQ( N, X, SCALE, SUMSQ )
   ! On entry, the value scale in the equation above.
   ! On exit, SCALE is overwritten with scl , the scaling factor
   ! for the sum of squares.
-  DOUBLE PRECISION ZERO
+  DOUBLE PRECISION :: ZERO
   PARAMETER ( ZERO = 0.0D+0 )
-  INTEGER IX
-  DOUBLE PRECISION ABSXI
+  INTEGER          :: IX
+  DOUBLE PRECISION :: ABSXI
   INTRINSIC ABS
   !
   IF( N.GT.0 ) THEN
@@ -4616,8 +4616,8 @@ double precision function ddot(n,dx,dy)
   !     uses unrolled loops for increments equal to one.
   !     jack dongarra, linpack, 3/11/78.
   !
-  double precision dx(*),dy(*),dtemp
-  integer i,m,mp1,n
+  double precision :: dx(*),dy(*),dtemp
+  integer          :: i,m,mp1,n
   !
   ddot = 0.0d0
   dtemp = 0.0d0
@@ -4644,8 +4644,8 @@ subroutine daxpy(n,da,dx,incx,dy,incy)
   !     uses unrolled loops for increments equal to one.
   !     jack dongarra, linpack, 3/11/78.
   !
-  double precision dx(1),dy(1),da
-  integer i,incx,incy,ix,iy,m,mp1,n
+  double precision :: dx(1),dy(1),da
+  integer          :: i,incx,incy,ix,iy,m,mp1,n
   !
   if(n.le.0)return
   if (abs(da) .lt. tiny(1.d0)) return

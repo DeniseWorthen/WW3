@@ -580,8 +580,8 @@ CONTAINS
     CHARACTER(LEN=21)    :: IDACT
     CHARACTER(LEN=16)    :: OUTID
     CHARACTER(LEN=23)    :: IDTIME
-    INTEGER eIOBP
-    INTEGER ITH_F
+    INTEGER              :: eIOBP
+    INTEGER              :: ITH_F
 #ifdef W3_PDLIB
     REAL                 :: VS_SPEC(NSPEC)
     REAL                 :: VD_SPEC(NSPEC)

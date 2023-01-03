@@ -2537,6 +2537,7 @@ CONTAINS
 #endif
     CHARACTER(LEN=30)    :: IDTST, TNAME
     CHARACTER(LEN=10)    :: VERTST
+    CHARACTER(LEN=15)    :: TIMETAG
     !/
     !/ ------------------------------------------------------------------- /
     !/

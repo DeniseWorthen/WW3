@@ -439,13 +439,13 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: JGRID, NSEALM, NSEATM
-    INTEGER                 :: NSEAL_DUMMY, ISEA
+    INTEGER       :: JGRID, NSEALM, NSEATM
+    INTEGER       :: NSEAL_DUMMY, ISEA
 #ifdef W3_PDLIB
-    INTEGER IRANK
+    INTEGER       :: IRANK
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
     !/
 #ifdef W3_S

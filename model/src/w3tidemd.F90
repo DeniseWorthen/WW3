@@ -301,9 +301,9 @@ CONTAINS
     CHARACTER(LEN=100), INTENT(IN)  :: LIST(70)
     INTEGER,            INTENT(OUT) :: INDS(70), TIDE_PRMF
 
-    INTEGER J, FOUND
+    INTEGER :: J, FOUND
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT   =   0
+    INTEGER, SAVE :: IENT   =   0
 #endif
     !
 #ifdef W3_S
@@ -494,7 +494,7 @@ CONTAINS
     !
     IMPLICIT NONE
     !
-    INTEGER J, K, K1, L, J1, JL, L2, KM1, JBASE
+    INTEGER :: J, K, K1, L, J1, JL, L2, KM1, JBASE
     !
     DO L=1,TIDE_MF
       DO K=1,NTOTAL_CON
@@ -672,7 +672,7 @@ CONTAINS
     CHARACTER*256, INTENT(IN)  :: filename
     CHARACTER*256, INTENT(OUT) :: fnam6,fnam7,fnam8,fnam9,fnam11
 
-    INTEGER KIN
+    INTEGER :: KIN
 
     ! Parameters for reading KR1
     !      FILE I/O
@@ -973,8 +973,9 @@ CONTAINS
   !/ ------------------------------------------------------------------- /
   ! Note by FA: should try to replace with standard distance  d= sqrt(a^2+b^2)
   FUNCTION dpythag(a,b)
-    DOUBLE PRECISION a,b,dpythag
-    DOUBLE PRECISION absa,absb
+    DOUBLE PRECISION :: a,b,dpythag
+    DOUBLE PRECISION :: absa,absb
+
     absa=abs(a)
     absb=abs(b)
     IF (absa.gt.absb)then
@@ -992,11 +993,12 @@ CONTAINS
   !/ ------------------------------------------------------------------- /
   !  (C) Copr. 1986-92 Numerical Recipes Software '%1&&Yw^2.
   SUBROUTINE dsvbksb(u,w,v,m,n,mp,np,b,x)
-    INTEGER m,mp,n,np,NMAX
-    DOUBLE PRECISION b(mp),u(mp,np),v(np,np),w(np),x(np)
+    INTEGER          :: m,mp,n,np,NMAX
+    DOUBLE PRECISION :: b(mp),u(mp,np),v(np,np),w(np),x(np)
     PARAMETER (NMAX=500)
-    INTEGER i,j,jj
-    DOUBLE PRECISION s,tmp(NMAX)
+    INTEGER          :: i,j,jj
+    DOUBLE PRECISION :: s,tmp(NMAX)
+
     do j=1,n
       s=0.0d0
       IF (w(j).ne.0.0d0)then
@@ -1020,12 +1022,12 @@ CONTAINS
 
   !/ ------------------------------------------------------------------- /
   SUBROUTINE dsvdcmp(a,m,n,mp,np,w,v)
-    INTEGER m,mp,n,np,NMAX
-    DOUBLE PRECISION a(mp,np),v(np,np),w(np)
+    INTEGER          :: m,mp,n,np,NMAX
+    DOUBLE PRECISION ::a(mp,np),v(np,np),w(np)
     PARAMETER (NMAX=500)
 
-    INTEGER i,its,j,jj,k,l,nm
-    DOUBLE PRECISION anorm,c,f,g,h,s,scale,x,y,z,rv1(NMAX)
+    INTEGER          :: i,its,j,jj,k,l,nm
+    DOUBLE PRECISION :: anorm,c,f,g,h,s,scale,x,y,z,rv1(NMAX)
 
     g=0.0d0
     scale=0.0d0
@@ -1256,10 +1258,11 @@ CONTAINS
     ! See numerical recipes 2nd ed. The order of month and day have been swapped!
     !*********************************************************************
     IMPLICIT NONE
-    INTEGER id,mm,iyyy
-    INTEGER IGREG
-    INTEGER*4 ja,jm,jy
-    INTEGER*4 JULDAYT
+    INTEGER   :: id,mm,iyyy
+    INTEGER   :: IGREG
+    INTEGER*4 :: ja,jm,jy
+    INTEGER*4 :: JULDAYT
+
     IGREG=15+31*(10+12*1582)
     jy=iyyy
     IF (jy.EQ.0) WRITE(6,*) 'There is no zero year !!'

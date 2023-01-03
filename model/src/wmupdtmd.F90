@@ -3048,15 +3048,15 @@ CONTAINS
     ! IN X AND Y
 
     !IMPLICIT NONE
-    INTEGER  X_LEN, Y_LEN, INXEND, INYEND, NPX,NPY
-    REAL, DIMENSION(X_LEN) :: XARRAY
-    REAL, DIMENSION(Y_LEN)  :: YARRAY
+    INTEGER                       :: X_LEN, Y_LEN, INXEND, INYEND, NPX,NPY
+    REAL, DIMENSION(X_LEN)        :: XARRAY
+    REAL, DIMENSION(Y_LEN)        :: YARRAY
     REAL, DIMENSION(X_LEN, Y_LEN) :: FUNC
-    REAL :: X,Y
+    REAL                          :: X,Y
 
-    REAL :: X1, X2, Y1, Y2, SUM
-    INTEGER :: INX,INY, INITIALX, INITIALY
-    INTEGER :: INFINX, INFINY,ICOUNT,I,J
+    REAL                          :: X1, X2, Y1, Y2, SUM
+    INTEGER                       :: INX,INY, INITIALX, INITIALY
+    INTEGER                       :: INFINX, INFINY,ICOUNT,I,J
 
     INX = XYCURVISEARCH(X_LEN, XARRAY, X)
     INY = XYCURVISEARCH(Y_LEN, YARRAY, Y)
