@@ -794,45 +794,45 @@ CONTAINS
     REAL,    INTENT(IN)  :: A(NTH,NK), CG(NK), WN(NK), DEPTH
     REAL,    INTENT(OUT) :: S(NTH,NK), D(NTH,NK)
     !!
-    LOGICAL, SAVE        :: FIRST_TSA = .TRUE.
+    LOGICAL, SAVE :: FIRST_TSA = .TRUE.
     !!    -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !!    ------------------------------------------------------------------
     !!
     !!    Local Parameters & variables
     !!    -----------------------------
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    integer              :: irng, iang
-    integer              :: nd3         !* bin # corresp. to ww3 dep
-    real                 :: dep         !* depth (m), get it from WW3 DEPTH
-    real                 :: wka(NK)     !* from WW3 WN(1:NK) corresp. to "DEPTH"
-    real                 :: cga(NK)     !* from WW3 CG(1:NK) corresp. to "DEPTH"
-    real                 :: pha(NK)     !* k*dk*dtheta array corresp. to "DEPTH"
-    real                 :: fac         !* twopi*oma()/cga()
-    real                 :: sum1        !* dummy variable
+    integer       :: irng, iang
+    integer       :: nd3     !* bin # corresp. to ww3 dep
+    real          :: dep     !* depth (m), get it from WW3 DEPTH
+    real          :: wka(NK) !* from WW3 WN(1:NK) corresp. to "DEPTH"
+    real          :: cga(NK) !* from WW3 CG(1:NK) corresp. to "DEPTH"
+    real          :: pha(NK) !* k*dk*dtheta array corresp. to "DEPTH"
+    real          :: fac     !* twopi*oma()/cga()
+    real          :: sum1    !* dummy variable
     !!    -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !!
-    integer              :: npk         !* bin# at peak frequency fpk
-    integer              :: npk2        !* bin# of second peak frequency
-    integer              :: npk0        !* dummy int. used in the shuffle of npk's
-    integer              :: nsep        !* min # of bins that separates npk & npk2
-    !* set nsep = 2
-    integer              :: npeaks      !* # of peaks (=0, 1, or 2)
-    integer              :: nfs         !* bin# of freq. separation
+    integer       :: npk     !* bin# at peak frequency fpk
+    integer       :: npk2    !* bin# of second peak frequency
+    integer       :: npk0    !* dummy int. used in the shuffle of npk's
+    integer       :: nsep    !* min # of bins that separates npk & npk2
+                             !* set nsep = 2
+    integer       :: npeaks  !* # of peaks (=0, 1, or 2)
+    integer       :: nfs     !* bin# of freq. separation
     !!    -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !!
-    integer              :: nbins       !* actual # of bins > npk  (incl. nfs) or
-    !!                                        !* actual # of bins > npk2 (incl. nrng)
-    !!                                        !* to guarantee a min 1 bin in equi. range
-    real                 :: fpk         !* peak frequency (Hz)
-    real                 :: fpk2        !* second peak frequency (Hz)
-    real                 :: e1max       !* 1D energy at 1st peak 'fpk'
-    real                 :: e1max2      !* 1D energy at 2nd peak 'fpk2'
-    real                 :: sumd1       !* sum dens1+dens2 at nfs
-    real                 :: sumd2       !* sum dens1+dens2 at nfs+1
-    real                 :: densat1     !* averaged dens1  at nfs
-    real                 :: densat2     !* averaged dens1  at nfs+1
+    integer       :: nbins   !* actual # of bins > npk  (incl. nfs) or
+    !!                       !* actual # of bins > npk2 (incl. nrng)
+    !!                       !* to guarantee a min 1 bin in equi. range
+    real          :: fpk     !* peak frequency (Hz)
+    real          :: fpk2    !* second peak frequency (Hz)
+    real          :: e1max   !* 1D energy at 1st peak 'fpk'
+    real          :: e1max2  !* 1D energy at 2nd peak 'fpk2'
+    real          :: sumd1   !* sum dens1+dens2 at nfs
+    real          :: sumd2   !* sum dens1+dens2 at nfs+1
+    real          :: densat1 !* averaged dens1  at nfs
+    real          :: densat2 !* averaged dens1  at nfs+1
     !!    --------------------------------------------------------------- &
     !!    ---------------------::-----------------------------------------72
     !!    ##################################################################
@@ -2439,27 +2439,27 @@ CONTAINS
     !!
     !!    Parameter list
     !!    --------------
-    real,    intent(in) :: dep
-    real,    intent(in) :: wk1x,wk1y, wk3x,wk3y
+    real, intent(in) :: dep
+    real, intent(in) :: wk1x,wk1y, wk3x,wk3y
     !!    -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !!    ------------------------------------------------------------------
     !!
     !!
     !!    Local Parameters & variables
     !!    -----------------------------
-    integer              :: n, np, nnp, nplace
-    integer              :: ierr_gr
+    integer          :: n, np, nnp, nplace
+    integer          :: ierr_gr
     !!
-    real                 :: p,  px,  py,  q,    qrtp,  qsqp,        &
-         dr, dth, thp, dphi, cphi,               &
-         w1, w1x, w1y, wk1,  w3, w3x, w3y, wk3,  &
-         rold, rold1, rold2, rnew, rnew1, rnew2, &
-         pxod, pyod,  zpod,                      &
-         t, t1, t2, t3, tm, tp, ds1, ds2,        &
-         rmin, rmax, rcenter, rradius
+    real             :: p,  px,  py,  q,    qrtp,  qsqp
+    real             :: dr, dth, thp, dphi, cphi
+    real             :: w1, w1x, w1y, wk1,  w3, w3x, w3y, wk3
+    real             :: rold, rold1, rold2, rnew, rnew1, rnew2
+    real             :: pxod, pyod,  zpod
+    real             :: t, t1, t2, t3, tm, tp, ds1, ds2
+    real             :: rmin, rmax, rcenter, rradius
     !!
-    double precision     :: dbt3,dbt4,dbt5,dbt6, dbz, dbp, dbqrtp,  &
-         cdthold, cdthnew, wate1, wate2
+    double precision :: dbt3,dbt4,dbt5,dbt6, dbz, dbp, dbqrtp
+    double precision :: cdthold, cdthnew, wate1, wate2
     !!    -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !!    ---------------------::-----------------------------------------72
     !!    ##################################################################
@@ -5096,15 +5096,15 @@ CONTAINS
     !!
     !!    Parameter list
     !!    --------------
-    REAL,    INTENT(INOUT) :: X(nrng,nang)
+    REAL, INTENT(INOUT) :: X(nrng,nang)
     !!    -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !!    ------------------------------------------------------------------
     !!
     !!
     !!    Local Parameters
     !!    ----------------
-    integer              :: irng, iang
-    real                 :: Y(nrng,nang)  !* dummy array used in smoothing
+    integer :: irng, iang
+    real    :: Y(nrng,nang)  !* dummy array used in smoothing
     !!    -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     !!    ---------------------::-----------------------------------------72
     !!    ##################################################################

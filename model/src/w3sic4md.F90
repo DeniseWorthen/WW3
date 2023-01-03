@@ -344,28 +344,26 @@ CONTAINS
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE     :: IENT = 0
 #endif
 #ifdef W3_T0
-    INTEGER                 :: ITH
-    REAL                    :: DOUT(NK,NTH)
+    INTEGER           :: ITH
+    REAL              :: DOUT(NK,NTH)
 #endif
-    INTEGER                 :: IKTH, IK, ITH, IC4METHOD, IFC
-    REAL                    :: D1D(NK), EB(NK)
-    REAL                    :: ICECOEF1, ICECOEF2, ICECOEF3, &
-         ICECOEF4, ICECOEF5, ICECOEF6, &
-         ICECOEF7, ICECOEF8
+    INTEGER           :: IKTH, IK, ITH, IC4METHOD, IFC
+    REAL              :: D1D(NK), EB(NK)
+    REAL              :: ICECOEF1, ICECOEF2, ICECOEF3
+    REAL              :: ICECOEF4, ICECOEF5, ICECOEF6
+    REAL              :: ICECOEF7, ICECOEF8
+    REAL              :: x1,x2,x3,x1sqr,x2sqr,x3sqr   !case 8
+    REAL              :: perfour,amhb,bmhb            !case 8
 
-    REAL                    :: x1,x2,x3,x1sqr,x2sqr,x3sqr   !case 8
-    REAL                    :: perfour,amhb,bmhb            !case 8
-
-    REAL                    :: KI1,KI2,KI3,KI4,FC5,FC6,FC7,FREQ
-    REAL                    :: HS, EMEAN, HICE
-    REAL, ALLOCATABLE       :: WN_I(:)  ! exponential decay rate for amplitude
-    REAL, ALLOCATABLE       :: ALPHA(:) ! exponential decay rate for energy
-    REAL, ALLOCATABLE       :: MARG1(:), MARG2(:) ! Arguments for M2
-    REAL, ALLOCATABLE       :: KARG1(:), KARG2(:), KARG3(:) !Arguments for M3
-
+    REAL              :: KI1,KI2,KI3,KI4,FC5,FC6,FC7,FREQ
+    REAL              :: HS, EMEAN, HICE
+    REAL, ALLOCATABLE :: WN_I(:)  ! exponential decay rate for amplitude
+    REAL, ALLOCATABLE :: ALPHA(:) ! exponential decay rate for energy
+    REAL, ALLOCATABLE :: MARG1(:), MARG2(:) ! Arguments for M2
+    REAL, ALLOCATABLE :: KARG1(:), KARG2(:), KARG3(:) !Arguments for M3
     !/
     !/ ------------------------------------------------------------------- /
     !/

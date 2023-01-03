@@ -174,12 +174,12 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: I1, ITT
+    INTEGER       :: I1, ITT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: SQRTH, SIX, R1, WNP, CP, UNZ, ALPHA, &
-         RDCH, AFP
+    REAL          :: SQRTH, SIX, R1, WNP, CP, UNZ, ALPHA
+    REAL          :: RDCH, AFP
     !/
     !/ ------------------------------------------------------------------- /
     !/

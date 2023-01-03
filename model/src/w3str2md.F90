@@ -246,18 +246,18 @@ CONTAINS
     !     XISLN :     log of XIS
     !
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    INTEGER I1, I2, ID, IDDUM, IENT, II, IS, ISM, ISM1, ISMAX, &
-         ISP, ISP1, ITH, IK
-    REAL    AUX1, AUX2, BIPH, C0, CM, DEP, DEP_2, DEP_3, E0, EM, HS, &
-         FT, RINT, SIGPICG, SINBPH, STRI, WISM, WISM1, WISP, &
-         WISP1, W0, WM, WN0, WNM, XIS, XISLN
+    INTEGER           :: I1, I2, ID, IDDUM, IENT, II, IS, ISM, ISM1, ISMAX
+    INTEGER           :: ISP, ISP1, ITH, IK
+    REAL              :: AUX1, AUX2, BIPH, C0, CM, DEP, DEP_2, DEP_3, E0, EM, HS
+    REAL              :: FT, RINT, SIGPICG, SINBPH, STRI, WISM, WISM1, WISP
+    REAL              :: WISP1, W0, WM, WN0, WNM, XIS, XISLN
     REAL, ALLOCATABLE :: E(:), SA(:,:)
     REAL              :: EB(NK), EBAND, EMEAN, SIGM01
     !----- Temp (to be moved) -----
     REAL, ALLOCATABLE :: EF(:),SF(:)
-    REAL    :: URSELL
+    REAL              :: URSELL
     !------------------------------
     !/
     !/ ------------------------------------------------------------------- /

@@ -233,93 +233,93 @@ PROGRAM W3PRNC
   !/ ------------------------------------------------------------------- /
   !/ Local parameters
   !/
-  TYPE(NML_FORCING_T)     :: NML_FORCING
-  TYPE(NML_FILE_T)        :: NML_FILE
-  TYPE(T_GSU)             :: GSI
+  TYPE(NML_FORCING_T)           :: NML_FORCING
+  TYPE(NML_FILE_T)              :: NML_FILE
+  TYPE(T_GSU)                   :: GSI
   !
-  INTEGER                 :: NTI, NDSEN, NIDIMS, NFIELDS, ICLO,   &
-       NDSI, NDSM, NDSDAT, NDSTRC, NTRACE,  &
-       IERR, IFLD, ITYPE, J, NFCOMP,        &
-       IX, IY, JX, NXI, NYI, NDAT, JJ,      &
-       NDSLL, IDLALL, IDFMLL, NCID, IRET,   &
-       MXM, MYM, DATTYP, RECLDT, IDAT,      &
-       NDIMSGRID, NDIMSVAR, VARIDTMP,       &
-       NUMDIMS, I, ITIME
-  INTEGER                 :: ILAND = -999
-  INTEGER                 :: GTYPEDUM = 0
+  INTEGER                       :: NTI, NDSEN, NIDIMS, NFIELDS, ICLO
+        INTEGER                 :: NDSI, NDSM, NDSDAT, NDSTRC, NTRACE
+  INTEGER                       :: IERR, IFLD, ITYPE, J, NFCOMP
+  INTEGER                       :: IX, IY, JX, NXI, NYI, NDAT, JJ
+  INTEGER                       :: NDSLL, IDLALL, IDFMLL, NCID, IRET
+  INTEGER                       :: MXM, MYM, DATTYP, RECLDT, IDAT
+  INTEGER                       :: NDIMSGRID, NDIMSVAR, VARIDTMP
+  INTEGER                       :: NUMDIMS, I, ITIME
+  INTEGER                       :: ILAND = -999
+  INTEGER                       :: GTYPEDUM = 0
 
   !
-  INTEGER                 :: TIME(2), TIMESTART(2), TIMESTOP(2),  &
-       TIMESHIFT(2), NXJ(2), NYJ(2),        &
-       NDSF(2), IDLAF(2), IDFMF(2),         &
-       IS(4), JS(4), VARIDF(50), DIMSVAR(4),&
-       DIMLN(5), REFDATE(8),CURDATE(8),     &
-       STARTDATE(8),STPDATE(8)
+  INTEGER                       :: TIME(2), TIMESTART(2), TIMESTOP(2)
+  INTEGER                       :: TIMESHIFT(2), NXJ(2), NYJ(2)
+  INTEGER                       :: NDSF(2), IDLAF(2), IDFMF(2)
+  INTEGER                       :: IS(4), JS(4), VARIDF(50), DIMSVAR(4)
+  INTEGER                       :: DIMLN(5), REFDATE(8),CURDATE(8)
+  INTEGER                       :: STARTDATE(8),STPDATE(8)
 #ifdef W3_MPI
-  INTEGER                 :: IERR_MPI, IND, REST, SLICE
+  INTEGER                       :: IERR_MPI, IND, REST, SLICE
 #endif
 #ifdef W3_O15
-  INTEGER                 :: NDSTIME
+  INTEGER                       :: NDSTIME
 #endif
 #ifdef W3_S
-  INTEGER, SAVE           :: IENT = 0
+  INTEGER, SAVE                 :: IENT = 0
 #endif
 #ifdef W3_T2
-  INTEGER                 :: IXP0, IXPN, IXPWDT = 60
+  INTEGER                       :: IXP0, IXPN, IXPWDT = 60
 #endif
 #ifdef W3_T3
-  INTEGER                 :: IX0, IXN, IXWDT = 60
+  INTEGER                       :: IX0, IXN, IXWDT = 60
 #endif
   !
-  INTEGER, ALLOCATABLE    :: IX21(:,:), IX22(:,:),                &
-       IY21(:,:), IY22(:,:),                &
-       JX21(:,:), JX22(:,:),                &
-       JY21(:,:), JY22(:,:),                &
-       MAPOVR(:,:), MASK(:,:),              &
-       NELEM(:), CUMUL(:)
+  INTEGER,          ALLOCATABLE :: IX21(:,:), IX22(:,:)
+  INTEGER,          ALLOCATABLE :: IY21(:,:), IY22(:,:)
+  INTEGER,          ALLOCATABLE :: JX21(:,:), JX22(:,:)
+  INTEGER,          ALLOCATABLE :: JY21(:,:), JY22(:,:)
+  INTEGER,          ALLOCATABLE :: MAPOVR(:,:), MASK(:,:)
+  INTEGER,          ALLOCATABLE :: NELEM(:), CUMUL(:)
 #ifdef W3_T3
-  INTEGER, ALLOCATABLE    :: MAPOUT(:,:)
+  INTEGER,          ALLOCATABLE :: MAPOUT(:,:)
 #endif
   !
-  REAL                    :: X0I, XNI, Y0I, YNI, SXI, SYI,        &
-       X, Y, FACTOR, EFAC, NODATA,          &
-       XCFAC, XCOFF, YCFAC, YCOFF,          &
-       FILLVALUE, TIMEDELAY
-  REAL                    :: ACC = 0.05
+  REAL                          :: X0I, XNI, Y0I, YNI, SXI, SYI
+  REAL                          :: X, Y, FACTOR, EFAC, NODATA
+  REAL                          :: XCFAC, XCOFF, YCFAC, YCOFF
+  REAL                          :: FILLVALUE, TIMEDELAY
+  REAL                          :: ACC = 0.05
   !
-  REAL                    :: SCFAC(2), ADDOFF(2), RW(4)
+  REAL                          :: SCFAC(2), ADDOFF(2), RW(4)
   !
-  REAL, ALLOCATABLE       :: RD11(:,:), RD21(:,:),                &
-       RD12(:,:), RD22(:,:),                &
-       XD11(:,:), XD21(:,:),                &
-       XD12(:,:), XD22(:,:),                &
-       FX(:,:), FY(:,:), FA(:,:),           &
-       A1(:,:), A2(:,:), A3(:,:)
-  REAL, ALLOCATABLE       :: XC(:,:), YC(:,:), AC(:,:),           &
-       DATA(:,:), XTEMP(:,:)
+  REAL,             ALLOCATABLE :: RD11(:,:), RD21(:,:)
+  REAL,             ALLOCATABLE :: RD12(:,:), RD22(:,:)
+  REAL,             ALLOCATABLE :: XD11(:,:), XD21(:,:)
+  REAL,             ALLOCATABLE :: XD12(:,:), XD22(:,:)
+  REAL,             ALLOCATABLE :: FX(:,:), FY(:,:), FA(:,:)
+  REAL,             ALLOCATABLE :: A1(:,:), A2(:,:), A3(:,:)
+  REAL,             ALLOCATABLE :: XC(:,:), YC(:,:), AC(:,:)
+  REAL,             ALLOCATABLE :: DATA(:,:), XTEMP(:,:)
   !
-  REAL, POINTER           :: ALA(:,:), ALO(:,:)
+  REAL, POINTER                 :: ALA(:,:), ALO(:,:)
   !
-  DOUBLE PRECISION        :: REFJULDAY, CURJULDAY, STARTJULDAY, STPJULDAY
+  DOUBLE PRECISION              :: REFJULDAY, CURJULDAY, STARTJULDAY, STPJULDAY
   !
-  CHARACTER*1024          :: STRFIELDSNAME
-  CHARACTER*100           :: FIELDSNAME(4)
-  CHARACTER*1024          :: STRDIMSNAME
-  CHARACTER*100           :: DIMSNAME(2)
-  CHARACTER               :: COMSTR*1, IDFLD*3, IDTYPE*2,         &
-       IDTIME*23, FROMLL*4, FORMLL*16,      &
-       NAMELL*80, NAMEF*80, IDTIME2*23
-  CHARACTER*14            :: IDSTR1(-7:7)
-  CHARACTER*15            :: IDSTR3(3)
-  CHARACTER*32            :: FORMT(2), FORMF(2)
-  CHARACTER*20            :: IDSTR2(6)
-  CHARACTER*20            :: DIMNAME(5)
-  CHARACTER*50            :: TIMEUNITS, CALENDAR
+  CHARACTER*1024                :: STRFIELDSNAME
+  CHARACTER*100                 :: FIELDSNAME(4)
+  CHARACTER*1024                :: STRDIMSNAME
+  CHARACTER*100                 :: DIMSNAME(2)
+  CHARACTER                     :: COMSTR*1, IDFLD*3, IDTYPE*2
+  CHARACTER                     :: IDTIME*23, FROMLL*4, FORMLL*16
+  CHARACTER                     :: NAMELL*80, NAMEF*80, IDTIME2*23
+  CHARACTER*14                  :: IDSTR1(-7:7)
+  CHARACTER*15                  :: IDSTR3(3)
+  CHARACTER*32                  :: FORMT(2), FORMF(2)
+  CHARACTER*20                  :: IDSTR2(6)
+  CHARACTER*20                  :: DIMNAME(5)
+  CHARACTER*50                  :: TIMEUNITS, CALENDAR
   !
-  LOGICAL                 :: INGRID, FLGNML
-  LOGICAL                 :: FLSTAB, FLBERG, CLO(2), FLTIME, FLHDR
+  LOGICAL                       :: INGRID, FLGNML
+  LOGICAL                       :: FLSTAB, FLBERG, CLO(2), FLTIME, FLHDR
 #ifdef W3_T
-  LOGICAL                 :: FLMOD
+  LOGICAL                       :: FLMOD
 #endif
 
 
@@ -327,41 +327,41 @@ PROGRAM W3PRNC
   !
   ! Variables used in tidal analysis
   !
-  INTEGER                 :: K, L, TIDEFLAG,                      &
-       TIDE_NDEF, TIDE_ITREND
+  INTEGER                       :: K, L, TIDEFLAG
+  INTEGER                       :: TIDE_NDEF, TIDE_ITREND
 #ifdef W3_T
-  INTEGER, PARAMETER      :: LRB = 4
-  INTEGER(KIND=8)         :: RPOS
-  INTEGER                 ::   LRECL, NREC
+  INTEGER, PARAMETER            :: LRB = 4
+  INTEGER(KIND=8)               :: RPOS
+  INTEGER                       ::   LRECL, NREC
 #endif
   !
-  INTEGER, ALLOCATABLE          :: IMAX(:)
+  INTEGER,          ALLOCATABLE :: IMAX(:)
   !
   REAL                          :: TIDE_LAT
   !
-  REAL, ALLOCATABLE       :: TIDE_DATA_ALL(:,:,:),                &
-       SSQ(:), RES(:)
+  REAL,             ALLOCATABLE :: TIDE_DATA_ALL(:,:,:)
+  REAL,             ALLOCATABLE :: SSQ(:), RES(:)
 #ifdef W3_MPI
-  REAL, ALLOCATABLE       :: TIDE1DL(:), TIDE1D(:)
+  REAL,             ALLOCATABLE :: TIDE1DL(:), TIDE1D(:)
 #endif
 #ifdef W3_T
-  REAL(KIND=LRB), ALLOCATABLE :: NULLBUFF(:)
+  REAL(KIND=LRB),   ALLOCATABLE :: NULLBUFF(:)
 #endif
   !
-  DOUBLE PRECISION, ALLOCATABLE :: ALLTIMES(:),                   &
-       SDEV0(:), SDEV(:), RMSR(:),    &
-       RMSR0(:), RMSRP(:), RESMAX(:)
+  DOUBLE PRECISION, ALLOCATABLE :: ALLTIMES(:)
+  DOUBLE PRECISION, ALLOCATABLE :: SDEV0(:), SDEV(:), RMSR(:)
+  DOUBLE PRECISION, ALLOCATABLE :: RMSR0(:), RMSRP(:), RESMAX(:)
   !
-  CHARACTER*256           :: TIDECONSTNAMES
-  CHARACTER*100           :: LIST(70)
+  CHARACTER*256                 :: TIDECONSTNAMES
+  CHARACTER*100                 :: LIST(70)
   !
-  LOGICAL, ALLOCATABLE    :: TIDALCOMP(:,:)
+  LOGICAL,          ALLOCATABLE :: TIDALCOMP(:,:)
   !
 #ifdef W3_T
-  CHARACTER*21            :: FNAMETXT
+  CHARACTER*21                  :: FNAMETXT
 #endif
   !
-  EQUIVALENCE              ( NXI , NXJ(1) ) , ( NYI , NYJ(1) )
+  EQUIVALENCE ( NXI , NXJ(1) ) , ( NYI , NYJ(1) )
   !/
   !/ ------------------------------------------------------------------- /
   !/
@@ -2628,8 +2628,8 @@ SUBROUTINE INTERP(MXM, MYM, XC, IX21, IX22, IY21, IY22,       &
   !/ ------------------------------------------------------------------- /
   !/    Local variables
   !/
-  INTEGER      :: IX, IY
-  REAL         :: FACTOR
+  INTEGER :: IX, IY
+  REAL    :: FACTOR
   !/ ------------------------------------------------------------------- /
 
   DO IY=1,NY
@@ -2692,7 +2692,7 @@ SUBROUTINE CHECK_ERROR(IRET, ILINE)
 
   IMPLICIT NONE
 
-  INTEGER IRET, ILINE
+  INTEGER :: IRET, ILINE
 
   IF (IRET .NE. NF90_NOERR) THEN
     WRITE(NDSE,*) ' *** WAVEWATCH III ERROR IN OUNF :'

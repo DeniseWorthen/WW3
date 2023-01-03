@@ -469,51 +469,51 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER :: NSEALout, NSEALMout
-    integer :: IRANK, I, ISTAT
-    INTEGER                 :: IE, IFL, IFT, IERR, NTTOT, NTLOC,    &
-         NTTARG, IK, IP, ITH, IX, IY, &
-         J, J0, TOUT(2), TLST(2), ISEA, IS,   &
-         K, I1, I2, JSEA, NTTMAX
+    INTEGER              :: NSEALout, NSEALMout
+    integer              :: IRANK, I, ISTAT
+    INTEGER              :: IE, IFL, IFT, IERR, NTTOT, NTLOC
+    INTEGER              :: NTTARG, IK, IP, ITH, IX, IY
+    INTEGER              :: J, J0, TOUT(2), TLST(2), ISEA, IS
+    INTEGER              :: K, I1, I2, JSEA, NTTMAX
 #ifdef W3_DIST
-    INTEGER                 :: ISTEP, ISP, IW
+    INTEGER              :: ISTEP, ISP, IW
 #endif
 #ifdef W3_MPI
-    INTEGER                 :: IERR_MPI, BGROUP, LGROUP
+    INTEGER              :: IERR_MPI, BGROUP, LGROUP
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE        :: IENT = 0
 #endif
 #ifdef W3_T
-    INTEGER                 :: NX0, NXN
-    INTEGER, ALLOCATABLE    :: MAPOUT(:,:)
+    INTEGER              :: NX0, NXN
+    INTEGER, ALLOCATABLE :: MAPOUT(:,:)
 #endif
 #ifdef W3_MPI
-    INTEGER, ALLOCATABLE    :: TMPRNK(:)
+    INTEGER, ALLOCATABLE :: TMPRNK(:)
 #endif
-    INTEGER, ALLOCATABLE    :: NT(:), MAPTST(:,:)
+    INTEGER, ALLOCATABLE :: NT(:), MAPTST(:,:)
 #ifdef W3_T
-    INTEGER, SAVE           :: NXS = 49
+    INTEGER, SAVE        :: NXS = 49
 #endif
-    REAL                    :: DTTST, DEPTH, FRACOS
-    REAL                    :: FACTOR
-    REAL                    :: WLVeff
+    REAL                 :: DTTST, DEPTH, FRACOS
+    REAL                 :: FACTOR
+    REAL                 :: WLVeff
 #ifdef W3_T
-    REAL, ALLOCATABLE      :: XOUT(:,:)
+    REAL,    ALLOCATABLE :: XOUT(:,:)
 #endif
-    LOGICAL                 :: OPENED
-    CHARACTER(LEN=8)        :: STTIME
-    CHARACTER(LEN=10)       :: STDATE
-    INTEGER                 :: ISPROC
+    LOGICAL              :: OPENED
+    CHARACTER(LEN=8)     :: STTIME
+    CHARACTER(LEN=10)    :: STDATE
+    INTEGER              :: ISPROC
 #ifdef W3_DIST
-    CHARACTER(LEN=12)       :: FORMAT
+    CHARACTER(LEN=12)    :: FORMAT
 #endif
-    CHARACTER(LEN=23)       :: DTME21
-    CHARACTER(LEN=30)       :: LFILE, TFILE
+    CHARACTER(LEN=23)    :: DTME21
+    CHARACTER(LEN=30)    :: LFILE, TFILE
 #ifdef W3_PDLIB
-    INTEGER                 :: IScal(1), IPROC
+    INTEGER              :: IScal(1), IPROC
 #endif
-    integer                 :: memunit
+    integer              :: memunit
     !/
     !/ ------------------------------------------------------------------- /
     !
@@ -1775,13 +1775,13 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: NXXXX
+    INTEGER       :: NXXXX
 #ifdef W3_MPI
-    INTEGER                 :: IERR_MPI, ISP, IH, ITARG,       &
-         IERR1, IERR2, IP
+    INTEGER       :: IERR_MPI, ISP, IH, ITARG
+    INTEGER       :: IERR1, IERR2, IP
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -2157,22 +2157,22 @@ CONTAINS
     !/ Local parameters
     !/
 #ifdef W3_MPI
-    INTEGER                 :: IK, IFJ
-    INTEGER                 :: IH, IT0, IROOT, IT, IERR, I0,   &
-         IFROM, IX(4), IY(4), IS(4),     &
-         IP(4), I, J, JSEA, ITARG, IB,   &
-         JSEA0, JSEAN, NSEAB, IBOFF,     &
-         ISEA, ISPROC, K, NRQMAX
+    INTEGER          :: IK, IFJ
+    INTEGER          :: IH, IT0, IROOT, IT, IERR, I0
+    INTEGER          :: IFROM, IX(4), IY(4), IS(4)
+    INTEGER          :: IP(4), I, J, JSEA, ITARG, IB
+    INTEGER          :: JSEA0, JSEAN, NSEAB, IBOFF
+    INTEGER          :: ISEA, ISPROC, K, NRQMAX
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT
+    INTEGER, SAVE    :: IENT
 #endif
 #ifdef W3_MPI
-    LOGICAL                 :: FLGRDALL(NOGRP,NGRPP)
-    LOGICAL                 :: FLGRDARST(NOGRP,NGRPP)
+    LOGICAL          :: FLGRDALL(NOGRP,NGRPP)
+    LOGICAL          :: FLGRDARST(NOGRP,NGRPP)
 #endif
 #ifdef W3_MPIT
-    CHARACTER(LEN=5)      :: STRING
+    CHARACTER(LEN=5) :: STRING
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -5983,13 +5983,13 @@ CONTAINS
     !/ Local parameters
     !/
 #ifdef W3_MPI
-    INTEGER                 :: IH, IROOT, I, J, IT, IT0, JSEA, &
-         IERR, ITARG, IX(4), IY(4),      &
-         K, IS(4), IP(4)
+    INTEGER       :: IH, IROOT, I, J, IT, IT0, JSEA
+    INTEGER       :: IERR, ITARG, IX(4), IY(4)
+    INTEGER       :: K, IS(4), IP(4)
 #endif
-    INTEGER                 :: itout
+    INTEGER       :: itout
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT
+    INTEGER, SAVE :: IENT
 #endif
     !/
     !/ ------------------------------------------------------------------- /

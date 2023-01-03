@@ -116,8 +116,7 @@ MODULE W3IOPOMD
   !/ Private parameter statements (ID strings)
   !/
   CHARACTER(LEN=10), PARAMETER, PRIVATE :: VEROPT = '2021-04-06'
-  CHARACTER(LEN=31), PARAMETER, PRIVATE ::                        &
-       IDSTR = 'WAVEWATCH III POINT OUTPUT FILE'
+  CHARACTER(LEN=31), PARAMETER, PRIVATE :: IDSTR = 'WAVEWATCH III POINT OUTPUT FILE'
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
@@ -270,23 +269,23 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    LOGICAL                 :: INGRID
-    INTEGER                 :: IPT, J, K
-    INTEGER                 :: IX1, IY1, IXS, IYS
+    LOGICAL                       :: INGRID
+    INTEGER                       :: IPT, J, K
+    INTEGER                       :: IX1, IY1, IXS, IYS
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE                 :: IENT = 0
 #endif
-    INTEGER                 :: IX(4), IY(4)   ! Indices of points used in interp.
-    REAL                    :: RD(4)          ! Interpolation coefficient
-    REAL, PARAMETER         :: ACC = 0.05
-    REAL                    :: FACTOR
-    INTEGER                 :: ITOUT          ! Triangle index in unstructured grids
+    INTEGER                       :: IX(4), IY(4)   ! Indices of points used in interp.
+    REAL                          :: RD(4)          ! Interpolation coefficient
+    REAL, PARAMETER               :: ACC = 0.05
+    REAL                          :: FACTOR
+    INTEGER                       :: ITOUT          ! Triangle index in unstructured grids
 #ifdef W3_O7a
-    INTEGER                 :: IX0, IXN, IY0, IYN, NNX,         &
-         KX, KY, JX, IIX, IX2, IY2, IS1
-    REAL                    :: RD1, RD2, RDTOT, ZBOX(4), DEPTH
-    CHARACTER(LEN=1)         :: SEA(5), LND(5), OUT(5)
-    CHARACTER(LEN=9)         :: PARTS
+    INTEGER                       :: IX0, IXN, IY0, IYN, NNX
+    INTEGER                       :: KX, KY, JX, IIX, IX2, IY2, IS1
+    REAL                          :: RD1, RD2, RDTOT, ZBOX(4), DEPTH
+    CHARACTER(LEN=1)              :: SEA(5), LND(5), OUT(5)
+    CHARACTER(LEN=9)              :: PARTS
     CHARACTER(LEN=1), ALLOCATABLE :: STRING(:), LINE1(:), LINE2(:)
     !
     DATA SEA / ' ', 's', 'e', 'a', ' ' /
@@ -737,28 +736,28 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: I, IX1, IY1, IX(4), IY(4), J, IS(4), &
-         IM(4), IK, ITH, ISP
+    INTEGER       :: I, IX1, IY1, IX(4), IY(4), J, IS(4)
+    INTEGER       :: IM(4), IK, ITH, ISP
 #ifdef W3_MPI
-    INTEGER                 :: IOFF, IERR_MPI
-    INTEGER                 :: STAT(MPI_STATUS_SIZE,4*NOPTS)
+    INTEGER       :: IOFF, IERR_MPI
+    INTEGER       :: STAT(MPI_STATUS_SIZE,4*NOPTS)
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: RD(4), RDS, RDI, FACRD,              &
-         WNDX, WNDY, CURX, CURY, FAC1(NK),    &
-         FAC2(NK), FAC3(NK), FAC4(NK)
+    REAL          :: RD(4), RDS, RDI, FACRD
+    REAL          :: WNDX, WNDY, CURX, CURY, FAC1(NK)
+    REAL          :: FAC2(NK), FAC3(NK), FAC4(NK)
 #ifdef W3_FLX5
-    REAL                    :: TAUX, TAUY
+    REAL          :: TAUX, TAUY
 #endif
-    INTEGER                 :: JSEA, ISEA
+    INTEGER       :: JSEA, ISEA
 #ifdef W3_T
-    REAL                    :: SPTEST(NK,NTH)
+    REAL          :: SPTEST(NK,NTH)
 #endif
 #ifdef W3_RTD
-    REAL :: Spectr(NSPEC), AnglDIS
-    INTEGER :: IROT
+    REAL          :: Spectr(NSPEC), AnglDIS
+    INTEGER       :: IROT
 #endif
     !/
     !/ ------------------------------------------------------------------- /

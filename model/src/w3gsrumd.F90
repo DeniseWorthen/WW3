@@ -1285,8 +1285,7 @@ CONTAINS
   !/
   !/ ------------------------------------------------------------------- /
   !/
-  FUNCTION W3GFCL_R4( GSU, XT, YT, IS, JS, XS, YS, &
-       POLE, EPS, FNCL, DEBUG ) RESULT(INGRID)
+  FUNCTION W3GFCL_R4( GSU, XT, YT, IS, JS, XS, YS, POLE, EPS, FNCL, DEBUG ) RESULT(INGRID)
     !     Single precision interface
     LOGICAL                            :: INGRID
     TYPE(T_GSU), INTENT(IN)            :: GSU
@@ -1326,8 +1325,7 @@ CONTAINS
   !/
   !/ ------------------------------------------------------------------- /
   !/
-  FUNCTION W3GFCL_R8( GSU, XT, YT, IS, JS, XS, YS, &
-       POLE, EPS, FNCL, DEBUG ) RESULT(INGRID)
+  FUNCTION W3GFCL_R8( GSU, XT, YT, IS, JS, XS, YS, POLE, EPS, FNCL, DEBUG ) RESULT(INGRID)
     !     Double precision interface
     LOGICAL                            :: INGRID
     TYPE(T_GSU), INTENT(IN)            :: GSU

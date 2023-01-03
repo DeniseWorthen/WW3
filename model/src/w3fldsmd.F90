@@ -1109,14 +1109,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IX, IY, J, ISTAT
+    INTEGER            :: IX, IY, J, ISTAT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE      :: IENT = 0
 #endif
-    REAL                    :: DTTST
-    LOGICAL                 :: WRITE, FL2D, FLFRST, FLBE, FLST,    &
-         FLINTERP, FLCOUPL
-    LOGICAL, PARAMETER      :: FLAGSC_DEFAULT = .FALSE.
+    REAL               :: DTTST
+    LOGICAL            :: WRITE, FL2D, FLFRST, FLBE, FLST
+    LOGICAL            :: FLINTERP, FLCOUPL
+    LOGICAL, PARAMETER :: FLAGSC_DEFAULT = .FALSE.
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -1910,17 +1910,17 @@ CONTAINS
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE      :: IENT = 0
 #endif
-    TYPE(T_GSU)             :: GSU
-    INTEGER                 :: IX, IY, I, J, NNBR, II(4), JJ(4),    &
-         MSKC, IFOUND, IMASK, ICOR1
-    REAL                    :: RR(4), X, Y
-    REAL, POINTER           :: PLAT(:,:), PLON(:,:)
-    LOGICAL                 :: INGRID, LMSK(MXI,MYI)
-    LOGICAL                 :: LDBG = .FALSE.
-    INTEGER, PARAMETER      :: NNBR_MAX = 2
-    INTEGER                 :: ICLO
+    TYPE(T_GSU)        :: GSU
+    INTEGER            :: IX, IY, I, J, NNBR, II(4), JJ(4)
+    INTEGER            :: MSKC, IFOUND, IMASK, ICOR1
+    REAL               :: RR(4), X, Y
+    REAL, POINTER      :: PLAT(:,:), PLON(:,:)
+    LOGICAL            :: INGRID, LMSK(MXI,MYI)
+    LOGICAL            :: LDBG = .FALSE.
+    INTEGER, PARAMETER :: NNBR_MAX = 2
+    INTEGER            :: ICLO
     !/
     !/ ------------------------------------------------------------------- /
     !/

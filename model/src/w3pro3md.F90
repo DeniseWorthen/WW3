@@ -207,14 +207,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IX, IY, IXY0, IX2, IY2, IX0, IY0,    &
-         ISEA, IK, ITH, ISP, ISP0, ISP2, NCENTC
+    INTEGER       :: IX, IY, IXY0, IX2, IY2, IX0, IY0
+    INTEGER       :: ISEA, IK, ITH, ISP, ISP0, ISP2, NCENTC
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
 #ifdef W3_T
-    INTEGER                 :: MAPTXY(NY,NX), I, IXY
-    INTEGER                 :: MAPTST(NK+2,NTH)
+    INTEGER       :: MAPTXY(NY,NX), I, IXY
+    INTEGER       :: MAPTST(NK+2,NTH)
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -775,34 +775,34 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: ITH, IK, NTLOC, ITLOC, ISEA, IXY, IP
-    INTEGER                 :: IX, IY, IXC, IYC, IBI
-    INTEGER                 :: IIXY1(NSEA), IIXY2(NSEA),            &
-         IIXY3(NSEA), IIXY4(NSEA)
-    INTEGER                 :: TTEST(2),DTTST
+    INTEGER       :: ITH, IK, NTLOC, ITLOC, ISEA, IXY, IP
+    INTEGER       :: IX, IY, IXC, IYC, IBI
+    INTEGER       :: IIXY1(NSEA), IIXY2(NSEA)
+    INTEGER       :: IIXY3(NSEA), IIXY4(NSEA)
+    INTEGER       :: TTEST(2),DTTST
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: CG0, CGA, CGN, CGX, CGY, CXC, CYC,   &
-         CXMIN, CXMAX, CYMIN, CYMAX
-    REAL                    :: CGC, FGSE = 1.
-    REAL                    :: FTH, FTHX, FTHY, FCG, FCGX, FCGY
-    REAL                    :: DTLOC, DTRAD,                        &
-         DXCGN, DYCGN, DXCGS, DYCGS, DXCGC,   &
-         DYCGC
-    REAL                    :: RDI1(NSEA), RDI2(NSEA),              &
-         RDI3(NSEA), RDI4(NSEA)
-    REAL                    :: TMPX, TMPY, RD1, RD2, RD3, RD4
-    LOGICAL                 :: YFIRST
-    LOGICAL                 :: GLOBAL
-    REAL                    :: CP, CQ
+    REAL          :: CG0, CGA, CGN, CGX, CGY, CXC, CYC
+    REAL          :: CXMIN, CXMAX, CYMIN, CYMAX
+    REAL          :: CGC, FGSE = 1.
+    REAL          :: FTH, FTHX, FTHY, FCG, FCGX, FCGY
+    REAL          :: DTLOC, DTRAD
+    REAL          :: DXCGN, DYCGN, DXCGS, DYCGS, DXCGC
+    REAL          :: DYCGC
+    REAL          :: RDI1(NSEA), RDI2(NSEA)
+    REAL          :: RDI3(NSEA), RDI4(NSEA)
+    REAL          :: TMPX, TMPY, RD1, RD2, RD3, RD4
+    LOGICAL       :: YFIRST
+    LOGICAL       :: GLOBAL
+    REAL          :: CP, CQ
     !/
     !/ Automatic work arrays
     !/
-    INTEGER                 :: MAPSTX(1-2*NY:NY*(NX+2))
-    REAL                    :: VLCFLX((NX+1)*NY), VLCFLY((NX+1)*NY),&
-         AQ(1-NY:NY*(NX+2))
-    REAL                    :: CXTOT((NX+1)*NY), CYTOT(NX*NY)
+    INTEGER       :: MAPSTX(1-2*NY:NY*(NX+2))
+    REAL          :: VLCFLX((NX+1)*NY), VLCFLY((NX+1)*NY)
+    REAL          :: AQ(1-NY:NY*(NX+2))
+    REAL          :: CXTOT((NX+1)*NY), CYTOT(NX*NY)
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -1567,17 +1567,17 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: ITH, IK, ISP
+    INTEGER       :: ITH, IK, ISP
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: FDDMAX, FDG, FKD, FKD0, DCYX,        &
-         DCXXYY, DCXY, DCXX, DCXYYX, DCYY,    &
-         VELNOFILT, VELFAC, DEPTH
-    REAL                    :: DSDD(0:NK+1), FRK(NK), FRG(NK),      &
-         FKC(NTH), VQ(-NK-1:NK2*(NTH+2)),     &
-         DB(NK2,NTH+1), DM(NK2,0:NTH+1),      &
-         VCFLT(NK2*(NTH+1)), CFLK(NK2,NTH)
+    REAL          :: FDDMAX, FDG, FKD, FKD0, DCYX
+    REAL          :: DCXXYY, DCXY, DCXX, DCXYYX, DCYY
+    REAL          :: VELNOFILT, VELFAC, DEPTH
+    REAL          :: DSDD(0:NK+1), FRK(NK), FRG(NK)
+    REAL          :: FKC(NTH), VQ(-NK-1:NK2*(NTH+2))
+    REAL          :: DB(NK2,NTH+1), DM(NK2,0:NTH+1)
+    REAL          :: VCFLT(NK2*(NTH+1)), CFLK(NK2,NTH)
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -1973,21 +1973,21 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: ITH, IK, IXY, IP
-    INTEGER                 :: IX, IY, IXC, IYC, IBI
+    INTEGER       :: ITH, IK, IXY, IP
+    INTEGER       :: IX, IY, IXC, IYC, IBI
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: CG0, CGA, CGN, CGX, CGY, CXC, CYC,   &
-         CXMIN, CXMAX, CYMIN, CYMAX
-    REAL                    :: CGC, FGSE = 1.
-    REAL                    :: FTH, FTHX, FTHY, FCG, FCGX, FCGY
-    REAL                    :: CP, CQ
+    REAL          :: CG0, CGA, CGN, CGX, CGY, CXC, CYC
+    REAL          :: CXMIN, CXMAX, CYMIN, CYMAX
+    REAL          :: CGC, FGSE = 1.
+    REAL          :: FTH, FTHX, FTHY, FCG, FCGX, FCGY
+    REAL          :: CP, CQ
     !/
     !/ Automatic work arrays
     !/
-    REAL                    :: VLCFLX, VLCFLY
-    REAL                    :: CXTOT, CYTOT
+    REAL          :: VLCFLX, VLCFLY
+    REAL          :: CXTOT, CYTOT
     !/
     !/ ------------------------------------------------------------------- /
     !/

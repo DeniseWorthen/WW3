@@ -243,19 +243,19 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: ITH, IMI(NSPEC), IMD(NSPEC),         &
-         IMO(NSPEC), IND(NSPEC), NP_MAX,      &
-         IP, IT(1), INDEX(DIMXP), NWS,        &
-         IPW, IPT, ISP
-    INTEGER                 :: PMAP(DIMXP)
+    INTEGER       :: ITH, IMI(NSPEC), IMD(NSPEC)
+    INTEGER       :: IMO(NSPEC), IND(NSPEC), NP_MAX
+    INTEGER       :: IP, IT(1), INDEX(DIMXP), NWS
+    INTEGER       :: IPW, IPT, ISP
+    INTEGER       :: PMAP(DIMXP)
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: ZP(NSPEC), ZMIN, ZMAX, Z(NSPEC),     &
-         FACT, WSMAX, HSMAX
-    REAL                    :: TP(DIMP,DIMXP)
-    INTEGER                 :: IK, WIND_PART    ! ChrisB; added for new
-    REAL                    :: C, UPAR, SIGCUT  ! UKMO partioning methods
+    REAL          :: ZP(NSPEC), ZMIN, ZMAX, Z(NSPEC)
+    REAL          :: FACT, WSMAX, HSMAX
+    REAL          :: TP(DIMP,DIMXP)
+    INTEGER       :: IK, WIND_PART    ! ChrisB; added for new
+    REAL          :: C, UPAR, SIGCUT  ! UKMO partioning methods
     !/
     !/ ------------------------------------------------------------------- /
     ! 0.  Initializations
@@ -563,12 +563,12 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: I, IN, IV
+    INTEGER       :: I, IN, IV
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    INTEGER                 :: NUMV(IHMAX), IADDR(IHMAX),           &
-         IORDER(NSPEC)
+    INTEGER       :: NUMV(IHMAX), IADDR(IHMAX)
+    INTEGER       :: IORDER(NSPEC)
     !/
 #ifdef W3_S
     CALL STRACE (IENT, 'PTSORT')
@@ -683,9 +683,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: N, J, I, K
+    INTEGER :: N, J, I, K
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
     CALL STRACE (IENT, 'PTNGHB')
 #endif
     !
@@ -893,15 +893,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: MASK, INIT, IWSHED, IMD(NSPEC),      &
-         IC_LABEL, IFICT_PIXEL, M, IH, MSAVE, &
-         IP, I, IPP, IC_DIST, IEMPTY, IPPP,   &
-         JL, JN, IPT, J
-    INTEGER                 :: IQ(NSPEC), IQ_START, IQ_END
+    INTEGER       :: MASK, INIT, IWSHED, IMD(NSPEC)
+    INTEGER       :: IC_LABEL, IFICT_PIXEL, M, IH, MSAVE
+    INTEGER       :: IP, I, IPP, IC_DIST, IEMPTY, IPPP
+    INTEGER       :: JL, JN, IPT, J
+    INTEGER       :: IQ(NSPEC), IQ_START, IQ_END
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: ZPMAX, EP1, DIFF
+    REAL          :: ZPMAX, EP1, DIFF
     !/
 #ifdef W3_S
     CALL STRACE (IENT, 'PT_FLD')
@@ -1247,22 +1247,22 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IK, ITH, ISP, IP, IFPMAX(0:NPI)
+    INTEGER                :: IK, ITH, ISP, IP, IFPMAX(0:NPI)
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE          :: IENT = 0
 #endif
-    REAL                    :: SUMF(0:NK+1,0:NPI), SUMFW(NK,0:NPI), &
-         SUMFX(NK,0:NPI), SUMFY(NK,0:NPI),    &
-         SUME(0:NPI), SUMEW(0:NPI),           &
-         SUMEX(0:NPI), SUMEY(0:NPI),          &
-         EFPMAX(0:NPI), FCDIR(NTH)
-    REAL,DIMENSION(0:NPI)   :: SUME1, SUME2, SUMEM1, SUMQP
-    REAL                    :: HS, XL, XH, XL2, XH2, EL, EH, DENOM, &
-         SIGP, WNP, CGP, UPAR, C(NK), RD, FACT
-    REAL                    :: QP, M0, M1, M2, MM1, FSPRD, EPM_FP, ALP_PM
-    REAL                    :: Y, YHAT, XHAT, SUMXY, SUMYLOGY, NUMER,&
-         SUMY, SUMXXY, SUMXYLOGY, SUMEXP, SUMEYP
-    REAL                    :: FTEII
+    REAL                   :: SUMF(0:NK+1,0:NPI), SUMFW(NK,0:NPI)
+    REAL                   :: SUMFX(NK,0:NPI), SUMFY(NK,0:NPI)
+    REAL                   :: SUME(0:NPI), SUMEW(0:NPI)
+    REAL                   :: SUMEX(0:NPI), SUMEY(0:NPI)
+    REAL                   :: EFPMAX(0:NPI), FCDIR(NTH)
+    REAL, DIMENSION(0:NPI) :: SUME1, SUME2, SUMEM1, SUMQP
+    REAL                   :: HS, XL, XH, XL2, XH2, EL, EH, DENOM
+    REAL                   :: SIGP, WNP, CGP, UPAR, C(NK), RD, FACT
+    REAL                   :: QP, M0, M1, M2, MM1, FSPRD, EPM_FP, ALP_PM
+    REAL                   :: Y, YHAT, XHAT, SUMXY, SUMYLOGY, NUMER
+    REAL                   :: SUMY, SUMXXY, SUMXYLOGY, SUMEXP, SUMEYP
+    REAL                   :: FTEII
     !/
 #ifdef W3_S
     CALL STRACE (IENT, 'PTMEAN')

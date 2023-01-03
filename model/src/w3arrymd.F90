@@ -163,9 +163,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IIDFM, IIDLA, IX, IY, ISTAT
+    INTEGER        :: IIDFM, IIDLA, IX, IY, ISTAT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -509,9 +509,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IIDFM, IIDLA, IX, IY, ISTAT
+    INTEGER        :: IIDFM, IIDLA, IX, IY, ISTAT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -813,9 +813,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: I, K
+    INTEGER        :: I, K
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -1043,9 +1043,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: LBLOK, NBLOK, IBLOK, IX, IX1, IX2, IY
+    INTEGER        :: LBLOK, NBLOK, IBLOK, IX, IX1, IX2, IY
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE :: IENT = 0
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -1192,14 +1192,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IX, IY, JJ, JM, K1, LX, I
+    INTEGER        :: IX, IY, JJ, JM, K1, LX, I
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE  :: IENT = 0
 #endif
-    REAL                    :: FMAX, RR
-    LOGICAL                 :: FLSCLE
-    CHARACTER               :: PNUM*5, STRA*5, PNUM2*2, STRA3*3
-    DIMENSION               :: PNUM(25), PNUM2(61)
+    REAL           :: FMAX, RR
+    LOGICAL        :: FLSCLE
+    CHARACTER      :: PNUM*5, STRA*5, PNUM2*2, STRA3*3
+    DIMENSION      :: PNUM(25), PNUM2(61)
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -1450,16 +1450,16 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: NFRB, IFR, IL, IL0
+    INTEGER        :: NFRB, IFR, IL, IL0
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE  :: IENT = 0
 #endif
-    REAL, SAVE              :: TOPFAC = 1.1
-    REAL                    :: FTOP, RLINES, FACFR, FSC, FLINE,    &
-         EMAX, EMIN, EXTR, FLOC
-    LOGICAL                 :: FLSCLE
-    CHARACTER               :: STRA*10, STRA2*2, PNUM2*2
-    DIMENSION               :: PNUM2(NFM2)
+    REAL , SAVE    :: TOPFAC = 1.1
+    REAL           :: FTOP, RLINES, FACFR, FSC, FLINE
+    REAL           :: EMAX, EMIN, EXTR, FLOC
+    LOGICAL        :: FLSCLE
+    CHARACTER      :: STRA*10, STRA2*2, PNUM2*2
+    DIMENSION      :: PNUM2(NFM2)
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -1712,18 +1712,18 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER, PARAMETER      :: NFRMAX = 100
-    INTEGER, PARAMETER      :: NFM2   = NFRMAX+1
-    INTEGER                 :: NFRB, IFR, IE, IL
+    INTEGER , PARAMETER :: NFRMAX = 100
+    INTEGER , PARAMETER :: NFM2   = NFRMAX+1
+    INTEGER             :: NFRB, IFR, IE, IL
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE       :: IENT = 0
 #endif
-    REAL, SAVE              :: TOPFAC = 1.1
-    REAL                    :: FTOP, RLINES, FACFR, FSC, FLINE,    &
-         EMAX, EMIN, EXTR, FLOC
-    LOGICAL                 :: FLSCLE
-    CHARACTER               :: STRA*10, STRA2*2, STRAX*2, PNUM2*2
-    DIMENSION               :: PNUM2(NFM2)
+    REAL , SAVE         :: TOPFAC = 1.1
+    REAL                :: FTOP, RLINES, FACFR, FSC, FLINE
+    REAL                :: EMAX, EMIN, EXTR, FLOC
+    LOGICAL             :: FLSCLE
+    CHARACTER           :: STRA*10, STRA2*2, STRAX*2, PNUM2*2
+    DIMENSION           :: PNUM2(NFM2)
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -2033,15 +2033,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IFR, ITH, NFRB, INTANG, ITHSEC
+    INTEGER        :: IFR, ITH, NFRB, INTANG, ITHSEC
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE  :: IENT = 0
 #endif
-    LOGICAL                 :: FLSCLE
-    REAL                    :: FACFR, EMAX, EMIN, DTHDEG, RR, RRC
-    CHARACTER               :: PNUM*5, STRA*5, STRANG*5, PNUM2*2,  &
-         STRA2*2
-    DIMENSION               :: PNUM(25), PNUM2(101)
+    LOGICAL        :: FLSCLE
+    REAL           :: FACFR, EMAX, EMIN, DTHDEG, RR, RRC
+    CHARACTER      :: PNUM*5, STRA*5, STRANG*5, PNUM2*2
+    CHARACTER      :: STRA2*2
+    DIMENSION      :: PNUM(25), PNUM2(101)
     !/
     !/ ------------------------------------------------------------------- /
     !/

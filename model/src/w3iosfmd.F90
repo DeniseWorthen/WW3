@@ -92,8 +92,7 @@ MODULE W3IOSFMD
   !/ Private parameter statements (ID strings)
   !/
   CHARACTER(LEN=10), PARAMETER, PRIVATE :: VERPRT = '2018-07-25'
-  CHARACTER(LEN=35), PARAMETER, PRIVATE ::                        &
-       IDSTR = 'WAVEWATCH III PARTITIONED DATA FILE'
+  CHARACTER(LEN=35), PARAMETER, PRIVATE :: IDSTR = 'WAVEWATCH III PARTITIONED DATA FILE'
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
@@ -194,14 +193,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: DIMXP, JSEA, ISEA, IX, IY,     &
-         IK, ITH, NP, TMPSIZ, OLDSIZ, FINSIZ
-    INTEGER, SAVE           :: TSFAC = 7
+    INTEGER           :: DIMXP, JSEA, ISEA, IX, IY
+    INTEGER           :: IK, ITH, NP, TMPSIZ, OLDSIZ, FINSIZ
+    INTEGER, SAVE     :: TSFAC = 7
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE     :: IENT = 0
 #endif
-    REAL                    :: UABS, UDIR, DEPTH, FACT, E2(NK,NTH)
-    REAL, ALLOCATABLE       :: XP(:,:), TMP(:,:), TMP2(:,:)
+    REAL              :: UABS, UDIR, DEPTH, FACT, E2(NK,NTH)
+    REAL, ALLOCATABLE :: XP(:,:), TMP(:,:), TMP2(:,:)
     !/
 #ifdef W3_S
     CALL STRACE (IENT, 'W3CPRT')
@@ -465,18 +464,18 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: I, J, IERR, ISEA, JSEA, JAPROC,      &
-         IX, IY, IP, IOFF, DTSIZ=0
+    INTEGER             :: I, J, IERR, ISEA, JSEA, JAPROC
+    INTEGER             :: IX, IY, IP, IOFF, DTSIZ=0
 #ifdef W3_MPI
-    INTEGER                 :: ICSIZ, IERR_MPI, IT,            &
-         STATUS(MPI_STATUS_SIZE,1), JSLM
+    INTEGER             :: ICSIZ, IERR_MPI, IT
+    INTEGER             :: STATUS(MPI_STATUS_SIZE,1), JSLM
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE       :: IENT = 0
 #endif
-    INTEGER, POINTER        :: ICP(:,:)
-    REAL                    :: X, Y, DEPTH, UABS, UDIR, CABS, CDIR
-    REAL, POINTER           :: DTP(:,:)
+    INTEGER,    POINTER :: ICP(:,:)
+    REAL                :: X, Y, DEPTH, UABS, UDIR, CABS, CDIR
+    REAL,       POINTER :: DTP(:,:)
     !
     TYPE PROCS
       INTEGER, POINTER :: ICPRT(:,:)

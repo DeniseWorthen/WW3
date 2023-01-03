@@ -318,81 +318,80 @@ PROGRAM W3SHEL
   !/ ------------------------------------------------------------------- /
   !/ Local parameters
   !/
-  TYPE(NML_DOMAIN_T)       :: NML_DOMAIN
-  TYPE(NML_INPUT_T)        :: NML_INPUT
-  TYPE(NML_OUTPUT_TYPE_T)  :: NML_OUTPUT_TYPE
-  TYPE(NML_OUTPUT_DATE_T)  :: NML_OUTPUT_DATE
-  TYPE(NML_HOMOG_COUNT_T)  :: NML_HOMOG_COUNT
-  TYPE(NML_HOMOG_INPUT_T), ALLOCATABLE  :: NML_HOMOG_INPUT(:)
+  TYPE(NML_DOMAIN_T)                   :: NML_DOMAIN
+  TYPE(NML_INPUT_T)                    :: NML_INPUT
+  TYPE(NML_OUTPUT_TYPE_T)              :: NML_OUTPUT_TYPE
+  TYPE(NML_OUTPUT_DATE_T)              :: NML_OUTPUT_DATE
+  TYPE(NML_HOMOG_COUNT_T)              :: NML_HOMOG_COUNT
+  TYPE(NML_HOMOG_INPUT_T), ALLOCATABLE :: NML_HOMOG_INPUT(:)
   !
-  INTEGER             :: NDSI, NDSI2, NDSS, NDSO, NDSE, NDST, NDSL,&
-       NDSEN, IERR, J, I, ILOOP, IPTS, NPTS,     &
-       NDTNEW, MPI_COMM = -99,                   &
-       FLAGTIDE, COUPL_COMM, IH, N_TOT
-  INTEGER             :: NDSF(-7:9), NDS(13), NTRACE(2), NDT(7:9), &
-       TIME0(2), TIMEN(2), TTIME(2), TTT(2),     &
-       NH(-7:10), THO(2,-7:10,NHMAX), RCLD(7:9), &
-       NODATA(7:9), ODAT(40), IPRT(6) = 0,       &
-       STARTDATE(8), STOPDATE(8), IHH(-7:10)
+  INTEGER                              :: NDSI, NDSI2, NDSS, NDSO, NDSE, NDST, NDSL
+  INTEGER                              :: NDSEN, IERR, J, I, ILOOP, IPTS, NPTS
+  INTEGER                              :: NDTNEW, MPI_COMM = -99
+  INTEGER                              :: FLAGTIDE, COUPL_COMM, IH, N_TOT
+  INTEGER                              :: NDSF(-7:9), NDS(13), NTRACE(2), NDT(7:9)
+  INTEGER                              :: TIME0(2), TIMEN(2), TTIME(2), TTT(2)
+  INTEGER                              :: NH(-7:10), THO(2,-7:10,NHMAX), RCLD(7:9)
+  INTEGER                              :: NODATA(7:9), ODAT(40), IPRT(6) = 0
+  INTEGER                              :: STARTDATE(8), STOPDATE(8), IHH(-7:10)
   !
 #ifdef W3_OASIS
-  INTEGER             :: OASISED
+  INTEGER                              :: OASISED
 #endif
 #ifdef W3_COU
-  INTEGER             :: OFL
+  INTEGER                              :: OFL
 #endif
-  INTEGER             :: CLKDT1(8), CLKDT2(8), CLKDT3(8)
+  INTEGER                              :: CLKDT1(8), CLKDT2(8), CLKDT3(8)
 #ifdef W3_MPI
-  INTEGER             :: IERR_MPI
+  INTEGER                              :: IERR_MPI
 #endif
   !
-  REAL                :: FACTOR, DTTST, XX, YY,                    &
-       HA(NHMAX,-7:10), HD(NHMAX,-7:10),         &
-       HS(NHMAX,-7:10)
-  REAL                :: CLKFIN, CLKFEL
-  REAL, ALLOCATABLE   :: X(:), Y(:), XXX(:,:), DATA0(:,:),         &
-       DATA1(:,:), DATA2(:,:)
+  REAL                                 :: FACTOR, DTTST, XX, YY
+  REAL                                 :: HA(NHMAX,-7:10), HD(NHMAX,-7:10)
+  REAL                                 :: HS(NHMAX,-7:10)
+  REAL                                 :: CLKFIN, CLKFEL
+  REAL,                    ALLOCATABLE :: X(:), Y(:), XXX(:,:), DATA0(:,:)
+  REAL,                    ALLOCATABLE :: DATA1(:,:), DATA2(:,:)
   !
-  DOUBLE PRECISION    :: STARTJULDAY, STOPJULDAY
+  DOUBLE PRECISION                     :: STARTJULDAY, STOPJULDAY
   !
-  CHARACTER(LEN=1)    :: COMSTR, FLAGTFC(-7:10)
-  CHARACTER(LEN=3)    :: IDSTR(-7:10), IDTST
-  CHARACTER(LEN=6)    :: YESXNO
-  CHARACTER(LEN=40)   :: PN
-  CHARACTER(LEN=40),                                               &
-       ALLOCATABLE :: PNAMES(:)
-  CHARACTER(LEN=13)   :: IDFLDS(-7:10)
-  CHARACTER(LEN=20)   :: STRNG
-  CHARACTER(LEN=23)   :: DTME21
-  CHARACTER(LEN=30)   :: IDOTYP(8)
-  CHARACTER(LEN=80)   :: LINE
-  CHARACTER(LEN=256)  :: TMPLINE, TEST
-  CHARACTER(LEN=1024) :: FLDIN
-  CHARACTER(LEN=1024) :: FLDRST=''
-  CHARACTER(LEN=80)   :: LINEIN
-  CHARACTER(LEN=8)    :: WORDS(7)=''
+  CHARACTER(LEN=1)                     :: COMSTR, FLAGTFC(-7:10)
+  CHARACTER(LEN=3)                     :: IDSTR(-7:10), IDTST
+  CHARACTER(LEN=6)                     :: YESXNO
+  CHARACTER(LEN=40)                    :: PN
+  CHARACTER(LEN=40),       ALLOCATABLE :: PNAMES(:)
+  CHARACTER(LEN=13)                    :: IDFLDS(-7:10)
+  CHARACTER(LEN=20)                    :: STRNG
+  CHARACTER(LEN=23)                    :: DTME21
+  CHARACTER(LEN=30)                    :: IDOTYP(8)
+  CHARACTER(LEN=80)                    :: LINE
+  CHARACTER(LEN=256)                   :: TMPLINE, TEST
+  CHARACTER(LEN=1024)                  :: FLDIN
+  CHARACTER(LEN=1024)                  :: FLDRST=''
+  CHARACTER(LEN=80)                    :: LINEIN
+  CHARACTER(LEN=8)                     :: WORDS(7)=''
 
 #ifdef W3_COU
-  CHARACTER(LEN=30)   :: OFILE
+  CHARACTER(LEN=30)                    :: OFILE
 #endif
   !
-  LOGICAL             :: FLLSTL, FLLSTI, FLLSTR, FLFLG, FLHOM,     &
-       TFLAGI, PRTFRM, FLAGSCI, FLGNML
-  LOGICAL             :: FLGRD(NOGRP,NGRPP), FLGD(NOGRP),          &
-       FLGR2(NOGRP,NGRPP), FLG2(NOGRP),          &
-       FLAGSTIDE(4), FLH(-7:10), FLGDAS(3),      &
-       FLLST_ALL(-7:10)
+  LOGICAL                              :: FLLSTL, FLLSTI, FLLSTR, FLFLG, FLHOM
+  LOGICAL                              :: TFLAGI, PRTFRM, FLAGSCI, FLGNML
+  LOGICAL                              :: FLGRD(NOGRP,NGRPP), FLGD(NOGRP)
+  LOGICAL                              :: FLGR2(NOGRP,NGRPP), FLG2(NOGRP)
+  LOGICAL                              :: FLAGSTIDE(4), FLH(-7:10), FLGDAS(3)
+  LOGICAL                              :: FLLST_ALL(-7:10)
 #ifdef W3_MPI
-  LOGICAL             :: FLHYBR = .FALSE.
+  LOGICAL                              :: FLHYBR = .FALSE.
 #endif
 #ifdef W3_OMPH
-  INTEGER             :: THRLEV
+  INTEGER                              :: THRLEV
 #endif
 #ifdef W3_OASIS
-  LOGICAL             :: L_MASTER
+  LOGICAL                              :: L_MASTER
 #endif
-  character(len=10)   :: jchar
-  integer             :: memunit
+  character(len=10)                    :: jchar
+  integer                              :: memunit
   !
   !/
   !/ ------------------------------------------------------------------- /

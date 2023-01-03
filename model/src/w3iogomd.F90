@@ -157,8 +157,7 @@ MODULE W3IOGOMD
   !/ Private parameter statements (ID strings)
   !/
   CHARACTER(LEN=10), PARAMETER, PRIVATE :: VEROGR = '2019-10-04'
-  CHARACTER(LEN=30), PARAMETER, PRIVATE ::                        &
-       IDSTR = 'WAVEWATCH III GRID OUTPUT FILE'
+  CHARACTER(LEN=30), PARAMETER, PRIVATE :: IDSTR = 'WAVEWATCH III GRID OUTPUT FILE'
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
@@ -1329,58 +1328,58 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IK, ITH, JSEA, ISEA, IX, IY,         &
-         IKP0(NSEAL), NKH(NSEAL),             &
-         I, J, LKMS, HKMS, ITL
+    INTEGER       :: IK, ITH, JSEA, ISEA, IX, IY
+    INTEGER       :: IKP0(NSEAL), NKH(NSEAL)
+    INTEGER       :: I, J, LKMS, HKMS, ITL
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: FXPMC, FACTOR, FACTOR2, EBAND, FKD,  &
-         AABS, UABS,                          &
-         XL, XH, XL2, XH2, EL, EH, DENOM, KD, &
-         M1, M2, MA, MB, MC, STEX, STEY, STED
-    REAL                    :: ET(NSEAL), EWN(NSEAL), ETR(NSEAL),   &
-         ETX(NSEAL), ETY(NSEAL), AB(NSEAL),   &
-         ETXX(NSEAL), ETYY(NSEAL), ETXY(NSEAL),&
-         ABX(NSEAL), ABY(NSEAL),ET02(NSEAL),  &
-         EBD(NK,NSEAL), EC(NSEAL),            &
-         ABR(NSEAL), UBR(NSEAL), UBS(NSEAL),  &
-         ABX2(NSEAL), ABY2(NSEAL),            &
-         AB2X(NSEAL), AB2Y(NSEAL),            &
-         ABST(NSEAL), ABXX(NSEAL),            &
-         ABYY(NSEAL), ABXY(NSEAL),            &
-         ABYX(NSEAL), EET1(NSEAL),            &
-         ETUSCX(NSEAL), ETUSCY(NSEAL),        &
-         ETMSSL(NSEAL), ETMSSCL(NSEAL),       &
-         ETTPMM(NSEAL), ETF(NSEAL),           &
-         ET1(NSEAL), ABX2M(NSEAL),            &
-         ABY2M(NSEAL), ABXM(NSEAL),           &
-         ABYM(NSEAL), ABXYM(NSEAL),           &
-         MSSXM(NSEAL), MSSYM(NSEAL),          &
-         MSSXTM(NSEAL), MSSYTM(NSEAL),        &
-         MSSXYM(NSEAL), THMP(NSEAL),          &
-         T02P(NSEAL), NV(NSEAL), NS(NSEAL),   &
-         NB(NSEAL), MODE(NSEAL),              &
-         MU(NSEAL), NI(NSEAL), STMAXEL(NSEAL),&
-         PHI(21,NSEAL),PHIST(NSEAL),         &
-         EBC(NK,NSEAL), ABP(NSEAL),           &
-         STMAXDL(NSEAL), TLPHI(NSEAL),        &
-         WL02X(NSEAL), WL02Y(NSEAL),          &
-         ALPXT(NSEAL), ALPYT(NSEAL),          &
-         ALPXY(NSEAL), SCREST(NSEAL)
-    REAL                       USSCO, FT1
-    REAL, SAVE              :: HSMIN = 0.01
-    LOGICAL                 :: FLOLOC(NOGRP,NGRPP)
+    REAL          :: FXPMC, FACTOR, FACTOR2, EBAND, FKD
+    REAL          :: AABS, UABS
+    REAL          :: XL, XH, XL2, XH2, EL, EH, DENOM, KD
+    REAL          :: M1, M2, MA, MB, MC, STEX, STEY, STED
+    REAL          :: ET(NSEAL), EWN(NSEAL), ETR(NSEAL)
+    REAL          :: ETX(NSEAL), ETY(NSEAL), AB(NSEAL)
+    REAL          :: ETXX(NSEAL), ETYY(NSEAL), ETXY(NSEAL)
+    REAL          :: ABX(NSEAL), ABY(NSEAL),ET02(NSEAL)
+    REAL          :: EBD(NK,NSEAL), EC(NSEAL)
+    REAL          :: ABR(NSEAL), UBR(NSEAL), UBS(NSEAL)
+    REAL          :: ABX2(NSEAL), ABY2(NSEAL)
+    REAL          :: AB2X(NSEAL), AB2Y(NSEAL)
+    REAL          :: ABST(NSEAL), ABXX(NSEAL)
+    REAL          :: ABYY(NSEAL), ABXY(NSEAL)
+    REAL          :: ABYX(NSEAL), EET1(NSEAL)
+    REAL          :: ETUSCX(NSEAL), ETUSCY(NSEAL)
+    REAL          :: ETMSSL(NSEAL), ETMSSCL(NSEAL)
+    REAL          :: ETTPMM(NSEAL), ETF(NSEAL)
+    REAL          :: ET1(NSEAL), ABX2M(NSEAL)
+    REAL          :: ABY2M(NSEAL), ABXM(NSEAL)
+    REAL          :: ABYM(NSEAL), ABXYM(NSEAL)
+    REAL          :: MSSXM(NSEAL), MSSYM(NSEAL)
+    REAL          :: MSSXTM(NSEAL), MSSYTM(NSEAL)
+    REAL          :: MSSXYM(NSEAL), THMP(NSEAL)
+    REAL          :: T02P(NSEAL), NV(NSEAL), NS(NSEAL)
+    REAL          :: NB(NSEAL), MODE(NSEAL)
+    REAL          :: MU(NSEAL), NI(NSEAL), STMAXEL(NSEAL)
+    REAL          :: PHI(21,NSEAL),PHIST(NSEAL)
+    REAL          :: EBC(NK,NSEAL), ABP(NSEAL)
+    REAL          :: STMAXDL(NSEAL), TLPHI(NSEAL)
+    REAL          :: WL02X(NSEAL), WL02Y(NSEAL)
+    REAL          :: ALPXT(NSEAL), ALPYT(NSEAL)
+    REAL          :: ALPXY(NSEAL), SCREST(NSEAL)
+    REAL          :: USSCO, FT1
+    REAL, SAVE    :: HSMIN = 0.01
+    LOGICAL       :: FLOLOC(NOGRP,NGRPP)
 #ifdef W3_CESMCOUPLED
     ! SWW: angle between wind and waves
     ! HSL: surface layer depth (=0.2*HML)
-    REAL                    :: SWW !angle between wind and waves
-    REAL                    :: HSL !surface layer depth (=0.2*HML)
+    REAL          :: SWW !angle between wind and waves
+    REAL          :: HSL !surface layer depth (=0.2*HML)
     ! tmp variables for surface and SL averaged SD
-    REAL                    :: ETUSSX(NSEAL),        &
-         ETUSSY(NSEAL),        &
-         ETUSSXH(NSEAL),       &
-         ETUSSYH(NSEAL)
+    REAL          :: ETUSSX(NSEAL)
+    REAL          :: ETUSSY(NSEAL)
+    REAL          :: ETUSSXH(NSEAL)
+    REAL          :: ETUSSYH(NSEAL)
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -2695,28 +2694,27 @@ CONTAINS
     INTEGER,   INTENT(IN)           :: NDSOG
     INTEGER,   INTENT(IN), OPTIONAL :: IMOD
     CHARACTER, INTENT(IN)           :: INXOUT*(*)
-
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IGRD, IERR, I, J, IX, IY, MOGRP,     &
-         MGRPP, ISEA, MOSWLL, IK, IFI, IFJ    &
-         ,IFILOUT
-    INTEGER, ALLOCATABLE    :: MAPTMP(:,:)
+    INTEGER              :: IGRD, IERR, I, J, IX, IY, MOGRP
+    INTEGER              :: MGRPP, ISEA, MOSWLL, IK, IFI, IFJ
+    INTEGER              :: IFILOUT
+    INTEGER, ALLOCATABLE :: MAPTMP(:,:)
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE        :: IENT = 0
 #endif
-    REAL                    :: AUX1(NSEA), AUX2(NSEA),              &
-         AUX3(NSEA), AUX4(NSEA)
+    REAL                 :: AUX1(NSEA), AUX2(NSEA)
+    REAL                 :: AUX3(NSEA), AUX4(NSEA)
 #ifdef W3_SMC
-    REAL                    :: UDARC
+    REAL                 :: UDARC
 #endif
-    CHARACTER(LEN=15) :: TIMETAG
-    CHARACTER(LEN=30)       :: IDTST, TNAME
-    CHARACTER(LEN=10)       :: VERTST
-    CHARACTER(len=512)      :: FNAME
-    character(len=16)       :: user_timestring    !YYYY-MM-DD-SSSSS
+    CHARACTER(LEN=15)    :: TIMETAG
+    CHARACTER(LEN=30)    :: IDTST, TNAME
+    CHARACTER(LEN=10)    :: VERTST
+    CHARACTER(len=512)   :: FNAME
+    character(len=16)    :: user_timestring    !YYYY-MM-DD-SSSSS
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -4000,15 +3998,15 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IK, ITH, ISEA, JSEA
-    INTEGER                 :: IKST, IKFI, IB
+    INTEGER       :: IK, ITH, ISEA, JSEA
+    INTEGER       :: IKST, IKFI, IB
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: FACTOR, FKD,KD
-    REAL                    :: ABX(NSEAL), ABY(NSEAL), USSCO
-    REAL                    :: MINDIFF
-    INTEGER                 :: Spc2Bnd(NK)
+    REAL          :: FACTOR, FKD,KD
+    REAL          :: ABX(NSEAL), ABY(NSEAL), USSCO
+    REAL          :: MINDIFF
+    INTEGER       :: Spc2Bnd(NK)
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -4236,18 +4234,18 @@ CONTAINS
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
     !
-    INTEGER              :: FPOPT = 0
+    INTEGER       :: FPOPT = 0
     !
-    INTEGER              :: IK, ITH, ISEA, JSEA, IKM, IKL, IKH, IX, IY
-    REAL                 :: TDPT, TU10, TUDIR, SINU, COSU, TC, TFORCE
-    REAL                 :: ESIG(NK) ! E(σ)
-    REAL                 :: FACTOR, ET, HS, ETP, HSP, SIGP, KP, &
-         CGP, WSTP
-    REAL                 :: XL, XH, XL2, XH2, EL, EH, DENOM
-    REAL                 :: TWBT
+    INTEGER       :: IK, ITH, ISEA, JSEA, IKM, IKL, IKH, IX, IY
+    REAL          :: TDPT, TU10, TUDIR, SINU, COSU, TC, TFORCE
+    REAL          :: ESIG(NK) ! E(σ)
+    REAL          :: FACTOR, ET, HS, ETP, HSP, SIGP, KP
+    REAL          :: CGP, WSTP
+    REAL          :: XL, XH, XL2, XH2, EL, EH, DENOM
+    REAL          :: TWBT
     !/
     !/ ------------------------------------------------------------------- /
     !/

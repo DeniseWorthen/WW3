@@ -73,16 +73,16 @@ Module W3FLD1MD
   !/
   !
   PUBLIC
-  ! Tail_Choice: Chose the method to determine the level of the tail
-  INTEGER, SAVE :: Tail_Choice
+                                           ! Tail_Choice: Chose the method to determine the level of the tail
+  INTEGER , SAVE :: Tail_Choice
 #ifdef W3_OMPG
   !$omp threadprivate(Tail_Choice)
 #endif
-  REAL, SAVE    :: Tail_Level !if Tail_Choice=0, tail is constant
-  REAL, SAVE    :: Tail_transition_ratio1! freq/fpi where tail
-  !  adjustment begins
-  REAL, SAVE    :: Tail_transition_ratio2! freq/fpi where tail
-  !  adjustment ends
+  REAL ,    SAVE :: Tail_Level             !if Tail_Choice=0, tail is constant
+  REAL ,    SAVE :: Tail_transition_ratio1 ! freq/fpi where tail
+                                           !  adjustment begins
+  REAL,     SAVE :: Tail_transition_ratio2 ! freq/fpi where tail
+                                           !  adjustment ends
 #ifdef W3_OMPG
   !$omp threadprivate(Tail_Level)
   !$omp threadprivate(Tail_transition_ratio1,Tail_transition_ratio2)
@@ -90,8 +90,7 @@ Module W3FLD1MD
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
-  SUBROUTINE W3FLD1( ASPC, FPI, WNDX,WNDY, ZWND,               &
-       DEPTH, RIB, DAIR, UST, USTD, Z0,               &
+  SUBROUTINE W3FLD1( ASPC, FPI, WNDX,WNDY, ZWND, DEPTH, RIB, DAIR, UST, USTD, Z0, &
        TAUNUX, TAUNUY, CHARN)
     !/
     !/                  +-----------------------------------+
@@ -194,55 +193,55 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    REAL, PARAMETER         ::  NU=0.105/10000.0
-    REAL, PARAMETER         ::  DELTA=0.03
+    REAL , PARAMETER                   ::  NU=0.105/10000.0
+    REAL , PARAMETER                   ::  DELTA=0.03
     ! Commonly used parameters
-    REAL                    ::  wnd_in_mag, wnd_in_dir
+    REAL                               ::  wnd_in_mag, wnd_in_dir
     !For Calculating Tail
-    REAL                    ::  KMAX, KTAILA, KTAILB, KTAILC
-    REAL                    ::  SAT, z01, z02, u10
-    LOGICAL                 ::  ITERFLAG
-    INTEGER                 ::  COUNT
+    REAL                               ::  KMAX, KTAILA, KTAILB, KTAILC
+    REAL                               ::  SAT, z01, z02, u10
+    LOGICAL                            ::  ITERFLAG
+    INTEGER                            ::  COUNT
     !For Iterations
-    REAL                    ::  DTX, DTY, iter_thresh, &
-         USTSM, Z0SM, Z1
+    REAL                               ::  DTX, DTY, iter_thresh
+    REAL                               :: USTSM, Z0SM, Z1
     !For stress calculation
-    REAL                    ::  WAGE, CBETA, BP, CD,       &
-         USTRB, ANGDIF, USTAR, ZNU, &
-         TAUT, TAUX, TAUY, BETAG, TAUDIR, &
-         TAUDIRB
+    REAL                               ::  WAGE, CBETA, BP, CD
+    REAL                               :: USTRB, ANGDIF, USTAR, ZNU
+    REAL                               :: TAUT, TAUX, TAUY, BETAG, TAUDIR
+    REAL                               :: TAUDIRB
     !For wind profile calculation
-    REAL                    ::  UPROFV, VPROFV
+    REAL                               ::  UPROFV, VPROFV
     !For wind profile iteration
-    REAL                    ::  WND_1X, WND_1Y, &
-         WND_2X, WND_2Y, &
-         WND_3X, WND_3Y, &
-         DIFU10XX, DIFU10YX, DIFU10XY, DIFU10YY, &
-         FD_A, FD_B, FD_C, FD_D, &
-         DWNDX, DWNDY, &
-         APAR, CH,UITV, VITV,USTL,&
-         CK
+    REAL                               ::  WND_1X, WND_1Y
+    REAL                               :: WND_2X, WND_2Y
+    REAL                               :: WND_3X, WND_3Y
+    REAL                               :: DIFU10XX, DIFU10YX, DIFU10XY, DIFU10YY
+    REAL                               :: FD_A, FD_B, FD_C, FD_D
+    REAL                               :: DWNDX, DWNDY
+    REAL                               :: APAR, CH,UITV, VITV,USTL
+    REAL                               :: CK
     !For adding stability to wind profile
-    REAL                    ::  WND_TOP, ANG_TOP, WND_PA, WND_PE,   &
-         WND_PEx, WND_PEy, WND_PAx, WND_PAy, &
-         CDM
-    INTEGER                 ::  NKT, K, T, Z2, ITER, ZI, ZII, &
-         I, CTR, ITERATION, KA1, KA2, &
-         KA3, KB
+    REAL                               ::  WND_TOP, ANG_TOP, WND_PA, WND_PE
+    REAL                               :: WND_PEx, WND_PEy, WND_PAx, WND_PAy
+    REAL                               :: CDM
+    INTEGER                            ::  NKT, K, T, Z2, ITER, ZI, ZII
+    INTEGER                            :: I, CTR, ITERATION, KA1, KA2
+    INTEGER                            :: KA3, KB
     ! For defining extended spectrum with appended tail.
-    REAL, ALLOCATABLE, DIMENSION(:)   :: WN, DWN, CP,SIG2
-    REAL, ALLOCATABLE, DIMENSION(:,:) :: SPC2
-    REAL, ALLOCATABLE, DIMENSION(:)   :: TLTN, TLTE, TAUD, &
-         TLTND, &
-         TLTED, ZOFK, UPROF, VPROF, &
-         FTILDE, UP1, VP1, UP, VP, &
-         TLTNA, TLTEA
+    REAL , ALLOCATABLE, DIMENSION(:)   :: WN, DWN, CP,SIG2
+    REAL , ALLOCATABLE, DIMENSION(:,:) :: SPC2
+    REAL , ALLOCATABLE, DIMENSION(:)   :: TLTN, TLTE, TAUD
+    REAL , ALLOCATABLE, DIMENSION(:)   :: TLTND
+    REAL , ALLOCATABLE, DIMENSION(:)   :: TLTED, ZOFK, UPROF, VPROF
+    REAL , ALLOCATABLE, DIMENSION(:)   :: FTILDE, UP1, VP1, UP, VP
+    REAL , ALLOCATABLE, DIMENSION(:)   :: TLTNA, TLTEA
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE                     :: IENT = 0
 #endif
-    LOGICAL                 :: FSFL1,FSFL2, CRIT1, CRIT2
-    LOGICAL                 :: IT_FLAG1, IT_FLAG2
-    LOGICAL, SAVE           :: FIRST = .TRUE.
+    LOGICAL                            :: FSFL1,FSFL2, CRIT1, CRIT2
+    LOGICAL                            :: IT_FLAG1, IT_FLAG2
+    LOGICAL , SAVE                     :: FIRST = .TRUE.
 #ifdef W3_OMPG
     !$omp threadprivate( FIRST)
 #endif
@@ -953,13 +952,13 @@ CONTAINS
     !/ Local parameters
     !/
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER , SAVE                   :: IENT = 0
 #endif
-    REAL                :: BT(NKT), IC, ANGLE2, ANG(NKT),&
-         NORMSPC(NTH), AVG, ANGDIF, M, MAXANG, &
-         MAXAN, MINAN
-    INTEGER             :: MAI, I, K, T
-    REAL, ALLOCATABLE, DIMENSION(:)  :: ANGLE1
+    REAL                             :: BT(NKT), IC, ANGLE2, ANG(NKT)
+    REAL                             :: NORMSPC(NTH), AVG, ANGDIF, M, MAXANG
+    REAL                             :: MAXAN, MINAN
+    INTEGER                          :: MAI, I, K, T
+    REAL , ALLOCATABLE, DIMENSION(:) :: ANGLE1
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -1328,10 +1327,9 @@ CONTAINS
     REAL, PARAMETER :: cf6 = 0.0406766967657759
 
     !Variables from znot_wind10m
-    REAL            :: Z10, U10,AAA,TMP
-
+    REAL          :: Z10, U10,AAA,TMP
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
     CALL STRACE (IENT, 'WND2Z0M')
 #endif
 
@@ -1433,7 +1431,7 @@ CONTAINS
     REAL, INTENT(IN)  :: WND10
     REAL, INTENT(OUT) :: SAT
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
     CALL STRACE (IENT, 'WND2SAT')
 #endif
     !/ Old HWRF 2015 and ST2

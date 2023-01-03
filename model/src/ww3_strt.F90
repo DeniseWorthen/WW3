@@ -248,36 +248,36 @@ PROGRAM W3STRT
   !/ ------------------------------------------------------------------- /
   !/ Local parameters
   !/
-  INTEGER                 :: NDSI, NDSM, NDSR, NDSTRC, NTRACE,    &
-       NDSEN, IERR, ITYPE, NCOS, IKM, IK,   &
-       ITHM, ITH, JSEA, ISEA, IX, IY, J
+  INTEGER              :: NDSI, NDSM, NDSR, NDSTRC, NTRACE
+  INTEGER              :: NDSEN, IERR, ITYPE, NCOS, IKM, IK
+  INTEGER              :: ITHM, ITH, JSEA, ISEA, IX, IY, J
 #ifdef W3_MPI
-  INTEGER                 :: IERR_MPI
+  INTEGER              :: IERR_MPI
 #endif
 #ifdef W3_S
-  INTEGER, SAVE           :: IENT = 0
+  INTEGER, SAVE        :: IENT = 0
 #endif
 #ifdef W3_O6
-  INTEGER                 :: NSX, NSY
-  INTEGER, ALLOCATABLE    :: MAPO(:,:)
+  INTEGER              :: NSX, NSY
+  INTEGER, ALLOCATABLE :: MAPO(:,:)
 #endif
-  REAL                    :: FP, SIP, THM, XM, SIX, YM, SIY, HMAX,&
-       CHSIP, FRREL, ETOT, E1I, FACTOR, X,  &
-       Y, RDSQR, ALFA, GAMMA, SIGA, SIGB,   &
-       YLN, FR, BETA, FRR, S, SUMD, ANG,    &
-       ARG, FACS, DEPTH, WN, CG, HPQMAX
-  REAL, ALLOCATABLE       :: E1(:), DD(:), E2(:,:), E21(:), FINP(:,:)
+  REAL                 :: FP, SIP, THM, XM, SIX, YM, SIY, HMAX
+  REAL                 :: CHSIP, FRREL, ETOT, E1I, FACTOR, X
+  REAL                 :: Y, RDSQR, ALFA, GAMMA, SIGA, SIGB
+  REAL                 :: YLN, FR, BETA, FRR, S, SUMD, ANG
+  REAL                 :: ARG, FACS, DEPTH, WN, CG, HPQMAX
+  REAL,    ALLOCATABLE :: E1(:), DD(:), E2(:,:), E21(:), FINP(:,:)
 #ifdef W3_O5
-  REAL, ALLOCATABLE       :: E2OUT(:,:)
+  REAL,    ALLOCATABLE :: E2OUT(:,:)
 #endif
 #ifdef W3_O6
-  REAL, ALLOCATABLE       :: HSIG(:,:)
+  REAL,    ALLOCATABLE :: HSIG(:,:)
 #endif
-  CHARACTER               :: COMSTR*1, INXOUT*4
+  CHARACTER            :: COMSTR*1, INXOUT*4
 #ifdef W3_EXPORTWWM
-  INTEGER                 :: ISPEC
+  INTEGER              :: ISPEC
 #endif
-  LOGICAL                 :: FLONE,NOSIX
+  LOGICAL              :: FLONE,NOSIX
   !/
   !/ ------------------------------------------------------------------- /
   !

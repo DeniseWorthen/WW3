@@ -359,36 +359,36 @@ PROGRAM W3UPRSTR
   !/ ------------------------------------------------------------------- /
   !  Local variables
   !/
-  INTEGER                 :: NDSI, NDSM, NDSTRC, NTRACE, IERR, I, J
-  CHARACTER               :: COMSTR*1
+  INTEGER                     :: NDSI, NDSM, NDSTRC, NTRACE, IERR, I, J
+  CHARACTER                   :: COMSTR*1
   !
-  TYPE(NML_RESTART_T)     :: NML_RESTART
-  TYPE(NML_UPDATE_T)      :: NML_UPDATE
+  TYPE(NML_RESTART_T)         :: NML_RESTART
+  TYPE(NML_UPDATE_T)          :: NML_UPDATE
   !
-  !      REAL, ALLOCATABLE       :: BETAW(:)
-  !      LOGICAL, ALLOCATABLE    :: MASK(:)
-  LOGICAL                 :: anl_exists, CORWSEA, FLGNML
-  INTEGER                 :: IMOD,  NDSEN, IX, IY, IK, ITH, &
-       IXW, IYW
-  REAL, ALLOCATABLE       :: UPDPRCNT(:,:),VATMP(:), HSIG(:,:),     &
-       A(:), HS_ANAL(:,:), gues(:,:),         &
-       HS_DIF(:,:),SWHANL(:,:), SWHBCKG(:,:), &
-       SWHUPRSTR(:,:),VATMP_NORM(:),          &
-       WSBCKG(:,:),WDRBCKG(:,:)
-  INTEGER, ALLOCATABLE    :: VAMAPWS(:)
-  REAL                    :: PRCNTG, PRCNTG_CAP, THRWSEA
-  INTEGER                 :: ROWS, COLS, ISEA
-  CHARACTER(128)          :: FLNMCOR, FLNMANL
-  CHARACTER(16)           :: UPDPROC
+  !      REAL,    ALLOCATABLE :: BETAW(:)
+  !      LOGICAL, ALLOCATABLE :: MASK(:)
+  LOGICAL                     :: anl_exists, CORWSEA, FLGNML
+  INTEGER                     :: IMOD,  NDSEN, IX, IY, IK, ITH
+  INTEGER                     :: IXW, IYW
+  REAL,           ALLOCATABLE :: UPDPRCNT(:,:),VATMP(:), HSIG(:,:)
+  REAL,           ALLOCATABLE :: A(:), HS_ANAL(:,:), gues(:,:)
+  REAL,           ALLOCATABLE :: HS_DIF(:,:),SWHANL(:,:), SWHBCKG(:,:)
+  REAL,           ALLOCATABLE :: SWHUPRSTR(:,:),VATMP_NORM(:)
+  REAL,           ALLOCATABLE :: WSBCKG(:,:),WDRBCKG(:,:)
+  INTEGER,        ALLOCATABLE :: VAMAPWS(:)
+  REAL                        :: PRCNTG, PRCNTG_CAP, THRWSEA
+  INTEGER                     :: ROWS, COLS, ISEA
+  CHARACTER(128)              :: FLNMCOR, FLNMANL
+  CHARACTER(16)               :: UPDPROC
   !     for howv
-  REAL                    :: SWHTMP,SWHBCKG_1, SWHANL_1,            &
-       DEPTH, WN, CG, ETOT, E1I,              &
-       SWHTMP1,SUMVATMP, SWHBCKG_W, SWHBCKG_S
-  REAL                    :: K
-  CHARACTER(8), PARAMETER :: MYNAME='W3UPRSTR'
-  LOGICAL                 :: SMCGRD = .FALSE.
-  LOGICAL                 :: SMCWND = .FALSE.
-  LOGICAL                 :: WRSTON = .FALSE.
+  REAL                        :: SWHTMP,SWHBCKG_1, SWHANL_1
+  REAL                        :: DEPTH, WN, CG, ETOT, E1I
+  REAL                        :: SWHTMP1,SUMVATMP, SWHBCKG_W, SWHBCKG_S
+  REAL                        :: K
+  CHARACTER(8), PARAMETER     :: MYNAME='W3UPRSTR'
+  LOGICAL                     :: SMCGRD = .FALSE.
+  LOGICAL                     :: SMCWND = .FALSE.
+  LOGICAL                     :: WRSTON = .FALSE.
   !/
   !/ ------------------------------------------------------------------- /
   !/
@@ -1416,11 +1416,11 @@ CONTAINS
     CHARACTER(*),         INTENT(IN)  :: FLNMCOR
     LOGICAL,              INTENT(IN)  :: SMCGRD
     ! Local Variables
-    INTEGER            :: I, J, IERR
-    INTEGER            :: K, L, M, N
-    REAL :: A
-    INTEGER, PARAMETER :: IP_FID = 123
-    CHARACTER(25), PARAMETER::myname='read_grbtxt'
+    INTEGER                  :: I, J, IERR
+    INTEGER                  :: K, L, M, N
+    REAL                     :: A
+    INTEGER,       PARAMETER :: IP_FID = 123
+    CHARACTER(25), PARAMETER :: myname='read_grbtxt'
     !
 #ifdef W3_T
     WRITE (NDSO,*) trim(myname), ' starts'
@@ -1538,11 +1538,11 @@ CONTAINS
     CHARACTER(*),         INTENT(IN)  :: FLNMCOR
     LOGICAL,              INTENT(IN)  :: SMCGRD
     ! Local Variables
-    INTEGER            :: I, J, IERR
-    INTEGER            :: K, L, M, N
-    REAL :: A, WS, WD
-    INTEGER, PARAMETER :: IP_FID = 123
-    CHARACTER(25), PARAMETER::myname='read_grbtxt'
+    INTEGER                  :: I, J, IERR
+    INTEGER                  :: K, L, M, N
+    REAL                     :: A, WS, WD
+    INTEGER,       PARAMETER :: IP_FID = 123
+    CHARACTER(25), PARAMETER :: myname='read_grbtxt'
     !
 #ifdef W3_T
     WRITE (NDSO,*) trim(myname), ' starts'
@@ -1767,8 +1767,8 @@ CONTAINS
     REAL,    DIMENSION(:), INTENT(IN)  :: VA1p
     INTEGER, DIMENSION(:), INTENT(OUT) :: VAMAPWS ! Wind-sea id for spectral bins
 
-    REAL :: RELWS, ETOTw, ETOTs, EwI, EsI
-    CHARACTER(25),PARAMETER :: myname='SWH_RSRT_1pw'
+    REAL                     :: RELWS, ETOTw, ETOTs, EwI, EsI
+    CHARACTER(25), PARAMETER :: myname='SWH_RSRT_1pw'
     !
 #ifdef W3_T
     WRITE (NDSO,*) trim(myname), ' starts'
@@ -2053,9 +2053,9 @@ CONTAINS
     LOGICAL,               INTENT(IN)    :: ADJALL
 
     CHARACTER(25), PARAMETER :: myname='UPDTWSPECF'
-    REAL :: FFAC, SIGSHFT, FDM1, FDM2, WN1, CG1, WN2, CG2
-    INTEGER :: LPF, M1, M2
-    REAL, ALLOCATABLE :: VASHFT(:)
+    REAL                     :: FFAC, SIGSHFT, FDM1, FDM2, WN1, CG1, WN2, CG2
+    INTEGER                  :: LPF, M1, M2
+    REAL, ALLOCATABLE        :: VASHFT(:)
     !
 #ifdef W3_T
     WRITE (NDSO,*) trim(myname), ' starts'

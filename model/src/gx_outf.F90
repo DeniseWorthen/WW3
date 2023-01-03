@@ -150,24 +150,24 @@ PROGRAM GXOUTF
   !/ ------------------------------------------------------------------- /
   !/ Local parameters
   !/
-  INTEGER                 :: NDSI, NDSM, NDSOG, NDSDAT, NDSCTL,   &
-       NDSTRC, NTRACE, IERR, I,J,K, IFI,IFJ,&
-       TOUT(2), NOUT, TDUM(2), NVAR, IOUT,  &
-       IX0, IXN, IY0, IYN, TIME0(2), IH0,   &
-       IM0, ID0, IID, IJ0, IOTEST, IINC, IU,&
-       TIMEN(2), JLEN
+  INTEGER       :: NDSI, NDSM, NDSOG, NDSDAT, NDSCTL
+  INTEGER       :: NDSTRC, NTRACE, IERR, I,J,K, IFI,IFJ
+  INTEGER       :: TOUT(2), NOUT, TDUM(2), NVAR, IOUT
+  INTEGER       :: IX0, IXN, IY0, IYN, TIME0(2), IH0
+  INTEGER       :: IM0, ID0, IID, IJ0, IOTEST, IINC, IU
+  INTEGER       :: TIMEN(2), JLEN
 #ifdef W3_S
-  INTEGER, SAVE           :: IENT = 0
+  INTEGER, SAVE :: IENT = 0
 #endif
-  REAL                    :: DTREQ, DTEST
-  REAL                    :: FAC, XYMAX
-  CHARACTER               :: COMSTR*1, IDTIME*23, IDDDAY*11,      &
-       CINC*2
-  CHARACTER*3             :: MNTH(12)
-  CHARACTER*5             :: PARID
-  LOGICAL                 :: FLONE, FLTWO, FLDIR, FLTRI, FLPRT
-  LOGICAL                 :: FLREQ(NOGRP,NGRPP), FLOG(NOGRP),     &
-       MSOUT, MBOUT, LTEMP(NGRPP)
+  REAL          :: DTREQ, DTEST
+  REAL          :: FAC, XYMAX
+  CHARACTER     :: COMSTR*1, IDTIME*23, IDDDAY*11
+  CHARACTER     :: CINC*2
+  CHARACTER*3   :: MNTH(12)
+  CHARACTER*5   :: PARID
+  LOGICAL       :: FLONE, FLTWO, FLDIR, FLTRI, FLPRT
+  LOGICAL       :: FLREQ(NOGRP,NGRPP), FLOG(NOGRP)
+  LOGICAL       :: MSOUT, MBOUT, LTEMP(NGRPP)
   !/
   !/ ------------------------------------------------------------------- /
   !/
@@ -826,16 +826,16 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IX, IY, J, ISEA, IXL, IXR
-    INTEGER                 :: MAPXCL(NY,NX), MAPDRY(NY,NX),        &
-         MAPICE(NY,NX), MAPLND(NY,NX),        &
-         MAPMSK(NY,NX)
+    INTEGER       :: IX, IY, J, ISEA, IXL, IXR
+    INTEGER       :: MAPXCL(NY,NX), MAPDRY(NY,NX)
+    INTEGER       :: MAPICE(NY,NX), MAPLND(NY,NX)
+    INTEGER       :: MAPMSK(NY,NX)
+    REAL          :: X1(NX,NY), XX(NX,NY), XY(NX,NY)
+    REAL          :: XA(NX,NY,0:NOSWLL)
+    REAL          :: VALLND = 0.001
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT   = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: X1(NX,NY), XX(NX,NY), XY(NX,NY),     &
-         XA(NX,NY,0:NOSWLL)
-    REAL                    :: VALLND = 0.001
     !/
     !/ ------------------------------------------------------------------- /
     !/

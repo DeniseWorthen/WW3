@@ -745,23 +745,23 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: J, I, II, IT0, IT, ITARG, IFROM
+    INTEGER              :: J, I, II, IT0, IT, ITARG, IFROM
 #ifdef W3_SHRD
-    INTEGER                 :: MPI_COMM_GRD = 1, CROOT = 1
-    INTEGER, PARAMETER      :: MPI_COMM_NULL = -1
+    INTEGER              :: MPI_COMM_GRD = 1, CROOT = 1
+    INTEGER, PARAMETER   :: MPI_COMM_NULL = -1
 #endif
 #ifdef W3_MPI
-    INTEGER                 :: IERR_MPI, NMPPNT
-    INTEGER, ALLOCATABLE    :: STATUS(:,:)
+    INTEGER              :: IERR_MPI, NMPPNT
+    INTEGER, ALLOCATABLE :: STATUS(:,:)
 #endif
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE        :: IENT = 0
 #endif
-    REAL, POINTER           :: SPEC(:,:)
+    REAL, POINTER        :: SPEC(:,:)
 #ifdef W3_MPI
-    REAL, POINTER           :: SPCR(:,:), DPR(:), WAR(:),      &
-         WDR(:), ASR(:), CAR(:), CDR(:)
-    REAL, POINTER           :: ICRO(:), ICRFO(:), ICRHO(:)
+    REAL, POINTER        :: SPCR(:,:), DPR(:), WAR(:)
+    REAL, POINTER        :: WDR(:), ASR(:), CAR(:), CDR(:)
+    REAL, POINTER        :: ICRO(:), ICRFO(:), ICRHO(:)
 #endif
     !/
 #ifdef W3_S

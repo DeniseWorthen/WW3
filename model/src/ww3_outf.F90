@@ -175,19 +175,19 @@ PROGRAM W3OUTF
   !/ ------------------------------------------------------------------- /
   !/ Local parameters
   !/
-  INTEGER                 :: NDSI, NDSM, NDSOG, NDSDAT, NDSDT,    &
-       NDSTRC, NTRACE, IERR, I, J, IFI, IFJ,&
-       TOUT(2), TDUM(2), IOTEST, NOUT,      &
-       ITYPE, IX1, IXN, IXS, IY1, IYN, IYS, &
-       IDLA, IDFM, IOUT, IPART
+  INTEGER       :: NDSI, NDSM, NDSOG, NDSDAT, NDSDT
+  INTEGER       :: NDSTRC, NTRACE, IERR, I, J, IFI, IFJ
+  INTEGER       :: TOUT(2), TDUM(2), IOTEST, NOUT
+  INTEGER       :: ITYPE, IX1, IXN, IXS, IY1, IYN, IYS
+  INTEGER       :: IDLA, IDFM, IOUT, IPART
 #ifdef W3_S
-  INTEGER, SAVE           :: IENT = 0
+  INTEGER, SAVE :: IENT = 0
 #endif
-  REAL                    :: DTREQ, DTEST
-  CHARACTER               :: COMSTR*1, IDTIME*23, IDDDAY*11,      &
-       TABNME*9
-  LOGICAL                 :: FLREQ(NOGRP,NGRPP), FLOG(NOGRP),     &
-       SCALE, VECTOR, LTEMP(NGRPP)
+  REAL          :: DTREQ, DTEST
+  CHARACTER     :: COMSTR*1, IDTIME*23, IDDDAY*11
+  CHARACTER     :: TABNME*9
+  LOGICAL       :: FLREQ(NOGRP,NGRPP), FLOG(NOGRP)
+  LOGICAL       :: SCALE, VECTOR, LTEMP(NGRPP)
   !/
   !/ ------------------------------------------------------------------- /
   !/
@@ -639,41 +639,42 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER                 :: NX, NY, NSEA
+    !TODO: Are these meant as INTENT(IN)?
+    INTEGER :: NX, NY, NSEA
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: NXMAX, NXTOT, NBLOK, IH, IM, IS,     &
-         MFILL, J, ISEA, IX, IY, IXB, IB,     &
-         IXA, NINGRD, JJ, IFI, IFJ
-    INTEGER                 :: MAP(NX+1,NY), MP2(NX+1,NY),          &
-         MX1(NX,NY), MXX(NX,NY), MYY(NX,NY),  &
-         MXY(NX,NY)
-    INTEGER, SAVE           :: IPASS
-    !     INTEGER, SAVE           :: NCOL   = 80
-    INTEGER, SAVE           :: NCOL   = 132
+    INTEGER               :: NXMAX, NXTOT, NBLOK, IH, IM, IS
+         INTEGER          :: MFILL, J, ISEA, IX, IY, IXB, IB
+    INTEGER               :: IXA, NINGRD, JJ, IFI, IFJ
+    INTEGER               :: MAP(NX+1,NY), MP2(NX+1,NY)
+    INTEGER               :: MX1(NX,NY), MXX(NX,NY), MYY(NX,NY)
+    INTEGER               :: MXY(NX,NY)
+    INTEGER, SAVE         :: IPASS
+    !     INTEGER, SAVE   :: NCOL   = 80
+    INTEGER, SAVE         :: NCOL   = 132
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT   =   0
+    INTEGER, SAVE         :: IENT   =   0
 #endif
-    REAL                    :: FSC, CABS, UABS, FSCA, XMIN, XMAX,   &
-         XAVG, XSTD, YGBX, XGBX, AABS
-    REAL                    :: X1(NX+1,NY), X2(NX+1,NY),            &
-         XX(NX+1,NY), XY(NX+1,NY), DPTMAX(1)
+    REAL                  :: FSC, CABS, UABS, FSCA, XMIN, XMAX
+    REAL                  :: XAVG, XSTD, YGBX, XGBX, AABS
+    REAL                  :: X1(NX+1,NY), X2(NX+1,NY)
+    REAL                  :: XX(NX+1,NY), XY(NX+1,NY), DPTMAX(1)
     !!Li  Type 4 sea point only text output variables.  JGLi25Jun2013
-    REAL, Dimension(NSEA)   :: XS1, XS2, XS3, XS4, AUX
+    REAL, Dimension(NSEA) :: XS1, XS2, XS3, XS4, AUX
     !!Li
-    DOUBLE PRECISION        :: XDS, XDSQ
-    LOGICAL                 :: FLONE, FLTWO, FLDIR, FLTRI
+    DOUBLE PRECISION      :: XDS, XDSQ
+    LOGICAL               :: FLONE, FLTWO, FLDIR, FLTRI
 #ifdef W3_T
-    LOGICAL                 :: LTEMP(NGRPP)
+    LOGICAL               :: LTEMP(NGRPP)
 #endif
-    CHARACTER               :: OLDTID*8, FNAME*32, ENAME*7,         &
-         FORMG*12, FORMF*11, UNITS*10, FSCS*7
-    CHARACTER, SAVE         :: TIMEID*8 = '00000000'
-    CHARACTER, SAVE         :: FILEID*13 = 'WAVEWATCH III'
+    CHARACTER             :: OLDTID*8, FNAME*32, ENAME*7
+    CHARACTER             :: FORMG*12, FORMF*11, UNITS*10, FSCS*7
+    CHARACTER, SAVE       :: TIMEID*8 = '00000000'
+    CHARACTER, SAVE       :: FILEID*13 = 'WAVEWATCH III'
 #ifdef W3_BT4
-    REAL, PARAMETER            :: LOG2=LOG(2.)
+    REAL, PARAMETER       :: LOG2=LOG(2.)
 #endif
     !/
     !/ ------------------------------------------------------------------- /
