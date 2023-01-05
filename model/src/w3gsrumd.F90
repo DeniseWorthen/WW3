@@ -232,10 +232,10 @@ MODULE W3GSRUMD
   !/ Use associated modules
   !/
 #ifdef ENABLE_WW3
-  USE W3SERVMD, ONLY: EXTCDE
+  USE W3SERVMD , ONLY : EXTCDE
 #endif
 #ifdef W3_S
-  USE W3SERVMD, ONLY: STRACE
+  USE W3SERVMD , ONLY : STRACE
 #endif
   !/
   !/ Specify default data typing

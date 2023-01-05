@@ -181,11 +181,11 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, DTH, DDEN, &
-         ECOS, ESIN, EC2, MAPTH, MAPWN, &
-         SIG2, DSII
+    USE W3GDATMD , ONLY : NK, NTH, NSPEC, SIG, DTH, DDEN
+    USE W3GDATMD , ONLY : ECOS, ESIN, EC2, MAPTH, MAPWN
+    USE W3GDATMD , ONLY : SIG2, DSII
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !/
     !
@@ -524,10 +524,10 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, DTH, DDEN, ECOS, ESIN
-    USE W3SERVMD, ONLY: DIAGONALIZE
+    USE W3GDATMD , ONLY : NK, NTH, NSPEC, SIG, DTH, DDEN, ECOS, ESIN
+    USE W3SERVMD , ONLY : DIAGONALIZE
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !/
     IMPLICIT NONE

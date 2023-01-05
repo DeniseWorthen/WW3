@@ -493,35 +493,35 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: DWAT, srce_imp_post, srce_imp_pre,         &
-         srce_direct, GRAV, TPI, TPIINV, LPDLIB
+    USE CONSTANTS       , ONLY : DWAT, srce_imp_post, srce_imp_pre
+    USE CONSTANTS       , ONLY : srce_direct, GRAV, TPI, TPIINV, LPDLIB
 #ifdef W3_T
-    USE CONSTANTS, ONLY: RADE
+    USE CONSTANTS       , ONLY : RADE
 #endif
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, TH, DMIN, DTMAX,       &
-         DTMIN, FACTI1, FACTI2, FACSD, FACHFA, FACP, &
-         XFC, XFLT, XREL, XFT, FXFM, FXPM, DDEN,     &
-         FTE, FTF, FHMAX, ECOS, ESIN, IICEDISP,      &
-         ICESCALES, IICESMOOTH
-    USE W3GDATMD, ONLY: FSSOURCE, optionCall
-    USE W3GDATMD, ONLY: B_JGS_NLEVEL, B_JGS_SOURCE_NONLINEAR
+    USE W3GDATMD        , ONLY : NK, NTH, NSPEC, SIG, TH, DMIN, DTMAX
+    USE W3GDATMD        , ONLY : DTMIN, FACTI1, FACTI2, FACSD, FACHFA, FACP
+    USE W3GDATMD        , ONLY : XFC, XFLT, XREL, XFT, FXFM, FXPM, DDEN
+    USE W3GDATMD        , ONLY : FTE, FTF, FHMAX, ECOS, ESIN, IICEDISP
+    USE W3GDATMD        , ONLY : ICESCALES, IICESMOOTH
+    USE W3GDATMD        , ONLY : FSSOURCE, optionCall
+    USE W3GDATMD        , ONLY : B_JGS_NLEVEL, B_JGS_SOURCE_NONLINEAR
 #ifdef W3_REF1
-    USE W3GDATMD, ONLY: IOBP, IOBPD, IOBDP, GTYPE, UNGTYPE, REFPARS
+    USE W3GDATMD        , ONLY : IOBP, IOBPD, IOBDP, GTYPE, UNGTYPE, REFPARS
 #endif
-    USE W3WDATMD, ONLY: TIME
-    USE W3ODATMD, ONLY: NDSE, NDST, IAPROC
-    USE W3IDATMD, ONLY: INFLAGS2, ICEP2
+    USE W3WDATMD        , ONLY : TIME
+    USE W3ODATMD        , ONLY : NDSE, NDST, IAPROC
+    USE W3IDATMD        , ONLY : INFLAGS2, ICEP2
     USE W3DISPMD
 #ifdef W3_NNT
-    USE W3ODATMD, ONLY: IAPROC, SCREEN, FNMPRE
+    USE W3ODATMD        , ONLY : IAPROC, SCREEN, FNMPRE
 #endif
 #ifdef W3_FLD1
-    USE W3FLD1MD, ONLY: W3FLD1
-    USE W3GDATMD, ONLY: AALPHA
+    USE W3FLD1MD        , ONLY : W3FLD1
+    USE W3GDATMD        , ONLY : AALPHA
 #endif
 #ifdef W3_FLD2
-    USE W3FLD2MD, ONLY: W3FLD2
-    USE W3GDATMD, ONLY: AALPHA
+    USE W3FLD2MD        , ONLY : W3FLD2
+    USE W3GDATMD        , ONLY : AALPHA
 #endif
 #ifdef W3_FLX1
     USE W3FLX1MD
@@ -549,20 +549,20 @@ CONTAINS
 #endif
 #ifdef W3_ST2
     USE W3SRC2MD
-    USE W3GDATMD, ONLY : ZWIND
+    USE W3GDATMD        , ONLY : ZWIND
 #endif
 #ifdef W3_ST3
     USE W3SRC3MD
-    USE W3GDATMD, ONLY : ZZWND, FFXFM, FFXPM
+    USE W3GDATMD        , ONLY : ZZWND, FFXFM, FFXPM
 #endif
 #ifdef W3_ST4
-    USE W3SRC4MD, ONLY : W3SPR4, W3SIN4, W3SDS4
-    USE W3GDATMD, ONLY : ZZWND, FFXFM, FFXPM, FFXFA
+    USE W3SRC4MD        , ONLY : W3SPR4, W3SIN4, W3SDS4
+    USE W3GDATMD        , ONLY : ZZWND, FFXFM, FFXPM, FFXFA
 #endif
 #ifdef W3_ST6
     USE W3SRC6MD
-    USE W3SWLDMD, ONLY : W3SWL6
-    USE W3GDATMD, ONLY : SWL6S6
+    USE W3SWLDMD        , ONLY : W3SWL6
+    USE W3GDATMD        , ONLY : SWL6S6
 #endif
 #ifdef W3_NL1
     USE W3SNL1MD
@@ -578,7 +578,7 @@ CONTAINS
 #endif
 #ifdef W3_NL5
     USE W3SNL5MD
-    USE W3TIMEMD, ONLY: TICK21
+    USE W3TIMEMD        , ONLY : TICK21
 #endif
 #ifdef W3_NLS
     USE W3SNLSMD
@@ -615,7 +615,7 @@ CONTAINS
 #endif
 #ifdef W3_IS2
     USE W3SIS2MD
-    USE W3GDATMD, ONLY : IS2PARS
+    USE W3GDATMD        , ONLY : IS2PARS
 #endif
 #ifdef W3_DB1
     USE W3SDB1MD
@@ -630,23 +630,23 @@ CONTAINS
     USE W3REF1MD
 #endif
 #ifdef W3_IG1
-    USE W3GDATMD, ONLY : IGPARS
+    USE W3GDATMD        , ONLY : IGPARS
 #endif
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD        , ONLY : STRACE
 #endif
 #ifdef W3_NNT
-    USE W3SERVMD, ONLY: EXTCDE
+    USE W3SERVMD        , ONLY : EXTCDE
 #endif
 #ifdef W3_UOST
-    USE W3UOSTMD, ONLY : UOST_SRCTRMCOMPUTE
+    USE W3UOSTMD        , ONLY : UOST_SRCTRMCOMPUTE
 #endif
 #ifdef W3_PDLIB
-    USE PDLIB_W3PROFSMD, ONLY : B_JAC, ASPAR_JAC, ASPAR_DIAG_SOURCES, ASPAR_DIAG_ALL
-    USE yowNodepool,    ONLY: PDLIB_CCON, NPA, PDLIB_I_DIAG, PDLIB_JA, PDLIB_IA_P, PDLIB_SI
-    USE W3GDATMD, ONLY: IOBP_LOC, IOBPD_LOC, IOBPA_LOC, IOBDP_LOC
-    USE W3WDATMD, ONLY: VA
-    USE W3PARALL, ONLY: ONESIXTH, ZERO, THR, IMEM, LSLOC
+    USE PDLIB_W3PROFSMD , ONLY : B_JAC, ASPAR_JAC, ASPAR_DIAG_SOURCES, ASPAR_DIAG_ALL
+    USE yowNodepool     , ONLY : PDLIB_CCON, NPA, PDLIB_I_DIAG, PDLIB_JA, PDLIB_IA_P, PDLIB_SI
+    USE W3GDATMD        , ONLY : IOBP_LOC, IOBPD_LOC, IOBPA_LOC, IOBDP_LOC
+    USE W3WDATMD        , ONLY : VA
+    USE W3PARALL        , ONLY : ONESIXTH, ZERO, THR, IMEM, LSLOC
 #endif
     !/
     IMPLICIT NONE
@@ -2408,9 +2408,9 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC, XFR, DDEN, SIG,FTE, FTTR
+    USE W3GDATMD , ONLY : NK, NTH, NSPEC, XFR, DDEN, SIG,FTE, FTTR
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !
     IMPLICIT NONE
@@ -2523,7 +2523,7 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !
     USE W3GDATMD, only : NTH, NK, NSPEC
@@ -2611,11 +2611,10 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !
-
-    USE W3GDATMD, only : NTH, NK, NSPEC
+    USE W3GDATMD , only : NTH, NK, NSPEC
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /

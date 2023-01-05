@@ -189,12 +189,12 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: GRAV
+    USE CONSTANTS , ONLY : GRAV
     USE W3DISPMD
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, TH, DTH, IGPARS
+    USE W3GDATMD  , ONLY : NK, NTH, NSPEC, SIG, TH, DTH, IGPARS
 
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
     !/
     !
@@ -897,7 +897,7 @@ CONTAINS
     !
     !
     !
-    USE W3GDATMD, ONLY: IGPARS
+    USE W3GDATMD , ONLY : IGPARS
     IMPLICIT NONE
 
     INTEGER NFRE,NANG,NDEPTH,M,K,M1,K1,M2_M,M2_P,K2,MP,&

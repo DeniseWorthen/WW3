@@ -151,9 +151,9 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !/
-    USE CONSTANTS, ONLY : GRAV
+    USE CONSTANTS , ONLY : GRAV
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
     !
     IMPLICIT NONE
@@ -247,9 +247,9 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !/
-    USE CONSTANTS, ONLY : GRAV
+    USE CONSTANTS , ONLY : GRAV
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
     !
     IMPLICIT NONE
@@ -411,8 +411,7 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !/
-    USE CONSTANTS, ONLY : GRAV, PI
-    !!/S      USE W3SERVMD, ONLY: STRACE
+    USE CONSTANTS , ONLY : GRAV, PI
     !
     IMPLICIT NONE
     !/
@@ -518,7 +517,7 @@ CONTAINS
     !
     ! 10. Source code :
 
-    USE W3GDATMD, ONLY: DMIN
+    USE W3GDATMD , ONLY : DMIN
     !
     !/ ------------------------------------------------------------------- /
     !/
@@ -624,9 +623,9 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !/
-    USE CONSTANTS, ONLY : GRAV
+    USE CONSTANTS , ONLY : GRAV
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
     !
     IMPLICIT NONE
@@ -779,13 +778,12 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: TPI
-    USE W3ODATMD,  ONLY: NDSE
-    USE W3SERVMD,  ONLY: EXTCDE
-    USE W3GDATMD, ONLY: NK, IICEHDISP, IICEDDISP, IICEFDISP, IICEHMIN
-    ! USE W3DISPMD,  ONLY: WAVNU1
+    USE CONSTANTS , ONLY : TPI
+    USE W3ODATMD  , ONLY : NDSE
+    USE W3SERVMD  , ONLY : EXTCDE
+    USE W3GDATMD  , ONLY : NK, IICEHDISP, IICEDDISP, IICEFDISP, IICEHMIN
 #ifdef W3_S
-    USE W3SERVMD,  ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
     !/
     IMPLICIT NONE
@@ -1046,10 +1044,10 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY: DWAT, TPI, GRAV
-    USE W3GDATMD, ONLY: NK
+    USE CONSTANTS , ONLY : DWAT, TPI, GRAV
+    USE W3GDATMD  , ONLY : NK
 #ifdef W3_S
-    USE W3SERVMD,  ONLY: STRACE
+    USE W3SERVMD  , ONLY : STRACE
 #endif
     !/
     IMPLICIT NONE

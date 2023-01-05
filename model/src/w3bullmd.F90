@@ -36,11 +36,11 @@ MODULE W3BULLMD
   !/    26-Dec-2012 : Modified obsolete declarations.     ( version 4.11 )
   !/
   !/ ------------------------------------------------------------------- /
-  USE W3GDATMD, ONLY: GNAME, NK, NTH, NSPEC, FLAGLL
-  USE W3ODATMD, ONLY: NOPTS, PTLOC, PTNME, DIMP
-  USE CONSTANTS, ONLY: PI, TPI
-  USE W3WDATMD, ONLY: TIME
-  USE W3TIMEMD, ONLY: DSEC21
+  USE W3GDATMD  , ONLY : GNAME, NK, NTH, NSPEC, FLAGLL
+  USE W3ODATMD  , ONLY : NOPTS, PTLOC, PTNME, DIMP
+  USE CONSTANTS , ONLY : PI, TPI
+  USE W3WDATMD  , ONLY : TIME
+  USE W3TIMEMD  , ONLY : DSEC21
   PUBLIC
   INTEGER, PARAMETER   :: NPTAB = 6, NFLD = 50, NPMAX = 80
   !
@@ -162,7 +162,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !     USE CONSTANTS
 #ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
+    USE W3SERVMD , ONLY : STRACE
 #endif
     !
     IMPLICIT NONE
