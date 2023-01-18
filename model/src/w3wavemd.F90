@@ -2486,7 +2486,7 @@ CONTAINS
 #endif
         !
         !
-      END DO
+      END DO ! DO IT = IT0, NT
 
 #ifdef W3_TIMINGS
       CALL PRINT_MY_TIME("W3WAVE, step 6.21.1")
@@ -2873,7 +2873,7 @@ CONTAINS
             !
           END IF
           !
-        END DO
+        END DO ! DO J=1, NOTYPE
         !
 #ifdef W3_MEMCHECK
         write(40000+IAPROC,*) 'memcheck_____:', 'WW3_WAVE AFTER TIME LOOP 3'
