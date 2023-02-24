@@ -518,11 +518,10 @@ CONTAINS
     !
     ! 1.  Set-up of data structures and I/O  ----------------------------- /
     ! 1.a Point to proper data structures.
-    !
-    memunit = 10000+IAPROC
-    call print_memcheck(memunit, 'memcheck_____:'//' WW3_INIT SECTION 1')
 
     CALL W3SETO ( IMOD, MDS(2), MDS(3) )
+
+    memunit = 10000+IAPROC
     call print_memcheck(memunit, 'memcheck_____:'//' WW3_INIT SECTION 1a')
 
     CALL W3SETG ( IMOD, MDS(2), MDS(3) )
@@ -566,6 +565,7 @@ CONTAINS
     CALL MPI_COMM_RANK ( MPI_COMM_WAVE, IAPROC, IERR_MPI )
     IAPROC = IAPROC + 1
 #endif
+    memunit = 10000+IAPROC
     !
     IF ( IOSTYP .LE. 1 ) THEN
       !
@@ -1512,7 +1512,6 @@ CONTAINS
     IF ( IAPROC .EQ. NAPERR ) WRITE (NDSE,8029)
     CALL EXTCDE ( 829 )
 #endif
-
     !
 888 CONTINUE
     IF ( IAPROC .EQ. NAPERR ) WRITE (NDSE,8000) IERR

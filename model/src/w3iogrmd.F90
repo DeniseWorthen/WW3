@@ -859,7 +859,6 @@ CONTAINS
              LEN, IEN, ANGLE0, ANGLE, SI, MAXX, MAXY,         &
              DXYMAX, INDEX_CELL, CCON, COUNTCON, IE_CELL,     &
              POS_CELL, IOBP, IOBPA, IOBDP, IOBPD, IAA, JAA, POSI
-
         call print_memcheck(memunit, 'memcheck_____:'//' WIOGR SECTION 6')
 
       END SELECT !GTYPE
