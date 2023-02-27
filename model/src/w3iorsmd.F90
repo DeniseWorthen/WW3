@@ -387,6 +387,8 @@ CONTAINS
     CHARACTER(LEN=15)       :: TIMETAG
     character(len=16)       :: user_timestring    !YYYY-MM-DD-SSSSS
     logical                 :: exists
+    ! debug
+    integer :: i
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -701,17 +703,12 @@ CONTAINS
         ELSE
           !
           IF (LPDLIB .and. (GTYPE.eq.UNGTYPE)) THEN
-#endif
-#ifdef W3_TIMINGS
-            CALL PRINT_MY_TIME("Before UNST_PDLIB_WRITE_TO_FILE")
-#endif
+            if(iaproc.eq.3)print '(a,5g14.7)','DEBUGX0 : ',(ust(i),i=29406,29410)
+            print *,'DEBUG w3iors pdlib ',iosflg,naproc,naprst
 #ifdef W3_PDLIB
             CALL UNST_PDLIB_WRITE_TO_FILE(NDSR)
 #endif
-#ifdef W3_TIMINGS
-            CALL PRINT_MY_TIME("After UNST_PDLIB_WRITE_TO_FILE")
-#endif
-#ifdef W3_MPI
+            if(iaproc.eq.3)print '(a,5g14.7)','DEBUGX1 : ',(ust(i),i=29406,29410)
           ELSE
 
             IF ( IAPROC .NE. NAPRST ) THEN
@@ -881,8 +878,9 @@ CONTAINS
           !
 #ifdef W3_MPI
           ALLOCATE ( STAT2(MPI_STATUS_SIZE,NRQRS) )
-          CALL MPI_WAITALL                               &
-               ( NRQRS, IRQRS , STAT2, IERR_MPI )
+          if(iaproc.eq.3)print '(a,5g14.7)','DEBUGYY3aa bf : ',(ust(i),i=29406,29410)
+          CALL MPI_WAITALL ( NRQRS, IRQRS , STAT2, IERR_MPI )
+          if(iaproc.eq.3)print '(a,5g14.7)','DEBUGYY3aa af : ',(ust(i),i=29406,29410)
           DEALLOCATE ( STAT2 )
 #endif
           !

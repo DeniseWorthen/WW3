@@ -614,7 +614,8 @@ CONTAINS
     logical :: do_wavefield_separation_output
     logical :: do_startall
     logical :: do_w3outg
-
+    ! debug
+    integer :: i
     !/ ------------------------------------------------------------------- /
     ! 0.  Initializations
     !
@@ -2738,6 +2739,7 @@ CONTAINS
         !
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP 3')
 
+        if(iaproc.eq.3)print '(a,5g14.7)','DEBUG6 : ',(ust(i),i=29406,29410)
         ! If there is a second stream of restart files then J=8 and FLOUT(8)=.TRUE.
         J=8
         IF ( FLOUT(J) ) THEN
@@ -2780,6 +2782,7 @@ CONTAINS
           END IF
         END IF
         !        END OF CHECKPOINT
+        if(iaproc.eq.3)print '(a,5g14.7)','DEBUG7 : ',(ust(i),i=29406,29410)
         !
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP 3')
         !
