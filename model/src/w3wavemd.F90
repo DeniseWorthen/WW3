@@ -2389,6 +2389,8 @@ CONTAINS
       !     Delay if data assimilation time.
       !
       !
+      if(iaproc.eq.3)print '(a,2i12)','DEBUG4 : ',time
+      if(iaproc.eq.3)print '(a,5g14.7)','DEBUG4 : ',(ust(i),i=29406,29410)
       IF ( TOFRST(1)  .EQ. -1 ) THEN
         DTTST  = 1.
       ELSE
@@ -2486,7 +2488,9 @@ CONTAINS
             END IF
           ELSE
 #ifdef W3_PDLIB
+            if(iaproc.eq.3)print '(a,5g14.7)','DEBUG4a : ',(ust(i),i=29406,29410)
             CALL DO_OUTPUT_EXCHANGES(IMOD)
+            if(iaproc.eq.3)print '(a,5g14.7)','DEBUG4b : ',(ust(i),i=29406,29410)
 #endif
           END IF ! IF (.NOT. LPDLIB .or. (GTYPE.ne.UNGTYPE))
         END IF ! if (do_startall)
@@ -2507,6 +2511,7 @@ CONTAINS
           END IF
         END IF
 #endif
+        if(iaproc.eq.3)print '(a,5g14.7)','DEBUG4c : ',(ust(i),i=29406,29410)
         !
 #ifdef W3_MPI
         IF ( FLOUT(4) .AND. NRQRS.NE.0 ) THEN
@@ -2522,11 +2527,12 @@ CONTAINS
           END IF
         END IF
 #endif
+        if(iaproc.eq.3)print '(a,5g14.7)','DEBUG4d : ',(ust(i),i=29406,29410)
         !
 #ifdef W3_MPI
         IF ( FLOUT(8) .AND. NRQRS.NE.0 ) THEN
           IF ( DSEC21(TIME,TONEXT(:,8)).EQ.0. ) THEN
-            CALL MPI_STARTALL ( NRQRS, IRQRS , IERR_MPI )
+            !CALL MPI_STARTALL ( NRQRS, IRQRS , IERR_MPI )
             FLGMPI(8) = .TRUE.
             NRQMAX    = MAX ( NRQMAX , NRQRS )
 #endif
@@ -2534,9 +2540,11 @@ CONTAINS
             WRITE (NDST,9043) '8 ', NRQRS, NRQMAX, NAPRST
 #endif
 #ifdef W3_MPI
+            if(iaproc.eq.3)print '(a,5g14.7,2i12)','DEBUG4XX : here  ',time
           END IF
         END IF
 #endif
+        if(iaproc.eq.3)print '(a,5g14.7)','DEBUG4e : ',(ust(i),i=29406,29410)
         !
 #ifdef W3_MPI
         IF ( FLOUT(5) .AND. NRQBP.NE.0 ) THEN
@@ -2552,6 +2560,7 @@ CONTAINS
           END IF
         END IF
 #endif
+        if(iaproc.eq.3)print '(a,5g14.7)','DEBUG4f : ',(ust(i),i=29406,29410)
         !
 #ifdef W3_MPI
         IF ( FLOUT(5) .AND. NRQBP2.NE.0 .AND. IAPROC.EQ.NAPBPT) THEN
@@ -2566,6 +2575,7 @@ CONTAINS
           END IF
         END IF
 #endif
+        if(iaproc.eq.3)print '(a,5g14.7)','DEBUG4g : ',(ust(i),i=29406,29410)
         !
 #ifdef W3_MPI
         IF ( NRQMAX .NE. 0 ) ALLOCATE ( STATIO(MPI_STATUS_SIZE,NRQMAX) )
@@ -2573,7 +2583,7 @@ CONTAINS
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP 2')
         !
         ! 4.c Reset next output time
-
+        if(iaproc.eq.3)print '(a,5g14.7)','DEBUG5 : ',(ust(i),i=29406,29410)
         !
         TOFRST(1) = -1
         TOFRST(2) =  0

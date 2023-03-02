@@ -1021,7 +1021,8 @@ contains
     real          :: tauwx, tauwy, cd, z0, fmeanws, dlwmean
     logical       :: llws(nspec)
     logical, save :: firstCall = .true.
-
+    ! debug
+    integer :: i
     !----------------------------------------------------------------------
 
     jsea_loop: do jsea = 1,nseal_noghost
@@ -1054,6 +1055,7 @@ contains
       endif !firstCall
       wrln(jsea) = charn(jsea)*ust(isea)**2/grav
     enddo jsea_loop
+    if(iaproc.eq.3)print '(a,5g14.7)','DEBUGXX3 : ',(ust(i),i=29406,29410)
 
     firstCall = .false.
 

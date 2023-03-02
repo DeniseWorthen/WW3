@@ -370,6 +370,7 @@ CONTAINS
 #ifdef W3_T
     WRITE (NDST,9060) EMEAN, WNMEAN, TPIINV, USTAR, CD, Z0
 #endif
+    !USTAR = .0888
     !
     RETURN
     !

@@ -387,8 +387,6 @@ CONTAINS
     CHARACTER(LEN=15)       :: TIMETAG
     character(len=16)       :: user_timestring    !YYYY-MM-DD-SSSSS
     logical                 :: exists
-    ! debug
-    integer :: i
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -704,7 +702,7 @@ CONTAINS
           !
           IF (LPDLIB .and. (GTYPE.eq.UNGTYPE)) THEN
             if(iaproc.eq.3)print '(a,5g14.7)','DEBUGX0 : ',(ust(i),i=29406,29410)
-            print *,'DEBUG w3iors pdlib ',iosflg,naproc,naprst
+            if(iaproc.eq.3)print *,'DEBUG w3iors pdlib ',iosflg,naproc,naprst
 #ifdef W3_PDLIB
             CALL UNST_PDLIB_WRITE_TO_FILE(NDSR)
 #endif
