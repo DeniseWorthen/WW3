@@ -323,6 +323,11 @@ CONTAINS
     IF ( FLGRDALL( 6, 11) ) THEN
       IH = IH + 1
     END IF
+    IF ( FLGRDALL( 6, 12) ) THEN
+      DO IK=1,2*NK
+        IH = IH + 1
+      END DO
+    END IF
     IF ( FLGRDALL( 6, 13) ) THEN
       IH = IH + 1
       IH = IH + 1
@@ -825,7 +830,7 @@ CONTAINS
          STH2M, HSIG, TAUICE, PHICE, PTHP0, PQP,&
          PPE, PGW, PSW, PTM1, PT1, PT2, PEP,   &
          QP, MSSD, MSCD, STMAXE, STMAXD, HMAXE, &
-         HCMAXE, HMAXD, HCMAXD, WBT
+         HCMAXE, HMAXD, HCMAXD, WBT, USSP
     USE W3GDATMD, ONLY: NK, NSEAL
     USE W3ODATMD, ONLY: NDST, IAPROC, NAPROC, NTPROC, FLOUT,   &
          NAPFLD, NAPPNT, NAPRST, NAPBPT, NAPTRK,&
@@ -1200,6 +1205,12 @@ CONTAINS
           IF ( FLGRDALL( 6, 11) ) THEN
             IH = IH + 1
             Arrexch(IH,JSEA)=PHICE(JSEA)
+          END IF
+          IF ( FLGRDALL( 6, 12) ) THEN
+            DO IK=1,2*NK
+              IH = IH + 1
+              Arrexch(IH,JSEA)=USSP(JSEA,IK)
+            END DO
           END IF
           IF ( FLGRDALL( 6, 13) ) THEN
             IH = IH + 1
@@ -1637,6 +1648,12 @@ CONTAINS
         IF (  FLGRDALL( 6, 11) ) THEN
           IH = IH + 1
           PHICE(1:NSEA) = ARRtotal(IH,:)
+        END IF
+        IF ( FLGRDALL( 6, 12) ) THEN
+          DO IK=1,2*NK
+            IH = IH + 1
+            USSP(1:NSEA,IK) = ARRtotal(IH,:)
+          END DO
         END IF
         IF ( FLGRDALL( 6, 13) ) THEN
           IH = IH + 1
