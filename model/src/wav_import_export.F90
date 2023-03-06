@@ -749,8 +749,13 @@ contains
         call CALC_U3STOKES(va, 2)
         do ib = 1, USSPF(2)
           do jsea = 1, nseal_noghost
-            sw_pstokes_x(ib,jsea) = ussp(jsea,ib)
-            sw_pstokes_y(ib,jsea) = ussp(jsea,nk+ib)
+            call init_get_isea(isea, jsea)
+            ix  = mapsf(isea,1)
+            iy  = mapsf(isea,2)
+            !if (mapsta(iy,ix) == 1) then
+              sw_pstokes_x(ib,jsea) = ussp(jsea,ib)
+              sw_pstokes_y(ib,jsea) = ussp(jsea,nk+ib)
+            !end if
           enddo
         end do
       end if
@@ -1251,7 +1256,7 @@ contains
         call init_get_isea(isea, jsea)
         ix  = mapsf(isea,1)                   ! global ix
         iy  = mapsf(isea,2)                   ! global iy
-        if (mapsta(iy,ix) .eq. 1) then        ! active sea point
+        if (mapsta(iy,ix) == 1) then          ! active sea point
           factor = dden(ik) / cg(ik,isea)
           ebd = ab(jsea) * factor
           ebd = ebd / dsii(ik)
