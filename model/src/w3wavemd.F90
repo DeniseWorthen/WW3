@@ -2389,7 +2389,7 @@ CONTAINS
       !     Delay if data assimilation time.
       !
       !
-      if(iaproc.eq.3)print '(a,2i12)','DEBUG4 : ',time
+      if(iaproc.eq.3)print '(a,i4,2i12)','DEBUG4 : ',gtype,time
       if(iaproc.eq.3)print '(a,5g14.7)','DEBUG4 : ',(ust(i),i=29406,29410)
       IF ( TOFRST(1)  .EQ. -1 ) THEN
         DTTST  = 1.
@@ -2466,7 +2466,10 @@ CONTAINS
           end IF
         end if
         if (do_startall) then
-          IF (.NOT. LPDLIB .or. (GTYPE.ne.UNGTYPE)) THEN
+          if (.not. lpdlib) then
+          !if (GTYPE .ne. UNGTYPE) then
+          !IF (.NOT. LPDLIB .or. (GTYPE.ne.UNGTYPE)) THEN
+            if(iaproc.eq.3)print *,'DEBUGZZZ',lpdlib,gtype
             IF (NRQGO.NE.0 ) THEN
               CALL MPI_STARTALL ( NRQGO, IRQGO , IERR_MPI )
 
@@ -2532,7 +2535,7 @@ CONTAINS
 #ifdef W3_MPI
         IF ( FLOUT(8) .AND. NRQRS.NE.0 ) THEN
           IF ( DSEC21(TIME,TONEXT(:,8)).EQ.0. ) THEN
-            !CALL MPI_STARTALL ( NRQRS, IRQRS , IERR_MPI )
+            CALL MPI_STARTALL ( NRQRS, IRQRS , IERR_MPI )
             FLGMPI(8) = .TRUE.
             NRQMAX    = MAX ( NRQMAX , NRQRS )
 #endif

@@ -703,6 +703,7 @@ CONTAINS
     DO IPROC=2,NAPROC
       ListFirst(iProc)=ListFirst(iProc-1) + ListNPA(iProc-1)
     END DO
+    print *,'start pdlib_write_to_file'
     !
     LRECL  = MAX ( LRB*NSPEC ,                                      &
          LRB*(6+(25/LRB)+(9/LRB)+(29/LRB)+(3/LRB)) )
@@ -781,6 +782,7 @@ CONTAINS
         END IF
       END IF
     END DO
+    print *,'done with pdlib_write_to_file'
   END SUBROUTINE UNST_PDLIB_WRITE_TO_FILE
   !/ ------------------------------------------------------------------- /
   SUBROUTINE DO_OUTPUT_EXCHANGES(IMOD)
@@ -808,7 +810,7 @@ CONTAINS
     !
     !  4. Subroutines used :
     !
-    USE W3ADATMD, ONLY: W3XDMA, W3SETA, W3XETA
+    USE W3ADATMD, ONLY: W3XDMA, W3SETA, W3XETA, wadats
     USE W3SERVMD, ONLY: EXTCDE
     USE W3GDATMD, ONLY: NSEA
     USE W3GDATMD, ONLY: NX, NSPEC, MAPFS, E3DF, P2MSF, US3DF
@@ -1335,9 +1337,24 @@ CONTAINS
           END IF
         END DO
       END IF
+
+      !ainit=true at end of w3dima
+      !ainit2=true at end of w3xdma
+
+        print *,'init WADATS(IMOD)%AINIT',WADATS(IMOD)%AINIT
+        print *,'init WADATS(IMOD)%AINIT2',WADATS(IMOD)%AINIT2
+
       IF ( IAPROC .EQ. NAPFLD ) THEN
-        !              CALL W3XDMA ( IMOD, NDSE, NDST, FLGRDALL )
+        print *,'00 ',nsea,lbound(hs,1), ubound(hs,1),lbound(arrtotal,2),ubound(arrtotal,2)
+        IF (.not. WADATS(IMOD)%AINIT2) CALL W3XDMA ( IMOD, NDSE, NDST, FLGRDALL )
+
+        print *,'post WADATS(IMOD)%AINIT',WADATS(IMOD)%AINIT
+        print *,'post WADATS(IMOD)%AINIT2',WADATS(IMOD)%AINIT2
+
+        print *,'01 ',nsea,lbound(hs,1), ubound(hs,1),lbound(arrtotal,2),ubound(arrtotal,2)
         CALL W3XETA ( IMOD, NDSE, NDST )
+        !CALL W3SETA ( IMOD, NDSE, NDST )
+        print *,'02 ',nsea,lbound(hs,1), ubound(hs,1),lbound(arrtotal,2),ubound(arrtotal,2)
         IH     = 0
         IF ( FLGRDALL( 2, 1) ) THEN
           IH = IH + 1

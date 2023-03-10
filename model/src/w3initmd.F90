@@ -2195,8 +2195,11 @@ CONTAINS
     IROOT  = NAPFLD - 1
     !
     !
-    IF ((FLOUT(1) .OR. FLOUT(7)).and.(.not. LPDLIB .or.       &
-         (GTYPE .ne. UNGTYPE).or. .TRUE.)) THEN
+    ! ??? why is the .true. here ???
+    !IF ((FLOUT(1) .OR. FLOUT(7)).and.(.not. LPDLIB .or.  &
+    !     (GTYPE .ne. UNGTYPE).or. .TRUE.)) THEN
+    IF ( (FLOUT(1) .OR. FLOUT(7)) .and. .not. LPDLIB) THEN
+      print *,'DEBUGZZ inside w3iogo setup'
       !
       ! NRQMAX is the maximum number of output fields that require MPI communication,
       ! aimed to gather field values stored in each processor into one processor in
@@ -3463,7 +3466,7 @@ CONTAINS
 #endif
         !
 #ifdef W3_MPI
-      END IF
+      END IF ! IF ( IAPROC .LE. NAPROC ) THEN
       !
       IF ( NRQGO .GT. NRQMAX ) THEN
         WRITE (NDSE,1010) NRQGO, NRQMAX
@@ -4712,14 +4715,14 @@ CONTAINS
 #ifdef W3_MPI
         CALL W3SETA ( IMOD, NDSE, NDST )
         !
-      END IF
+      END IF ! IF ( IAPROC .EQ. NAPFLD ) THEN
       !
       IF ( NRQGO2 .GT. NRQMAX*NAPROC ) THEN
         WRITE (NDSE,1011) NRQGO2, NRQMAX*NAPROC
         CALL EXTCDE (11)
       END IF
       !
-    END IF
+    END IF ! IF ( (FLOUT(1) .OR. FLOUT(7)) .and. (.not. LPDLIB .or. (GTYPE .ne. UNGTYPE).or. .TRUE.)) THEN
     !
     ! 2.  Set-up for W3IORS ---------------------------------------------- /
     ! 2.a General preparations

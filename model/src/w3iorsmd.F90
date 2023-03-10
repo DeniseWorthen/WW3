@@ -762,12 +762,12 @@ CONTAINS
             END DO
             !
             DEALLOCATE ( STAT1 )
-          END IF
+          END IF ! IF (LPDLIB .and. (GTYPE.eq.UNGTYPE)) THEN
 #endif
           !
-        END IF
+        END IF ! IF ( .NOT.IOSFLG .OR. (NAPROC.EQ.1.AND.NAPRST.EQ.1) ) THEN
         !
-      END IF
+      END IF ! IF ( TYPE.EQ.'WIND' .OR. TYPE.EQ.'CALM' ) THEN
     ELSE
       !
       ! Reading spectra
@@ -848,7 +848,7 @@ CONTAINS
 #ifdef W3_MPI
           END IF
 #endif
-        END IF
+        END IF ! IF (LPDLIB .and. (GTYPE.eq.UNGTYPE)) THEN
       END IF
     END IF
 
@@ -1408,6 +1408,7 @@ CONTAINS
     IF (ALLOCATED(TMP))  DEALLOCATE(TMP)
     IF (ALLOCATED(TMP2)) DEALLOCATE(TMP2)
     !
+    print *,'DEBUG w3iors exit'
     RETURN
     !
     ! Escape locations read errors :
