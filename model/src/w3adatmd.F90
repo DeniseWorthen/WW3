@@ -1007,6 +1007,7 @@ CONTAINS
     !
     !AR: Check this below more ...
     NXXX   = NSEALM * NAPROC
+    print *,'NXXX w3adat = ',NSEALM,NAPROC,NXXX
     !
     !     Output and input parameteres by output type
     !
@@ -1572,6 +1573,8 @@ CONTAINS
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
 #endif
+    ! debug
+    use w3wdatmd, only : time
     !
     !/
     !/ ------------------------------------------------------------------- /
@@ -2385,6 +2388,7 @@ CONTAINS
     !
     WADATS(IMOD)%AINIT2 = .TRUE.
     !
+    print *,'w3xdma done ',time,WADATS(IMOD)%AINIT,WADATS(IMOD)%AINIT2
 #ifdef W3_T
     WRITE (NDST,9001)
     WRITE (NDST,9001)

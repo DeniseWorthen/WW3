@@ -1,3 +1,4 @@
+
 MODULE PDLIB_FIELD_VEC
   !/                  +-----------------------------------+
   !/                  | WAVEWATCH III           NOAA/NCEP |
@@ -849,6 +850,8 @@ CONTAINS
     USE W3PARALL, ONLY: INIT_GET_JSEA_ISPROC
     USE W3PARALL, ONLY: INIT_GET_ISEA
     use yowDatapool, only: istatus
+    !debug
+    use w3wdatmd    , only: time
     !/
     IMPLICIT NONE
     !
@@ -893,6 +896,7 @@ CONTAINS
     IF ( FLOUT(1) .OR. FLOUT(7) ) THEN
       CALL GET_ARRAY_SIZE(TheSize)
       IF ( IAPROC .LE. NAPROC ) THEN
+        print *,'UST ',lbound(ust,1),ubound(ust,1),'  HS ',lbound(hs,1),ubound(hs,1)
         allocate(ARRexch(TheSize, NSEAL), ARRpos(NSEAL))
         DO JSEA=1,NSEAL
           CALL INIT_GET_ISEA(ISEA, JSEA)
@@ -1341,15 +1345,14 @@ CONTAINS
       !ainit=true at end of w3dima
       !ainit2=true at end of w3xdma
 
-        print *,'init WADATS(IMOD)%AINIT',WADATS(IMOD)%AINIT
-        print *,'init WADATS(IMOD)%AINIT2',WADATS(IMOD)%AINIT2
+        print *,'init WADATS(IMOD)%AINIT,AINIT2 ',time,WADATS(IMOD)%AINIT,WADATS(IMOD)%AINIT2
 
       IF ( IAPROC .EQ. NAPFLD ) THEN
         print *,'00 ',nsea,lbound(hs,1), ubound(hs,1),lbound(arrtotal,2),ubound(arrtotal,2)
-        IF (.not. WADATS(IMOD)%AINIT2) CALL W3XDMA ( IMOD, NDSE, NDST, FLGRDALL )
+        !IF (.not. WADATS(IMOD)%AINIT2) CALL W3XDMA ( IMOD, NDSE, NDST, FLGRDALL )
 
-        print *,'post WADATS(IMOD)%AINIT',WADATS(IMOD)%AINIT
-        print *,'post WADATS(IMOD)%AINIT2',WADATS(IMOD)%AINIT2
+        print *,'post WADATS(IMOD)%AINIT,AINIT2 ',time,WADATS(IMOD)%AINIT,WADATS(IMOD)%AINIT2
+
 
         print *,'01 ',nsea,lbound(hs,1), ubound(hs,1),lbound(arrtotal,2),ubound(arrtotal,2)
         CALL W3XETA ( IMOD, NDSE, NDST )

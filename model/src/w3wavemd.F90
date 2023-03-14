@@ -2466,9 +2466,7 @@ CONTAINS
           end IF
         end if
         if (do_startall) then
-          if (.not. lpdlib) then
-          !if (GTYPE .ne. UNGTYPE) then
-          !IF (.NOT. LPDLIB .or. (GTYPE.ne.UNGTYPE)) THEN
+          IF (.NOT. LPDLIB .or. (GTYPE.ne.UNGTYPE)) THEN
             if(iaproc.eq.3)print *,'DEBUGZZZ',lpdlib,gtype
             IF (NRQGO.NE.0 ) THEN
               CALL MPI_STARTALL ( NRQGO, IRQGO , IERR_MPI )

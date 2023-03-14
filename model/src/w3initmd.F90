@@ -2142,6 +2142,9 @@ CONTAINS
     USE W3GDATMD, ONLY: GTYPE, UNGTYPE
     USE CONSTANTS, ONLY: LPDLIB
     !/
+    !debug
+    use w3wdatmd, only : time
+    use w3adatmd, only : wadats
 #ifdef W3_MPI
     INCLUDE "mpif.h"
 #endif
@@ -2196,9 +2199,9 @@ CONTAINS
     !
     !
     ! ??? why is the .true. here ???
-    !IF ((FLOUT(1) .OR. FLOUT(7)).and.(.not. LPDLIB .or.  &
-    !     (GTYPE .ne. UNGTYPE).or. .TRUE.)) THEN
-    IF ( (FLOUT(1) .OR. FLOUT(7)) .and. .not. LPDLIB) THEN
+    IF ((FLOUT(1) .OR. FLOUT(7)).and.(.not. LPDLIB .or.  &
+         (GTYPE .ne. UNGTYPE).or. .TRUE.)) THEN
+    !IF ((FLOUT(1) .OR. FLOUT(7)).and.(.not. LPDLIB .or. (GTYPE .ne. UNGTYPE))) THEN
       print *,'DEBUGZZ inside w3iogo setup'
       !
       ! NRQMAX is the maximum number of output fields that require MPI communication,
@@ -3482,6 +3485,7 @@ CONTAINS
         ELSE
           CALL W3XDMA ( IMOD, NDSE, NDST, FLGRDALL )
         ENDIF
+        print *,'mpi_send_init done ',time,WADATS(IMOD)%AINIT,WADATS(IMOD)%AINIT2
         !
         ! 1.c Receives of fields
         !
@@ -4722,6 +4726,7 @@ CONTAINS
         CALL EXTCDE (11)
       END IF
       !
+      print *,'recv_init done ',time,WADATS(IMOD)%AINIT,WADATS(IMOD)%AINIT2
     END IF ! IF ( (FLOUT(1) .OR. FLOUT(7)) .and. (.not. LPDLIB .or. (GTYPE .ne. UNGTYPE).or. .TRUE.)) THEN
     !
     ! 2.  Set-up for W3IORS ---------------------------------------------- /
@@ -4817,6 +4822,7 @@ CONTAINS
         END DO
       END IF
       !
+      print *,'iors recv_init done ',time,WADATS(IMOD)%AINIT,WADATS(IMOD)%AINIT2
       IF (OARST) THEN
         IF ( FLOGRR( 1, 2) ) THEN
           IH     = IH + 1
@@ -5163,6 +5169,7 @@ CONTAINS
 #ifdef W3_MPI
         END IF
         !
+        print *,'iors send_init done ',time,WADATS(IMOD)%AINIT,WADATS(IMOD)%AINIT2
         IF ( IAPROC .EQ. NAPRST ) THEN
           IF (NAPRST .NE. NAPFLD) CALL W3XDMA ( IMOD, NDSE, NDST, FLOGRR )
           CALL W3XETA ( IMOD, NDSE, NDST )
@@ -5517,7 +5524,7 @@ CONTAINS
           !
           CALL W3SETA ( IMOD, NDSE, NDST )
         END IF
-      END IF
+      END IF ! IF (OARST) THEN
       !
       NRQRS  = IH
       IF (OARST) THEN
@@ -5599,7 +5606,7 @@ CONTAINS
             END DO
             !
           END IF
-        END IF
+        END IF ! IF ((.NOT. LPDLIB).OR.(GTYPE .NE. UNGTYPE)) THEN
 #endif
         !
 #ifdef W3_MPIT
