@@ -434,6 +434,7 @@ contains
     type(ESMF_VM)                  :: vm
     type(ESMF_Time)                :: esmfTime, startTime, currTime, stopTime
     type(ESMF_TimeInterval)        :: TimeOffset
+    type(ESMF_TimeInterval)        :: TimeStep
     type(ESMF_Calendar)            :: calendar
     character(CL)                  :: cvalue
     integer                        :: shrlogunit
@@ -590,16 +591,16 @@ contains
          unit=msgString, rc=rc)
     call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
     call ESMF_ClockGet( clock, startTime=startTime, currTime=currTime, rc=rc)
-    timeoffset = currTime - startTime
-    call ESMF_TimeIntervalGet(timeoffset, h_r8=toff, rc=rc)
+    TimeOffset = currTime - startTime
+    call ESMF_TimeIntervalGet(TimeOffset, h_r8=toff, rc=rc)
     write(msgstring,'(a,g14.7)')'TimeOffset: CurrTime - StartTime = ',toff
     call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
     ! Initial run or restart run
     if ( runtype == "initial") then
       call ESMF_ClockGet( clock, startTime=esmfTime, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-#ifndef CESMCOUPLED
-      esmfTime = esmfTime + timeoffset
+#ifndef W3_CESMCOUPLED
+      esmfTime = esmfTime + TimeOffset
 #endif
     else
       call ESMF_ClockGet( clock, currTime=esmfTime, rc=rc )
