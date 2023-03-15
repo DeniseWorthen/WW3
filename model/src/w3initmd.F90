@@ -4729,7 +4729,7 @@ CONTAINS
     IH     = 0
     IROOT  = NAPRST - 1
     !
-    IF ( FLOUT(4) .OR. FLOUT(8) ) THEN
+    IF ((FLOUT(4) .OR. FLOUT(8)) .and. (LPDLIB .eqv. .FALSE.)) THEN
       IF (OARST) THEN
         ALLOCATE ( OUTPTS(IMOD)%OUT4%IRQRS(34*NAPROC) )
       ELSE
@@ -5547,7 +5547,7 @@ CONTAINS
 #ifdef W3_MPI
         IH     = 0
         !
-        IF ((.NOT. LPDLIB).OR.(GTYPE .NE. UNGTYPE)) THEN
+        !IF ((.NOT. LPDLIB).OR.(GTYPE .NE. UNGTYPE)) THEN
           IF ( IAPROC .NE. NAPRST ) THEN
             !
             ALLOCATE ( OUTPTS(IMOD)%OUT4%IRQRSS(NBLKRS) )
@@ -5597,7 +5597,7 @@ CONTAINS
             END DO
             !
           END IF
-        END IF ! IF ((.NOT. LPDLIB).OR.(GTYPE .NE. UNGTYPE)) THEN
+        !END IF ! IF ((.NOT. LPDLIB).OR.(GTYPE .NE. UNGTYPE)) THEN
 #endif
         !
 #ifdef W3_MPIT
@@ -5609,7 +5609,7 @@ CONTAINS
         !
       END IF
       !
-    END IF
+    END IF ! IF ((FLOUT(4) .OR. FLOUT(8)) .and. (LPDLIB .eqv. .FALSE.)) THEN
 #endif
     !
     ! 3.  Set-up for W3IOBC ( SENDs ) ------------------------------------ /

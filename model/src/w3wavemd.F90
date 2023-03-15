@@ -2532,7 +2532,7 @@ CONTAINS
 #ifdef W3_MPI
         IF ( FLOUT(8) .AND. NRQRS.NE.0 ) THEN
           IF ( DSEC21(TIME,TONEXT(:,8)).EQ.0. ) THEN
-            !CALL MPI_STARTALL ( NRQRS, IRQRS , IERR_MPI )
+            CALL MPI_STARTALL ( NRQRS, IRQRS , IERR_MPI )
             FLGMPI(8) = .TRUE.
             NRQMAX    = MAX ( NRQMAX , NRQRS )
 #endif
