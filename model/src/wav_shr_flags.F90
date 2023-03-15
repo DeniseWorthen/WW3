@@ -1172,5 +1172,4 @@ contains
     flush(unum)
 
   end subroutine print_logmsg_4line
-
 end module wav_shr_flags

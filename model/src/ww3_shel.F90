@@ -433,7 +433,6 @@ PROGRAM W3SHEL
   !--- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ! 0.  Set up data structures
   !
-  memunit = 740+IAPROC
 #ifdef W3_OASIS
   OASISED=1
 #endif
@@ -452,6 +451,7 @@ PROGRAM W3SHEL
   CALL W3SETA ( 1, 6, 6 )
   CALL W3SETO ( 1, 6, 6 )
   CALL W3SETI ( 1, 6, 6 )
+
   memunit = 740+IAPROC
   call print_memcheck(memunit, 'memcheck_____:'//' WW3_SHEL SECTION 1')
   !

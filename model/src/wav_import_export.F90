@@ -63,7 +63,7 @@ module wav_import_export
 #else
   logical :: cesmcoupled = .false.                  !< logical defining a non-CESM use case (UWM)
 #endif
-  integer, public    :: nseal_noghost               !< the number of local sea points on a processor, exclusive
+  integer, public    :: nseal_cpl                   !< the number of local sea points on a processor, exclusive
                                                     !! of the ghost points. For non-PDLIB cases, this is nseal
   character(*),parameter :: u_FILE_u = &            !< a character string for an ESMF log message
        __FILE__
@@ -649,7 +649,7 @@ contains
       call state_getfldptr(exportState, 'Sw_lamult', sw_lamult, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
       sw_lamult(:) = fillvalue
-      do jsea=1, nseal_noghost
+      do jsea=1, nseal_cpl
         call init_get_isea(isea, jsea)
         ix  = mapsf(isea,1)
         iy  = mapsf(isea,2)
@@ -666,7 +666,7 @@ contains
       call state_getfldptr(exportState, 'Sw_ustokes', sw_ustokes, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
       sw_ustokes(:) = fillvalue
-      do jsea=1, nseal_noghost
+      do jsea=1, nseal_cpl
         call init_get_isea(isea, jsea)
         ix  = mapsf(isea,1)
         iy  = mapsf(isea,2)
@@ -681,7 +681,7 @@ contains
       call state_getfldptr(exportState, 'Sw_vstokes', sw_vstokes, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
       sw_vstokes(:) = fillvalue
-      do jsea=1, nseal_noghost
+      do jsea=1, nseal_cpl
         call init_get_isea(isea, jsea)
         ix  = mapsf(isea,1)
         iy  = mapsf(isea,2)
@@ -748,7 +748,7 @@ contains
       if (USSPF(1) > 0) then ! Partitioned Stokes drift computation is turned on in mod_def file.
         call CALC_U3STOKES(va, 2)
         do ib = 1, USSPF(2)
-          do jsea = 1, nseal_noghost
+          do jsea = 1, nseal_cpl
             call init_get_isea(isea, jsea)
             ix  = mapsf(isea,1)
             iy  = mapsf(isea,2)
@@ -760,6 +760,7 @@ contains
         end do
       end if
     endif
+
     if (dbug_flag > 5) then
       call state_diagnose(exportState, 'at export ', rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
@@ -965,7 +966,7 @@ contains
     !----------------------------------------------------------------------
 
     !TODO: fix firstCall like for Roughl
-    jsea_loop: do jsea = 1,nseal_noghost
+    jsea_loop: do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
       if ( firstCall ) then
         charn(jsea) = zero
@@ -973,17 +974,14 @@ contains
         ustar = zero
         ustdr = zero
 #ifdef W3_ST3
-        call w3spr3( va(:,jsea), cg(1:nk,isea), wn(1:nk,isea),   &
-             emean, fmean, fmean1, wnmean, amax,         &
-             u10(isea), u10d(isea), ustar, ustdr, tauwx, &
-             tauwy, cd, z0, charn(jsea), llws, fmeanws )
+        call w3spr3( va(:,jsea), cg(1:nk,isea), wn(1:nk,isea), emean, fmean, fmean1, wnmean, &
+             amax, u10(isea), u10d(isea), ustar, ustdr, tauwx, tauwy, cd, z0, charn(jsea),   &
+             llws, fmeanws )
 #endif
 #ifdef W3_ST4
-        call w3spr4( va(:,jsea), cg(1:nk,isea), wn(1:nk,isea),  &
-             emean, fmean, fmean1, wnmean, amax,         &
-             u10(isea), u10d(isea), ustar, ustdr, tauwx, &
-             tauwy, cd, z0, charn(jsea), llws, fmeanws,  &
-             dlwmean )
+        call w3spr4( va(:,jsea), cg(1:nk,isea), wn(1:nk,isea), emean, fmean, fmean1, wnmean, &
+             amax, u10(isea), u10d(isea), ustar, ustdr, tauwx, tauwy, cd, z0, charn(jsea),   &
+             llws, fmeanws, dlwmean )
 #endif
       endif !firstCall
       chkn(jsea) = charn(jsea)
@@ -1030,7 +1028,7 @@ contains
     integer :: i
     !----------------------------------------------------------------------
 
-    jsea_loop: do jsea = 1,nseal_noghost
+    jsea_loop: do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
       ix = mapsf(isea,1)
       iy = mapsf(isea,2)
@@ -1044,17 +1042,14 @@ contains
           tauwx = zero
           tauwy = zero
 #ifdef W3_ST3
-          call w3spr3( va(:,jsea), cg(1:nk,isea), wn(1:nk,isea),   &
-               emean, fmean, fmean1, wnmean, amax,         &
-               u10(isea), u10d(isea), ustar, ustdr, tauwx, &
-               tauwy, cd, z0, charn(jsea), llws, fmeanws )
+          call w3spr3( va(:,jsea), cg(1:nk,isea), wn(1:nk,isea), emean, fmean, fmean1, wnmean, &
+               amax, u10(isea), u10d(isea), ustar, ustdr, tauwx, tauwy, cd, z0, charn(jsea),   &
+               llws, fmeanws )
 #endif
 #ifdef W3_ST4
-          call w3spr4( va(:,jsea), cg(1:nk,isea), wn(1:nk,isea),   &
-               emean, fmean, fmean1, wnmean, amax,         &
-               u10(isea), u10d(isea), ustar, ustdr, tauwx, &
-               tauwy, cd, z0, charn(jsea), llws, fmeanws,  &
-               dlwmean )
+          call w3spr4( va(:,jsea), cg(1:nk,isea), wn(1:nk,isea), emean, fmean, fmean1, wnmean, &
+               amax, u10(isea), u10d(isea), ustar, ustdr, tauwx, tauwy, cd, z0, charn(jsea),   &
+               llws, fmeanws, dlwmean )
 #endif
         end if
       endif !firstCall
@@ -1111,7 +1106,7 @@ contains
     wbyn(:) = zero
     wbpn(:) = zero
 
-    jsea_loop: do jsea = 1,nseal_noghost
+    jsea_loop: do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
       if ( dw(isea).le.zero ) cycle jsea_loop
       depth = max(dmin,dw(isea))
@@ -1187,7 +1182,7 @@ contains
     !----------------------------------------------------------------------
 
     facd = dwat*grav
-    jsea_loop: do jsea = 1,nseal_noghost
+    jsea_loop: do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
       if ( dw(isea).le.zero ) cycle jsea_loop
       sxxs = zero
@@ -1252,7 +1247,7 @@ contains
         end do
       end do
 
-      do jsea = 1,nseal_noghost
+      do jsea = 1,nseal_cpl
         call init_get_isea(isea, jsea)
         ix  = mapsf(isea,1)                   ! global ix
         iy  = mapsf(isea,2)                   ! global iy
@@ -1310,7 +1305,7 @@ contains
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
     global_output(:) = 0._r4
     global_input(:) = 0._r4
-    do jsea = 1, nseal_noghost
+    do jsea = 1, nseal_cpl
       call init_get_isea(isea, jsea)
       global_input(isea) = real(dataptr(jsea),4)
     end do
@@ -1663,13 +1658,11 @@ contains
     ! read header information
     ! this was inside of w3fldo call but since we are opening file
     ! once and rewinding, the header need to be read
-    read(mdsf, iostat=ierr) tsstr, tsfld, nxt, nyt, &
-         gtypet, filler(1:2), tideflag
+    read(mdsf, iostat=ierr) tsstr, tsfld, nxt, nyt, gtypet, filler(1:2), tideflag
 
     ! read input
-    call w3fldg('READ', lstring, mdsf, mdst, mdse, nx, ny, &
-         nx, ny, time0, timen, tw0l, wx0l, wy0l, dt0l, twnl, &
-         wxnl, wynl, dtnl, ierr, flagsc)
+    call w3fldg('READ', lstring, mdsf, mdst, mdse, nx, ny, nx, ny, time0, timen, tw0l, wx0l, wy0l, &
+         dt0l, twnl, wxnl, wynl, dtnl, ierr, flagsc)
 
     wxdata(:) = 0.0_r4
     wydata(:) = 0.0_r4

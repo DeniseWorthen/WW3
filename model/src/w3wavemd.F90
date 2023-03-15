@@ -2438,9 +2438,7 @@ CONTAINS
         WRITE (NDST,9042) LOCAL, FLPART, FLOUTG
 #endif
         !
-        IF ( LOCAL .AND. FLPART ) then
-          CALL W3CPRT ( IMOD )
-        end IF
+        IF ( LOCAL .AND. FLPART ) CALL W3CPRT ( IMOD )
 
         do_w3outg = .false.
         if (w3_cesmcoupled_flag .and. histwr) then

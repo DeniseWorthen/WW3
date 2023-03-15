@@ -319,8 +319,7 @@ contains
     do i = 1,ndims*nelements/2
       fldptr1d(i) = iaproc
     end do
-
-    call ESMF_FieldBundleWrite(FBtemp, filename=trim(mesh_name)//'.decomp.nc',  overwrite=.true., rc=rc)
+    call ESMF_FieldBundleWrite(FBtemp, filename=trim(mesh_name)//'.decomp.nc', overwrite=.true., rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
 
     deallocate(ownedElemCoords)
