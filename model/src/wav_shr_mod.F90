@@ -141,6 +141,7 @@ contains
     integer                :: ncnt,ecnt,lb,ub
     integer                :: nowndn, nownde
     integer, allocatable   :: nids(:), eids(:), nowners(:)
+    real(r8), allocatable  :: ncoords(:)
     character(len=*),parameter :: subname = '(wav_shr_mod:mesh_diagnose) '
     !-------------------------------------------------------
 
@@ -183,6 +184,10 @@ contains
     allocate(nowners(ncnt))
     allocate(eids(ecnt))
 
+    allocate(ncoords(2*nowndn))
+    call ESMF_MeshGet(EMeshIn, ownedNodeCoords=ncoords, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    print '(a,9g14.7)','NCOORDS ',ncoords(1:9)
     if (elementDistGridIsPresent) call ESMF_LogWrite('element Distgrid is Present', rc=rc)
     if (nodalDistGridIsPresent) call ESMF_LogWrite('nodal Distgrid is Present', rc=rc)
     if (elementMaskIsPresent) call ESMF_LogWrite('element Mask is Present', rc=rc)

@@ -746,18 +746,21 @@ contains
       sw_pstokes_x(:,:) = fillvalue
       sw_pstokes_y(:,:) = fillvalue
       if (USSPF(1) > 0) then ! Partitioned Stokes drift computation is turned on in mod_def file.
-        call CALC_U3STOKES(va, 2)
-        do ib = 1, USSPF(2)
-          do jsea = 1, nseal_cpl
-            call init_get_isea(isea, jsea)
-            ix  = mapsf(isea,1)
-            iy  = mapsf(isea,2)
-            !if (mapsta(iy,ix) == 1) then
-              sw_pstokes_x(ib,jsea) = ussp(jsea,ib)
-              sw_pstokes_y(ib,jsea) = ussp(jsea,nk+ib)
-            !end if
-          enddo
-        end do
+        !call pstokes(va,sw_pstokes_x,sw_pstokes_y)
+          ! call CALC_U3STOKES(va, 2)
+           do ib = 1, USSPF(2)
+             do jsea = 1, nseal_cpl
+               call init_get_isea(isea, jsea)
+               ix  = mapsf(isea,1)
+               iy  = mapsf(isea,2)
+               if (mapsta(iy,ix) == 1) then
+                 !       sw_pstokes_x(ib,jsea) = ussp(jsea,ib)
+                 !       sw_pstokes_y(ib,jsea) = ussp(jsea,nk+ib)
+                 sw_pstokes_x(ib,jsea) = 1.0e-5
+                 sw_pstokes_y(ib,jsea) = 1.0e-5
+               end if
+             enddo
+           end do
       end if
     endif
 
@@ -1240,7 +1243,7 @@ contains
     do ik = 1,nwav_elev_spectrum
       ab = 0.0
       do ith = 1, nth
-        do jsea = 1,nseal
+        do jsea = 1,nseal_cpl
           ab(jsea) = ab(jsea) + a(ith,ik,jsea)
         end do
       end do
@@ -1261,6 +1264,98 @@ contains
     end do
 
   end subroutine CalcEF
+
+  subroutine pstokes(a,sw_pstokes_x,sw_pstokes_y)
+
+    use constants, only : tpiinv, grav, tpi
+    use w3gdatmd,  only : dden, dsii, xfr, sig, nk, nth, nseal, ecos, esin, ussp_wn
+    use w3adatmd,  only : cg, wn, dw
+    use w3gdatmd,  only : usspf, mapsf, mapsta
+    use w3parall,  only : init_get_isea
+    ! debug
+    use w3odatmd,  only : naproc, iaproc
+    use w3gdatmd,  only : xgrd, ygrd
+    use w3wdatmd,  only : time
+
+    real, intent(in)  :: a(nth,nk,0:nseal)
+    real(r8), pointer :: sw_pstokes_x(:,:), sw_pstokes_y(:,:)
+
+    ! local variables
+    integer :: ik, ith, isea, jsea
+    integer :: ikst, ikfi, ib, ix, iy
+    real    :: factor, fkd, kd
+    real    :: abx, aby, ussco
+    real    :: sumx(usspf(2)), sumy(usspf(2))
+    real    :: mindiff
+    integer :: spc2bnd(nk)
+
+    logical :: onde1, onde2
+    onde1 = .false.
+    onde2 = .false.
+    if(naproc .eq. 10 .and. iaproc .eq. 2)onde2 = .true.
+    if(naproc .eq.  5 .and. iaproc .eq. 1)onde1 = .true.
+
+    ikst=1  ! start at 1
+    ikfi=nk ! end at nk
+    do jsea = 1,nseal_cpl
+      call init_get_isea(isea, jsea)
+      ix  = mapsf(isea,1)                   ! global ix
+      iy  = mapsf(isea,2)                   ! global iy
+      if(onde1 .and. ix .eq. 8442)print *,'DEBUGXY ',xgrd(iy,ix),ygrd(iy,ix),jsea
+      if(onde2 .and. ix .eq. 8442)print *,'DEBUGXY ',xgrd(iy,ix),ygrd(iy,ix),jsea
+
+      if (mapsta(iy,ix) == 1) then          ! active sea point
+
+        sumx = 0.0
+        sumy = 0.0
+        do ik=ikst,ikfi   !1, nk
+          abx = 0.
+          aby = 0.
+          do ith = 1, nth
+            abx = abx + a(ith,ik,jsea)*ecos(ith)
+            aby = aby + a(ith,ik,jsea)*esin(ith)
+            if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32)print '(a,2i12,2i4,2g15.7)','DEBUG32 ',time,ik,ith,aby,a(ith,ik,jsea)
+            if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32)print '(a,2i12,2i4,2g15.7)','DEBUG32 ',time,ik,ith,aby,a(ith,ik,jsea)
+
+            if(onde1 .and. ix .eq. 8442 .and. ik .eq. 33)print '(a,2i12,2i4,2g15.7)','DEBUG33 ',time,ik,ith,aby,a(ith,ik,jsea)
+            if(onde2 .and. ix .eq. 8442 .and. ik .eq. 33)print '(a,2i12,2i4,2g15.7)','DEBUG33 ',time,ik,ith,aby,a(ith,ik,jsea)
+          end do
+
+          factor = dden(ik) / cg(ik,isea)
+          ! deep water limit
+          kd = max ( 0.001 , wn(ik,isea) * dw(isea) )
+          if ( kd .lt. 6. ) then
+            fkd = factor / sinh(kd)**2
+            ussco = fkd*sig(ik)*wn(ik,isea)*cosh(2.*kd)
+          else
+            ussco = factor*sig(ik)*2.*wn(ik,isea)
+          end if
+          ! match each spectral component to the nearest partition
+          mindiff = 1.e8
+          spc2bnd(ik) = 1
+          mindiff = abs(ussp_wn(1)-wn(ik,isea))
+          do ib = 2,usspf(2)
+            if (mindiff .gt. abs(ussp_wn(ib)-wn(ik,isea))) then
+              spc2bnd(ik) = ib
+              mindiff = abs(ussp_wn(ib)-wn(ik,isea))
+            endif
+          enddo
+          sumx(spc2bnd(ik)) = sumx(spc2bnd(ik)) + abx*ussco
+          sumy(spc2bnd(ik)) = sumy(spc2bnd(ik)) + aby*ussco
+          if(onde1 .and. ix .eq. 8442 .and. spc2bnd(ik) .eq. 3)print '(a,2i12,i4,2g15.7)','DEBUG00 ',time,ik,aby,ussco
+          if(onde2 .and. ix .eq. 8442 .and. spc2bnd(ik) .eq. 3)print '(a,2i12,i4,2g15.7)','DEBUG00 ',time,ik,aby,ussco
+        end do ! do ik
+
+        do ib = 1,usspf(2)
+          sw_pstokes_x(ib,jsea) = sumx(ib)
+          sw_pstokes_y(ib,jsea) = sumy(ib)
+        end do
+      end if ! if (mapsta(iy,ix) == 1) then
+    end do
+    if(onde1)print '(a,2i12,g15.7)','DEBUG01 ',time,sw_pstokes_y(3,6145)
+    if(onde2)print '(a,2i12,g15.7)','DEBUG01 ',time,sw_pstokes_y(3,1125)
+
+  end subroutine pstokes
 
   !====================================================================================
   !> Create a global field across all PEs

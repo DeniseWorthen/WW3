@@ -420,6 +420,11 @@ contains
     use yowNodepool  , only : ng
 #endif
 
+    !degug
+    use yowNodepool   , only : npa
+    use yowNodepool  , only : iplg, np
+    use yowElementpool, only : ielg, ine
+
     ! input/output variables
     type(ESMF_GridComp)  :: gcomp
     type(ESMF_State)     :: importState
@@ -719,7 +724,7 @@ contains
     else
       unstr_mesh = .false.
     end if
-
+    print '(a,9i8)','DEBUG1:',nx,nseal,npa,np,ng,lbound(iplg,1),ubound(iplg,1),lbound(ielg,1),ubound(ielg,1)
     ! Create a  global index array for sea points.
     !
     ! Note that nsea is the global number of sea points - and nseal is the local
