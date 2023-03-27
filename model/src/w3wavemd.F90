@@ -452,6 +452,7 @@ CONTAINS
     USE PDLIB_W3PROFSMD, only : ALL_VA_INTEGRAL_PRINT, ALL_VAOLD_INTEGRAL_PRINT, ALL_FIELD_INTEGRAL_PRINT
     USE W3PARALL, only : PDLIB_NSEAL, PDLIB_NSEALM
     USE yowNodepool, only: npa, iplg, np
+    use yowExchangeModule, only: PDLIB_exchange2Dreal, PDLIB_exchange1Dreal
 #endif
     !/
     USE W3SERVMD
@@ -2333,7 +2334,6 @@ CONTAINS
         END DO
         IF (IT.GT.0) DTG=DTGTEMP
 #endif
-
         !
         !
         ! 3.8 Update global time step.
@@ -2375,6 +2375,7 @@ CONTAINS
 #ifdef W3_T
       WRITE (NDST,9030)
 #endif
+      !call pdlib_exchange2dreal(va)
       call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE END TIME LOOP')
       !
       !     End of loop over time steps

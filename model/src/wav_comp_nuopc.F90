@@ -421,9 +421,9 @@ contains
 #endif
 
     !degug
-    use yowNodepool   , only : npa
-    use yowNodepool  , only : iplg, np
-    use yowElementpool, only : ielg, ine
+    !use yowNodepool   , only : npa
+    !use yowNodepool  , only : iplg, np
+    !use yowElementpool, only : ielg, ine
 
     ! input/output variables
     type(ESMF_GridComp)  :: gcomp
@@ -724,7 +724,7 @@ contains
     else
       unstr_mesh = .false.
     end if
-    print '(a,9i8)','DEBUG1:',nx,nseal,npa,np,ng,lbound(iplg,1),ubound(iplg,1),lbound(ielg,1),ubound(ielg,1)
+    !print '(a,9i8)','DEBUG1:',nx,nseal,npa,np,ng,lbound(iplg,1),ubound(iplg,1),lbound(ielg,1),ubound(ielg,1)
     ! Create a  global index array for sea points.
     !
     ! Note that nsea is the global number of sea points - and nseal is the local
@@ -878,6 +878,7 @@ contains
 #endif
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
+    !call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   end subroutine InitializeRealize
 

@@ -124,6 +124,9 @@ contains
 
     use ESMF          , only : ESMF_Mesh, ESMF_LOGMSG_Info
 
+    ! debug
+    use w3odatmd      , only : iaproc
+
     ! input/output variables
     type(ESMF_Mesh) , intent(in)  :: EMeshIn
     integer         , intent(in)  :: gindex_size
@@ -141,8 +144,10 @@ contains
     integer                :: ncnt,ecnt,lb,ub
     integer                :: nowndn, nownde
     integer, allocatable   :: nids(:), eids(:), nowners(:)
-    real(r8), allocatable  :: ncoords(:)
+    real(r8), allocatable  :: ncoords(:),ncoordsx(:),ncoordsy(:)
     character(len=*),parameter :: subname = '(wav_shr_mod:mesh_diagnose) '
+    ! debug
+    integer :: n
     !-------------------------------------------------------
 
     rc = ESMF_SUCCESS
@@ -175,9 +180,8 @@ contains
          elementMaskIsPresent=elementMaskIsPresent, &
          nodeMaskIsPresent=nodeMaskIsPresent, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
-    write(msgString,'(5(a,i6))')trim(mesh_name)//' Info: Node Cnt = ',ncnt,' Elem Cnt = ',ecnt, &
-         ' num Owned Elms = ',nownde,' num Owned Nodes = ',nowndn,&
-         ' Gindex size = ',gindex_size
+    write(msgString,'(4(a,i6))')trim(mesh_name)//' Info: Node Cnt = ',ncnt,' Elem Cnt = ',ecnt, &
+         ' num Owned Elms = ',nownde,' num Owned Nodes = ',nowndn
     call ESMF_LogWrite(trim(msgString), rc=rc)
 
     allocate(nids(ncnt))
@@ -187,7 +191,17 @@ contains
     allocate(ncoords(2*nowndn))
     call ESMF_MeshGet(EMeshIn, ownedNodeCoords=ncoords, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
-    print '(a,9g14.7)','NCOORDS ',ncoords(1:9)
+    allocate(ncoordsx(nowndn))
+    allocate(ncoordsy(nowndn))
+    ncoordsx(1:nowndn) = ncoords(1::2)
+    ncoordsy(1:nowndn) = ncoords(2::2)
+    !do n = 1,size(ncoordsx)
+    !  if (iaproc .eq. 3)print '(a,2g14.7)','NCOORDS ',ncoordsx(n),ncoordsy(n)
+    !end do
+
+    !print '(a,9g14.7)','NCOORDSX ',ncoordsx(1:9)
+    !print '(a,9g14.7)','NCOORDSY ',ncoordsy(1:9)
+
     if (elementDistGridIsPresent) call ESMF_LogWrite('element Distgrid is Present', rc=rc)
     if (nodalDistGridIsPresent) call ESMF_LogWrite('nodal Distgrid is Present', rc=rc)
     if (elementMaskIsPresent) call ESMF_LogWrite('element Mask is Present', rc=rc)
@@ -217,6 +231,7 @@ contains
       write(msgString,'(a,12i8)')trim(mesh_name)//' : ElemIds(ub-9:ub) = ',lb,ub,eids(ub-9:ub)
       call ESMF_LogWrite(trim(msgString), rc=rc)
     end if
+
     deallocate(nids)
     deallocate(eids)
     deallocate(nowners)
@@ -303,6 +318,10 @@ contains
     call ESMF_FieldGet(doffield, farrayPtr=dofptr, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
     dofptr(:) = dof(:)
+
+    !do i = 1,size(ownedElemCoords_x)
+    !  if (iaproc .eq. 3)print '(a,2g14.7)','ECOORDS ',ownedElemCoords_x(i),ownedElemCoords_y(i)
+    !end do
 
     call ESMF_FieldBundleGet(FBtemp, fieldName='coordx', field=lfield, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return

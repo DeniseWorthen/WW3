@@ -1839,6 +1839,7 @@ CONTAINS
 #endif
     USE W3IDATMD, ONLY: TIN, ICEI, BERGI
     USE W3PARALL, ONLY: INIT_GET_JSEA_ISPROC, INIT_GET_ISEA
+    !use yowExchangeModule, only: PDLIB_exchange2Dreal, PDLIB_exchange1Dreal
     !/
     IMPLICIT NONE
     !/
@@ -1855,26 +1856,21 @@ CONTAINS
 #endif
     INTEGER                 :: MAPICE(NY,NX), ISPROC
     LOGICAL                 :: LOCAL
+    logical :: onde1, onde2
+    onde1 = .false.
+    onde2 = .false.
+    if(naproc .eq. 10 .and. iaproc .eq. 2)onde2 = .true.
+    if(naproc .eq.  5 .and. iaproc .eq. 1)onde1 = .true.
     !/
     !/ ------------------------------------------------------------------- /
     !/
-#ifdef W3_S
-    CALL STRACE (IENT, 'W3UICE')
-#endif
     !
     LOCAL   = IAPROC .LE. NAPROC
     !
-#ifdef W3_T
-    WRITE (NDST,9000) FICEN
-    IF ( .NOT. LOCAL ) WRITE (NDST,9001)
-#endif
     !
     ! 1.  Preparations --------------------------------------------------- *
     ! 1.a Update times
     !
-#ifdef W3_T
-    WRITE (NDST,9010) TIME, TICE, TIN
-#endif
     TICE(1) = TIN(1)
     TICE(2) = TIN(2)
     !
@@ -1895,6 +1891,8 @@ CONTAINS
       IY        = MAPSF(ISEA,2)
       ICE(ISEA) = ICEI(IX,IY)
       BERG(ISEA)= BERGI(IX,IY)
+      if(onde1 .and. ix .eq. 8442)print '(a,2i12,g14.7,3i5)','UICEXX ',time,icei(ix,iy),mapice(iy,ix),mapst2(iy,ix),mapsta(iy,ix)
+      if(onde2 .and. ix .eq. 8442)print '(a,2i12,g14.7,3i5)','UICEXX ',time,icei(ix,iy),mapice(iy,ix),mapst2(iy,ix),mapsta(iy,ix)
       !
       ! 2.b Sea point to be de-activated..
       !
@@ -1904,28 +1902,13 @@ CONTAINS
         MAPICE(IY,IX) = 1
         CALL INIT_GET_JSEA_ISPROC(ISEA, JSEA, ISPROC)
         IF (LOCAL .AND. (IAPROC .eq. ISPROC)) THEN
-#ifdef W3_T
-          WRITE (NDST,9021) ISEA, IX, IY, MAPSTA(IY,IX),     &
-               ICEI(IX,IY), 'ICE (NEW)'
-#endif
           VA(:,JSEA) = 0.
-#if defined W3_ST3 || defined(W3_ST4)
           CHARN(JSEA) = AALPHA
-#else
-          CHARN(JSEA) = 0.
-#endif
-#ifdef W3_T
-        ELSE
-          WRITE (NDST,9021) ISEA, IX, IY, MAPSTA(IY,IX),     &
-               ICEI(IX,IY), 'ICE (NEW X)'
-#endif
+          !call pdlib_exchange1dreal(va(:,jsea))
         END IF
-
-#ifdef W3_T
-      ELSE IF ( ICEI(IX,IY).GE.FICEN ) THEN
-        WRITE (NDST,9021) ISEA, IX, IY, MAPSTA(IY,IX),         &
-             ICEI(IX,IY), 'ICE'
-#endif
+        !call pdlib_exchange2dreal(va)
+        if(onde1 .and. ix .eq. 8442)print *,'UICEdeact ',time
+        if(onde2 .and. ix .eq. 8442)print *,'UICEdeact ',time
       END IF
       !
       ! 2.b Ice point to be re-activated.
@@ -1940,40 +1923,19 @@ CONTAINS
 
           CALL INIT_GET_JSEA_ISPROC(ISEA, JSEA, ISPROC)
           IF ( LOCAL .AND. (IAPROC .eq. ISPROC) ) THEN
-#ifdef W3_T
-            WRITE (NDST,9021) ISEA, IX, IY, MAPSTA(IY,IX), &
-                 ICEI(IX,IY), 'SEA (NEW)'
-#endif
             VA(:,JSEA) = 0.
-#if defined W3_ST3 || defined(W3_ST4)
             CHARN(JSEA) = AALPHA
-#else
-            CHARN(JSEA) = 0.
-#endif
-#ifdef W3_T
-          ELSE
-            WRITE (NDST,9021) ISEA, IX, IY, MAPSTA(IY,IX), &
-                 ICEI(IX,IY), 'SEA (NEW X)'
-#endif
+            !call pdlib_exchange1dreal(va(:,jsea))
           END IF
-
-#ifdef W3_T
-        ELSE
-          WRITE (NDST,9021) ISEA, IX, IY, MAPSTA(IY,IX),     &
-               ICEI(IX,IY), 'DIS'
-#endif
+          !call pdlib_exchange2dreal(va)
         END IF
-
-#ifdef W3_T
-      ELSE IF ( ICEI(IX,IY).LT.FICEN ) THEN
-        WRITE (NDST,9021) ISEA, IX, IY, MAPSTA(IY,IX),     &
-             ICEI(IX,IY), 'SEA'
-#endif
-
+        if(onde1 .and. ix .eq. 8442)print *,'UICEact ',time
+        if(onde2 .and. ix .eq. 8442)print *,'UICEact ',time
       END IF
 #endif
 
     END DO
+    !call pdlib_exchange2dreal(va)
     !
     ! 3.  Update MAPST2 -------------------------------------------------- *
     !

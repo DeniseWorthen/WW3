@@ -470,6 +470,7 @@ contains
         call SetGlobalInput(importState, 'Si_ifrac', vm, global_data, rc)
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
         call FillGlobalInput(global_data, ICEI)
+        !where(icei .ge. 0.0)icei = 0.15
       end if
     end if
 #ifdef W3_CESMCOUPLED
@@ -745,22 +746,24 @@ contains
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
       sw_pstokes_x(:,:) = fillvalue
       sw_pstokes_y(:,:) = fillvalue
+      sw_pstokes_x(:,:) = 1.0e-5
+      sw_pstokes_y(:,:) = 1.0e-5
       if (USSPF(1) > 0) then ! Partitioned Stokes drift computation is turned on in mod_def file.
         !call pstokes(va,sw_pstokes_x,sw_pstokes_y)
-          ! call CALC_U3STOKES(va, 2)
-           do ib = 1, USSPF(2)
-             do jsea = 1, nseal_cpl
-               call init_get_isea(isea, jsea)
-               ix  = mapsf(isea,1)
-               iy  = mapsf(isea,2)
-               if (mapsta(iy,ix) == 1) then
-                 !       sw_pstokes_x(ib,jsea) = ussp(jsea,ib)
-                 !       sw_pstokes_y(ib,jsea) = ussp(jsea,nk+ib)
-                 sw_pstokes_x(ib,jsea) = 1.0e-5
-                 sw_pstokes_y(ib,jsea) = 1.0e-5
-               end if
-             enddo
-           end do
+          !call CALC_U3STOKES(va, 2)
+           ! do ib = 1, USSPF(2)
+           !   do jsea = 1, nseal_cpl
+           !     call init_get_isea(isea, jsea)
+           !     ix  = mapsf(isea,1)
+           !     iy  = mapsf(isea,2)
+           !     if (mapsta(iy,ix) == 1) then
+           !       !       sw_pstokes_x(ib,jsea) = ussp(jsea,ib)
+           !       !       sw_pstokes_y(ib,jsea) = ussp(jsea,nk+ib)
+           !       sw_pstokes_x(ib,jsea) = 1.0e-5
+           !       sw_pstokes_y(ib,jsea) = 1.0e-5
+           !     end if
+           !   enddo
+           ! end do
       end if
     endif
 
