@@ -398,15 +398,12 @@ CONTAINS
           NCENTC = NCENTC - 1
         END IF
       END DO
-    END IF
+    END IF ! IF (GTYPE .LT. 3) THEN
     !
     ! 5.  Maps for intra-spectral propagation ---------------------------- *
     !
     IF ( MAPTH2(1) .NE. 0 ) RETURN
     !
-#ifdef W3_T
-    MAPTST = 0
-#endif
     !
     ! 5.a MAPTH2 and MAPBTK
     !
@@ -415,19 +412,9 @@ CONTAINS
         ISP    = ITH + (IK-1)*NTH
         ISP2   = (IK+1) + (ITH-1)*(NK+2)
         MAPTH2(ISP) = ISP2
-#ifdef W3_T
-        MAPTST(IK+1,ITH) = MAPTST(IK+1,ITH) + 1
-#endif
       END DO
     END DO
     !
-#ifdef W3_T
-    WRITE (NDST,9000) 'MAPTH2', ISP, 0, 0, ISP
-    DO IK=NK+2, 1, -1
-      WRITE (NDST,9001) (MAPTST(IK,ITH),ITH=1, NTH)
-    END DO
-    MAPTST = 0
-#endif
     !
     ! 5.b MAPWN2
     !
@@ -437,9 +424,6 @@ CONTAINS
         ISP0   = ISP0 + 1
         ISP2   = (IK+1) + (ITH-1)*(NK+2)
         MAPWN2(ISP0) = ISP2
-#ifdef W3_T
-        MAPTST(IK+1,ITH) = MAPTST(IK+1,ITH) + 1
-#endif
       END DO
     END DO
     !
@@ -447,26 +431,14 @@ CONTAINS
       ISP0   = ISP0 + 1
       ISP2   = NK+1 + (ITH-1)*(NK+2)
       MAPWN2(ISP0) = ISP2
-#ifdef W3_T
-      MAPTST(NK+1,ITH) = MAPTST(NK+1,ITH) + 2
-#endif
     END DO
     !
     DO ITH=1, NTH
       ISP0   = ISP0 + 1
       ISP2   = 1 + (ITH-1)*(NK+2)
       MAPWN2(ISP0) = ISP2
-#ifdef W3_T
-      MAPTST(1,ITH) = MAPTST(1,ITH) + 4
-#endif
     END DO
     !
-#ifdef W3_T
-    WRITE (NDST,9000) 'MAPWN2', NSPEC-NTH, NTH, NTH, NSPEC+NTH
-    DO IK=NK+2, 1, -1
-      WRITE (NDST,9001) (MAPTST(IK,ITH),ITH=1, NTH)
-    END DO
-#endif
     !
     RETURN
     !
@@ -1550,6 +1522,8 @@ CONTAINS
 #ifdef W3_UNO
     USE W3UNO2MD
 #endif
+    !debug
+    use w3wdatmd, only : time
     !/
     IMPLICIT NONE
     !/
@@ -1761,79 +1735,38 @@ CONTAINS
     !
     ! 5.  Propagate ------------------------------------------------------ *
     !
-    IF ( MOD(ITIME,2) .EQ. 0 ) THEN
-      IF ( FLCK ) THEN
-        DO ITH=1, NTH
-          VQ(NK+2+(ITH-1)*NK2) = FACHFA * VQ(NK+1+(ITH-1)*NK2)
-        END DO
-        !
-#ifdef W3_UQ
-        CALL W3QCK2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM,   &
-             VQ, .FALSE., 1, MAPTH2, NSPEC,            &
-             MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,      &
-             NDSE, NDST )
-#endif
-        !
-#ifdef W3_UNO
-        CALL W3UNO2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM,  &
-             VQ, .FALSE., 1, MAPTH2, NSPEC,           &
-             MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,     &
-             NDSE, NDST )
-#endif
-        !
-      END IF
-      IF ( FLCTH ) THEN
-        !
-#ifdef W3_UQ
-        CALL W3QCK1 ( NTH, NK2, NTH, NK2, VCFLT, VQ, .TRUE.,    &
-             NK2, MAPTH2, NSPEC, MAPTH2, NSPEC, NSPEC, &
-             NSPEC, NDSE, NDST )
-#endif
-        !
-#ifdef W3_UNO
-        CALL W3UNO2r( NTH, NK2, NTH, NK2, VCFLT, VQ, .TRUE.,   &
-             NK2, MAPTH2, NSPEC, MAPTH2, NSPEC, NSPEC,&
-             NSPEC, NDSE, NDST )
-#endif
-        !
-      END IF
-    ELSE
-      IF ( FLCTH ) THEN
-        !
-#ifdef W3_UQ
-        CALL W3QCK1 ( NTH, NK2, NTH, NK2, VCFLT, VQ, .TRUE.,    &
-             NK2, MAPTH2, NSPEC, MAPTH2, NSPEC, NSPEC, &
-             NSPEC, NDSE, NDST )
-#endif
-        !
-#ifdef W3_UNO
-        CALL W3UNO2r( NTH, NK2, NTH, NK2, VCFLT, VQ, .TRUE.,   &
-             NK2, MAPTH2, NSPEC, MAPTH2, NSPEC, NSPEC,&
-             NSPEC, NDSE, NDST )
-#endif
-        !
-      END IF
-      IF ( FLCK ) THEN
-        DO ITH=1, NTH
-          VQ(NK+2+(ITH-1)*NK2) = FACHFA * VQ(NK+1+(ITH-1)*NK2)
-        END DO
-        !
-#ifdef W3_UQ
-        CALL W3QCK2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM,   &
-             VQ, .FALSE., 1, MAPTH2, NSPEC,            &
-             MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,      &
-             NDSE, NDST )
-#endif
-        !
-#ifdef W3_UNO
-        CALL W3UNO2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM,  &
-             VQ, .FALSE., 1, MAPTH2, NSPEC,           &
-             MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,     &
-             NDSE, NDST )
-#endif
-        !
-      END IF
-    END IF
+    print '(a,2i12,2i5)','DEBUGA ',time,itime,mod(itime,2)
+    ! IF ( MOD(ITIME,2) .EQ. 0 ) THEN
+    !    IF ( FLCK ) THEN
+    !       DO ITH=1, NTH
+    !          VQ(NK+2+(ITH-1)*NK2) = FACHFA * VQ(NK+1+(ITH-1)*NK2)
+    !       END DO
+    !       CALL W3QCK2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM, &
+    !            VQ, .FALSE., 1, MAPTH2, NSPEC,                   &
+    !            MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,             &
+    !            NDSE, NDST )
+    !    END IF
+    !    IF ( FLCTH ) THEN
+    !       CALL W3QCK1 ( NTH, NK2, NTH, NK2, VCFLT, VQ, .TRUE.,  &
+    !            NK2, MAPTH2, NSPEC, MAPTH2, NSPEC, NSPEC,        &
+    !            NSPEC, NDSE, NDST )
+    !    END IF
+    ! ELSE
+       IF ( FLCK ) THEN
+          DO ITH=1, NTH
+             VQ(NK+2+(ITH-1)*NK2) = FACHFA * VQ(NK+1+(ITH-1)*NK2)
+          END DO
+          CALL W3QCK2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM, &
+               VQ, .FALSE., 1, MAPTH2, NSPEC,                   &
+               MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,             &
+               NDSE, NDST )
+       END IF
+       IF ( FLCTH ) THEN
+          CALL W3QCK1 ( NTH, NK2, NTH, NK2, VCFLT, VQ, .TRUE.,  &
+               NK2, MAPTH2, NSPEC, MAPTH2, NSPEC, NSPEC,        &
+               NSPEC, NDSE, NDST )
+       END IF
+    !END IF ! IF ( MOD(ITIME,2) .EQ. 0 ) THEN
     !
     ! 6.  Store reults --------------------------------------------------- *
     !
