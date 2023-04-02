@@ -82,31 +82,16 @@ contains
 
     call setDimSize(secDim)
     call print_memcheck(memunit, 'memcheck_____:'//' WW3_PDLIB SECTION 1')
-#ifdef W3_DEBUGINIT
-    Print *, '1: MPIcomm=', MPIcomm
-#endif
     call initMPI(MPIcomm)
 
     memunit = 70000+myrank
     call print_memcheck(memunit, 'memcheck_____:'//' WW3_PDLIB SECTION 2')
-#ifdef W3_DEBUGINIT
-    Print *, '2: After initMPI'
-#endif
     call assignMesh(MNP, MNE)
     call print_memcheck(memunit, 'memcheck_____:'//' WW3_PDLIB SECTION 3')
-#ifdef W3_DEBUGINIT
-    Print *, '3: After assignMesh'
-#endif
     call prePartition()
     call print_memcheck(memunit, 'memcheck_____:'//' WW3_PDLIB SECTION 4')
-#ifdef W3_DEBUGINIT
-    Print *, '3: After prePartition'
-#endif
     call findConnNodes(INE_global)
     call print_memcheck(memunit, 'memcheck_____:'//' WW3_PDLIB SECTION 5')
-#ifdef W3_DEBUGINIT
-    Print *, '4: After findConnNodes'
-#endif
     if(debugPrePartition) then
       if(myrank == 0) then
         write(*,*) "pre-partition"
@@ -120,21 +105,12 @@ contains
     endif
 
     !   call writeMesh()
-#ifdef W3_DEBUGINIT
-    Print *, '4.1: After findConnNodes'
-#endif
     !    CALL REAL_MPI_BARRIER_PDLIB(MPIcomm, "Before call to runParmetis")
     call runParmetis(MNP)
     call print_memcheck(memunit, 'memcheck_____:'//' WW3_PDLIB SECTION 6')
     !    CALL REAL_MPI_BARRIER_PDLIB(MPIcomm, "After call to runParmetis")
-#ifdef W3_DEBUGINIT
-    Print *, '5: After runParmetis'
-#endif
     call postPartition
     call print_memcheck(memunit, 'memcheck_____:'//' WW3_PDLIB SECTION 7')
-#ifdef W3_DEBUGINIT
-    Print *, 'Before findGhostNodes'
-#endif
     call findGhostNodes
     call print_memcheck(memunit, 'memcheck_____:'//' WW3_PDLIB SECTION 8')
 

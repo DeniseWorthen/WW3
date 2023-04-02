@@ -423,7 +423,7 @@ contains
     use w3gdatmd      , only : ntri, trigp
     use yowNodepool   , only : npa
     use yowNodepool   , only : iplg, np
-    use yowElementpool, only : ielg, ine
+    use yowElementpool, only : ielg, ine, ne
     use w3gdatmd   , only : xgrd, ygrd
 
     ! input/output variables
@@ -477,7 +477,7 @@ contains
     character(ESMF_MAXSTR)         :: ifname = 'ww3_multi.inp'
     character(len=*), parameter    :: subname = '(wav_comp_nuopc:InitializeRealize)'
     ! degug
-    integer :: i1,i2,i3,pos
+    integer :: i1,i2,i3,pos,i,j
     real(r8), allocatable :: nodecoords(:,:)
     ! -------------------------------------------------------------------
 
@@ -728,7 +728,7 @@ contains
     else
       unstr_mesh = .false.
     end if
-    print '(a,7i8)','DEBUG1:',nx,nseal,npa,np,ng,ntri,ubound(trigp,2)
+    print '(a,8i8)','DEBUG1:',nx,nseal,npa,np,ng,ne,ntri,ubound(trigp,2)
     ! Create a  global index array for sea points.
     !
     ! Note that nsea is the global number of sea points - and nseal is the local
@@ -742,32 +742,19 @@ contains
 #else
     nseal_cpl = nseal
 #endif
-
-    ! !debug
-    ! allocate(nodecoords(3,nseal_cpl))
-    ! do jsea = 1,nseal_cpl
-    !    do j = 1,2
-    !       pos = 2*(jsea-1)+j
-    !       if (j == 1) then
-    !          nodecoords(pos,isea) = xgrd(1,iplg(jsea))
-    !       else
-    !          nodecoords(pos,isea) = ygrd(1,iplg(jsea))
-    !       end if
-    !    end do
+    ! do i = 1,ne
+    !   do j = 1,3
+    !     print '(a,3i8)','DEBUG20: ',i,3*(i-1)+j,ine(j,i)
+    !   end do
     ! end do
-
     ! do jsea=1,5
     !    call init_get_isea(isea, jsea)
     !    ix = mapsf(isea,1)
     !    iy = mapsf(isea,2)
     !    i1 = trigp(1,isea); i2 = trigp(2,isea); i3 = trigp(3,isea)
     !    print '(a,5i8,2g15.7)','DEBUG2: ',jsea,isea,i1,i2,i3,xgrd(1,ix),ygrd(1,ix)
-    !    !print '(a,6g15.7)','DEBUG3: ',xgrd(1,i1),ygrd(1,i1),xgrd(1,i2),ygrd(1,i2),xgrd(1,i3),ygrd(1,i3)
-    !    !print '(a,2i8,2g15.7)','DEBUG2: ',jsea,isea,xgrd(1,ix),ygrd(1,ix)
-    !    !print '(a,6g15.7)','DEBUG3: ',xgrd(1,i1),ygrd(1,i1),xgrd(1,i2),ygrd(1,i2),xgrd(1,i3),ygrd(1,i3)
+    !    print '(a,6g15.7)','DEBUG3: ',xgrd(1,i1),ygrd(1,i1),xgrd(1,i2),ygrd(1,i2),xgrd(1,i3),ygrd(1,i3)
     ! end do
-
-
 
     allocate(gindex_sea(nseal_cpl))
     do jsea=1, nseal_cpl

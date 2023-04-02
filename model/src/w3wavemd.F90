@@ -1482,6 +1482,8 @@ CONTAINS
       end do
     end do
     !debugstokes
+    if(onde1)print '(a,2i12,2i5)','DEBUGA ',time,itime,mod(itime,2)
+    if(onde2)print '(a,2i12,2i5)','DEBUGA ',time,itime,mod(itime,2)
         !
         ! 3.6 Perform Propagation = = = = = = = = = = = = = = = = = = = = = = =
         ! 3.6.1 Preparations
@@ -1504,6 +1506,9 @@ CONTAINS
           TTEST(2) = 0
           DTTEST = DSEC21(TTEST,TIME)
           ITLOCH = ( NTLOC + 1 - MOD(NINT(DTTEST/DTG),2) ) / 2
+          itloc = 0
+          if(onde1)print '(a,2i12,3i8)','DEBUG_ITLOCa ',time,itloc,itloch,ntloc
+          if(onde2)print '(a,2i12,3i8)','DEBUG_ITLOCa ',time,itloc,itloch,ntloc
           !
           ! 3.6.2 Intra-spectral part 1
           !
@@ -1552,6 +1557,8 @@ CONTAINS
                     J = 1
                     !
 #ifdef W3_PR3
+                    if(onde1.and. ix .eq. 8442)print '(a,2i12,2i8)','DEBUG_ITLOCa call w3ktp3 ',time, itime, mod(itime,2)
+                    if(onde2.and. ix .eq. 8442)print '(a,2i12,2i8)','DEBUG_ITLOCa call w3ktp3 ',time, itime, mod(itime,2)
                     CALL W3KTP3 ( ISEA, FACTH, FACK, CTHG0S(ISEA),       &
                          CG(:,ISEA), WN(:,ISEA), DEPTH,                  &
                          DDDX(IY,IXrel), DDDY(IY,IXrel), CX(ISEA),       &
@@ -1564,7 +1571,7 @@ CONTAINS
                   END IF  !!  GTYPE
                   !
                 END IF
-              END DO
+              END DO ! DO JSEA=1, NSEA
               !
 #ifdef W3_OMPG
               !$OMP END DO
@@ -1612,72 +1619,25 @@ CONTAINS
             ELSE IF(FSTOTALEXP .and. (IT .ne. 0)) THEN
               CALL PDLIB_W3XYPUG_BLOCK_EXPLICIT(IMOD, FACX, FACX, DTG, VGX, VGY)
             ENDIF
-#endif
-          ELSE
-            IF (FLCX .or. FLCY) THEN
-              !
-#ifdef W3_MPI
-              IF ( NRQSG1 .GT. 0 ) THEN
-                CALL MPI_STARTALL (NRQSG1, IRQSG1(1,1), IERR_MPI)
-                CALL MPI_STARTALL (NRQSG1, IRQSG1(1,2), IERR_MPI)
-              END IF
-#endif
-              !
-              !
-              ! Initialize FIELD variable
-              FIELD = 0.
-              !
-              DO ISPEC=1, NSPEC
-                IF ( IAPPRO(ISPEC) .EQ. IAPROC ) THEN
-                  !
-                  IF( GTYPE .EQ. SMCTYPE ) THEN
-                    IX = 1
-                  ELSE IF (.NOT.LPDLIB ) THEN
-                    CALL W3GATH ( ISPEC, FIELD )
-                  END IF   !! GTYPE
-                  !
-                  IF (GTYPE .EQ. SMCTYPE) THEN
-                    IX = 1
-                    !
-                  ELSE IF (GTYPE .EQ. UNGTYPE) THEN
-                    IX = 1
-#ifdef W3_MPI
-                    IF (.NOT. LPDLIB) THEN
-#endif
-#ifdef W3_PR3
-                      CALL W3XYPUG ( ISPEC, FACX, FACX, DTG, FIELD, VGX, VGY, UGDTUPDATE )
-#endif
-#ifdef W3_MPI
-                    END IF
-#endif
-                    !
-                  ELSE
-                    IX = 1
-#ifdef W3_PR3
-                    CALL W3XYP3 ( ISPEC, DTG, MAPSTA, MAPFS, FIELD, VGX, VGY )
-#endif
-                    !
-                  END IF   !! GTYPE
-                  !
-                  IF( GTYPE .EQ. SMCTYPE ) THEN
-                    IX = 1
-                  ELSE IF (.NOT.LPDLIB ) THEN
-                    CALL W3SCAT ( ISPEC, MAPSTA, FIELD )
-                  END IF   !! GTYPE
-                END IF
-              END DO
-              !
-              call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 17')
-              !
-              !Li   Initialise IK IX IY in case ARC option is not used to avoid warnings.
-              IK=1
-              IX=1
-              IY=1
-              !
-              ! End of test FLCX.OR.FLCY
-            END IF
-            !
-          END IF
+#endif  !
+          END IF ! IF (LPDLIB) THEN
+    !debugstokes
+    DO JSEA=1, NSEAL
+      CALL INIT_GET_ISEA(ISEA, JSEA)
+      IX     = MAPSF(ISEA,1)
+      IY     = MAPSF(ISEA,2)
+      DO IK=1, NK
+        DO ITH=1, NTH
+          IS=ITH+(IK-1)*NTH
+          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7,i8)','DEBUGY6a ',time,VA(IS,JSEA),IOBP_LOC(JSEA)
+          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7,i8)','DEBUGY6a ',time,VA(IS,JSEA),IOBP_LOC(JSEA)
+        end do
+      end do
+    end do
+    !debugstokes
+    if(onde1)print '(a,2i12,3i8)','DEBUG_ITLOCb ',time,itloc,itloch,ntloc
+    if(onde2)print '(a,2i12,3i8)','DEBUG_ITLOCb ',time,itloc,itloch,ntloc
+
           !
           ! 3.6.4 Intra-spectral part 2
           !
@@ -1709,22 +1669,10 @@ CONTAINS
                   ELSE
                     IXrel = IX
                   END IF
-                  !
-                  IF( GTYPE .EQ. SMCTYPE ) THEN
-                    J = 1
-#ifdef W3_SMC
-                    !!Li    Refraction and GCT in theta direction is done by rotation.
-                    CALL W3KRTN ( ISEA, FACTH, FACK, CTHG0S(ISEA),       &
-                         CG(:,ISEA), WN(:,ISEA), DEPTH,                  &
-                         DHDX(ISEA), DHDY(ISEA), DHLMT(:,ISEA),          &
-                         CX(ISEA), CY(ISEA), DCXDX(IY,IX),               &
-                         DCXDY(IY,IX), DCYDX(IY,IX), DCYDY(IY,IX),       &
-                         DCDX(:,IY,IX), DCDY(:,IY,IX), VA(:,JSEA) )
-#endif
-                    !
-                  ELSE
                     J = 1
 #ifdef W3_PR3
+                    if(onde1.and. ix .eq. 8442)print '(a,2i12,2i8)','DEBUG_ITLOCb call w3ktp3 ',time,itime, mod(itime,2)
+                    if(onde2.and. ix .eq. 8442)print '(a,2i12,2i8)','DEBUG_ITLOCb call w3ktp3 ',time,itime, mod(itime,2)
                     CALL W3KTP3 ( ISEA, FACTH, FACK, CTHG0S(ISEA),       &
                          CG(:,ISEA), WN(:,ISEA), DEPTH,                  &
                          DDDX(IY,IXrel), DDDY(IY,IXrel), CX(ISEA),       &
@@ -1733,8 +1681,6 @@ CONTAINS
                          DCDX(:,IY,IXrel), DCDY(:,IY,IXrel), VA(:,JSEA), &
                          CFLTHMAX(JSEA), CFLKMAX(JSEA) )
 #endif
-                    !
-                  END IF  !! GTYPE
                   !
                 END IF
               END DO

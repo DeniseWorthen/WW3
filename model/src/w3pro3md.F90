@@ -1580,8 +1580,7 @@ CONTAINS
     !
     DO IK=0, NK+1
       IF ( DEPTH*WN(IK) .LT. 5. ) THEN
-        DSDD(IK) = MAX ( 0. ,                                     &
-             CG(IK)*WN(IK)-0.5*SIG(IK) ) / DEPTH
+        DSDD(IK) = MAX ( 0. , CG(IK)*WN(IK)-0.5*SIG(IK) ) / DEPTH
       ELSE
         DSDD(IK) = 0.
       END IF
@@ -1590,8 +1589,7 @@ CONTAINS
 #ifdef W3_T
     WRITE (NDST,9020)
     DO IK=1, NK+1
-      WRITE (NDST,9021) IK, TPI/SIG(IK), TPI/WN(IK),             &
-           CG(IK), DSDD(IK)
+      WRITE (NDST,9021) IK, TPI/SIG(IK), TPI/WN(IK), CG(IK), DSDD(IK)
     END DO
 #endif
     !
@@ -1635,8 +1633,7 @@ CONTAINS
         DCXY   = FACTH *   DCXDY
         !
         DO ISP=1, NSPEC
-          VCFLT(MAPTH2(ISP)) = ES2(ISP)*DCYX  +     &
-               ESC(ISP)*DCXXYY - EC2(ISP)*DCXY
+          VCFLT(MAPTH2(ISP)) = ES2(ISP)*DCYX  + ESC(ISP)*DCXXYY - EC2(ISP)*DCXY
         END DO
         !
       ELSE
@@ -1651,8 +1648,7 @@ CONTAINS
       FDDMAX = 0.
       !
       DO ISP=1, NSPEC
-        FDDMAX = MAX ( FDDMAX , ABS (                      &
-             ESIN(ISP)*DCDX(MAPWN(ISP)) - ECOS(ISP)*DCDY(MAPWN(ISP)) ) )
+        FDDMAX = MAX ( FDDMAX , ABS ( ESIN(ISP)*DCDX(MAPWN(ISP)) - ECOS(ISP)*DCDY(MAPWN(ISP)) ) )
       END DO
       DO IK=1, NK
         FRK(IK) = FACTH * CG(IK) * WN(IK) / SIG(IK)
@@ -1732,10 +1728,42 @@ CONTAINS
       END DO
       !
     END IF
+    !!! original code
+    IF ( MOD(ITIME,2) .EQ. 0 ) THEN
+      IF ( FLCK ) THEN
+        DO ITH=1, NTH
+          VQ(NK+2+(ITH-1)*NK2) = FACHFA * VQ(NK+1+(ITH-1)*NK2)
+        END DO
+        CALL W3QCK2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM, &
+             VQ, .FALSE., 1, MAPTH2, NSPEC,                   &
+             MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,             &
+             NDSE, NDST )
+      END IF
+      IF ( FLCTH ) THEN
+        CALL W3QCK1 ( NTH, NK2, NTH, NK2, VCFLT, VQ, .TRUE.,  &
+             NK2, MAPTH2, NSPEC, MAPTH2, NSPEC, NSPEC,        &
+             NSPEC, NDSE, NDST )
+      END IF
+    ELSE
+      IF ( FLCTH ) THEN
+        CALL W3QCK1 ( NTH, NK2, NTH, NK2, VCFLT, VQ, .TRUE.,  &
+             NK2, MAPTH2, NSPEC, MAPTH2, NSPEC, NSPEC,        &
+             NSPEC, NDSE, NDST )
+      END IF
+      IF ( FLCK ) THEN
+        DO ITH=1, NTH
+          VQ(NK+2+(ITH-1)*NK2) = FACHFA * VQ(NK+1+(ITH-1)*NK2)
+        END DO
+        CALL W3QCK2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM, &
+             VQ, .FALSE., 1, MAPTH2, NSPEC,                   &
+             MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,             &
+             NDSE, NDST )
+      END IF
+    END IF
+    !!! original code
     !
     ! 5.  Propagate ------------------------------------------------------ *
     !
-    print '(a,2i12,2i5)','DEBUGA ',time,itime,mod(itime,2)
     ! IF ( MOD(ITIME,2) .EQ. 0 ) THEN
     !    IF ( FLCK ) THEN
     !       DO ITH=1, NTH
@@ -1752,21 +1780,21 @@ CONTAINS
     !            NSPEC, NDSE, NDST )
     !    END IF
     ! ELSE
-       IF ( FLCK ) THEN
-          DO ITH=1, NTH
-             VQ(NK+2+(ITH-1)*NK2) = FACHFA * VQ(NK+1+(ITH-1)*NK2)
-          END DO
-          CALL W3QCK2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM, &
-               VQ, .FALSE., 1, MAPTH2, NSPEC,                   &
-               MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,             &
-               NDSE, NDST )
-       END IF
-       IF ( FLCTH ) THEN
-          CALL W3QCK1 ( NTH, NK2, NTH, NK2, VCFLT, VQ, .TRUE.,  &
-               NK2, MAPTH2, NSPEC, MAPTH2, NSPEC, NSPEC,        &
-               NSPEC, NDSE, NDST )
-       END IF
-    !END IF ! IF ( MOD(ITIME,2) .EQ. 0 ) THEN
+    !    IF ( FLCK ) THEN
+    !       DO ITH=1, NTH
+    !          VQ(NK+2+(ITH-1)*NK2) = FACHFA * VQ(NK+1+(ITH-1)*NK2)
+    !       END DO
+    !       CALL W3QCK2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM, &
+    !            VQ, .FALSE., 1, MAPTH2, NSPEC,                   &
+    !            MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,             &
+    !            NDSE, NDST )
+    !    END IF
+    !    IF ( FLCTH ) THEN
+    !       CALL W3QCK1 ( NTH, NK2, NTH, NK2, VCFLT, VQ, .TRUE.,  &
+    !            NK2, MAPTH2, NSPEC, MAPTH2, NSPEC, NSPEC,        &
+    !            NSPEC, NDSE, NDST )
+    !    END IF
+    ! END IF ! IF ( MOD(ITIME,2) .EQ. 0 ) THEN
     !
     ! 6.  Store reults --------------------------------------------------- *
     !

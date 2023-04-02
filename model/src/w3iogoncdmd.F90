@@ -69,11 +69,11 @@ contains
     use w3odatmd   , only : use_user_histname, user_histfname
 
     ! test corners
-    !use w3gdatmd     , only : ntri, trigp
-    !use yowElementpool, only : ielg, ine
-    !use yowNodepool  , only : ng
-    !use w3adatmd     , only : nsealm
-    !use w3gdatmd     , only : ie_cell, pos_cell
+    use w3gdatmd     , only : ntri, trigp
+    use yowElementpool, only : ielg, ine
+    use yowNodepool  , only : ng
+    use w3adatmd     , only : nsealm
+    use w3gdatmd     , only : ie_cell, pos_cell
 
     ! local variables
     integer               :: igrd
@@ -99,10 +99,10 @@ contains
     !     lbound(ielg,1),ubound(ielg,1),lbound(xgrd,2),ubound(xgrd,2)
     !print '(a,8i8)','DEBUG IO2',lbound(ine,1),ubound(ine,1),lbound(ine,2),ubound(ine,2),lbound(ie_cell,1),ubound(ie_cell,1), &
     !     lbound(pos_cell,1),ubound(pos_cell,1)
-    !n = 7965
-    !i1 = trigp(1,n); i2 = trigp(2,n); i3 = trigp(3,n)
-    !print '(a,2g14.7)','DEBUG IO3 ',xgrd(1,n),ygrd(1,n)
-    !print '(a,3i6,6g14.7)','DEBUG IO3 ',i1,i2,i3,xgrd(1,i1),ygrd(1,i1),xgrd(1,i2),ygrd(1,i2),xgrd(1,i3),ygrd(1,i3)
+    n = 7965
+    i1 = trigp(1,n); i2 = trigp(2,n); i3 = trigp(3,n)
+    print '(a,2g14.7)','DEBUG IO3 ',xgrd(1,n),ygrd(1,n)
+    print '(a,3i6,6g14.7)','DEBUG IO3 ',i1,i2,i3,xgrd(1,i1),ygrd(1,i1),xgrd(1,i2),ygrd(1,i2),xgrd(1,i3),ygrd(1,i3)
 
     ! -------------------------------------------------------------
     ! create the netcdf file

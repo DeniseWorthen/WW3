@@ -1131,24 +1131,21 @@ CONTAINS
       !     alpha = 0.005 , 0.5 in eq., 0.25 for directional distribution
       !
 #ifdef W3_SEED
-      DO IK=MIN(NK,NKH), NK
-        UC     = FACSD * GRAV / SIG(IK)
-        SLEV   = MIN ( 1. , MAX ( 0. , U10ABS/UC-1. ) ) *      &
-             6.25E-4 / WN1(IK)**3 / SIG(IK)
-        IF (INFLAGS2(4)) SLEV=SLEV*(1-ICE)
-        DO ITH=1, NTH
-          SPEC(ITH+(IK-1)*NTH) = MAX ( SPEC(ITH+(IK-1)*NTH) ,  &
-               SLEV * MAX ( 0. , COS(U10DIR-TH(ITH)) )**2 )
-        END DO
-      END DO
+      ! DO IK=MIN(NK,NKH), NK
+      !   UC     = FACSD * GRAV / SIG(IK)
+      !   SLEV   = MIN ( 1. , MAX ( 0. , U10ABS/UC-1. ) ) * 6.25E-4 / WN1(IK)**3 / SIG(IK)
+      !   IF (INFLAGS2(4)) SLEV=SLEV*(1-ICE)
+      !   DO ITH=1, NTH
+      !     SPEC(ITH+(IK-1)*NTH) = MAX ( SPEC(ITH+(IK-1)*NTH) , SLEV * MAX ( 0. , COS(U10DIR-TH(ITH)) )**2 )
+      !   END DO
+      ! END DO
 #endif
       !
       ! 6.d Add tail
       !
       DO IK=NKH+1, NK
         DO ITH=1, NTH
-          SPEC(ITH+(IK-1)*NTH) = SPEC(ITH+(IK-2)*NTH) * FACHFA         &
-               + 0.
+          SPEC(ITH+(IK-1)*NTH) = SPEC(ITH+(IK-2)*NTH) * FACHFA + 0.
         END DO
       END DO
       !
