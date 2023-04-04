@@ -607,8 +607,8 @@ CONTAINS
        DO ITH=1, NTH
           IS=ITH+(IK-1)*NTH
           EB  = EB  + A(IS)
-          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7)','DEBUGX5 ',time,A(IS)
-          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7)','DEBUGX5 ',time,A(IS)
+          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGX5 ',time,A(IS)
+          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGX5 ',time,A(IS)
        END DO
        !
        !  At this point UORB and AORB are the variances of the orbital velocity and surface elevation
@@ -678,8 +678,8 @@ CONTAINS
     !
     CONST0=BBETA*DRAT/(kappa**2)
     !
-    if(onde1 .and. ix .eq. 8442)print '(a,2i12,7g15.7)','DEBUGX3a0 ',time, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUX, TAUY, UST
-    if(onde2 .and. ix .eq. 8442)print '(a,2i12,7g15.7)','DEBUGX3a0 ',time, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUX, TAUY, UST
+    if(onde1 .and. ix .eq. 8442)print '(a,2i12,7g18.10)','DEBUGX3a0 ',time, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUX, TAUY, UST
+    if(onde2 .and. ix .eq. 8442)print '(a,2i12,7g18.10)','DEBUGX3a0 ',time, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUX, TAUY, UST
     DO IK=1, NK
        TAUPX=TAUX-ABS(TTAUWSHELTER)*STRESSSTAB(ISTAB,1)
        TAUPY=TAUY-ABS(TTAUWSHELTER)*STRESSSTAB(ISTAB,2)
@@ -706,8 +706,8 @@ CONTAINS
        !
        SWELLCOEFV=-SSWELLF(5)*DRAT*2*K(IS)*SQRT(2*NU_AIR*SIG2(IS))
        SWELLCOEFT=-DRAT*SSWELLF(1)*16*SIG2(IS)**2/GRAV
-       if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32)print '(a,2i12,4g15.7)','DEBUGX4a ',time,taupx,taupy,ustp,usdirp
-       if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32)print '(a,2i12,4g15.7)','DEBUGX4a ',time,taupx,taupy,ustp,usdirp
+       if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32)print '(a,2i12,4g18.10)','DEBUGX4a ',time,taupx,taupy,ustp,usdirp
+       if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32)print '(a,2i12,4g18.10)','DEBUGX4a ',time,taupx,taupy,ustp,usdirp
        !
        DO ITH=1,NTH
           IS=ITH+(IK-1)*NTH
@@ -766,8 +766,8 @@ CONTAINS
              STRESSSTAB(ISTAB,1)=STRESSSTAB(ISTAB,1)+TEMP2*ECOS(IS)
              STRESSSTAB(ISTAB,2)=STRESSSTAB(ISTAB,2)+TEMP2*ESIN(IS)
           END IF
-          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,3g15.7)','DEBUGX4b ',time,temp2,a(is),DSTAB(ISTAB,IS)
-          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,3g15.7)','DEBUGX4b ',time,temp2,a(is),DSTAB(ISTAB,IS)
+          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,3g18.10)','DEBUGX4b ',time,temp2,a(is),DSTAB(ISTAB,IS)
+          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,3g18.10)','DEBUGX4b ',time,temp2,a(is),DSTAB(ISTAB,IS)
        END DO ! DO ITH=1,NTH
     END DO ! DO IK=1, NK
     !
@@ -777,8 +777,8 @@ CONTAINS
     TAUWNX =STRESSSTABN(3,1)
     TAUWNY =STRESSSTABN(3,2)
     S = D * A
-    if(onde1 .and. ix .eq. 8442)print '(a,2i12,4g15.7)','DEBUGX3a ',time, TAUWNX, TAUWNY, TAUWX, TAUWY
-    if(onde2 .and. ix .eq. 8442)print '(a,2i12,4g15.7)','DEBUGX3a ',time, TAUWNX, TAUWNY, TAUWX, TAUWY
+    if(onde1 .and. ix .eq. 8442)print '(a,2i12,4g18.10)','DEBUGX3a ',time, TAUWNX, TAUWNY, TAUWX, TAUWY
+    if(onde2 .and. ix .eq. 8442)print '(a,2i12,4g18.10)','DEBUGX3a ',time, TAUWNX, TAUWNY, TAUWX, TAUWY
     !
     ! ... Test output of arrays
     !
@@ -826,8 +826,8 @@ CONTAINS
     TAUHF = CONST0*TEMP*UST**2*TAU1
     TAUWX = XSTRESS+TAUHF*COS(USDIRP)
     TAUWY = YSTRESS+TAUHF*SIN(USDIRP)
-    if(onde1 .and. ix .eq. 8442)print '(a,2i12,4g15.7)','DEBUGX3b ',time, TAUWNX, TAUWNY, TAUWX, TAUWY
-    if(onde2 .and. ix .eq. 8442)print '(a,2i12,4g15.7)','DEBUGX3b ',time, TAUWNX, TAUWNY, TAUWX, TAUWY
+    if(onde1 .and. ix .eq. 8442)print '(a,2i12,4g18.10)','DEBUGX3b ',time, TAUWNX, TAUWNY, TAUWX, TAUWY
+    if(onde2 .and. ix .eq. 8442)print '(a,2i12,4g18.10)','DEBUGX3b ',time, TAUWNX, TAUWNY, TAUWX, TAUWY
     !
     ! Reduces tail effect to make sure that wave-supported stress
     ! is less than total stress, this is borrowed from ECWAM Stresso.F
@@ -839,8 +839,8 @@ CONTAINS
        TAUWX=TAUWX*TAUWB/TAUW
        TAUWY=TAUWY*TAUWB/TAUW
     END IF
-    if(onde1 .and. ix .eq. 8442)print '(a,2i12,4g15.7)','DEBUGX3c ',time, TAUWNX, TAUWNY, TAUWX, TAUWY
-    if(onde2 .and. ix .eq. 8442)print '(a,2i12,4g15.7)','DEBUGX3c ',time, TAUWNX, TAUWNY, TAUWX, TAUWY
+    if(onde1 .and. ix .eq. 8442)print '(a,2i12,4g18.10)','DEBUGX3c ',time, TAUWNX, TAUWNY, TAUWX, TAUWY
+    if(onde2 .and. ix .eq. 8442)print '(a,2i12,4g18.10)','DEBUGX3c ',time, TAUWNX, TAUWNY, TAUWX, TAUWY
     !
     RETURN
     !

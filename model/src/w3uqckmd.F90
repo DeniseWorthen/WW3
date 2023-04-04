@@ -1,4 +1,5 @@
-!> @file
+
+0;95;0c!> @file
 !> @brief Contains MODULE W3UQCKMD.
 !>
 !> @author H. L. Tolman  @date 27-May-2014
@@ -617,66 +618,17 @@ CONTAINS
     !/
     INTEGER                 :: IXY, IP, IXYC, IXYU, IXYD, IY, IX,   &
          IAD00, IAD02, IADN0, IADN1, IADN2
-#ifdef W3_S
-    INTEGER, SAVE           :: IENT
-#endif
-#ifdef W3_T1
-    INTEGER                 :: IX2, IY2
-#endif
     REAL                    :: CFL, VEL, QB, DQ, DQNZ, QCN, QBN,    &
          QBR, CFAC, FLA(1-MY:MY*MX)
-#ifdef W3_T0
-    REAL                    :: QMAX
-#endif
-#ifdef W3_T1
-    REAL                    :: QBO, QN, XCFL
-#endif
-#ifdef W3_T2
-    REAL                    :: QOLD
-#endif
     !/
     !/ ------------------------------------------------------------------- /
     !/
-#ifdef W3_S
-    CALL STRACE (IENT, 'W3QCK2')
-#endif
-    !
-#ifdef W3_T
-    WRITE (NDST,9000) MX, MY, NX, NY, DT, CLOSE, INC, NB0, NB1, NB2
-#endif
-    !
-#ifdef W3_T0
-    QMAX   = 0.
-    DO IY=1, NY
-      DO IX=1, NX
-        QMAX   = MAX ( QMAX , Q(IY+(IX-1)*MY) )
-      END DO
-    END DO
-    QMAX   = MAX ( 0.01*QMAX , 1.E-10 )
-#endif
-    !
-#ifdef W3_T0
-    WRITE (NDST,9001) 'VELO'
-    DO IY=NY,1,-1
-      WRITE (NDST,9002) (NINT(100.*VELO(IY+(IX-1)*MY)           &
-           *DT/DX1(IY+(IX-1)*MY)),IX=1,NX)
-    END DO
-    WRITE (NDST,9001) 'Q'
-    DO IY=NY,1,-1
-      WRITE (NDST,9002) (NINT(Q(IY+(IX-1)*MY)/QMAX),IX=1,NX)
-    END DO
-    WRITE (NDST,9001) 'MAPACT'
-    WRITE (NDST,9003) (MAPACT(IXY),IXY=1,NACT)
-#endif
     !
     ! 1.  Initialize aux. array FLA and closure ------------------------- *
     !
     FLA = 0.
     !
     IF ( CLOSE ) THEN
-#ifdef W3_T
-      WRITE (NDST,9005)
-#endif
       IAD00  = -MY
       IAD02  =  MY
       IADN0  = IAD00 + MY*NX
@@ -696,10 +648,6 @@ CONTAINS
     ! 2.  Fluxes for central points ------------------------------------- *
     !     ( 3rd order + limiter )
     !
-#ifdef W3_T1
-    WRITE (NDST,9010)
-    WRITE (NDST,9011) NB0, 'CENTRAL'
-#endif
     !
     DO IP=1, NB0
       !
@@ -707,9 +655,9 @@ CONTAINS
       VEL    = 0.5 * ( VELO(IXY) + VELO(IXY+INC) )
       CFL    = DT *  VEL / DX2(IXY)
       IXYC   = IXY - INC * INT( MIN ( 0. , SIGN(1.1,CFL) ) )
-      QB     = 0.5 * ( (1.-CFL)*Q(IXY+INC) + (1.+CFL)*Q(IXY) )      &
-           - DX2(IXY)**2 / DX1(IXYC) * (1.-CFL**2) / 6.      &
-           * ( (Q(IXYC+INC)-Q(IXYC))/DX2(IXYC)           &
+      QB     = 0.5 * ( (1.-CFL)*Q(IXY+INC) + (1.+CFL)*Q(IXY) ) &
+           - DX2(IXY)**2 / DX1(IXYC) * (1.-CFL**2) / 6.        &
+           * ( (Q(IXYC+INC)-Q(IXYC))/DX2(IXYC)                 &
            - (Q(IXYC)-Q(IXYC-INC))/DX2(IXYC-INC) )
       !
       IXYU   = IXYC - INC * INT ( SIGN (1.1,CFL) )
@@ -719,9 +667,6 @@ CONTAINS
       QCN    = ( Q(IXYC) - Q(IXYU) ) / DQNZ
       QCN    = MIN ( 1.1, MAX ( -0.1 , QCN ) )
       !
-#ifdef W3_T1
-      QBO    = QB
-#endif
       QBN    = MAX ( (QB-Q(IXYU))/DQNZ , QCN )
       QBN    = MIN ( QBN , 1. , QCN/MAX(1.E-10,ABS(CFL)) )
       QBR    = Q(IXYU) + QBN*DQ
@@ -730,85 +675,34 @@ CONTAINS
       !
       FLA(IXY) = VEL * QB
       !
-#ifdef W3_T1
-      IY     = MOD ( IXY , MY )
-      IX     = 1 + IXY/MY
-      IY2    = MOD ( IXY+INC , MY )
-      IX2    = 1 + (IXY+INC)/MY
-      QN     = MAX ( QB, QBO, Q(IXY-INC), Q(   IXY   ),         &
-           Q(IXY+INC), Q(IXY+2*INC) )
-      IF ( QN .GT. 1.E-10 ) THEN
-        QN     = 1. /QN
-        WRITE (NDST,9012) IP, IX, IY, IX2, IY2,               &
-             CFL, DT*VELO(IXY)/DX1(IXY),                 &
-             DT*VELO(IXY+INC)/DX1(IXY+INC),         &
-             QBO*QN, QB*QN, Q(IXY-INC)*QN, Q(   IXY   )*QN,  &
-             Q(IXY+INC)*QN, Q(IXY+2*INC)*QN
-      END IF
-#endif
       !
     END DO
     !
     ! 3.  Fluxes for points with boundary above ------------------------- *
     !     ( 1st order without limiter )
     !
-#ifdef W3_T1
-    WRITE (NDST,9011) NB1-NB0, 'BOUNDARY ABOVE'
-#endif
     !
     DO IP=NB0+1, NB1
       IXY    = MAPBOU(IP)
       VEL    = VELO(IXY)
       IXYC   = IXY - INC * INT( MIN ( 0. , SIGN(1.1,VEL) ) )
       FLA(IXY) = VEL * Q(IXYC)
-#ifdef W3_T1
-      IY     = MOD ( IXY , MY )
-      IX     = 1 + IXY/MY
-      IY2    = MOD ( IXY+INC , MY )
-      IX2    = 1 + (IXY+INC)/MY
-      QN     = MAX ( Q(IXY+INC), Q(IXY) )
-      IF ( QN .GT. 1.E-10 ) THEN
-        QN     = 1. /QN
-        WRITE (NDST,9013) IP, IX, IY, IX2, IY2, XCFL,             &
-             DT*VELO(IXY)/DX2(IXY),                  &
-             Q(IXYC)*QN, Q(IXY)*QN, Q(IXY+INC)*QN
-      END IF
-#endif
     END DO
     !
     ! 4.  Fluxes for points with boundary below ------------------------- *
     !     ( 1st order without limiter )
     !
-#ifdef W3_T1
-    WRITE (NDST,9011) NB2-NB1, 'BOUNDARY BELOW'
-#endif
     !
     DO IP=NB1+1, NB2
       IXY    = MAPBOU(IP)
       VEL    = VELO(IXY+INC)
       IXYC   = IXY - INC * INT( MIN ( 0. , SIGN(1.1,VEL) ) )
       FLA(IXY) = VEL * Q(IXYC)
-#ifdef W3_T1
-      IY     = MOD ( IXY , MY )
-      IX     = 1 + IXY/MY
-      IY2    = MOD ( IXY+INC , MY )
-      IX2    = 1 + (IXY+INC)/MY
-      QN     = MAX ( Q(IXY+INC), Q(IXY) )
-      IF ( QN .GT. 1.E-10 ) THEN
-        QN     = 1. /QN
-        WRITE (NDST,9014) IP, IX, IY, IX2, IY2, XCFL,         &
-             DT*VELO(IXY+INC)/DX2(IXY),          &
-             Q(IXYC)*QN, Q(IXY)*QN, Q(IXY+INC)*QN
-      END IF
-#endif
     END DO
     !
     ! 5.  Global closure ----------------------------------------------- *
     !
     IF ( CLOSE ) THEN
-#ifdef W3_T
-      WRITE (NDST,9015)
-#endif
       DO IY=1, NY
         FLA (IY+IAD00) = FLA (IY+IADN0)
       END DO
@@ -816,30 +710,11 @@ CONTAINS
     !
     ! 6.  Propagation -------------------------------------------------- *
     !
-#ifdef W3_T2
-    WRITE (NDST,9020)
-#endif
     DO IP=1, NACT
       IXY    = MAPACT(IP)
-#ifdef W3_T2
-      QOLD   = Q(IXY)
-#endif
-      Q(IXY) = MAX ( 0. , Q(IXY) + DT/DX1(IXY) *                    &
-           (FLA(IXY-INC)-FLA(IXY)) )
-#ifdef W3_T2
-      IF ( QOLD + Q(IXY) .GT. 1.E-10 )                          &
-           WRITE (NDST,9021) IP, IXY, QOLD, Q(IXY),             &
-           DT*FLA(IXY-INC)/DX1(IXY),          &
-           DT*FLA(IXY)/DX1(IXY)
-#endif
+      Q(IXY) = MAX ( 0. , Q(IXY) + DT/DX1(IXY) * (FLA(IXY-INC)-FLA(IXY)) )
     END DO
     !
-#ifdef W3_T0
-    WRITE (NDST,9001) 'Q'
-    DO IY=NY,1,-1
-      WRITE (NDST,9002) (NINT(Q(IY+(IX-1)*MY)/QMAX),IX=1,NX)
-    END DO
-#endif
     !
     RETURN
     !

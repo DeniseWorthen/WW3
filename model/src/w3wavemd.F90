@@ -774,12 +774,13 @@ CONTAINS
       CALL INIT_GET_ISEA(ISEA, JSEA)
       IX     = MAPSF(ISEA,1)
       IY     = MAPSF(ISEA,2)
-      if(onde1 .and. ix .eq. 8442)print *,'XXX ',xgrd(iy,ix),ygrd(iy,ix),9+(32-1)*36
+      if(onde1 .and. ix .eq. 8442)print *,'XXX ',isea,xgrd(iy,ix),ygrd(iy,ix),9+(32-1)*36
+      if(onde2 .and. ix .eq. 8442)print *,'XXX ',isea,xgrd(iy,ix),ygrd(iy,ix),9+(32-1)*36
       DO IK=1, NK
         DO ITH=1, NTH
           IS=ITH+(IK-1)*NTH
-          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7)','DEBUGY0 ',time,VA(IS,JSEA)
-          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7)','DEBUGY0 ',time,VA(IS,JSEA)
+          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY0 ',time,VA(IS,JSEA)
+          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY0 ',time,VA(IS,JSEA)
         end do
       end do
     end do
@@ -1009,8 +1010,8 @@ CONTAINS
       DO IK=1, NK
         DO ITH=1, NTH
           IS=ITH+(IK-1)*NTH
-          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7)','DEBUGY1 ',time,VA(IS,JSEA)
-          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7)','DEBUGY1 ',time,VA(IS,JSEA)
+          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY1 ',time,VA(IS,JSEA)
+          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY1 ',time,VA(IS,JSEA)
         end do
       end do
     end do
@@ -1157,8 +1158,8 @@ CONTAINS
       DO IK=1, NK
         DO ITH=1, NTH
           IS=ITH+(IK-1)*NTH
-          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7)','DEBUGY2 ',time,VA(IS,JSEA)
-          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7)','DEBUGY2 ',time,VA(IS,JSEA)
+          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY2 ',time,VA(IS,JSEA)
+          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY2 ',time,VA(IS,JSEA)
         end do
       end do
     end do
@@ -1179,8 +1180,8 @@ CONTAINS
       DO IK=1, NK
         DO ITH=1, NTH
           IS=ITH+(IK-1)*NTH
-          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7)','DEBUGY3 ',time,VA(IS,JSEA)
-          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7)','DEBUGY3 ',time,VA(IS,JSEA)
+          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY3 ',time,VA(IS,JSEA)
+          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY3 ',time,VA(IS,JSEA)
         end do
       end do
     end do
@@ -1246,8 +1247,11 @@ CONTAINS
         IF ( FLMAP ) THEN
           IF ( GTYPE .NE. SMCTYPE ) THEN
 #ifdef W3_PR3
+            !gtype=3 for unstruc,should create only mapth2,mapwn2,used in pro3
             CALL W3MAP3
+            !trflag=0, should just return w/o doing anything to trnx,y
             CALL W3UTRN ( TRNX, TRNY )
+            ! generates maptrn, whatever that is
             CALL W3MAPT
 #endif
           END IF  !! GTYPE
@@ -1261,8 +1265,8 @@ CONTAINS
           DO IK=1, NK
             DO ITH=1, NTH
               IS=ITH+(IK-1)*NTH
-              if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7)','DEBUGY4 ',time,VA(IS,JSEA)
-              if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7)','DEBUGY4 ',time,VA(IS,JSEA)
+              if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY4 ',time,VA(IS,JSEA)
+              if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY4 ',time,VA(IS,JSEA)
             end do
           end do
         end do
@@ -1302,8 +1306,8 @@ CONTAINS
 #endif
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 13')
         !
-        if(onde1)print *,'DEBUGZ',time,FLSOU,FSSOURCE,np,nseal,npa
-        if(onde2)print *,'DEBUGZ',time,FLSOU,FSSOURCE,np,nseal,npa
+        if(onde1)print *,'DEBUGZ',time,FLSOU,FSSOURCE,np,nseal,npa,fachfa
+        if(onde2)print *,'DEBUGZ',time,FLSOU,FSSOURCE,np,nseal,npa,fachfa
 #ifdef W3_PDLIB
         IF ( FLSOU .and. LPDLIB .and. FSSOURCE) THEN
 #endif
@@ -1472,12 +1476,11 @@ CONTAINS
       CALL INIT_GET_ISEA(ISEA, JSEA)
       IX     = MAPSF(ISEA,1)
       IY     = MAPSF(ISEA,2)
-      if(onde1 .and. ix .eq. 8442)print *,'XXX ',xgrd(iy,ix),ygrd(iy,ix),9+(32-1)*36
       DO IK=1, NK
         DO ITH=1, NTH
           IS=ITH+(IK-1)*NTH
-          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7)','DEBUGY5 ',time,VA(IS,JSEA)
-          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7)','DEBUGY5 ',time,VA(IS,JSEA)
+          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10,2i8)','DEBUGY5 ',time,VA(IS,JSEA),isea,jsea
+          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10,2i8)','DEBUGY5 ',time,VA(IS,JSEA),isea,jsea
         end do
       end do
     end do
@@ -1589,8 +1592,8 @@ CONTAINS
       DO IK=1, NK
         DO ITH=1, NTH
           IS=ITH+(IK-1)*NTH
-          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7)','DEBUGY6 ',time,VA(IS,JSEA)
-          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7)','DEBUGY6 ',time,VA(IS,JSEA)
+          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY6 ',time,VA(IS,JSEA)
+          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY6 ',time,VA(IS,JSEA)
         end do
       end do
     end do
@@ -1629,8 +1632,8 @@ CONTAINS
       DO IK=1, NK
         DO ITH=1, NTH
           IS=ITH+(IK-1)*NTH
-          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7,i8)','DEBUGY6a ',time,VA(IS,JSEA),IOBP_LOC(JSEA)
-          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7,i8)','DEBUGY6a ',time,VA(IS,JSEA),IOBP_LOC(JSEA)
+          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10,i8)','DEBUGY6a ',time,VA(IS,JSEA),IOBP_LOC(JSEA)
+          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10,i8)','DEBUGY6a ',time,VA(IS,JSEA),IOBP_LOC(JSEA)
         end do
       end do
     end do
@@ -1673,6 +1676,13 @@ CONTAINS
 #ifdef W3_PR3
                     if(onde1.and. ix .eq. 8442)print '(a,2i12,2i8)','DEBUG_ITLOCb call w3ktp3 ',time,itime, mod(itime,2)
                     if(onde2.and. ix .eq. 8442)print '(a,2i12,2i8)','DEBUG_ITLOCb call w3ktp3 ',time,itime, mod(itime,2)
+                    DO IK=1, NK
+                      DO ITH=1, NTH
+                        IS=ITH+(IK-1)*NTH
+                        if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10,i8)','DEBUGYb4 ',time,VA(IS,JSEA),IOBP_LOC(JSEA)
+                        if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10,i8)','DEBUGYb4 ',time,VA(IS,JSEA),IOBP_LOC(JSEA)
+                      end do
+                    end do
                     CALL W3KTP3 ( ISEA, FACTH, FACK, CTHG0S(ISEA),       &
                          CG(:,ISEA), WN(:,ISEA), DEPTH,                  &
                          DDDX(IY,IXrel), DDDY(IY,IXrel), CX(ISEA),       &
@@ -1681,6 +1691,13 @@ CONTAINS
                          DCDX(:,IY,IXrel), DCDY(:,IY,IXrel), VA(:,JSEA), &
                          CFLTHMAX(JSEA), CFLKMAX(JSEA) )
 #endif
+                    DO IK=1, NK
+                      DO ITH=1, NTH
+                        IS=ITH+(IK-1)*NTH
+                        if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10,i8)','DEBUGYaf ',time,VA(IS,JSEA),IOBP_LOC(JSEA)
+                        if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10,i8)','DEBUGYaf ',time,VA(IS,JSEA),IOBP_LOC(JSEA)
+                      end do
+                    end do
                   !
                 END IF
               END DO
@@ -1704,8 +1721,8 @@ CONTAINS
             DO IK=1, NK
               DO ITH=1, NTH
                 IS=ITH+(IK-1)*NTH
-                if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7)','DEBUGY7 ',time,VA(IS,JSEA)
-                if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7)','DEBUGY7 ',time,VA(IS,JSEA)
+                if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY7 ',time,VA(IS,JSEA)
+                if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY7 ',time,VA(IS,JSEA)
               end do
             end do
           end do
@@ -1735,13 +1752,14 @@ CONTAINS
               DELA=1.
               DELX=1.
               DELY=1.
-              IF ( MAPSTA(IY,IX) .EQ. 1 .AND. FLAGST(ISEA)) THEN
+              !IF ( MAPSTA(IY,IX) .EQ. 1 .AND. FLAGST(ISEA)) THEN
+              IF ( MAPSTA(IY,IX) .EQ. 1) THEN
                 TMP1   = WHITECAP(JSEA,1:4)
                 TMP2   = BEDFORMS(JSEA,1:3)
                 TMP3   = TAUBBL(JSEA,1:2)
                 TMP4   = TAUICE(JSEA,1:2)
-                if(onde1 .and. ix .eq. 8442)print '(a,2i12,4g15.7)','DEBUGZ2 ',time,TAUWIX(JSEA), TAUWIY(JSEA), TAUWNX(JSEA), TAUWNY(JSEA)
-                if(onde2 .and. ix .eq. 8442)print '(a,2i12,4g15.7)','DEBUGZ2 ',time,TAUWIX(JSEA), TAUWIY(JSEA), TAUWNX(JSEA), TAUWNY(JSEA)
+                if(onde1 .and. ix .eq. 8442)print '(a,2i12,4g18.10)','DEBUGZ2 ',time,TAUWIX(JSEA), TAUWIY(JSEA), TAUWNX(JSEA), TAUWNY(JSEA)
+                if(onde2 .and. ix .eq. 8442)print '(a,2i12,4g18.10)','DEBUGZ2 ',time,TAUWIX(JSEA), TAUWIY(JSEA), TAUWNX(JSEA), TAUWNY(JSEA)
 #ifdef W3_PDLIB
                 IF (FSSOURCE) THEN
                   CALL W3SRCE(srce_imp_post,IT,ISEA,JSEA,IX,IY,IMOD,     &
@@ -1808,8 +1826,8 @@ CONTAINS
                 FCUT  (JSEA) = UNDEF
                 !                    VA(:,JSEA)  = 0.
               END IF
-              if(onde1 .and. ix .eq. 8442)print '(a,2i12,4g15.7)','DEBUGZ3 ',time,TAUWIX(JSEA), TAUWIY(JSEA), TAUWNX(JSEA), TAUWNY(JSEA)
-              if(onde2 .and. ix .eq. 8442)print '(a,2i12,4g15.7)','DEBUGZ3 ',time,TAUWIX(JSEA), TAUWIY(JSEA), TAUWNX(JSEA), TAUWNY(JSEA)
+              if(onde1 .and. ix .eq. 8442)print '(a,2i12,4g18.10)','DEBUGZ3 ',time,TAUWIX(JSEA), TAUWIY(JSEA), TAUWNX(JSEA), TAUWNY(JSEA)
+              if(onde2 .and. ix .eq. 8442)print '(a,2i12,4g18.10)','DEBUGZ3 ',time,TAUWIX(JSEA), TAUWIY(JSEA), TAUWNX(JSEA), TAUWNY(JSEA)
             END DO
             !
 #ifdef W3_OMPG
@@ -1826,8 +1844,8 @@ CONTAINS
             DO IK=1, NK
               DO ITH=1, NTH
                 IS=ITH+(IK-1)*NTH
-                if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7)','DEBUGY8 ',time,VA(IS,JSEA)
-                if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g15.7)','DEBUGY8 ',time,VA(IS,JSEA)
+                if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY8 ',time,VA(IS,JSEA)
+                if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY8 ',time,VA(IS,JSEA)
               end do
             end do
           end do

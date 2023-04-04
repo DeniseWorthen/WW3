@@ -195,9 +195,6 @@ CONTAINS
          NCENT, MAPX2, MAPY2, MAPAXY, MAPCXY,        &
          MAPTH2, MAPWN2
     USE W3ODATMD, ONLY: NDST
-#ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
-#endif
     !/
     IMPLICIT NONE
     !/
@@ -209,27 +206,14 @@ CONTAINS
     !/
     INTEGER                 :: IX, IY, IXY0, IX2, IY2, IX0, IY0,    &
          ISEA, IK, ITH, ISP, ISP0, ISP2, NCENTC
-#ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
-#endif
-#ifdef W3_T
-    INTEGER                 :: MAPTXY(NY,NX), I, IXY
-    INTEGER                 :: MAPTST(NK+2,NTH)
-#endif
     !/
     !/ ------------------------------------------------------------------- /
     !/
-#ifdef W3_S
-    CALL STRACE (IENT, 'W3MAP3')
-#endif
     !
     IF (GTYPE .LT. 3) THEN
       ! 1.  Map MAPX2 ------------------------------------------------------ *
       ! 1.a Range 1 to NMX0
       !
-#ifdef W3_T
-      MAPTXY = 0.
-#endif
       !
       NMX0   = 0
       DO IX=1, NX
@@ -239,9 +223,6 @@ CONTAINS
           IF ( MAPSTA(IY,IX).EQ.1 .AND. MAPSTA(IY,IX2).EQ.1 ) THEN
             NMX0   = NMX0 + 1
             MAPX2(NMX0) = IXY0 + IY
-#ifdef W3_T
-            MAPTXY(IY,IX) = MAPTXY(IY,IX) + 1
-#endif
           END IF
         END DO
       END DO
@@ -256,9 +237,6 @@ CONTAINS
           IF ( MAPSTA(IY,IX).EQ.1 .AND. MAPSTA(IY,IX2).NE.1 ) THEN
             NMX1   = NMX1 + 1
             MAPX2(NMX1) = IXY0 + IY
-#ifdef W3_T
-            MAPTXY(IY,IX) = MAPTXY(IY,IX) + 2
-#endif
           END IF
         END DO
       END DO
@@ -273,27 +251,14 @@ CONTAINS
           IF ( MAPSTA(IY,IX).NE.1 .AND. MAPSTA(IY,IX2).EQ.1 ) THEN
             NMX2   = NMX2 + 1
             MAPX2(NMX2) = IXY0 + IY
-#ifdef W3_T
-            MAPTXY(IY,IX) = MAPTXY(IY,IX) + 4
-#endif
           END IF
         END DO
       END DO
       !
-#ifdef W3_T
-      WRITE (NDST,9000) 'MAPX2', NMX0, NMX1-NMX0,                     &
-           NMX2-NMX1, NMX2
-      DO IY=NY, 1, -1
-        WRITE (NDST,9001) (MAPTXY(IY,IX),IX=1, NX)
-      END DO
-#endif
       !
       ! 2.  Map MAPY2 ------------------------------------------------------ *
       ! 2.a Range 1 to NMY0
       !
-#ifdef W3_T
-      MAPTXY = 0.
-#endif
       !
       NMY0   = 0
       DO IX=1, NX
@@ -303,9 +268,6 @@ CONTAINS
           IF ( MAPSTA(IY,IX).EQ.1 .AND. MAPSTA(IY2,IX).EQ.1 ) THEN
             NMY0   = NMY0 + 1
             MAPY2(NMY0) = IXY0 + IY
-#ifdef W3_T
-            MAPTXY(IY,IX) = MAPTXY(IY,IX) + 1
-#endif
           END IF
         END DO
       END DO
@@ -320,10 +282,7 @@ CONTAINS
           IF ( MAPSTA(IY,IX).EQ.1 .AND. MAPSTA(IY2,IX).NE.1 ) THEN
             NMY1   = NMY1 + 1
             MAPY2(NMY1) = IXY0 + IY
-#ifdef W3_T
-            MAPTXY(IY,IX) = MAPTXY(IY,IX) + 2
-#endif
-          END IF
+          end if
         END DO
       END DO
       !
@@ -337,20 +296,10 @@ CONTAINS
           IF ( MAPSTA(IY,IX).NE.1 .AND. MAPSTA(IY2,IX).EQ.1 ) THEN
             NMY2   = NMY2 + 1
             MAPY2(NMY2) = IXY0 + IY
-#ifdef W3_T
-            MAPTXY(IY,IX) = MAPTXY(IY,IX) + 4
-#endif
           END IF
         END DO
       END DO
       !
-#ifdef W3_T
-      WRITE (NDST,9000) 'MAPY2', NMY0, NMY1-NMY0,                     &
-           NMY2-NMY1, NMY2
-      DO IY=NY, 1, -1
-        WRITE (NDST,9001) (MAPTXY(IY,IX),IX=1, NX)
-      END DO
-#endif
       !
       ! 3.  Map MAPAXY ----------------------------------------------------- *
       !
@@ -403,6 +352,7 @@ CONTAINS
     ! 5.  Maps for intra-spectral propagation ---------------------------- *
     !
     IF ( MAPTH2(1) .NE. 0 ) RETURN
+    print *,'ABCD here'
     !
     !
     ! 5.a MAPTH2 and MAPBTK
@@ -1524,6 +1474,7 @@ CONTAINS
 #endif
     !debug
     use w3wdatmd, only : time
+    use w3odatmd, only  : naproc, iaproc
     !/
     IMPLICIT NONE
     !/
@@ -1552,12 +1503,14 @@ CONTAINS
          FKC(NTH), VQ(-NK-1:NK2*(NTH+2)),     &
          DB(NK2,NTH+1), DM(NK2,0:NTH+1),      &
          VCFLT(NK2*(NTH+1)), CFLK(NK2,NTH)
+    logical :: onde1, onde2
+    onde1 = .false.
+    onde2 = .false.
+    if(naproc .eq. 10 .and. iaproc .eq. 2 .and. isea .eq. 8442)onde2 = .true.
+    if(naproc .eq.  5 .and. iaproc .eq. 1 .and. isea .eq. 8442)onde1 = .true.
     !/
     !/ ------------------------------------------------------------------- /
     !/
-#ifdef W3_S
-    CALL STRACE (IENT, 'W3KTP3')
-#endif
     !
     ! 1.  Preparations --------------------------------------------------- *
     ! 1.a Initialize arrays
@@ -1569,11 +1522,6 @@ CONTAINS
     CFLTHMAX = 0.
     CFLKMAX  = 0.
     !
-#ifdef W3_T
-    WRITE (NDST,9000) FLCTH, FLCK, FACTH, FACK, CTMAX
-    WRITE (NDST,9010) ISEA, DEPTH, CX, CY, DDDX, DDDY,           &
-         DCXDX, DCXDY, DCYDX, DCYDY
-#endif
     !
     ! 2.  Preparation for point ------------------------------------------ *
     ! 2.a Array with partial derivative of sigma versus depth
@@ -1586,18 +1534,25 @@ CONTAINS
       END IF
     END DO
     !
-#ifdef W3_T
-    WRITE (NDST,9020)
-    DO IK=1, NK+1
-      WRITE (NDST,9021) IK, TPI/SIG(IK), TPI/WN(IK), CG(IK), DSDD(IK)
-    END DO
-#endif
     !
     ! 2.b Extract spectrum
+    ! from w3map3
+    ! DO IK=1, NK
+    !    DO ITH=1, NTH
+    !       is = ITH+(IK-1)*NTH
+    !       ISP    = ITH + (IK-1)*NTH
+    !       ISP2   = (IK+1) + (ITH-1)*(NK+2)
+    !       MAPTH2(ISP) = ISP2
+    !    END DO
+    ! END DO
+    ! so ik .eq. 32 .and. is .eq. 1125 => isp=1125, isp2=313
     !
+
     DO ISP=1, NSPEC
       VQ(MAPTH2(ISP)) = VA(ISP)
     END DO
+    if(onde1)print '(a,2i12,i5,g18.10)','DEBUGB0 ',time,mod(itime,2),vq(313)
+    if(onde2)print '(a,2i12,i5,g18.10)','DEBUGB0 ',time,mod(itime,2),vq(313)
     !
     ! 3.  Refraction velocities ------------------------------------------ *
     !
@@ -1642,31 +1597,12 @@ CONTAINS
       !
       ! 3.c Depth refraction and great-circle propagation
       !
-#ifdef W3_REFRX
-      ! 3.d @C/@x refraction and great-circle propagation
-      FRK    = 0.
-      FDDMAX = 0.
-      !
-      DO ISP=1, NSPEC
-        FDDMAX = MAX ( FDDMAX , ABS ( ESIN(ISP)*DCDX(MAPWN(ISP)) - ECOS(ISP)*DCDY(MAPWN(ISP)) ) )
-      END DO
-      DO IK=1, NK
-        FRK(IK) = FACTH * CG(IK) * WN(IK) / SIG(IK)
-      END DO
-#endif
       !
       DO ISP=1, NSPEC
         VELNOFILT = VCFLT(MAPTH2(ISP))       &
              + FRG(MAPWN(ISP)) * ECOS(ISP)              &
              + FRK(MAPWN(ISP)) * ( ESIN(ISP)*DDDX - ECOS(ISP)*DDDY )
         !
-#ifdef W3_REFRX
-        ! 3.d @C/@x refraction and great-circle propagation
-        VELNOFILT = VCFLT(MAPTH2(ISP))       &
-             + FRG(MAPWN(ISP)) * ECOS(ISP)            &
-             + FRK(MAPWN(ISP)) * ( ESIN(ISP)*DCDX(MAPWN(ISP)) &
-             - ECOS(ISP)*DCDY(MAPWN(ISP)) )
-#endif
         CFLTHMAX = MAX(CFLTHMAX, ABS(VELNOFILT))
         !
         ! Puts filtering on total velocity (including currents and great circle effects)
@@ -1691,8 +1627,7 @@ CONTAINS
       FKD    =    ( CX*DDDX + CY*DDDY )
       !
       DO ITH=1, NTH
-        FKC(ITH) = EC2(ITH)*DCXX +                                &
-             ESC(ITH)*DCXYYX + ES2(ITH)*DCYY
+        FKC(ITH) = EC2(ITH)*DCXX + ESC(ITH)*DCXYYX + ES2(ITH)*DCYY
       END DO
       !
       ! 4.b Band widths
@@ -1734,30 +1669,47 @@ CONTAINS
         DO ITH=1, NTH
           VQ(NK+2+(ITH-1)*NK2) = FACHFA * VQ(NK+1+(ITH-1)*NK2)
         END DO
+        if(onde1)print '(a,2i12,g18.10)','DEBUGB1 ',time,vq(313)
+        if(onde2)print '(a,2i12,g18.10)','DEBUGB1 ',time,vq(313)
+        ! inout cflk(io=velo), db (io=dx1), dm (io=dx'), vq(io=q)
         CALL W3QCK2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM, &
              VQ, .FALSE., 1, MAPTH2, NSPEC,                   &
              MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,             &
              NDSE, NDST )
+        if(onde1)print '(a,2i12,g18.10)','DEBUGB2 ',time,vq(313)
+        if(onde2)print '(a,2i12,g18.10)','DEBUGB2 ',time,vq(313)
       END IF
       IF ( FLCTH ) THEN
+        if(onde1)print '(a,2i12,g18.10)','DEBUGB3 ',time,vq(313)
+        if(onde2)print '(a,2i12,g18.10)','DEBUGB3 ',time,vq(313)
         CALL W3QCK1 ( NTH, NK2, NTH, NK2, VCFLT, VQ, .TRUE.,  &
              NK2, MAPTH2, NSPEC, MAPTH2, NSPEC, NSPEC,        &
              NSPEC, NDSE, NDST )
+        if(onde1)print '(a,2i12,g18.10)','DEBUGB4 ',time,vq(313)
+        if(onde2)print '(a,2i12,g18.10)','DEBUGB4 ',time,vq(313)
       END IF
     ELSE
       IF ( FLCTH ) THEN
+        if(onde1)print '(a,2i12,g18.10)','DEBUGB5 ',time,vq(313)
+        if(onde2)print '(a,2i12,g18.10)','DEBUGB5 ',time,vq(313)
         CALL W3QCK1 ( NTH, NK2, NTH, NK2, VCFLT, VQ, .TRUE.,  &
              NK2, MAPTH2, NSPEC, MAPTH2, NSPEC, NSPEC,        &
              NSPEC, NDSE, NDST )
+        if(onde1)print '(a,2i12,g18.10)','DEBUGB6 ',time,vq(313)
+        if(onde2)print '(a,2i12,g18.10)','DEBUGB6 ',time,vq(313)
       END IF
       IF ( FLCK ) THEN
         DO ITH=1, NTH
           VQ(NK+2+(ITH-1)*NK2) = FACHFA * VQ(NK+1+(ITH-1)*NK2)
         END DO
+        if(onde1)print '(a,2i12,g18.10)','DEBUGB8 ',time,vq(313)
+        if(onde2)print '(a,2i12,g18.10)','DEBUGB8 ',time,vq(313)
         CALL W3QCK2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM, &
              VQ, .FALSE., 1, MAPTH2, NSPEC,                   &
              MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,             &
              NDSE, NDST )
+        if(onde1)print '(a,2i12,g18.10)','DEBUGB9 ',time,vq(313)
+        if(onde2)print '(a,2i12,g18.10)','DEBUGB9 ',time,vq(313)
       END IF
     END IF
     !!! original code

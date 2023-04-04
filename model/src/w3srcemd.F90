@@ -731,8 +731,8 @@ CONTAINS
     !
     ! 1.c Set mean parameters
     !
-    if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2a ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
-    if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2a ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+    if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2a ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+    if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2a ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
 #ifdef W3_ST4
     TAUWX=0.
     TAUWY=0.
@@ -746,25 +746,25 @@ CONTAINS
            AMAX, U10ABS, U10DIR,                           &
            USTAR, USTDIR,                                  &
            TAUWX, TAUWY, CD, Z0, CHARN, LLWS, FMEANWS, DLWMEAN)
-      if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2b_1 ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
-      if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2b_1 ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+      if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2b_1 ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+      if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2b_1 ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
       ! TAUWX, TAUWY, TAUWNX, TAUWNY are intent(out) for sin4
       CALL W3SIN4 ( SPEC, CG1, WN2, U10ABS, USTAR, DRAT, AS,       &
            U10DIR, Z0, CD, TAUWX, TAUWY, TAUWAX, TAUWAY,       &
            VSIN, VDIN, LLWS, IX, IY, BRLAMBDA )
-      if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2b_2 ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
-      if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2b_2 ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+      if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2b_2 ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+      if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2b_2 ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
     END IF
-    if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2b_3 ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
-    if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2b_3 ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+    if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2b_3 ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+    if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2b_3 ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
     CALL W3SPR4 (SPEC, CG1, WN1, EMEAN, FMEAN, FMEAN1, WNMEAN, &
          AMAX, U10ABS, U10DIR,                         &
          USTAR, USTDIR,                                &
          TAUWX, TAUWY, CD, Z0, CHARN, LLWS, FMEANWS, DLWMEAN)
     TWS = 1./FMEANWS
 #endif
-    if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2b ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
-    if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2b ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+    if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2b ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+    if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2b ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
     !
     ! 1.c2 Stores the initial data
     !
@@ -801,8 +801,8 @@ CONTAINS
            U10DIR, Z0, CD, TAUWX, TAUWY, TAUWAX, TAUWAY,       &
            VSIN, VDIN, LLWS, IX, IY, BRLAMBDA )
 #endif
-      if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2c ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
-      if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2c ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+      if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2c ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+      if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2c ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
       !
       ! 2.b Nonlinear interactions.
       !
@@ -1014,8 +1014,8 @@ CONTAINS
         RETURN ! return everything is done for the implicit ...
 
       END IF ! srce_imp_pre
-      if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2d ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
-      if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2d ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+      if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2d ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+      if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2d ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
 
 #endif W3_PDLIB
       !
@@ -1082,8 +1082,8 @@ CONTAINS
       TAUWIY= TAUWIY+ TAUWY * DRAT *DT
       TAUWNX= TAUWNX+ TAUWAX * DRAT *DT
       TAUWNY= TAUWNY+ TAUWAY * DRAT *DT
-      if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2e ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
-      if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2e ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+      if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2e ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+      if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2e ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
 
       ! MISSING: TAIL TO BE ADDED ?
       !
@@ -1123,22 +1123,22 @@ CONTAINS
         END IF
       END IF
 #endif
-      if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2f ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
-      if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2f ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+      if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2f ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+      if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2f ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
 
       !
       ! 6.c Seeding of spectrum
       !     alpha = 0.005 , 0.5 in eq., 0.25 for directional distribution
       !
 #ifdef W3_SEED
-      ! DO IK=MIN(NK,NKH), NK
-      !   UC     = FACSD * GRAV / SIG(IK)
-      !   SLEV   = MIN ( 1. , MAX ( 0. , U10ABS/UC-1. ) ) * 6.25E-4 / WN1(IK)**3 / SIG(IK)
-      !   IF (INFLAGS2(4)) SLEV=SLEV*(1-ICE)
-      !   DO ITH=1, NTH
-      !     SPEC(ITH+(IK-1)*NTH) = MAX ( SPEC(ITH+(IK-1)*NTH) , SLEV * MAX ( 0. , COS(U10DIR-TH(ITH)) )**2 )
-      !   END DO
-      ! END DO
+      DO IK=MIN(NK,NKH), NK
+        UC     = FACSD * GRAV / SIG(IK)
+        SLEV   = MIN ( 1. , MAX ( 0. , U10ABS/UC-1. ) ) * 6.25E-4 / WN1(IK)**3 / SIG(IK)
+        IF (INFLAGS2(4)) SLEV=SLEV*(1-ICE)
+        DO ITH=1, NTH
+          SPEC(ITH+(IK-1)*NTH) = MAX ( SPEC(ITH+(IK-1)*NTH) , SLEV * MAX ( 0. , COS(U10DIR-TH(ITH)) )**2 )
+        END DO
+      END DO
 #endif
       !
       ! 6.d Add tail
@@ -1156,8 +1156,8 @@ CONTAINS
            U10DIR, Z0, CD, TAUWX, TAUWY, TAUWAX, TAUWAY, &
            VSIN, VDIN, LLWS, IX, IY, BRLAMBDA )
 #endif
-      if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2g ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
-      if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2g ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+      if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2g ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+      if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2g ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
 
       !
       ! 7.  Check if integration complete ---------------------------------- *
@@ -1195,8 +1195,8 @@ CONTAINS
 #endif
     !
 888 CONTINUE
-    if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2h ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
-    if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2h ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+    if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2h ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+    if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2h ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
 
     !
     ! 9.a  Computes PHIOC------------------------------------------ *
@@ -1247,8 +1247,8 @@ CONTAINS
     !     INFLAGS2(4) is true if ice concentration was ever read during
     !             this simulation
     !
-    if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2i ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
-    if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2i ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+    if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2i ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+    if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2i ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
 
     IF ( INFLAGS2(4).AND.ICE.GT.0 ) THEN
 
@@ -1297,8 +1297,8 @@ CONTAINS
       TAUICE(:)=TAUICE(:)/DTG
     ELSE
     END IF
-    if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2j ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
-    if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2j ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+    if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2j ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+    if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2j ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
     !
     !
     ! - - - - - - - - - - - - - - - - - - - - - -
@@ -1321,8 +1321,8 @@ CONTAINS
       CHARN = AALPHA
     ENDIF
 #endif
-    if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2k ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
-    if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g15.7)','DEBUGX2k ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+    if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2k ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+    if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2k ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
     !
     ! 12. includes shoreline reflection --------------------------------------------- *
     !
