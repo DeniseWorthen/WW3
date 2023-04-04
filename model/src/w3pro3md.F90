@@ -1482,9 +1482,8 @@ CONTAINS
     !/ Parameter list
     !/
     INTEGER, INTENT(IN)     :: ISEA
-    REAL, INTENT(IN)        :: FACTH, FACK, CTHG0, CG(0:NK+1),      &
-         WN(0:NK+1), DW, DDDX, DDDY,       &
-         CX, CY, DCXDX, DCXDY, DCYDX, DCYDY
+    REAL, INTENT(IN)        :: FACTH, FACK, CTHG0, CG(0:NK+1), WN(0:NK+1), DW, DDDX, DDDY
+    REAL, INTENT(IN)        :: CX, CY, DCXDX, DCXDY, DCYDX, DCYDY
     REAL, INTENT(IN)        :: DCDX(0:NK+1), DCDY(0:NK+1)
     REAL, INTENT(INOUT)     :: VA(NSPEC)
     REAL, INTENT(OUT)       :: CFLTHMAX, CFLKMAX
@@ -1492,17 +1491,14 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: ITH, IK, ISP
+    INTEGER :: ITH, IK, ISP
 #ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
+    INTEGER, SAVE :: IENT = 0
 #endif
-    REAL                    :: FDDMAX, FDG, FKD, FKD0, DCYX,        &
-         DCXXYY, DCXY, DCXX, DCXYYX, DCYY,    &
-         VELNOFILT, VELFAC, DEPTH
-    REAL                    :: DSDD(0:NK+1), FRK(NK), FRG(NK),      &
-         FKC(NTH), VQ(-NK-1:NK2*(NTH+2)),     &
-         DB(NK2,NTH+1), DM(NK2,0:NTH+1),      &
-         VCFLT(NK2*(NTH+1)), CFLK(NK2,NTH)
+    REAL :: FDDMAX, FDG, FKD, FKD0, DCYX, DCXXYY, DCXY, DCXX, DCXYYX, DCYY
+    REAL :: VELNOFILT, VELFAC, DEPTH
+    REAL :: DSDD(0:NK+1), FRK(NK), FRG(NK), FKC(NTH), VQ(-NK-1:NK2*(NTH+2))
+    REAL :: DB(NK2,NTH+1), DM(NK2,0:NTH+1), VCFLT(NK2*(NTH+1)), CFLK(NK2,NTH)
     logical :: onde1, onde2
     onde1 = .false.
     onde2 = .false.
@@ -1671,7 +1667,6 @@ CONTAINS
         END DO
         if(onde1)print '(a,2i12,g18.10)','DEBUGB1 ',time,vq(313)
         if(onde2)print '(a,2i12,g18.10)','DEBUGB1 ',time,vq(313)
-        ! inout cflk(io=velo), db (io=dx1), dm (io=dx'), vq(io=q)
         CALL W3QCK2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM, &
              VQ, .FALSE., 1, MAPTH2, NSPEC,                   &
              MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,             &

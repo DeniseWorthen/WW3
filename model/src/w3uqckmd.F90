@@ -600,6 +600,10 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
+    !debug
+    use w3wdatmd, only : time
+    use w3odatmd, only  : naproc, iaproc
+
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -712,7 +716,13 @@ CONTAINS
     !
     DO IP=1, NACT
       IXY    = MAPACT(IP)
+      if(onde1 .and.ixy .eq. 313)print '(a,2i12,4g18.10)','DEBUGC0 ',time,q(ixy),fla(ixy-inc),fla(ixy),DX1(IXY)
+      if(onde2 .and.ixy .eq. 313)print '(a,2i12,4g18.10)','DEBUGC0 ',time,q(ixy),fla(ixy-inc),fla(ixy),DX1(IXY)
+
       Q(IXY) = MAX ( 0. , Q(IXY) + DT/DX1(IXY) * (FLA(IXY-INC)-FLA(IXY)) )
+
+      if(onde1 .and.ixy .eq. 313)print '(a,2i12,3g18.10)','DEBUGC1 ',time,q(ixy),fla(ixy-inc),fla(ixy)
+      if(onde2 .and.ixy .eq. 313)print '(a,2i12,3g18.10)','DEBUGC1 ',time,q(ixy),fla(ixy-inc),fla(ixy)
     END DO
     !
     !
