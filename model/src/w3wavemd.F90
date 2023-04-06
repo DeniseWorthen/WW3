@@ -1739,214 +1739,226 @@ CONTAINS
             END IF
           END IF
           IF (LPDLIB) THEN
-            !
-#ifdef W3_PDLIB
+            ! fstotalimp=F,fstotalexp=F,flcxy=T
+            if(onde1)print *, 'Z0 ',it,FSTOTALIMP,FSTOTALEXP,FLCX,FLCY
             IF ((FSTOTALIMP .eqv. .FALSE.).and.(FLCX .or. FLCY)) THEN
-#endif
-#ifdef W3_PDLIB
               DO ISPEC=1,NSPEC
                 CALL PDLIB_W3XYPUG ( ISPEC, FACX, FACX, DTG, VGX, VGY, UGDTUPDATE )
               END DO
-#endif
-#ifdef W3_PDLIB
+              !debugstokes
+              DO JSEA=1, NSEAL
+                CALL INIT_GET_ISEA(ISEA, JSEA)
+                IX     = MAPSF(ISEA,1)
+                IY     = MAPSF(ISEA,2)
+                DO IK=1, NK
+                  DO ITH=1, NTH
+                    IS=ITH+(IK-1)*NTH
+                    if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY6a0 ',time,VA(IS,JSEA)
+                    if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY6a0 ',time,VA(IS,JSEA)
+                  end do
+                end do
+              end do
+              !debugstokes
             END IF
-#endif
-            !
-#ifdef W3_PDLIB
             IF (FSTOTALIMP .and. (IT .ne. 0)) THEN
-#endif
-#ifdef W3_PDLIB
               CALL PDLIB_W3XYPUG_BLOCK_IMPLICIT(IMOD, FACX, FACX, DTG, VGX, VGY)
-#endif
-#ifdef W3_PDLIB
             ELSE IF(FSTOTALEXP .and. (IT .ne. 0)) THEN
-#endif
-#ifdef W3_PDLIB
               CALL PDLIB_W3XYPUG_BLOCK_EXPLICIT(IMOD, FACX, FACX, DTG, VGX, VGY)
-#endif
-#ifdef W3_PDLIB
             ENDIF
-#endif
-          ELSE
-            IF (FLCX .or. FLCY) THEN
-              !
-#ifdef W3_MPI
-              IF ( NRQSG1 .GT. 0 ) THEN
-                CALL MPI_STARTALL (NRQSG1, IRQSG1(1,1), IERR_MPI)
-                CALL MPI_STARTALL (NRQSG1, IRQSG1(1,2), IERR_MPI)
-              END IF
-#endif
-              !
-              !
-              ! Initialize FIELD variable
-              FIELD = 0.
-              !
-              DO ISPEC=1, NSPEC
-                IF ( IAPPRO(ISPEC) .EQ. IAPROC ) THEN
-                  !
-                  IF( GTYPE .EQ. SMCTYPE ) THEN
-                    IX = 1
-#ifdef W3_SMC
-                    !!Li   Use SMC sub to gether field
-                    CALL W3GATHSMC ( ISPEC, FIELD )
-#endif
-                  ELSE IF (.NOT.LPDLIB ) THEN
-                    CALL W3GATH ( ISPEC, FIELD )
-                  END IF   !! GTYPE
-                  !
-                  IF (GTYPE .EQ. SMCTYPE) THEN
-                    IX = 1
-#ifdef W3_SMC
-                    !!Li   Propagation on SMC grid uses UNO2 scheme.
-                    CALL W3PSMC ( ISPEC, DTG, FIELD )
-#endif
-                    !
-                  ELSE IF (GTYPE .EQ. UNGTYPE) THEN
-                    IX = 1
-#ifdef W3_MPI
-                    IF (.NOT. LPDLIB) THEN
-#endif
-#ifdef W3_PR1
-                      CALL W3XYPUG ( ISPEC, FACX, FACX, DTG, FIELD, VGX, VGY, UGDTUPDATE )
-#endif
-#ifdef W3_PR2
-                      CALL W3XYPUG ( ISPEC, FACX, FACX, DTG, FIELD, VGX, VGY, UGDTUPDATE )
-#endif
-#ifdef W3_PR3
-                      CALL W3XYPUG ( ISPEC, FACX, FACX, DTG, FIELD, VGX, VGY, UGDTUPDATE )
-#endif
-#ifdef W3_MPI
-                    END IF
-#endif
-                    !
-                  ELSE
-                    IX = 1
-#ifdef W3_PR1
-                    CALL W3XYP1 ( ISPEC, DTG, MAPSTA, FIELD, VGX, VGY )
-#endif
-#ifdef W3_PR2
-                    CALL W3XYP2 ( ISPEC, DTG, MAPSTA, MAPFS, FIELD, VGX, VGY )
-#endif
-#ifdef W3_PR3
-                    CALL W3XYP3 ( ISPEC, DTG, MAPSTA, MAPFS, FIELD, VGX, VGY )
-#endif
-                    !
-                  END IF   !! GTYPE
-                  !
-                  IF( GTYPE .EQ. SMCTYPE ) THEN
-                    IX = 1
-#ifdef W3_SMC
-                    !!Li   Use SMC sub to scatter field
-                    CALL W3SCATSMC ( ISPEC, MAPSTA, FIELD )
-#endif
-                  ELSE IF (.NOT.LPDLIB ) THEN
-                    CALL W3SCAT ( ISPEC, MAPSTA, FIELD )
-                  END IF   !! GTYPE
+            !debugstokes
+            DO JSEA=1, NSEAL
+              CALL INIT_GET_ISEA(ISEA, JSEA)
+              IX     = MAPSF(ISEA,1)
+              IY     = MAPSF(ISEA,2)
+              DO IK=1, NK
+                DO ITH=1, NTH
+                  IS=ITH+(IK-1)*NTH
+                  if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY6a1 ',time,VA(IS,JSEA)
+                  if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY6a1 ',time,VA(IS,JSEA)
+                end do
+              end do
+            end do
+            !debugstokes
+!          ELSE
+!             IF (FLCX .or. FLCY) THEN
+!               !
+! #ifdef W3_MPI
+!               IF ( NRQSG1 .GT. 0 ) THEN
+!                 CALL MPI_STARTALL (NRQSG1, IRQSG1(1,1), IERR_MPI)
+!                 CALL MPI_STARTALL (NRQSG1, IRQSG1(1,2), IERR_MPI)
+!               END IF
+! #endif
+!               !
+!               !
+!               ! Initialize FIELD variable
+!               FIELD = 0.
+!               !
+!               DO ISPEC=1, NSPEC
+!                 IF ( IAPPRO(ISPEC) .EQ. IAPROC ) THEN
+!                   !
+!                   IF( GTYPE .EQ. SMCTYPE ) THEN
+!                     IX = 1
+! #ifdef W3_SMC
+!                     !!Li   Use SMC sub to gether field
+!                     CALL W3GATHSMC ( ISPEC, FIELD )
+! #endif
+!                   ELSE IF (.NOT.LPDLIB ) THEN
+!                     CALL W3GATH ( ISPEC, FIELD )
+!                   END IF   !! GTYPE
+!                   !
+!                   IF (GTYPE .EQ. SMCTYPE) THEN
+!                     IX = 1
+! #ifdef W3_SMC
+!                     !!Li   Propagation on SMC grid uses UNO2 scheme.
+!                     CALL W3PSMC ( ISPEC, DTG, FIELD )
+! #endif
+!                     !
+!                   ELSE IF (GTYPE .EQ. UNGTYPE) THEN
+!                     IX = 1
+! #ifdef W3_MPI
+!                     IF (.NOT. LPDLIB) THEN
+! #endif
+! #ifdef W3_PR1
+!                       CALL W3XYPUG ( ISPEC, FACX, FACX, DTG, FIELD, VGX, VGY, UGDTUPDATE )
+! #endif
+! #ifdef W3_PR2
+!                       CALL W3XYPUG ( ISPEC, FACX, FACX, DTG, FIELD, VGX, VGY, UGDTUPDATE )
+! #endif
+! #ifdef W3_PR3
+!                       CALL W3XYPUG ( ISPEC, FACX, FACX, DTG, FIELD, VGX, VGY, UGDTUPDATE )
+! #endif
+! #ifdef W3_MPI
+!                     END IF
+! #endif
+!                     !
+!                   ELSE
+!                     IX = 1
+! #ifdef W3_PR1
+!                     CALL W3XYP1 ( ISPEC, DTG, MAPSTA, FIELD, VGX, VGY )
+! #endif
+! #ifdef W3_PR2
+!                     CALL W3XYP2 ( ISPEC, DTG, MAPSTA, MAPFS, FIELD, VGX, VGY )
+! #endif
+! #ifdef W3_PR3
+!                     CALL W3XYP3 ( ISPEC, DTG, MAPSTA, MAPFS, FIELD, VGX, VGY )
+! #endif
+!                     !
+!                   END IF   !! GTYPE
+!                   !
+!                   IF( GTYPE .EQ. SMCTYPE ) THEN
+!                     IX = 1
+! #ifdef W3_SMC
+!                     !!Li   Use SMC sub to scatter field
+!                     CALL W3SCATSMC ( ISPEC, MAPSTA, FIELD )
+! #endif
+!                   ELSE IF (.NOT.LPDLIB ) THEN
+!                     CALL W3SCAT ( ISPEC, MAPSTA, FIELD )
+!                   END IF   !! GTYPE
 
-                END IF
-              END DO
-              !
-#ifdef W3_MPI
-              IF ( NRQSG1 .GT. 0 ) THEN
-                ALLOCATE ( STATCO(MPI_STATUS_SIZE,NRQSG1) )
-                CALL MPI_WAITALL (NRQSG1, IRQSG1(1,1), STATCO, IERR_MPI)
-                CALL MPI_WAITALL (NRQSG1, IRQSG1(1,2), STATCO, IERR_MPI)
-                DEALLOCATE ( STATCO )
-              END IF
-#endif
-              call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 17')
-              !
-              !Li   Initialise IK IX IY in case ARC option is not used to avoid warnings.
-              IK=1
-              IX=1
-              IY=1
-#ifdef W3_SMC
-              !Li    Find source boundary spectra and assign to SPCBAC
-              IF( ARCTC ) THEN
+!                 END IF
+!               END DO
+!               !
+! #ifdef W3_MPI
+!               IF ( NRQSG1 .GT. 0 ) THEN
+!                 ALLOCATE ( STATCO(MPI_STATUS_SIZE,NRQSG1) )
+!                 CALL MPI_WAITALL (NRQSG1, IRQSG1(1,1), STATCO, IERR_MPI)
+!                 CALL MPI_WAITALL (NRQSG1, IRQSG1(1,2), STATCO, IERR_MPI)
+!                 DEALLOCATE ( STATCO )
+!               END IF
+! #endif
+!               call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 17')
+!               !
+!               !Li   Initialise IK IX IY in case ARC option is not used to avoid warnings.
+!               IK=1
+!               IX=1
+!               IY=1
+! #ifdef W3_SMC
+!               !Li    Find source boundary spectra and assign to SPCBAC
+!               IF( ARCTC ) THEN
 
-                DO IK = 1, NBAC
-                  IF( IK .LE. (NBAC-NBGL) ) THEN
-                    IY = ICLBAC(IK)
-                  ELSE
-                    IY = NGLO + IK
-                  ENDIF
+!                 DO IK = 1, NBAC
+!                   IF( IK .LE. (NBAC-NBGL) ) THEN
+!                     IY = ICLBAC(IK)
+!                   ELSE
+!                     IY = NGLO + IK
+!                   ENDIF
 
-                  !Li    Work out root PE (ISPEC) and JSEA numbers for IY
-#ifdef W3_DIST
-                  ISPEC = MOD( IY-1, NAPROC )
-                  JSEA = 1 + (IY - ISPEC - 1)/NAPROC
-#endif
-#ifdef W3_SHRD
-                  ISPEC = 0
-                  JSEA = IY
-#endif
-#endif
-                  ! W3_SMC ...
-                  !
-#ifdef W3_SMC
-                  !!Li   Assign boundary cell spectra.
-                  IF( IAPROC .EQ. ISPEC+1 ) THEN
-                    SPCBAC(:,IK)=VA(:,JSEA)
-                  ENDIF
-#endif
-                  !
-#ifdef W3_SMC
-                  !!Li   Broadcast local SPCBAC(:,IK) to all other PEs.
-#ifdef W3_MPI
-                  CALL MPI_BCAST(SPCBAC(1,IK),NSPEC,MPI_REAL,ISPEC,MPI_COMM_WAVE,IERR_MPI)
-                  CALL MPI_BARRIER (MPI_COMM_WAVE,IERR_MPI)
-#endif
-#endif
-                  !
-#ifdef W3_SMC
-                END DO   !! Loop IK ends.
-#endif
-                !
-#ifdef W3_SMC
-                !!Li    Update Arctic boundary cell spectra if within local range
-                ALLOCATE ( BACSPEC(NSPEC) )
-                DO IK = 1, NBAC
-                  IF( IK .LE. (NBAC-NBGL) ) THEN
-                    IX = NGLO + IK
-                    BACANGL = ANGARC(IK)
-                  ELSE
-                    IX = ICLBAC(IK)
-                    BACANGL = - ANGARC(IK)
-                  ENDIF
+!                   !Li    Work out root PE (ISPEC) and JSEA numbers for IY
+! #ifdef W3_DIST
+!                   ISPEC = MOD( IY-1, NAPROC )
+!                   JSEA = 1 + (IY - ISPEC - 1)/NAPROC
+! #endif
+! #ifdef W3_SHRD
+!                   ISPEC = 0
+!                   JSEA = IY
+! #endif
+! #endif
+!                   ! W3_SMC ...
+!                   !
+! #ifdef W3_SMC
+!                   !!Li   Assign boundary cell spectra.
+!                   IF( IAPROC .EQ. ISPEC+1 ) THEN
+!                     SPCBAC(:,IK)=VA(:,JSEA)
+!                   ENDIF
+! #endif
+!                   !
+! #ifdef W3_SMC
+!                   !!Li   Broadcast local SPCBAC(:,IK) to all other PEs.
+! #ifdef W3_MPI
+!                   CALL MPI_BCAST(SPCBAC(1,IK),NSPEC,MPI_REAL,ISPEC,MPI_COMM_WAVE,IERR_MPI)
+!                   CALL MPI_BARRIER (MPI_COMM_WAVE,IERR_MPI)
+! #endif
+! #endif
+!                   !
+! #ifdef W3_SMC
+!                 END DO   !! Loop IK ends.
+! #endif
+!                 !
+! #ifdef W3_SMC
+!                 !!Li    Update Arctic boundary cell spectra if within local range
+!                 ALLOCATE ( BACSPEC(NSPEC) )
+!                 DO IK = 1, NBAC
+!                   IF( IK .LE. (NBAC-NBGL) ) THEN
+!                     IX = NGLO + IK
+!                     BACANGL = ANGARC(IK)
+!                   ELSE
+!                     IX = ICLBAC(IK)
+!                     BACANGL = - ANGARC(IK)
+!                   ENDIF
 
-                  !!Li    Work out boundary PE (ISPEC) and JSEA numbers for IX
-#ifdef W3_DIST
-                  ISPEC = MOD( IX-1, NAPROC )
-                  JSEA = 1 + (IX - ISPEC - 1)/NAPROC
-#endif
-#ifdef W3_SHRD
-                  ISPEC = 0
-                  JSEA = IX
-#endif
-#endif
-                  !
-#ifdef W3_SMC
-                  IF( IAPROC .EQ. ISPEC+1 ) THEN
-                    BACSPEC = SPCBAC(:,IK)
+!                   !!Li    Work out boundary PE (ISPEC) and JSEA numbers for IX
+! #ifdef W3_DIST
+!                   ISPEC = MOD( IX-1, NAPROC )
+!                   JSEA = 1 + (IX - ISPEC - 1)/NAPROC
+! #endif
+! #ifdef W3_SHRD
+!                   ISPEC = 0
+!                   JSEA = IX
+! #endif
+! #endif
+!                   !
+! #ifdef W3_SMC
+!                   IF( IAPROC .EQ. ISPEC+1 ) THEN
+!                     BACSPEC = SPCBAC(:,IK)
 
-                    CALL w3acturn( NTH, NK, BACANGL, BACSPEC )
+!                     CALL w3acturn( NTH, NK, BACANGL, BACSPEC )
 
-                    VA(:,JSEA) = BACSPEC
-                    !!Li              WRITE(NDSE,*) "IAPROC, IX, JSEAx, IK=", IAPROC, IX, JSEA, IK
-                  ENDIF
+!                     VA(:,JSEA) = BACSPEC
+!                     !!Li              WRITE(NDSE,*) "IAPROC, IX, JSEAx, IK=", IAPROC, IX, JSEA, IK
+!                   ENDIF
 
-                END DO  !! Loop IK ends.
-                DEALLOCATE ( BACSPEC )
+!                 END DO  !! Loop IK ends.
+!                 DEALLOCATE ( BACSPEC )
 
-              ENDIF  !! ARCTC
-#endif
-              !
-              ! End of test FLCX.OR.FLCY
-            END IF
+!               ENDIF  !! ARCTC
+! #endif
+!               !
+!               ! End of test FLCX.OR.FLCY
+!             END IF
             !
           END IF
           !debugstokes
-          !first diff seen 64800
+          !ok at 64800
           DO JSEA=1, NSEAL
             CALL INIT_GET_ISEA(ISEA, JSEA)
             IX     = MAPSF(ISEA,1)
@@ -2048,6 +2060,7 @@ CONTAINS
           !
           UGDTUPDATE = .FALSE.
           !debugstokes
+          ! first diff at 64800
           DO JSEA=1, NSEAL
             CALL INIT_GET_ISEA(ISEA, JSEA)
             IX     = MAPSF(ISEA,1)
