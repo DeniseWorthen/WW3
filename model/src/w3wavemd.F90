@@ -226,9 +226,9 @@ CONTAINS
   !>
 
   SUBROUTINE W3WAVE ( IMOD, ODAT, TEND, STAMP, NO_OUT &
-       #ifdef W3_OASIS
+#ifdef W3_OASIS
        ,ID_LCOMM, TIMEN                 &
-       #endif
+#endif
        )
     !/
     !/                  +-----------------------------------+
@@ -1018,6 +1018,7 @@ CONTAINS
             VAOLD(ISPEC,IP)=VA(ISPEC,IP)
           END DO
         END DO
+#endif
         !debugstokes
         DO JSEA=1, NSEAL
           CALL INIT_GET_ISEA(ISEA, JSEA)
