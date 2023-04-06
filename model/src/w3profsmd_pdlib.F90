@@ -722,13 +722,6 @@ CONTAINS
     ! 1.  Preparations --------------------------------------------------- *
     ! 1.a Set constants
     !
-#ifdef W3_S
-    CALL STRACE (IENT, 'W3XYPUG')
-#endif
-#ifdef W3_DEBUGSOLVER
-    WRITE(740+IAPROC,*) 'Begin of PDLIB_W3XYPUG'
-    FLUSH(740+IAPROC)
-#endif
     ITH    = 1 + MOD(ISP-1,NTH)
     IK     = 1 + (ISP-1)/NTH
     CCOS   = FACX * ECOS(ITH)
@@ -759,18 +752,7 @@ CONTAINS
       VLCFLX(IP) = CCOS * CG(IK,ISEA) / CLATS(ISEA)
       VLCFLY(IP) = CSIN * CG(IK,ISEA)
 #endif
-#ifdef W3_MGP
-      VLCFLX(IP) = VLCFLX(IP) - CCURX*VGX/CLATS(ISEA)
-      VLCFLY(IP) = VLCFLY(IP) - CCURY*VGY
-#endif
     END DO
-#ifdef W3_DEBUGSOLVER
-    WRITE(740+IAPROC,*) 'ISP=', ISP, ' ITH=', ITH, ' IK=', IK
-    WRITE(740+IAPROC,*) '1: maxval(VLCFLX)=', maxval(VLCFLX)
-    WRITE(740+IAPROC,*) '1: maxval(VLCFLY)=', maxval(VLCFLY)
-    WRITE(740+IAPROC,*) 'FLCUR=', FLCUR
-    FLUSH(740+IAPROC)
-#endif
     IF ( FLCUR ) THEN
       DO JSEA=1, NSEAL
         IP      = JSEA
@@ -785,7 +767,6 @@ CONTAINS
         END IF
       END DO
     END IF
-
     C(:,1) = VLCFLX(:) * IOBDP_LOC
     C(:,2) = VLCFLY(:) * IOBDP_LOC
     !
@@ -810,10 +791,6 @@ CONTAINS
     !
     ! 4. propagate using the selected scheme
     !
-#ifdef W3_DEBUGSOLVER
-    WRITE(740+IAPROC,*) 'maxval(C)=', maxval(C)
-    FLUSH(740+IAPROC)
-#endif
     IF (FSN) THEN
       CALL PDLIB_W3XYPFSN2(ISP, C, LCALC, RD1, RD2, DTG, AC)
     ELSE IF (FSPSI) THEN
@@ -830,11 +807,6 @@ CONTAINS
         AC(IP) = AC_MAP(IBND_MAP)
       END DO
     END IF
-#ifdef W3_DEBUGSOLVER
-    WRITE(740+IAPROC,*) 'After solutioning'
-    FLUSH(740+IAPROC)
-#endif
-
     ! 6.  Store results in VQ in proper format --------------------------- *
     !
     DO JSEA=1, NSEAL
@@ -843,10 +815,6 @@ CONTAINS
       ISEA=MAPFS(1,IP_glob)
       VA(ISP,JSEA) = MAX ( 0. , CG(IK,ISEA)/CLATS(ISEA)*AC(IP) )
     END DO
-#ifdef W3_DEBUGSOLVER
-    WRITE(740+IAPROC,*) 'Leaving PDLIB_W3XYPUG'
-    FLUSH(740+IAPROC)
-#endif
     !/
     !/ End of W3SPR4 ----------------------------------------------------- /
     !/
@@ -936,12 +904,6 @@ CONTAINS
                                          ! conditions
     LOGICAL, INTENT(IN)    :: LCALC      ! Switch for the calculation of
                                          ! the max. Global Time step
-#ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
-#endif
-#ifdef W3_REF1
-    INTEGER(KIND=1)    :: IOBPDR(NX)
-#endif
     INTEGER :: IP, IE, POS, IT, I1, I2, I3, I, J, ITH, IK
     INTEGER :: IBI, NI(3)
     INTEGER :: JX
@@ -967,28 +929,11 @@ CONTAINS
     REAL  :: eSumAC, sumAC, sumBPI0, sumBPIN, sumCG, sumCLATS
     LOGICAL :: testWrite
     REAL  :: FIN(1), FOUT(1)
-#ifdef W3_S
-    CALL STRACE (IENT, 'W3XYPFSN')
-#endif
-#ifdef W3_DEBUGSOLVER
-    WRITE(740+IAPROC,*) 'PDLIB_W3XYPFSN2, step 1'
-    FLUSH(740+IAPROC)
-    CALL SCAL_INTEGRAL_PRINT_R4(AC, "AC in input")
-#endif
 
     ITH    = 1 + MOD(ISP-1,NTH)
     IK     = 1 + (ISP-1)/NTH
     DTMAX  = DBLE(10.E10)
     !
-#ifdef W3_REF1
-    IOBPDR(:)=(1-IOBP_LOC(:))*(1-IOBPD_LOC(ITH,:))
-#endif
-
-#ifdef W3_DEBUGSOLVER
-    WRITE(740+IAPROC,*) 'NX=', NX
-    WRITE(740+IAPROC,*) 'PDLIB_W3XYPFSN2, step 2'
-    FLUSH(740+IAPROC)
-#endif
     !
     !2       Propagation
     !2.a     Calculate K-Values and contour based quantities ...
@@ -1021,10 +966,6 @@ CONTAINS
       FLALL(2,IE) = (FL111 + FL312) * ONESIXTH + KELEM(2,IE)
       FLALL(3,IE) = (FL211 + FL112) * ONESIXTH + KELEM(3,IE)
     END DO
-#ifdef W3_DEBUGSOLVER
-    WRITE(740+IAPROC,*) 'PDLIB_W3XYPFSN2, step 3'
-    FLUSH(740+IAPROC)
-#endif
     IF (LCALC) THEN
       KKSUM = ZERO
       DO IE = 1, NE
@@ -1053,35 +994,10 @@ CONTAINS
         ITER(IK,ITH) = ABS(NINT(CFLXY))
       END IF
     END IF ! LCALC
-#ifdef W3_DEBUGSOLVER
-    WRITE(740+IAPROC,*) 'PDLIB_W3XYPFSN2, step 4'
-    FLUSH(740+IAPROC)
-#endif
-    DO IP = 1, npa
+    DO IP = 1, np
       DTSI(IP) = DBLE(DT)/DBLE(ITER(IK,ITH))/PDLIB_SI(IP) ! Some precalculations for the time integration.
     END DO
-#ifdef W3_DEBUGSOLVER
-    WRITE(740+IAPROC,*) 'PDLIB_W3XYPFSN2, step 4.1'
-    FLUSH(740+IAPROC)
-    CALL SCAL_INTEGRAL_PRINT_R4(PDLIB_SI, "PDLIB_SI in input")
-    WRITE(740+IAPROC,*) 'PDLIB_W3XYPFSN2, step 4.2'
-    FLUSH(740+IAPROC)
-    CALL SCAL_INTEGRAL_PRINT_R4(DTSI, "DTSI in input")
-    WRITE(740+IAPROC,*) 'PDLIB_W3XYPFSN2, step 5'
-    WRITE(740+IAPROC,*) 'IK=', IK, ' ITH=', ITH
-    WRITE(740+IAPROC,*) 'ITER=', ITER(IK,ITH)
-    FLUSH(740+IAPROC)
-#endif
     DO IT = 1, ITER(IK,ITH)
-#ifdef W3_DEBUGSOLVER
-      WRITE(740+IAPROC,*) 'IK=', IK, ' ITH=', ITH
-      WRITE(740+IAPROC,*) 'IT=', IT, ' ITER=', ITER(IK,ITH)
-      FLUSH(740+IAPROC)
-      IF (testWrite) THEN
-        WRITE(740+IAPROC,*) 'IT=', IT
-        FLUSH(740+IAPROC)
-      END IF
-#endif
       U = DBLE(AC)
       ST = ZERO
       DO IE = 1, NE
@@ -1089,33 +1005,14 @@ CONTAINS
         UTILDE = NM(IE) * (DOT_PRODUCT(FLALL(:,IE),U(NI)))
         ST(NI) = ST(NI) + KELEM(:,IE) * (U(NI) - UTILDE) ! the 2nd term are the theta values of each node ...
       END DO ! IE
-#ifdef W3_DEBUGSOLVER
-      IF (testWrite) THEN
-        CALL SCAL_INTEGRAL_PRINT_R4(ST, "ST in loop")
-      END IF
-#endif
       !
       ! IOBPD=0  : waves coming from land
       ! IOBPD=1 : waves coming from the coast
       !
-      DO IP = 1, npa
+      DO IP = 1, np
         U(IP) = MAX(ZERO,U(IP)-DTSI(IP)*ST(IP)*(1-IOBPA_LOC(IP)))*DBLE(IOBPD_LOC(ITH,IP))*IOBDP_LOC(IP)
-#ifdef W3_REF1
-        IF (REFPARS(3).LT.0.5.AND.IOBPD_LOC(ITH,IP).EQ.0.AND.IOBPA_LOC(IP).EQ.0) U(IP) = AC(IP) ! restores reflected boundary values
-#endif
       END DO
-#ifdef W3_DEBUGSOLVER
-      IF (testWrite) THEN
-        CALL SCAL_INTEGRAL_PRINT_R4(U, "U in loop")
-      END IF
-#endif
       AC = REAL(U)
-
-#ifdef W3_DEBUGSOLVER
-      IF (testWrite) THEN
-        CALL SCAL_INTEGRAL_PRINT_R4(AC, "AC in loop")
-      END IF
-#endif
       !
       ! 5 Update boundaries ... would be better to omit any if clause in this loop ...
       !   a possibility would be to use NBI = 0 when FLBPI is FALSE and loop on IBI whatever the value of NBI
@@ -1130,52 +1027,18 @@ CONTAINS
           RD1    = 0.
           RD2    = 1.
         END IF
-#ifdef W3_DEBUGSOLVER
-        sumAC=0
-        sumBPI0=0
-        sumBPIN=0
-        sumCG=0
-        sumCLATS=0
-#endif
         DO IBI = 1, NBI
           IP_glob = MAPSF(ISBPI(IBI),1)
           JX=IPGL_npa(IP_glob)
           IF (JX .gt. 0) THEN
             AC(JX) = ( RD1*BBPI0(ISP,IBI) + RD2*BBPIN(ISP,IBI) )   &
                  / CG(IK,ISBPI(IBI)) * CLATS(ISBPI(IBI))
-#ifdef W3_DEBUGSOLVER
-            sumAC=sumAC + AC(JX)
-            sumBPI0=sumBPI0 + BBPI0(ISP,IBI)
-            sumBPIN=sumBPIN + BBPIN(ISP,IBI)
-            sumCG=sumCG + CG(IK,ISBPI(IBI))
-            sumCLATS=sumCLATS + CLATS(ISBPI(IBI))
-#endif
           END IF
         END DO
       END IF
 
-#ifdef W3_DEBUGSOLVER
-      WRITE(740+IAPROC,*) 'NBI=', NBI
-      WRITE(740+IAPROC,*) 'RD1=', RD1, ' RD2=', RD2
-      WRITE(740+IAPROC,*) 'ISP=', ISP, 'sumAC=', sumAC
-      WRITE(740+IAPROC,*) 'ISP=', ISP, 'sumBPI0=', sumBPI0
-      WRITE(740+IAPROC,*) 'ISP=', ISP, 'sumBPIN=', sumBPIN
-      WRITE(740+IAPROC,*) 'ISP=', ISP, 'sumCG=', sumCG
-      WRITE(740+IAPROC,*) 'ISP=', ISP, 'sumCLATS=', sumCLATS
-      FLUSH(740+IAPROC)
-#endif
-      CALL PDLIB_exchange1DREAL(AC)
-
-#ifdef W3_DEBUGSOLVER
-      IF (testWrite) THEN
-        CALL SCAL_INTEGRAL_PRINT_R4(AC, "AC after FLBPI")
-      END IF
-#endif
+      !CALL PDLIB_exchange1DREAL(AC)
     END DO
-#ifdef W3_DEBUGSOLVER
-    WRITE(740+IAPROC,*) 'PDLIB_W3XYPFSN2, step 6'
-    FLUSH(740+IAPROC)
-#endif
   END SUBROUTINE PDLIB_W3XYPFSN2
   !/ ------------------------------------------------------------------- /
   SUBROUTINE PDLIB_W3XYPFSPSI2 ( ISP, C, LCALC, RD10, RD20, DT, AC)

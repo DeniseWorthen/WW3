@@ -1440,26 +1440,17 @@ CONTAINS
             !
             DO JSEA=1, NSEAL
               CALL INIT_GET_ISEA(ISEA, JSEA)
-#ifdef W3_PR3
+
               IF (GTYPE .EQ. UNGTYPE) THEN
                 IF ( FLOGRD(9,3) ) THEN
-#endif
-#ifdef W3_PDLIB
                   IF (.NOT. LPDLIB) THEN
-#endif
-#ifdef W3_PR3
                     CALL W3CFLUG ( ISEA, NKCFL, FACX, FACX, DTG, MAPFS, CFLXYMAX(JSEA), &
                          VGX, VGY )
-#endif
-#ifdef W3_PDLIB
                   ENDIF
-#endif
-#ifdef W3_PR3
                 END IF
               ELSE
                 CALL W3CFLXY ( ISEA, DTG, MAPSTA, MAPFS, CFLXYMAX(JSEA), VGX, VGY )
               END IF
-#endif
             END DO
             !
 #ifdef W3_OMPG
@@ -1568,13 +1559,13 @@ CONTAINS
                          CY(ISEA), DCXDX(IY,IXrel), DCXDY(IY,IXrel),     &
                          DCYDX(IY,IXrel), DCYDY(IY,IXrel),               &
                          DCDX(:,IY,IXrel), DCDY(:,IY,IXrel), VA(:,JSEA), &
-                         CFLTHMAX(JSEA), CFLKMAX(JSEA) )
+                         CFLTHMAX(JSEA), CFLKMAX(JSEA), 1)
 #endif
                     !
                   END IF  !!  GTYPE
                   !
                 END IF
-              END DO ! DO JSEA=1, NSEA
+              END DO ! DO JSEA=1, NSEAL
               !
 #ifdef W3_OMPG
               !$OMP END DO
@@ -1613,6 +1604,7 @@ CONTAINS
             !
 #ifdef W3_PDLIB
             IF ((FSTOTALIMP .eqv. .FALSE.).and.(FLCX .or. FLCY)) THEN
+              !updates VA,
               DO ISPEC=1,NSPEC
                 CALL PDLIB_W3XYPUG ( ISPEC, FACX, FACX, DTG, VGX, VGY, UGDTUPDATE )
               END DO
@@ -1620,6 +1612,7 @@ CONTAINS
             IF (FSTOTALIMP .and. (IT .ne. 0)) THEN
               CALL PDLIB_W3XYPUG_BLOCK_IMPLICIT(IMOD, FACX, FACX, DTG, VGX, VGY)
             ELSE IF(FSTOTALEXP .and. (IT .ne. 0)) THEN
+              ! doesn't get here
               CALL PDLIB_W3XYPUG_BLOCK_EXPLICIT(IMOD, FACX, FACX, DTG, VGX, VGY)
             ENDIF
 #endif  !
@@ -1689,7 +1682,7 @@ CONTAINS
                          CY(ISEA), DCXDX(IY,IXrel), DCXDY(IY,IXrel),     &
                          DCYDX(IY,IXrel), DCYDY(IY,IXrel),               &
                          DCDX(:,IY,IXrel), DCDY(:,IY,IXrel), VA(:,JSEA), &
-                         CFLTHMAX(JSEA), CFLKMAX(JSEA) )
+                         CFLTHMAX(JSEA), CFLKMAX(JSEA) ,2)
 #endif
                     DO IK=1, NK
                       DO ITH=1, NTH

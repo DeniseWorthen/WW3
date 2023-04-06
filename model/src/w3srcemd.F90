@@ -748,6 +748,14 @@ CONTAINS
            TAUWX, TAUWY, CD, Z0, CHARN, LLWS, FMEANWS, DLWMEAN)
       if(onde1 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2b_1 ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
       if(onde2 .and. ix .eq. 8442)print '(a,2i12,8g18.10)','DEBUGX2b_1 ',time,TAUWIX, TAUWIY, TAUWNX, TAUWNY, TAUWX, TAUWY, TAUWAX, TAUWAY
+
+      DO IK=1, NK
+        DO ITH=1, NTH
+          IS=ITH+(IK-1)*NTH
+          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGX2c_1 ',time,SPEC(IS)
+          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY0 ',time,SPEC(IS)
+        end do
+      end do
       ! TAUWX, TAUWY, TAUWNX, TAUWNY are intent(out) for sin4
       CALL W3SIN4 ( SPEC, CG1, WN2, U10ABS, USTAR, DRAT, AS,       &
            U10DIR, Z0, CD, TAUWX, TAUWY, TAUWAX, TAUWAY,       &

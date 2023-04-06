@@ -1585,9 +1585,6 @@ CONTAINS
     ! 1.  Preparations --------------------------------------------------- *
     ! 1.a Update times
     !
-#ifdef W3_T
-    WRITE (NDST,9010) TIME, TIC1, TI1
-#endif
     TIC1(1) = TI1(1)
     TIC1(2) = TI1(2)
 
@@ -1601,11 +1598,6 @@ CONTAINS
     END DO
     !
     RETURN
-#ifdef W3_T
-9010 FORMAT ( ' TEST W3UIC1 : TIME     :',I9.8,I7.6/              &
-         '               OLD TICE :',I9.8,I7.6/              &
-         '               NEW TICE :',I9.8,I7.6)
-#endif
     !/
     !/ End of W3UIC1 ----------------------------------------------------- /
     !/
@@ -1699,9 +1691,6 @@ CONTAINS
     ! 1.  Preparations --------------------------------------------------- *
     ! 1.a Update times
     !
-#ifdef W3_T
-    WRITE (NDST,9010) TIME, TIC5, TI5
-#endif
     TIC5(1) = TI5(1)
     TIC5(2) = TI5(2)
 
@@ -1722,12 +1711,6 @@ CONTAINS
     END DO
     !
     RETURN
-#ifdef W3_T
-9010 FORMAT ( ' TEST W3UIC5 : TIME     :',I9.8,I7.6/              &
-         '               OLD TICE :',I9.8,I7.6/              &
-         '               NEW TICE :',I9.8,I7.6)
-#endif
-
     !/
     !/
     !/ End of W3UIC5 ----------------------------------------------------- /
@@ -1942,6 +1925,8 @@ CONTAINS
 #ifdef W3_IC0
     MAPST2 = MAPST2 + MAPICE
 #endif
+    if(onde1 .and. ix .eq. 8442)print '(a,2i12,g14.7,3i5)','UICEXX0 ',time,icei(ix,iy),mapice(iy,ix),mapst2(iy,ix),mapsta(iy,ix)
+    if(onde2 .and. ix .eq. 8442)print '(a,2i12,g14.7,3i5)','UICEXX0 ',time,icei(ix,iy),mapice(iy,ix),mapst2(iy,ix),mapsta(iy,ix)
     !
     RETURN
     !
@@ -2692,29 +2677,6 @@ CONTAINS
   !> @date   30-Oct-2009
   !>
   SUBROUTINE W3UTRN ( TRNX, TRNY )
-    !/
-    !/                  +-----------------------------------+
-    !/                  | WAVEWATCH III           NOAA/NCEP |
-    !/                  |           H. L. Tolman            |
-    !/                  |                        FORTRAN 90 |
-    !/                  | Last update :         30-Oct-2009 |
-    !/                  +-----------------------------------+
-    !/
-    !/    02-Apr-2001 : Origination.                        ( version 2.10 )
-    !/    11-Jan-2002 : Sub-grid ice.                       ( version 2.15 )
-    !/    30-Apr-2002 : Change to ICE on storage grid.      ( version 2.20 )
-    !/    15-Dec-2004 : Multiple grid version.              ( version 3.06 )
-    !/    11-Jan-2007 : Clean-up for boundary points.       ( version 3.10 )
-    !/    30-Oct-2009 : Implement run-time grid selection.  ( version 3.14 )
-    !/                  (W. E. Rogers & T. J. Campbell, NRL)
-    !/    30-Oct-2009 : Implement curvilinear grid type.    ( version 3.14 )
-    !/                  (W. E. Rogers & T. J. Campbell, NRL)
-    !/
-    !  1. Purpose :
-    !
-    !     Update cell boundary transparencies for general use in propagation
-    !     routines.
-    !
     !  2. Method :
     !
     !     Two arrays are generated with the size (NY*NX,-1:1). The value
@@ -2722,41 +2684,6 @@ CONTAINS
     !     or left boundary is an inflow boundary. (IXY,1) is used if the
     !     upper or right boundary is an inflow boundary. (IXY,0) is used
     !     for all other cases (by definition full transparency).
-    !
-    !  3. Parameters :
-    !
-    !     Parameter list
-    !     ----------------------------------------------------------------
-    !       TRNX/Y  R.A.   I   Transparencies from model defintion file.
-    !     ----------------------------------------------------------------
-    !
-    !  4. Subroutines used :
-    !
-    !     See module documentation.
-    !
-    !  5. Called by :
-    !
-    !      Name      Type  Module   Description
-    !     ----------------------------------------------------------------
-    !      W3WAVE    Subr. W3WAVEMD Actual wave model routine.
-    !     ----------------------------------------------------------------
-    !
-    !  6. Error messages :
-    !
-    !     None.
-    !
-    !  7. Remarks :
-    !
-    !  8. Structure :
-    !
-    !     See source code.
-    !
-    !  9. Switches :
-    !
-    !       !/S      Enable subroutine tracing.
-    !       !/T      Basic test output.
-    !
-    ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
     USE W3GDATMD, ONLY: NX, NY, NSEA, MAPSTA, MAPSF,                &
@@ -2776,51 +2703,26 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/
     INTEGER                 :: ISEA, IX, IY, IXY, IXN, IXP, IYN, IYP
-#ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
-#endif
-#ifdef W3_T
-    INTEGER                 :: ILEV, NLEV
-#endif
 
     REAL                    :: TRIX(NY*NX), TRIY(NY*NX), DX, DY,    &
          LICE0, LICEN
-#ifdef W3_T
-    REAL                    :: LEVS(0:10)
-#endif
     !/
     !/ ------------------------------------------------------------------- /
     !/
-#ifdef W3_S
-    CALL STRACE (IENT, 'W3UTRN')
-#endif
-#ifdef W3_T
-    WRITE (NDST,9000) TRFLAG
-#endif
     !
     ! 1.  Preparations --------------------------------------------------- *
     !
     ATRNX = 1.
     ATRNY = 1.
-#ifdef W3_T
-    WRITE (NDST,9001) 'INITIALIZING ATRNX/Y'
-#endif
     !
     ! 2.  Filling arrays from TRNX/Y for obstructions -------------------- *
     ! 2.a TRFLAG = 0, no action needed
     IF ( TRFLAG .EQ. 0 ) THEN
-#ifdef W3_T
-      WRITE (NDST,9001) 'NO FURTHER ACTION REQUIRED'
-#endif
       RETURN
       !
       ! 2.b TRFLAG = 1,3: TRNX/Y defined at boundaries
       !
     ELSE IF ( TRFLAG.EQ.1 .OR. TRFLAG.EQ.3 .OR. TRFLAG.EQ.5 ) THEN
-#ifdef W3_T
-      WRITE (NDST,9001) 'DATA APPLIED AT CELL BOUNDARIES'
-      LEVS   = 0.
-#endif
       !
       DO ISEA=1, NSEA
         !
@@ -2840,20 +2742,12 @@ CONTAINS
         ATRNY(IXY,-1) = TRNY(IXY-1)
         ATRNY(IXY, 1) = TRNY(IXY)
         !
-#ifdef W3_T
-        ILEV          = NINT(10.*MIN(TRNX(IXY),TRNY(IXY)))
-        LEVS(ILEV)    = LEVS(ILEV) + 1.
-#endif
         !
       END DO
       !
       ! 2.c TRFLAG = 2,4: TRNX/Y defined at cell centers
       !
     ELSE
-#ifdef W3_T
-      WRITE (NDST,9001) 'DATA APPLIED AT CELL CENTERS'
-      LEVS   = 0.
-#endif
       !
       DO ISEA=1, NSEA
         !
@@ -2913,39 +2807,20 @@ CONTAINS
           END IF
         END IF
         !
-#ifdef W3_T
-        ILEV          = NINT(10.*MIN(TRNX(IXY),TRNY(IXY)))
-        LEVS(ILEV)    = LEVS(ILEV) + 1.
-#endif
         !
       END DO
     END IF
     !
-#ifdef W3_T
-    WRITE(NDST,9010) 'ISLANDS'
-    NLEV   = 0
-    DO ILEV=0, 10
-      WRITE (NDST,9011) ILEV, LEVS(ILEV)/REAL(NSEA)
-      NLEV = NLEV + NINT(LEVS(ILEV))
-    END DO
-#endif
     !
     ! 3.  Adding ice to obstructions ------------------------------------- *
     ! 3.a TRFLAG < 3, no action needed
     !
     IF ( TRFLAG.LT.3 .OR. FICEN-FICE0.LT.1.E-6 ) THEN
-#ifdef W3_T
-      WRITE (NDST,9001) 'NO ICE ACTION REQUIRED'
-#endif
       RETURN
       !
       ! 3.b TRFLAG = 3,4: Calculate ice transparencies
       !
     ELSE
-#ifdef W3_T
-      WRITE (NDST,9001) 'CALCULATE ICE TRANSPARENCIES'
-      LEVS   = 0.
-#endif
       TRIX   = 1.
       TRIY   = 1.
       !
@@ -2961,42 +2836,21 @@ CONTAINS
           DX     = DX * RADIUS * DERA
           DY     = DY * RADIUS * DERA
         END IF
-
-        !
-#ifdef W3_IC0
         IF (ICE(ISEA).GT.0) THEN
           IF (FICEL.GT.0.) THEN
             TRIX(IXY) = EXP(-ICE(ISEA)*DX/FICEL)
             TRIY(IXY) = EXP(-ICE(ISEA)*DY/FICEL)
           ELSE
-#endif
-            ! Otherwise: original Tolman expression (Tolman 2003)
-#ifdef W3_IC0
             LICE0  = FICE0*DX
             LICEN  = FICEN*DX
             TRIX(IXY) = ( LICEN - ICE(ISEA)*DX ) / ( LICEN - LICE0 )
-#endif
-
-            ! begin temporary notes
-            !                TRIX = (   LICEN    - ICE(ISEA)*DX ) / (   LICEN -      LICE0 )
-            !    thus, it is TRIX=  ( (FICEN*DX) - ICE(ISEA)*DX ) / ( (FICEN*DX) - (FICE0*DX) )
-            !    thus, it is TRIX=  (   FICEN -    ICE(ISEA) )   /  (  FICEN     -   FICE0 )
-            !    in other words, the variables DX DY are not used
-            !                    and the variables LICE0 LICEN are not necessary.
-            ! end temporary notes
-
-#ifdef W3_IC0
             LICE0  = FICE0*DY
             LICEN  = FICEN*DY
             TRIY(IXY) = ( LICEN - ICE(ISEA)*DY ) / ( LICEN - LICE0 )
           END IF
-#endif
-          !
-#ifdef W3_IC0
           TRIX(IXY) = MAX ( 0. , MIN ( 1. , TRIX(IXY) ) )
           TRIY(IXY) = MAX ( 0. , MIN ( 1. , TRIY(IXY) ) )
         END IF
-#endif
         !
         !  Adding iceberg attenuation
         !
@@ -3005,21 +2859,9 @@ CONTAINS
           TRIY(IXY) = TRIY(IXY)*EXP(-BERG(ISEA)*FFACBERG  *DY*0.0001)
         END IF
         !
-#ifdef W3_T
-        ILEV          = NINT(10.*MIN(TRIX(IXY),TRIY(IXY)))
-        LEVS(ILEV)    = LEVS(ILEV) + 1.
-#endif
         !
       END DO
       !
-#ifdef W3_T
-      WRITE(NDST,9010) 'ICE'
-      NLEV   = 0
-      DO ILEV=0, 10
-        WRITE (NDST,9011) ILEV, LEVS(ILEV)/REAL(NSEA)
-        NLEV = NLEV + NINT(LEVS(ILEV))
-      END DO
-#endif
       !
       ! 3.c Combine transparencies, ice always defined at cell center !
       !
@@ -3051,14 +2893,10 @@ CONTAINS
           IYP    = IXY + 1
         END IF
         !
-        ATRNX(IXY,-1) = ATRNX(IXY,-1)                             &
-             * (1.+TRIX(IXY)) * TRIX(IXN)/(1.+TRIX(IXN))
-        ATRNX(IXY, 1) = ATRNX(IXY, 1)                             &
-             * (1.+TRIX(IXY)) * TRIX(IXP)/(1.+TRIX(IXP))
-        ATRNY(IXY,-1) = ATRNY(IXY,-1)                             &
-             * (1.+TRIY(IXY)) * TRIY(IYN)/(1.+TRIY(IYN))
-        ATRNY(IXY, 1) = ATRNY(IXY, 1)                             &
-             * (1.+TRIY(IXY)) * TRIY(IYP)/(1.+TRIY(IYP))
+        ATRNX(IXY,-1) = ATRNX(IXY,-1) * (1.+TRIX(IXY)) * TRIX(IXN)/(1.+TRIX(IXN))
+        ATRNX(IXY, 1) = ATRNX(IXY, 1) * (1.+TRIX(IXY)) * TRIX(IXP)/(1.+TRIX(IXP))
+        ATRNY(IXY,-1) = ATRNY(IXY,-1) * (1.+TRIY(IXY)) * TRIY(IYN)/(1.+TRIY(IYN))
+        ATRNY(IXY, 1) = ATRNY(IXY, 1) * (1.+TRIY(IXY)) * TRIY(IYP)/(1.+TRIY(IYP))
         !
       END DO
       !

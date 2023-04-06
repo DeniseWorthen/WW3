@@ -1,5 +1,4 @@
-
-0;95;0c!> @file
+!> @file
 !> @brief Contains MODULE W3UQCKMD.
 !>
 !> @author H. L. Tolman  @date 27-May-2014
@@ -514,7 +513,7 @@ CONTAINS
   !>
   SUBROUTINE W3QCK2 (MX, MY, NX, NY, VELO, DT, DX1, DX2, Q, CLOSE,&
        INC,  MAPACT, NACT, MAPBOU, NB0, NB1, NB2,    &
-       NDSE, NDST )
+       NDSE, NDST ,isea, partno)
     !/
     !/                  +-----------------------------------+
     !/                  | WAVEWATCH III           NOAA/NCEP |
@@ -616,6 +615,8 @@ CONTAINS
     REAL, INTENT(INOUT)     :: VELO(MY*(MX+1)), DX1(MY*(MX+1)),     &
          DX2(1-MY:MY*(MX+1)), Q(1-MY:MY*(MX+2))
     LOGICAL, INTENT(IN)     :: CLOSE
+    !debug
+    integer, intent(in) :: isea, partno
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -624,6 +625,11 @@ CONTAINS
          IAD00, IAD02, IADN0, IADN1, IADN2
     REAL                    :: CFL, VEL, QB, DQ, DQNZ, QCN, QBN,    &
          QBR, CFAC, FLA(1-MY:MY*MX)
+    logical :: onde1, onde2
+    onde1 = .false.
+    onde2 = .false.
+    if(naproc .eq. 10 .and. iaproc .eq. 2 .and. isea .eq. 8442)onde2 = .true.
+    if(naproc .eq.  5 .and. iaproc .eq. 1 .and. isea .eq. 8442)onde1 = .true.
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -655,7 +661,9 @@ CONTAINS
     !
     DO IP=1, NB0
       !
-      IXY    = MAPBOU(IP)
+       IXY    = MAPBOU(IP)
+       if(onde1 .and.ixy .eq. 313)print '(a,2i12,i5,4g18.10)','DEBUGC00 ',time,partno,q(ixy),fla(ixy-inc),fla(ixy),DX1(IXY)
+       if(onde2 .and.ixy .eq. 313)print '(a,2i12,i5,4g18.10)','DEBUGC00 ',time,partno,q(ixy),fla(ixy-inc),fla(ixy),DX1(IXY)
       VEL    = 0.5 * ( VELO(IXY) + VELO(IXY+INC) )
       CFL    = DT *  VEL / DX2(IXY)
       IXYC   = IXY - INC * INT( MIN ( 0. , SIGN(1.1,CFL) ) )
@@ -663,6 +671,8 @@ CONTAINS
            - DX2(IXY)**2 / DX1(IXYC) * (1.-CFL**2) / 6.        &
            * ( (Q(IXYC+INC)-Q(IXYC))/DX2(IXYC)                 &
            - (Q(IXYC)-Q(IXYC-INC))/DX2(IXYC-INC) )
+      if(onde1 .and.ixy .eq. 313)print '(a,2i12,i5,4g18.10)','DEBUGC01 ',time,partno,q(ixy),fla(ixy-inc),fla(ixy),DX1(IXY)
+      if(onde2 .and.ixy .eq. 313)print '(a,2i12,i5,4g18.10)','DEBUGC01 ',time,partno,q(ixy),fla(ixy-inc),fla(ixy),DX1(IXY)
       !
       IXYU   = IXYC - INC * INT ( SIGN (1.1,CFL) )
       IXYD   = 2*IXYC - IXYU
@@ -670,6 +680,8 @@ CONTAINS
       DQNZ   = SIGN ( MAX(1.E-15,ABS(DQ)) , DQ )
       QCN    = ( Q(IXYC) - Q(IXYU) ) / DQNZ
       QCN    = MIN ( 1.1, MAX ( -0.1 , QCN ) )
+      if(onde1 .and.ixy .eq. 313)print '(a,2i12,i5,4g18.10)','DEBUGC02 ',time,partno,q(ixyd),q(ixyu)
+      if(onde2 .and.ixy .eq. 313)print '(a,2i12,i5,4g18.10)','DEBUGC02 ',time,partno,q(ixyd),q(ixyu)
       !
       QBN    = MAX ( (QB-Q(IXYU))/DQNZ , QCN )
       QBN    = MIN ( QBN , 1. , QCN/MAX(1.E-10,ABS(CFL)) )
@@ -677,9 +689,13 @@ CONTAINS
       CFAC   = REAL ( INT( 2. * ABS(QCN-0.5) ) )
       QB     = (1.-CFAC)*QBR + CFAC*Q(IXYC)
       !
+      if(onde1 .and.ixy .eq. 313)print '(a,2i12,i5,4g18.10)','DEBUGC03 ',time,partno,q(ixyc),qbr
+      if(onde2 .and.ixy .eq. 313)print '(a,2i12,i5,4g18.10)','DEBUGC03 ',time,partno,q(ixyc),qbr
       FLA(IXY) = VEL * QB
       !
       !
+      if(onde1 .and.ixy .eq. 313)print '(a,2i12,i5,4g18.10)','DEBUGC0a ',time,partno,q(ixy),fla(ixy-inc),fla(ixy),DX1(IXY)
+      if(onde2 .and.ixy .eq. 313)print '(a,2i12,i5,4g18.10)','DEBUGC0a ',time,partno,q(ixy),fla(ixy-inc),fla(ixy),DX1(IXY)
     END DO
     !
     ! 3.  Fluxes for points with boundary above ------------------------- *
@@ -691,6 +707,8 @@ CONTAINS
       VEL    = VELO(IXY)
       IXYC   = IXY - INC * INT( MIN ( 0. , SIGN(1.1,VEL) ) )
       FLA(IXY) = VEL * Q(IXYC)
+      if(onde1 .and.ixy .eq. 313)print '(a,2i12,i5,4g18.10)','DEBUGC0b ',time,partno,q(ixy),fla(ixy-inc),fla(ixy),DX1(IXY)
+      if(onde2 .and.ixy .eq. 313)print '(a,2i12,i5,4g18.10)','DEBUGC0b ',time,partno,q(ixy),fla(ixy-inc),fla(ixy),DX1(IXY)
     END DO
     !
     ! 4.  Fluxes for points with boundary below ------------------------- *
@@ -702,6 +720,8 @@ CONTAINS
       VEL    = VELO(IXY+INC)
       IXYC   = IXY - INC * INT( MIN ( 0. , SIGN(1.1,VEL) ) )
       FLA(IXY) = VEL * Q(IXYC)
+      if(onde1 .and.ixy .eq. 313)print '(a,2i12,i5,4g18.10)','DEBUGC0c ',time,partno,q(ixy),fla(ixy-inc),fla(ixy),DX1(IXY)
+      if(onde2 .and.ixy .eq. 313)print '(a,2i12,i5,4g18.10)','DEBUGC0c ',time,partno,q(ixy),fla(ixy-inc),fla(ixy),DX1(IXY)
     END DO
     !
     ! 5.  Global closure ----------------------------------------------- *
@@ -716,54 +736,17 @@ CONTAINS
     !
     DO IP=1, NACT
       IXY    = MAPACT(IP)
-      if(onde1 .and.ixy .eq. 313)print '(a,2i12,4g18.10)','DEBUGC0 ',time,q(ixy),fla(ixy-inc),fla(ixy),DX1(IXY)
-      if(onde2 .and.ixy .eq. 313)print '(a,2i12,4g18.10)','DEBUGC0 ',time,q(ixy),fla(ixy-inc),fla(ixy),DX1(IXY)
+      if(onde1 .and.ixy .eq. 313)print '(a,2i12,i5,4g18.10)','DEBUGC0 ',time,partno,q(ixy),fla(ixy-inc),fla(ixy),DX1(IXY)
+      if(onde2 .and.ixy .eq. 313)print '(a,2i12,i5,4g18.10)','DEBUGC0 ',time,partno,q(ixy),fla(ixy-inc),fla(ixy),DX1(IXY)
 
       Q(IXY) = MAX ( 0. , Q(IXY) + DT/DX1(IXY) * (FLA(IXY-INC)-FLA(IXY)) )
 
-      if(onde1 .and.ixy .eq. 313)print '(a,2i12,3g18.10)','DEBUGC1 ',time,q(ixy),fla(ixy-inc),fla(ixy)
-      if(onde2 .and.ixy .eq. 313)print '(a,2i12,3g18.10)','DEBUGC1 ',time,q(ixy),fla(ixy-inc),fla(ixy)
+      if(onde1 .and.ixy .eq. 313)print '(a,2i12,i5,3g18.10)','DEBUGC1 ',time,partno,q(ixy),fla(ixy-inc),fla(ixy)
+      if(onde2 .and.ixy .eq. 313)print '(a,2i12,i5,3g18.10)','DEBUGC1 ',time,partno,q(ixy),fla(ixy-inc),fla(ixy)
     END DO
     !
     !
     RETURN
-    !
-    ! Formats
-    !
-#ifdef W3_T
-9000 FORMAT ( ' TEST W3QCK2 : ARRAY DIMENSIONS  :',2I6/           &
-         '               USED              :',2I6/           &
-         '               TIME STEP         :',F8.1/          &
-         '               CLOSE, INC        :',L6,I6/         &
-         '               NB0, NB1, NB2     :',3I6)
-#endif
-#ifdef W3_T0
-9001 FORMAT ( ' TEST W3QCK2 : DUMP ARRAY ',A,' :')
-9002 FORMAT ( 1X,43I3)
-9003 FORMAT ( 1X,21I6)
-#endif
-#ifdef W3_T
-9005 FORMAT (' TEST W3QCK2 : GLOBAL CLOSURE (1)')
-#endif
-    !
-#ifdef W3_T1
-9010 FORMAT (' TEST W3QCK2 : IP, 2x(IX,IY), CFL (b,i,i+1), ',    &
-         ' Q (b,b,i-1,i,i+1,i+2)')
-9011 FORMAT (' TEST W3QCK2 :',I6,' POINTS OF TYPE ',A)
-9012 FORMAT (10X,I6,4I4,1X,3F6.2,1X,F7.2,F6.2,1X,4F6.2)
-9013 FORMAT (10X,I6,4I4,1X,F6.2,F6.2,'  --- ',1X,F7.2,1X,'  --- ',&
-         2F6.2,'  --- ')
-9014 FORMAT (10X,I6,4I4,1X,F6.2,'  --- ',F6.2,1X,F7.2,1X,'  --- ',&
-         2F6.2,'  --- ')
-#endif
-#ifdef W3_T
-9015 FORMAT (' TEST W3QCK2 : GLOBAL CLOSURE (2)')
-#endif
-    !
-#ifdef W3_T2
-9020 FORMAT (' TEST W3QCK2 : IP, IXY, 2Q, 2FL')
-9021 FORMAT ('            ',2I6,2(1X,2E11.3))
-#endif
     !/
     !/ End of W3QCK2 ----------------------------------------------------- /
     !/

@@ -142,9 +142,6 @@ CONTAINS
     USE W3IDATMD, ONLY: FLCUR
     !      USE W3ODATMD, ONLY: NDSE, NDST, FLBPI, NBI, TBPI0, TBPIN,       &
     !                          ISBPI, BBPI0, BBPIN
-#ifdef W3_S
-    USE W3SERVMD, ONLY: STRACE
-#endif
 
     IMPLICIT NONE
     !/ ------------------------------------------------------------------- /
@@ -160,9 +157,6 @@ CONTAINS
     !/
     INTEGER                 :: ITH, IK, ISEA, IXY
     INTEGER                 :: IX
-#ifdef W3_S
-    INTEGER, SAVE           :: IENT = 0
-#endif
     REAL                    :: CCOS, CSIN, CCURX, CCURY
     REAL                    :: C(NX,2)
     REAL                    :: RD1, RD2
@@ -176,10 +170,6 @@ CONTAINS
     ! 1.  Preparations --------------------------------------------------- *
     ! 1.a Set constants
     !
-
-#ifdef W3_S
-    CALL STRACE (IENT, 'W3XYPUG')
-#endif
     ITH    = 1 + MOD(ISP-1,NTH)
     IK     = 1 + (ISP-1)/NTH
 
@@ -205,10 +195,6 @@ CONTAINS
       VQ(IXY)     = VQ(IXY) / CG(IK,ISEA) * CLATS(ISEA)
       VLCFLX(IXY) = CCOS * CG(IK,ISEA) / CLATS(ISEA)
       VLCFLY(IXY) = CSIN * CG(IK,ISEA)
-#ifdef W3_MGP
-      VLCFLX(IXY) = VLCFLX(IXY) - CCURX*VGX/CLATS(ISEA)
-      VLCFLY(IXY) = VLCFLY(IXY) - CCURY*VGY
-#endif
     END DO
 
     IF ( FLCUR ) THEN
