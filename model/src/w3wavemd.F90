@@ -226,9 +226,9 @@ CONTAINS
   !>
 
   SUBROUTINE W3WAVE ( IMOD, ODAT, TEND, STAMP, NO_OUT &
-#ifdef W3_OASIS
+       #ifdef W3_OASIS
        ,ID_LCOMM, TIMEN                 &
-#endif
+       #endif
        )
     !/
     !/                  +-----------------------------------+
@@ -614,6 +614,11 @@ CONTAINS
     logical :: do_wavefield_separation_output
     logical :: do_startall
     logical :: do_w3outg
+    logical :: onde1, onde2
+    onde1 = .false.
+    onde2 = .false.
+    if(naproc .eq. 10 .and. iaproc .eq. 2)onde2 = .true.
+    if(naproc .eq.  5 .and. iaproc .eq. 1)onde1 = .true.
     !/ ------------------------------------------------------------------- /
     ! 0.  Initializations
     !
@@ -633,11 +638,6 @@ CONTAINS
 #ifdef W3_UOST
     CALL UOST_SETGRID(IMOD)
 #endif
-
-#ifdef W3_DEBUGCOH
-    CALL ALL_VA_INTEGRAL_PRINT(IMOD, "W3WAVEMD, step 1", 1)
-#endif
-
     !
     ALLOCATE(TAUWX(NSEAL), TAUWY(NSEAL))
 #ifdef W3_REFRX
@@ -655,9 +655,6 @@ CONTAINS
     ELSE
       SKIP_O = .FALSE.
     END IF
-#ifdef W3_DEBUGCOH
-    CALL ALL_VA_INTEGRAL_PRINT(IMOD, "W3WAVEMD, step 2", 1)
-#endif
     !
     ! 0.b Subroutine tracing
     !
@@ -717,18 +714,12 @@ CONTAINS
     !
     ! 0.d Test output
     !
-#ifdef W3_T
-    WRITE (NDST,9000) IMOD, trim(FILEXT), TEND
-#endif
     !
     ! 1.  Check the consistency of the input ----------------------------- /
     ! 1.a Ending time versus initial time
     !
     DTTST  = DSEC21 ( TIME , TEND )
     FLZERO = DTTST .EQ. 0.
-#ifdef W3_T
-    WRITE (NDST,9010) DTTST, FLZERO
-#endif
     IF ( DTTST .LT. 0. ) THEN
       IF ( IAPROC .EQ. NAPERR ) WRITE (NDSE,1000)
       CALL EXTCDE ( 1 )
@@ -742,9 +733,6 @@ CONTAINS
       ELSE
         DTL0   = 1.
       END IF
-#ifdef W3_T
-      WRITE (NDST,9011) DTL0
-#endif
       IF ( DTL0 .LT. 0. ) THEN
         IF ( IAPROC .EQ. NAPERR ) WRITE (NDSE,1001)
         CALL EXTCDE ( 2 )
@@ -752,9 +740,6 @@ CONTAINS
     ELSE
       DTL0   = 0.
     END IF
-#ifdef W3_DEBUGCOH
-    CALL ALL_VA_INTEGRAL_PRINT(IMOD, "W3WAVEMD, step 4", 1)
-#endif
     !
     ! 1.c Current interval
     !
@@ -762,9 +747,6 @@ CONTAINS
       DTTST1 = DSEC21 ( TC0 , TCN )
       DTTST2 = DSEC21 ( TC0 , TIME )
       DTTST3 = DSEC21 ( TEND , TCN )
-#ifdef W3_T
-      WRITE (NDST,9012) DTTST1, DTTST2, DTTST3
-#endif
       IF ( DTTST1.LT.0. .OR. DTTST2.LT.0. .OR. DTTST3.LT.0. ) THEN
         IF ( IAPROC .EQ. NAPERR ) WRITE (NDSE,1002)
         CALL EXTCDE ( 3 )
@@ -781,9 +763,6 @@ CONTAINS
       DTTST1 = DSEC21 ( TW0 , TWN )
       DTTST2 = DSEC21 ( TW0 , TIME )
       DTTST3 = DSEC21 ( TEND , TWN )
-#ifdef W3_T
-      WRITE (NDST,9013) DTTST1, DTTST2, DTTST3
-#endif
       IF ( DTTST1.LT.0. .OR. DTTST2.LT.0. .OR. DTTST3.LT.0. ) THEN
         IF ( IAPROC .EQ. NAPERR ) WRITE (NDSE,1003)
         CALL EXTCDE ( 4 )
@@ -793,21 +772,31 @@ CONTAINS
         TOFRST = TIME
       END IF
     END IF
-#ifdef W3_DEBUGCOH
-    CALL ALL_VA_INTEGRAL_PRINT(IMOD, "W3WAVEMD, step 5", 1)
-#endif
     !
     ! 1.e Ice concentration interval
     !
+    !debugstokes
+    DO JSEA=1, NSEAL
+      CALL INIT_GET_ISEA(ISEA, JSEA)
+      IX     = MAPSF(ISEA,1)
+      IY     = MAPSF(ISEA,2)
+      if(onde1 .and. ix .eq. 8442)print *,'XXX ',isea,xgrd(iy,ix),ygrd(iy,ix),9+(32-1)*36
+      if(onde2 .and. ix .eq. 8442)print *,'XXX ',isea,xgrd(iy,ix),ygrd(iy,ix),9+(32-1)*36
+      DO IK=1, NK
+        DO ITH=1, NTH
+          IS=ITH+(IK-1)*NTH
+          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY0 ',time,VA(IS,JSEA)
+          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY0 ',time,VA(IS,JSEA)
+        end do
+      end do
+    end do
+    !debugstokes
     IF ( FLICE ) THEN
       IF ( TICE(1) .GE. 0 ) THEN
         DTI0   = DSEC21 ( TICE , TIN )
       ELSE
         DTI0   = 1.
       END IF
-#ifdef W3_T
-      WRITE (NDST,9014) DTI0
-#endif
       IF ( DTI0 .LT. 0. ) THEN
         IF ( IAPROC .EQ. NAPERR ) WRITE (NDSE,1004)
         CALL EXTCDE ( 5 )
@@ -815,9 +804,6 @@ CONTAINS
     ELSE
       DTI0   = 0.
     END IF
-#ifdef W3_DEBUGCOH
-    CALL ALL_VA_INTEGRAL_PRINT(IMOD, "W3WAVEMD, step 6", 1)
-#endif
     !
     ! 1.f Momentum interval
     !
@@ -825,9 +811,6 @@ CONTAINS
       DTTST1 = DSEC21 ( TU0 , TUN )
       DTTST2 = DSEC21 ( TU0 , TIME )
       DTTST3 = DSEC21 ( TEND , TUN )
-#ifdef W3_T
-      WRITE (NDST,9017) DTTST1, DTTST2, DTTST3
-#endif
       IF ( DTTST1.LT.0. .OR. DTTST2.LT.0. .OR. DTTST3.LT.0. ) THEN
         IF ( IAPROC .EQ. NAPERR ) WRITE (NDSE,1007)
         CALL EXTCDE ( 3 )
@@ -844,9 +827,6 @@ CONTAINS
       DTTST1 = DSEC21 ( TR0 , TRN )
       DTTST2 = DSEC21 ( TR0 , TIME )
       DTTST3 = DSEC21 ( TEND , TRN )
-#ifdef W3_T
-      WRITE (NDST,9018) DTTST1, DTTST2, DTTST3
-#endif
       IF ( DTTST1.LT.0. .OR. DTTST2.LT.0. .OR. DTTST3.LT.0. ) THEN
         IF ( IAPROC .EQ. NAPERR ) WRITE (NDSE,1008)
         CALL EXTCDE ( 2 )
@@ -865,9 +845,6 @@ CONTAINS
       ELSE
         DTI10   = 1.
       END IF
-#ifdef W3_T
-      WRITE (NDST,9015) DTI10
-#endif
       IF ( DTI10 .LT. 0. ) THEN
         IF ( IAPROC .EQ. NAPERR ) WRITE (NDSE,1005)
         CALL EXTCDE ( 5 )
@@ -885,9 +862,6 @@ CONTAINS
       ELSE
         DTI50   = 1.
       END IF
-#ifdef W3_T
-      WRITE (NDST,9016) DTI50
-#endif
       IF ( DTI50 .LT. 0. ) THEN
         IF ( IAPROC .EQ. NAPERR ) WRITE (NDSE,1006)
         CALL EXTCDE ( 5 )
@@ -902,27 +876,6 @@ CONTAINS
     !
     FLFRST = .TRUE.
     DO
-#ifdef W3_TIMINGS
-      CALL PRINT_MY_TIME("First entry in the TIME LOOP")
-#endif
-      !      DO JSEA = 1, NSEAL
-      !        DO IS = 1, NSPEC
-      !          IF (VA(IS, JSEA) .LT. 0.) THEN
-      !            WRITE(740+IAPROC,*) 'TEST W3WAVE 2', VA(IS,JSEA)
-      !            CALL FLUSH(740+IAPROC)
-      !          ENDIF
-      !        ENDDO
-      !      ENDDO
-      !      IF (SUM(VA) .NE. SUM(VA)) THEN
-      !        WRITE(740+IAPROC,*) 'NAN in ACTION 2', IX, IY, SUM(VA)
-      !        CALL FLUSH(740+IAPROC)
-      !        STOP
-      !      ENDIF
-
-
-#ifdef W3_DEBUGCOH
-      CALL ALL_VA_INTEGRAL_PRINT(IMOD, "W3WAVEMD, step 6.1", 1)
-#endif
       !
       !
       ! 2.a Pre-calculate table for IC3 ------------------------------------ /
@@ -1046,9 +999,6 @@ CONTAINS
       END IF
       call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE')
       !
-#ifdef W3_T
-      WRITE (NDST,9020) IT0, NT, DTGA
-#endif
       !
       ! ==================================================================== /
       !
@@ -1058,9 +1008,6 @@ CONTAINS
 
       !
       DO IT = IT0, NT
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("Begin of IT loop")
-#endif
 #ifdef W3_SETUP
         CALL WAVE_SETUP_COMPUTATION
 #endif
@@ -1071,14 +1018,21 @@ CONTAINS
             VAOLD(ISPEC,IP)=VA(ISPEC,IP)
           END DO
         END DO
-#endif
+        !debugstokes
+        DO JSEA=1, NSEAL
+          CALL INIT_GET_ISEA(ISEA, JSEA)
+          IX     = MAPSF(ISEA,1)
+          IY     = MAPSF(ISEA,2)
+          DO IK=1, NK
+            DO ITH=1, NTH
+              IS=ITH+(IK-1)*NTH
+              if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY1 ',time,VA(IS,JSEA)
+              if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY1 ',time,VA(IS,JSEA)
+            end do
+          end do
+        end do
+        !debugstokes
         !
-#ifdef W3_DEBUGCOH
-        CALL ALL_VA_INTEGRAL_PRINT(IMOD, "Beginning time loop", 1)
-#endif
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("After assigning VAOLD")
-#endif
         !
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 0')
         !
@@ -1108,29 +1062,13 @@ CONTAINS
           VGX    = (FAC*GA0+(1.-FAC)*GAN) * COS(FAC*GD0+(1.-FAC)*GDN)
           VGY    = (FAC*GA0+(1.-FAC)*GAN) * SIN(FAC*GD0+(1.-FAC)*GDN)
         END IF
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("After VGX/VGY assignation")
-#endif
-        !
-#ifdef W3_T
-        WRITE (NDST,9021) ITIME, IT, TIME, FLMAP, FLDDIR, VGX, VGY, DTG, DTRES
-#endif
         !
         ! 3.1 Interpolate winds, currents, and momentum.
         !     (Initialize wave fields with winds)
         !
-#ifdef W3_DEBUGDCXDX
-        WRITE(740+IAPROC,*) 'Debug DCXDX FLCUR=', FLCUR
-#endif
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 3a')
 
         IF ( FLCUR  ) THEN
-#ifdef W3_DEBUGCOH
-          CALL ALL_VA_INTEGRAL_PRINT(IMOD, "Before UCUR", 1)
-#endif
-#ifdef W3_TIMINGS
-          CALL PRINT_MY_TIME("W3WAVE, step 6.4.1")
-#endif
           CALL W3UCUR ( FLFRST )
 
           call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 3b')
@@ -1142,9 +1080,6 @@ CONTAINS
             CALL SMCDCXY
 #endif
           ELSE IF (GTYPE .EQ. UNGTYPE) THEN
-#ifdef W3_DEBUGDCXDX
-            WRITE(740+IAPROC,*) 'Before call to UG_GRADIENT for assigning DCXDX/DCXDY array'
-#endif
             CALL UG_GRADIENTS(CX, DCXDX, DCXDY)
             CALL UG_GRADIENTS(CY, DCYDX, DCYDY)
             UGDTUPDATE=.TRUE.
@@ -1162,9 +1097,6 @@ CONTAINS
           CX = 0.
           CY = 0.
         END IF ! FLCUR
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("After CX/CY assignation")
-#endif
         !
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 5')
 
@@ -1192,17 +1124,7 @@ CONTAINS
         !        STOP
         !      ENDIF
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 6')
-
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("After U10, etc. assignation")
-#endif
         !
-#ifdef W3_DEBUGCOH
-        CALL ALL_VA_INTEGRAL_PRINT(IMOD, "Before call to W3UINI", 1)
-#endif
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("Before call W3UINI")
-#endif
         IF ( FLIWND .AND. LOCAL ) CALL W3UINI ( VA )
         !
         IF ( FLTAUA ) THEN
@@ -1220,12 +1142,6 @@ CONTAINS
         !
         ! 3.2 Update boundary conditions if boundary flag is true (FLBPI)
         !
-#ifdef W3_DEBUGCOH
-        CALL ALL_VA_INTEGRAL_PRINT(IMOD, "Before boundary update", 1)
-#endif
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("Before boundary update")
-#endif
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 7')
 
         IF ( FLBPI .AND. LOCAL ) THEN
@@ -1256,12 +1172,6 @@ CONTAINS
 
 #ifdef W3_PDLIB
         CALL APPLY_BOUNDARY_CONDITION_VA
-#ifdef W3_DEBUGCOH
-        CALL ALL_VA_INTEGRAL_PRINT(IMOD, "After FLBPI and LOCAL", 1)
-#endif
-#endif
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("After FLBPI and LOCAL")
 #endif
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 8')
         !
@@ -1281,6 +1191,20 @@ CONTAINS
             IDACT(13:13) = 'I'
           END IF
           !
+          !debugstokes
+          DO JSEA=1, NSEAL
+            CALL INIT_GET_ISEA(ISEA, JSEA)
+            IX     = MAPSF(ISEA,1)
+            IY     = MAPSF(ISEA,2)
+            DO IK=1, NK
+              DO ITH=1, NTH
+                IS=ITH+(IK-1)*NTH
+                if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY2 ',time,VA(IS,JSEA)
+                if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY2 ',time,VA(IS,JSEA)
+              end do
+            end do
+          end do
+          !debugstokes
           IF ( IDACT(13:13).NE.' ' ) THEN
             CALL W3UICE ( VA )
             DTI0   = 0.
@@ -1288,14 +1212,21 @@ CONTAINS
             FLMAP  = .TRUE.
           END IF
         END IF
-#ifdef W3_DEBUGCOH
-        CALL ALL_VA_INTEGRAL_PRINT(IMOD, "After FLICE and DTI0", 1)
-#endif
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("After FLICE and DTI0")
-#endif
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 9')
-        !
+        !debugstokes
+        DO JSEA=1, NSEAL
+          CALL INIT_GET_ISEA(ISEA, JSEA)
+          IX     = MAPSF(ISEA,1)
+          IY     = MAPSF(ISEA,2)
+          DO IK=1, NK
+            DO ITH=1, NTH
+              IS=ITH+(IK-1)*NTH
+              if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY3 ',time,VA(IS,JSEA)
+              if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY3 ',time,VA(IS,JSEA)
+            end do
+          end do
+        end do
+        !debugstokes        !
         ! 3.3.2 Update ice thickness
         !
         IF ( FLIC1 .AND. DTI10.NE.0. ) THEN
@@ -1376,12 +1307,6 @@ CONTAINS
             FLDDIR = FLDDIR .OR. FLCTH .OR. FSREFRACTION .OR. FLCK .OR. FSFREQSHIFT
           END IF
         END IF
-#ifdef W3_DEBUGCOH
-        CALL ALL_VA_INTEGRAL_PRINT(IMOD, "After FFLEV and DTL0", 1)
-#endif
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("After FFLEV and DTL0")
-#endif
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 11b')
         !
         ! 3.5 Update maps and derivatives.
@@ -1402,15 +1327,22 @@ CONTAINS
             CALL W3MAPT
 #endif
           END IF  !! GTYPE
-
-          !! Hides call to W3NMIN, which currently only serves to warn when
-          !! one or more procs have zero active seapoints.
-#ifdef W3_DEBUGRUN
-          CALL W3NMIN ( MAPSTA, FLAG0 )
-          IF ( FLAG0 .AND. IAPROC.EQ.NAPERR ) WRITE (NDSE,1030) IMOD
-#endif
           FLMAP  = .FALSE.
         END IF
+        !debugstokes
+        DO JSEA=1, NSEAL
+          CALL INIT_GET_ISEA(ISEA, JSEA)
+          IX     = MAPSF(ISEA,1)
+          IY     = MAPSF(ISEA,2)
+          DO IK=1, NK
+            DO ITH=1, NTH
+              IS=ITH+(IK-1)*NTH
+              if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY4 ',time,VA(IS,JSEA)
+              if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY4 ',time,VA(IS,JSEA)
+            end do
+          end do
+        end do
+        !debugstokes
         !
         !
         IF ( FLDDIR ) THEN
@@ -1599,28 +1531,9 @@ CONTAINS
           END DO ! JSEA
         END IF ! PDLIB
 #endif
-
-
-#ifdef W3_PDLIB
-#ifdef W3_DEBUGSRC
-        WRITE(740+IAPROC,*) 'ITIME=', ITIME, ' IT=', IT
-        CALL ALL_VA_INTEGRAL_PRINT(IMOD, "VA after W3SRCE_IMP_PRE", 1)
-        CALL ALL_FIELD_INTEGRAL_PRINT(VSTOT, "VSTOT after W3SRCE_IMP_PRE")
-        CALL ALL_FIELD_INTEGRAL_PRINT(VDTOT, "VDTOT after W3SRCE_IMP_PRE")
-        IF (DEBUG_NODE .le. NSEAL) THEN
-          WRITE(740+IAPROC,*) '     Values for DEBUG_NODE=', DEBUG_NODE
-          WRITE(740+IAPROC,*) '     sum(VA)=', sum(VA(:,DEBUG_NODE))
-          WRITE(740+IAPROC,*) '     sum(VSTOT)=', sum(VSTOT(:,DEBUG_NODE))
-          WRITE(740+IAPROC,*) '     sum(VDTOT)=', sum(VDTOT(:,DEBUG_NODE))
-        END IF
-#endif
-#endif
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 14')
 
         IF ( FLZERO ) THEN
-#ifdef W3_T
-          WRITE (NDST,9022)
-#endif
           GOTO 400
         END IF
         IF ( IT.EQ.0 ) THEN
@@ -1629,23 +1542,14 @@ CONTAINS
           GOTO 370
         END IF
         IF ( FLDRY .OR. IAPROC.GT.NAPROC ) THEN
-#ifdef W3_T
-          WRITE (NDST,9023)
-#endif
           GOTO 380
         END IF
         !
         ! Estimation of the local maximum CFL for XY propagation
         !
-#ifdef W3_T
-        WRITE(NDSE,*) 'Computing CFLs .... ',NSEAL
-#endif
         IF ( FLOGRD(9,3).AND. UGDTUPDATE ) THEN
           IF (FSTOTALIMP .eqv. .FALSE.) THEN
             NKCFL=NK
-#ifdef W3_T
-            NKCFL=1
-#endif
             !
 #ifdef W3_OMPG
             !$OMP PARALLEL DO PRIVATE (JSEA,ISEA) SCHEDULE (DYNAMIC,1)
@@ -1656,9 +1560,6 @@ CONTAINS
 #ifdef W3_PR3
               IF (GTYPE .EQ. UNGTYPE) THEN
                 IF ( FLOGRD(9,3) ) THEN
-#endif
-#ifdef W3_T
-                  IF (MOD(ISEA,100).EQ.0) WRITE(NDSE,*) 'COMPUTING CFL FOR NODE:',ISEA
 #endif
 #ifdef W3_PDLIB
                   IF (.NOT. LPDLIB) THEN
@@ -1685,34 +1586,20 @@ CONTAINS
           END IF
         END IF
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 15')
-        !
-
-        !
-#ifdef W3_T
-        IF (GTYPE .EQ. UNGTYPE) THEN
-          IF ( FLOGRD(9,3) ) THEN
-            DTCFL1(:)=1.
-            DO JSEA=1,NSEAL
-              INDSORT(JSEA)=FLOAT(JSEA)
-              DTCFL1(JSEA)=DTG/CFLXYMAX(JSEA)
-            END DO
-            CALL SSORT1 (DTCFL1, INDSORT, NSEAL, 2)
-            IF ( IAPROC .EQ. NAPERR ) WRITE(NDSE,*) 'Nodes requesting smallest timesteps:'
-            IF ( IAPROC .EQ. NAPERR ) WRITE(NDSE,'(A,10I10)')   'Nodes      ',NINT(INDSORT(1:10))
-            IF ( IAPROC .EQ. NAPERR ) WRITE(NDSE,'(A,10F10.2)') 'time steps ',DTCFL1(1:10)
-            DO JSEA = 1, MIN(NSEAL,200)
-              ISEA   = NINT(INDSORT(JSEA))            ! will not work with MPI
-              IX     = MAPSF(ISEA,1)
-              IF (JSEA.EQ.1) then
-                WRITE(995,*) '       IP  dtmax_exp(ip)        x-coord        y-coord        z-coord'
-              end if
-              WRITE(995,'(I10,F10.2,3F10.4)') IX,  DTCFL1(JSEA), XGRD(1,IX), YGRD(2,IX), ZB(IX)
-            END DO ! JSEA
-            CLOSE(995)
-          END IF
-        END IF
-#endif
-
+        !debugstokes
+        DO JSEA=1, NSEAL
+          CALL INIT_GET_ISEA(ISEA, JSEA)
+          IX     = MAPSF(ISEA,1)
+          IY     = MAPSF(ISEA,2)
+          DO IK=1, NK
+            DO ITH=1, NTH
+              IS=ITH+(IK-1)*NTH
+              if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10,2i8)','DEBUGY5 ',time,VA(IS,JSEA),isea,jsea
+              if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10,2i8)','DEBUGY5 ',time,VA(IS,JSEA),isea,jsea
+            end do
+          end do
+        end do
+        !debugstokes
         !
         ! 3.6 Perform Propagation = = = = = = = = = = = = = = = = = = = = = = =
         ! 3.6.1 Preparations
@@ -1739,12 +1626,6 @@ CONTAINS
           !
           ! 3.6.2 Intra-spectral part 1
           !
-#ifdef W3_DEBUGCOH
-          CALL ALL_VA_INTEGRAL_PRINT(IMOD, "Before intraspectral part 1", 1)
-#endif
-#ifdef W3_TIMINGS
-          CALL PRINT_MY_TIME("Before intraspectral")
-#endif
           IF ( FLCTH .OR. FLCK ) THEN
             DO ITLOC=1, ITLOCH
               !
@@ -1831,13 +1712,20 @@ CONTAINS
             END DO
           END IF
           call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 16')
-
-#ifdef W3_DEBUGCOH
-          CALL ALL_VA_INTEGRAL_PRINT(IMOD, "Before spatial advection", 1)
-#endif
-#ifdef W3_TIMINGS
-          CALL PRINT_MY_TIME("Before spatial advection")
-#endif
+          !debugstokes
+          DO JSEA=1, NSEAL
+            CALL INIT_GET_ISEA(ISEA, JSEA)
+            IX     = MAPSF(ISEA,1)
+            IY     = MAPSF(ISEA,2)
+            DO IK=1, NK
+              DO ITH=1, NTH
+                IS=ITH+(IK-1)*NTH
+                if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY6 ',time,VA(IS,JSEA)
+                if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY6 ',time,VA(IS,JSEA)
+              end do
+            end do
+          end do
+          !debugstokes
           !
           ! 3.6.3 Longitude-latitude
           !       (time step correction in routine)
@@ -1865,9 +1753,6 @@ CONTAINS
             !
 #ifdef W3_PDLIB
             IF (FSTOTALIMP .and. (IT .ne. 0)) THEN
-#endif
-#ifdef W3_DEBUGCOH
-              CALL ALL_VA_INTEGRAL_PRINT(IMOD, "Before Block implicit", 1)
 #endif
 #ifdef W3_PDLIB
               CALL PDLIB_W3XYPUG_BLOCK_IMPLICIT(IMOD, FACX, FACX, DTG, VGX, VGY)
@@ -2059,14 +1944,19 @@ CONTAINS
             END IF
             !
           END IF
-
-#ifdef W3_DEBUGCOH
-          CALL ALL_VA_INTEGRAL_PRINT(IMOD, "After spatial advection", 1)
-#endif
-#ifdef W3_TIMINGS
-          CALL PRINT_MY_TIME("After spatial advection")
-#endif
-          !
+          !debugstokes
+          DO JSEA=1, NSEAL
+            CALL INIT_GET_ISEA(ISEA, JSEA)
+            IX     = MAPSF(ISEA,1)
+            IY     = MAPSF(ISEA,2)
+            DO IK=1, NK
+              DO ITH=1, NTH
+                IS=ITH+(IK-1)*NTH
+                if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10,i8)','DEBUGY6a ',time,VA(IS,JSEA),IOBP_LOC(JSEA)
+                if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10,i8)','DEBUGY6a ',time,VA(IS,JSEA),IOBP_LOC(JSEA)
+              end do
+            end do
+          end do
           ! 3.6.4 Intra-spectral part 2
           !
           IF ( FLCTH .OR. FLCK ) THEN
@@ -2153,14 +2043,22 @@ CONTAINS
               !
             END DO
           END IF
-#ifdef W3_DEBUGCOH
-          CALL ALL_VA_INTEGRAL_PRINT(IMOD, "After intraspectral adv.", 1)
-#endif
-#ifdef W3_TIMINGS
-          CALL PRINT_MY_TIME("fter intraspectral adv.")
-#endif
           !
           UGDTUPDATE = .FALSE.
+          !debugstokes
+          DO JSEA=1, NSEAL
+            CALL INIT_GET_ISEA(ISEA, JSEA)
+            IX     = MAPSF(ISEA,1)
+            IY     = MAPSF(ISEA,2)
+            DO IK=1, NK
+              DO ITH=1, NTH
+                IS=ITH+(IK-1)*NTH
+                if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY7 ',time,VA(IS,JSEA)
+                if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY7 ',time,VA(IS,JSEA)
+              end do
+            end do
+          end do
+          !debugstokes
           !
           ! 3.6 End propapgation  = = = = = = = = = = = = = = = = = = = = = = = =
 
@@ -2305,26 +2203,21 @@ CONTAINS
             !$OMP END DO
             !$OMP END PARALLEL
 #endif
-            !
-#ifdef W3_PDLIB
-#ifdef W3_DEBUGSRC
-            WRITE(740+IAPROC,*) 'ITIME=', ITIME, ' IT=', IT
-            CALL ALL_VAOLD_INTEGRAL_PRINT("VAOLD after W3SRCE_IMP_PRE_POST", 1)
-            CALL ALL_VA_INTEGRAL_PRINT(IMOD, "VA after W3SRCE_IMP_PRE_POST", 1)
-            IF (DEBUG_NODE .le. NSEAL) THEN
-              WRITE(740+IAPROC,*) '     Values for DEBUG_NODE=', DEBUG_NODE
-              WRITE(740+IAPROC,*) '     sum(VA)=', sum(VA(:,DEBUG_NODE))
-              WRITE(740+IAPROC,*) '     min/max(VA)=', minval(VA(:,DEBUG_NODE)), maxval(VA(:,DEBUG_NODE))
-            END IF
-#endif
-#endif
           END IF
-#ifdef W3_DEBUGCOH
-          CALL ALL_VA_INTEGRAL_PRINT(IMOD, "After source terms", 1)
-#endif
-#ifdef W3_TIMINGS
-          CALL PRINT_MY_TIME("After source terms")
-#endif
+          !debugstokes
+          DO JSEA=1, NSEAL
+            CALL INIT_GET_ISEA(ISEA, JSEA)
+            IX     = MAPSF(ISEA,1)
+            IY     = MAPSF(ISEA,2)
+            DO IK=1, NK
+              DO ITH=1, NTH
+                IS=ITH+(IK-1)*NTH
+                if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY8 ',time,VA(IS,JSEA)
+                if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY8 ',time,VA(IS,JSEA)
+              end do
+            end do
+          end do
+          !debugstokes
           !
           ! End of interations for DTMAX < 1s
           !
@@ -2358,23 +2251,10 @@ CONTAINS
           IDACT  = '         '
         END IF
         !
-#ifdef W3_DEBUGCOH
-        CALL ALL_VA_INTEGRAL_PRINT(IMOD, "end of time loop", 1)
-#endif
-#ifdef W3_TIMINGS
-        CALL PRINT_MY_TIME("end of time loop")
-#endif
         !
         !
       END DO
 
-#ifdef W3_TIMINGS
-      CALL PRINT_MY_TIME("W3WAVE, step 6.21.1")
-#endif
-      !
-#ifdef W3_T
-      WRITE (NDST,9030)
-#endif
       call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE END TIME LOOP')
       !
       !     End of loop over time steps
@@ -2402,15 +2282,9 @@ CONTAINS
       DTTST2 = DSEC21 ( TIME, TEND )
       FLAG_O = .NOT.SKIP_O .OR. ( SKIP_O .AND. DTTST2.NE.0. )
       !
-#ifdef W3_T
-      WRITE (NDST,9040) TOFRST, TDN, DTTST, DTTST1, FLAG_O
-#endif
       !
       IF ( DTTST.LE.0. .AND. DTTST1.NE.0. .AND. FLAG_O ) THEN
         !
-#ifdef W3_T
-        WRITE (NDST,9041)
-#endif
         !
         ! 4.b Processing and MPP preparations
         !
@@ -2430,9 +2304,6 @@ CONTAINS
         IF ( FLOUT(1) .AND. FLPFLD ) FLPART = FLPART .OR. DSEC21(TIME,TONEXT(:,1)).EQ.0.
         IF ( FLOUT(6) ) FLPART = FLPART .OR. DSEC21(TIME,TONEXT(:,6)).EQ.0.
         !
-#ifdef W3_T
-        WRITE (NDST,9042) LOCAL, FLPART, FLOUTG
-#endif
         !
         IF ( LOCAL .AND. FLPART ) CALL W3CPRT ( IMOD )
 
@@ -2796,13 +2667,7 @@ CONTAINS
         IF ( NRQMAX .NE. 0 ) DEALLOCATE ( STATIO )
 #endif
         !
-#ifdef W3_T
-        WRITE (NDST,9044)
-#endif
       END IF
-#ifdef W3_TIMINGS
-      CALL PRINT_MY_TIME("Before update log file")
-#endif
       call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP 4')
       !
       ! 5.  Update log file ------------------------------------------------ /
@@ -2848,9 +2713,6 @@ CONTAINS
       !
       DTTST  = DSEC21 ( TIME, TEND )
       IF ( DTTST .EQ. 0. ) EXIT
-#ifdef W3_TIMINGS
-      CALL PRINT_MY_TIME("Continuing the loop")
-#endif
     END DO
     call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP 5')
     !
@@ -3722,9 +3584,6 @@ CONTAINS
       NLOC = NSEA/NAPROC
 #endif
       !
-#ifdef W3_T
-      WRITE (NDST,9000) IPROC, NLOC
-#endif
       NMIN   = MIN ( NMIN , NLOC )
     END DO
 #ifdef W3_OMPG
@@ -3733,9 +3592,6 @@ CONTAINS
 #endif
     !
     FLAG0  = NMIN .EQ. 0
-#ifdef W3_T
-    WRITE (NDST,9001) NMIN, FLAG0
-#endif
     !
     RETURN
     !
