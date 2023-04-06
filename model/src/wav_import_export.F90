@@ -1317,11 +1317,11 @@ contains
             abx = abx + a(ith,ik,jsea)*ecos(ith)
             aby = aby + a(ith,ik,jsea)*esin(ith)
             is = ith+(ik-1)*nth
-            if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32)print '(a,2i12,3i4,2g18.10)','DEBUG32 ',time,ik,ith,is,aby,a(ith,ik,jsea)
-            if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32)print '(a,2i12,3i4,2g18.10)','DEBUG32 ',time,ik,ith,is,aby,a(ith,ik,jsea)
+            if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32)print '(a,2i12,3i6,2g18.10)','DEBUG32 ',time,ik,ith,is,aby,a(ith,ik,jsea)
+            if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32)print '(a,2i12,3i6,2g18.10)','DEBUG32 ',time,ik,ith,is,aby,a(ith,ik,jsea)
 
-            if(onde1 .and. ix .eq. 8442 .and. ik .eq. 33)print '(a,2i12,3i4,2g18.10)','DEBUG33 ',time,ik,ith,is,aby,a(ith,ik,jsea)
-            if(onde2 .and. ix .eq. 8442 .and. ik .eq. 33)print '(a,2i12,3i4,2g18.10)','DEBUG33 ',time,ik,ith,is,aby,a(ith,ik,jsea)
+            if(onde1 .and. ix .eq. 8442 .and. ik .eq. 33)print '(a,2i12,3i6,2g18.10)','DEBUG33 ',time,ik,ith,is,aby,a(ith,ik,jsea)
+            if(onde2 .and. ix .eq. 8442 .and. ik .eq. 33)print '(a,2i12,3i6,2g18.10)','DEBUG33 ',time,ik,ith,is,aby,a(ith,ik,jsea)
           end do
 
           factor = dden(ik) / cg(ik,isea)

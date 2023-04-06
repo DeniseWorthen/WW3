@@ -1946,6 +1946,7 @@ CONTAINS
             !
           END IF
           !debugstokes
+          !first diff seen 64800
           DO JSEA=1, NSEAL
             CALL INIT_GET_ISEA(ISEA, JSEA)
             IX     = MAPSF(ISEA,1)
