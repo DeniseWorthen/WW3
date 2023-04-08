@@ -1111,19 +1111,21 @@ CONTAINS
           USTDIR = 0.05
         END IF
 
-        !      DO JSEA = 1, NSEAL
-        !        DO IS = 1, NSPEC
-        !          IF (VA(IS, JSEA) .LT. 0.) THEN
-        !            WRITE(740+IAPROC,*) 'TEST W3WAVE 5', VA(IS,JSEA)
-        !            CALL FLUSH(740+IAPROC)
-        !          ENDIF
-        !        ENDDO
-        !      ENDDO
-        !      IF (SUM(VA) .NE. SUM(VA)) THEN
-        !        WRITE(740+IAPROC,*) 'NAN in ACTION 5', IX, IY, SUM(VA)
-        !        CALL FLUSH(740+IAPROC)
-        !        STOP
-        !      ENDIF
+#ifdef W3_DEBUGRUN
+        DO JSEA = 1, NSEAL
+          DO IS = 1, NSPEC
+            IF (VA(IS, JSEA) .LT. 0.) THEN
+              WRITE(740+IAPROC,*) 'TEST W3WAVE 5', VA(IS,JSEA)
+              CALL FLUSH(740+IAPROC)
+            ENDIF
+          ENDDO
+        ENDDO
+        IF (SUM(VA) .NE. SUM(VA)) THEN
+          WRITE(740+IAPROC,*) 'NAN in ACTION 5', IX, IY, SUM(VA)
+          CALL FLUSH(740+IAPROC)
+          STOP
+        ENDIF
+#endif
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 6')
         !
         IF ( FLIWND .AND. LOCAL ) CALL W3UINI ( VA )
@@ -1407,7 +1409,7 @@ CONTAINS
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 13')
         !
 #ifdef W3_PDLIB
-        IF ( FLSOU .and. LPDLIB .and. FSSOURCE) THEN
+        IF (LPDLIB .and. FLSOU .and. FSSOURCE) THEN
 #endif
 
 #ifdef W3_OMP0
@@ -1422,31 +1424,28 @@ CONTAINS
 #endif
 
 #ifdef W3_PDLIB
-          IF (.not. LSLOC) THEN
-            VSTOT = 0.
-            VDTOT = 0.
-          ENDIF
           IF (LSLOC) THEN
             B_JAC     = 0.
             ASPAR_JAC = 0.
+          ELSE
+            VSTOT = 0.
+            VDTOT = 0.
           ENDIF
 #endif
 
 
 #ifdef W3_PDLIB
+
           DO JSEA = 1, NP
-#endif
 
-#ifdef W3_PDLIB
             CALL INIT_GET_ISEA(ISEA, JSEA)
-#endif
 
-#ifdef W3_PDLIB
             IX     = MAPSF(ISEA,1)
             IY     = MAPSF(ISEA,2)
             DELA=1.
             DELX=1.
             DELY=1.
+
 #ifdef W3_REF1
             IF (GTYPE.EQ.RLGTYPE) THEN
               DELX=SX*CLATS(ISEA)/FACX
@@ -1459,76 +1458,60 @@ CONTAINS
               DELY=HQFAC(IY,IX)/ FACX
               DELA=DELX*DELY
             END IF
-#endif
-            !
-#ifdef W3_REF1
             REFLEC=REFLC(:,ISEA)
             REFLEC(4)=BERG(ISEA)*REFLEC(4)
             REFLED=REFLD(:,ISEA)
 #endif
+
 #ifdef W3_BT4
             D50=SED_D50(ISEA)
             PSIC=SED_PSIC(ISEA)
 #endif
             !
-#ifdef W3_PDLIB
-            IF ((IOBP_LOC(JSEA) .eq. 1 .or. IOBP_LOC(JSEA) .eq. 3) &
-                 & .and. IOBDP_LOC(JSEA) .eq. 1 .and. IOBPA_LOC(JSEA) .eq. 0) THEN
-#endif
-
-
-#ifdef W3_PDLIB
 #ifdef W3_DEBUGSRC
-              IF (IX .eq. DEBUG_NODE) THEN
-                WRITE(740+IAPROC,*) 'NODE_SRCE_IMP_PRE : IX=', IX, ' JSEA=', JSEA
-              END IF
-              WRITE(740+IAPROC,*) 'IT/IX/IY/IMOD=', IT, IX, IY, IMOD
-              WRITE(740+IAPROC,*) 'ISEA/JSEA=', ISEA, JSEA
-              WRITE(740+IAPROC,*) 'Before sum(VA)=', sum(VA(:,JSEA))
-              FLUSH(740+IAPROC)
-#endif
-              CALL W3SRCE(srce_imp_pre, IT, ISEA, JSEA, IX, IY, IMOD, &
-                   VAold(:,JSEA), VA(:,JSEA),                         &
-                   VSioDummy, VDioDummy, SHAVETOT(JSEA),              &
-                   ALPHA(1:NK,JSEA), WN(1:NK,ISEA),                   &
-                   CG(1:NK,ISEA), CLATS(ISEA), DW(ISEA), U10(ISEA),   &
-                   U10D(ISEA),                                        &
-#ifdef W3_FLX5
-                   TAUA(ISEA), TAUADIR(ISEA),                         &
-#endif
-                   AS(ISEA), UST(ISEA),                               &
-                   USTDIR(ISEA), CX(ISEA), CY(ISEA),                  &
-                   ICE(ISEA), ICEH(ISEA), ICEF(ISEA),                 &
-                   ICEDMAX(ISEA),                                     &
-                   REFLEC, REFLED, DELX, DELY, DELA,                  &
-                   TRNX(IY,IX), TRNY(IY,IX), BERG(ISEA),              &
-                   FPIS(ISEA), DTDYN(JSEA),                           &
-                   FCUT(JSEA), DTGpre, TAUWX(JSEA), TAUWY(JSEA),      &
-                   TAUOX(JSEA), TAUOY(JSEA), TAUWIX(JSEA),            &
-                   TAUWIY(JSEA), TAUWNX(JSEA),                        &
-                   TAUWNY(JSEA),  PHIAW(JSEA), CHARN(JSEA),           &
-                   TWS(JSEA), PHIOC(JSEA), TMP1, D50, PSIC, TMP2,     &
-                   PHIBBL(JSEA), TMP3, TMP4, PHICE(JSEA),             &
-                   TAUOCX(JSEA), TAUOCY(JSEA), WNMEAN(JSEA),          &
-                   RHOAIR(ISEA), ASF(ISEA))
-              IF (.not. LSLOC) THEN
-                VSTOT(:,JSEA) = VSioDummy
-                VDTOT(:,JSEA) = VDioDummy
-              ENDIF
-#ifdef W3_DEBUGSRC
-              WRITE(740+IAPROC,*) 'After sum(VA)=', sum(VA(:,JSEA))
-              WRITE(740+IAPROC,*) '   sum(VSTOT)=', sum(VSTOT(:,JSEA))
-              WRITE(740+IAPROC,*) '   sum(VDTOT)=', sum(VDTOT(:,JSEA))
-              WRITE(740+IAPROC,*) '     SHAVETOT=', SHAVETOT(JSEA)
-              FLUSH(740+IAPROC)
-#endif
-#endif
-            ELSE
-              UST   (ISEA) = UNDEF
-              USTDIR(ISEA) = UNDEF
-              DTDYN (JSEA) = UNDEF
-              FCUT  (JSEA) = UNDEF
+            IF (IX .eq. DEBUG_NODE) THEN
+              WRITE(740+IAPROC,*) 'NODE_SRCE_IMP_PRE : IX=', IX, ' JSEA=', JSEA
             END IF
+            WRITE(740+IAPROC,*) 'IT/IX/IY/IMOD=', IT, IX, IY, IMOD
+            WRITE(740+IAPROC,*) 'ISEA/JSEA=', ISEA, JSEA
+            WRITE(740+IAPROC,*) 'Before sum(VA)=', sum(VA(:,JSEA))
+            FLUSH(740+IAPROC)
+#endif
+            CALL W3SRCE(srce_imp_pre, IT, ISEA, JSEA, IX, IY, IMOD, &
+                 VAold(:,JSEA), VA(:,JSEA),                         &
+                 VSioDummy, VDioDummy, SHAVETOT(JSEA),              &
+                 ALPHA(1:NK,JSEA), WN(1:NK,ISEA),                   &
+                 CG(1:NK,ISEA), CLATS(ISEA), DW(ISEA), U10(ISEA),   &
+                 U10D(ISEA),                                        &
+#ifdef W3_FLX5
+                 TAUA(ISEA), TAUADIR(ISEA),                         &
+#endif
+                 AS(ISEA), UST(ISEA),                               &
+                 USTDIR(ISEA), CX(ISEA), CY(ISEA),                  &
+                 ICE(ISEA), ICEH(ISEA), ICEF(ISEA),                 &
+                 ICEDMAX(ISEA),                                     &
+                 REFLEC, REFLED, DELX, DELY, DELA,                  &
+                 TRNX(IY,IX), TRNY(IY,IX), BERG(ISEA),              &
+                 FPIS(ISEA), DTDYN(JSEA),                           &
+                 FCUT(JSEA), DTGpre, TAUWX(JSEA), TAUWY(JSEA),      &
+                 TAUOX(JSEA), TAUOY(JSEA), TAUWIX(JSEA),            &
+                 TAUWIY(JSEA), TAUWNX(JSEA),                        &
+                 TAUWNY(JSEA),  PHIAW(JSEA), CHARN(JSEA),           &
+                 TWS(JSEA), PHIOC(JSEA), TMP1, D50, PSIC, TMP2,     &
+                 PHIBBL(JSEA), TMP3, TMP4, PHICE(JSEA),             &
+                 TAUOCX(JSEA), TAUOCY(JSEA), WNMEAN(JSEA),          &
+                 RHOAIR(ISEA), ASF(ISEA))
+            IF (.not. LSLOC) THEN
+              VSTOT(:,JSEA) = VSioDummy
+              VDTOT(:,JSEA) = VDioDummy
+            ENDIF
+#ifdef W3_DEBUGSRC
+            WRITE(740+IAPROC,*) 'After sum(VA)=', sum(VA(:,JSEA))
+            WRITE(740+IAPROC,*) '   sum(VSTOT)=', sum(VSTOT(:,JSEA))
+            WRITE(740+IAPROC,*) '   sum(VDTOT)=', sum(VDTOT(:,JSEA))
+            WRITE(740+IAPROC,*) '     SHAVETOT=', SHAVETOT(JSEA)
+            FLUSH(740+IAPROC)
+#endif
           END DO ! JSEA
         END IF ! PDLIB
 #endif
@@ -1712,6 +1695,7 @@ CONTAINS
               !
             END DO
           END IF
+
           call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 16')
           !debugstokes
           DO JSEA=1, NSEAL
@@ -1738,14 +1722,7 @@ CONTAINS
               FACX   =  1.
             END IF
           END IF
-          IF (LPDLIB) THEN
-            ! fstotalimp=F,fstotalexp=F,flcxy=T
-            if(onde1)print *, 'Z0 ',it,FSTOTALIMP,FSTOTALEXP,FLCX,FLCY
-            IF ((FSTOTALIMP .eqv. .FALSE.).and.(FLCX .or. FLCY)) THEN
-              DO ISPEC=1,NSPEC
-                CALL PDLIB_W3XYPUG ( ISPEC, FACX, FACX, DTG, VGX, VGY, UGDTUPDATE )
-              END DO
-              !debugstokes
+          !debugstokes
               DO JSEA=1, NSEAL
                 CALL INIT_GET_ISEA(ISEA, JSEA)
                 IX     = MAPSF(ISEA,1)
@@ -1759,11 +1736,19 @@ CONTAINS
                 end do
               end do
               !debugstokes
+
+          IF (LPDLIB) THEN
+            IF (FLCX .or. FLCY) THEN
+              IF (.NOT. FSTOTALIMP .AND. .NOT. FSTOTALEXP) THEN
+                DO ISPEC=1,NSPEC
+                  CALL PDLIB_W3XYPUG ( ISPEC, FACX, FACX, DTG, VGX, VGY, UGDTUPDATE )
+                END DO
+              END IF
             END IF
             IF (FSTOTALIMP .and. (IT .ne. 0)) THEN
-              CALL PDLIB_W3XYPUG_BLOCK_IMPLICIT(IMOD, FACX, FACX, DTG, VGX, VGY)
+              CALL PDLIB_W3XYPUG_BLOCK_IMPLICIT(IMOD, FACX, FACX, DTG, VGX, VGY, UGDTUPDATE )
             ELSE IF(FSTOTALEXP .and. (IT .ne. 0)) THEN
-              CALL PDLIB_W3XYPUG_BLOCK_EXPLICIT(IMOD, FACX, FACX, DTG, VGX, VGY)
+              CALL PDLIB_W3XYPUG_BLOCK_EXPLICIT(IMOD, FACX, FACX, DTG, VGX, VGY, UGDTUPDATE )
             ENDIF
             !debugstokes
             DO JSEA=1, NSEAL
@@ -2106,6 +2091,7 @@ CONTAINS
             !$OMP&                  REFLEC,REFLED,D50,PSIC,TMP1,TMP2,TMP3,TMP4)
             !$OMP DO SCHEDULE (DYNAMIC,1)
 #endif
+
             !
             DO JSEA=1, NSEAL
               CALL INIT_GET_ISEA(ISEA, JSEA)
@@ -2212,7 +2198,6 @@ CONTAINS
               END IF
             END DO
 
-
             !
 #ifdef W3_OMPG
             !$OMP END DO
@@ -2241,6 +2226,9 @@ CONTAINS
         END DO
         IF (IT.GT.0) DTG=DTGTEMP
 #endif
+
+
+
 
         !
         !
@@ -2320,7 +2308,9 @@ CONTAINS
         IF ( FLOUT(6) ) FLPART = FLPART .OR. DSEC21(TIME,TONEXT(:,6)).EQ.0.
         !
         !
-        IF ( LOCAL .AND. FLPART ) CALL W3CPRT ( IMOD )
+        IF ( LOCAL .AND. FLPART ) then
+          CALL W3CPRT ( IMOD )
+        end IF
 
         do_w3outg = .false.
         if (w3_cesmcoupled_flag .and. histwr) then
@@ -2463,7 +2453,6 @@ CONTAINS
         TOFRST(2) =  0
         !
         DO J=1, NOTYPE
-
           IF ( FLOUT(J) ) THEN
             !
             !
