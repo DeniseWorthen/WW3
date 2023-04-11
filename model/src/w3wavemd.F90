@@ -1680,7 +1680,7 @@ CONTAINS
                          CY(ISEA), DCXDX(IY,IXrel), DCXDY(IY,IXrel),     &
                          DCYDX(IY,IXrel), DCYDY(IY,IXrel),               &
                          DCDX(:,IY,IXrel), DCDY(:,IY,IXrel), VA(:,JSEA), &
-                         CFLTHMAX(JSEA), CFLKMAX(JSEA) )
+                         CFLTHMAX(JSEA), CFLKMAX(JSEA) , 1)
 #endif
                     !
                   END IF  !!  GTYPE
@@ -1723,19 +1723,19 @@ CONTAINS
             END IF
           END IF
           !debugstokes
-              DO JSEA=1, NSEAL
-                CALL INIT_GET_ISEA(ISEA, JSEA)
-                IX     = MAPSF(ISEA,1)
-                IY     = MAPSF(ISEA,2)
-                DO IK=1, NK
-                  DO ITH=1, NTH
-                    IS=ITH+(IK-1)*NTH
-                    if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY6a0 ',time,VA(IS,JSEA)
-                    if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY6a0 ',time,VA(IS,JSEA)
-                  end do
-                end do
+          DO JSEA=1, NSEAL
+            CALL INIT_GET_ISEA(ISEA, JSEA)
+            IX     = MAPSF(ISEA,1)
+            IY     = MAPSF(ISEA,2)
+            DO IK=1, NK
+              DO ITH=1, NTH
+                IS=ITH+(IK-1)*NTH
+                if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY6a0 ',time,VA(IS,JSEA)
+                if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY6a0 ',time,VA(IS,JSEA)
               end do
-              !debugstokes
+            end do
+          end do
+          !debugstokes
 
           IF (LPDLIB) THEN
             IF (FLCX .or. FLCY) THEN
@@ -1944,6 +1944,7 @@ CONTAINS
           END IF
           !debugstokes
           !ok at 64800
+          ! dcdx,dcdy = 0
           DO JSEA=1, NSEAL
             CALL INIT_GET_ISEA(ISEA, JSEA)
             IX     = MAPSF(ISEA,1)
@@ -2027,7 +2028,7 @@ CONTAINS
                          CY(ISEA), DCXDX(IY,IXrel), DCXDY(IY,IXrel),     &
                          DCYDX(IY,IXrel), DCYDY(IY,IXrel),               &
                          DCDX(:,IY,IXrel), DCDY(:,IY,IXrel), VA(:,JSEA), &
-                         CFLTHMAX(JSEA), CFLKMAX(JSEA) )
+                         CFLTHMAX(JSEA), CFLKMAX(JSEA) , 2)
 #endif
                     !
                   END IF  !! GTYPE
