@@ -6328,6 +6328,7 @@ CONTAINS
 #endif
   END SUBROUTINE PDLIB_JACOBI_GAUSS_SEIDEL_BLOCK
   !/ ------------------------------------------------------------------- /
+!AAA
   SUBROUTINE PDLIB_EXPLICIT_BLOCK(IMOD, FACX, FACY, DTG, VGX, VGY, LCALC)
     !/
     !/                  +-----------------------------------+
@@ -6395,6 +6396,11 @@ CONTAINS
 #ifdef W3_REF1
     USE W3GDATMD, only: REFPARS
 #endif
+    !debug
+    use w3wdatmd, only : time
+    use w3odatmd, only : naproc, iaproc
+    use w3gdatmd,  only : xgrd, ygrd
+    use yowelementpool, only : belongto
 
     IMPLICIT NONE
 
@@ -6416,9 +6422,17 @@ CONTAINS
 
     REAL, PARAMETER   :: ONESIXTH = 1.0/6.0
     REAL, PARAMETER   :: ZERO = 0.0
-    REAL, PARAMETER   :: THR = 1E-12
+    REAL, PARAMETER   :: THR = 1.0E-12
 
     INTEGER           :: IK, ISP, ITH, IE, IP, IT, IBI, NI(3), I1, I2, I3, JX, IERR, IP_GLOB, ISEA
+    logical :: onde1, onde2
+    integer :: badix=24991, badik=28, badith=16
+    ! ith + (ik-1)*nth
+    integer :: badis=16 + (28-1)*36
+    onde1 = .false.
+    onde2 = .false.
+    if(naproc .eq. 10 .and. iaproc .eq. 5)onde2 = .true.
+    if(naproc .eq.  5 .and. iaproc .eq. 3)onde1 = .true.
     !
     ! 1.b Initialize arrays
     !
@@ -6427,10 +6441,20 @@ CONTAINS
     !   2a. Vectorized for all points looping over each wave number (maybe do a dirty save will be nice!)
     !
 
+    ! iplg(npa)
+    !print *,'YYY ',ne,npa,ubound(ine,2),ubound(mapsf,1)
+    !print *,'YYYY ',minval(iplg),maxval(iplg),npa,ne,ubound(ine,2),ubound(iplg)
+
+    ik = badik
+    do ip = 1,np
+      isea = iplg(ip)
+      if(onde1 .and. isea .eq. badix .and. ik .eq. badik)print '(a,2i8,3g18.10)','DEBUGP0 ',ip,isea,xgrd(1,mapsf(isea,1)),ygrd(1,mapsf(isea,1)),CLATS(ISEA)
+      if(onde2 .and. isea .eq. badix .and. ik .eq. badik)print '(a,2i8,3g18.10)','DEBUGP0 ',ip,isea,xgrd(1,mapsf(isea,1)),ygrd(1,mapsf(isea,1)),CLATS(ISEA)
+    end do
+
     DO IK = 1, NK
 
       IF (LCALC) THEN
-
         DO IP = 1, NPA
           CALL WAVNU3 (SIG(IK), DW(iplg(IP)), KSIG(IP), CGSIG(IP))
         ENDDO
@@ -6440,6 +6464,8 @@ CONTAINS
             ISEA = IPLG(IP)
             CXX(ITH,IP) = CGSIG(IP) * FACX * ECOS(ITH) / CLATS(ISEA)
             CYY(ITH,IP) = CGSIG(IP) * FACY * ESIN(ITH)
+            if(onde1 .and. isea .eq. badix .and. ik .eq. badik .and. ith .eq. badith)print '(a,i8,2i12,2g18.10)','DEBUGP1 ',isea,time,cxx(ith,ip),cyy(ith,ip)
+            if(onde2 .and. isea .eq. badix .and. ik .eq. badik .and. ith .eq. badith)print '(a,i8,2i12,2g18.10)','DEBUGP1 ',isea,time,cxx(ith,ip),cyy(ith,ip)
           ENDDO ! ith
           IF (FLCUR) THEN
             DO ITH = 1, NTH
@@ -6448,14 +6474,15 @@ CONTAINS
                 CXX(ITH,IP) = CXX(ITH,IP) + FACX * CX(ISEA)/CLATS(ISEA)
                 CYY(ITH,IP) = CYY(ITH,IP) + FACY * CY(ISEA)
               ENDIF
+              if(onde1 .and. isea .eq. badix .and. ik .eq. badik .and. ith .eq. badith)print '(a,i8,2i12,i5,3g18.10)','DEBUGP2 ',isea,time,IOBP_LOC(IP),cxx(ith,ip),cyy(ith,ip),CGSIG(IP)
+              if(onde2 .and. isea .eq. badix .and. ik .eq. badik .and. ith .eq. badith)print '(a,i8,2i12,i5,3g18.10)','DEBUGP2 ',isea,time,IOBP_LOC(IP),cxx(ith,ip),cyy(ith,ip),CGSIG(IP)
             ENDDO !ith
           ENDIF
-        ENDDO
+        ENDDO ! DO IP = 1, NPA
 
+        !kelem1,2,3(nth,ne,nk); flall1..(nth,ne,nk)
         DO IE = 1, NE
-
           NI  = INE(:,IE)
-
           I1  = NI(1)
           I2  = NI(2)
           I3  = NI(3)
@@ -6492,9 +6519,9 @@ CONTAINS
           FLALL1(:,IE,IK) = (FL311 + FL212) * ONESIXTH + KELEM1(:,IE,IK)
           FLALL2(:,IE,IK) = (FL111 + FL312) * ONESIXTH + KELEM2(:,IE,IK)
           FLALL3(:,IE,IK) = (FL211 + FL112) * ONESIXTH + KELEM3(:,IE,IK)
-
         ENDDO  ! IE
 
+        !kksum(nth,npa)
         KKSUM = ZERO
         DO IE = 1, NE
           NI = INE(:,IE)
@@ -6505,9 +6532,10 @@ CONTAINS
           ENDDO
         END DO
 
+        !pdlib_si(npa), iobdp_loc(npa); iobdp_loc =1 for depth>min
         DTMAXEXP = 1.E10
         DTMAX    = 1.E10
-        DO IP = 1, np
+        do ip = 1,np
           IF (IOBP_LOC(IP) .EQ. 1 .OR. FSBCCFL) THEN
             DO ITH = 1, NTH
               DTMAXEXP(ITH) = PDLIB_SI(IP)/MAX(THR,KKSUM(ITH,IP)*IOBDP_LOC(IP))
@@ -6516,8 +6544,9 @@ CONTAINS
             DTMAXOUT = MINVAL(DTMAX)
           ENDIF
         END DO
-        !?
-        fout(1) = 0.0
+
+        !not needed to avoid hang
+        !fout(1) = 0.0
         FIN(1) = DTMAXOUT
         CALL MPI_ALLREDUCE(FIN,FOUT,1,rtype,MPI_MIN,MPI_COMM_WCMP,ierr)
         DTMAXGL = FOUT(1)
@@ -6532,9 +6561,21 @@ CONTAINS
           ITER(IK) = ABS(NINT(CFLXY))
         END IF
 
+        ! a/b/c = (a/b)/c
+        ! does np here make it hang?---yes, if dtsi uses npa below, regardless of first exchange call, it hangs
+        ! if this i 1,np
+        !do ip=1,np
         DO IP = 1, npa
           DTSI(IP) = DBLE(DTMAXGL)/DBLE(ITER(IK))/PDLIB_SI(IP) ! Some precalculations for the time integration.
         END DO
+
+        ! debug
+        do ip = 1,npa
+          ISEA = IPLG(IP)
+          if(onde1 .and. isea .eq. badix .and. ik .eq. badik)print '(a,i8,2i12,g18.10)','DEBUGP3 ',isea,time,dtsi(ip)
+          if(onde2 .and. isea .eq. badix .and. ik .eq. badik)print '(a,i8,2i12,g18.10)','DEBUGP3 ',isea,time,dtsi(ip)
+        end do
+        !debug
 
       END IF ! LCALC
 
@@ -6546,53 +6587,68 @@ CONTAINS
           u(ith,ip) = va(isp,ip) / cgsig(ip) * clats(iplg(ip))
         enddo
       enddo
-      CALL PDLIB_exchange2DREAL(U)
 
+      !debug
+      do ip = 1,npa
+        ISEA = IPLG(IP)
+        isp = 0
+        do ith = 1,nth
+          isp = ith + (ik-1)*nth
+          if(onde1 .and. isea .eq. badix .and. ik .eq. badik .and. ith .eq. badith)print '(a,2i8,2i12,2g18.10)','DEBUGP4 ',isea,iter(ik),time,va(isp,ip),u(ith,ip)
+          if(onde2 .and. isea .eq. badix .and. ik .eq. badik .and. ith .eq. badith)print '(a,2i8,2i12,2g18.10)','DEBUGP4 ',isea,iter(ik),time,va(isp,ip),u(ith,ip)
+        end do
+      end do
+      !debug
+
+      !CALL PDLIB_exchange2DREAL(U)
+      !UOLD = U
+      !st(nth,npa)
       DO IT = 1, ITER(IK)
-        ST = ZERO
-        DO IE = 1, NE
-          NI  = INE(:,IE)
-          DO ITH = 1, NTH
-            UTILDE(ITH)   = NM(ITH,IE,IK) * (FLALL1(ITH,IE,IK)*U(ITH,NI(1)) + FLALL2(ITH,IE,IK)*U(ITH,NI(2)) + FLALL3(ITH,IE,IK)*U(ITH,NI(3)))
-            ST(ITH,NI(1)) = ST(ITH,NI(1)) + KELEM1(ITH,IE,IK) * (U(ITH,NI(1)) - UTILDE(ITH)) ! the 2nd term are the theta values of each node ...
-            ST(ITH,NI(2)) = ST(ITH,NI(2)) + KELEM2(ITH,IE,IK) * (U(ITH,NI(2)) - UTILDE(ITH)) ! the 2nd term are the theta values of each node ...
-            ST(ITH,NI(3)) = ST(ITH,NI(3)) + KELEM3(ITH,IE,IK) * (U(ITH,NI(3)) - UTILDE(ITH)) ! the 2nd term are the theta values of each node ...
-          ENDDO
-        END DO ! IE
 
-        DO IP = 1, NPA
+         ST = ZERO
+         DO IE = 1, NE
+            NI  = INE(:,IE)
+            DO ITH = 1, NTH
+               UTILDE(ITH)   = NM(ITH,IE,IK) * (FLALL1(ITH,IE,IK)*U(ITH,NI(1)) + FLALL2(ITH,IE,IK)*U(ITH,NI(2)) + FLALL3(ITH,IE,IK)*U(ITH,NI(3)))
+               ST(ITH,NI(1)) = ST(ITH,NI(1)) + KELEM1(ITH,IE,IK) * (U(ITH,NI(1)) - UTILDE(ITH)) ! the 2nd term are the theta values of each node ...
+               ST(ITH,NI(2)) = ST(ITH,NI(2)) + KELEM2(ITH,IE,IK) * (U(ITH,NI(2)) - UTILDE(ITH)) ! the 2nd term are the theta values of each node ...
+               ST(ITH,NI(3)) = ST(ITH,NI(3)) + KELEM3(ITH,IE,IK) * (U(ITH,NI(3)) - UTILDE(ITH)) ! the 2nd term are the theta values of each node ...
+            ENDDO
+         END DO ! IE
+
+         !putting npa here makes it hang! need dtsi (1:npa) above; iobpa=1 for "active boundary pts", otherwise=0, iobdp(~depth), iobpd(~boundary)
+         ! if npa is used here and np is used above in calc of dtsi, model hangs whether exchange above is on or off
+        DO IP = 1, NPa
           DO ITH = 1, NTH
-            U(ITH,IP) = MAX(ZERO,U(ITH,IP)-DTSI(IP)*ST(ITH,IP)*(1-IOBPA_LOC(IP)))*IOBPD_LOC(ITH,IP)*IOBDP_LOC(IP)
-#ifdef W3_REF1
-            IF (REFPARS(3).LT.0.5.AND.IOBPD_LOC(ITH,IP).EQ.0.AND.IOBPA_LOC(IP).EQ.0) U(ITH,IP) = UOLD(ITH,IP) ! restores reflected boundary values
-#endif
+             U(ITH,IP) = MAX(ZERO,U(ITH,IP)-DTSI(IP)*ST(ITH,IP)*(1-IOBPA_LOC(IP)))*IOBPD_LOC(ITH,IP)*IOBDP_LOC(IP)
           ENDDO
         ENDDO ! IP
 
-        IF ( FLBPI ) THEN
-          DO ITH = 1, NTH
-            ISP = ITH + (IK-1) * NTH
-            RD1 = RD10 - DTG * REAL(ITER(IK)-IT)/REAL(ITER(IK))
-            RD2 = RD20
-            IF ( RD2 .GT. 0.001 ) THEN
-              RD2    = MIN(1.,MAX(0.,RD1/RD2))
-              RD1    = 1. - RD2
-            ELSE
-              RD1    = 0.
-              RD2    = 1.
-            END IF
-            DO IBI = 1, NBI
-              IP_glob = MAPSF(ISBPI(IBI),1)
-              JX      = IPGL_npa(IP_glob)
-              IF (JX .gt. 0) THEN
-                U(ITH,JX) = ( RD1*BBPI0(ISP,IBI) + RD2*BBPIN(ISP,IBI) ) / CGSIG(ISBPI(IBI)) * CLATS(ISBPI(IBI))
-              END IF
-            END DO
-          ENDDO
-        ENDIF ! FLBPI
+        !debug
+        do ip = 1,npa
+          ISEA = IPLG(IP)
+          isp = 0
+          do ith = 1,nth
+            isp = ith + (ik-1)*nth
+            if(onde1 .and. isea .eq. badix .and. ik .eq. badik .and. ith .eq. badith)print '(a,2i8,2i12,3g18.10)','DEBUGP5 ',isea,iter(ik),time,va(isp,ip),u(ith,ip),st(ith,ip)
+            if(onde2 .and. isea .eq. badix .and. ik .eq. badik .and. ith .eq. badith)print '(a,2i8,2i12,3g18.10)','DEBUGP5 ',isea,iter(ik),time,va(isp,ip),u(ith,ip),st(ith,ip)
+          end do
+        end do
+        !debug
 
         CALL PDLIB_exchange2DREAL(U)
 
+        !debug
+        do ip = 1,npa
+          ISEA = IPLG(IP)
+          isp = 0
+          do ith = 1,nth
+            isp = ith + (ik-1)*nth
+            if(onde1 .and. isea .eq. badix .and. ik .eq. badik .and. ith .eq. badith)print '(a,2i8,2i12,2g18.10)','DEBUGP6 ',isea,iter(ik),time,va(isp,ip),u(ith,ip)
+            if(onde2 .and. isea .eq. badix .and. ik .eq. badik .and. ith .eq. badith)print '(a,2i8,2i12,2g18.10)','DEBUGP6 ',isea,iter(ik),time,va(isp,ip),u(ith,ip)
+          end do
+        end do
+        !debug
       ENDDO ! IT
 
       ! Exact and convert Wave Action
@@ -6658,7 +6714,7 @@ CONTAINS
 #endif
     USE W3GDATMD, only:  NTH, NK
 #ifdef W3_PDLIB
-    USE YOWNODEPOOL, only: np, npa
+    USE YOWNODEPOOL, only: np,npa
     USE YOWELEMENTPOOL, only: ne
 #endif
     IMPLICIT NONE
@@ -6666,7 +6722,7 @@ CONTAINS
 
     ALLOCATE(FLALL1(NTH,NE,NK), FLALL2(NTH,NE,NK), FLALL3(NTH,NE,NK))
     ALLOCATE(KELEM1(NTH,NE,NK), KELEM2(NTH,NE,NK), KELEM3(NTH,NE,NK))
-    ALLOCATE(NM(NTH,NE,NK), DTSI(NPA))
+    ALLOCATE(NM(NTH,NE,NK), DTSI(NPa))
     ALLOCATE(ITER(NK))
 
     !/ ------------------------------------------------------------------- /

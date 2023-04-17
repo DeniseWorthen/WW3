@@ -513,7 +513,7 @@ CONTAINS
   !>
   SUBROUTINE W3QCK2 (MX, MY, NX, NY, VELO, DT, DX1, DX2, Q, CLOSE,&
        INC,  MAPACT, NACT, MAPBOU, NB0, NB1, NB2,    &
-       NDSE, NDST )
+       NDSE, NDST, isea, partno )
     !/
     !/                  +-----------------------------------+
     !/                  | WAVEWATCH III           NOAA/NCEP |
@@ -599,6 +599,9 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
+    use w3wdatmd, only : time
+    use w3odatmd, only  : naproc, iaproc
+
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -611,6 +614,8 @@ CONTAINS
     REAL, INTENT(INOUT)     :: VELO(MY*(MX+1)), DX1(MY*(MX+1)),     &
          DX2(1-MY:MY*(MX+1)), Q(1-MY:MY*(MX+2))
     LOGICAL, INTENT(IN)     :: CLOSE
+    !debug
+    integer, intent(in) :: isea, partno
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -634,6 +639,11 @@ CONTAINS
 #ifdef W3_T2
     REAL                    :: QOLD
 #endif
+        logical :: onde1, onde2
+    onde1 = .false.
+    onde2 = .false.
+    if(naproc .eq. 10 .and. iaproc .eq. 2 .and. isea .eq. 8442)onde2 = .true.
+    if(naproc .eq.  5 .and. iaproc .eq. 1 .and. isea .eq. 8442)onde1 = .true.
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -824,8 +834,13 @@ CONTAINS
 #ifdef W3_T2
       QOLD   = Q(IXY)
 #endif
-      Q(IXY) = MAX ( 0. , Q(IXY) + DT/DX1(IXY) *                    &
-           (FLA(IXY-INC)-FLA(IXY)) )
+      if(onde1 .and.ixy .eq. 313)print '(a,2i12,i5,4g18.10)','DEBUGC0 ',time,partno,q(ixy),fla(ixy-inc),fla(ixy),DX1(IXY)
+      if(onde2 .and.ixy .eq. 313)print '(a,2i12,i5,4g18.10)','DEBUGC0 ',time,partno,q(ixy),fla(ixy-inc),fla(ixy),DX1(IXY)
+
+      Q(IXY) = MAX ( 0. , Q(IXY) + DT/DX1(IXY) * (FLA(IXY-INC)-FLA(IXY)) )
+
+      if(onde1 .and.ixy .eq. 313)print '(a,2i12,i5,3g18.10)','DEBUGC1 ',time,partno,q(ixy),fla(ixy-inc),fla(ixy)
+      if(onde2 .and.ixy .eq. 313)print '(a,2i12,i5,3g18.10)','DEBUGC1 ',time,partno,q(ixy),fla(ixy-inc),fla(ixy)
 #ifdef W3_T2
       IF ( QOLD + Q(IXY) .GT. 1.E-10 )                          &
            WRITE (NDST,9021) IP, IXY, QOLD, Q(IXY),             &
@@ -846,10 +861,10 @@ CONTAINS
     ! Formats
     !
 #ifdef W3_T
-9000 FORMAT ( ' TEST W3QCK2 : ARRAY DIMENSIONS  :',2I6/           &
-         '               USED              :',2I6/           &
-         '               TIME STEP         :',F8.1/          &
-         '               CLOSE, INC        :',L6,I6/         &
+9000 FORMAT ( ' TEST W3QCK2 : ARRAY DIMENSIONS  :',2I6/            &
+         '               USED              :',2I6/                 &
+         '               TIME STEP         :',F8.1/                &
+         '               CLOSE, INC        :',L6,I6/               &
          '               NB0, NB1, NB2     :',3I6)
 #endif
 #ifdef W3_T0
@@ -862,13 +877,13 @@ CONTAINS
 #endif
     !
 #ifdef W3_T1
-9010 FORMAT (' TEST W3QCK2 : IP, 2x(IX,IY), CFL (b,i,i+1), ',    &
+9010 FORMAT (' TEST W3QCK2 : IP, 2x(IX,IY), CFL (b,i,i+1), ',      &
          ' Q (b,b,i-1,i,i+1,i+2)')
 9011 FORMAT (' TEST W3QCK2 :',I6,' POINTS OF TYPE ',A)
 9012 FORMAT (10X,I6,4I4,1X,3F6.2,1X,F7.2,F6.2,1X,4F6.2)
-9013 FORMAT (10X,I6,4I4,1X,F6.2,F6.2,'  --- ',1X,F7.2,1X,'  --- ',&
+9013 FORMAT (10X,I6,4I4,1X,F6.2,F6.2,'  --- ',1X,F7.2,1X,'  --- ', &
          2F6.2,'  --- ')
-9014 FORMAT (10X,I6,4I4,1X,F6.2,'  --- ',F6.2,1X,F7.2,1X,'  --- ',&
+9014 FORMAT (10X,I6,4I4,1X,F6.2,'  --- ',F6.2,1X,F7.2,1X,'  --- ', &
          2F6.2,'  --- ')
 #endif
 #ifdef W3_T

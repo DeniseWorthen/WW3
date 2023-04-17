@@ -1421,7 +1421,7 @@ CONTAINS
   !/ ------------------------------------------------------------------- /
   SUBROUTINE W3KTP3 ( ISEA, FACTH, FACK, CTHG0, CG, WN, DW,       &
        DDDX, DDDY, CX, CY, DCXDX, DCXDY,           &
-       DCYDX, DCYDY, DCDX, DCDY, VA, CFLTHMAX, CFLKMAX )
+       DCYDX, DCYDY, DCDX, DCDY, VA, CFLTHMAX, CFLKMAX , partno)
     !/
     !/    *** THIS ROUTINE SHOULD BE IDENTICAL TO W3KTP2 ***
     !/
@@ -1550,6 +1550,9 @@ CONTAINS
 #ifdef W3_UNO
     USE W3UNO2MD
 #endif
+    !debug
+    use w3wdatmd, only : time
+    use w3odatmd, only : naproc, iaproc
     !/
     IMPLICIT NONE
     !/
@@ -1563,6 +1566,8 @@ CONTAINS
     REAL, INTENT(IN)        :: DCDX(0:NK+1), DCDY(0:NK+1)
     REAL, INTENT(INOUT)     :: VA(NSPEC)
     REAL, INTENT(OUT)       :: CFLTHMAX, CFLKMAX
+    !debug
+    integer, intent(in) :: partno
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -1578,6 +1583,11 @@ CONTAINS
          FKC(NTH), VQ(-NK-1:NK2*(NTH+2)),     &
          DB(NK2,NTH+1), DM(NK2,0:NTH+1),      &
          VCFLT(NK2*(NTH+1)), CFLK(NK2,NTH)
+    logical :: onde1, onde2
+    onde1 = .false.
+    onde2 = .false.
+    if(naproc .eq. 10 .and. iaproc .eq. 2 .and. isea .eq. 8442)onde2 = .true.
+    if(naproc .eq. 5 .and. iaproc .eq. 1 .and. isea .eq. 8442)onde1 = .true.
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -1620,12 +1630,24 @@ CONTAINS
            CG(IK), DSDD(IK)
     END DO
 #endif
+    ! from w3map3
+    ! DO IK=1, NK
+    ! DO ITH=1, NTH
+    ! is = ITH+(IK-1)*NTH
+    ! ISP = ITH + (IK-1)*NTH
+    ! ISP2 = (IK+1) + (ITH-1)*(NK+2)
+    ! MAPTH2(ISP) = ISP2
+    ! END DO
+    ! END DO
+    ! so ik .eq. 32 .and. is .eq. 1125 => isp=1125, isp2=313
     !
     ! 2.b Extract spectrum
     !
     DO ISP=1, NSPEC
       VQ(MAPTH2(ISP)) = VA(ISP)
     END DO
+    if(onde1)print '(a,2i12,2i5,g18.10)','DEBUGB0 ',time,mod(itime,2),partno,vq(313)
+    if(onde2)print '(a,2i12,2i5,g18.10)','DEBUGB0 ',time,mod(itime,2),partno,vq(313)
     !
     ! 3.  Refraction velocities ------------------------------------------ *
     !
@@ -1661,8 +1683,7 @@ CONTAINS
         DCXY   = FACTH *   DCXDY
         !
         DO ISP=1, NSPEC
-          VCFLT(MAPTH2(ISP)) = ES2(ISP)*DCYX  +     &
-               ESC(ISP)*DCXXYY - EC2(ISP)*DCXY
+          VCFLT(MAPTH2(ISP)) = ES2(ISP)*DCYX  + ESC(ISP)*DCXXYY - EC2(ISP)*DCXY
         END DO
         !
       ELSE
@@ -1766,51 +1787,63 @@ CONTAINS
         DO ITH=1, NTH
           VQ(NK+2+(ITH-1)*NK2) = FACHFA * VQ(NK+1+(ITH-1)*NK2)
         END DO
+        if(onde1)print '(a,2i12,i5,g18.10)','DEBUGB1 ',time,partno,vq(313)
+        if(onde2)print '(a,2i12,i5,g18.10)','DEBUGB1 ',time,partno,vq(313)
         !
 #ifdef W3_UQ
-        CALL W3QCK2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM,   &
-             VQ, .FALSE., 1, MAPTH2, NSPEC,            &
-             MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,      &
-             NDSE, NDST )
+        CALL W3QCK2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM, &
+             VQ, .FALSE., 1, MAPTH2, NSPEC,                   &
+             MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,             &
+             NDSE, NDST, isea, partno )
 #endif
+        if(onde1)print '(a,2i12,i5,g18.10)','DEBUGB2 ',time,partno,vq(313)
+        if(onde2)print '(a,2i12,i5,g18.10)','DEBUGB2 ',time,partno,vq(313)
         !
-#ifdef W3_UNO
-        CALL W3UNO2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM,  &
-             VQ, .FALSE., 1, MAPTH2, NSPEC,           &
-             MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,     &
-             NDSE, NDST )
-#endif
+! #ifdef W3_UNO
+!         CALL W3UNO2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM, &
+!              VQ, .FALSE., 1, MAPTH2, NSPEC,                   &
+!              MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,             &
+!              NDSE, NDST )
+! #endif
         !
       END IF
       IF ( FLCTH ) THEN
         !
+        if(onde1)print '(a,2i12,i5,g18.10)','DEBUGB3 ',time,partno,vq(313)
+        if(onde2)print '(a,2i12,i5,g18.10)','DEBUGB3 ',time,partno,vq(313)
 #ifdef W3_UQ
-        CALL W3QCK1 ( NTH, NK2, NTH, NK2, VCFLT, VQ, .TRUE.,    &
-             NK2, MAPTH2, NSPEC, MAPTH2, NSPEC, NSPEC, &
+        CALL W3QCK1 ( NTH, NK2, NTH, NK2, VCFLT, VQ, .TRUE.,  &
+             NK2, MAPTH2, NSPEC, MAPTH2, NSPEC, NSPEC,        &
              NSPEC, NDSE, NDST )
 #endif
+        if(onde1)print '(a,2i12,i5,g18.10)','DEBUGB4 ',time,partno,vq(313)
+        if(onde2)print '(a,2i12,i5,g18.10)','DEBUGB4 ',time,partno,vq(313)
         !
-#ifdef W3_UNO
-        CALL W3UNO2r( NTH, NK2, NTH, NK2, VCFLT, VQ, .TRUE.,   &
-             NK2, MAPTH2, NSPEC, MAPTH2, NSPEC, NSPEC,&
-             NSPEC, NDSE, NDST )
-#endif
+! #ifdef W3_UNO
+!         CALL W3UNO2r( NTH, NK2, NTH, NK2, VCFLT, VQ, .TRUE.,  &
+!              NK2, MAPTH2, NSPEC, MAPTH2, NSPEC, NSPEC,        &
+!              NSPEC, NDSE, NDST )
+! #endif
         !
       END IF
     ELSE
       IF ( FLCTH ) THEN
         !
+        if(onde1)print '(a,2i12,i5,g18.10)','DEBUGB5 ',time,partno,vq(313)
+        if(onde2)print '(a,2i12,i5,g18.10)','DEBUGB5 ',time,partno,vq(313)
 #ifdef W3_UQ
-        CALL W3QCK1 ( NTH, NK2, NTH, NK2, VCFLT, VQ, .TRUE.,    &
-             NK2, MAPTH2, NSPEC, MAPTH2, NSPEC, NSPEC, &
+        CALL W3QCK1 ( NTH, NK2, NTH, NK2, VCFLT, VQ, .TRUE.,  &
+             NK2, MAPTH2, NSPEC, MAPTH2, NSPEC, NSPEC,        &
              NSPEC, NDSE, NDST )
 #endif
+        if(onde1)print '(a,2i12,i5,g18.10)','DEBUGB6 ',time,partno,vq(313)
+        if(onde2)print '(a,2i12,i5,g18.10)','DEBUGB6 ',time,partno,vq(313)
         !
-#ifdef W3_UNO
-        CALL W3UNO2r( NTH, NK2, NTH, NK2, VCFLT, VQ, .TRUE.,   &
-             NK2, MAPTH2, NSPEC, MAPTH2, NSPEC, NSPEC,&
-             NSPEC, NDSE, NDST )
-#endif
+! #ifdef W3_UNO
+!         CALL W3UNO2r( NTH, NK2, NTH, NK2, VCFLT, VQ, .TRUE.,  &
+!              NK2, MAPTH2, NSPEC, MAPTH2, NSPEC, NSPEC,        &
+!              NSPEC, NDSE, NDST )
+! #endif
         !
       END IF
       IF ( FLCK ) THEN
@@ -1818,22 +1851,26 @@ CONTAINS
           VQ(NK+2+(ITH-1)*NK2) = FACHFA * VQ(NK+1+(ITH-1)*NK2)
         END DO
         !
+        if(onde1)print '(a,2i12,i5,g18.10)','DEBUGB7 ',time,partno,vq(313)
+        if(onde2)print '(a,2i12,i5,g18.10)','DEBUGB7 ',time,partno,vq(313)
 #ifdef W3_UQ
-        CALL W3QCK2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM,   &
-             VQ, .FALSE., 1, MAPTH2, NSPEC,            &
-             MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,      &
-             NDSE, NDST )
+        CALL W3QCK2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM, &
+             VQ, .FALSE., 1, MAPTH2, NSPEC,                   &
+             MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,             &
+             NDSE, NDST , isea, partno)
 #endif
+        if(onde1)print '(a,2i12,i5,g18.10)','DEBUGB8 ',time,partno,vq(313)
+        if(onde2)print '(a,2i12,i5,g18.10)','DEBUGB8 ',time,partno,vq(313)
         !
-#ifdef W3_UNO
-        CALL W3UNO2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM,  &
-             VQ, .FALSE., 1, MAPTH2, NSPEC,           &
-             MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,     &
-             NDSE, NDST )
-#endif
+! #ifdef W3_UNO
+!         CALL W3UNO2 ( NTH, NK2, NTH, NK2, CFLK, FACK, DB, DM, &
+!              VQ, .FALSE., 1, MAPTH2, NSPEC,                   &
+!              MAPWN2, NSPEC-NTH, NSPEC, NSPEC+NTH,             &
+!              NDSE, NDST )
+! #endif
         !
       END IF
-    END IF
+   END IF
     !
     ! 6.  Store reults --------------------------------------------------- *
     !
