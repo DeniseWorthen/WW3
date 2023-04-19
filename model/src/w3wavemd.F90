@@ -615,10 +615,13 @@ CONTAINS
     logical :: do_startall
     logical :: do_w3outg
     logical :: onde1, onde2
+    integer :: badix=24991, badik=28, badith=16
+    ! ith + (ik-1)*nth
+    integer :: badis=16 + (28-1)*36
     onde1 = .false.
     onde2 = .false.
-    if(naproc .eq. 10 .and. iaproc .eq. 2)onde2 = .true.
-    if(naproc .eq.  5 .and. iaproc .eq. 1)onde1 = .true.
+    if(naproc .eq. 10 .and. iaproc .eq. 5)onde2 = .true.
+    if(naproc .eq.  5 .and. iaproc .eq. 3)onde1 = .true.
     !/ ------------------------------------------------------------------- /
     ! 0.  Initializations
     !
@@ -780,13 +783,13 @@ CONTAINS
       CALL INIT_GET_ISEA(ISEA, JSEA)
       IX     = MAPSF(ISEA,1)
       IY     = MAPSF(ISEA,2)
-      if(onde1 .and. ix .eq. 8442)print *,'XXX ',isea,xgrd(iy,ix),ygrd(iy,ix),9+(32-1)*36
-      if(onde2 .and. ix .eq. 8442)print *,'XXX ',isea,xgrd(iy,ix),ygrd(iy,ix),9+(32-1)*36
+      if(onde1 .and. ix .eq. badix)print *,'XXX ',isea,xgrd(iy,ix),ygrd(iy,ix),16+(28-1)*36
+      if(onde2 .and. ix .eq. badix)print *,'XXX ',isea,xgrd(iy,ix),ygrd(iy,ix),16+(28-1)*36
       DO IK=1, NK
         DO ITH=1, NTH
-          IS=ITH+(IK-1)*NTH
-          if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY0 ',time,VA(IS,JSEA)
-          if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY0 ',time,VA(IS,JSEA)
+           IS=ITH+(IK-1)*NTH
+           if(onde1 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10)','DEBUGY0 ',time,VA(IS,JSEA)
+           if(onde2 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10)','DEBUGY0 ',time,VA(IS,JSEA)
         end do
       end do
     end do
@@ -1027,8 +1030,8 @@ CONTAINS
           DO IK=1, NK
             DO ITH=1, NTH
               IS=ITH+(IK-1)*NTH
-              if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY1 ',time,VA(IS,JSEA)
-              if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY1 ',time,VA(IS,JSEA)
+              if(onde1 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10)','DEBUGY1 ',time,VA(IS,JSEA)
+              if(onde2 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10)','DEBUGY1 ',time,VA(IS,JSEA)
             end do
           end do
         end do
@@ -1202,8 +1205,8 @@ CONTAINS
             DO IK=1, NK
               DO ITH=1, NTH
                 IS=ITH+(IK-1)*NTH
-                if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY2 ',time,VA(IS,JSEA)
-                if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY2 ',time,VA(IS,JSEA)
+                if(onde1 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10)','DEBUGY2 ',time,VA(IS,JSEA)
+                if(onde2 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10)','DEBUGY2 ',time,VA(IS,JSEA)
               end do
             end do
           end do
@@ -1224,8 +1227,8 @@ CONTAINS
           DO IK=1, NK
             DO ITH=1, NTH
               IS=ITH+(IK-1)*NTH
-              if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY3 ',time,VA(IS,JSEA)
-              if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY3 ',time,VA(IS,JSEA)
+              if(onde1 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10)','DEBUGY3 ',time,VA(IS,JSEA)
+              if(onde2 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10)','DEBUGY3 ',time,VA(IS,JSEA)
             end do
           end do
         end do
@@ -1340,8 +1343,8 @@ CONTAINS
           DO IK=1, NK
             DO ITH=1, NTH
               IS=ITH+(IK-1)*NTH
-              if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY4 ',time,VA(IS,JSEA)
-              if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY4 ',time,VA(IS,JSEA)
+              if(onde1 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10)','DEBUGY4 ',time,VA(IS,JSEA)
+              if(onde2 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10)','DEBUGY4 ',time,VA(IS,JSEA)
             end do
           end do
         end do
@@ -1578,8 +1581,8 @@ CONTAINS
           DO IK=1, NK
             DO ITH=1, NTH
               IS=ITH+(IK-1)*NTH
-              if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10,2i8)','DEBUGY5 ',time,VA(IS,JSEA),isea,jsea
-              if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10,2i8)','DEBUGY5 ',time,VA(IS,JSEA),isea,jsea
+              if(onde1 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10,2i8)','DEBUGY5 ',time,VA(IS,JSEA),isea,jsea
+              if(onde2 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10,2i8)','DEBUGY5 ',time,VA(IS,JSEA),isea,jsea
             end do
           end do
         end do
@@ -1705,8 +1708,8 @@ CONTAINS
             DO IK=1, NK
               DO ITH=1, NTH
                 IS=ITH+(IK-1)*NTH
-                if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY6 ',time,VA(IS,JSEA)
-                if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY6 ',time,VA(IS,JSEA)
+                if(onde1 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10)','DEBUGY6 ',time,VA(IS,JSEA)
+                if(onde2 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10)','DEBUGY6 ',time,VA(IS,JSEA)
               end do
             end do
           end do
@@ -1730,8 +1733,8 @@ CONTAINS
             DO IK=1, NK
               DO ITH=1, NTH
                 IS=ITH+(IK-1)*NTH
-                if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY6a0 ',time,VA(IS,JSEA)
-                if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY6a0 ',time,VA(IS,JSEA)
+                if(onde1 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10,L6)','DEBUGY6a0 ',time,VA(IS,JSEA),UGDTUPDATE
+                if(onde2 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10,L6)','DEBUGY6a0 ',time,VA(IS,JSEA),UGDTUPDATE
               end do
             end do
           end do
@@ -1758,8 +1761,8 @@ CONTAINS
               DO IK=1, NK
                 DO ITH=1, NTH
                   IS=ITH+(IK-1)*NTH
-                  if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY6a1 ',time,VA(IS,JSEA)
-                  if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY6a1 ',time,VA(IS,JSEA)
+                  if(onde1 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10)','DEBUGY6a1 ',time,VA(IS,JSEA)
+                  if(onde2 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10)','DEBUGY6a1 ',time,VA(IS,JSEA)
                 end do
               end do
             end do
@@ -1952,8 +1955,8 @@ CONTAINS
             DO IK=1, NK
               DO ITH=1, NTH
                 IS=ITH+(IK-1)*NTH
-                if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10,i8)','DEBUGY6a ',time,VA(IS,JSEA),IOBP_LOC(JSEA)
-                if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10,i8)','DEBUGY6a ',time,VA(IS,JSEA),IOBP_LOC(JSEA)
+                if(onde1 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10,i8)','DEBUGY6a ',time,VA(IS,JSEA),IOBP_LOC(JSEA)
+                if(onde2 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10,i8)','DEBUGY6a ',time,VA(IS,JSEA),IOBP_LOC(JSEA)
               end do
             end do
           end do
@@ -2054,8 +2057,8 @@ CONTAINS
             DO IK=1, NK
               DO ITH=1, NTH
                 IS=ITH+(IK-1)*NTH
-                if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY7 ',time,VA(IS,JSEA)
-                if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY7 ',time,VA(IS,JSEA)
+                if(onde1 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10)','DEBUGY7 ',time,VA(IS,JSEA)
+                if(onde2 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10)','DEBUGY7 ',time,VA(IS,JSEA)
               end do
             end do
           end do
@@ -2213,8 +2216,8 @@ CONTAINS
             DO IK=1, NK
               DO ITH=1, NTH
                 IS=ITH+(IK-1)*NTH
-                if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY8 ',time,VA(IS,JSEA)
-                if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32 .and. is .eq. 1125)print '(a,2i12,g18.10)','DEBUGY8 ',time,VA(IS,JSEA)
+                if(onde1 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10)','DEBUGY8 ',time,VA(IS,JSEA)
+                if(onde2 .and. ix .eq. badix .and. ik .eq. badik .and. is .eq. badis)print '(a,2i12,g18.10)','DEBUGY8 ',time,VA(IS,JSEA)
               end do
             end do
           end do

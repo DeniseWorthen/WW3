@@ -354,20 +354,22 @@ contains
 
       CX0(:,:) = def_value   ! ocn u current
       CXN(:,:) = def_value
-      if (state_fldchk(importState, 'So_u')) then
-        call SetGlobalInput(importState, 'So_u', vm, global_data, rc)
-        if (ChkErr(rc,__LINE__,u_FILE_u)) return
-        call FillGlobalInput(global_data, CX0)
-        call FillGlobalInput(global_data, CXN)
-      end if
+      !cx0 = 0.1
+      !cxn = 0.1
+       if (state_fldchk(importState, 'So_u')) then
+         call SetGlobalInput(importState, 'So_u', vm, global_data, rc)
+         if (ChkErr(rc,__LINE__,u_FILE_u)) return
+         call FillGlobalInput(global_data, CX0)
+         call FillGlobalInput(global_data, CXN)
+       end if
 
       CY0(:,:) = def_value   ! ocn v current
       CYN(:,:) = def_value
-      if (state_fldchk(importState, 'So_v')) then
-        call SetGlobalInput(importState, 'So_v', vm, global_data, rc)
-        if (ChkErr(rc,__LINE__,u_FILE_u)) return
-        call FillGlobalInput(global_data, CY0)
-        call FillGlobalInput(global_data, CYN)
+       if (state_fldchk(importState, 'So_v')) then
+         call SetGlobalInput(importState, 'So_v', vm, global_data, rc)
+         if (ChkErr(rc,__LINE__,u_FILE_u)) return
+         call FillGlobalInput(global_data, CY0)
+         call FillGlobalInput(global_data, CYN)
       end if
     end if
 
@@ -747,8 +749,8 @@ contains
       sw_pstokes_y(:,:) = fillvalue
       if (USSPF(1) > 0) then ! Partitioned Stokes drift computation is turned on in mod_def file.
         call pstokes(va,sw_pstokes_x,sw_pstokes_y)
-        sw_pstokes_x(:,:) = 1.0e-5
-        sw_pstokes_y(:,:) = 1.0e-5
+        !sw_pstokes_x(:,:) = 1.0e-5
+        !sw_pstokes_y(:,:) = 1.0e-5
           !call CALC_U3STOKES(va, 2)
            ! do ib = 1, USSPF(2)
            !   do jsea = 1, nseal_cpl
@@ -1294,8 +1296,8 @@ contains
     logical :: onde1, onde2
     onde1 = .false.
     onde2 = .false.
-    if(naproc .eq. 10 .and. iaproc .eq. 2)onde2 = .true.
-    if(naproc .eq.  5 .and. iaproc .eq. 1)onde1 = .true.
+    if(naproc .eq. 10 .and. iaproc .eq. 5)onde2 = .true.
+    if(naproc .eq.  5 .and. iaproc .eq. 3)onde1 = .true.
 
     ikst=1  ! start at 1
     ikfi=nk ! end at nk
@@ -1303,8 +1305,8 @@ contains
       call init_get_isea(isea, jsea)
       ix  = mapsf(isea,1)                   ! global ix
       iy  = mapsf(isea,2)                   ! global iy
-      if(onde1 .and. ix .eq. 8442)print *,'DEBUGXY ',xgrd(iy,ix),ygrd(iy,ix),jsea
-      if(onde2 .and. ix .eq. 8442)print *,'DEBUGXY ',xgrd(iy,ix),ygrd(iy,ix),jsea
+      if(onde1 .and. ix .eq. 24991)print *,'DEBUGXY ',xgrd(iy,ix),ygrd(iy,ix),jsea
+      if(onde2 .and. ix .eq. 24991)print *,'DEBUGXY ',xgrd(iy,ix),ygrd(iy,ix),jsea
 
       if (mapsta(iy,ix) == 1) then          ! active sea point
 
@@ -1317,11 +1319,11 @@ contains
             abx = abx + a(ith,ik,jsea)*ecos(ith)
             aby = aby + a(ith,ik,jsea)*esin(ith)
             is = ith+(ik-1)*nth
-            if(onde1 .and. ix .eq. 8442 .and. ik .eq. 32)print '(a,2i12,3i6,2g18.10)','DEBUG32 ',time,ik,ith,is,aby,a(ith,ik,jsea)
-            if(onde2 .and. ix .eq. 8442 .and. ik .eq. 32)print '(a,2i12,3i6,2g18.10)','DEBUG32 ',time,ik,ith,is,aby,a(ith,ik,jsea)
+            if(onde1 .and. ix .eq. 24991 .and. ik .eq. 28)print '(a,2i12,3i6,2g18.10)','DEBUG28 ',time,ik,ith,is,aby,a(ith,ik,jsea)
+            if(onde2 .and. ix .eq. 24991 .and. ik .eq. 28)print '(a,2i12,3i6,2g18.10)','DEBUG28 ',time,ik,ith,is,aby,a(ith,ik,jsea)
 
-            if(onde1 .and. ix .eq. 8442 .and. ik .eq. 33)print '(a,2i12,3i6,2g18.10)','DEBUG33 ',time,ik,ith,is,aby,a(ith,ik,jsea)
-            if(onde2 .and. ix .eq. 8442 .and. ik .eq. 33)print '(a,2i12,3i6,2g18.10)','DEBUG33 ',time,ik,ith,is,aby,a(ith,ik,jsea)
+!            if(onde1 .and. ix .eq. 24991 .and. ik .eq. 33)print '(a,2i12,3i6,2g18.10)','DEBUG33 ',time,ik,ith,is,aby,a(ith,ik,jsea)
+!            if(onde2 .and. ix .eq. 24991 .and. ik .eq. 33)print '(a,2i12,3i6,2g18.10)','DEBUG33 ',time,ik,ith,is,aby,a(ith,ik,jsea)
           end do
 
           factor = dden(ik) / cg(ik,isea)

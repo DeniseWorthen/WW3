@@ -1583,6 +1583,7 @@ CONTAINS
          FKC(NTH), VQ(-NK-1:NK2*(NTH+2)),     &
          DB(NK2,NTH+1), DM(NK2,0:NTH+1),      &
          VCFLT(NK2*(NTH+1)), CFLK(NK2,NTH)
+    logical :: onde1, onde2
     onde1 = .false.
     onde2 = .false.
     if(naproc .eq. 10 .and. iaproc .eq. 2 .and. isea .eq. 8442)onde2 = .true.
