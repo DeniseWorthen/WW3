@@ -230,12 +230,13 @@ contains
   !> @date 09-12-2022
   subroutine write_meshdecomp(EMeshIn, mesh_name, rc)
 
-    use ESMF          , only : ESMF_Mesh, ESMF_DistGrid, ESMF_Field, ESMF_FieldBundle, ESMF_FieldBundleAdd
-    use ESMF          , only : ESMF_DistGridGet, ESMF_FieldBundleCreate, ESMF_FieldCreate, ESMF_FieldBundleGet
-    use ESMF          , only : ESMF_MESHLOC_ELEMENT, ESMF_TYPEKIND_R8, ESMF_TYPEKIND_I4, ESMF_LOGMSG_Info
-    use ESMF          , only : ESMF_FieldBundleWrite, ESMF_FieldBundleDestroy
+    use ESMF     , only : ESMF_Mesh, ESMF_DistGrid, ESMF_Field, ESMF_FieldBundle, ESMF_FieldBundleAdd
+    use ESMF     , only : ESMF_DistGridGet, ESMF_FieldBundleCreate, ESMF_FieldCreate, ESMF_FieldBundleGet
+    use ESMF     , only : ESMF_MESHLOC_ELEMENT, ESMF_MESHLOC_NODE
+    use ESMF     , only : ESMF_TYPEKIND_R8, ESMF_TYPEKIND_I4, ESMF_LOGMSG_Info
+    use ESMF     , only : ESMF_FieldBundleWrite, ESMF_FieldBundleDestroy
 
-    use w3odatmd      , only : iaproc
+    use w3odatmd , only : iaproc
 
     ! input/output variables
     type(ESMF_Mesh) , intent(in)  :: EMeshIn
@@ -244,7 +245,7 @@ contains
 
     ! local variables
     type(ESMF_FieldBundle)         :: FBTemp
-    type(ESMF_Field)               :: lfield
+    type(ESMF_Field)               :: lfield, nfield
     type(ESMF_DistGrid)            :: distgrid
     type(ESMF_Field)               :: doffield
     character(len=6), dimension(4) :: lfieldlist
@@ -281,6 +282,9 @@ contains
       call ESMF_FieldBundleAdd(FBTemp, (/lfield/), rc=rc)
       if (chkerr(rc,__LINE__,u_FILE_u)) return
     end do
+
+    nfield = ESMF_FieldCreate(EMeshIn, ESMF_TYPEKIND_R8, name='test', &
+           meshloc=ESMF_MESHLOC_NODE, rc=rc)
 
     ! Set element coordinates
     allocate(ownedElemCoords(ndims*nelements))

@@ -65,6 +65,8 @@ module wav_import_export
 #endif
   integer, public    :: nseal_cpl                   !< the number of local sea points on a processor, exclusive
                                                     !! of the ghost points. For non-PDLIB cases, this is nseal
+  integer, public    :: nele_cpl = 0                !< the number of local elements on a processor, exclusive
+                                                    !! of any element containing one or more ghost points
   character(*),parameter :: u_FILE_u = &            !< a character string for an ESMF log message
        __FILE__
 
