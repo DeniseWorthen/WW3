@@ -36,9 +36,9 @@ module wav_comp_nuopc
   use NUOPC_Model           , only : model_label_SetRunClock    => label_SetRunClock
   use NUOPC_Model           , only : model_label_Finalize       => label_Finalize
   use NUOPC_Model           , only : NUOPC_ModelGet, SetVM
-  use wav_kind_mod          , only : r8=>shr_kind_r8, i8=>shr_kind_i8, i4=>shr_kind_i4
+  use wav_kind_mod          , only : r8=>shr_kind_r8, i8=>shr_kind_i8, i4=>shr_kind_i4, r4=>shr_kind_r4
   use wav_kind_mod          , only : cl=>shr_kind_cl, cs=>shr_kind_cs
-  use wav_import_export     , only : advertise_fields, realize_fields, nseal_cpl
+  use wav_import_export     , only : advertise_fields, realize_fields, nseal_cpl, nele_cpl
   use wav_shr_mod           , only : state_diagnose, state_getfldptr, state_fldchk
   use wav_shr_mod           , only : chkerr, state_setscalar, state_getscalar, alarmInit, ymd2date
   use wav_shr_mod           , only : wav_coupling_to_cice, nwav_elev_spectrum
@@ -415,9 +415,10 @@ contains
 #endif
     use wav_shel_inp , only : set_shel_io
     use wav_grdout   , only : wavinit_grdout
-    use wav_shr_mod       , only : diagnose_mesh, write_meshdecomp
+    use wav_shr_mod  , only : diagnose_mesh, write_meshdecomp, calc_center_coord
 #ifdef W3_PDLIB
-    use yowNodepool  , only : ng
+    use yowNodepool    , only : ng, np, iplg
+    use yowElementpool , only : ine, ne
 #endif
     ! test corners
     use w3gdatmd     , only : ntri, trigp
@@ -454,7 +455,7 @@ contains
     integer                        :: ix, iy
     character(CL)                  :: starttype
     integer                        :: ntrace(2)
-    integer                        :: n, jsea,isea, ncnt
+    integer                        :: n,j,jsea,isea, ncnt
     integer                        :: nlnd, nlnd_global, nlnd_local
     integer                        :: my_lnd_start, my_lnd_end
     integer, allocatable, target   :: mask_global(:)
@@ -475,12 +476,17 @@ contains
     integer                        :: stdout
     integer                        :: petcount
     real(r8)                       :: toff
+    integer(i4)                    :: ni(3)
+    real(r4)                       :: xnodes(3), ynodes(3)
+    real(r4), allocatable          :: xelem(:), yelem(:)
+    !integer(i4)                    :: ecnt(1)
+    integer(i4), allocatable       :: ine_local(:), ine_tmp(:), ine_global(:,:)
     character(ESMF_MAXSTR)         :: preamb = './'
     character(ESMF_MAXSTR)         :: ifname = 'ww3_multi.inp'
     character(len=*), parameter    :: subname = '(wav_comp_nuopc:InitializeRealize)'
     ! debug
-    integer :: i1, i2, i3, ni(3), maxi1, maxi2, maxi3, ii, ecnt
-    type(t_Node), pointer :: node, nodeNeighbor
+    integer :: i1, i2, i3, maxi1, maxi2, maxi3, ii, ecnt
+    !type(t_Node), pointer :: node, nodeNeighbor
     ! -------------------------------------------------------------------
 
     rc = ESMF_SUCCESS
@@ -855,17 +861,41 @@ contains
       deallocate(gindex)
     end if
 
-    if (unstr_mesh) then
-      nele_cpl = 0
-      do n = 1,ne
-        ni = ine(:,n)
-        ! the three nodes making up this element, including elements containing ghostnodes
-        ! ni(3) are local node ids
-        if (ni(1) .le. np .and. ni(2) .le. np .and. ni(3) .le. np) then
-          nele_cpl = nele_cpl + 1
-        end if
-      end do
-    end if
+    ! ! TODO: make option only if want output on elements
+    ! !if (w3_pdlib_flag) then
+    !   ecnt(1) = 0
+    !   nele_cpl = 0
+    !   do n = 1,ne
+    !     ! ni(3) are the three local node ids of this element, including elements containing ghostnodes
+    !     ni = ine(:,n)
+    !     if (ni(1) .le. np .and. ni(2) .le. np .and. ni(3) .le. np) then
+    !       ecnt(1) = ecnt(1) + 1
+    !     end if
+    !   end do
+    !   call ESMF_VMAllFullReduce(vm, sendData=ecnt, recvData=nele_cpl, count=1, reduceflag=ESMF_REDUCE_SUM, rc=rc)
+    !   if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    !   write(msgString,'(2(a,i8))')'Local number of elements ',ecnt,' Total number of elements ',nele_cpl
+    !   call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
+
+    !   ! create array of global ids for each local elements; use global reduce_sum like in setglobalinput to create an array
+    !   ! ine_global(3,nele_cpl); this will be the 3 global node ids that define a global element array with no ghost points
+
+    !   allocate(ine_local(1*ecnt(1)))
+    !   allocate(ine_tmp(1*nele_cpl))
+    !   allocate(ine_global(1,nele_cpl))
+    !   ecnt(1) = 0
+    !   do n = 1,ne
+    !     ni = ine(:,n)
+    !     if (ni(1) .le. np .and. ni(2) .le. np .and. ni(3) .le. np) then
+    !       j=1
+    !       !do j = 1,3
+    !         ecnt(1) = ecnt(1) + 1
+    !         ine_local(ecnt(1)) = iplg(ni(j))
+    !       !end do
+    !     end if
+    !   end do
+
+    !end if
 
     if (dbug_flag > 5) then
       call write_meshdecomp(Emesh, 'emesh', rc=rc)
@@ -873,59 +903,69 @@ contains
     end if
 
     ! nx=np_global=nsea
-    print '(a,11i8)','DEBUG1:',nx,np_global,nsea,nseal,npa,np,ng,ne,ubound(ine,2),ubound(ielg,1),ubound(trigp,2)
-    ! do n = 1,ubound(trigp,2)
-    !   i1 = trigp(1,n); i2 = trigp(2,n); i3 = trigp(3,n)
-    !   print '(a,4i8,8g14.7)','DEBUG2: ',n,i1,i2,i3,xgrd(1,n),ygrd(1,n),xgrd(1,i1),ygrd(1,i1),xgrd(1,i2),ygrd(1,i2),xgrd(1,i3),ygrd(1,i3)
-    !   print '(a,3i8)','DEBUG3: ',ipgl(i1),ipgl(i2),ipgl(i3)
-    ! end do
+    print '(a,13i8)','DEBUG1:',nx,np_global,nsea,nseal,np,npa,ng,ne,ntri,ubound(ine,2),ubound(ielg,1),ubound(trigp,2),maxval(trigp(:,:))
     maxi1 = -1; maxi2 = -1; maxi3 = -1
-    n = 13596
-    ni = ine(:,n)
-    i1 = ni(1); i2 = ni(2); i3 = ni(3)
-    ii=i1
-    print '(a,3i8,2g14.7)','DEBUG0:i1 ',ii,iplg(ii),pdlib_ccon(ii),xgrd(1,iplg(ii)),ygrd(1,iplg(ii))
-    ii=i2
-    print '(a,3i8,2g14.7)','DEBUG0:i2 ',ii,iplg(ii),pdlib_ccon(ii),xgrd(1,iplg(ii)),ygrd(1,iplg(ii))
-    ii=i3
-    print '(a,3i8,2g14.7)','DEBUG0:i3 ',ii,iplg(ii),pdlib_ccon(ii),xgrd(1,iplg(ii)),ygrd(1,iplg(ii))
+    allocate(xelem(1:ntri))
+    allocate(yelem(1:ntri))
+     do n = 1,ubound(trigp,2)
+       i1 = trigp(1,n); i2 = trigp(2,n); i3 = trigp(3,n)
+       maxi1 = max(maxi1,i1)
+       maxi2 = max(maxi2,i2)
+       maxi3 = max(maxi3,i3)
+       xnodes(:) = xgrd(1,trigp(:,n))
+       ynodes(:) = ygrd(1,trigp(:,n))
+       call calc_center_coord(xnodes,ynodes,xelem(n),yelem(n))
+       print '(a,4i8,8g14.7)','DEBUG2: ',n,i1,i2,i3,xelem(n),yelem(n),xgrd(1,i1),ygrd(1,i1),xgrd(1,i2),ygrd(1,i2),xgrd(1,i3),ygrd(1,i3)
+       !print '(a,3i8)','DEBUG3: ',ipgl(i1),ipgl(i2),ipgl(i3)
+     end do
+     print '(a,4i8)','DEBUG5: ',maxi1,maxi2,maxi3,max(max(maxi1,maxi2),maxi3)
+    ! maxi1 = -1; maxi2 = -1; maxi3 = -1
+    ! n = 13596
+    ! ni = ine(:,n)
+    ! i1 = ni(1); i2 = ni(2); i3 = ni(3)
+    ! ii=i1
+    ! print '(a,3i8,2g14.7)','DEBUG0:i1 ',ii,iplg(ii),pdlib_ccon(ii),xgrd(1,iplg(ii)),ygrd(1,iplg(ii))
+    ! ii=i2
+    ! print '(a,3i8,2g14.7)','DEBUG0:i2 ',ii,iplg(ii),pdlib_ccon(ii),xgrd(1,iplg(ii)),ygrd(1,iplg(ii))
+    ! ii=i3
+    ! print '(a,3i8,2g14.7)','DEBUG0:i3 ',ii,iplg(ii),pdlib_ccon(ii),xgrd(1,iplg(ii)),ygrd(1,iplg(ii))
 
-    n = 10
-    !do n = 1,np
-      node => nodes(n)
-      print '(a,2i8)','DEBUGa ',n,node%nConnNodes
-      do ii = 1,node%nConnNodes
-        nodeNeighbor => node%connNodes(ii)
-        i1 = nodeNeighbor%id_global
-        print '(a,3i8,4g14.7)','DEBUGb ',n,ii,i1,xgrd(1,n),ygrd(1,n),xgrd(1,i1),ygrd(1,i1)
-      end do
-    !end do
+    ! n = 10
+    ! !do n = 1,np
+    !   node => nodes(n)
+    !   print '(a,2i8)','DEBUGa ',n,node%nConnNodes
+    !   do ii = 1,node%nConnNodes
+    !     nodeNeighbor => node%connNodes(ii)
+    !     i1 = nodeNeighbor%id_global
+    !     print '(a,3i8,4g14.7)','DEBUGb ',n,ii,i1,xgrd(1,n),ygrd(1,n),xgrd(1,i1),ygrd(1,i1)
+    !   end do
+    ! !end do
 
-      n = 10
-      ecnt = 0
-      do n = 1,ne
-        ni = ine(:,n)
-        ! the three nodes making up this element, will include elements containing ghostnodes
-        ! i1,i2,i3 are local node ids
-        i1 = ni(1); i2 = ni(2); i3 = ni(3)
-        if (i1 .le. np .and. i2 .le. np .and. i3 .le. np) then
-          ecnt = ecnt + 1
-          maxi1 = max(maxi1,i1)
-          maxi2 = max(maxi2,i2)
-          maxi3 = max(maxi3,i3)
-          print '(a,6i8)','DEBUG2: ',n,i1,i2,i3,nseal_cpl,maxval(ni)
-          print '(a,7i8)','DEBUG3: ',n,iplg(i1),iplg(i2),iplg(i3),pdlib_ccon(i1),pdlib_ccon(i2),pdlib_ccon(i3)
-          !print '(a,i8,2g14.7)','DEBUG4 i1: ',n,xgrd(1,iplg(i1)),ygrd(1,iplg(i1))
-          !print '(a,i8,2g14.7)','DEBUG4 i2: ',n,xgrd(1,iplg(i2)),ygrd(1,iplg(i2))
-          !print '(a,i8,2g14.7)','DEBUG4 i3: ',n,xgrd(1,iplg(i3)),ygrd(1,iplg(i3))
-          ! gives the 3 corners of each element, count is local pe-local number of elements (ne)
-          print '(a,i8,3g14.7)','DEBUG4_lon: ',n,xgrd(1,iplg(i1)),xgrd(1,iplg(i2)),xgrd(1,iplg(i3))
-          print '(a,i8,3g14.7)','DEBUG4_lat: ',n,ygrd(1,iplg(i1)),ygrd(1,iplg(i2)),ygrd(1,iplg(i3))
-        end if
-      end do
-      print '(a,5i8)','DEBUG5: ',ecnt,maxi1,maxi2,maxi3,max(max(maxi1,maxi2),maxi3)
+    !   n = 10
+    !   ecnt = 0
+    !   do n = 1,ne
+    !     ni = ine(:,n)
+    !     ! the three nodes making up this element, will include elements containing ghostnodes
+    !     ! i1,i2,i3 are local node ids
+    !     i1 = ni(1); i2 = ni(2); i3 = ni(3)
+    !     if (i1 .le. np .and. i2 .le. np .and. i3 .le. np) then
+    !       ecnt = ecnt + 1
+    !       maxi1 = max(maxi1,i1)
+    !       maxi2 = max(maxi2,i2)
+    !       maxi3 = max(maxi3,i3)
+    !       print '(a,6i8)','DEBUG2: ',n,i1,i2,i3,nseal_cpl,maxval(ni)
+    !       print '(a,7i8)','DEBUG3: ',n,iplg(i1),iplg(i2),iplg(i3),pdlib_ccon(i1),pdlib_ccon(i2),pdlib_ccon(i3)
+    !       !print '(a,i8,2g14.7)','DEBUG4 i1: ',n,xgrd(1,iplg(i1)),ygrd(1,iplg(i1))
+    !       !print '(a,i8,2g14.7)','DEBUG4 i2: ',n,xgrd(1,iplg(i2)),ygrd(1,iplg(i2))
+    !       !print '(a,i8,2g14.7)','DEBUG4 i3: ',n,xgrd(1,iplg(i3)),ygrd(1,iplg(i3))
+    !       ! gives the 3 corners of each element, count is local pe-local number of elements (ne)
+    !       print '(a,i8,3g14.7)','DEBUG4_lon: ',n,xgrd(1,iplg(i1)),xgrd(1,iplg(i2)),xgrd(1,iplg(i3))
+    !       print '(a,i8,3g14.7)','DEBUG4_lat: ',n,ygrd(1,iplg(i1)),ygrd(1,iplg(i2)),ygrd(1,iplg(i3))
+    !     end if
+    !   end do
+    !   print '(a,5i8)','DEBUG5: ',ecnt,maxi1,maxi2,maxi3,max(max(maxi1,maxi2),maxi3)
 
-    call ESMF_Finalize(endflag=ESMF_END_ABORT)
+    !call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     !--------------------------------------------------------------------
     ! Realize the actively coupled fields

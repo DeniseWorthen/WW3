@@ -8,9 +8,10 @@
 
 module w3iogoncdmd
 
-  use w3gdatmd      , only : nk, nx, ny, mapsf, mapsta, nsea
-  use w3odatmd      , only : noswll, undef
-  use w3odatmd      , only : nds, iaproc, napout
+  use w3gdatmd , only : nk, nx, ny, mapsf, mapsta, nsea
+  use w3odatmd , only : noswll, undef
+  use w3odatmd , only : nds, iaproc, napout
+  use w3gdatmd , only : ntri, trigp
   use netcdf
 
   implicit none
@@ -21,9 +22,10 @@ module w3iogoncdmd
 
   ! used/reused in module
 
-  integer               :: isea, ierr, ncid, varid
-  integer               :: len_s, len_m, len_p, len_k
-  character(len=1024)   :: fname
+  integer             :: isea, ierr, ncid, varid
+  integer             :: len_s, len_m, len_p, len_k
+  character(len=1024) :: fname
+  logical             :: output_on_elem = .true.
 
   real, allocatable, target :: var3ds(:,:,:)
   real, allocatable, target :: var3dm(:,:,:)
@@ -31,6 +33,9 @@ module w3iogoncdmd
   real, allocatable, target :: var3dk(:,:,:)
 
   real, pointer :: var3d(:,:,:)
+
+  real, allocatable :: elem2d(:,:)
+  real, allocatable :: wgts(:,:)
 
   !===============================================================================
 contains
@@ -63,6 +68,7 @@ contains
 #ifdef W3_CESMCOUPLED
     use w3adatmd   , only : langmt
 #endif
+    use wav_shr_mod, only : calc_center_coord, calc_elem_weights
     use wav_grdout , only : varatts, outvars
     use w3timemd   , only : set_user_timestring
     use w3odatmd   , only : time_origin, calendar_name, elapsed_secs
@@ -76,7 +82,14 @@ contains
     character(len=12)     :: vname
     character(len=16)     :: user_timestring    !YYYY-MM-DD-SSSSS
 
-    integer :: n, xtid, ytid, stid, mtid, ptid, ktid, timid, varid
+    ! TODO: make allocatable, allocate only if output_on_elem true
+    ! xyelem, xynodes and wgts calculated once; add to wav_grdout init?
+    real :: xns(3), yns(3), xc, yc, wt(3)
+    real :: xelem(ntri,ny), yelem(ntri,ny)
+    real :: xnodes(ntri,ny,3), ynodes(ntri,ny,3)
+
+    integer :: xdim
+    integer :: n, xtid, ytid, ztid, stid, mtid, ptid, ktid, timid, varid
     logical :: s_axis = .false., m_axis = .false., p_axis = .false., k_axis = .false.
 
     !-------------------------------------------------------------------------------
@@ -87,6 +100,26 @@ contains
     call w3seta ( igrd, ndse, ndst )  ! sets pointers into wadats in w3adatmd
     call w3xeta ( igrd, ndse, ndst )  ! sets pointers into wadats in w3adatmd
     call w3setw ( igrd, ndse, ndst )  ! sets pointers into wdatas in w3wdatmd
+
+    ! maxval(trigp) = nx; x,ygrd(ny,nx)
+    if (output_on_elem) then
+      allocate(wgts(ntri,3))
+      allocate(elem2d(ntri,ny))
+      do n = 1,ntri
+        xns(:) = xgrd(1,trigp(:,n))
+        yns(:) = ygrd(1,trigp(:,n))
+        call calc_center_coord(xns,yns,xc,yc)
+        xnodes(n,ny,:) = xns(:)
+        ynodes(n,ny,:) = yns(:)
+        xelem(n,ny) = xc
+        yelem(n,ny) = yc
+        call calc_elem_weights(xns,yns,xc,yc,wt)
+        wgts(n,:) = wt(:)
+      end do
+      xdim = ntri
+    else
+      xdim = nx
+    end if
 
     ! -------------------------------------------------------------
     ! create the netcdf file
@@ -126,8 +159,11 @@ contains
     ! create the netcdf file
     ierr = nf90_create(trim(fname), nf90_clobber, ncid)
     call handle_err(ierr, 'nf90_create')
-    ierr = nf90_def_dim(ncid, 'nx', nx, xtid)
-    ierr = nf90_def_dim(ncid, 'ny', ny, ytid)
+    ierr = nf90_def_dim(ncid, 'nx', xdim, xtid)
+    ierr = nf90_def_dim(ncid, 'ny', ny,   ytid)
+    if (output_on_elem) then
+      ierr = nf90_def_dim(ncid, 'nz', 3,  ztid)
+    end if
     ierr = nf90_def_dim(ncid, 'time', nf90_unlimited, timid)
 
     if (s_axis) ierr = nf90_def_dim(ncid, 'noswll', len_s, stid)
@@ -150,6 +186,15 @@ contains
     ierr = nf90_def_var(ncid, 'lat', nf90_double, (/xtid,ytid/), varid)
     call handle_err(ierr,'def_latvar')
     ierr = nf90_put_att(ncid, varid, 'units', 'degrees_north')
+    ! add node coords if required
+    if (output_on_elem) then
+      ierr = nf90_def_var(ncid, 'clon', nf90_double, (/xtid,ytid,ztid/), varid)
+      call handle_err(ierr,'def_lonvar_corner')
+      ierr = nf90_put_att(ncid, varid, 'units', 'degrees_east')
+      ierr = nf90_def_var(ncid, 'clat', nf90_double, (/xtid,ytid,ztid/), varid)
+      call handle_err(ierr,'def_latvar_corner')
+      ierr = nf90_put_att(ncid, varid, 'units', 'degrees_north')
+    endif
 
     ! define the variables
     dimid3(1:2) = (/xtid, ytid/)
@@ -183,15 +228,37 @@ contains
     call handle_err(ierr, 'end variable definition')
 
     ! write the time and spatial axis values (lat,lon,time)
-    ierr = nf90_inq_varid(ncid,  'lat', varid)
-    call handle_err(ierr, 'inquire variable lat ')
-    ierr = nf90_put_var(ncid, varid, transpose(ygrd))
-    call handle_err(ierr, 'put lat')
+    if (output_on_elem) then
+      ierr = nf90_inq_varid(ncid,  'lat', varid)
+      call handle_err(ierr, 'inquire variable lat ')
+      ierr = nf90_put_var(ncid, varid, yelem)
+      call handle_err(ierr, 'put lat')
 
-    ierr = nf90_inq_varid(ncid,  'lon', varid)
-    call handle_err(ierr, 'inquire variable lon ')
-    ierr = nf90_put_var(ncid, varid, transpose(xgrd))
-    call handle_err(ierr, 'put lon')
+      ierr = nf90_inq_varid(ncid,  'lon', varid)
+      call handle_err(ierr, 'inquire variable lon ')
+      ierr = nf90_put_var(ncid, varid, xelem)
+      call handle_err(ierr, 'put lon')
+
+       ierr = nf90_inq_varid(ncid,  'clat', varid)
+       call handle_err(ierr, 'inquire variable clat ')
+       ierr = nf90_put_var(ncid, varid, ynodes)
+       call handle_err(ierr, 'put clat')
+
+       ierr = nf90_inq_varid(ncid,  'clon', varid)
+       call handle_err(ierr, 'inquire variable clon ')
+       ierr = nf90_put_var(ncid, varid, xnodes)
+       call handle_err(ierr, 'put clon')
+    else
+      ierr = nf90_inq_varid(ncid,  'lat', varid)
+      call handle_err(ierr, 'inquire variable lat ')
+      ierr = nf90_put_var(ncid, varid, transpose(ygrd))
+      call handle_err(ierr, 'put lat')
+
+      ierr = nf90_inq_varid(ncid,  'lon', varid)
+      call handle_err(ierr, 'inquire variable lon ')
+      ierr = nf90_put_var(ncid, varid, transpose(xgrd))
+      call handle_err(ierr, 'put lon')
+    end if
 
     ierr = nf90_inq_varid(ncid,  'time', varid)
     call handle_err(ierr, 'inquire variable time ')
@@ -360,6 +427,10 @@ contains
     if (p_axis) deallocate(var3dp)
     if (k_axis) deallocate(var3dk)
 
+    !TODO:
+    deallocate(wgts)
+    deallocate(elem2d)
+
     ! Flush the buffers for write
     call w3seta ( igrd, ndse, ndst )
 
@@ -434,8 +505,15 @@ contains
     call handle_err(ierr, 'open '//trim(fname)//' for writing')
     ierr = nf90_inq_varid(ncid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
-    ierr = nf90_put_var(ncid, varid, var2d)
-    call handle_err(ierr, 'put variable '//trim(vname))
+
+    if (output_on_elem) then
+      call elemmean(var2d,elem2d)
+      ierr = nf90_put_var(ncid, varid, elem2d)
+      call handle_err(ierr, 'put variable '//trim(vname))
+    else
+      ierr = nf90_put_var(ncid, varid, var2d)
+      call handle_err(ierr, 'put variable '//trim(vname))
+    end if
     ierr = nf90_close(ncid)
 
   end subroutine write_var2d
@@ -451,9 +529,9 @@ contains
     character(len=*), optional, intent(in) :: init2
 
     ! local variables
-    real, allocatable, dimension(:)     :: varloc
-    logical                             :: linit2
-    integer                             :: lb, ub
+    real, allocatable, dimension(:) :: varloc
+    logical                         :: linit2
+    integer                         :: lb, ub, k
 
     linit2 = .false.
     if (present(init2)) then
@@ -483,12 +561,43 @@ contains
     call handle_err(ierr, 'open '//trim(fname)//' for writing')
     ierr = nf90_inq_varid(ncid, trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
-    ierr = nf90_put_var(ncid, varid, var3d)
+
+    if (output_on_elem) then
+      do k = lb,ub
+        call elemmean(var3d(:,:,k),elem2d)
+        ierr = nf90_put_var(ncid, varid, elem2d, start=(/1,1,k/), count=(/nx,ny,1/))
+        call handle_err(ierr, 'put variable '//trim(vname))
+      end do
+    else
+      ierr = nf90_put_var(ncid, varid, var3d)
+    end if
     call handle_err(ierr, 'put variable '//trim(vname))
     ierr = nf90_close(ncid)
 
     deallocate(varloc)
   end subroutine write_var3d
+
+  subroutine elemmean(ain,aout)
+
+    real, intent(in)  :: ain(nx,ny)
+    real, intent(out) :: aout(ntri,ny)
+
+    real    :: var1, var2, var3
+    integer :: n
+
+    aout = undef
+    do n = 1,ntri
+      var1 = ain(trigp(1,n),ny)
+      var2 = ain(trigp(2,n),ny)
+      var3 = ain(trigp(3,n),ny)
+      if ((var1 .eq. undef) .or. (var2 .eq. undef) .or. (var3 .eq. undef))then
+        aout(n,ny) = undef
+      else
+        aout(n,ny) = wgts(n,1)*var1 + wgts(n,2)*var2 + wgts(n,3)*var3
+      end if
+    end do
+
+  end subroutine elemmean
 
   !===============================================================================
   subroutine handle_err(ierr,string)

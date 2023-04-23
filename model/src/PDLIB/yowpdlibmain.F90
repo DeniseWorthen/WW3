@@ -62,6 +62,7 @@ contains
   !> @param[in] thirdDim size of the third dimensions to exchange
   !> @param[in] MPIComm MPI communicator to use with pdlib
   !> @overload initPD1
+  !CALL initFromGridDim(NX,NTRI,TRIGP,NTH,MPI_COMM_WCMP)
   subroutine initFromGridDim(MNP, MNE, INE_global, secDim, MPIcomm)
     use yowDatapool,       only: myrank, debugPrePartition, debugPostPartition
     use yowNodepool,       only: np_global, np, np_perProcSum, ng, ipgl, iplg, npa

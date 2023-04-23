@@ -29,7 +29,7 @@ module wav_shr_mod
   use NUOPC           , only : NUOPC_CompAttributeGet
   use NUOPC_Model     , only : NUOPC_ModelGet
   use wav_kind_mod    , only : r8 => shr_kind_r8, i8 => shr_kind_i8, cl=>shr_kind_cl, cs=>shr_kind_cs
-  use wav_kind_mod    , only : i4 => shr_kind_i4
+  use wav_kind_mod    , only : r4 => shr_kind_r4, i4 => shr_kind_i4
 
   implicit none
   private
@@ -47,6 +47,8 @@ module wav_shr_mod
   private :: field_getfldptr   !< @private obtain a pointer to a field
   public  :: diagnose_mesh     !< @public write out info about mesh
   public  :: write_meshdecomp  !< @public write the mesh decomposition to a file
+  public  :: calc_center_coord !< @public calculate the center coords of an element
+  public  :: calc_elem_weights !< @public calcuate the weights for interpolating nodes->elems
 
   interface state_getfldptr
     module procedure state_getfldptr_1d
@@ -1376,5 +1378,74 @@ contains
       chkerr = .true.
     endif
   end function chkerr
+
+  subroutine calc_center_coord(xs,ys,xc,yc)
+
+    real(r4), dimension(3), intent(in)  :: xs,ys
+    real(r4)              , intent(out) :: xc,yc
+
+    !local variables
+    real(r4) :: xtmp(3)
+    real(r4) :: diff12, diff13, diff23, maxdiff
+    logical  :: xlon
+
+    ! determine if nodes are discontinuous across 0E
+    ! or 180E
+    xlon = .false.
+    diff12 = abs(xs(1) - xs(2))
+    diff13 = abs(xs(1) - xs(3))
+    diff23 = abs(xs(2) - xs(3))
+    maxdiff = max(max(diff12,diff13),diff23)
+    if (maxdiff .ge. 180.0) xlon = .true.
+
+    ! find the triangle center
+    yc = sum(ys)/3.0
+    if (.not. xlon) then
+      xc = sum(xs)/3.0
+    else
+      xtmp = xs
+      where(xtmp .ge. 180.0) xtmp = xtmp - 360.0
+      xc = sum(xtmp)/3.0
+      if (xc .lt. 0.0)xc = xc + 360.0
+    end if
+  end subroutine calc_center_coord
+
+  subroutine calc_elem_weights(xs,ys,xc,yc,wt)
+
+    ! w3triadmd, sr is_in_ungrid
+    real(r4), dimension(3), intent(in)  :: xs,ys
+    real(r4)              , intent(in)  :: xc,yc
+    real(r4), dimension(3), intent(out) :: wt
+
+    real(r8) :: x1,x2,x3,y1,y2,y3,s1,s2,s3,sg1,sg2,sg3
+
+    x1 = xs(1)
+    y1 = ys(1)
+    x2 = xs(2)
+    y2 = ys(2)
+    x3 = xs(3)
+    y3 = ys(3)
+    wt = 0.0
+
+    !with M = (xc,yc) the target point ...
+    !vector product of AB and AC
+    sg3=(y3-y1)*(x2-x1)-(x3-x1)*(y2-y1)
+    !vector product of AB and AM
+    s3=(yc-y1)*(x2-x1)-(xc-x1)*(y2-y1)
+    !vector product of BC and BA
+    sg1=(y1-y2)*(x3-x2)-(x1-x2)*(y3-y2)
+    !vector product of BC and BM
+    s1=(yc-y2)*(x3-x2)-(xc-x2)*(y3-y2)
+    !vector product of CA and CB
+    sg2=(y2-y3)*(x1-x3)-(x2-x3)*(y1-y3)
+    !vector product of CA and CM
+    s2=(yc-y3)*(x1-x3)-(xc-x3)*(y1-y3)
+
+    if ((s1*sg1 .ge. 0.0) .and. (s2*sg2 .ge. 0.0) .and. (s3*sg3.ge. 0.0)) then
+      wt(1) = s1/sg1
+      wt(2) = s2/sg2
+      wt(3) = 1.0 - wt(1) - wt(2)
+    end if
+  end subroutine calc_elem_weights
 
 end module wav_shr_mod
