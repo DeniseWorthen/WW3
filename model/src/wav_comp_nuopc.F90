@@ -419,6 +419,11 @@ contains
 #ifdef W3_PDLIB
     use yowNodepool  , only : ng
 #endif
+   ! locstream
+    use w3odatmd     , only : nopts, ptloc, ptnme
+    use w3triamd     , only : is_in_ungrid
+    use w3gsrumd     , only : w3grmp
+    use w3gdatmd     , only : gsu
 
     ! input/output variables
     type(ESMF_GridComp)  :: gcomp
@@ -432,6 +437,7 @@ contains
     type(ESMF_Mesh)                :: Emesh
     type(ESMF_Array)               :: elemMaskArray
     type(ESMF_VM)                  :: vm
+    type(ESMF_LocStream)           :: locstream, ptlocstream
     type(ESMF_Time)                :: esmfTime, startTime, currTime, stopTime
     type(ESMF_TimeInterval)        :: TimeOffset
     type(ESMF_TimeInterval)        :: TimeStep
@@ -470,6 +476,11 @@ contains
     character(ESMF_MAXSTR)         :: preamb = './'
     character(ESMF_MAXSTR)         :: ifname = 'ww3_multi.inp'
     character(len=*), parameter    :: subname = '(wav_comp_nuopc:InitializeRealize)'
+    ! locstream
+    real    :: rd(4)
+    real, allocatable :: latpts(:), lonpts(:)
+    integer :: iloc(4), jloc(4), itout, nvalid
+    logical :: ingrid
     ! -------------------------------------------------------------------
 
     rc = ESMF_SUCCESS
@@ -842,12 +853,49 @@ contains
       end if
       deallocate(meshmask)
       deallocate(gindex)
-    end if
 
-    if (dbug_flag > 5) then
-      call write_meshdecomp(Emesh, 'emesh', rc=rc)
+      ! LocStream
+      !do i = 1,nopts
+      !   print '(a,i8,2g14.7,a)','DEBUG ',i,ptloc(1,i),ptloc(2,i),trim(ptnme(i))
+      !end do
+      ! extract point locations that are in the model domain
+      j = 0
+      allocate(latpts(1:nopts))
+      allocate(lonpts(1:nopts))
+      latpts = -999.
+      lonpts = -999.
+      do i = 1,nopts
+        !if (unstr_mesh) then
+        !  call is_in_ungrid(1, dble(ptloc(1,i)), dble(ptloc(2,i)), itout, iloc, jloc, rd)
+        !  ingrid = (itout.gt.0)
+        !else
+        ingrid = w3grmp( gsu, ptloc(1,i), ptloc(2,i), iloc, jloc, rd )
+        !end if
+        if (ingrid) then
+          j = j +1
+          latpts(j) = ptloc(2,i)
+          lonpts(j) = ptloc(1,i)
+        end if
+      end do
+
+      nvalid = j
+      print *,'DEBUG ',nopts,nvalid
+      locstream=ESMF_LocStreamCreate(name="PointOut", localCount=nvalid, &
+           coordSys=ESMF_COORDSYS_SPH_DEG, rc=rc)
+      if (chkerr(rc,__LINE__,u_FILE_u)) return
+      call ESMF_LocStreamAddKey(locstream, keyName="ESMF:Lat",      &
+           farray=latpts(1:nvalid), datacopyflag=ESMF_DATACOPY_REFERENCE, &
+           keyUnits="Degrees", keyLongName="Latitude", rc=rc)
+      if (chkerr(rc,__LINE__,u_FILE_u)) return
+      call ESMF_LocStreamAddKey(locstream, keyName="ESMF:Lon",      &
+           farray=lonpts(1:nvalid), datacopyflag=ESMF_DATACOPY_REFERENCE, &
+           keyUnits="Degrees", keyLongName="Longitude", rc=rc)
+      if (chkerr(rc,__LINE__,u_FILE_u)) return
+
+      !redistribute onto mesh
+      ptlocstream= ESMF_LocStreamCreate(locstream, background=Emesh, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    end if
+      deallocate(latpts, lonpts)
 
     !--------------------------------------------------------------------
     ! Realize the actively coupled fields
