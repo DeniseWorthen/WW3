@@ -57,15 +57,15 @@ message(STATUS "Build with switch: ${switch_file}")
 configure_file(${switch_file} ${CMAKE_BINARY_DIR}/switch COPYONLY)
 
 # Create APP specific switch list for meshcap
-if(${SWITCH} MATCHES meshcap)
+if(${SWITCH} MATCHES "meshcap")
   file(STRINGS ${CMAKE_BINARY_DIR}/switch switches)
 
-  if(DEFINED PDLIB)
+  if(PDLIB)
     string(APPEND switches " PDLIB SCOTCH")
   else()
     string(APPEND switches " OMPG OMPH")
   endif()
-  if(DEFINED WAVEICE)
+  if(WAVEICE)
    string(APPEND switches " IC4")
   else()
    string(APPEND switches " IC0")
