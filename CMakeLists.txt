@@ -13,7 +13,7 @@ project(
 
 get_directory_property(hasParent PARENT_DIRECTORY)
 if(hasParent)
-  # Unset flags that come from Parent (ie UFS or other coupled build) 
+  # Unset flags that come from Parent (ie UFS or other coupled build)
   # for potential (-r8/-r4) conflict
   set(CMAKE_Fortran_FLAGS "")
   set(CMAKE_C_FLAGS "")
@@ -24,7 +24,7 @@ set(valid_caps "MULTI_ESMF" "NUOPC_MESH")
 
 set(UFS_CAP "" CACHE STRING "Valid options are ${valid_caps}")
 set(NETCDF ON CACHE BOOL "Build NetCDF programs (requires NetCDF)")
-set(ENDIAN "BIG" CACHE STRING "Endianness of unformatted output files. Valid values are 'BIG', 'LITTLE', 'NATIVE'.") 
+set(ENDIAN "BIG" CACHE STRING "Endianness of unformatted output files. Valid values are 'BIG', 'LITTLE', 'NATIVE'.")
 set(EXCLUDE_FIND "" CACHE STRING "Don't try and search for these libraries (assumd to be handled by the compiler/wrapper)")
 
 # make sure all "exclude_find" entries are lower case
@@ -55,6 +55,23 @@ endif()
 message(STATUS "Build with switch: ${switch_file}")
 # Copy switch file to build dir
 configure_file(${switch_file} ${CMAKE_BINARY_DIR}/switch COPYONLY)
+
+# Create APP specific switch list for meshcap
+if(${SWITCH} MATCHES meshcap)
+  file(STRINGS ${CMAKE_BINARY_DIR}/switch switches)
+
+  if(DEFINED PDLIB)
+    string(APPEND switches " PDLIB SCOTCH")
+  else()
+    string(APPEND switches " OMPG OMPH")
+  endif()
+  if(DEFINED WAVEICE)
+   string(APPEND switches " IC4")
+  else()
+   string(APPEND switches " IC0")
+  endif()
+  file(WRITE ${CMAKE_BINARY_DIR}/switch ${switches})
+endif()
 
 # Re-configure CMake when switch changes
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${CMAKE_BINARY_DIR}/switch)
