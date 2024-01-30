@@ -48,6 +48,7 @@ module wav_comp_nuopc
   use w3odatmd              , only : user_netcdf_grdout
   use w3odatmd              , only : time_origin, calendar_name, elapsed_secs
   use wav_shr_mod           , only : casename, multigrid, inst_suffix, inst_index, unstr_mesh
+  use wav_wrapper_mod       , only : ufs_settimer, ufs_logtimer, ufs_file_setlogunit, wtime
 #ifndef W3_CESMCOUPLED
   use wmwavemd              , only : wmwave
   use wmupdtmd              , only : wmupd2
@@ -99,9 +100,12 @@ module wav_comp_nuopc
                                                            !! using ESMF. If restart_option is present as config
                                                            !! option, user_restalarm will be true and will be
                                                            !! set using restart_option, restart_n and restart_ymd
-  integer :: time0(2)
-  integer :: timen(2)
-
+  integer :: ymd                                           !< current year-month-day
+  integer :: tod                                           !< current time of day (sec)
+  integer :: time0(2)                                      !< start time stored as yyyymmdd,hhmmss
+  integer :: timen(2)                                      !< end time stored as yyyymmdd,hhmmss
+  integer :: nu_timer                                      !< simple timer log, unused except by UFS
+  logical :: runtimelog = .false.                          !< logical flag for writing runtime log files
   character(*), parameter :: modName =  "(wav_comp_nuopc)" !< the name of this module
   character(*), parameter :: u_FILE_u = &                  !< a character string for an ESMF log message
        __FILE__
@@ -238,6 +242,7 @@ contains
     character(len=*), parameter :: subname=trim(modName)//':(InitializeAdvertise) '
     !-------------------------------------------------------------------------------
 
+    call ufs_settimer(wtime)
     rc = ESMF_SUCCESS
     call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
 
@@ -369,6 +374,15 @@ contains
     write(logmsg,'(A,l)') trim(subname)//': Wave wav_coupling_to_cice setting is ',wav_coupling_to_cice
     call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
 
+    ! Determine Runtime logging
+    call NUOPC_CompAttributeGet(gcomp, name="RunTimeLog", value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    if (isPresent .and. isSet) runtimelog=(trim(cvalue)=="true")
+    write(logmsg,*) runtimelog
+    call ESMF_LogWrite('WW3_cap:RunTimeLog = '//trim(logmsg), ESMF_LOGMSG_INFO)
+    if (runtimelog) then
+      call ufs_file_setLogUnit('./log.ww3.timer',nu_timer,runtimelog)
+    end if
     call advertise_fields(importState, exportState, flds_scalar_name, rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
@@ -419,11 +433,8 @@ contains
 #ifdef W3_PDLIB
     use yowNodepool  , only : ng
 #endif
-   ! locstream
+    ! locstream
     use w3odatmd     , only : nopts, ptloc, ptnme
-    use w3triamd     , only : is_in_ungrid
-    use w3gsrumd     , only : w3grmp
-    use w3gdatmd     , only : gsu
 
     ! input/output variables
     type(ESMF_GridComp)  :: gcomp
@@ -437,7 +448,6 @@ contains
     type(ESMF_Mesh)                :: Emesh
     type(ESMF_Array)               :: elemMaskArray
     type(ESMF_VM)                  :: vm
-    type(ESMF_LocStream)           :: locstream, ptlocstream
     type(ESMF_Time)                :: esmfTime, startTime, currTime, stopTime
     type(ESMF_TimeInterval)        :: TimeOffset
     type(ESMF_TimeInterval)        :: TimeStep
@@ -477,15 +487,17 @@ contains
     character(ESMF_MAXSTR)         :: ifname = 'ww3_multi.inp'
     character(len=*), parameter    :: subname = '(wav_comp_nuopc:InitializeRealize)'
     ! locstream
-    real    :: rd(4)
-    real, allocatable :: latpts(:), lonpts(:)
-    integer :: iloc(4), jloc(4), itout, nvalid
-    logical :: ingrid
+    integer :: i,lsize_src
+    type(ESMF_LocStream) :: ptslocstrm
+    type(ESMF_Field)     :: ptfield, lfield
+    type(ESMF_RouteHandle) :: ptRH
+    integer, pointer              :: fldptr1d(:), ptptr1d(:)
     ! -------------------------------------------------------------------
 
     rc = ESMF_SUCCESS
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
 
+    call ufs_settimer(wtime)
     !--------------------------------------------------------------------
     ! Set up data structures
     !--------------------------------------------------------------------
@@ -853,49 +865,59 @@ contains
       end if
       deallocate(meshmask)
       deallocate(gindex)
+    end if
 
-      ! LocStream
-      !do i = 1,nopts
-      !   print '(a,i8,2g14.7,a)','DEBUG ',i,ptloc(1,i),ptloc(2,i),trim(ptnme(i))
-      !end do
-      ! extract point locations that are in the model domain
-      j = 0
-      allocate(latpts(1:nopts))
-      allocate(lonpts(1:nopts))
-      latpts = -999.
-      lonpts = -999.
-      do i = 1,nopts
-        !if (unstr_mesh) then
-        !  call is_in_ungrid(1, dble(ptloc(1,i)), dble(ptloc(2,i)), itout, iloc, jloc, rd)
-        !  ingrid = (itout.gt.0)
-        !else
-        ingrid = w3grmp( gsu, ptloc(1,i), ptloc(2,i), iloc, jloc, rd )
-        !end if
-        if (ingrid) then
-          j = j +1
-          latpts(j) = ptloc(2,i)
-          lonpts(j) = ptloc(1,i)
-        end if
-      end do
-
-      nvalid = j
-      print *,'DEBUG ',nopts,nvalid
-      locstream=ESMF_LocStreamCreate(name="PointOut", localCount=nvalid, &
-           coordSys=ESMF_COORDSYS_SPH_DEG, rc=rc)
-      if (chkerr(rc,__LINE__,u_FILE_u)) return
-      call ESMF_LocStreamAddKey(locstream, keyName="ESMF:Lat",      &
-           farray=latpts(1:nvalid), datacopyflag=ESMF_DATACOPY_REFERENCE, &
-           keyUnits="Degrees", keyLongName="Latitude", rc=rc)
-      if (chkerr(rc,__LINE__,u_FILE_u)) return
-      call ESMF_LocStreamAddKey(locstream, keyName="ESMF:Lon",      &
-           farray=lonpts(1:nvalid), datacopyflag=ESMF_DATACOPY_REFERENCE, &
-           keyUnits="Degrees", keyLongName="Longitude", rc=rc)
-      if (chkerr(rc,__LINE__,u_FILE_u)) return
-
-      !redistribute onto mesh
-      ptlocstream= ESMF_LocStreamCreate(locstream, background=Emesh, rc=rc)
+    if (dbug_flag > 5) then
+      call write_meshdecomp(Emesh, 'emesh', rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      deallocate(latpts, lonpts)
+    end if
+
+    ! locstream
+    print *,'XXX ',nopts
+    ! set up a locstream and find which proc holds each point
+    ptslocstrm=ESMF_LocStreamCreate(name="PointOut", localCount=nopts, coordSys=ESMF_COORDSYS_SPH_DEG, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    call ESMF_LocStreamAddKey(ptslocstrm, keyName="ESMF:Lat",      &
+         farray=real(ptloc(2,:),8), datacopyflag=ESMF_DATACOPY_REFERENCE, &
+         keyUnits="Degrees", keyLongName="Latitude", rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    call ESMF_LocStreamAddKey(ptslocstrm, keyName="ESMF:Lon",      &
+         farray=real(ptloc(1,:),8), datacopyflag=ESMF_DATACOPY_REFERENCE, &
+         keyUnits="Degrees", keyLongName="Longitude", rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ptfield = ESMF_FieldCreate(ptslocstrm, typekind=ESMF_TYPEKIND_I4, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+
+    call ESMF_MeshGet(EMesh, numOwnedElements=lsize_src, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    lfield = ESMF_FieldCreate(EMesh, ESMF_TYPEKIND_I4, name='src', meshloc=ESMF_MESHLOC_ELEMENT, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    call ESMF_FieldGet(lfield, farrayPtr=fldptr1d, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    do i = 1,lsize_src
+      fldptr1d(i) = iaproc
+    end do
+
+    call ESMF_FieldRegridStore(srcField=lfield, dstField=ptfield, routeHandle=ptRH, &
+                               regridmethod=ESMF_REGRIDMETHOD_NEAREST_STOD, &
+                               unmappedaction=ESMF_UNMAPPEDACTION_IGNORE, &
+                               rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+
+    call ESMF_FieldRegrid(lfield, ptfield, routeHandle=ptRH, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    call ESMF_FieldGet(ptfield, farrayPtr=ptptr1d, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    do i = 1,size(ptptr1d)
+      if(ptptr1d(i) .eq. iaproc)print *,'YYY ',i,ptptr1d(i),ptloc(1,i),ptloc(2,i)
+    end do
+    call ESMF_FieldWrite(ptfield, filename='test.nc', overwrite=.true., rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+
+    ! create a src field = farrayptr=iaproc
+    ! create a dst field on locstream
+    ! regrid from src->dst w/ ndstod?
+    ! retrieve values of field on dst(locstream)
 
     !--------------------------------------------------------------------
     ! Realize the actively coupled fields
@@ -919,6 +941,7 @@ contains
       enddo
     end if
 #endif
+    if (root_task) call ufs_logtimer(nu_timer,time,start_tod,'InitializeRealize time: ',runtimelog,wtime)
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
 
@@ -1048,8 +1071,6 @@ contains
     type(ESMF_Time)         :: currTime, nextTime, startTime, stopTime
     integer                 :: yy,mm,dd,hh,ss
     integer                 :: imod
-    integer                 :: ymd        ! current year-month-day
-    integer                 :: tod        ! current time of day (sec)
     integer                 :: shrlogunit ! original log unit and level
     character(ESMF_MAXSTR)  :: msgString
     character(len=*),parameter :: subname = '(wav_comp_nuopc:ModelAdvance) '
@@ -1089,6 +1110,8 @@ contains
     if ( root_task ) then
       write(nds(1),'(a,3i4,i10)') 'ymd2date currTime wav_comp_nuopc hh,mm,ss,ymd', hh,mm,ss,ymd
     end if
+    if (root_task) call ufs_logtimer(nu_timer,time,tod,'ModelAdvance time since last step: ',runtimelog,wtime)
+    call ufs_settimer(wtime)
 
     ! use next time; the NUOPC clock is not updated
     ! until the end of the time interval
@@ -1186,6 +1209,8 @@ contains
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
+    if (root_task) call ufs_logtimer(nu_timer,time,tod,'ModelAdvance time: ',runtimelog,wtime)
+    call ufs_settimer(wtime)
 
   end subroutine ModelAdvance
 
@@ -1405,6 +1430,7 @@ contains
     end if
 
     call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
+    if(root_task) call ufs_logtimer(nu_timer,timen,tod,'ModelFinalize time: ',runtimelog,wtime)
 
   end subroutine ModelFinalize
 
@@ -1623,6 +1649,7 @@ contains
     ! Initialize ww3 for ufs (called from InitializeRealize)
 
     use w3odatmd     , only : fnmpre
+    use w3gdatmd     , only : dtcfl, dtcfli, dtmax, dtmin
     use w3initmd     , only : w3init
     use wav_shel_inp , only : read_shel_config
     use wav_shel_inp , only : npts, odat, iprt, x, y, pnames, prtfrm
@@ -1639,6 +1666,7 @@ contains
     character(len=CL) :: logmsg
     logical           :: isPresent, isSet
     character(len=CL) :: cvalue
+    integer           :: dt_in(4)
     character(len=*), parameter :: subname = '(wav_comp_nuopc:wavinit_ufs)'
     ! -------------------------------------------------------------------
 
@@ -1686,6 +1714,21 @@ contains
     call w3init ( 1, .false., 'ww3', mds, ntrace, odat, flgrd, flgr2, flgd, flg2, &
          npts, x, y, pnames, iprt, prtfrm, mpi_comm )
 
+    write(logmsg,'(A,4f10.2)') trim(subname)//': mod_def timesteps file  ',dtmax,dtcfl,dtcfli,dtmin
+    call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
+    call NUOPC_CompAttributeGet(gcomp, name='dt_in', isPresent=isPresent, isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    if (isPresent .and. isSet) then
+      call NUOPC_CompAttributeGet(gcomp, name='dt_in', value=cvalue, rc=rc)
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      read(cvalue,*)dt_in
+      dtmax  = real(dt_in(1),4)
+      dtcfl  = real(dt_in(2),4)
+      dtcfli = real(dt_in(3),4)
+      dtmin  = real(dt_in(4),4)
+      write(logmsg,'(A,4f10.2)') trim(subname)//': mod_def timesteps reset ',dtmax,dtcfl,dtcfli,dtmin
+      call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
+    end if
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
   end subroutine waveinit_ufs
 
