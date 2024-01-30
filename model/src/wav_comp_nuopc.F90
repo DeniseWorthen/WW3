@@ -488,7 +488,7 @@ contains
     character(len=*), parameter    :: subname = '(wav_comp_nuopc:InitializeRealize)'
     ! locstream
     integer :: i,lsize_src
-    type(ESMF_LocStream) :: ptslocstrm
+    type(ESMF_LocStream) :: tmpLocStrm, ptslocstrm
     type(ESMF_Field)     :: ptfield, lfield
     type(ESMF_RouteHandle) :: ptRH
     integer, pointer              :: fldptr1d(:), ptptr1d(:)
@@ -875,15 +875,17 @@ contains
     ! locstream
     print *,'XXX ',nopts
     ! set up a locstream and find which proc holds each point
-    ptslocstrm=ESMF_LocStreamCreate(name="PointOut", localCount=nopts, coordSys=ESMF_COORDSYS_SPH_DEG, rc=rc)
+    tmpLocStrm=ESMF_LocStreamCreate(name="PointOut", localCount=nopts, coordSys=ESMF_COORDSYS_SPH_DEG, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
-    call ESMF_LocStreamAddKey(ptslocstrm, keyName="ESMF:Lat",      &
+    call ESMF_LocStreamAddKey(tmpLocStrm, keyName="ESMF:Lat",      &
          farray=real(ptloc(2,:),8), datacopyflag=ESMF_DATACOPY_REFERENCE, &
          keyUnits="Degrees", keyLongName="Latitude", rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
-    call ESMF_LocStreamAddKey(ptslocstrm, keyName="ESMF:Lon",      &
+    call ESMF_LocStreamAddKey(tmpLocStrm, keyName="ESMF:Lon",      &
          farray=real(ptloc(1,:),8), datacopyflag=ESMF_DATACOPY_REFERENCE, &
          keyUnits="Degrees", keyLongName="Longitude", rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ptslocstrm = ESMF_LocstreamCreate(tmpLocStrm, background=Emesh, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
     ptfield = ESMF_FieldCreate(ptslocstrm, typekind=ESMF_TYPEKIND_I4, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
