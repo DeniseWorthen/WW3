@@ -875,7 +875,9 @@ contains
     ! locstream
     print *,'XXX ',nopts
     ! set up a locstream and find which proc holds each point
-    tmpLocStrm=ESMF_LocStreamCreate(name="PointOut", localCount=nopts, coordSys=ESMF_COORDSYS_SPH_DEG, rc=rc)
+    !tmpLocStrm=ESMF_LocStreamCreate(name="PointOut", localCount=nopts, coordSys=ESMF_COORDSYS_SPH_DEG, rc=rc)
+    tmpLocStrm=ESMF_LocStreamCreate(maxindex=nopts, indexflag=ESMF_INDEX_GLOBAL, rc=rc)
+
     if (chkerr(rc,__LINE__,u_FILE_u)) return
     call ESMF_LocStreamAddKey(tmpLocStrm, keyName="ESMF:Lat",      &
          farray=real(ptloc(2,:),8), datacopyflag=ESMF_DATACOPY_REFERENCE, &
@@ -885,10 +887,15 @@ contains
          farray=real(ptloc(1,:),8), datacopyflag=ESMF_DATACOPY_REFERENCE, &
          keyUnits="Degrees", keyLongName="Longitude", rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
+
     ptslocstrm = ESMF_LocstreamCreate(tmpLocStrm, background=Emesh, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
-    ptfield = ESMF_FieldCreate(ptslocstrm, typekind=ESMF_TYPEKIND_I4, rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
+
+    !ptfield = ESMF_FieldCreate(ptslocstrm, typekind=ESMF_TYPEKIND_I4, rc=rc)
+    !if (chkerr(rc,__LINE__,u_FILE_u)) return
+
+
+    !ptslocstrm = tmplocstrm
 
     call ESMF_MeshGet(EMesh, numOwnedElements=lsize_src, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
