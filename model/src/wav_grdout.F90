@@ -157,9 +157,9 @@ contains
          varatts( "T0M1 ", "T0M1      ", "Mean wave period (Tm0,-1)                       ", "s         ", "  ", .false.) , &
          varatts( "T01  ", "T01       ", "Mean wave period (Tm0,1)                        ", "s         ", "  ", .false.) , &
          varatts( "FP   ", "FP0       ", "Peak frequency                                  ", "s-1       ", "  ", .false.) , &
-         varatts( "DIR  ", "THM       ", "Mean wave direction                             ", "rad       ", "  ", .false.) , &
-         varatts( "SPR  ", "THS       ", "Mean directional spread                         ", "rad       ", "  ", .false.) , &
-         varatts( "DP   ", "THP0      ", "Peak direction                                  ", "rad       ", "  ", .false.) , &
+         varatts( "DIR  ", "THM       ", "Mean wave direction                             ", "deg       ", "  ", .false.) , &
+         varatts( "SPR  ", "THS       ", "Mean directional spread                         ", "deg       ", "  ", .false.) , &
+         varatts( "DP   ", "THP0      ", "Peak direction                                  ", "deg       ", "  ", .false.) , &
          varatts( "HIG  ", "HSIG      ", "Infragravity height                             ", "m         ", "  ", .false.) , &
          varatts( "MXE  ", "STMAXE    ", "Max surface elev (STE)                          ", "m         ", "  ", .false.) , &
          varatts( "MXES ", "STMAXD    ", "St Dev Max surface elev (STE)                   ", "m         ", "  ", .false.) , &
