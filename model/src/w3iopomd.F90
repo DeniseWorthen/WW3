@@ -312,6 +312,7 @@ CONTAINS
     END IF
     !
     CALL W3DMO2 ( IMOD, NDSE, NDST, NPT )
+    print *,'ZZZ0 ',npt,nopts
     GRDID  = FILEXT
     !
     NOPTS  = 0
@@ -355,7 +356,8 @@ CONTAINS
       ELSE
         CALL IS_IN_UNGRID(IMOD, DBLE(XPT(IPT)), DBLE(YPT(IPT)), itout, IX, IY, RD)
         INGRID = (ITOUT.GT.0)
-      END IF
+     END IF
+     print '(a,2i6,2f10.2,a10,l1)','ZZZ1 ',ipt,npt,xpt(ipt),ypt(ipt),pnames(ipt),ingrid
       !
       IF ( .NOT.INGRID ) THEN
         IF ( IAPROC .EQ. NAPERR ) THEN
