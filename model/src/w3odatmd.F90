@@ -573,6 +573,8 @@ MODULE W3ODATMD
                                                      !! if true => write restart
   logical            :: user_netcdf_grdout = .false. !<@public logical flag to use netCDF for gridded
                                                      !! field output
+  logical            :: use_iogopio = .false.
+
   character(len= 36) :: time_origin = ''             !< @public the time_origin used for netCDF output
   character(len= 36) :: calendar_name = ''           !< @public the calendar used for netCDF output
   integer(kind=8)    :: elapsed_secs = 0             !< @public the time in seconds from the time_origin

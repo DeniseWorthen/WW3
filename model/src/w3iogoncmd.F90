@@ -6,7 +6,7 @@
 !> @date 01-05-2022
 #include "w3macros.h"
 
-module w3iogoncdmd
+module w3iogoncmd
 
   use w3gdatmd      , only : nk, nx, ny, mapsf, mapsta, nsea
   use w3odatmd      , only : noswll, undef
@@ -17,7 +17,7 @@ module w3iogoncdmd
 
   private
 
-  public :: w3iogoncd
+  public :: w3iogonc
 
   ! used/reused in module
 
@@ -36,7 +36,7 @@ module w3iogoncdmd
 contains
   !===============================================================================
 
-  subroutine w3iogoncd ()
+  subroutine w3iogonc ()
 
     use w3odatmd   , only : fnmpre
     use w3gdatmd   , only : filext, trigp, ntri, ungtype, gtype
@@ -396,7 +396,7 @@ contains
     ! Flush the buffers for write
     call w3seta ( igrd, ndse, ndst )
 
-  end subroutine w3iogoncd
+  end subroutine w3iogonc
 
   !===============================================================================
   subroutine write_var2d(vname, var, dir, usemask, init0, init2)
@@ -538,4 +538,4 @@ contains
     end if
   end subroutine handle_err
 
-end module w3iogoncdmd
+end module w3iogoncmd
