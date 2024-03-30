@@ -2617,9 +2617,9 @@ CONTAINS
 #endif
                     if (w3_sbs_flag) then
                       IF ( J .EQ. 1 ) THEN
-                        CALL W3IOGO( 'WRITE', NDS(7), ITEST, IMOD
+                        CALL W3IOGO( 'WRITE', NDS(7), ITEST, IMOD &
 #ifdef W3_ASCII
-                        ,NDS(14)                              &
+                             ,NDS(14)                             &
 #endif
                              )
                       ENDIF
