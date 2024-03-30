@@ -2617,7 +2617,11 @@ CONTAINS
 #endif
                     if (w3_sbs_flag) then
                       IF ( J .EQ. 1 ) THEN
-                        CALL W3IOGO( 'WRITE', NDS(7), ITEST, IMOD )
+                        CALL W3IOGO( 'WRITE', NDS(7), ITEST, IMOD
+#ifdef W3_ASCII
+                        ,NDS(14)                              &
+#endif
+                             )
                       ENDIF
 
                       ! Generate output flag file for fields and SBS coupling.
@@ -2636,7 +2640,11 @@ CONTAINS
               ELSE IF ( do_point_output ) THEN
                 IF ( IAPROC .EQ. NAPPNT ) THEN
                   CALL W3IOPE ( VA )
-                  CALL W3IOPO ( 'WRITE', NDS(8), ITEST, IMOD )
+                  CALL W3IOPO ( 'WRITE', NDS(8), ITEST, IMOD &
+#ifdef W3_ASCII
+                          ,NDS(15)                           &
+#endif
+                          )
                 END IF
 
               ELSE IF ( do_track_output ) THEN
