@@ -100,8 +100,10 @@ module wav_comp_nuopc
                                                            !! using ESMF. If restart_option is present as config
                                                            !! option, user_restalarm will be true and will be
                                                            !! set using restart_option, restart_n and restart_ymd
-  integer :: time0(2)
-  integer :: timen(2)
+  integer :: ymd                                           !< current year-month-day
+  integer :: tod                                           !< current time of day (sec)
+  integer :: time0(2)                                      !< start time stored as yyyymmdd,hhmmss
+  integer :: timen(2)                                      !< end time stored as yyyymmdd,hhmmss
   integer :: nu_timer                                      !< simple timer log, unused except by UFS
   logical :: runtimelog = .false.                          !< logical flag for writing runtime log files
   character(*), parameter :: modName =  "(wav_comp_nuopc)" !< the name of this module
@@ -367,7 +369,7 @@ contains
          isSet=isSet, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
     if (isPresent .and. isSet) then
-      wav_coupling_to_cice=(trim(cvalue)=="true")
+       read(cvalue,*) wav_coupling_to_cice
     end if
     write(logmsg,'(A,l)') trim(subname)//': Wave wav_coupling_to_cice setting is ',wav_coupling_to_cice
     call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
@@ -565,6 +567,7 @@ contains
     if ( root_task ) then
       write(stdout,'(a)')'      *** WAVEWATCH III Program shell ***      '
       write(stdout,'(a)')'==============================================='
+      write(stdout,'(a,l)')' Wave wav_coupling_to_cice setting is ',wav_coupling_to_cice
     end if
 
     !--------------------------------------------------------------------
@@ -915,6 +918,7 @@ contains
     type(ESMF_State)  :: exportState
     real(r8), pointer :: z0rlen(:)
     real(r8), pointer :: sw_lamult(:)
+    real(r8), pointer :: sw_lasl(:)
     real(r8), pointer :: sw_ustokes(:)
     real(r8), pointer :: sw_vstokes(:)
     real(r8), pointer :: wave_elevation_spectrum(:,:)
@@ -936,6 +940,14 @@ contains
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
       sw_lamult (:) = 1.
     endif
+    if (state_fldchk(exportState, 'Sw_lasl')) then
+      call state_getfldptr(exportState, 'Sw_lasl', sw_lasl, rc=rc)
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      ! note: the default value of this surface layer averaged Langmuir number
+      ! should be a large number to be consistent with lamult=1., ustokes=0.,
+      ! and vstokes=0.
+      sw_lasl (:) = 1.e6
+    endif
     if (state_fldchk(exportState, 'Sw_ustokes')) then
       call state_getfldptr(exportState, 'Sw_ustokes', sw_ustokes, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
@@ -952,7 +964,7 @@ contains
       call CalcRoughl(z0rlen)
     endif
     if (wav_coupling_to_cice) then
-      call state_getfldptr(exportState, 'wave_elevation_spectrum', wave_elevation_spectrum, rc=rc)
+      call state_getfldptr(exportState, 'Sw_elevation_spectrum', wave_elevation_spectrum, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
       wave_elevation_spectrum(:,:) = 0.
     endif
@@ -1014,8 +1026,6 @@ contains
     type(ESMF_Time)         :: currTime, nextTime, startTime, stopTime
     integer                 :: yy,mm,dd,hh,ss
     integer                 :: imod
-    integer                 :: ymd        ! current year-month-day
-    integer                 :: tod        ! current time of day (sec)
     integer                 :: shrlogunit ! original log unit and level
     character(ESMF_MAXSTR)  :: msgString
     character(len=*),parameter :: subname = '(wav_comp_nuopc:ModelAdvance) '
@@ -1375,7 +1385,7 @@ contains
     end if
 
     call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
-    if(root_task) call ufs_logtimer(nu_timer,timen,0,'ModelFinalize time: ',runtimelog,wtime)
+    if(root_task) call ufs_logtimer(nu_timer,timen,tod,'ModelFinalize time: ',runtimelog,wtime)
 
   end subroutine ModelFinalize
 
@@ -1659,6 +1669,8 @@ contains
     call w3init ( 1, .false., 'ww3', mds, ntrace, odat, flgrd, flgr2, flgd, flg2, &
          npts, x, y, pnames, iprt, prtfrm, mpi_comm )
 
+    write(logmsg,'(A,4f10.2)') trim(subname)//': mod_def timesteps file  ',dtmax,dtcfl,dtcfli,dtmin
+    call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
     call NUOPC_CompAttributeGet(gcomp, name='dt_in', isPresent=isPresent, isSet=isSet, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
     if (isPresent .and. isSet) then
@@ -1669,6 +1681,8 @@ contains
       dtcfl  = real(dt_in(2),4)
       dtcfli = real(dt_in(3),4)
       dtmin  = real(dt_in(4),4)
+      write(logmsg,'(A,4f10.2)') trim(subname)//': mod_def timesteps reset ',dtmax,dtcfl,dtcfli,dtmin
+      call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
     end if
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
   end subroutine waveinit_ufs
