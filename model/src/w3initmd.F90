@@ -2243,23 +2243,22 @@ CONTAINS
       !
       ! Calculation of NRQMAX splitted by output groups and field type
       !       scalar                2-comp   3-comp
-      NRQMAX =   1           +    0  +    0  +  &  ! group 1
-           18                +    0  +    0  +  &  ! group 2
-           0                 +    0  +    0  +  &  ! group 3 (extra contributions below)
-           2+(NOGE(4)-2)*(NOSWLL+1) +    0  +    0  +  &  ! group 4
+      NRQMAX =   1              +   0  +     0  +  &  ! group 1
+                18              +   0  +     0  +  &  ! group 2
+                 0              +   0  +     0  +  &  ! group 3 (extra contributions below)
+      2+(NOGE(4)-2)*(NOSWLL+1)  +   0  +     0  +  &  ! group 4
                  8              +   2  +     1  +  &  ! group 5
                  3              +   6  +     1  +  &  ! group 6 (extra contributions below)
                  1              +   3  +     1  +  &  ! group 7
                  4              +   2  +     0  +  &  ! group 8
-           5                 +    0  +    0  +  &  ! group 9
-           NOEXTR            +    0  +    0        ! group 10
-
+                 5              +   0  +     0  +  &  ! group 9
+            NOEXTR              +   0  +     0        ! group 10
       ! Extra contributions to NRQMAX from group 3
       DO IFJ=1,5
         IF ( FLGRDALL( 3,IFJ)) NRQMAX = NRQMAX + E3DF(3,IFJ) - E3DF(2,IFJ) + 1
       END DO
       ! Extra contributions to NRQMAX from group 6
-      IF ( FLGRDALL( 6,9)) NRQMAX = NRQMAX + P2MSF(3) - P2MSF(2) + 1
+      IF ( FLGRDALL( 6, 9) ) NRQMAX = NRQMAX + P2MSF(3) - P2MSF(2) + 1
       IF ( FLGRDALL( 6, 8) ) NRQMAX = NRQMAX + 2*NK
       IF ( FLGRDALL( 6,12) ) NRQMAX = NRQMAX + 2*NK
       IF ( FLGRDALL( 6,14) ) NRQMAX = NRQMAX + 2

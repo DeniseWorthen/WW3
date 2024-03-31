@@ -563,7 +563,6 @@ contains
     end if
 
     if (.not. multigrid) call set_shel_io(stdout,mds,ntrace)
-
     if ( root_task ) then
       write(stdout,'(a)')'      *** WAVEWATCH III Program shell ***      '
       write(stdout,'(a)')'==============================================='
