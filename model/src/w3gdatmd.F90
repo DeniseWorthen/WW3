@@ -429,6 +429,17 @@ MODULE W3GDATMD
   !      KDCON     Real  Public   Conversion factor for relative depth.
   !      KDMN      Real  Public   Minimum relative depth.
   !      SNLSn     Real  Public   Constants in shallow water factor.
+  !      IQTPE     Int.  Public   Type of depth treatment
+  !                               -2 : Deep water GQM with scaling
+  !                                1 : Deep water DIA
+  !                                2 : Deep water DIA with scaling
+  !                                3 : Finite water depth DIA
+  !      GQNF1     Int.  Public   Gaussian quadrature resolution
+  !      GQNT1     Int.  Public   Gaussian quadrature resolution
+  !      GQNNQ_OM2 Int.  Public   Gaussian quadrature resolution
+  !      GQTHRSAT  Real  Public   Threshold on saturation for SNL calculation
+  !      GQTHRCOU  Real  Public   Threshold for filter on coupling coefficient
+  !      GQAMP     R.A.  Public   Amplification factors
   !                                                             (!/NL2)
   !      IQTPE     Int.  Public   Type of depth treatment
   !                                1 : Deep water
@@ -889,7 +900,7 @@ MODULE W3GDATMD
     REAL,     POINTER     :: DCKI(:,:), SATWEIGHTS(:,:),CUMULW(:,:),QBI(:,:)
     REAL                  :: AALPHA, BBETA, ZZ0MAX, ZZ0RAT, ZZALP,&
          SSINTHP, TTAUWSHELTER, SSWELLF(1:7), &
-         SSDSC(1:21), SSDSBR,                 &
+         SSDSC(1:21), SSDSBR, SINTAILPAR(1:5),&
          SSDSP, WWNMEANP, SSTXFTF, SSTXFTWN,  &
          FFXPM, FFXFM, FFXFA,   &
          SSDSBRF1, SSDSBRF2, SSDSBINT,SSDSBCK,&
@@ -913,6 +924,8 @@ MODULE W3GDATMD
 #ifdef W3_NL1
     REAL                  :: SNLC1, LAM, KDCON, KDMN,             &
          SNLS1, SNLS2, SNLS3
+    INTEGER               :: IQTPE, GQNF1, GQNT1, GQNQ_OM2
+    REAL                  :: NLTAIL, GQTHRSAT, GQTHRCOU, GQAMP(4)
 #endif
 #ifdef W3_NL2
     INTEGER               :: IQTPE, NDPTHS
@@ -1311,7 +1324,7 @@ MODULE W3GDATMD
        FFXFM, FFXPM, SSDSBRF1, SSDSBRF2,    &
        SSDSBINT, SSDSBCK, SSDSHCK, SSDSABK, &
        SSDSPBK, SSINBR,SSINTHP,TTAUWSHELTER,&
-       SSWELLF(:), SSDSC(:), SSDSBR,        &
+       SINTAILPAR(:), SSWELLF(:), SSDSC(:), SSDSBR,        &
        SSDSP, WWNMEANP, SSTXFTF, SSTXFTWN,  &
        SSDSBT, SSDSCOS, SSDSDTH, SSDSBM(:)
 #endif
@@ -1326,6 +1339,8 @@ MODULE W3GDATMD
   !/ Data aliasses for structure SNLP(S)
   !/
 #ifdef W3_NL1
+  INTEGER, POINTER        :: IQTPE, GQNF1, GQNT1, GQNQ_OM2
+  REAL, POINTER           :: NLTAIL, GQTHRSAT, GQTHRCOU, GQAMP(:)
   REAL, POINTER           :: SNLC1, LAM, KDCON, KDMN,             &
        SNLS1, SNLS2, SNLS3
 #endif
@@ -2066,12 +2081,18 @@ CONTAINS
          MPARS(IMOD)%SRCPS%QBI(NKHS,NKD),   &
          STAT=ISTAT                         )
     CHECK_ALLOC_STATUS ( ISTAT )
+    MPARS(IMOD)%SRCPS%IKTAB(:,:)=0.
+    MPARS(IMOD)%SRCPS%DCKI(:,:)=0.
+    MPARS(IMOD)%SRCPS%QBI(:,:)=0.
     SDSNTH  = MTH/2-1 !MIN(NINT(SSDSDTH/(DTH*RADE)),MTH/2-1)
     ALLOCATE( MPARS(IMOD)%SRCPS%SATINDICES(2*SDSNTH+1,MTH), &
          MPARS(IMOD)%SRCPS%SATWEIGHTS(2*SDSNTH+1,MTH), &
          MPARS(IMOD)%SRCPS%CUMULW(MSPEC,MSPEC),        &
          STAT=ISTAT                                   )
     CHECK_ALLOC_STATUS ( ISTAT )
+    MPARS(IMOD)%SRCPS%SATINDICES(:,:)=0.
+    MPARS(IMOD)%SRCPS%SATWEIGHTS(:,:)=0.
+    MPARS(IMOD)%SRCPS%CUMULW(:,:)=0.
 #endif
     !
     SGRDS(IMOD)%SINIT  = .TRUE.
@@ -2644,6 +2665,7 @@ CONTAINS
     ZZ0RAT   => MPARS(IMOD)%SRCPS%ZZ0RAT
     ZZALP    => MPARS(IMOD)%SRCPS%ZZALP
     TTAUWSHELTER  => MPARS(IMOD)%SRCPS%TTAUWSHELTER
+    SINTAILPAR  => MPARS(IMOD)%SRCPS%SINTAILPAR
     SSWELLFPAR  => MPARS(IMOD)%SRCPS%SSWELLFPAR
     SSWELLF  => MPARS(IMOD)%SRCPS%SSWELLF
     SSDSC    => MPARS(IMOD)%SRCPS%SSDSC
@@ -2701,6 +2723,14 @@ CONTAINS
     SNLS1  => MPARS(IMOD)%SNLPS%SNLS1
     SNLS2  => MPARS(IMOD)%SNLPS%SNLS2
     SNLS3  => MPARS(IMOD)%SNLPS%SNLS3
+    IQTPE  => MPARS(IMOD)%SNLPS%IQTPE
+    GQNF1  => MPARS(IMOD)%SNLPS%GQNF1
+    GQNT1  => MPARS(IMOD)%SNLPS%GQNT1
+    GQNQ_OM2  => MPARS(IMOD)%SNLPS%GQNQ_OM2
+    NLTAIL => MPARS(IMOD)%SNLPS%NLTAIL
+    GQTHRSAT => MPARS(IMOD)%SNLPS%GQTHRSAT
+    GQTHRCOU=> MPARS(IMOD)%SNLPS%GQTHRCOU
+    GQAMP=> MPARS(IMOD)%SNLPS%GQAMP
 #endif
 #ifdef W3_NL2
     IQTPE  => MPARS(IMOD)%SNLPS%IQTPE
