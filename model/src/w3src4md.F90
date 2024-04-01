@@ -358,6 +358,7 @@ CONTAINS
     CALL W3FLX5 ( ZZWND, U, UDIR, TAUA, TAUADIR, DAIR,  &
          USTAR, USDIR, Z0, CD, CHARN )
 #else
+    Z0=0.
     CALL CALC_USTAR(U,TAUW,USTAR,Z0,CHARN)
     UNZ    = MAX ( 0.01 , U )
     CD     = (USTAR/UNZ)**2
@@ -899,7 +900,7 @@ CONTAINS
         ZLOG     = MIN(ALOG(ZMU),0.)
         ZBETA        = CONST1*ZMU*ZLOG**4
         !
-        ! Optional addition of capillary wave peak if SINTAIL2=1 
+        ! Optional addition of capillary wave peak if SINTAIL2=1
         !
         IF (SINTAILPAR(3).GT.0) THEN
           IF (USTR.LT.CM) THEN
