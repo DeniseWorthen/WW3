@@ -2614,14 +2614,14 @@ CONTAINS
 #ifdef W3_MPI
                     IF ( FLGMPI(1) ) CALL MPI_WAITALL( NRQGO2, IRQGO2, STATIO, IERR_MPI )
                     FLGMPI(1) = .FALSE.
-                    CALL W3IOGO( 'WRITE', NDS(7), ITEST, IMOD &
-#ifdef W3_ASCII
-                         ,NDS(14)                             &
-                         )
 #endif
                     if (w3_sbs_flag) then
                       IF ( J .EQ. 1 ) THEN
-                        CALL W3IOGO( 'WRITE', NDS(7), ITEST, IMOD )
+                        CALL W3IOGO( 'WRITE', NDS(7), ITEST, IMOD &
+#ifdef W3_ASCII
+                             ,NDS(14)                             &
+#endif
+                             )
                       ENDIF
 
                       ! Generate output flag file for fields and SBS coupling.

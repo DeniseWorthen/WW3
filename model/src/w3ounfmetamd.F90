@@ -3980,9 +3980,6 @@ CONTAINS
     META(1)%VARNC='Goda wave peakedness parameter'
     META(1)%VMIN = 0
     META(1)%VMAX = 32
-<<<<<<< HEAD
-
-=======
     ! IFI=8, IFJ=6, QKK
     META => GROUP(8)%FIELD(6)%META
     META(1)%FSC    = 0.05
@@ -3996,7 +3993,6 @@ CONTAINS
     META(1)%VARNC='2D wavenumber peakedness'
     META(1)%VMIN = 0
     META(1)%VMAX = 1600
->>>>>>> 4cd995d0
     !
     !---------- GROUP 9 ----------------
     !
