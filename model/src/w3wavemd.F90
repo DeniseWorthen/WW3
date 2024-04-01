@@ -2614,6 +2614,10 @@ CONTAINS
 #ifdef W3_MPI
                     IF ( FLGMPI(1) ) CALL MPI_WAITALL( NRQGO2, IRQGO2, STATIO, IERR_MPI )
                     FLGMPI(1) = .FALSE.
+                    CALL W3IOGO( 'WRITE', NDS(7), ITEST, IMOD &
+#ifdef W3_ASCII
+                         ,NDS(14)                             &
+                         )
 #endif
                     if (w3_sbs_flag) then
                       IF ( J .EQ. 1 ) THEN
@@ -2628,7 +2632,11 @@ CONTAINS
                       OPEN( UNIT=NDSOFLG, FILE=FOUTNAME)
                       CLOSE( NDSOFLG )
                     else
-                      CALL W3IOGO( 'WRITE', NDS(7), ITEST, IMOD )
+                      CALL W3IOGO( 'WRITE', NDS(7), ITEST, IMOD &
+#ifdef W3_ASCII
+                           ,NDS(14)                             &
+#endif
+                           )
                     endif
                   end if
                 end if ! user_netcdf_grdout
@@ -2636,7 +2644,11 @@ CONTAINS
               ELSE IF ( do_point_output ) THEN
                 IF ( IAPROC .EQ. NAPPNT ) THEN
                   CALL W3IOPE ( VA )
-                  CALL W3IOPO ( 'WRITE', NDS(8), ITEST, IMOD )
+                  CALL W3IOPO ( 'WRITE', NDS(8), ITEST, IMOD &
+#ifdef W3_ASCII
+                       ,NDS(15)                              &
+#endif
+                       )
                 END IF
 
               ELSE IF ( do_track_output ) THEN
