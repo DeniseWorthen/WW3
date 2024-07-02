@@ -2415,13 +2415,15 @@ CONTAINS
         end IF
 
         do_w3outg = .false.
-        if (w3_cesmcoupled_flag .and. histwr) then
+        !if (w3_cesmcoupled_flag .and. histwr) then
+        if (histwr) then
           do_w3outg = .true.
         else if ( LOCAL .AND. (FLOUTG .OR. FLOUTG2) ) then
           do_w3outg = .true.
         end if
         if (do_w3outg) then
-          CALL W3OUTG ( VA, FLPFLD, FLOUTG, FLOUTG2 )
+           CALL W3OUTG ( VA, FLPFLD, FLOUTG, FLOUTG2 )
+           print *,'XXX done with w3outg'
         end if
         !
         if (.not. use_iogopio) then
@@ -2528,8 +2530,9 @@ CONTAINS
             if (w3_sbs_flag) then
               do_gridded_output = ( j .eq. 1 )  .or. ( j .eq. 7 )
             else
-              if (w3_cesmcoupled_flag) then
-                do_gridded_output = ( j .eq. 1 ) .and. histwr
+               !if (w3_cesmcoupled_flag) then
+               if (histwr) then
+                do_gridded_output = ( j .eq. 1 )
               else
                 do_gridded_output = ( j .eq. 1 )
               end if
@@ -2554,7 +2557,7 @@ CONTAINS
             DTTST   = DSEC21 ( TIME, TOUT )
             !
             IF ( DTTST .EQ. 0. ) THEN
-              if (.not. use_iogopio) then
+               if (.not. use_iogopio) then
                 if (do_gridded_output) then
                   if (user_netcdf_grdout) then
                     IF ( FLGMPI(0) )CALL MPI_WAITALL( NRQGO, IRQGO, STATIO, IERR_MPI )
@@ -2585,7 +2588,10 @@ CONTAINS
                         CALL W3IOGO( 'WRITE', NDS(7), ITEST, IMOD )
                       endif
                     end if
-                 end if ! user_netcdf_grdout
+                  end if ! user_netcdf_grdout
+                else
+                  call w3iogonc_pio ( )
+               end if
               ELSE IF ( do_point_output ) THEN
                 IF ( IAPROC .EQ. NAPPNT ) THEN
                   CALL W3IOPE ( VA )

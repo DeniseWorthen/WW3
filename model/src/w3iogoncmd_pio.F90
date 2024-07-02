@@ -131,8 +131,8 @@ contains
     master_task = 0
     istride = 4
     basetask = 1
-    !numiotasks = max((nprocs-basetask)/istride,1)
-    numiotasks = 2
+    numiotasks = max((nprocs-basetask)/istride,1)
+    !numiotasks = 2
     rearranger = PIO_REARR_BOX
     print '(a,6i8)','SETUP ',nprocs,iaproc,my_task,numiotasks, nseal_cpl, size(hs)
 
