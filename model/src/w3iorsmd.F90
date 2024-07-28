@@ -990,14 +990,14 @@ CONTAINS
                  (ASF(ISEA),ISEA=1+(IPART-1)*NSIZE,          &
                  MIN(NSEA,IPART*NSIZE))
           END DO
-          DO IPART=1,NPART
-            NREC  = NREC + 1
-            RPOS  = 1_8 + LRECL*(NREC-1_8)
-            WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
-            WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)         &
-                 (FPIS(ISEA),ISEA=1+(IPART-1)*NSIZE,         &
-                 MIN(NSEA,IPART*NSIZE))
-          END DO
+          ! DO IPART=1,NPART
+          !   NREC  = NREC + 1
+          !   RPOS  = 1_8 + LRECL*(NREC-1_8)
+          !   WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
+          !   WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)         &
+          !        (FPIS(ISEA),ISEA=1+(IPART-1)*NSIZE,         &
+          !        MIN(NSEA,IPART*NSIZE))
+          ! END DO
           IF (OARST) THEN
 #ifdef W3_MPI
             CALL W3XETA ( IGRD, NDSE, NDST )
@@ -1168,13 +1168,13 @@ CONTAINS
                (ASF(ISEA),ISEA=1+(IPART-1)*NSIZE,              &
                MIN(NSEA,IPART*NSIZE))
         END DO
-        DO IPART=1,NPART
-          NREC  = NREC + 1
-          RPOS  = 1_8 + LRECL*(NREC-1_8)
-          READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)              &
-               (FPIS(ISEA),ISEA=1+(IPART-1)*NSIZE,             &
-               MIN(NSEA,IPART*NSIZE))
-        END DO
+        ! DO IPART=1,NPART
+        !   NREC  = NREC + 1
+        !   RPOS  = 1_8 + LRECL*(NREC-1_8)
+        !   READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)              &
+        !        (FPIS(ISEA),ISEA=1+(IPART-1)*NSIZE,             &
+        !        MIN(NSEA,IPART*NSIZE))
+        ! END DO
         IF (OARST) THEN
           IF ( FLOGOA(1,2) ) THEN
             READ (NDSR,ERR=802,IOSTAT=IERR) CX(1:NSEA)
