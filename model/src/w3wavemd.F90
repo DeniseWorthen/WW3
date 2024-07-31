@@ -2606,7 +2606,7 @@ CONTAINS
                     IF ( FLGMPI(1) ) CALL MPI_WAITALL( NRQGO2, IRQGO2, STATIO, IERR_MPI )
                     FLGMPI(1) = .FALSE.
 #endif
-                    CALL W3IOGONCD ()
+                    CALL W3IOGONCD ( tend )
                   END IF
                 else
                   ! default (binary) output
