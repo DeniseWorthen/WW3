@@ -623,7 +623,7 @@ contains
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
     endif
     ! Determine time attributes for history output
-    call ESMF_TimeGet( esmfTime, timeString=time_origin, calendar=calendar, rc=rc )
+    call ESMF_TimeGet( startTime, timeString=time_origin, calendar=calendar, rc=rc )
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
     time_origin = 'seconds since '//time_origin(1:10)//' '//time_origin(12:19)
     !call ESMF_ClockGet(clock, calendar=calendar)
