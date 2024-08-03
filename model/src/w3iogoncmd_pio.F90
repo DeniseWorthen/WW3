@@ -57,7 +57,7 @@ module w3iogoncmd_pio
 contains
   !===============================================================================
 
-  subroutine w3iogonc_pio ( )
+  subroutine w3iogonc_pio ( timen )
 
     use w3odatmd   , only : fnmpre, naproc, iaproc
     use w3gdatmd   , only : filext, trigp, ntri, ungtype, gtype
@@ -80,9 +80,7 @@ contains
     use w3adatmd   , only : cflxymax, cflthmax, cflkmax, p2sms, us3d
     use w3adatmd   , only : th1m, sth1m, th2m, sth2m, hsig, phice, tauice
     use w3adatmd   , only : stmaxe, stmaxd, hmaxe, hcmaxe, hmaxd, hcmaxd, ussp, tauocx, tauocy
-#ifdef W3_CESMCOUPLED
-    use w3adatmd   , only : langmt
-#endif
+    use w3adatmd   , only : usshx, usshy
     use wav_grdout , only : varatts, outvars
 
     use w3timemd   , only : set_user_timestring
@@ -91,7 +89,7 @@ contains
     !TODO: use unstr_mesh from wav_shr_mod; currently fails due to CI
     !use wav_shr_mod      , only : unstr_mesh
 
-    !integer, intent(in)   :: timen(2)
+    integer, intent(in)   :: timen(2)
 
     ! local variables
     integer             :: igrd
@@ -148,10 +146,10 @@ contains
       if (len_trim(user_histfname) == 0 ) then
         call extcde (60, msg="user history filename requested but not provided")
       end if
-      call set_user_timestring(time,user_timestring)
+      call set_user_timestring(timen,user_timestring)
       fname = trim(user_histfname)//trim(user_timestring)//'.nc'
     else
-      write(fname,'(a,i8.8,a1,i6.6,a)')trim(fnmpre),time(1),'.',time(2),'.out_grd.'//trim(filext)//'.nc'
+      write(fname,'(a,i8.8,a1,i6.6,a)')trim(fnmpre),timen(1),'.',timen(2),'.out_grd.'//trim(filext)//'.nc'
     end if
 
     len_s = noswll + 1                  ! 0:noswll
@@ -409,9 +407,8 @@ contains
         if (vname .eq.   'PHICE') call write_var2d(vname, phice    (1:nseal_cpl) )
         if (vname .eq.  'TAUOCX') call write_var2d(vname, tauocx   (1:nseal_cpl) )
         if (vname .eq.  'TAUOCY') call write_var2d(vname, tauocy   (1:nseal_cpl) )
-#ifdef W3_CESMCOUPLED
-        if (vname .eq.  'LANGMT') call write_var2d(vname, langmt   (1:nseal_cpl) )
-#endif
+        if (vname .eq.   'USSHX') call write_var2d(vname, usshx    (1:nseal_cpl) )
+        if (vname .eq.   'USSHY') call write_var2d(vname, usshy    (1:nseal_cpl) )
         ! Group 7
         if (vname .eq.    'ABAX') call write_var2d(vname, aba      (1:nseal_cpl), dir=cos(abd(1:nseal_cpl)) )
         if (vname .eq.    'ABAY') call write_var2d(vname, aba      (1:nseal_cpl), dir=sin(abd(1:nseal_cpl)) )
