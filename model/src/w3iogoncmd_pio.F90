@@ -92,7 +92,7 @@ contains
     integer, intent(in)   :: timen(2)
 
     ! local variables
-    integer             :: igrd
+    !integer             :: igrd
     integer    ,target  :: dimid3(3)
     integer    ,target  :: dimid4(4)
     integer    ,pointer :: dimid(:)
@@ -111,15 +111,14 @@ contains
     integer :: my_task
     integer :: master_task
     integer :: status
-
     !-------------------------------------------------------------------------------
 
-    igrd   = 1
+    !igrd   = 1
     !TODO: are these needed?
-    call w3seto ( igrd, ndse, ndst )
-    call w3setg ( igrd, ndse, ndst )
-    call w3seta ( igrd, ndse, ndst )  ! sets pointers into wadats in w3adatmd
-    call w3setw ( igrd, ndse, ndst )  ! sets pointers into wdatas in w3wdatmd
+    !call w3seto ( igrd, ndse, ndst )
+    !call w3setg ( igrd, ndse, ndst )
+    !call w3seta ( igrd, ndse, ndst )  ! sets pointers into wadats in w3adatmd
+    !call w3setw ( igrd, ndse, ndst )  ! sets pointers into wdatas in w3wdatmd
 
     ! TODO: for now, hardwire  the io system
     pioid%fh = -1
@@ -333,20 +332,20 @@ contains
 
       else
         ! Group 1
-        if (vname .eq.      'DW') call write_var2d(vname, dw       (1:nseal_cpl), init0='false')
-        if (vname .eq.      'CX') call write_var2d(vname, cx       (1:nseal_cpl), init0='false')
-        if (vname .eq.      'CY') call write_var2d(vname, cy       (1:nseal_cpl), init0='false')
-        if (vname .eq.     'UAX') call write_var2d(vname, ua       (1:nseal_cpl), dir=cos(ud(1:nseal_cpl)), init0='false')
-        if (vname .eq.     'UAY') call write_var2d(vname, ua       (1:nseal_cpl), dir=sin(ud(1:nseal_cpl)), init0='false')
-        if (vname .eq.      'AS') call write_var2d(vname, as       (1:nseal_cpl), init0='false')
-        if (vname .eq.     'WLV') call write_var2d(vname, wlv      (1:nseal_cpl), init0='false')
-        if (vname .eq.     'ICE') call write_var2d(vname, ice      (1:nseal_cpl), init0='false')
-        if (vname .eq.    'BERG') call write_var2d(vname, berg     (1:nseal_cpl), init0='false')
-        if (vname .eq.    'TAUX') call write_var2d(vname, taua     (1:nseal_cpl), dir=cos(tauadir(1:nseal_cpl)), init0='false')
-        if (vname .eq.    'TAUY') call write_var2d(vname, taua     (1:nseal_cpl), dir=sin(tauadir(1:nseal_cpl)), init0='false')
-        if (vname .eq.  'RHOAIR') call write_var2d(vname, rhoair   (1:nseal_cpl), init0='false')
-        if (vname .eq.    'ICEH') call write_var2d(vname, iceh     (1:nseal_cpl), init0='false')
-        if (vname .eq.    'ICEF') call write_var2d(vname, icef     (1:nseal_cpl), init0='false')
+        if (vname .eq.      'DW') call write_var2d(vname, dw       (1:nsea), init0='false', global='true')
+        if (vname .eq.      'CX') call write_var2d(vname, cx       (1:nsea), init0='false', global='true')
+        if (vname .eq.      'CY') call write_var2d(vname, cy       (1:nsea), init0='false', global='true')
+        if (vname .eq.     'UAX') call write_var2d(vname, ua       (1:nsea), dir=cos(ud(1:nsea)), init0='false', global='true')
+        if (vname .eq.     'UAY') call write_var2d(vname, ua       (1:nsea), dir=sin(ud(1:nsea)), init0='false', global='true')
+        if (vname .eq.      'AS') call write_var2d(vname, as       (1:nsea), init0='false', global='true')
+        if (vname .eq.     'WLV') call write_var2d(vname, wlv      (1:nsea), init0='false', global='true')
+        if (vname .eq.     'ICE') call write_var2d(vname, ice      (1:nsea), init0='false', global='true')
+        if (vname .eq.    'BERG') call write_var2d(vname, berg     (1:nsea), init0='false', global='true')
+        if (vname .eq.    'TAUX') call write_var2d(vname, taua     (1:nsea), dir=cos(tauadir(1:nsea)), init0='false', global='true')
+        if (vname .eq.    'TAUY') call write_var2d(vname, taua     (1:nsea), dir=sin(tauadir(1:nsea)), init0='false', global='true')
+        if (vname .eq.  'RHOAIR') call write_var2d(vname, rhoair   (1:nsea), init0='false', global='true')
+        if (vname .eq.    'ICEH') call write_var2d(vname, iceh     (1:nsea), init0='false', global='true')
+        if (vname .eq.    'ICEF') call write_var2d(vname, icef     (1:nsea), init0='false', global='true')
 
         ! Group 2
         if (vname .eq.      'HS') call write_var2d(vname, hs       (1:nseal_cpl) )
@@ -455,14 +454,15 @@ contains
   end subroutine w3iogonc_pio
 
   !===============================================================================
-  subroutine write_var2d(vname, var, dir, usemask, init0, init2)
+  subroutine write_var2d(vname, var, dir, usemask, init0, init2, global)
     ! write (nseal) array as (nx,ny)
     ! if dir is present, write x or y component of (nsea) array as (nx,ny)
     ! if mask is present and true, use mapsta=1 to mask values
     ! if init0 is present and false, do not initialize values
     ! for mapsta<0. this prevents group 1 variables being set undef over
     ! ice. if init2 is present and true, apply a second initialization to
-    ! a subset of variables for where mapsta==2
+    ! a subset of variables for where mapsta==2. if global is present and
+    ! true, write pe-local copy of global field
 
     character(len=*),           intent(in) :: vname
     real            ,           intent(in) :: var(:)
@@ -470,10 +470,11 @@ contains
     character(len=*), optional, intent(in) :: usemask
     character(len=*), optional, intent(in) :: init0
     character(len=*), optional, intent(in) :: init2
+    character(len=*), optional, intent(in) :: global
 
     ! local variables
     real, dimension(nseal_cpl) :: varout
-    logical                    :: lmask, linit0, linit2
+    logical                    :: lmask, linit0, linit2, lglobal
     real                       :: varloc
 
     lmask = .false.
@@ -488,17 +489,22 @@ contains
     if (present(init2)) then
       linit2 = (trim(init2) == "true")
     end if
-
+    lglobal = .false.
+    if (present(global)) then
+       lglobal = (trim(global) == "true")
+    end if
     ! DEBUG
     !write(*,'(a)')' writing variable ' //trim(vname)//' to history file '//trim(fname)
 
     varout = undef
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
-      ! initialization
-      !print '(a,5i6,f8.2)','WWvar2d ',jsea,isea,ix,iy,n,var(jsea)
+      if (lglobal) then
+        varloc = var(isea)
+      else
+        varloc = var(jsea)
+      end if
 
-      varloc = var(jsea)
       if (linit0) then
         if (mapsta(mapsf(isea,2),mapsf(isea,1)) < 0) varloc = undef
       end if
@@ -510,10 +516,18 @@ contains
         if (varloc .ne. undef) then
           if (lmask) then
             if (mapsta(mapsf(isea,2),mapsf(isea,1)) == 1) then
-              varout(jsea) = varloc*dir(jsea)
+              if (lglobal) then
+                varout(jsea) = varloc*dir(isea)
+              else
+                varout(jsea) = varloc*dir(jsea)
+              end if
             end if
           else
-            varout(jsea) = varloc*dir(jsea)
+            if (lglobal) then
+              varout(jsea) = varloc*dir(isea)
+            else
+              varout(jsea) = varloc*dir(jsea)
+            end if
           end if
         end if
       else
@@ -557,20 +571,17 @@ contains
     ! DEBUG
     ! write(nds(1),'(a,2i6)')' writing variable ' //trim(vname)//' to history file ' &
     !    //trim(fname)//' with bounds ',lb,ub
-    !print *,'XYXY ',trim(vname),minval(var3d,1),maxval(var3d,1),minval(var3d,2),maxval(var3d,2)
 
     var3d = undef
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
       ! initialization
       varloc(:) = var(jsea,:)
-      print '(a,2i6,2f8.2)','WWvar2d ',jsea,isea,minval(varloc),maxval(varloc)
       if (mapsta(mapsf(isea,2),mapsf(isea,1)) < 0) varloc(:) = undef
       if (linit2) then
         if (mapsta(mapsf(isea,2),mapsf(isea,1)) == 2) varloc(:) = undef
       end if
       var3d(jsea,:) = varloc(:)
-      !print *,trim(vname),jsea,lb,ub,varloc
     end do
 
     ierr = pio_inq_varid(pioid,  trim(vname), vardesc)
@@ -617,7 +628,6 @@ contains
       iy = mapsf(isea,2)                 ! global iy
       n = n+1
       dof2d(n) = (iy-1)*nx + ix          ! local index : global index
-      !print '(a,4i6,2f10.2)','PIO ',jsea,ix,iy,(iy-1)*nx + ix,xgrd(iy,ix),ygrd(iy,ix)
     end do
     call pio_initdecomp(wav_pio_subsystem, PIO_REAL, (/nx,ny/), dof2d, iodesc)
 
