@@ -491,7 +491,8 @@ CONTAINS
 #ifdef W3_TIMINGS
     USE W3PARALL, only : PRINT_MY_TIME
 #endif
-    use w3iogoncdmd   , only : w3iogoncd
+    use w3iogoncmd_pio, only : w3iogonc_pio
+    use w3iogoncmd    , only : w3iogonc
     use w3odatmd      , only : histwr, rstwr, user_netcdf_grdout
     !
 #ifdef W3_MPI
@@ -2611,7 +2612,7 @@ CONTAINS
                       IF ( FLGMPI(1) ) CALL MPI_WAITALL( NRQGO2, IRQGO2, STATIO, IERR_MPI )
                       FLGMPI(1) = .FALSE.
 #endif
-                      CALL W3IOGONCD ( tend )
+                      CALL W3IOGONC ( tend )
                     END IF
                   else
                     ! default (binary) output
