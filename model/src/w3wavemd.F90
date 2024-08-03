@@ -491,8 +491,7 @@ CONTAINS
 #ifdef W3_TIMINGS
     USE W3PARALL, only : PRINT_MY_TIME
 #endif
-    use w3iogoncmd    , only : w3iogonc
-    use w3iogoncmd_pio, only : w3iogonc_pio
+    use w3iogoncdmd   , only : w3iogoncd
     use w3odatmd      , only : histwr, rstwr, user_netcdf_grdout
     !
 #ifdef W3_MPI
@@ -2415,97 +2414,143 @@ CONTAINS
         end IF
 
         do_w3outg = .false.
-        !if (w3_cesmcoupled_flag .and. histwr) then
-        if (histwr) then
+        if (w3_cesmcoupled_flag .and. histwr) then
           do_w3outg = .true.
         else if ( LOCAL .AND. (FLOUTG .OR. FLOUTG2) ) then
           do_w3outg = .true.
         end if
         if (do_w3outg) then
-           CALL W3OUTG ( VA, FLPFLD, FLOUTG, FLOUTG2 )
-           print *,'XXX done with w3outg'
+          CALL W3OUTG ( VA, FLPFLD, FLOUTG, FLOUTG2 )
         end if
         !
-        if (.not. use_iogopio) then
 #ifdef W3_MPI
-           FLGMPI = .FALSE.
-           NRQMAX = 0
-           !
-           do_startall = .false.
-           if (w3_cesmcoupled_flag .and. histwr) then
-              IF ( FLOUT(1) .OR.  FLOUT(7) ) THEN
-                 do_startall = .true.
-              end IF
-           else
-              CPLWRTFLG=.FALSE.
-              IF ( FLOUT(7) .AND. SBSED ) THEN
-                 IF (DSEC21(TIME,TONEXT(:,7)).EQ.0.) THEN
-                    CPLWRTFLG=.TRUE.
-                 END IF
+        FLGMPI = .FALSE.
+        NRQMAX = 0
+        !
+        do_startall = .false.
+        if (.not. use_iogopio) then
+          if (w3_cesmcoupled_flag .and. histwr) then
+            IF ( FLOUT(1) .OR.  FLOUT(7) ) THEN
+              do_startall = .true.
+            end IF
+          else
+            CPLWRTFLG=.FALSE.
+            IF ( FLOUT(7) .AND. SBSED ) THEN
+              IF (DSEC21(TIME,TONEXT(:,7)).EQ.0.) THEN
+                CPLWRTFLG=.TRUE.
               END IF
-              IF ( ( (DSEC21(TIME,TONEXT(:,1)).EQ.0.) .AND. FLOUT(1) ) .OR. &
-                   ( CPLWRTFLG ) ) THEN
-                 do_startall = .true.
-              end IF
-           end if
-
-           if (do_startall) then
-              IF (.NOT. LPDLIB) THEN
-                 IF (NRQGO.NE.0 ) THEN
-                    CALL MPI_STARTALL ( NRQGO, IRQGO , IERR_MPI )
-                    FLGMPI(0) = .TRUE.
-                    NRQMAX    = MAX ( NRQMAX , NRQGO )
-                 END IF
-
-                 IF (NRQGO2.NE.0 ) THEN
-                    CALL MPI_STARTALL ( NRQGO2, IRQGO2, IERR_MPI )
-                    FLGMPI(1) = .TRUE.
-                    NRQMAX    = MAX ( NRQMAX , NRQGO2 )
-                 END IF
-              ELSE
-#ifdef W3_PDLIB
-                 CALL DO_OUTPUT_EXCHANGES(IMOD)
-#endif
-              END IF ! IF (.NOT. LPDLIB) THEN
-           END IF ! if (do_startall)
+            END IF
+            IF ( ( (DSEC21(TIME,TONEXT(:,1)).EQ.0.) .AND. FLOUT(1) ) .OR. &
+                 ( CPLWRTFLG ) ) THEN
+              do_startall = .true.
+            end IF
+          end if
         end if
+        if (do_startall) then
+          IF (.NOT. LPDLIB) THEN
+            IF (NRQGO.NE.0 ) THEN
+              CALL MPI_STARTALL ( NRQGO, IRQGO , IERR_MPI )
 
+              FLGMPI(0) = .TRUE.
+              NRQMAX    = MAX ( NRQMAX , NRQGO )
+#ifdef W3_MPIT
+              WRITE (NDST,9043) '1a', NRQGO, NRQMAX, NAPFLD
+#endif
+            END IF
+            !
+            IF (NRQGO2.NE.0 ) THEN
+              CALL MPI_STARTALL ( NRQGO2, IRQGO2, IERR_MPI )
+
+              FLGMPI(1) = .TRUE.
+              NRQMAX    = MAX ( NRQMAX , NRQGO2 )
+#ifdef W3_MPIT
+              WRITE (NDST,9043) '1b', NRQGO2, NRQMAX, NAPFLD
+#endif
+            END IF
+          ELSE
+#ifdef W3_PDLIB
+            CALL DO_OUTPUT_EXCHANGES(IMOD)
+#endif
+          END IF ! IF (.NOT. LPDLIB) THEN
+        END IF ! if (do_startall)
+#endif
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP 1')
-
+        !
+#ifdef W3_MPI
         IF ( FLOUT(2) .AND. NRQPO.NE.0 ) THEN
           IF ( DSEC21(TIME,TONEXT(:,2)).EQ.0. ) THEN
             CALL MPI_STARTALL ( NRQPO, IRQPO1, IERR_MPI )
             FLGMPI(2) = .TRUE.
             NRQMAX    = MAX ( NRQMAX , NRQPO )
+#endif
+#ifdef W3_MPIT
+            WRITE (NDST,9043) '2 ', NRQPO, NRQMAX, NAPPNT
+#endif
+#ifdef W3_MPI
           END IF
         END IF
+#endif
+        !
+#ifdef W3_MPI
         IF ( FLOUT(4) .AND. NRQRS.NE.0 ) THEN
           IF ( DSEC21(TIME,TONEXT(:,4)).EQ.0. ) THEN
             CALL MPI_STARTALL ( NRQRS, IRQRS , IERR_MPI )
             FLGMPI(4) = .TRUE.
             NRQMAX    = MAX ( NRQMAX , NRQRS )
+#endif
+#ifdef W3_MPIT
+            WRITE (NDST,9043) '4 ', NRQRS, NRQMAX, NAPRST
+#endif
+#ifdef W3_MPI
           END IF
         END IF
+#endif
+        !
+#ifdef W3_MPI
         IF ( FLOUT(8) .AND. NRQRS.NE.0 ) THEN
           IF ( DSEC21(TIME,TONEXT(:,8)).EQ.0. ) THEN
             CALL MPI_STARTALL ( NRQRS, IRQRS , IERR_MPI )
             FLGMPI(8) = .TRUE.
             NRQMAX    = MAX ( NRQMAX , NRQRS )
+#endif
+#ifdef W3_MPIT
+            WRITE (NDST,9043) '8 ', NRQRS, NRQMAX, NAPRST
+#endif
+#ifdef W3_MPI
           END IF
         END IF
+#endif
+        !
+#ifdef W3_MPI
         IF ( FLOUT(5) .AND. NRQBP.NE.0 ) THEN
           IF ( DSEC21(TIME,TONEXT(:,5)).EQ.0. ) THEN
             CALL MPI_STARTALL ( NRQBP , IRQBP1, IERR_MPI )
             FLGMPI(5) = .TRUE.
             NRQMAX    = MAX ( NRQMAX , NRQBP )
+#endif
+#ifdef W3_MPIT
+            WRITE (NDST,9043) '5a', NRQBP, NRQMAX, NAPBPT
+#endif
+#ifdef W3_MPI
           END IF
         END IF
+#endif
+        !
+#ifdef W3_MPI
         IF ( FLOUT(5) .AND. NRQBP2.NE.0 .AND. IAPROC.EQ.NAPBPT) THEN
           IF ( DSEC21(TIME,TONEXT(:,5)).EQ.0. ) THEN
             CALL MPI_STARTALL (NRQBP2,IRQBP2,IERR_MPI)
             NRQMAX    = MAX ( NRQMAX , NRQBP2 )
+#endif
+#ifdef W3_MPIT
+            WRITE (NDST,9043) '5b', NRQBP2, NRQMAX, NAPBPT
+#endif
+#ifdef W3_MPI
           END IF
         END IF
+#endif
+        !
+#ifdef W3_MPI
         IF ( NRQMAX .NE. 0 ) ALLOCATE ( STATIO(MPI_STATUS_SIZE,NRQMAX) )
 #endif
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP 2')
@@ -2516,11 +2561,7 @@ CONTAINS
         TOFRST(1) = -1
         TOFRST(2) =  0
         !
-        if (histwr .and. use_iogopio) then
-           call w3iogonc_pio( timen )
-        else
-
-           DO J   =1, NOTYPE
+        DO J=1, NOTYPE
 
           IF ( FLOUT(J) ) THEN
             !
@@ -2530,9 +2571,8 @@ CONTAINS
             if (w3_sbs_flag) then
               do_gridded_output = ( j .eq. 1 )  .or. ( j .eq. 7 )
             else
-               !if (w3_cesmcoupled_flag) then
-               if (histwr) then
-                do_gridded_output = ( j .eq. 1 )
+              if (w3_cesmcoupled_flag) then
+                do_gridded_output = ( j .eq. 1 ) .and. histwr
               else
                 do_gridded_output = ( j .eq. 1 )
               end if
@@ -2557,21 +2597,29 @@ CONTAINS
             DTTST   = DSEC21 ( TIME, TOUT )
             !
             IF ( DTTST .EQ. 0. ) THEN
-               if (.not. use_iogopio) then
-                if (do_gridded_output) then
+              if (do_gridded_output) then
+                if (use_iogopio) then
+                  call w3iogonc_pio ( tend )
+                else
                   if (user_netcdf_grdout) then
+#ifdef W3_MPI
                     IF ( FLGMPI(0) )CALL MPI_WAITALL( NRQGO, IRQGO, STATIO, IERR_MPI )
                     FLGMPI(0) = .FALSE.
+#endif
                     IF ( IAPROC .EQ. NAPFLD ) THEN
+#ifdef W3_MPI
                       IF ( FLGMPI(1) ) CALL MPI_WAITALL( NRQGO2, IRQGO2, STATIO, IERR_MPI )
                       FLGMPI(1) = .FALSE.
-                      CALL W3IOGONC ( tend )
+#endif
+                      CALL W3IOGONCD ( tend )
                     END IF
                   else
                     ! default (binary) output
                     IF ( IAPROC .EQ. NAPFLD ) THEN
+#ifdef W3_MPI
                       IF ( FLGMPI(1) ) CALL MPI_WAITALL( NRQGO2, IRQGO2, STATIO, IERR_MPI )
                       FLGMPI(1) = .FALSE.
+#endif
                       if (w3_sbs_flag) then
                         IF ( J .EQ. 1 ) THEN
                           CALL W3IOGO( 'WRITE', NDS(7), ITEST, IMOD )
@@ -2589,9 +2637,7 @@ CONTAINS
                       endif
                     end if
                   end if ! user_netcdf_grdout
-                else
-                  call w3iogonc_pio ( )
-               end if
+                end if ! iogopio
               ELSE IF ( do_point_output ) THEN
                 IF ( IAPROC .EQ. NAPPNT ) THEN
                   CALL W3IOPE ( VA )
@@ -2725,12 +2771,10 @@ CONTAINS
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP 3')
         !
 #ifdef W3_MPI
-        if (.not. use_iogopio) then
-          IF ( FLGMPI(0) ) CALL MPI_WAITALL ( NRQGO, IRQGO , STATIO, IERR_MPI )
-          if (user_netcdf_grdout) then
-            IF ( FLGMPI(1) .and. ( IAPROC .EQ. NAPFLD ) ) then
-              CALL MPI_WAITALL ( NRQGO2, IRQGO2 , STATIO, IERR_MPI )
-            end if
+        IF ( FLGMPI(0) ) CALL MPI_WAITALL ( NRQGO, IRQGO , STATIO, IERR_MPI )
+        if (user_netcdf_grdout) then
+          IF ( FLGMPI(1) .and. ( IAPROC .EQ. NAPFLD ) ) then
+            CALL MPI_WAITALL ( NRQGO2, IRQGO2 , STATIO, IERR_MPI )
           end if
         end if
         IF ( FLGMPI(2) ) CALL MPI_WAITALL ( NRQPO, IRQPO1, STATIO, IERR_MPI )
