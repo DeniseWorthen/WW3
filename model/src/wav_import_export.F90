@@ -592,7 +592,7 @@ contains
     !---------------------------------------------------------------------------
 
     use wav_kind_mod,   only : R8 => SHR_KIND_R8
-    use w3adatmd      , only : USSX, USSY, USSP, HS
+    use w3adatmd      , only : USSX, USSY, USSP, HS, tauox, tauoy
     use w3adatmd      , only : w3seta
     use w3idatmd      , only : w3seti
     use w3wdatmd      , only : va, w3setw
@@ -717,6 +717,7 @@ contains
       enddo
     end if
 #endif
+    ! TODO: needs to be at export freq
     ! surface stokes drift
     if (state_fldchk(exportState, 'Sw_ustokes')) then
       call state_getfldptr(exportState, 'Sw_ustokes', sw_ustokes, rc=rc)
@@ -761,17 +762,17 @@ contains
       call CalcRoughl(z0rlen)
     endif
 
-    if ( state_fldchk(exportState, 'wbcuru') .and. &
-         state_fldchk(exportState, 'wbcurv') .and. &
-         state_fldchk(exportState, 'wbcurp')) then
-      call state_getfldptr(exportState, 'wbcuru', wbcuru, rc=rc)
-      if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      call state_getfldptr(exportState, 'wbcurv', wbcurv, rc=rc)
-      if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      call state_getfldptr(exportState, 'wbcurp', wbcurp, rc=rc)
-      if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      call CalcBotcur( va, wbcuru, wbcurv, wbcurp)
-    end if
+    ! if ( state_fldchk(exportState, 'wbcuru') .and. &
+    !      state_fldchk(exportState, 'wbcurv') .and. &
+    !      state_fldchk(exportState, 'wbcurp')) then
+    !   call state_getfldptr(exportState, 'wbcuru', wbcuru, rc=rc)
+    !   if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    !   call state_getfldptr(exportState, 'wbcurv', wbcurv, rc=rc)
+    !   if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    !   call state_getfldptr(exportState, 'wbcurp', wbcurp, rc=rc)
+    !   if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    !   call CalcBotcur( va, wbcuru, wbcurv, wbcurp)
+    ! end if
 
     if ( state_fldchk(exportState, 'Sw_wavsuu') .and. &
          state_fldchk(exportState, 'Sw_wavsuv') .and. &
@@ -823,6 +824,46 @@ contains
       call CalcHs(va, sw_hs)
     end if
 
+    if (state_fldchk(exportState, 'Sw_bhd')) then
+      call state_getfldptr(exportState, 'Sw_bhd', sw_bhd, rc=rc)
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      sw_bhd(:) = fillvalue
+      call CalcBHD(va, sw_bhd)
+    end if
+
+    if ( state_fldchk(exportState, 'Sw_tauox') .and. &
+         state_fldchk(exportState, 'Sw_tauoy') )then
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      call state_getfldptr(exportState, 'Sw_tauox', sw_tauox, rc=rc)
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      call state_getfldptr(exportState, 'Sw_tauoy', sw_tauoy, rc=rc)
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      sw_tauox(:) = fillvalue
+      sw_tauoy(:) = fillvalue
+      do jsea=1, nseal_cpl
+        call init_get_isea(isea, jsea)
+        ix  = mapsf(isea,1)
+        iy  = mapsf(isea,2)
+        if (mapsta(iy,ix) == 1) then
+          sw_tauox(jsea) = tauox(jsea)
+          sw_tauoy(jsea) = tauoy(jsea)
+        else
+          sw_tauox(jsea) = 0.
+          sw_tauoy(jsea) = 0.
+        endif
+      enddo
+    end if
+
+    if ( state_fldchk(exportState, 'Sw_ubax') .and. &
+         state_fldchk(exportState, 'Sw_ubay') )then
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      call state_getfldptr(exportState, 'Sw_ubax', sw_ubax, rc=rc)
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      call state_getfldptr(exportState, 'Sw_ubay', sw_ubay, rc=rc)
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      ! TODO:
+      !call CalcUVB(va, sw_ubax, sw_ubay)
+    end if
 
     if (dbug_flag > 5) then
       call state_diagnose(exportState, 'at export ', rc=rc)
@@ -1122,88 +1163,88 @@ contains
 
   end subroutine CalcRoughl
 
-  !===============================================================================
-  !> Calculate wave-bottom currents for export
-  !!
-  !> @details TODO:
-  !!
-  !! @param[in] a                    input spectra
-  !! @param     wbxn                 a 1-D pointer to a field on a mesh
-  !! @param     wbyn                 a 1-D pointer to a field on a mesh
-  !! @param     wbpn                 a 1-D pointer to a field on a mesh
-  !!
-  !> @author T. J. Campbell, NRL
-  !> @date 09-Aug-2017
-  subroutine CalcBotcur ( a, wbxn, wbyn, wbpn )
+  ! !===============================================================================
+  ! !> Calculate wave-bottom currents for export
+  ! !!
+  ! !> @details TODO:
+  ! !!
+  ! !! @param[in] a                    input spectra
+  ! !! @param     wbxn                 a 1-D pointer to a field on a mesh
+  ! !! @param     wbyn                 a 1-D pointer to a field on a mesh
+  ! !! @param     wbpn                 a 1-D pointer to a field on a mesh
+  ! !!
+  ! !> @author T. J. Campbell, NRL
+  ! !> @date 09-Aug-2017
+  ! subroutine CalcBotcur ( a, wbxn, wbyn, wbpn )
 
-    ! Calculate wave-bottom currents for export
+  !   ! Calculate wave-bottom currents for export
 
-    use w3gdatmd,  only : nseal, nk, nth, sig, dmin, ecos, esin, dden, mapsf, mapsta, nspec
-    use w3adatmd,  only : dw, cg, wn
-    use w3odatmd,  only : naproc, iaproc
+  !   use w3gdatmd,  only : nseal, nk, nth, sig, dmin, ecos, esin, dden, mapsf, mapsta, nspec
+  !   use w3adatmd,  only : dw, cg, wn
+  !   use w3odatmd,  only : naproc, iaproc
 
-    ! input/output variables
-    real, intent(in)            :: a(nth,nk,0:nseal) ! Input spectra (in par list to change shape)
-    real(ESMF_KIND_R8), pointer :: wbxn(:)           ! eastward-component export field pointer
-    real(ESMF_KIND_R8), pointer :: wbyn(:)           ! northward-component export field pointer
-    real(ESMF_KIND_R8), pointer :: wbpn(:)           ! period export field pointer
+  !   ! input/output variables
+  !   real, intent(in)            :: a(nth,nk,0:nseal) ! Input spectra (in par list to change shape)
+  !   real(ESMF_KIND_R8), pointer :: wbxn(:)           ! eastward-component export field pointer
+  !   real(ESMF_KIND_R8), pointer :: wbyn(:)           ! northward-component export field pointer
+  !   real(ESMF_KIND_R8), pointer :: wbpn(:)           ! period export field pointer
 
-    ! local variables
-    real(8), parameter   :: half  = 0.5_r8
-    real(8), parameter   ::  one  = 1.0_r8
-    real(8), parameter   ::  two  = 2.0_r8
-    real(8), parameter   :: kdmin = 1e-7_r8
-    real(8), parameter   :: kdmax = 18.0_r8
-    integer              :: isea, jsea, ik, ith
-    real(8)              :: depth
-    real(8)              :: kd, fack, fkd, aka, akx, aky, abr, ubr, ubx, uby, dir
-    real(8), allocatable :: sig2(:)
-    !----------------------------------------------------------------------
+  !   ! local variables
+  !   real(8), parameter   :: half  = 0.5_r8
+  !   real(8), parameter   ::  one  = 1.0_r8
+  !   real(8), parameter   ::  two  = 2.0_r8
+  !   real(8), parameter   :: kdmin = 1e-7_r8
+  !   real(8), parameter   :: kdmax = 18.0_r8
+  !   integer              :: isea, jsea, ik, ith
+  !   real(8)              :: depth
+  !   real(8)              :: kd, fack, fkd, aka, akx, aky, abr, ubr, ubx, uby, dir
+  !   real(8), allocatable :: sig2(:)
+  !   !----------------------------------------------------------------------
 
-    allocate( sig2(1:nk) )
-    sig2(1:nk) = sig(1:nk)**2
+  !   allocate( sig2(1:nk) )
+  !   sig2(1:nk) = sig(1:nk)**2
 
-    wbxn(:) = zero
-    wbyn(:) = zero
-    wbpn(:) = zero
+  !   wbxn(:) = zero
+  !   wbyn(:) = zero
+  !   wbpn(:) = zero
 
-    jsea_loop: do jsea = 1,nseal_cpl
-      call init_get_isea(isea, jsea)
-      if ( dw(isea).le.zero ) cycle jsea_loop
-      depth = max(dmin,dw(isea))
-      abr = zero
-      ubr = zero
-      ubx = zero
-      uby = zero
-      ik_loop: do ik = 1,nk
-        aka = zero
-        akx = zero
-        aky = zero
-        ith_loop: do ith = 1,nth
-          aka = aka + a(ith,ik,jsea)
-          akx = akx + a(ith,ik,jsea)*ecos(ith)
-          aky = aky + a(ith,ik,jsea)*esin(ith)
-        enddo ith_loop
-        fack = dden(ik)/cg(ik,isea)
-        kd = max(kdmin,min(kdmax,wn(ik,isea)*depth))
-        fkd = fack/sinh(kd)**2
-        abr = abr + aka*fkd
-        ubr = ubr + aka*sig2(ik)*fkd
-        ubx = ubx + akx*sig2(ik)*fkd
-        uby = uby + aky*sig2(ik)*fkd
-      enddo ik_loop
-      if ( abr.le.zero .or. ubr.le.zero ) cycle jsea_loop
-      abr = sqrt(two*abr)
-      ubr = sqrt(two*ubr)
-      dir = atan2(uby,ubx)
-      wbxn(jsea) = ubr*cos(dir)
-      wbyn(jsea) = ubr*sin(dir)
-      wbpn(jsea) = tpi*abr/ubr
-    enddo jsea_loop
+  !   jsea_loop: do jsea = 1,nseal_cpl
+  !     call init_get_isea(isea, jsea)
+  !     if ( dw(isea).le.zero ) cycle jsea_loop
+  !     depth = max(dmin,dw(isea))
+  !     abr = zero
+  !     ubr = zero
+  !     ubx = zero
+  !     uby = zero
+  !     ik_loop: do ik = 1,nk
+  !       aka = zero
+  !       akx = zero
+  !       aky = zero
+  !       ith_loop: do ith = 1,nth
+  !         aka = aka + a(ith,ik,jsea)
+  !         akx = akx + a(ith,ik,jsea)*ecos(ith)
+  !         aky = aky + a(ith,ik,jsea)*esin(ith)
+  !       enddo ith_loop
+  !       fack = dden(ik)/cg(ik,isea)
+  !       kd = max(kdmin,min(kdmax,wn(ik,isea)*depth))
+  !       fkd = fack/sinh(kd)**2
+  !       abr = abr + aka*fkd
+  !       ubr = ubr + aka*sig2(ik)*fkd
+  !       ubx = ubx + akx*sig2(ik)*fkd
+  !       uby = uby + aky*sig2(ik)*fkd
+  !     enddo ik_loop
+  !     if ( abr.le.zero .or. ubr.le.zero ) cycle jsea_loop
+  !     abr = sqrt(two*abr)
+  !     ubr = sqrt(two*ubr)
+  !     dir = atan2(uby,ubx)
+  !     wbxn(jsea) = ubr*cos(dir)
+  !     wbyn(jsea) = ubr*sin(dir)
+  !     wbpn(jsea) = tpi*abr/ubr
+  !   enddo jsea_loop
 
-    deallocate( sig2 )
+  !   deallocate( sig2 )
 
-  end subroutine CalcBotcur
+  ! end subroutine CalcBotcur
 
   !===============================================================================
   !> Calculate radiation stresses for export
@@ -1219,8 +1260,6 @@ contains
   !> @author Denise.Worthen@noaa.gov
   !> @date 08-05-2024
   subroutine CalcRadstr2D ( a, sxxn, sxyn, syyn )
-
-    ! Calculate radiation stresses for export
 
     use w3gdatmd,   only : nseal, nk, nth, sig, es2, esc, ec2, fte, dden, mapsf, mapsta
     use w3adatmd,   only : dw, cg, wn
@@ -1383,6 +1422,58 @@ contains
       end if
     end do
   end subroutine CalcHs
+
+  !===============================================================================
+  !> Calculate Bernoulli head pressure for export
+  !!
+  !> @details Calculates Bernoulli head pressure independently of w3iogomd to ensure
+  !! that exported BHD field is updated at the coupling frequency
+  !!
+  !! @param[in]    a       input spectra
+  !! @param[inout] bhd     a 1-D pointer to a field on a mesh
+  !!
+  !> @author Denise.Worthen@noaa.gov
+  !> @date 8-02-2024
+  subroutine CalcBHD (a, bhd)
+
+    use constants, only : tpi
+    use w3gdatmd,  only : nth, nk, nseal, mapsf, mapsta, dden, fte
+    use w3adatmd,  only : dw, nsealm, cg, wn
+    use w3parall,  only : init_get_isea
+
+    ! input/output variables
+    real, intent(in)     :: a(nth,nk,0:nseal)
+    real(r8), pointer    :: bhd(:)
+
+    ! local variables
+    real    :: factor, kd, ab, ebd
+    integer :: ik, ith, isea, jsea, ix, iy
+
+    ebd = 0.0
+    ab = 0.0
+    bhd = 0.0
+    do jsea = 1,nseal_cpl
+      call init_get_isea(isea, jsea)
+      ix  = mapsf(isea,1)                   ! global ix
+      iy  = mapsf(isea,2)                   ! global iy
+      if (mapsta(iy,ix) == 1) then          ! active sea point
+        ebd = 0.0
+        do ik = 1,nk
+          factor = dden(ik) / cg(ik,isea)
+          ab = 0.0
+          do ith = 1,nth
+            ab = ab + a(ith,ik,jsea)
+          end do
+          ebd = ab*factor
+          kd = max ( 0.001 , wn(ik,isea) * dw(isea) )
+          if (kd .lt. 6.0) then
+            bhd(jsea) = bhd(jsea) + grav*wn(ik,isea) * ebd / (sinh(2.*kd))
+          end if
+        end do !ik
+      end if
+    end do
+
+  end subroutine CalcBHD
 
   !====================================================================================
   !> Create a global field across all PEs
