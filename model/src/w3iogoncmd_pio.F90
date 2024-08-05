@@ -44,12 +44,13 @@ module w3iogoncmd_pio
 
   type(iosystem_desc_t) :: wav_pio_subsystem
   type(file_desc_t)     :: pioid
+  type(var_desc_t)      :: varid
   type(io_desc_t)       :: iodesc2d    !2d only
   type(io_desc_t)       :: iodesc3ds   !s-axis variables
   type(io_desc_t)       :: iodesc3dm   !m-axis variables
   type(io_desc_t)       :: iodesc3dp   !p-axis variables
   type(io_desc_t)       :: iodesc3dk   !k-axis variables
-  type(var_desc_t)      :: vardesc
+
 
   integer :: pio_iotype
 
@@ -187,35 +188,35 @@ contains
     if (gtype .eq. ungtype) then
       ierr = pio_def_dim(pioid, 'ne'  , ntri, xeid)
       ierr = pio_def_dim(pioid, 'nn'  ,    3, ztid)
-    END IF
+    end if
 
     ! define the time variable
-    ierr = pio_def_var(pioid, 'time', PIO_DOUBLE, (/timid/), vardesc)
+    ierr = pio_def_var(pioid, 'time', PIO_DOUBLE, (/timid/), varid)
     call handle_err(ierr,'def_timevar')
-    ierr = pio_put_att(pioid, vardesc, 'units', trim(time_origin))
+    ierr = pio_put_att(pioid, varid, 'units', trim(time_origin))
     call handle_err(ierr,'def_time_units')
-    ierr = pio_put_att(pioid, vardesc, 'calendar', trim(calendar_name))
+    ierr = pio_put_att(pioid, varid, 'calendar', trim(calendar_name))
     call handle_err(ierr,'def_time_calendar')
 
     ! define the spatial axis variables (lat,lon)
-    ierr = pio_def_var(pioid, 'lon', PIO_DOUBLE, (/xtid,ytid/), vardesc)
+    ierr = pio_def_var(pioid, 'lon', PIO_DOUBLE, (/xtid,ytid/), varid)
     call handle_err(ierr,'def_lonvar')
-    ierr = pio_put_att(pioid, vardesc, 'units', 'degrees_east')
-    ierr = pio_def_var(pioid, 'lat', PIO_DOUBLE, (/xtid,ytid/), vardesc)
+    ierr = pio_put_att(pioid, varid, 'units', 'degrees_east')
+    ierr = pio_def_var(pioid, 'lat', PIO_DOUBLE, (/xtid,ytid/), varid)
     call handle_err(ierr,'def_latvar')
-    ierr = pio_put_att(pioid, vardesc, 'units', 'degrees_north')
+    ierr = pio_put_att(pioid, varid, 'units', 'degrees_north')
 
     ! add mapsta
-    ierr = pio_def_var(pioid, 'mapsta', PIO_INT, (/xtid, ytid, timid/), vardesc)
+    ierr = pio_def_var(pioid, 'mapsta', PIO_INT, (/xtid, ytid, timid/), varid)
     call handle_err(ierr, 'def_mapsta')
-    ierr = pio_put_att(pioid, vardesc, 'units', 'unitless')
-    ierr = pio_put_att(pioid, vardesc, 'long_name', 'map status')
+    ierr = pio_put_att(pioid, varid, 'units', 'unitless')
+    ierr = pio_put_att(pioid, varid, 'long_name', 'map status')
 
     if (gtype .eq. ungtype) then
-      ierr = pio_def_var(pioid, 'nconn', PIO_INT, (/ztid,xeid/), vardesc)
+      ierr = pio_def_var(pioid, 'nconn', PIO_INT, (/ztid,xeid/), varid)
       call handle_err(ierr,'def_nodeconnections')
-      ierr = pio_put_att(pioid, vardesc, 'units', 'unitless')
-      ierr = pio_put_att(pioid, vardesc, 'long_name', 'node connectivity')
+      ierr = pio_put_att(pioid, varid, 'units', 'unitless')
+      ierr = pio_put_att(pioid, varid, 'long_name', 'node connectivity')
     end if
 
     ! define the variables
@@ -239,11 +240,11 @@ contains
         dimid => dimid3
       end if
 
-      ierr = pio_def_var(pioid, trim(outvars(n)%var_name), PIO_REAL, dimid, vardesc)
+      ierr = pio_def_var(pioid, trim(outvars(n)%var_name), PIO_REAL, dimid, varid)
       call handle_err(ierr, 'define variable '//trim((outvars(n)%var_name)))
-      ierr = pio_put_att(pioid, vardesc, 'units'     , trim(outvars(n)%unit_name))
-      ierr = pio_put_att(pioid, vardesc, 'long_name' , trim(outvars(n)%long_name))
-      ierr = pio_put_att(pioid, vardesc, '_FillValue', undef)
+      ierr = pio_put_att(pioid, varid, 'units'     , trim(outvars(n)%unit_name))
+      ierr = pio_put_att(pioid, varid, 'long_name' , trim(outvars(n)%long_name))
+      ierr = pio_put_att(pioid, varid, '_FillValue', undef)
     end do
     ! end variable definitions
     ierr = pio_enddef(pioid)
@@ -256,32 +257,32 @@ contains
     if (k_axis)call wav_initdecomp(nz=len_k, iodesc=iodesc3dk)
 
     ! write the time and spatial axis values (lat,lon,time)
-    ierr = pio_inq_varid(pioid,  'lat', vardesc)
+    ierr = pio_inq_varid(pioid,  'lat', varid)
     call handle_err(ierr, 'inquire variable lat ')
-    ierr = pio_put_var(pioid, vardesc, transpose(ygrd))
+    ierr = pio_put_var(pioid, varid, transpose(ygrd))
     call handle_err(ierr, 'put lat')
 
-    ierr = pio_inq_varid(pioid,  'lon', vardesc)
+    ierr = pio_inq_varid(pioid,  'lon', varid)
     call handle_err(ierr, 'inquire variable lon ')
-    ierr = pio_put_var(pioid, vardesc, transpose(xgrd))
+    ierr = pio_put_var(pioid, varid, transpose(xgrd))
     call handle_err(ierr, 'put lon')
 
-    ierr = pio_inq_varid(pioid,  'time', vardesc)
+    ierr = pio_inq_varid(pioid,  'time', varid)
     call handle_err(ierr, 'inquire variable time ')
-    ierr = pio_put_var(pioid, vardesc, (/1/), real(elapsed_secs,8))
+    ierr = pio_put_var(pioid, varid, (/1/), real(elapsed_secs,8))
     call handle_err(ierr, 'put time')
 
     if (gtype .eq. ungtype) then
-      ierr = pio_inq_varid(pioid,  'nconn', vardesc)
+      ierr = pio_inq_varid(pioid,  'nconn', varid)
       call handle_err(ierr, 'inquire variable nconn ')
-      ierr = pio_put_var(pioid, vardesc, trigp)
+      ierr = pio_put_var(pioid, varid, trigp)
       call handle_err(ierr, 'put trigp')
     end if
 
     !maps
-    ierr = pio_inq_varid(pioid,  'mapsta', vardesc)
+    ierr = pio_inq_varid(pioid,  'mapsta', varid)
     call handle_err(ierr, 'inquire variable mapsta ')
-    ierr = pio_put_var(pioid, vardesc, transpose(mapsta))
+    ierr = pio_put_var(pioid, varid, transpose(mapsta))
     call handle_err(ierr, 'put mapsta')
 
     ! write the requested variables
@@ -535,10 +536,10 @@ contains
       end if
     end do
 
-    ierr = pio_inq_varid(pioid,  trim(vname), vardesc)
+    ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
-    call pio_setframe(pioid, vardesc, int(1,kind=Pio_Offset_Kind))
-    call pio_write_darray(pioid, vardesc, iodesc2d, varout, ierr)
+    call pio_setframe(pioid, varid, int(1,kind=Pio_Offset_Kind))
+    call pio_write_darray(pioid, varid, iodesc2d, varout, ierr)
     call handle_err(ierr, 'put variable '//trim(vname))
 
   end subroutine write_var2d
@@ -584,10 +585,10 @@ contains
       var3d(jsea,:) = varloc(:)
     end do
 
-    ierr = pio_inq_varid(pioid,  trim(vname), vardesc)
+    ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
-    call pio_setframe(pioid, vardesc, int(1,kind=PIO_OFFSET_KIND))
-    call pio_write_darray(pioid, vardesc, iodesc, var3d, ierr)
+    call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
+    call pio_write_darray(pioid, varid, iodesc, var3d, ierr)
 
     deallocate(varloc)
   end subroutine write_var3d
