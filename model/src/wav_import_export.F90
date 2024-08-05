@@ -145,10 +145,18 @@ contains
       call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_lasl' )
     else
       call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_z0')
+      ! coastal coupling
       call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_wavsuu')
       call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_wavsuv')
       call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_wavsvv')
       call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_hs')
+      call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_bhd')
+      call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_tauox')
+      call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_tauoy')
+      call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_taubblx')
+      call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_taubbly')
+      call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_ubax')
+      call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_ubay')
     end if
     call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_pstokes_x', ungridded_lbound=1, ungridded_ubound=3)
     call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_pstokes_y', ungridded_lbound=1, ungridded_ubound=3)
@@ -618,15 +626,22 @@ contains
     real(r8), pointer :: wbcuru(:)
     real(r8), pointer :: wbcurv(:)
     real(r8), pointer :: wbcurp(:)
-    real(r8), pointer :: sxxn(:)
-    real(r8), pointer :: sxyn(:)
-    real(r8), pointer :: syyn(:)
-
     real(r8), pointer :: sw_lamult(:)
     real(r8), pointer :: sw_lasl(:)
     real(r8), pointer :: sw_ustokes(:)
     real(r8), pointer :: sw_vstokes(:)
+
+    real(r8), pointer :: sxxn(:)
+    real(r8), pointer :: sxyn(:)
+    real(r8), pointer :: syyn(:)
     real(r8), pointer :: sw_hs(:)
+    real(r8), pointer :: sw_bhd(:)
+    real(r8), pointer :: sw_tauox(:)
+    real(r8), pointer :: sw_tauoy(:)
+    real(r8), pointer :: sw_taubblx(:)
+    real(r8), pointer :: sw_taubbly(:)
+    real(r8), pointer :: sw_ubax(:)
+    real(r8), pointer :: sw_ubay(:)
 
     ! d2 is location, d1 is frequency  - nwav_elev_spectrum frequencies will be used
     real(r8), pointer :: wave_elevation_spectrum(:,:)
@@ -807,6 +822,7 @@ contains
       sw_hs(:) = fillvalue
       call CalcHs(va, sw_hs)
     end if
+
 
     if (dbug_flag > 5) then
       call state_diagnose(exportState, 'at export ', rc=rc)
@@ -1206,7 +1222,7 @@ contains
 
     ! Calculate radiation stresses for export
 
-    use w3gdatmd,   only : nseal, nk, nth, sig, es2, esc, ec2, fte, dden
+    use w3gdatmd,   only : nseal, nk, nth, sig, es2, esc, ec2, fte, dden, mapsf, mapsta
     use w3adatmd,   only : dw, cg, wn
     use w3odatmd,   only : naproc, iaproc
 
@@ -1217,7 +1233,7 @@ contains
     real(ESMF_KIND_R8), pointer    :: syyn(:)           ! northward-component export field
 
     ! local variables
-    integer :: isea, jsea, ik, ith
+    integer :: isea, jsea, ik, ith, ix, iy
     real    :: factor, abxx, abyy, abxy
 
     sxxn = 0.0
@@ -1225,34 +1241,38 @@ contains
     sxyn = 0.0
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
-      do ik = 1,nk
-        factor = max ( 0.5, cg(ik,isea)/sig(ik)*wn(ik,isea) )
-        abxx = 0.0
-        abyy = 0.0
-        abxy = 0.0
-        do ith = 1,nth
-          abxx = abxx + ((1.0 + ec2(ith))*factor-0.5) * a(ith,ik,jsea)
-          abyy = abyy + ((1.0 + es2(ith))*factor-0.5) * a(ith,ik,jsea)
-          abxy = abxy + esc(ith)* factor * a(ith,ik,jsea)
+      ix  = mapsf(isea,1)                   ! global ix
+      iy  = mapsf(isea,2)                   ! global iy
+      if (mapsta(iy,ix) == 1) then          ! active sea point
+        do ik = 1,nk
+          factor = max ( 0.5, cg(ik,isea)/sig(ik)*wn(ik,isea) )
+          abxx = 0.0
+          abyy = 0.0
+          abxy = 0.0
+          do ith = 1,nth
+            abxx = abxx + ((1.0 + ec2(ith))*factor-0.5) * a(ith,ik,jsea)
+            abyy = abyy + ((1.0 + es2(ith))*factor-0.5) * a(ith,ik,jsea)
+            abxy = abxy + esc(ith)* factor * a(ith,ik,jsea)
+          end do
+
+          factor = dden(ik) / cg(ik,isea)
+          abxx = max ( 0.0, abxx ) * factor
+          abyy = max ( 0.0, abyy ) * factor
+          abxy = abxy * factor
+
+          sxxn(jsea) = sxxn(jsea) + abxx
+          syyn(jsea) = syyn(jsea) + abyy
+          sxyn(jsea) = sxyn(jsea) + abxy
         end do
-
-        factor = dden(ik) / cg(ik,isea)
-        abxx = max ( 0.0, abxx ) * factor
-        abyy = max ( 0.0, abyy ) * factor
-        abxy = abxy * factor
-
-        sxxn(jsea) = sxxn(jsea) + abxx
-        syyn(jsea) = syyn(jsea) + abyy
-        sxyn(jsea) = sxyn(jsea) + abxy
-      end do
-      sxxn(jsea) = sxxn(jsea) + fte * abxx/cg(nk,isea)
-      syyn(jsea) = syyn(jsea) + fte * abyy/cg(nk,isea)
-      sxyn(jsea) = sxyn(jsea) + fte * abxy/cg(nk,isea)
+        sxxn(jsea) = sxxn(jsea) + fte * abxx/cg(nk,isea)
+        syyn(jsea) = syyn(jsea) + fte * abyy/cg(nk,isea)
+        sxyn(jsea) = sxyn(jsea) + fte * abxy/cg(nk,isea)
+      end if
     end do
-
     sxxn = sxxn*dwat*grav
     syyn = syyn*dwat*grav
     sxyn = sxyn*dwat*grav
+
   end subroutine CalcRadstr2D
 
   !===============================================================================
@@ -1314,7 +1334,7 @@ contains
   !! that exported HS field is updated at the coupling frequency
   !!
   !! @param[in]    a      input spectra
-  !! @param[inout] hs     significant wave height
+  !! @param[inout] hs     a 1-D pointer to a field on a mesh
   !!
   !> @author Denise.Worthen@noaa.gov
   !> @date 8-02-2024
@@ -1330,46 +1350,38 @@ contains
     real(r8), pointer    :: hs(:)
 
     ! local variables
-    real    :: ab(nseal), et(nseal)
-    real    :: ebd, factor, eband
+    real    :: factor, eband, ab, et
     integer :: ik, ith, isea, jsea, ix, iy
 
     et = 0.0
-    do ik = 1, nk
-      ab = 0.0
-      do ith = 1, nth
-        do jsea = 1,nseal_cpl
-          ab(jsea) = ab(jsea) + a(ith,ik,jsea)
-        end do
-      end do
-
-      do jsea = 1,nseal_cpl
-        call init_get_isea(isea, jsea)
-        factor = dden(ik) / cg(ik,isea)
-        ebd = ab(jsea) * factor
-        et(jsea) = et(jsea) + ebd
-      end do
-    end do !ik
-
+    ab = 0.0
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
-      eband = ab(jsea)/cg(nk,isea)
-      et(jsea) = et(jsea) + fte*eband
       ix  = mapsf(isea,1)                   ! global ix
       iy  = mapsf(isea,2)                   ! global iy
       if (mapsta(iy,ix) == 1) then          ! active sea point
+        et = 0.0
+        do ik = 1,nk
+          factor = dden(ik) / cg(ik,isea)
+          ab = 0.0
+          do ith = 1,nth
+            ab = ab + a(ith,ik,jsea)
+          end do
+          et = et + ab*factor
+        end do !ik
+        eband = ab/cg(nk,isea)
+        et = et + fte*eband
 #ifdef W3_O9
-        if ( et(jsea) .ge. 0.0 ) then
-          hs(jsea) =  4.0*sqrt ( et(jsea) )
+        if ( et .ge. 0.0 ) then
+          hs(jsea) =  4.0*sqrt ( et )
         else
-          hs(jsea) = -4.0*sqrt ( -et(jsea) )
+          hs(jsea) = -4.0*sqrt ( -et )
         end if
 #else
-        hs(jsea) = 4.0*sqrt ( et(jsea) )
+        hs(jsea) = 4.0*sqrt ( et )
 #endif
       end if
     end do
-
   end subroutine CalcHs
 
   !====================================================================================
