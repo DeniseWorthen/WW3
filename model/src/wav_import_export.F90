@@ -94,8 +94,7 @@ contains
     integer          , intent(out) :: rc
 
     ! local variables
-    integer          :: n, num
-    character(len=2) :: fvalue
+    integer          :: n
     character(len=*), parameter :: subname='(wav_import_export:advertise_fields)'
     !-------------------------------------------------------------------------------
 
@@ -138,16 +137,18 @@ contains
     if (.not. unstr_mesh) then
       call fldlist_add(fldsFrWav_num, fldsFrWav, trim(flds_scalar_name))
     end if
+    call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_ustokes')
+    call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_vstokes')
+
     if (cesmcoupled) then
       call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_lamult' )
       call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_lasl' )
-      call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_ustokes')
-      call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_vstokes')
     else
       call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_z0')
       call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_wavsuu')
       call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_wavsuv')
       call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_wavsvv')
+      call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_hs')
     end if
     call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_pstokes_x', ungridded_lbound=1, ungridded_ubound=3)
     call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_pstokes_y', ungridded_lbound=1, ungridded_ubound=3)
@@ -583,7 +584,7 @@ contains
     !---------------------------------------------------------------------------
 
     use wav_kind_mod,   only : R8 => SHR_KIND_R8
-    use w3adatmd      , only : USSX, USSY, USSP
+    use w3adatmd      , only : USSX, USSY, USSP, HS
     use w3adatmd      , only : w3seta
     use w3idatmd      , only : w3seti
     use w3wdatmd      , only : va, w3setw
@@ -592,7 +593,7 @@ contains
     use w3iogomd      , only : CALC_U3STOKES
 #ifdef W3_CESMCOUPLED
     use w3wdatmd      , only : ASF, UST
-    use w3adatmd      , only : USSHX, USSHY, UD, HS
+    use w3adatmd      , only : USSHX, USSHY, UD
     use w3idatmd      , only : HSL
 #else
     use wmmdatmd      , only : mdse, mdst, wmsetm
@@ -625,6 +626,7 @@ contains
     real(r8), pointer :: sw_lasl(:)
     real(r8), pointer :: sw_ustokes(:)
     real(r8), pointer :: sw_vstokes(:)
+    real(r8), pointer :: sw_hs(:)
 
     ! d2 is location, d1 is frequency  - nwav_elev_spectrum frequencies will be used
     real(r8), pointer :: wave_elevation_spectrum(:,:)
@@ -767,6 +769,7 @@ contains
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
       call CalcRadstr2D( va, sxxn, sxyn, syyn)
     end if
+
     if (wav_coupling_to_cice) then
       call state_getfldptr(exportState, 'Sw_elevation_spectrum', wave_elevation_spectrum, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
@@ -797,6 +800,13 @@ contains
         end do
       end if
     endif
+
+    if (state_fldchk(exportState, 'Sw_hs')) then
+      call state_getfldptr(exportState, 'Sw_hs', sw_hs, rc=rc)
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      sw_hs(:) = fillvalue
+      call CalcHs(va, sw_hs)
+    end if
 
     if (dbug_flag > 5) then
       call state_diagnose(exportState, 'at export ', rc=rc)
@@ -1182,15 +1192,16 @@ contains
   !===============================================================================
   !> Calculate radiation stresses for export
   !!
-  !> @details TODO:
+  !> @details Calculates radiation stresses independently of w3iogomd to ensure
+  !! that export fields are updated at the coupling frequency
   !!
   !! @param[in] a                    input spectra
   !! @param     sxxn                 a 1-D pointer to a field on a mesh
   !! @param     sxyn                 a 1-D pointer to a field on a mesh
   !! @param     syyn                 a 1-D pointer to a field on a mesh
   !!
-  !> @author T. J. Campbell, NRL
-  !> @date 09-Aug-2017
+  !> @author Denise.Worthen@noaa.gov
+  !> @date 08-05-2024
   subroutine CalcRadstr2D ( a, sxxn, sxyn, syyn )
 
     ! Calculate radiation stresses for export
@@ -1206,45 +1217,42 @@ contains
     real(ESMF_KIND_R8), pointer    :: syyn(:)           ! northward-component export field
 
     ! local variables
-    character(ESMF_MAXSTR) :: cname
-    character(128)         :: msg
-    real(8), parameter     :: half  = 0.5
-    real(8), parameter     ::  one  = 1.0
-    real(8), parameter     ::  two  = 2.0
-    integer                :: isea, jsea, ik, ith
-    real(8)                :: sxxs, sxys, syys
-    real(8)                :: akxx, akxy, akyy, cgoc, facd, fack, facs
-    !----------------------------------------------------------------------
+    integer :: isea, jsea, ik, ith
+    real    :: factor, abxx, abyy, abxy
 
-    facd = dwat*grav
-    jsea_loop: do jsea = 1,nseal_cpl
+    sxxn = 0.0
+    syyn = 0.0
+    sxyn = 0.0
+    do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
-      if ( dw(isea).le.zero ) cycle jsea_loop
-      sxxs = zero
-      sxys = zero
-      syys = zero
-      ik_loop: do ik = 1,nk
-        akxx = zero
-        akxy = zero
-        akyy = zero
-        cgoc = cg(ik,isea)*wn(ik,isea)/sig(ik)
-        cgoc = min(one,max(half,cgoc))
-        ith_loop: do ith = 1,nth
-          akxx = akxx + (cgoc*(ec2(ith)+one)-half)*a(ith,ik,jsea)
-          akxy = akxy + cgoc*esc(ith)*a(ith,ik,jsea)
-          akyy = akyy + (cgoc*(es2(ith)+one)-half)*a(ith,ik,jsea)
-        enddo ith_loop
-        fack = dden(ik)/cg(ik,isea)
-        sxxs = sxxs + akxx*fack
-        sxys = sxys + akxy*fack
-        syys = syys + akyy*fack
-      enddo ik_loop
-      facs = (one+fte/cg(nk,isea))*facd
-      sxxn(jsea) = sxxs*facs
-      sxyn(jsea) = sxys*facs
-      syyn(jsea) = syys*facs
-    enddo jsea_loop
+      do ik = 1,nk
+        factor = max ( 0.5, cg(ik,isea)/sig(ik)*wn(ik,isea) )
+        abxx = 0.0
+        abyy = 0.0
+        abxy = 0.0
+        do ith = 1,nth
+          abxx = abxx + ((1.0 + ec2(ith))*factor-0.5) * a(ith,ik,jsea)
+          abyy = abyy + ((1.0 + es2(ith))*factor-0.5) * a(ith,ik,jsea)
+          abxy = abxy + esc(ith)* factor * a(ith,ik,jsea)
+        end do
 
+        factor = dden(ik) / cg(ik,isea)
+        abxx = max ( 0.0, abxx ) * factor
+        abyy = max ( 0.0, abyy ) * factor
+        abxy = abxy * factor
+
+        sxxn(jsea) = sxxn(jsea) + abxx
+        syyn(jsea) = syyn(jsea) + abyy
+        sxyn(jsea) = sxyn(jsea) + abxy
+      end do
+      sxxn(jsea) = sxxn(jsea) + fte * abxx/cg(nk,isea)
+      syyn(jsea) = syyn(jsea) + fte * abyy/cg(nk,isea)
+      sxyn(jsea) = sxyn(jsea) + fte * abxy/cg(nk,isea)
+    end do
+
+    sxxn = sxxn*dwat*grav
+    syyn = syyn*dwat*grav
+    sxyn = sxyn*dwat*grav
   end subroutine CalcRadstr2D
 
   !===============================================================================
@@ -1299,6 +1307,71 @@ contains
 
   end subroutine CalcEF
 
+  !===============================================================================
+  !> Calculate significant wave height for export
+  !!
+  !> @details Calculates significant wave height independently of w3iogomd to ensure
+  !! that exported HS field is updated at the coupling frequency
+  !!
+  !! @param[in]    a      input spectra
+  !! @param[inout] hs     significant wave height
+  !!
+  !> @author Denise.Worthen@noaa.gov
+  !> @date 8-02-2024
+  subroutine CalcHs (a, hs)
+
+    use constants, only : tpi
+    use w3gdatmd,  only : nth, nk, nseal, mapsf, mapsta, dden, fte
+    use w3adatmd,  only : nsealm, cg
+    use w3parall,  only : init_get_isea
+
+    ! input/output variables
+    real, intent(in)     :: a(nth,nk,0:nseal)
+    real(r8), pointer    :: hs(:)
+
+    ! local variables
+    real    :: ab(nseal), et(nseal)
+    real    :: ebd, factor, eband
+    integer :: ik, ith, isea, jsea, ix, iy
+
+    et = 0.0
+    do ik = 1, nk
+      ab = 0.0
+      do ith = 1, nth
+        do jsea = 1,nseal_cpl
+          ab(jsea) = ab(jsea) + a(ith,ik,jsea)
+        end do
+      end do
+
+      do jsea = 1,nseal_cpl
+        call init_get_isea(isea, jsea)
+        factor = dden(ik) / cg(ik,isea)
+        ebd = ab(jsea) * factor
+        et(jsea) = et(jsea) + ebd
+      end do
+    end do !ik
+
+    do jsea = 1,nseal_cpl
+      call init_get_isea(isea, jsea)
+      eband = ab(jsea)/cg(nk,isea)
+      et(jsea) = et(jsea) + fte*eband
+      ix  = mapsf(isea,1)                   ! global ix
+      iy  = mapsf(isea,2)                   ! global iy
+      if (mapsta(iy,ix) == 1) then          ! active sea point
+#ifdef W3_O9
+        if ( et(jsea) .ge. 0.0 ) then
+          hs(jsea) =  4.0*sqrt ( et(jsea) )
+        else
+          hs(jsea) = -4.0*sqrt ( -et(jsea) )
+        end if
+#else
+        hs(jsea) = 4.0*sqrt ( et(jsea) )
+#endif
+      end if
+    end do
+
+  end subroutine CalcHs
+
   !====================================================================================
   !> Create a global field across all PEs
   !!
@@ -1315,7 +1388,7 @@ contains
   !> @date 01-05-2022
   subroutine SetGlobalInput(importState, fldname, vm, global_output, rc)
 
-    use w3gdatmd, only: nsea, nseal, nx, ny
+    use w3gdatmd, only: nsea, nx, ny
     use w3odatmd, only: naproc, iaproc
 
     ! input/output variables
@@ -1529,7 +1602,7 @@ contains
   !> @date 01-05-2022
   subroutine check_globaldata(gcomp, fldname, global_data, nvals, rc)
 
-    use w3gdatmd, only: nseal, nsea, mapsf, nx, ny
+    use w3gdatmd, only: nseal, mapsf, nx, ny
     use w3odatmd, only: naproc, iaproc
 
     ! input/output variables
