@@ -717,37 +717,14 @@ contains
       enddo
     end if
 #endif
-    ! TODO: needs to be at export freq
-    ! surface stokes drift
-    if (state_fldchk(exportState, 'Sw_ustokes')) then
+    if ( state_fldchk(exportState, 'Sw_ustokes') .and. &
+         state_fldchk(exportState, 'Sw_vstokes') )then
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
       call state_getfldptr(exportState, 'Sw_ustokes', sw_ustokes, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      sw_ustokes(:) = fillvalue
-      do jsea=1, nseal_cpl
-        call init_get_isea(isea, jsea)
-        ix  = mapsf(isea,1)
-        iy  = mapsf(isea,2)
-        if (mapsta(iy,ix) == 1) then
-          sw_ustokes(jsea) = USSX(jsea)
-        else
-          sw_ustokes(jsea) = 0.
-        endif
-      enddo
-    end if
-    if (state_fldchk(exportState, 'Sw_vstokes')) then
       call state_getfldptr(exportState, 'Sw_vstokes', sw_vstokes, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      sw_vstokes(:) = fillvalue
-      do jsea=1, nseal_cpl
-        call init_get_isea(isea, jsea)
-        ix  = mapsf(isea,1)
-        iy  = mapsf(isea,2)
-        if (mapsta(iy,ix) == 1) then
-          sw_vstokes(jsea) = USSY(jsea)
-        else
-          sw_vstokes(jsea) = 0.
-        endif
-      enddo
+      call CalcStokes(va, sw_ustokes, sw_vstokes, fillvalue)
     end if
 
     if (state_fldchk(exportState, 'Sw_ch')) then
@@ -783,7 +760,7 @@ contains
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
       call state_getfldptr(exportState, 'Sw_wavsvv', syyn, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      call CalcRadstr2D( va, sxxn, sxyn, syyn)
+      call CalcRadstr2D( va, sxxn, sxyn, syyn, fillvalue)
     end if
 
     if (wav_coupling_to_cice) then
@@ -821,14 +798,14 @@ contains
       call state_getfldptr(exportState, 'Sw_hs', sw_hs, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
       sw_hs(:) = fillvalue
-      call CalcHs(va, sw_hs)
+      call CalcHs(va, sw_hs, fillvalue)
     end if
 
     if (state_fldchk(exportState, 'Sw_bhd')) then
       call state_getfldptr(exportState, 'Sw_bhd', sw_bhd, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
       sw_bhd(:) = fillvalue
-      call CalcBHD(va, sw_bhd)
+      call CalcBHD(va, sw_bhd, fillvalue)
     end if
 
     if ( state_fldchk(exportState, 'Sw_tauox') .and. &
@@ -847,9 +824,6 @@ contains
         if (mapsta(iy,ix) == 1) then
           sw_tauox(jsea) = tauox(jsea)
           sw_tauoy(jsea) = tauoy(jsea)
-        else
-          sw_tauox(jsea) = 0.
-          sw_tauoy(jsea) = 0.
         endif
       enddo
     end if
@@ -862,7 +836,7 @@ contains
       call state_getfldptr(exportState, 'Sw_ubay', sw_ubay, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
       ! TODO:
-      !call CalcUVB(va, sw_ubax, sw_ubay)
+      !call CalcUVB(va, sw_ubax, sw_ubay, fillvalue)
     end if
 
     if (dbug_flag > 5) then
@@ -1059,14 +1033,14 @@ contains
 #endif
 
     ! input/output variables
-    real(ESMF_KIND_R8), pointer :: chkn(:)  ! 1D Charnock export field pointer
+    real(r8), pointer :: chkn(:)  ! 1D Charnock export field pointer
 
     ! local variables
-    integer            :: isea, jsea, ix, iy
-    real               :: emean, fmean, fmean1, wnmean, amax, ustar, ustdr
-    real               :: tauwx, tauwy, cd, z0, fmeanws, dlwmean
-    logical            :: llws(nspec)
-    logical, save      :: firstCall = .true.
+    integer           :: isea, jsea, ix, iy
+    real              :: emean, fmean, fmean1, wnmean, amax, ustar, ustdr
+    real              :: tauwx, tauwy, cd, z0, fmeanws, dlwmean
+    logical           :: llws(nspec)
+    logical, save     :: firstCall = .true.
     !----------------------------------------------------------------------
 
     !TODO: fix firstCall like for Roughl
@@ -1256,33 +1230,34 @@ contains
   !! @param     sxxn                 a 1-D pointer to a field on a mesh
   !! @param     sxyn                 a 1-D pointer to a field on a mesh
   !! @param     syyn                 a 1-D pointer to a field on a mesh
-  !!
+  !! @param[in] fval                 fill value
   !> @author Denise.Worthen@noaa.gov
   !> @date 08-05-2024
-  subroutine CalcRadstr2D ( a, sxxn, sxyn, syyn )
+  subroutine CalcRadstr2D ( a, sxxn, sxyn, syyn, fval)
 
     use w3gdatmd,   only : nseal, nk, nth, sig, es2, esc, ec2, fte, dden, mapsf, mapsta
     use w3adatmd,   only : dw, cg, wn
     use w3odatmd,   only : naproc, iaproc
 
     ! input/output variables
-    real, intent(in)               :: a(nth,nk,0:nseal) ! Input spectra (in par list to change shape)
-    real(ESMF_KIND_R8), pointer    :: sxxn(:)           ! eastward-component export field
-    real(ESMF_KIND_R8), pointer    :: sxyn(:)           ! eastward-northward-component export field
-    real(ESMF_KIND_R8), pointer    :: syyn(:)           ! northward-component export field
+    real,              intent(in)    :: a(nth,nk,0:nseal) ! Input spectra (in par list to change shape)
+    real(r8),          intent(in)    :: fval
+    real(r8), pointer, intent(inout) :: sxxn(:)           ! eastward-component export field
+    real(r8), pointer, intent(inout) :: sxyn(:)           ! eastward-northward-component export field
+    real(r8), pointer, intent(inout) :: syyn(:)           ! northward-component export field
 
     ! local variables
     integer :: isea, jsea, ik, ith, ix, iy
-    real    :: factor, abxx, abyy, abxy
+    real    :: factor, abxx, abyy, abxy, sxx1, syy1, sxy1
 
-    sxxn = 0.0
-    syyn = 0.0
-    sxyn = 0.0
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
       ix  = mapsf(isea,1)                   ! global ix
       iy  = mapsf(isea,2)                   ! global iy
       if (mapsta(iy,ix) == 1) then          ! active sea point
+        sxx1 = 0.0
+        syy1 = 0.0
+        sxy1 = 0.0
         do ik = 1,nk
           factor = max ( 0.5, cg(ik,isea)/sig(ik)*wn(ik,isea) )
           abxx = 0.0
@@ -1299,18 +1274,24 @@ contains
           abyy = max ( 0.0, abyy ) * factor
           abxy = abxy * factor
 
-          sxxn(jsea) = sxxn(jsea) + abxx
-          syyn(jsea) = syyn(jsea) + abyy
-          sxyn(jsea) = sxyn(jsea) + abxy
-        end do
-        sxxn(jsea) = sxxn(jsea) + fte * abxx/cg(nk,isea)
-        syyn(jsea) = syyn(jsea) + fte * abyy/cg(nk,isea)
-        sxyn(jsea) = sxyn(jsea) + fte * abxy/cg(nk,isea)
+          sxx1 = sxx1 + abxx
+          syy1 = syy1 + abyy
+          sxy1 = sxy1 + abxy
+        end do !ik
+        sxx1 = sxx1 + fte * abxx/cg(nk,isea)
+        syy1 = syy1 + fte * abyy/cg(nk,isea)
+        sxy1 = sxy1 + fte * abxy/cg(nk,isea)
+      end if
+      if (mapsta(iy,ix) == 1) then          ! active sea point
+        sxxn(jsea) = sxx1*dwat*grav
+        syyn(jsea) = syy1*dwat*grav
+        sxyn(jsea) = sxy1*dwat*grav
+      else
+        sxxn(jsea) = fval
+        syyn(jsea) = fval
+        sxyn(jsea) = fval
       end if
     end do
-    sxxn = sxxn*dwat*grav
-    syyn = syyn*dwat*grav
-    sxyn = sxyn*dwat*grav
 
   end subroutine CalcRadstr2D
 
@@ -1329,7 +1310,7 @@ contains
 
     use constants, only : tpi
     use w3gdatmd,  only : nth, nk, nseal, mapsf, mapsta, dden, dsii
-    use w3adatmd,  only : nsealm, cg
+    use w3adatmd,  only : cg
     use w3parall,  only : init_get_isea
 
     ! input/output variables
@@ -1377,23 +1358,22 @@ contains
   !!
   !> @author Denise.Worthen@noaa.gov
   !> @date 8-02-2024
-  subroutine CalcHs (a, hs)
+  subroutine CalcHs (a, hs, fval)
 
     use constants, only : tpi
     use w3gdatmd,  only : nth, nk, nseal, mapsf, mapsta, dden, fte
-    use w3adatmd,  only : nsealm, cg
+    use w3adatmd,  only : cg
     use w3parall,  only : init_get_isea
 
     ! input/output variables
-    real, intent(in)     :: a(nth,nk,0:nseal)
-    real(r8), pointer    :: hs(:)
+    real,              intent(in)    :: a(nth,nk,0:nseal)
+    real(r8),          intent(in)    :: fval
+    real(r8), pointer, intent(inout) :: hs(:)
 
     ! local variables
     real    :: factor, eband, ab, et
     integer :: ik, ith, isea, jsea, ix, iy
 
-    et = 0.0
-    ab = 0.0
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
       ix  = mapsf(isea,1)                   ! global ix
@@ -1419,6 +1399,8 @@ contains
 #else
         hs(jsea) = 4.0*sqrt ( et )
 #endif
+      else
+        hs(jsea) = fval
       end if
     end do
   end subroutine CalcHs
@@ -1430,34 +1412,33 @@ contains
   !! that exported BHD field is updated at the coupling frequency
   !!
   !! @param[in]    a       input spectra
+  !! @param[in]    fval    fillvalue
   !! @param[inout] bhd     a 1-D pointer to a field on a mesh
   !!
   !> @author Denise.Worthen@noaa.gov
   !> @date 8-02-2024
-  subroutine CalcBHD (a, bhd)
+  subroutine CalcBHD (a, bhd, fval)
 
-    use constants, only : tpi
-    use w3gdatmd,  only : nth, nk, nseal, mapsf, mapsta, dden, fte
-    use w3adatmd,  only : dw, nsealm, cg, wn
+    use w3gdatmd,  only : nth, nk, nseal, mapsf, mapsta, dden
+    use w3adatmd,  only : dw, cg, wn
     use w3parall,  only : init_get_isea
 
     ! input/output variables
-    real, intent(in)     :: a(nth,nk,0:nseal)
-    real(r8), pointer    :: bhd(:)
+    real,              intent(in)    :: a(nth,nk,0:nseal)
+    real(r8),          intent(in)    :: fval
+    real(r8), pointer, intent(inout) :: bhd(:)
 
     ! local variables
-    real    :: factor, kd, ab, ebd
+    real    :: factor, kd, ab, ebd, bhd1
     integer :: ik, ith, isea, jsea, ix, iy
 
-    ebd = 0.0
-    ab = 0.0
-    bhd = 0.0
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
       ix  = mapsf(isea,1)                   ! global ix
       iy  = mapsf(isea,2)                   ! global iy
       if (mapsta(iy,ix) == 1) then          ! active sea point
         ebd = 0.0
+        bhd1 = 0.0
         do ik = 1,nk
           factor = dden(ik) / cg(ik,isea)
           ab = 0.0
@@ -1467,13 +1448,80 @@ contains
           ebd = ab*factor
           kd = max ( 0.001 , wn(ik,isea) * dw(isea) )
           if (kd .lt. 6.0) then
-            bhd(jsea) = bhd(jsea) + grav*wn(ik,isea) * ebd / (sinh(2.*kd))
+            bhd1 = bhd1 + grav*wn(ik,isea) * ebd / (sinh(2.*kd))
           end if
         end do !ik
+        bhd(jsea) = bhd1
+      else
+        bhd(jsea) = fval
       end if
     end do
 
   end subroutine CalcBHD
+
+  !====================================================================================
+  !> Calculate Stokes drift for export
+  !!
+  !> @details Calculates Stokes drift independently of w3iogomd to ensure
+  !! that exported USSX and USSY fields are updated at the coupling frequency
+  !!
+  !! @param[in]    a       input spectra
+  !! @param[in]    fval    fill value
+  !! @param[inout] us      a 1-D pointer to a field on a mesh
+  !! @param[inout] vs      a 1-D pointer to a field on a mesh
+  !!
+  !> @author Denise.Worthen@noaa.gov
+  !> @date 8-02-2024
+  subroutine CalcStokes(a, us, vs, fval)
+
+    use w3gdatmd,  only : nth, nk, nseal, mapsf, mapsta, dden, ecos, esin
+    use w3adatmd,  only : dw, cg, wn
+    use w3gdatmd,  only : sig
+    use w3parall,  only : init_get_isea
+
+    ! input/output variables
+    real,              intent(in)    :: a(nth,nk,0:nseal)
+    real(r8),          intent(in)    :: fval
+    real(r8), pointer, intent(inout) :: us(:), vs(:)
+
+    ! local variables
+    real    :: factor, kd, abx, aby, fkd, ussco, us1, vs1
+    integer :: ik, ith, isea, jsea, ix, iy
+
+    do jsea = 1,nseal_cpl
+      call init_get_isea(isea, jsea)
+      ix  = mapsf(isea,1)                   ! global ix
+      iy  = mapsf(isea,2)                   ! global iy
+      if (mapsta(iy,ix) == 1) then          ! active sea point
+        us1 = 0.0
+        vs1 = 0.0
+        do ik = 1,nk
+          factor = dden(ik) / cg(ik,isea)
+          abx = 0.0
+          aby = 0.0
+          do ith = 1,nth
+            abx = abx + a(ith,ik,jsea)*ecos(ith)
+            aby = aby + a(ith,ik,jsea)*esin(ith)
+          end do
+          kd = max ( 0.001 , wn(ik,isea) * dw(isea) )
+          if (kd .lt. 6.0) then
+            fkd =  factor / sinh(kd)**2
+            ussco = fkd*sig(ik)*wn(ik,isea)*cosh(2.0*kd)
+          else
+            ussco = factor*sig(ik)*2.0*wn(ik,isea)
+          end if
+          us1 = us1 + abx*ussco
+          vs1 = vs1 + aby*ussco
+        end do !ik
+        us(jsea) = us1
+        vs(jsea) = vs1
+      else
+        us(jsea) = fval
+        vs(jsea) = fval
+      end if
+    end do
+
+  end subroutine CalcStokes
 
   !====================================================================================
   !> Create a global field across all PEs
