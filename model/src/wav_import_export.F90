@@ -668,7 +668,8 @@ contains
     if (multigrid) then
       call wmsetm ( 1, mdse, mdst )
     end if
-#else
+#endif
+#ifdef W3_CESMCOUPLED
     if (state_fldchk(exportState, 'Sw_lamult')) then
       call state_getfldptr(exportState, 'Sw_lamult', sw_lamult, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
@@ -716,7 +717,40 @@ contains
          endif
       enddo
     end if
-#endif
+
+    ! surface stokes drift at history frequency
+    if (state_fldchk(exportState, 'Sw_ustokes')) then
+      call state_getfldptr(exportState, 'Sw_ustokes', sw_ustokes, rc=rc)
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      sw_ustokes(:) = fillvalue
+      do jsea=1, nseal_cpl
+        call init_get_isea(isea, jsea)
+        ix  = mapsf(isea,1)
+        iy  = mapsf(isea,2)
+        if (mapsta(iy,ix) == 1) then
+          sw_ustokes(jsea) = USSX(jsea)
+        else
+          sw_ustokes(jsea) = 0.
+        endif
+      enddo
+    end if
+    if (state_fldchk(exportState, 'Sw_vstokes')) then
+      call state_getfldptr(exportState, 'Sw_vstokes', sw_vstokes, rc=rc)
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      sw_vstokes(:) = fillvalue
+      do jsea=1, nseal_cpl
+        call init_get_isea(isea, jsea)
+        ix  = mapsf(isea,1)
+        iy  = mapsf(isea,2)
+        if (mapsta(iy,ix) == 1) then
+          sw_vstokes(jsea) = USSY(jsea)
+        else
+          sw_vstokes(jsea) = 0.
+        endif
+      enddo
+    end if
+#else
+    ! surface stokes drift at coupling frequency
     if ( state_fldchk(exportState, 'Sw_ustokes') .and. &
          state_fldchk(exportState, 'Sw_vstokes') )then
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
@@ -726,6 +760,7 @@ contains
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
       call CalcStokes(va, sw_ustokes, sw_vstokes, fillvalue)
     end if
+#endif
 
     if (state_fldchk(exportState, 'Sw_ch')) then
       call state_getfldptr(exportState, 'charno', charno, rc=rc)
