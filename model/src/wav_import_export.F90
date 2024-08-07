@@ -155,8 +155,11 @@ contains
       call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_tauoy')
       call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_taubblx')
       call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_taubbly')
-      call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_ubax')
-      call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_ubay')
+      call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_ubrx')
+      call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_ubry')
+      call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_thm')
+      call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_t0m1')
+      call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_wnmean')
     end if
     call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_pstokes_x', ungridded_lbound=1, ungridded_ubound=3)
     call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_pstokes_y', ungridded_lbound=1, ungridded_ubound=3)
@@ -606,6 +609,8 @@ contains
 #else
     use wmmdatmd      , only : mdse, mdst, wmsetm
 #endif
+    ! debug
+    use w3adatmd, only : thm, wnmean, t0m1
 
     ! input/output/variables
     type(ESMF_GridComp)            :: gcomp
@@ -623,9 +628,6 @@ contains
 
     real(r8), pointer :: z0rlen(:)
     real(r8), pointer :: charno(:)
-    real(r8), pointer :: wbcuru(:)
-    real(r8), pointer :: wbcurv(:)
-    real(r8), pointer :: wbcurp(:)
     real(r8), pointer :: sw_lamult(:)
     real(r8), pointer :: sw_lasl(:)
     real(r8), pointer :: sw_ustokes(:)
@@ -640,8 +642,11 @@ contains
     real(r8), pointer :: sw_tauoy(:)
     real(r8), pointer :: sw_taubblx(:)
     real(r8), pointer :: sw_taubbly(:)
-    real(r8), pointer :: sw_ubax(:)
-    real(r8), pointer :: sw_ubay(:)
+    real(r8), pointer :: sw_ubrx(:)
+    real(r8), pointer :: sw_ubry(:)
+    real(r8), pointer :: sw_thm(:)
+    real(r8), pointer :: sw_t0m1(:)
+    real(r8), pointer :: sw_wnmean(:)
 
     ! d2 is location, d1 is frequency  - nwav_elev_spectrum frequencies will be used
     real(r8), pointer :: wave_elevation_spectrum(:,:)
@@ -774,18 +779,6 @@ contains
       call CalcRoughl(z0rlen)
     endif
 
-    ! if ( state_fldchk(exportState, 'wbcuru') .and. &
-    !      state_fldchk(exportState, 'wbcurv') .and. &
-    !      state_fldchk(exportState, 'wbcurp')) then
-    !   call state_getfldptr(exportState, 'wbcuru', wbcuru, rc=rc)
-    !   if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    !   call state_getfldptr(exportState, 'wbcurv', wbcurv, rc=rc)
-    !   if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    !   call state_getfldptr(exportState, 'wbcurp', wbcurp, rc=rc)
-    !   if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    !   call CalcBotcur( va, wbcuru, wbcurv, wbcurp)
-    ! end if
-
     if ( state_fldchk(exportState, 'Sw_wavsuu') .and. &
          state_fldchk(exportState, 'Sw_wavsuv') .and. &
          state_fldchk(exportState, 'Sw_wavsvv')) then
@@ -863,15 +856,32 @@ contains
       enddo
     end if
 
-    if ( state_fldchk(exportState, 'Sw_ubax') .and. &
-         state_fldchk(exportState, 'Sw_ubay') )then
+    if ( state_fldchk(exportState, 'Sw_ubrx') .and. &
+         state_fldchk(exportState, 'Sw_ubry') )then
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      call state_getfldptr(exportState, 'Sw_ubax', sw_ubax, rc=rc)
+      call state_getfldptr(exportState, 'Sw_ubrx', sw_ubrx, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      call state_getfldptr(exportState, 'Sw_ubay', sw_ubay, rc=rc)
+      call state_getfldptr(exportState, 'Sw_ubry', sw_ubry, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      ! TODO:
-      !call CalcUVB(va, sw_ubax, sw_ubay, fillvalue)
+      call CalcUVBed(va, sw_ubrx, sw_ubry, fillvalue)
+   end if
+
+    if (state_fldchk(exportState, 'Sw_thm')) then
+     call state_getfldptr(exportState, 'Sw_thm', sw_thm, rc=rc)
+     if (ChkErr(rc,__LINE__,u_FILE_u)) return
+     sw_thm(:) = thm(:)
+    end if
+
+    if (state_fldchk(exportState, 'Sw_t0m1')) then
+      call state_getfldptr(exportState, 'Sw_t0m1', sw_t0m1, rc=rc)
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      sw_t0m1(:) = t0m1(:)
+    end if
+
+    if (state_fldchk(exportState, 'Sw_wnmean')) then
+      call state_getfldptr(exportState, 'Sw_wnmean', sw_wnmean, rc=rc)
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      sw_wnmean(:) = wnmean(:)
     end if
 
     if (dbug_flag > 5) then
@@ -1172,89 +1182,6 @@ contains
 
   end subroutine CalcRoughl
 
-  ! !===============================================================================
-  ! !> Calculate wave-bottom currents for export
-  ! !!
-  ! !> @details TODO:
-  ! !!
-  ! !! @param[in] a                    input spectra
-  ! !! @param     wbxn                 a 1-D pointer to a field on a mesh
-  ! !! @param     wbyn                 a 1-D pointer to a field on a mesh
-  ! !! @param     wbpn                 a 1-D pointer to a field on a mesh
-  ! !!
-  ! !> @author T. J. Campbell, NRL
-  ! !> @date 09-Aug-2017
-  ! subroutine CalcBotcur ( a, wbxn, wbyn, wbpn )
-
-  !   ! Calculate wave-bottom currents for export
-
-  !   use w3gdatmd,  only : nseal, nk, nth, sig, dmin, ecos, esin, dden, mapsf, mapsta, nspec
-  !   use w3adatmd,  only : dw, cg, wn
-  !   use w3odatmd,  only : naproc, iaproc
-
-  !   ! input/output variables
-  !   real, intent(in)            :: a(nth,nk,0:nseal) ! Input spectra (in par list to change shape)
-  !   real(ESMF_KIND_R8), pointer :: wbxn(:)           ! eastward-component export field pointer
-  !   real(ESMF_KIND_R8), pointer :: wbyn(:)           ! northward-component export field pointer
-  !   real(ESMF_KIND_R8), pointer :: wbpn(:)           ! period export field pointer
-
-  !   ! local variables
-  !   real(8), parameter   :: half  = 0.5_r8
-  !   real(8), parameter   ::  one  = 1.0_r8
-  !   real(8), parameter   ::  two  = 2.0_r8
-  !   real(8), parameter   :: kdmin = 1e-7_r8
-  !   real(8), parameter   :: kdmax = 18.0_r8
-  !   integer              :: isea, jsea, ik, ith
-  !   real(8)              :: depth
-  !   real(8)              :: kd, fack, fkd, aka, akx, aky, abr, ubr, ubx, uby, dir
-  !   real(8), allocatable :: sig2(:)
-  !   !----------------------------------------------------------------------
-
-  !   allocate( sig2(1:nk) )
-  !   sig2(1:nk) = sig(1:nk)**2
-
-  !   wbxn(:) = zero
-  !   wbyn(:) = zero
-  !   wbpn(:) = zero
-
-  !   jsea_loop: do jsea = 1,nseal_cpl
-  !     call init_get_isea(isea, jsea)
-  !     if ( dw(isea).le.zero ) cycle jsea_loop
-  !     depth = max(dmin,dw(isea))
-  !     abr = zero
-  !     ubr = zero
-  !     ubx = zero
-  !     uby = zero
-  !     ik_loop: do ik = 1,nk
-  !       aka = zero
-  !       akx = zero
-  !       aky = zero
-  !       ith_loop: do ith = 1,nth
-  !         aka = aka + a(ith,ik,jsea)
-  !         akx = akx + a(ith,ik,jsea)*ecos(ith)
-  !         aky = aky + a(ith,ik,jsea)*esin(ith)
-  !       enddo ith_loop
-  !       fack = dden(ik)/cg(ik,isea)
-  !       kd = max(kdmin,min(kdmax,wn(ik,isea)*depth))
-  !       fkd = fack/sinh(kd)**2
-  !       abr = abr + aka*fkd
-  !       ubr = ubr + aka*sig2(ik)*fkd
-  !       ubx = ubx + akx*sig2(ik)*fkd
-  !       uby = uby + aky*sig2(ik)*fkd
-  !     enddo ik_loop
-  !     if ( abr.le.zero .or. ubr.le.zero ) cycle jsea_loop
-  !     abr = sqrt(two*abr)
-  !     ubr = sqrt(two*ubr)
-  !     dir = atan2(uby,ubx)
-  !     wbxn(jsea) = ubr*cos(dir)
-  !     wbyn(jsea) = ubr*sin(dir)
-  !     wbpn(jsea) = tpi*abr/ubr
-  !   enddo jsea_loop
-
-  !   deallocate( sig2 )
-
-  ! end subroutine CalcBotcur
-
   !===============================================================================
   !> Calculate radiation stresses for export
   !!
@@ -1275,11 +1202,11 @@ contains
     use w3odatmd,   only : naproc, iaproc
 
     ! input/output variables
-    real,              intent(in)    :: a(nth,nk,0:nseal) ! Input spectra (in par list to change shape)
-    real(r8),          intent(in)    :: fval
-    real(r8), pointer, intent(inout) :: sxxn(:)           ! eastward-component export field
-    real(r8), pointer, intent(inout) :: sxyn(:)           ! eastward-northward-component export field
-    real(r8), pointer, intent(inout) :: syyn(:)           ! northward-component export field
+    real,                        intent(in)    :: a(nth,nk,0:nseal) ! Input spectra (in par list to change shape)
+    real(ESMF_KIND_R8),          intent(in)    :: fval
+    real(ESMF_KIND_R8), pointer, intent(inout) :: sxxn(:)           ! eastward-component export field
+    real(ESMF_KIND_R8), pointer, intent(inout) :: sxyn(:)           ! eastward-northward-component export field
+    real(ESMF_KIND_R8), pointer, intent(inout) :: syyn(:)           ! northward-component export field
 
     ! local variables
     integer :: isea, jsea, ik, ith, ix, iy
@@ -1349,8 +1276,8 @@ contains
     use w3parall,  only : init_get_isea
 
     ! input/output variables
-    real, intent(in)     :: a(nth,nk,0:nseal)
-    real(r8), pointer    :: wave_elevation_spectrum(:,:)
+    real, intent(in)               :: a(nth,nk,0:nseal)
+    real(ESMF_KIND_R8), pointer    :: wave_elevation_spectrum(:,:)
 
     ! local variables
     real    :: ab(nseal)
@@ -1401,9 +1328,9 @@ contains
     use w3parall,  only : init_get_isea
 
     ! input/output variables
-    real,              intent(in)    :: a(nth,nk,0:nseal)
-    real(r8),          intent(in)    :: fval
-    real(r8), pointer, intent(inout) :: hs(:)
+    real,                        intent(in)    :: a(nth,nk,0:nseal)
+    real(ESMF_KIND_R8),          intent(in)    :: fval
+    real(ESMF_KIND_R8), pointer, intent(inout) :: hs(:)
 
     ! local variables
     real    :: factor, eband, ab, et
@@ -1459,9 +1386,9 @@ contains
     use w3parall,  only : init_get_isea
 
     ! input/output variables
-    real,              intent(in)    :: a(nth,nk,0:nseal)
-    real(r8),          intent(in)    :: fval
-    real(r8), pointer, intent(inout) :: bhd(:)
+    real,                        intent(in)    :: a(nth,nk,0:nseal)
+    real(ESMF_KIND_R8),          intent(in)    :: fval
+    real(ESMF_KIND_R8), pointer, intent(inout) :: bhd(:)
 
     ! local variables
     real    :: factor, kd, ab, ebd, bhd1
@@ -1515,9 +1442,9 @@ contains
     use w3parall,  only : init_get_isea
 
     ! input/output variables
-    real,              intent(in)    :: a(nth,nk,0:nseal)
-    real(r8),          intent(in)    :: fval
-    real(r8), pointer, intent(inout) :: us(:), vs(:)
+    real,                        intent(in)    :: a(nth,nk,0:nseal)
+    real(ESMF_KIND_R8),          intent(in)    :: fval
+    real(ESMF_KIND_R8), pointer, intent(inout) :: us(:), vs(:)
 
     ! local variables
     real    :: factor, kd, abx, aby, fkd, ussco, us1, vs1
@@ -1557,6 +1484,78 @@ contains
     end do
 
   end subroutine CalcStokes
+
+  !====================================================================================
+  !> Calculate UVBed drift for export
+  !!
+  !> @details Calculates near bed orbital velocities independently of w3iogomd to
+  !! ensure that exported UBRX and UBRY fields are updated at the coupling frequency
+  !!
+  !! @param[in]    a       input spectra
+  !! @param[in]    fval    fill value
+  !! @param[inout] ubrx    a 1-D pointer to a field on a mesh
+  !! @param[inout] vbry    a 1-D pointer to a field on a mesh
+  !!
+  !> @author Denise.Worthen@noaa.gov
+  !> @date 8-02-2024
+  subroutine CalcUVBed(a, ubrx, ubry, fval)
+
+    use w3gdatmd,  only : nth, nk, nseal, mapsf, mapsta, dden, ecos, esin
+    use w3adatmd,  only : dw, cg, wn
+    use w3gdatmd,  only : sig
+    use w3parall,  only : init_get_isea
+
+    ! input/output variables
+    real,                        intent(in)    :: a(nth,nk,0:nseal)
+    real(ESMF_KIND_R8),          intent(in)    :: fval
+    real(ESMF_KIND_R8), pointer, intent(inout) :: ubrx(:), ubry(:)
+
+    ! local variables
+    real    :: factor, kd, ab, abx, aby, fkd, ussco, uba1, ubd1, ubr1
+    integer :: ik, ith, isea, jsea, ix, iy
+
+    do jsea = 1,nseal_cpl
+      call init_get_isea(isea, jsea)
+      ix  = mapsf(isea,1)                   ! global ix
+      iy  = mapsf(isea,2)                   ! global iy
+      if (mapsta(iy,ix) == 1) then          ! active sea point
+        uba1 = 0.0
+        ubd1 = 0.0
+        ubr1 = 0.0
+        do ik = 1,nk
+          factor = dden(ik) / cg(ik,isea)
+          ab = 0.0
+          abx = 0.0
+          aby = 0.0
+          do ith = 1,nth
+            ab  = ab  + a(ith,ik,jsea)
+            abx = abx + a(ith,ik,jsea)*ecos(ith)
+            aby = aby + a(ith,ik,jsea)*esin(ith)
+          end do
+          kd = max ( 0.001 , wn(ik,isea) * dw(isea) )
+          if (kd .lt. 6.0) then
+            fkd =  factor / sinh(kd)**2
+            ubr1 = ubr1 + ab*sig(ik)**2 * fkd
+            uba1 = uba1 + abx*sig(ik)**2 * fkd
+            ubd1 = ubd1 + aby*sig(ik)**2 * fkd
+          end if
+        end do !ik
+        ubr1 = sqrt(2.0*max(0.0,ubr1))
+        if (ubr1 .ge. 1.0e-7) then
+          ubd1 = atan2(ubd1,uba1)
+        else
+          ubd1 = 0.0
+        end if
+        uba1 = ubr1
+        ubrx(jsea) = uba1*cos(ubd1)
+        ubry(jsea) = uba1*sin(ubd1)
+      else
+        ubrx(jsea) = fval
+        ubry(jsea) = fval
+      end if
+    end do
+
+  end subroutine CalcUVBed
 
   !====================================================================================
   !> Create a global field across all PEs

@@ -130,7 +130,6 @@ contains
     gridoutdefs(:,:)%dims = ""
     gridoutdefs(:,:)%validout = .false.
 
-    ! TODO: confirm unit values
     !  1   Forcing Fields
     gridoutdefs(1,1:14) = [ &
          varatts( "DPT  ", "DW        ", "Water depth                                     ", "m         ", "  ", .false.) , &
@@ -178,7 +177,7 @@ contains
          varatts( "STH1M", "STH1M     ", "Directional spreading from a1,b2                ", "deg       ", "k ", .false.) , &
          varatts( "TH2M ", "TH2M      ", "Mean wave direction from a2,b2                  ", "deg       ", "k ", .false.) , &
          varatts( "STH2M", "STH2M     ", "Directional spreading from a2,b2                ", "deg       ", "k ", .false.) , &
-                                !TODO: has reverse indices (nk,nsea)
+         !TODO: has reverse indices (nk,nsea)
          varatts( "WN   ", "WN        ", "Wavenumber array                                ", "m-1       ", "k ", .false.)   &
          ]
 
@@ -223,8 +222,8 @@ contains
 
     !  6   Wave-ocean layer
     gridoutdefs(6,1:25) = [ &
-         varatts( "SXX  ", "SXX       ", "Radiation stresses xx                           ", "N m-1     ", "  ", .false.) , &
-         varatts( "SYY  ", "SYY       ", "Radiation stresses yy                           ", "N m-1     ", "  ", .false.) , &
+         varatts( "SXY  ", "SXX       ", "Radiation stresses xx                           ", "N m-1     ", "  ", .false.) , &
+         varatts( "SXY  ", "SYY       ", "Radiation stresses yy                           ", "N m-1     ", "  ", .false.) , &
          varatts( "SXY  ", "SXY       ", "Radiation stresses xy                           ", "N m-1     ", "  ", .false.) , &
          varatts( "TWO  ", "TAUOX     ", "Wave to ocean momentum flux x                   ", "m2 s-2    ", "  ", .false.) , &
          varatts( "TWO  ", "TAUOY     ", "Wave to ocean momentum flux y                   ", "m2 s-2    ", "  ", .false.) , &
