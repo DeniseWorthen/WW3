@@ -61,7 +61,7 @@ contains
     use w3adatmd   , only : cflxymax, cflthmax, cflkmax, p2sms, us3d
     use w3adatmd   , only : th1m, sth1m, th2m, sth2m, hsig, phice, tauice
     use w3adatmd   , only : stmaxe, stmaxd, hmaxe, hcmaxe, hmaxd, hcmaxd, ussp, tauocx, tauocy
-    use w3adatmd , only : usshx, usshy
+    use w3adatmd   , only : usshx, usshy
     use wav_grdout , only : varatts, outvars
     use w3timemd   , only : set_user_timestring
     use w3odatmd   , only : time_origin, calendar_name, elapsed_secs
