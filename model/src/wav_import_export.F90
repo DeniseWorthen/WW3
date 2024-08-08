@@ -274,13 +274,13 @@ contains
     ! Obtain the wave input from the mediator
     !---------------------------------------------------------------------------
 
-    use w3gdatmd    , only: nsea, nseal, MAPSTA, NX, NY, w3setg
+    use w3gdatmd    , only: nsea, NX, NY, w3setg
     use w3idatmd    , only: CX0, CY0, CXN, CYN, DT0, DTN, ICEI, WLEV, INFLAGS1, ICEP1, ICEP5
     use w3idatmd    , only: TC0, TCN, TLN, TIN, TI1, TI5, TW0, TWN, WX0, WY0, WXN, WYN
     use w3idatmd    , only: UX0, UY0, UXN, UYN, TU0, TUN
     use w3idatmd    , only: tfn, w3seti
     use w3odatmd    , only: w3seto
-    use w3wdatmd    , only: time, w3setw
+    use w3wdatmd    , only: w3setw
 #ifdef W3_CESMCOUPLED
     use w3idatmd    , only: HSL
 #else
@@ -310,7 +310,6 @@ contains
     integer                 :: mpi_comm_null = -1
     real(r4), allocatable   :: wxdata(:)      ! only needed if merge_import
     real(r4), allocatable   :: wydata(:)      ! only needed if merge_import
-    character(len=CL)       :: msgString
     character(len=*), parameter :: subname='(wav_import_export:import_fields)'
     !---------------------------------------------------------------------------
 
@@ -599,8 +598,8 @@ contains
     use w3adatmd      , only : w3seta
     use w3idatmd      , only : w3seti
     use w3wdatmd      , only : va, w3setw
-    use w3odatmd      , only : w3seto, naproc, iaproc
-    use w3gdatmd      , only : nseal, mapsf, MAPSTA, USSPF, NK, w3setg
+    use w3odatmd      , only : w3seto
+    use w3gdatmd      , only : mapsf, MAPSTA, USSPF, NK, w3setg
     use w3iogomd      , only : CALC_U3STOKES
 #ifdef W3_CESMCOUPLED
     use w3wdatmd      , only : ASF, UST
@@ -622,7 +621,7 @@ contains
     real(R8)          :: fillvalue = zero                      ! special missing value
 #endif
     type(ESMF_State)  :: exportState
-    integer           :: n, jsea, isea, ix, iy, ib
+    integer           :: jsea, isea, ix, iy, ib
 
     real(r8), pointer :: z0rlen(:)
     real(r8), pointer :: charno(:)
@@ -1092,22 +1091,20 @@ contains
 
     ! Calculate Charnok for export
 
-    use w3gdatmd,   only : nseal, nk, nth, sig, mapsf, mapsta, nspec
+    use w3gdatmd,   only : nk, nspec
     use w3adatmd,   only : cg, wn, charn, u10, u10d
     use w3wdatmd,   only : va
-    use w3odatmd,   only : naproc, iaproc
 #ifdef W3_ST3
     use w3src3md,   only : w3spr3
 #endif
 #ifdef W3_ST4
     use w3src4md,   only : w3spr4
 #endif
-
     ! input/output variables
     real(r8), pointer :: chkn(:)  ! 1D Charnock export field pointer
 
     ! local variables
-    integer           :: isea, jsea, ix, iy
+    integer           :: isea, jsea
     real              :: emean, fmean, fmean1, wnmean, amax, ustar, ustdr
     real              :: tauwx, tauwy, cd, z0, fmeanws, dlwmean
     logical           :: llws(nspec)
@@ -1152,10 +1149,10 @@ contains
   subroutine CalcRoughl ( wrln)
 
     ! Calculate wave roughness length for export
-    use w3gdatmd,   only : nseal, nk, nth, sig, dmin, ecos, esin, dden, mapsf, mapsta, nspec
-    use w3adatmd,   only : dw, cg, wn, charn, u10, u10d
+    use w3gdatmd,   only : nk, mapsf, mapsta, nspec
+    use w3adatmd,   only : cg, wn, charn, u10, u10d
     use w3wdatmd,   only : va, ust
-    use w3odatmd,   only : naproc, iaproc, runtype
+    use w3odatmd,   only : runtype
 #ifdef W3_ST3
     use w3src3md,   only : w3spr3
 #endif
@@ -1223,8 +1220,7 @@ contains
   subroutine CalcRadstr2D ( a, sxxn, sxyn, syyn, fval)
 
     use w3gdatmd,   only : nseal, nk, nth, sig, es2, esc, ec2, fte, dden, mapsf, mapsta
-    use w3adatmd,   only : dw, cg, wn
-    use w3odatmd,   only : naproc, iaproc
+    use w3adatmd,   only : cg, wn
 
     ! input/output variables
     real,                        intent(in)    :: a(nth,nk,0:nseal) ! Input spectra (in par list to change shape)
@@ -1536,7 +1532,7 @@ contains
     real(ESMF_KIND_R8), pointer, intent(inout) :: ubrx(:), ubry(:)
 
     ! local variables
-    real    :: factor, kd, ab, abx, aby, fkd, ussco, uba1, ubd1, ubr1
+    real    :: factor, kd, ab, abx, aby, fkd, uba1, ubd1, ubr1
     integer :: ik, ith, isea, jsea, ix, iy
 
     do jsea = 1,nseal_cpl
@@ -1718,8 +1714,7 @@ contains
   !> @date 01-05-2022
   subroutine SetGlobalInput(importState, fldname, vm, global_output, rc)
 
-    use w3gdatmd, only: nsea, nx, ny
-    use w3odatmd, only: naproc, iaproc
+    use w3gdatmd, only: nsea
 
     ! input/output variables
     type(ESMF_State) , intent(in)  :: importState
@@ -1729,7 +1724,7 @@ contains
     integer          , intent(out) :: rc
 
     ! local variables
-    integer           :: jsea, isea, ix, iy
+    integer           :: jsea, isea
     real(r4)          :: global_input(nsea)
     real(r8), pointer :: dataptr(:)
     character(len=*), parameter :: subname = '(wav_import_export:setGlobalInput)'
@@ -1837,7 +1832,7 @@ contains
   !> @date 01-05-2022
   subroutine set_importmask(importState, clock, fldname, vm, rc)
 
-    use w3gdatmd, only: nsea, nseal, nx, ny
+    use w3gdatmd, only: nsea, nseal
     use w3odatmd, only: naproc, iaproc
 
     ! input/output variables
@@ -1852,7 +1847,7 @@ contains
     type(ESMF_TimeInterval) :: timeStep
     logical                 :: firstCall, secondCall
     real(r4)                :: fillValue = 9.99e20
-    integer                 :: isea, jsea, ix, iy
+    integer                 :: isea, jsea
     real(r8), pointer       :: dataptr(:)
     real(r4)                :: mask_local(nsea)
     character(len=CL)       :: msgString
@@ -1945,7 +1940,7 @@ contains
     ! local variables
     type(ESMF_Clock)                :: clock
     type(ESMF_State)                :: importState
-    type(ESMF_Time)                 :: currtime, nexttime
+    type(ESMF_Time)                 :: nexttime
     type(ESMF_Field)                :: lfield
     type(ESMF_Field)                :: newfield
     type(ESMF_MeshLoc)              :: meshloc
@@ -1953,7 +1948,6 @@ contains
     character(len=CS)               :: timestr
     character(ESMF_MAXSTR) ,pointer :: lfieldnamelist(:)
     integer                         :: fieldCount
-    integer                         :: lrank
     integer                         :: yr,mon,day,sec    ! time units
     integer                         :: jsea, isea, ix, iy
     real(r8), pointer               :: dataptr1d(:)
