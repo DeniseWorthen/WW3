@@ -879,7 +879,15 @@ contains
     if (state_fldchk(exportState, 'Sw_wnmean')) then
       call state_getfldptr(exportState, 'Sw_wnmean', sw_wnmean, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      sw_wnmean(:) = wnmean(:)
+      sw_wnmean(:) = fillvalue
+      do jsea=1, nseal_cpl
+        call init_get_isea(isea, jsea)
+        ix  = mapsf(isea,1)
+        iy  = mapsf(isea,2)
+        if (mapsta(iy,ix) == 1) then
+          sw_wnmean(jsea) = wnmean(jsea)
+        endif
+      enddo
     end if
 
     if ( state_fldchk(exportState, 'Sw_taubblx') .and. &
@@ -889,8 +897,17 @@ contains
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
       call state_getfldptr(exportState, 'Sw_taubbly', sw_taubbly, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      sw_taubblx(:) = taubbl(:,1)
-      sw_taubbly(:) = taubbl(:,2)
+      sw_taubblx(:) = fillvalue
+      sw_taubbly(:) = fillvalue
+      do jsea=1, nseal_cpl
+        call init_get_isea(isea, jsea)
+        ix  = mapsf(isea,1)
+        iy  = mapsf(isea,2)
+        if (mapsta(iy,ix) == 1) then
+          sw_taubblx(jsea) = taubbl(jsea,1)
+          sw_taubbly(jsea) = taubbl(jsea,2)
+        endif
+      enddo
     end if
 
     if (dbug_flag > 5) then
