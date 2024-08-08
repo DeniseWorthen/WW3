@@ -595,7 +595,7 @@ contains
     !---------------------------------------------------------------------------
 
     use wav_kind_mod,   only : R8 => SHR_KIND_R8
-    use w3adatmd      , only : USSX, USSY, USSP, HS, tauox, tauoy, wnmean
+    use w3adatmd      , only : USSX, USSY, USSP, HS, tauox, tauoy, wnmean, taubbl
     use w3adatmd      , only : w3seta
     use w3idatmd      , only : w3seti
     use w3wdatmd      , only : va, w3setw
@@ -880,6 +880,17 @@ contains
       call state_getfldptr(exportState, 'Sw_wnmean', sw_wnmean, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
       sw_wnmean(:) = wnmean(:)
+    end if
+
+    if ( state_fldchk(exportState, 'Sw_taubblx') .and. &
+         state_fldchk(exportState, 'Sw_taubbly') )then
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      call state_getfldptr(exportState, 'Sw_taubblx', sw_taubblx, rc=rc)
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      call state_getfldptr(exportState, 'Sw_taubbly', sw_taubbly, rc=rc)
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      sw_taubblx(:) = taubbl(:,1)
+      sw_taubbly(:) = taubbl(:,2)
     end if
 
     if (dbug_flag > 5) then
