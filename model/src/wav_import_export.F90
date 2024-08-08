@@ -105,7 +105,7 @@ contains
     ! Advertise import fields
     !--------------------------------
 
-    !call fldlist_add(fldsToWav_num, fldsToWav, 'So_h'       )
+    call fldlist_add(fldsToWav_num, fldsToWav, 'So_h'       )
     call fldlist_add(fldsToWav_num, fldsToWav, 'Si_ifrac'   )
     call fldlist_add(fldsToWav_num, fldsToWav, 'So_u'       )
     call fldlist_add(fldsToWav_num, fldsToWav, 'So_v'       )
