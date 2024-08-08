@@ -455,7 +455,7 @@ contains
       end if
 
       if (lfldir) then
-         if (varloc.ne.undef) then
+         if (varloc .ne. undef) then
             varloc = mod(630. - rade*varloc, 360.)
          end if
       end if

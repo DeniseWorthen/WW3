@@ -595,7 +595,7 @@ contains
     !---------------------------------------------------------------------------
 
     use wav_kind_mod,   only : R8 => SHR_KIND_R8
-    use w3adatmd      , only : USSX, USSY, USSP, HS, tauox, tauoy
+    use w3adatmd      , only : USSX, USSY, USSP, HS, tauox, tauoy, wnmean
     use w3adatmd      , only : w3seta
     use w3idatmd      , only : w3seti
     use w3wdatmd      , only : va, w3setw
@@ -609,8 +609,6 @@ contains
 #else
     use wmmdatmd      , only : mdse, mdst, wmsetm
 #endif
-    ! debug
-    use w3adatmd, only : thm, wnmean, t0m1
 
     ! input/output/variables
     type(ESMF_GridComp)            :: gcomp
@@ -826,7 +824,7 @@ contains
       call state_getfldptr(exportState, 'Sw_hs', sw_hs, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
       sw_hs(:) = fillvalue
-      call CalcHs(va, sw_hs, fillvalue)
+      call CalcHS(va, sw_hs, fillvalue)
     end if
 
     if (state_fldchk(exportState, 'Sw_bhd')) then
@@ -869,13 +867,13 @@ contains
     if (state_fldchk(exportState, 'Sw_thm')) then
      call state_getfldptr(exportState, 'Sw_thm', sw_thm, rc=rc)
      if (ChkErr(rc,__LINE__,u_FILE_u)) return
-     sw_thm(:) = thm(:)
+     call CalcTHM(va, sw_thm, fillvalue)
     end if
 
     if (state_fldchk(exportState, 'Sw_t0m1')) then
       call state_getfldptr(exportState, 'Sw_t0m1', sw_t0m1, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      sw_t0m1(:) = t0m1(:)
+      call CalcT0M1(va, sw_t0m1, fillvalue)
     end if
 
     if (state_fldchk(exportState, 'Sw_wnmean')) then
@@ -1126,7 +1124,6 @@ contains
   subroutine CalcRoughl ( wrln)
 
     ! Calculate wave roughness length for export
-
     use w3gdatmd,   only : nseal, nk, nth, sig, dmin, ecos, esin, dden, mapsf, mapsta, nspec
     use w3adatmd,   only : dw, cg, wn, charn, u10, u10d
     use w3wdatmd,   only : va, ust
@@ -1320,7 +1317,7 @@ contains
   !!
   !> @author Denise.Worthen@noaa.gov
   !> @date 8-02-2024
-  subroutine CalcHs (a, hs, fval)
+  subroutine CalcHS (a, hs, fval)
 
     use constants, only : tpi
     use w3gdatmd,  only : nth, nk, nseal, mapsf, mapsta, dden, fte
@@ -1365,7 +1362,7 @@ contains
         hs(jsea) = fval
       end if
     end do
-  end subroutine CalcHs
+  end subroutine CalcHS
 
   !===============================================================================
   !> Calculate Bernoulli head pressure for export
@@ -1556,6 +1553,126 @@ contains
     end do
 
   end subroutine CalcUVBed
+
+  !===============================================================================
+  !> Calculate mean wave direction for export
+  !!
+  !> @details Calculates mean wave direction independently of w3iogomd to ensure
+  !! that exported THM field is updated at the coupling frequency
+  !!
+  !! @param[in]    a       input spectra
+  !! @param[inout] thm     a 1-D pointer to a field on a mesh
+  !!
+  !> @author Denise.Worthen@noaa.gov
+  !> @date 8-02-2024
+  subroutine CalcTHM (a, thm, fval)
+
+    use constants, only : rade
+    use w3gdatmd,  only : nth, nk, nseal, mapsf, mapsta, dden, fte, ecos, esin
+    use w3adatmd,  only : cg
+    use w3parall,  only : init_get_isea
+
+    ! input/output variables
+    real,                        intent(in)    :: a(nth,nk,0:nseal)
+    real(ESMF_KIND_R8),          intent(in)    :: fval
+    real(ESMF_KIND_R8), pointer, intent(inout) :: thm(:)
+
+    ! local variables
+    real    :: factor, abx, aby, etx, ety
+    integer :: ik, ith, isea, jsea, ix, iy
+
+    do jsea = 1,nseal_cpl
+      call init_get_isea(isea, jsea)
+      ix  = mapsf(isea,1)                   ! global ix
+      iy  = mapsf(isea,2)                   ! global iy
+      if (mapsta(iy,ix) == 1) then          ! active sea point
+        etx = 0.0
+        ety = 0.0
+        do ik = 1,nk
+          factor = dden(ik) / cg(ik,isea)
+          abx = 0.0
+          aby = 0.0
+          do ith = 1,nth
+            abx = abx + a(ith,ik,jsea)*ecos(ith)
+            aby = aby + a(ith,ik,jsea)*esin(ith)
+          end do
+          etx = etx + abx*factor
+          ety = ety + aby*factor
+        end do !ik
+        etx = etx + fte * abx/cg(nk,isea)
+        ety = ety + fte * aby/cg(nk,isea)
+        if ( abs(etx) + abs(ety) .gt. 1.e-7 ) then
+          thm(jsea) = atan2(ety,etx)
+        else
+          thm(jsea) = 0.0
+        end if
+        ! convert to degrees
+        thm(jsea) = mod(630.0 - rade*thm(jsea), 360.0)
+      else
+        thm(jsea) = fval
+      end if
+    end do
+
+  end subroutine CalcTHM
+
+  !===============================================================================
+  !> Calculate mean wave direction for export
+  !!
+  !> @details Calculates mean wave period independently of w3iogomd to ensure
+  !! that exported T0M1 field is updated at the coupling frequency
+  !!
+  !! @param[in]    a       input spectra
+  !! @param[inout] thm     a 1-D pointer to a field on a mesh
+  !!
+  !> @author Denise.Worthen@noaa.gov
+  !> @date 8-02-2024
+  subroutine CalcT0M1 (a, t0m1, fval)
+
+    use constants, only : tpi
+    use w3gdatmd,  only : nth, nk, nseal, mapsf, mapsta, dden, fte, fttr, sig
+    use w3adatmd,  only : cg
+    use w3parall,  only : init_get_isea
+
+    ! input/output variables
+    real,                        intent(in)    :: a(nth,nk,0:nseal)
+    real(ESMF_KIND_R8),          intent(in)    :: fval
+    real(ESMF_KIND_R8), pointer, intent(inout) :: t0m1(:)
+
+    ! local variables
+    real    :: factor, eband, ab, et, ebd, etr
+    integer :: ik, ith, isea, jsea, ix, iy
+
+    do jsea = 1,nseal_cpl
+      call init_get_isea(isea, jsea)
+      ix  = mapsf(isea,1)                   ! global ix
+      iy  = mapsf(isea,2)                   ! global iy
+      if (mapsta(iy,ix) == 1) then          ! active sea point
+        etr = 0.0
+        et = 0.0
+        do ik = 1,nk
+          factor = dden(ik) / cg(ik,isea)
+          ab = 0.0
+          do ith = 1,nth
+            ab = ab + a(ith,ik,jsea)
+          end do
+          ebd = ab*factor
+          et = et + ebd
+          etr = etr + ebd/sig(ik)
+        end do !ik
+        eband = ab/cg(nk,isea)
+        et = et + fte*eband
+        etr = etr + fttr*eband
+        if (et .gt. 1.0e-7) then
+          t0m1(jsea) = etr/et * tpi
+        else
+          t0m1(jsea) = tpi/sig(nk)
+        end if
+      else
+        t0m1(jsea) = fval
+      end if
+    end do
+
+  end subroutine CalcT0M1
 
   !====================================================================================
   !> Create a global field across all PEs
