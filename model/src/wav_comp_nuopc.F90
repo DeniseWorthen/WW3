@@ -1023,6 +1023,7 @@ contains
     use wav_import_export , only : import_fields, export_fields
     use wav_shel_inp      , only : odat
     use w3odatmd          , only : rstwr, histwr
+    use wav_restart_mod   , only : write_restart
 
     ! arguments:
     type(ESMF_GridComp)  :: gcomp
@@ -1173,6 +1174,10 @@ contains
 
     call export_fields(gcomp, rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
+
+    if (rstwr) then
+       call write_restart ('test.nc')
+    end if
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
     if (root_task) call ufs_logtimer(nu_timer,time,tod,'ModelAdvance time: ',runtimelog,wtime)

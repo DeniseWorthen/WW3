@@ -68,6 +68,7 @@ set(nuopc_mesh_cap_src
   wav_import_export.F90
   wav_wrapper_mod.F90
   w3iogoncmd_pio.F90
+  wav_restart_mod.F90
   )
 
 set(esmf_multi_cap_src

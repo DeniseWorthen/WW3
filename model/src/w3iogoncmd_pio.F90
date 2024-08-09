@@ -28,6 +28,7 @@ module w3iogoncmd_pio
 
   public :: w3iogonc_pio
   public :: wav_initdecomp
+  public :: handle_err
 
   ! used/reused in module
   integer             :: isea, jsea, ix, iy, ierr
@@ -499,7 +500,7 @@ contains
 
     varout = undef
     do jsea = 1,nseal_cpl
-      call init_get_isea(isea, jsea)
+,      call init_get_isea(isea, jsea)
       if (lglobal) then
         varloc = var(isea)
       else
