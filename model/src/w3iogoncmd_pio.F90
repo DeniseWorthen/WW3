@@ -7,6 +7,7 @@
 
 module w3iogoncmd_pio
 
+  use constants         , only : rade
   use w3parall          , only : init_get_isea
   use w3gdatmd          , only : xgrd, ygrd
   use w3gdatmd          , only : nk, nx, ny, mapsf, mapsta, nsea
@@ -570,7 +571,7 @@ contains
 
     ! local variables
     real, allocatable, dimension(:) :: varloc
-    logical                         :: linit2
+    logical                         :: linit2, lfldir
     integer                         :: lb, ub
 
     linit2 = .false.
