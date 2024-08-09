@@ -104,6 +104,8 @@ contains
     integer :: n, xtid, ytid, xeid, ztid, stid, mtid, ptid, ktid, timid
     logical :: s_axis = .false., m_axis = .false., p_axis = .false., k_axis = .false.
 
+    ! decompositions are real, need to make an integer one to write mapsta as int
+    real, allocatable :: lmap(:)
     ! pio
     integer :: nprocs
     integer :: istride
@@ -280,11 +282,21 @@ contains
       call handle_err(ierr, 'put trigp')
     end if
 
-    !maps
+    ! mapsta is global
+    allocate(lmap(1:nseal_cpl))
+    lmap = 0.0
+    do jsea = 1,nseal_cpl
+      call init_get_isea(isea, jsea)
+      ix = mapsf(isea,1)
+      iy = mapsf(isea,2)
+      lmap(jsea) = real(mapsta(iy,ix),4)
+    end do
     ierr = pio_inq_varid(pioid,  'mapsta', varid)
     call handle_err(ierr, 'inquire variable mapsta ')
-    ierr = pio_put_var(pioid, varid, transpose(mapsta))
-    call handle_err(ierr, 'put mapsta')
+    call pio_setframe(pioid, varid, int(1,kind=Pio_Offset_Kind))
+    call pio_write_darray(pioid, varid, iodesc2d, lmap, ierr)
+    call handle_err(ierr, 'put variable mapsta')
+    deallocate(lmap)
 
     ! write the requested variables
     do n = 1,size(outvars)
