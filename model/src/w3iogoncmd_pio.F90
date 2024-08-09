@@ -7,6 +7,7 @@
 
 module w3iogoncmd_pio
 
+  use constants         , only : rade
   use w3parall          , only : init_get_isea
   use w3gdatmd          , only : xgrd, ygrd
   use w3gdatmd          , only : nk, nx, ny, mapsf, mapsta, nsea
@@ -104,6 +105,8 @@ contains
     integer :: n, xtid, ytid, xeid, ztid, stid, mtid, ptid, ktid, timid
     logical :: s_axis = .false., m_axis = .false., p_axis = .false., k_axis = .false.
 
+    ! decompositions are real, need to make an integer one to write mapsta as int
+    real, allocatable :: lmap(:)
     ! pio
     integer :: nprocs
     integer :: istride
@@ -280,11 +283,21 @@ contains
       call handle_err(ierr, 'put trigp')
     end if
 
-    !maps
+    ! mapsta is global
+    allocate(lmap(1:nseal_cpl))
+    lmap = 0.0
+    do jsea = 1,nseal_cpl
+      call init_get_isea(isea, jsea)
+      ix = mapsf(isea,1)
+      iy = mapsf(isea,2)
+      lmap(jsea) = real(mapsta(iy,ix),4)
+    end do
     ierr = pio_inq_varid(pioid,  'mapsta', varid)
     call handle_err(ierr, 'inquire variable mapsta ')
-    ierr = pio_put_var(pioid, varid, transpose(mapsta))
-    call handle_err(ierr, 'put mapsta')
+    call pio_setframe(pioid, varid, int(1,kind=Pio_Offset_Kind))
+    call pio_write_darray(pioid, varid, iodesc2d, lmap, ierr)
+    call handle_err(ierr, 'put variable mapsta')
+    deallocate(lmap)
 
     ! write the requested variables
     do n = 1,size(outvars)
@@ -295,10 +308,10 @@ contains
         if(vname .eq.      'PHS') call write_var3d(iodesc3ds, vname, phs      (1:nseal_cpl,0:noswll) )
         if(vname .eq.      'PTP') call write_var3d(iodesc3ds, vname, ptp      (1:nseal_cpl,0:noswll) )
         if(vname .eq.      'PLP') call write_var3d(iodesc3ds, vname, plp      (1:nseal_cpl,0:noswll) )
-        if(vname .eq.     'PDIR') call write_var3d(iodesc3ds, vname, pdir     (1:nseal_cpl,0:noswll) )
-        if(vname .eq.      'PSI') call write_var3d(iodesc3ds, vname, psi      (1:nseal_cpl,0:noswll) )
+        if(vname .eq.     'PDIR') call write_var3d(iodesc3ds, vname, pdir     (1:nseal_cpl,0:noswll), fldir='true' )
+        if(vname .eq.      'PSI') call write_var3d(iodesc3ds, vname, psi      (1:nseal_cpl,0:noswll), fldir='true' )
         if(vname .eq.      'PWS') call write_var3d(iodesc3ds, vname, pws      (1:nseal_cpl,0:noswll) )
-        if(vname .eq.      'PDP') call write_var3d(iodesc3ds, vname, pthp0    (1:nseal_cpl,0:noswll) )
+        if(vname .eq.      'PDP') call write_var3d(iodesc3ds, vname, pthp0    (1:nseal_cpl,0:noswll), fldir='true' )
         if(vname .eq.      'PQP') call write_var3d(iodesc3ds, vname, pqp      (1:nseal_cpl,0:noswll) )
         if(vname .eq.      'PPE') call write_var3d(iodesc3ds, vname, ppe      (1:nseal_cpl,0:noswll) )
         if(vname .eq.      'PGW') call write_var3d(iodesc3ds, vname, pgw      (1:nseal_cpl,0:noswll) )
@@ -356,9 +369,9 @@ contains
         if (vname .eq.    'T0M1') call write_var2d(vname, t0m1     (1:nseal_cpl) )
         if (vname .eq.     'T01') call write_var2d(vname, t01      (1:nseal_cpl) )
         if (vname .eq.     'FP0') call write_var2d(vname, fp0      (1:nseal_cpl) )
-        if (vname .eq.     'THM') call write_var2d(vname, thm      (1:nseal_cpl) )
-        if (vname .eq.     'THS') call write_var2d(vname, ths      (1:nseal_cpl) )
-        if (vname .eq.    'THP0') call write_var2d(vname, thp0     (1:nseal_cpl) )
+        if (vname .eq.     'THM') call write_var2d(vname, thm      (1:nseal_cpl), fldir='true' )
+        if (vname .eq.     'THS') call write_var2d(vname, ths      (1:nseal_cpl), fldir='true' )
+        if (vname .eq.    'THP0') call write_var2d(vname, thp0     (1:nseal_cpl), fldir='true' )
         if (vname .eq.    'HSIG') call write_var2d(vname, hsig     (1:nseal_cpl) )
         if (vname .eq.  'STMAXE') call write_var2d(vname, stmaxe   (1:nseal_cpl) )
         if (vname .eq.  'STMAXD') call write_var2d(vname, stmaxd   (1:nseal_cpl) )
@@ -456,14 +469,15 @@ contains
   end subroutine w3iogonc_pio
 
   !===============================================================================
-  subroutine write_var2d(vname, var, dir, usemask, init0, init2, global)
+  subroutine write_var2d(vname, var, dir, usemask, init0, init2, fldir, global)
     ! write (nseal) array as (nx,ny)
     ! if dir is present, write x or y component of (nsea) array as (nx,ny)
     ! if mask is present and true, use mapsta=1 to mask values
     ! if init0 is present and false, do not initialize values
     ! for mapsta<0. this prevents group 1 variables being set undef over
     ! ice. if init2 is present and true, apply a second initialization to
-    ! a subset of variables for where mapsta==2. if global is present and
+    ! a subset of variables for where mapsta==2. if fldir is present and true
+    ! then the directions will be converted to degrees. if global is present and
     ! true, write pe-local copy of global field
 
     character(len=*),           intent(in) :: vname
@@ -472,11 +486,12 @@ contains
     character(len=*), optional, intent(in) :: usemask
     character(len=*), optional, intent(in) :: init0
     character(len=*), optional, intent(in) :: init2
+    character(len=*), optional, intent(in) :: fldir
     character(len=*), optional, intent(in) :: global
 
     ! local variables
     real, dimension(nseal_cpl) :: varout
-    logical                    :: lmask, linit0, linit2, lglobal
+    logical                    :: lmask, linit0, linit2, lfldir, lglobal
     real                       :: varloc
 
     lmask = .false.
@@ -491,9 +506,13 @@ contains
     if (present(init2)) then
       linit2 = (trim(init2) == "true")
     end if
+    lfldir = .false.
+    if (present(fldir)) then
+      lfldir = (trim(fldir) == "true")
+    end if
     lglobal = .false.
     if (present(global)) then
-       lglobal = (trim(global) == "true")
+      lglobal = (trim(global) == "true")
     end if
     ! DEBUG
     !write(*,'(a)')' writing variable ' //trim(vname)//' to history file '//trim(fname)
@@ -514,6 +533,11 @@ contains
         if (mapsta(mapsf(isea,2),mapsf(isea,1)) == 2) varloc = undef
       end if
 
+      if (lfldir) then
+        if (varloc .ne. undef) then
+          varloc = mod(630. - rade*varloc, 360.)
+        end if
+      end if
       if (present(dir)) then
         if (varloc .ne. undef) then
           if (lmask) then
@@ -546,24 +570,30 @@ contains
   end subroutine write_var2d
 
   !===============================================================================
-  subroutine write_var3d(iodesc, vname, var, init2)
+  subroutine write_var3d(iodesc, vname, var, init2, fldir)
     ! write (nseal,:) array as (nx,ny,:)
     ! if init2 is present and true, apply a second initialization to
-    ! a subset of variables for where mapsta==2
+    ! a subset of variables for where mapsta==2. if fldir is present and true
+    ! then the directions will be converted to degrees.
 
     type(io_desc_t),         intent(inout) :: iodesc
     character(len=*),           intent(in) :: vname
     real            ,           intent(in) :: var(:,:)
     character(len=*), optional, intent(in) :: init2
+    character(len=*), optional, intent(in) :: fldir
 
     ! local variables
     real, allocatable, dimension(:) :: varloc
-    logical                         :: linit2
+    logical                         :: linit2, lfldir
     integer                         :: lb, ub
 
     linit2 = .false.
     if (present(init2)) then
       linit2 = (trim(init2) == "true")
+    end if
+    lfldir = .false.
+    if (present(fldir)) then
+      lfldir = (trim(fldir) == "true")
     end if
 
     lb = lbound(var,2)
@@ -582,6 +612,11 @@ contains
       if (mapsta(mapsf(isea,2),mapsf(isea,1)) < 0) varloc(:) = undef
       if (linit2) then
         if (mapsta(mapsf(isea,2),mapsf(isea,1)) == 2) varloc(:) = undef
+      end if
+      if (lfldir) then
+        if (mapsta(mapsf(isea,2),mapsf(isea,1)).ge.0 )  then
+          varloc(:) = mod(630. - rade*varloc(:), 360.)
+        end if
       end if
       var3d(jsea,:) = varloc(:)
     end do
