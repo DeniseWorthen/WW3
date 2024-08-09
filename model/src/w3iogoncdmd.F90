@@ -6,7 +6,7 @@
 !> @date 01-05-2022
 #include "w3macros.h"
 
-module w3iogoncmd
+module w3iogoncdmd
 
   use constants     , only : rade
   use w3gdatmd      , only : nk, nx, ny, mapsf, mapsta, nsea
@@ -18,7 +18,7 @@ module w3iogoncmd
 
   private
 
-  public :: w3iogonc
+  public :: w3iogoncd
 
   ! used/reused in module
 
@@ -37,7 +37,7 @@ module w3iogoncmd
 contains
   !===============================================================================
 
-  subroutine w3iogonc ( timen )
+  subroutine w3iogoncd ( timen )
 
     use w3odatmd   , only : fnmpre
     use w3gdatmd   , only : filext, trigp, ntri, ungtype, gtype
@@ -70,6 +70,7 @@ contains
     !use wav_shr_mod, only : unstr_mesh
 
     integer, intent(in)   :: timen(2)
+
     ! local variables
     integer               :: igrd
     integer    ,target    :: dimid3(3)
@@ -395,7 +396,7 @@ contains
     ! Flush the buffers for write
     call w3seta ( igrd, ndse, ndst )
 
-  end subroutine w3iogonc
+  end subroutine w3iogoncd
 
   !===============================================================================
   subroutine write_var2d(vname, var, dir, usemask, init0, init2, fldir)
@@ -454,7 +455,7 @@ contains
       end if
 
       if (lfldir) then
-         if (varloc.ne.undef) then
+         if (varloc .ne. undef) then
             varloc = mod(630. - rade*varloc, 360.)
          end if
       end if
@@ -559,4 +560,4 @@ contains
     end if
   end subroutine handle_err
 
-end module w3iogoncmd
+end module w3iogoncdmd

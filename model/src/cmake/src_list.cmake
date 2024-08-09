@@ -56,7 +56,7 @@ set(ftn_src
   wmwavemd.F90
   w3tidemd.F90
   wav_grdout.F90
-  w3iogoncmd.F90
+  w3iogoncdmd.F90
   wav_shr_flags.F90
   )
 

@@ -130,7 +130,6 @@ contains
     gridoutdefs(:,:)%dims = ""
     gridoutdefs(:,:)%validout = .false.
 
-    ! TODO: confirm unit values
     !  1   Forcing Fields
     gridoutdefs(1,1:14) = [ &
          varatts( "DPT  ", "DW        ", "Water depth                                     ", "m         ", "  ", .false.) , &
