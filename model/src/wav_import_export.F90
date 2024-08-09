@@ -1106,7 +1106,6 @@ contains
 #ifdef W3_ST4
     use w3src4md,   only : w3spr4
 #endif
-
     ! input/output variables
     real(r8), pointer :: chkn(:)  ! 1D Charnock export field pointer
 
