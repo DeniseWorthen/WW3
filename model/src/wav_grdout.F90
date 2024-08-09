@@ -177,7 +177,7 @@ contains
          varatts( "STH1M", "STH1M     ", "Directional spreading from a1,b2                ", "deg       ", "k ", .false.) , &
          varatts( "TH2M ", "TH2M      ", "Mean wave direction from a2,b2                  ", "deg       ", "k ", .false.) , &
          varatts( "STH2M", "STH2M     ", "Directional spreading from a2,b2                ", "deg       ", "k ", .false.) , &
-                                !TODO: has reverse indices (nk,nsea)
+         !TODO: has reverse indices (nk,nsea)
          varatts( "WN   ", "WN        ", "Wavenumber array                                ", "m-1       ", "k ", .false.)   &
          ]
 
