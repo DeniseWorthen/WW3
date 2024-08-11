@@ -11,8 +11,7 @@ module w3iogoncmd_pio
   use w3parall          , only : init_get_isea
   use w3gdatmd          , only : xgrd, ygrd
   use w3gdatmd          , only : nk, nx, ny, mapsf, mapsta, nsea
-  use w3odatmd          , only : noswll, undef
-  use w3odatmd          , only : nds, iaproc, napout
+  use w3odatmd          , only : nds, iaproc, napout, undef
   use w3adatmd          , only : mpi_comm_wave
   use wav_import_export , only : nseal_cpl
   use pio
@@ -65,23 +64,22 @@ contains
     use w3odatmd   , only : fnmpre, naproc, iaproc
     use w3gdatmd   , only : filext, trigp, ntri, ungtype, gtype
     use w3servmd   , only : extcde
-    use w3wdatmd   , only : w3setw, w3dimw, time, wlv, ice, icef, iceh, berg, ust, ustdir, asf, rhoair
-    use w3gdatmd   , only : e3df, p2msf, us3df, usspf, w3setg
-    use w3odatmd   , only : nogrp, ngrpp, idout, ndst, ndse,  noswll, w3seto
-    use w3adatmd   , only : w3seta, w3dima
-    use w3adatmd   , only : ainit, dw, ua, ud, as, cx, cy, wn, taua, tauadir
+    use w3wdatmd   , only : wlv, ice, icef, iceh, berg, ust, ustdir, asf, rhoair
+    use w3gdatmd   , only : e3df, p2msf, us3df, usspf
+    use w3odatmd   , only : nogrp, ngrpp, noswll
+    use w3adatmd   , only : dw, ua, ud, as, cx, cy, taua, tauadir
     use w3adatmd   , only : hs, wlm, t02, t0m1, t01, fp0, thm, ths, thp0, wbt, wnmean
     use w3adatmd   , only : dtdyn
     use w3adatmd   , only : fcut, aba, abd, uba, ubd, sxx, syy, sxy
     use w3adatmd   , only : phs, ptp, plp, pdir, psi, pws, pwst, pnr
     use w3adatmd   , only : pthp0, pqp, ppe, pgw, psw, ptm1, pt1, pt2
-    use w3adatmd   , only : pep, usero, tauox, tauoy, tauwix, tauwiy
+    use w3adatmd   , only : pep, tauox, tauoy, tauwix, tauwiy
     use w3adatmd   , only : phiaw, phioc, tusx, tusy, prms, tpms
-    use w3adatmd   , only : ussx, ussy, mssx, mssy, mssd, mscx, mscy
-    use w3adatmd   , only : mscd, qp, tauwnx, tauwny, charn, tws, bhd
+    use w3adatmd   , only : ussx, ussy, mssx, mssy, mscx, mscy
+    use w3adatmd   , only : tauwnx, tauwny, charn, tws, bhd
     use w3adatmd   , only : phibbl, taubbl, whitecap, bedforms, cge, ef
     use w3adatmd   , only : cflxymax, cflthmax, cflkmax, p2sms, us3d
-    use w3adatmd   , only : th1m, sth1m, th2m, sth2m, hsig, phice, tauice
+    use w3adatmd   , only : hsig, phice, tauice
     use w3adatmd   , only : stmaxe, stmaxd, hmaxe, hcmaxe, hmaxd, hcmaxd, ussp, tauocx, tauocy
     use w3adatmd   , only : usshx, usshy
     use wav_grdout , only : varatts, outvars
@@ -95,7 +93,6 @@ contains
     integer, intent(in)   :: timen(2)
 
     ! local variables
-    !integer             :: igrd
     integer    ,target  :: dimid3(3)
     integer    ,target  :: dimid4(4)
     integer    ,pointer :: dimid(:)
@@ -115,15 +112,8 @@ contains
     integer :: rearranger
     integer :: my_task
     integer :: master_task
-    integer :: status
-    !-------------------------------------------------------------------------------
 
-    !igrd   = 1
-    !TODO: are these needed?
-    !call w3seto ( igrd, ndse, ndst )
-    !call w3setg ( igrd, ndse, ndst )
-    !call w3seta ( igrd, ndse, ndst )  ! sets pointers into wadats in w3adatmd
-    !call w3setw ( igrd, ndse, ndst )  ! sets pointers into wdatas in w3wdatmd
+    !-------------------------------------------------------------------------------
 
     ! TODO: for now, hardwire  the io system
     pioid%fh = -1
@@ -519,7 +509,7 @@ contains
 
     varout = undef
     do jsea = 1,nseal_cpl
-,      call init_get_isea(isea, jsea)
+      call init_get_isea(isea, jsea)
       if (lglobal) then
         varloc = var(isea)
       else
@@ -614,7 +604,7 @@ contains
         if (mapsta(mapsf(isea,2),mapsf(isea,1)) == 2) varloc(:) = undef
       end if
       if (lfldir) then
-        if (mapsta(mapsf(isea,2),mapsf(isea,1)).ge.0 )  then
+        if (mapsta(mapsf(isea,2),mapsf(isea,1)) > 0 )  then
           varloc(:) = mod(630. - rade*varloc(:), 360.)
         end if
       end if

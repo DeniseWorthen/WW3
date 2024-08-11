@@ -1019,11 +1019,13 @@ contains
     !------------------------
 
     use w3wavemd          , only : w3wave
-    use w3wdatmd          , only : time, w3setw
+    use w3wdatmd          , only : time, w3setw, va
     use wav_import_export , only : import_fields, export_fields
     use wav_shel_inp      , only : odat
     use w3odatmd          , only : rstwr, histwr
     use wav_restart_mod   , only : write_restart
+    !debug
+    use w3timemd, only: set_user_timestring
 
     ! arguments:
     type(ESMF_GridComp)  :: gcomp
@@ -1041,6 +1043,9 @@ contains
     integer                 :: shrlogunit ! original log unit and level
     character(ESMF_MAXSTR)  :: msgString
     character(len=*),parameter :: subname = '(wav_comp_nuopc:ModelAdvance) '
+    ! debug
+    character(len=16) :: user_timestring    !YYYY-MM-DD-SSSSS
+    character(len=CL) :: fname
     !-------------------------------------------------------
 
     rc = ESMF_SUCCESS
@@ -1167,7 +1172,8 @@ contains
     call w3wave ( 1, odat, timen )
 #endif
     if(profile_memory) call ESMF_VMLogMemInfo("Exiting  WW3 Run : ")
-
+    ! field, restart,restart 2
+    !print *,'XXX strides ',odat(3),odat(18),odat(38)
     !------------
     ! Create export state
     !------------
@@ -1176,12 +1182,17 @@ contains
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
     if (rstwr) then
-       call write_restart ('test.nc')
+      call set_user_timestring(timen,user_timestring)
+      fname = 'test.'//trim(user_timestring)//'.nc'
+      call ESMF_LogWrite('XXX write '//trim(fname), ESMF_LOGMSG_INFO)
+      call write_restart (trim(fname), va)
     end if
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
     if (root_task) call ufs_logtimer(nu_timer,time,tod,'ModelAdvance time: ',runtimelog,wtime)
     call ufs_settimer(wtime)
+
+    !call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   end subroutine ModelAdvance
 
@@ -1271,11 +1282,11 @@ contains
       if (isPresent .and. isSet) then
         call NUOPC_CompAttributeGet(gcomp, name="restart_option", value=restart_option, rc=rc)
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
-
+        restart_option = 'nhours'
         call NUOPC_CompAttributeGet(gcomp, name="restart_n", value=cvalue, rc=rc)
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
         read(cvalue,*) restart_n
-
+        restart_n = 1
         call NUOPC_CompAttributeGet(gcomp, name="restart_ymd", value=cvalue, rc=rc)
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
         read(cvalue,*) restart_ymd

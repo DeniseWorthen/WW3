@@ -1,12 +1,11 @@
 module wav_restart_mod
 
   use w3parall          , only : init_get_isea
-  use w3gdatmd          , only : nk, nx, ny, nspec, mapsf, mapsta, nsea
-  use w3adatmd          , only : mpi_comm_wave
-  use w3wdatmd          , only : va
+  use w3gdatmd          , only : nth, nk, nx, ny, nspec, mapsf, mapsta, nsea, nseal
+  use w3adatmd          , only : nsealm, mpi_comm_wave
   use w3odatmd          , only : iaproc, naproc
   use wav_import_export , only : nseal_cpl
-  use w3iogoncmd_pio    , only : wav_initdecomp, handle_err       !TODO: move the wav_pio
+  use w3iogoncmd_pio    , only : handle_err       !TODO: move the wav_pio
   use pio
   use netcdf
 
@@ -15,15 +14,12 @@ module wav_restart_mod
   private
   ! used/reused in module
   integer             :: isea, jsea, ix, iy, ierr
-  integer             :: len_s, len_m, len_p, len_k
   character(len=1024) :: fname
 
   type(iosystem_desc_t) :: wav_pio_subsystem
   type(file_desc_t)     :: pioid
   type(var_desc_t)      :: varid
-  type(io_desc_t)       :: iodesc3d
-
-  integer :: pio_iotype
+  type(io_desc_t)       :: iodesc
 
   public :: write_restart
 
@@ -31,19 +27,23 @@ module wav_restart_mod
 contains
   !===============================================================================
 
-  subroutine write_restart (fname)
+  subroutine write_restart (fname, a)
+
     use w3odatmd   , only : time_origin, calendar_name, elapsed_secs
 
+    ! input/output variables
+    real            , intent(in) :: a(nth,nk,0:nseal)
     character(len=*), intent(in) :: fname
 
     ! local variables
-    character(len=12)    :: vname
-
-    integer :: timid, xtid, ytid, ztid, j, ierr
-    integer :: dimid(3)
+    character(len=12) :: vname
+    integer           :: timid, xtid, ytid, ztid, ierr
+    integer           :: ik, ith, ix, iy, kk
+    integer           :: dimid(4)
     real,allocatable  :: varout(:,:)
 
     ! pio
+    integer :: pio_iotype
     integer :: nprocs
     integer :: istride
     integer :: basetask
@@ -64,6 +64,7 @@ contains
     numiotasks = max((nprocs-basetask)/istride,1)
     !numiotasks = 2
     rearranger = PIO_REARR_BOX
+    !rearranger = PIO_REARR_SUBSET
 
     call pio_init(my_task, MPI_COMM_WAVE, numiotasks, master_task, istride, rearranger, &
          wav_pio_subsystem, base=basetask)
@@ -76,9 +77,9 @@ contains
     ierr = pio_def_dim(pioid,    'nx',    nx, xtid)
     ierr = pio_def_dim(pioid,    'ny',    ny, ytid)
     ierr = pio_def_dim(pioid, 'nspec', nspec, ztid)
-    ierr = pio_def_dim(pioid, 'time', PIO_UNLIMITED, timid)
+    ierr = pio_def_dim(pioid,  'time', PIO_UNLIMITED, timid)
 
-    ! define the time variable
+    !define the time variable
     ierr = pio_def_var(pioid, 'time', PIO_DOUBLE, (/timid/), varid)
     call handle_err(ierr,'def_timevar')
     ierr = pio_put_att(pioid, varid, 'units', trim(time_origin))
@@ -87,7 +88,7 @@ contains
     call handle_err(ierr,'def_time_calendar')
 
     vname = 'va'
-    dimid = (/xtid, ytid, ztid/)
+    dimid = (/xtid, ytid, ztid, timid/)
     ierr = pio_def_var(pioid, trim(vname), PIO_REAL, dimid, varid)
     call handle_err(ierr, 'define variable '//trim(vname))
 
@@ -95,32 +96,48 @@ contains
     ierr = pio_enddef(pioid)
     call handle_err(ierr, 'end variable definition')
 
-    call wav_initdecomp(nz=nspec, iodesc=iodesc3d)
-
+    ! initialize the decomp
+    call wav_initdecomp_3d(nz=nspec, iodesc=iodesc)
+    !print '(a,8i8)','XXX ',nsea,nseal,nsealm,nseal_cpl,lbound(va,1),ubound(va,1),lbound(va,2),ubound(va,2)
+    !print '(a,5i8)','XXX ',nsea,nseal,nsealm,nseal_cpl,ubound(a,3)
     !WRITEBUFF(1:NSPEC) = VA(1:NSPEC,JSEA)
 
-    allocate(varout(nspec,nseal_cpl))
+    ! write the time
+    ierr = pio_inq_varid(pioid,  'time', varid)
+    call handle_err(ierr, 'inquire variable time ')
+    ierr = pio_put_var(pioid, varid, (/1/), real(elapsed_secs,8))
+    call handle_err(ierr, 'put time')
+
+    allocate(varout(1:nseal_cpl,1:nspec))
     varout = 0.0
-    do j = 1,nseal_cpl
-      call init_get_isea(isea, jsea)
-      varout(:,jsea) = va(:,jsea)
+    do jsea = 1,nseal_cpl
+      kk = 0
+      do ik = 1,nk
+        do ith = 1,nth
+          kk = kk + 1
+          varout(jsea,kk) = a(ith,ik,jsea)
+        end do
+      end do
     end do
 
+    vname = 'va'
     ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
     call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
-    call pio_write_darray(pioid, varid, iodesc3d, varout, ierr)
+    call pio_write_darray(pioid, varid, iodesc, varout, ierr)
     deallocate(varout)
 
-    call pio_freedecomp(pioid,iodesc3d)
+    !call pio_syncfile(pioid)
+    call pio_freedecomp(pioid, iodesc)
     call pio_closefile(pioid)
+
   end subroutine write_restart
 
   !===============================================================================
   subroutine wav_initdecomp_3d(nz, iodesc)
 
-    integer        , intent(in)  :: nz
-    type(io_desc_t), intent(out) :: iodesc
+    type(io_desc_t)      :: iodesc
+    integer , intent(in) :: nz
 
     integer          :: k,n
     integer, pointer :: dof3d(:)
