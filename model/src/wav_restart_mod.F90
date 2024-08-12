@@ -2,7 +2,7 @@ module wav_restart_mod
 
   use w3parall          , only : init_get_isea
   use w3adatmd          , only : mpi_comm_wave
-  use w3gdatmd          , only : nth, nk, nx, ny, nspec, mapsta, nseal
+  use w3gdatmd          , only : nth, nk, nx, ny, nspec, mapsta, nseal, nsea
   use wav_import_export , only : nseal_cpl
   use wav_pio_mod       , only : pio_iotype, wav_pio_subsystem
   use wav_pio_mod       , only : handle_err, wav_pio_initdecomp
@@ -19,7 +19,7 @@ module wav_restart_mod
   type(io_desc_t)   :: iodesc3dk
 
   public :: write_restart
-  !public :: read_restart
+  public :: read_restart
 
   !===============================================================================
 contains
@@ -78,9 +78,6 @@ contains
     ! initialize the decomp
     call wav_pio_initdecomp(iodesc2d)
     call wav_pio_initdecomp(nspec, iodesc3dk)
-    !print '(a,8i8)','XXX ',nsea,nseal,nsealm,nseal_cpl,lbound(va,1),ubound(va,1),lbound(va,2),ubound(va,2)
-    !print '(a,5i8)','XXX ',nsea,nseal,nsealm,nseal_cpl,ubound(a,3)
-    !WRITEBUFF(1:NSPEC) = VA(1:NSPEC,JSEA)
 
     ! write the time
     ierr = pio_inq_varid(pioid,  'time', varid)
@@ -129,36 +126,54 @@ contains
     deallocate(varout)
 
     !call pio_syncfile(pioid)
-    call pio_freedecomp(pioid, iodsec2d)
+    call pio_freedecomp(pioid, iodesc2d)
     call pio_freedecomp(pioid, iodesc3dk)
     call pio_closefile(pioid)
 
   end subroutine write_restart
 
-  ! subroutine read_restart (fname, vaout)
+  subroutine read_restart (fname, vaout)
 
-  !   real            , intent(in) :: vaout(nspec,0:nseal)
-  !   character(len=*), intent(in) :: fname
+    real            , intent(out) :: vaout(1:nspec,1:nsea)
+    character(len=*), intent(in)  :: fname
 
+    ! local variables
+    character(len=12) :: vname
+    integer           :: ierr
+    logical           :: exists
+    ! decompositions are real, need to make an integer one to write mapsta as int
+    real              :: maptmp(ny,nx)
+    real              :: atmp(nth,nk,0:nseal)
 
-  !   ! ! decompositions are real, need to make an integer one to write mapsta as int
-  !   ! real, allocatable :: lmap(:)
+    ! open the netcdf file
+    inquire(file = trim(fname), exist=exists)
+    if (exists) then
+      pioid%fh = -1
+      ierr = pio_openfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), pio_write)
+      call handle_err(ierr, 'open file '//trim(fname))
+    else
+      !error out
+    end if
 
-  !   ! vname = 'va'
-  !   ! dimid = (/xtid, ytid, ztid, timid/)
-  !   ! ierr = pio_def_var(pioid, trim(vname), PIO_REAL, dimid, varid)
-  !   ! call handle_err(ierr, 'define variable '//trim(vname))
+    ! initialize the decomp
+    call wav_pio_initdecomp(iodesc2d)
+    call wav_pio_initdecomp(nspec, iodesc3dk)
 
-  !   ! vname = 'mapsta'
-  !   ! ierr = pio_def_var(pioid, trim(vname), PIO_INT, (/xtid, ytid, timid/), varid)
-  !   ! call handle_err(ierr, 'def_mapsta')
-  !   ! ierr = pio_put_att(pioid, varid, 'units', 'unitless')
-  !   ! ierr = pio_put_att(pioid, varid, 'long_name', 'map status')
+    vname = 'va'
+    ierr = pio_inq_varid(pioid, trim(vname), varid)
+    call pio_read_darray(pioid, varid, iodesc3dk, atmp, ierr)
+    call handle_err(ierr, 'get variable '//trim(vname))
 
-  !   ! ! end variable definitions
-  !   ! ierr = pio_enddef(pioid)
-  !   ! call handle_err(ierr, 'end variable definition')
+    vname = 'mapsta'
+    ierr = pio_inq_varid(pioid, trim(vname), varid)
+    call pio_read_darray(pioid, varid, iodesc2d, maptmp, ierr)
+    call handle_err(ierr, 'get variable '//trim(vname))
 
-  ! end subroutine read_restart
+    !mapsta = int(maptmp,4)
 
+    call pio_freedecomp(pioid, iodesc2d)
+    call pio_freedecomp(pioid, iodesc3dk)
+    call pio_closefile(pioid)
+
+  end subroutine read_restart
 end module wav_restart_mod
