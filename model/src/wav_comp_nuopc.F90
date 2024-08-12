@@ -1208,8 +1208,6 @@ contains
     if (root_task) call ufs_logtimer(nu_timer,time,tod,'ModelAdvance time: ',runtimelog,wtime)
     call ufs_settimer(wtime)
 
-    !call ESMF_Finalize(endflag=ESMF_END_ABORT)
-
   end subroutine ModelAdvance
 
   !===============================================================================

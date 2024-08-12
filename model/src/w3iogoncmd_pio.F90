@@ -237,6 +237,8 @@ contains
       call handle_err(ierr, 'put trigp')
     end if
 
+    ! TODO: tried init decomp w/ use_int=.true. but getting garbage
+    ! land values....sea values OK
     ! mapsta is global
     allocate(lmap(1:nseal_cpl))
     lmap = 0.0

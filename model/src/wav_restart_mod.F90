@@ -1,6 +1,8 @@
 module wav_restart_mod
 
-  use w3gdatmd          , only : nth, nk, nx, ny, nspec
+  use w3parall          , only : init_get_isea
+  use w3adatmd          , only : mpi_comm_wave
+  use w3gdatmd          , only : nth, nk, nx, ny, nspec, mapsta, nseal
   use wav_import_export , only : nseal_cpl
   use wav_pio_mod       , only : pio_iotype, wav_pio_subsystem
   use wav_pio_mod       , only : handle_err, wav_pio_initdecomp
@@ -13,10 +15,11 @@ module wav_restart_mod
 
   type(file_desc_t) :: pioid
   type(var_desc_t)  :: varid
+  type(io_desc_t)   :: iodesc2d
   type(io_desc_t)   :: iodesc3dk
 
   public :: write_restart
-  public :: read_restart
+  !public :: read_restart
 
   !===============================================================================
 contains
@@ -24,8 +27,7 @@ contains
 
   subroutine write_restart (fname, a)
 
-    use w3adatmd , only : mpi_comm_wave
-    use w3gdatmd , only : nseal
+    use w3gdatmd , only : mapsf
     use w3odatmd , only : time_origin, calendar_name, elapsed_secs
 
     real            , intent(in) :: a(nth,nk,0:nseal)
@@ -38,6 +40,7 @@ contains
     integer           :: isea, jsea
     integer           :: dimid(4)
     real, allocatable :: varout(:,:)
+    real, allocatable :: lmap(:)
 
     ! create the netcdf file
     pioid%fh = -1
@@ -62,11 +65,18 @@ contains
     ierr = pio_def_var(pioid, trim(vname), PIO_REAL, dimid, varid)
     call handle_err(ierr, 'define variable '//trim(vname))
 
+    vname = 'mapsta'
+    ierr = pio_def_var(pioid, trim(vname), PIO_INT, (/xtid, ytid, timid/), varid)
+    call handle_err(ierr, 'define variable '//trim(vname))
+    ierr = pio_put_att(pioid, varid, 'units', 'unitless')
+    ierr = pio_put_att(pioid, varid, 'long_name', 'map status')
+
     ! end variable definitions
     ierr = pio_enddef(pioid)
     call handle_err(ierr, 'end variable definition')
 
     ! initialize the decomp
+    call wav_pio_initdecomp(iodesc2d)
     call wav_pio_initdecomp(nspec, iodesc3dk)
     !print '(a,8i8)','XXX ',nsea,nseal,nsealm,nseal_cpl,lbound(va,1),ubound(va,1),lbound(va,2),ubound(va,2)
     !print '(a,5i8)','XXX ',nsea,nseal,nsealm,nseal_cpl,ubound(a,3)
@@ -78,6 +88,26 @@ contains
     ierr = pio_put_var(pioid, varid, (/1/), real(elapsed_secs,8))
     call handle_err(ierr, 'put time')
 
+    ! mapsta is global
+    allocate(lmap(1:nseal_cpl))
+    lmap = 0.0
+    do jsea = 1,nseal_cpl
+      call init_get_isea(isea, jsea)
+      ix = mapsf(isea,1)
+      iy = mapsf(isea,2)
+      lmap(jsea) = real(mapsta(iy,ix),4)
+    end do
+
+    ! write mapsta
+    vname = 'mapsta'
+    ierr = pio_inq_varid(pioid,  trim(vname), varid)
+    call handle_err(ierr, 'inquire variable '//trim(vname))
+    call pio_setframe(pioid, varid, int(1,kind=Pio_Offset_Kind))
+    call pio_write_darray(pioid, varid, iodesc2d, lmap, ierr)
+    call handle_err(ierr, 'put variable '//trim(vname))
+    deallocate(lmap)
+
+    ! write va
     allocate(varout(1:nseal_cpl,1:nspec))
     varout = 0.0
     do jsea = 1,nseal_cpl
@@ -95,15 +125,40 @@ contains
     call handle_err(ierr, 'inquire variable '//trim(vname))
     call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
     call pio_write_darray(pioid, varid, iodesc3dk, varout, ierr)
+    call handle_err(ierr, 'put variable '//trim(vname))
     deallocate(varout)
 
     !call pio_syncfile(pioid)
+    call pio_freedecomp(pioid, iodsec2d)
     call pio_freedecomp(pioid, iodesc3dk)
     call pio_closefile(pioid)
 
   end subroutine write_restart
 
-  subroutine read_restart
-  end subroutine read_restart
+  ! subroutine read_restart (fname, vaout)
+
+  !   real            , intent(in) :: vaout(nspec,0:nseal)
+  !   character(len=*), intent(in) :: fname
+
+
+  !   ! ! decompositions are real, need to make an integer one to write mapsta as int
+  !   ! real, allocatable :: lmap(:)
+
+  !   ! vname = 'va'
+  !   ! dimid = (/xtid, ytid, ztid, timid/)
+  !   ! ierr = pio_def_var(pioid, trim(vname), PIO_REAL, dimid, varid)
+  !   ! call handle_err(ierr, 'define variable '//trim(vname))
+
+  !   ! vname = 'mapsta'
+  !   ! ierr = pio_def_var(pioid, trim(vname), PIO_INT, (/xtid, ytid, timid/), varid)
+  !   ! call handle_err(ierr, 'def_mapsta')
+  !   ! ierr = pio_put_att(pioid, varid, 'units', 'unitless')
+  !   ! ierr = pio_put_att(pioid, varid, 'long_name', 'map status')
+
+  !   ! ! end variable definitions
+  !   ! ierr = pio_enddef(pioid)
+  !   ! call handle_err(ierr, 'end variable definition')
+
+  ! end subroutine read_restart
 
 end module wav_restart_mod

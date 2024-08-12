@@ -61,7 +61,7 @@ contains
     numiotasks = max((nprocs-basetask)/istride,1)
     !numiotasks = 2
     rearranger = PIO_REARR_BOX
-    print '(a,4i8)','SETUP ',nprocs,iaproc,my_task,numiotasks, nseal_cpl
+    print '(a,5i8)','SETUP ',nprocs,iaproc,my_task,numiotasks,nseal_cpl
 
     call pio_init(my_task, MPI_COMM_WAVE, numiotasks, master_task, istride, rearranger, &
          wav_pio_subsystem, base=basetask)
