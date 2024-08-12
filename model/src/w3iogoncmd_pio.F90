@@ -40,6 +40,7 @@ module w3iogoncmd_pio
   type(file_desc_t)     :: pioid
   type(var_desc_t)      :: varid
   type(io_desc_t)       :: iodesc2d    !2d only
+  type(io_desc_t)       :: iodesc2dint !2d only, integer
   type(io_desc_t)       :: iodesc3ds   !s-axis variables
   type(io_desc_t)       :: iodesc3dm   !m-axis variables
   type(io_desc_t)       :: iodesc3dp   !p-axis variables
@@ -94,7 +95,8 @@ contains
     logical :: s_axis = .false., m_axis = .false., p_axis = .false., k_axis = .false.
 
     ! decompositions are real, need to make an integer one to write mapsta as int
-    real, allocatable :: lmap(:)
+    !real :: lmap(nseal_cpl)
+    integer :: lmap(nseal_cpl)
 
     ! -------------------------------------------------------------
     ! create the netcdf file
@@ -209,6 +211,7 @@ contains
     call handle_err(ierr, 'end variable definition')
 
     call wav_pio_initdecomp(iodesc2d)
+    call wav_pio_initdecomp(iodesc2dint, use_int=.true.)
     if (s_axis)call wav_pio_initdecomp(len_s, iodesc3ds)
     if (m_axis)call wav_pio_initdecomp(len_m, iodesc3dm)
     if (p_axis)call wav_pio_initdecomp(len_p, iodesc3dp)
@@ -240,20 +243,19 @@ contains
     ! TODO: tried init decomp w/ use_int=.true. but getting garbage
     ! land values....sea values OK
     ! mapsta is global
-    allocate(lmap(1:nseal_cpl))
-    lmap = 0.0
+    lmap(:) = 0
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
       ix = mapsf(isea,1)
       iy = mapsf(isea,2)
-      lmap(jsea) = real(mapsta(iy,ix),4)
+      lmap(jsea) = mapsta(iy,ix)
     end do
+    print *,'XXX ',minval(lmap),maxval(lmap)
     ierr = pio_inq_varid(pioid,  'mapsta', varid)
     call handle_err(ierr, 'inquire variable mapsta ')
     call pio_setframe(pioid, varid, int(1,kind=Pio_Offset_Kind))
-    call pio_write_darray(pioid, varid, iodesc2d, lmap, ierr)
+    call pio_write_darray(pioid, varid, iodesc2dint, lmap, ierr, fillval=int(0,4))
     call handle_err(ierr, 'put variable mapsta')
-    deallocate(lmap)
 
     ! write the requested variables
     do n = 1,size(outvars)
@@ -415,6 +417,7 @@ contains
     if (k_axis) deallocate(var3dk)
 
     call pio_freedecomp(pioid,iodesc2d)
+    call pio_freedecomp(pioid,iodesc2dint)
     if (s_axis) call pio_freedecomp(pioid, iodesc3ds)
     if (m_axis) call pio_freedecomp(pioid, iodesc3dm)
     if (p_axis) call pio_freedecomp(pioid, iodesc3dp)

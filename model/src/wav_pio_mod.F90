@@ -38,7 +38,7 @@ contains
   subroutine wav_pio_init(gcomp, rc)
 
     use ESMF         , only : ESMF_GridComp, ESMF_UtilStringUpperCase, ESMF_VM, ESMF_FAILURE
-    use ESMF         , only : ESMF_LogWrite, ESMF_LOGMSG_ERROR
+    use ESMF         , only : ESMF_SUCCESS, ESMF_LogWrite, ESMF_LOGMSG_ERROR
     use NUOPC        , only : NUOPC_CompAttributeGet
     use wav_kind_mod , only : CL=>SHR_KIND_CL, CS=>SHR_KIND_CS
     use w3adatmd     , only : mpi_comm_wave
@@ -66,6 +66,7 @@ contains
 
     !-------------------------------------------------------------------------------
 
+    rc = ESMF_SUCCESS
     ! TODO: for now, hardwire  the io system
     ! pio_iotype = PIO_IOTYPE_PNETCDF
     ! nprocs = naproc
@@ -138,7 +139,7 @@ contains
        if (pio_root < 0) then
           pio_root = 1
        endif
-       pio_root = min(pio_root, petCount-1)
+       pio_root = min(pio_root, naproc-1)
     else
        pio_root = 1
     end if
@@ -167,10 +168,10 @@ contains
     if (my_task == 0) write(logunit,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
 
     ! check for parallel IO, it requires at least two io pes
-    if (petCount > 1 .and. pio_numiotasks == 1 .and. &
+    if (naproc > 1 .and. pio_numiotasks == 1 .and. &
        (pio_iotype .eq. PIO_IOTYPE_PNETCDF .or. pio_iotype .eq. PIO_IOTYPE_NETCDF4P)) then
        pio_numiotasks = 2
-       pio_stride = min(pio_stride, petCount/2)
+       pio_stride = min(pio_stride, naproc/2)
        if (my_task == 0) then
           write(logunit,*) ' parallel io requires at least two io pes - following parameters are updated:'
           write(logunit,*) trim(subname), ' : pio_stride = ', pio_stride
@@ -180,14 +181,14 @@ contains
 
     ! check/set/correct io pio parameters
     if (pio_stride > 0 .and. pio_numiotasks < 0) then
-       pio_numiotasks = max(1, petCount/pio_stride)
+       pio_numiotasks = max(1, naproc/pio_stride)
        if (my_task == 0) write(logunit,*) trim(subname), ' : update pio_numiotasks = ', pio_numiotasks
     else if(pio_numiotasks > 0 .and. pio_stride < 0) then
-       pio_stride = max(1, petCount/pio_numiotasks)
+       pio_stride = max(1, naproc/pio_numiotasks)
        if (my_task == 0) write(logunit,*) trim(subname), ' : update pio_stride = ', pio_stride
     else if(pio_numiotasks < 0 .and. pio_stride < 0) then
-       pio_stride = max(1,petCount/4)
-       pio_numiotasks = max(1,petCount/pio_stride)
+       pio_stride = max(1,naproc/4)
+       pio_numiotasks = max(1,naproc/pio_stride)
        if (my_task == 0) write(logunit,*) trim(subname), ' : update pio_numiotasks = ', pio_numiotasks
        if (my_task == 0) write(logunit,*) trim(subname), ' : update pio_stride = ', pio_stride
     end if
@@ -195,20 +196,20 @@ contains
        pio_root = 0
     endif
 
-    if (pio_root + (pio_stride)*(pio_numiotasks-1) >= petCount .or. &
-       pio_stride <= 0 .or. pio_numiotasks <= 0 .or. pio_root < 0 .or. pio_root > petCount-1) then
-       if (petCount < 100) then
-          pio_stride = max(1, petCount/4)
-       else if(petCount < 1000) then
-          pio_stride = max(1, petCount/8)
+    if (pio_root + (pio_stride)*(pio_numiotasks-1) >= naproc .or. &
+       pio_stride <= 0 .or. pio_numiotasks <= 0 .or. pio_root < 0 .or. pio_root > naproc-1) then
+       if (naproc < 100) then
+          pio_stride = max(1, naproc/4)
+       else if(naproc < 1000) then
+          pio_stride = max(1, naproc/8)
        else
-          pio_stride = max(1, petCount/16)
+          pio_stride = max(1, naproc/16)
        end if
        if(pio_stride > 1) then
-          pio_numiotasks = petCount/pio_stride
-          pio_root = min(1, petCount-1)
+          pio_numiotasks = naproc/pio_stride
+          pio_root = min(1, naproc-1)
        else
-          pio_numiotasks = petCount
+          pio_numiotasks = naproc
           pio_root = 0
        end if
        if (my_task == 0) then
@@ -241,8 +242,12 @@ contains
     if (my_task == 0) write(logunit,*) trim(subname), ' : pio_rearranger = ', trim(cvalue), pio_rearranger
 
     ! init PIO
-    if (my_task == 0) write(logunit,*) trim(subname),' calling pio init'
-    !call pio_init(localPet, comm, pio_numiotasks, 0, pio_stride, pio_rearranger, io_subsystem, base=pio_root)
+    if (my_task == 0) then
+      write(logunit,*) trim(subname),' calling pio init'
+      write(logunit,*) trim(subname), ' : pio_root = ', pio_root
+      write(logunit,*) trim(subname), ' : pio_stride = ', pio_stride
+      write(logunit,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
+    end if
 
     call pio_init(my_task, MPI_COMM_WAVE, pio_numiotasks, master_task, pio_stride, pio_rearranger, &
          wav_pio_subsystem, base=pio_root)

@@ -15,7 +15,7 @@ module wav_restart_mod
 
   type(file_desc_t) :: pioid
   type(var_desc_t)  :: varid
-  type(io_desc_t)   :: iodesc2d
+  type(io_desc_t)   :: iodesc2dint
   type(io_desc_t)   :: iodesc3dk
 
   public :: write_restart
@@ -39,8 +39,8 @@ contains
     integer           :: ik, ith, ix, iy, kk
     integer           :: isea, jsea
     integer           :: dimid(4)
-    real, allocatable :: varout(:,:)
-    real, allocatable :: lmap(:)
+    integer           :: lmap(1:nseal_cpl)
+    real              :: varout(1:nseal_cpl,1:nspec)
 
     ! create the netcdf file
     pioid%fh = -1
@@ -68,15 +68,13 @@ contains
     vname = 'mapsta'
     ierr = pio_def_var(pioid, trim(vname), PIO_INT, (/xtid, ytid, timid/), varid)
     call handle_err(ierr, 'define variable '//trim(vname))
-    ierr = pio_put_att(pioid, varid, 'units', 'unitless')
-    ierr = pio_put_att(pioid, varid, 'long_name', 'map status')
 
     ! end variable definitions
     ierr = pio_enddef(pioid)
     call handle_err(ierr, 'end variable definition')
 
     ! initialize the decomp
-    call wav_pio_initdecomp(iodesc2d)
+    call wav_pio_initdecomp(iodesc2dint, use_int=.true.)
     call wav_pio_initdecomp(nspec, iodesc3dk)
 
     ! write the time
@@ -86,13 +84,12 @@ contains
     call handle_err(ierr, 'put time')
 
     ! mapsta is global
-    allocate(lmap(1:nseal_cpl))
-    lmap = 0.0
+    lmap(:) = 0
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
       ix = mapsf(isea,1)
       iy = mapsf(isea,2)
-      lmap(jsea) = real(mapsta(iy,ix),4)
+      lmap(jsea) = mapsta(iy,ix)
     end do
 
     ! write mapsta
@@ -100,13 +97,11 @@ contains
     ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
     call pio_setframe(pioid, varid, int(1,kind=Pio_Offset_Kind))
-    call pio_write_darray(pioid, varid, iodesc2d, lmap, ierr)
+    call pio_write_darray(pioid, varid, iodesc2dint, lmap, ierr, fillval=int(0,4))
     call handle_err(ierr, 'put variable '//trim(vname))
-    deallocate(lmap)
 
     ! write va
-    allocate(varout(1:nseal_cpl,1:nspec))
-    varout = 0.0
+    varout(:,:) = 0.0
     do jsea = 1,nseal_cpl
       kk = 0
       do ik = 1,nk
@@ -123,10 +118,9 @@ contains
     call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
     call pio_write_darray(pioid, varid, iodesc3dk, varout, ierr)
     call handle_err(ierr, 'put variable '//trim(vname))
-    deallocate(varout)
 
     !call pio_syncfile(pioid)
-    call pio_freedecomp(pioid, iodesc2d)
+    call pio_freedecomp(pioid, iodesc2dint)
     call pio_freedecomp(pioid, iodesc3dk)
     call pio_closefile(pioid)
 
@@ -156,7 +150,7 @@ contains
     end if
 
     ! initialize the decomp
-    call wav_pio_initdecomp(iodesc2d)
+    call wav_pio_initdecomp(iodesc2dint)
     call wav_pio_initdecomp(nspec, iodesc3dk)
 
     vname = 'va'
@@ -166,12 +160,12 @@ contains
 
     vname = 'mapsta'
     ierr = pio_inq_varid(pioid, trim(vname), varid)
-    call pio_read_darray(pioid, varid, iodesc2d, maptmp, ierr)
+    call pio_read_darray(pioid, varid, iodesc2dint, maptmp, ierr)
     call handle_err(ierr, 'get variable '//trim(vname))
 
     !mapsta = int(maptmp,4)
 
-    call pio_freedecomp(pioid, iodesc2d)
+    call pio_freedecomp(pioid, iodesc2dint)
     call pio_freedecomp(pioid, iodesc3dk)
     call pio_closefile(pioid)
 
