@@ -45,7 +45,7 @@ module wav_comp_nuopc
   use wav_shr_mod           , only : merge_import, dbug_flag
   use w3odatmd              , only : nds, iaproc, napout
   use w3odatmd              , only : runtype, use_user_histname, user_histfname, use_user_restname, user_restfname
-  use w3odatmd              , only : user_netcdf_grdout, use_iogopio
+  use w3odatmd              , only : user_netcdf_grdout, use_iogopio, use_rstnc
   use w3odatmd              , only : time_origin, calendar_name, elapsed_secs
   use wav_shr_mod           , only : casename, multigrid, inst_suffix, inst_index, unstr_mesh
   use wav_wrapper_mod       , only : ufs_settimer, ufs_logtimer, ufs_file_setlogunit, wtime
@@ -374,6 +374,15 @@ contains
     write(logmsg,'(A,l)') trim(subname)//': Wave use_iogopio setting is ',use_iogopio
     call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
 
+    use_rstnc = .false.
+    call NUOPC_CompAttributeGet(gcomp, name='use_rstnc', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    if (isPresent .and. isSet) then
+      use_rstnc=(trim(cvalue)=="true")
+    end if
+    write(logmsg,'(A,l)') trim(subname)//': Wave use_rstnc setting is ',use_rstnc
+    call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
+
     ! Determine wave-ice coupling
     wav_coupling_to_cice = .false.
     call NUOPC_CompAttributeGet(gcomp, name='wav_coupling_to_cice', value=cvalue, isPresent=isPresent, &
@@ -440,6 +449,7 @@ contains
 #endif
     use wav_shel_inp , only : set_shel_io
     use wav_grdout   , only : wavinit_grdout
+    use wav_pio_mod  , only : wav_pio_init
     use wav_shr_mod  , only : diagnose_mesh, write_meshdecomp
 #ifdef W3_PDLIB
     use yowNodepool  , only : ng
@@ -736,6 +746,12 @@ contains
     if (user_netcdf_grdout) then
       call wavinit_grdout
     end if
+
+    !--------------------------------------------------------------------
+    ! initialize PIO
+    !--------------------------------------------------------------------
+
+    call wav_pio_init()
 
     !--------------------------------------------------------------------
     ! Mesh initialization

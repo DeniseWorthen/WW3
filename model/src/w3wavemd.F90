@@ -2363,6 +2363,7 @@ CONTAINS
       !     Delay if data assimilation time.
       !
       !
+
       IF ( TOFRST(1)  .EQ. -1 ) THEN
         DTTST  = 1.
       ELSE
@@ -2444,7 +2445,7 @@ CONTAINS
             IF ( ( (DSEC21(TIME,TONEXT(:,1)).EQ.0.) .AND. FLOUT(1) ) .OR. &
                  ( CPLWRTFLG ) ) THEN
               do_startall = .true.
-            end IF
+            end if
           end if
         end if
         if (do_startall) then

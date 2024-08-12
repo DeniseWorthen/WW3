@@ -574,6 +574,7 @@ MODULE W3ODATMD
   logical            :: user_netcdf_grdout = .false. !<@public logical flag to use netCDF for gridded
                                                      !! field output
   logical            :: use_iogopio = .false.
+  logical            :: use_rstnc = .false.
 
   character(len= 36) :: time_origin = ''             !< @public the time_origin used for netCDF output
   character(len= 36) :: calendar_name = ''           !< @public the calendar used for netCDF output

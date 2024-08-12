@@ -11,9 +11,11 @@ module w3iogoncmd_pio
   use w3parall          , only : init_get_isea
   use w3gdatmd          , only : xgrd, ygrd
   use w3gdatmd          , only : nk, nx, ny, mapsf, mapsta, nsea
-  use w3odatmd          , only : nds, iaproc, napout, undef
+  use w3odatmd          , only : undef
   use w3adatmd          , only : mpi_comm_wave
   use wav_import_export , only : nseal_cpl
+  use wav_pio_mod       , only : pio_iotype, wav_pio_subsystem
+  use wav_pio_mod       , only : handle_err, wav_pio_initdecomp
   use pio
   use netcdf
 
@@ -21,18 +23,10 @@ module w3iogoncmd_pio
 
   private
 
-  interface wav_initdecomp
-     module procedure wav_initdecomp_2d
-     module procedure wav_initdecomp_3d
-  end interface wav_initdecomp
-
   public :: w3iogonc_pio
-  public :: wav_initdecomp
-  public :: handle_err
 
   ! used/reused in module
   integer             :: isea, jsea, ix, iy, ierr
-  integer             :: len_s, len_m, len_p, len_k
   character(len=1024) :: fname
 
   real, allocatable, target :: var3ds(:,:)
@@ -43,7 +37,6 @@ module w3iogoncmd_pio
   ! output variable for (nx,ny,nz) fields
   real, pointer :: var3d(:,:)
 
-  type(iosystem_desc_t) :: wav_pio_subsystem
   type(file_desc_t)     :: pioid
   type(var_desc_t)      :: varid
   type(io_desc_t)       :: iodesc2d    !2d only
@@ -52,16 +45,13 @@ module w3iogoncmd_pio
   type(io_desc_t)       :: iodesc3dp   !p-axis variables
   type(io_desc_t)       :: iodesc3dk   !k-axis variables
 
-
-  integer :: pio_iotype
-
   !===============================================================================
 contains
   !===============================================================================
 
   subroutine w3iogonc_pio ( timen )
 
-    use w3odatmd   , only : fnmpre, naproc, iaproc
+    use w3odatmd   , only : fnmpre
     use w3gdatmd   , only : filext, trigp, ntri, ungtype, gtype
     use w3servmd   , only : extcde
     use w3wdatmd   , only : wlv, ice, icef, iceh, berg, ust, ustdir, asf, rhoair
@@ -100,37 +90,11 @@ contains
     character(len=16)   :: user_timestring    !YYYY-MM-DD-SSSSS
 
     integer :: n, xtid, ytid, xeid, ztid, stid, mtid, ptid, ktid, timid
+    integer :: len_s, len_m, len_p, len_k
     logical :: s_axis = .false., m_axis = .false., p_axis = .false., k_axis = .false.
 
     ! decompositions are real, need to make an integer one to write mapsta as int
     real, allocatable :: lmap(:)
-    ! pio
-    integer :: nprocs
-    integer :: istride
-    integer :: basetask
-    integer :: numiotasks
-    integer :: rearranger
-    integer :: my_task
-    integer :: master_task
-
-    !-------------------------------------------------------------------------------
-
-    ! TODO: for now, hardwire  the io system
-    pioid%fh = -1
-    pio_iotype = PIO_IOTYPE_PNETCDF
-    nprocs = naproc
-    my_task = iaproc - 1
-    master_task = 0
-    istride = 4
-    basetask = 1
-    numiotasks = max((nprocs-basetask)/istride,1)
-    !numiotasks = 2
-    rearranger = PIO_REARR_BOX
-    print '(a,6i8)','SETUP ',nprocs,iaproc,my_task,numiotasks, nseal_cpl, size(hs)
-
-    call pio_init(my_task, MPI_COMM_WAVE, numiotasks, master_task, istride, rearranger, &
-         wav_pio_subsystem, base=basetask)
-    call pio_seterrorhandling(wav_pio_subsystem, PIO_RETURN_ERROR)
 
     ! -------------------------------------------------------------
     ! create the netcdf file
@@ -145,6 +109,10 @@ contains
     else
       write(fname,'(a,i8.8,a1,i6.6,a)')trim(fnmpre),timen(1),'.',timen(2),'.out_grd.'//trim(filext)//'.nc'
     end if
+
+    pioid%fh = -1
+    ierr = pio_createfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), pio_clobber)
+    call handle_err(ierr, 'pio_create')
 
     len_s = noswll + 1                  ! 0:noswll
     len_m = p2msf(3)-p2msf(2) + 1       ! ?
@@ -166,10 +134,6 @@ contains
     if (m_axis) allocate(var3dm(1:nseal_cpl,len_m))
     if (p_axis) allocate(var3dp(1:nseal_cpl,len_p))
     if (k_axis) allocate(var3dk(1:nseal_cpl,len_k))
-
-    ! create the netcdf file
-    ierr = pio_createfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), pio_clobber)
-    call handle_err(ierr, 'pio_create')
 
     ierr = pio_def_dim(pioid, 'nx', nx, xtid)
     ierr = pio_def_dim(pioid, 'ny', ny, ytid)
@@ -244,11 +208,11 @@ contains
     ierr = pio_enddef(pioid)
     call handle_err(ierr, 'end variable definition')
 
-    call wav_initdecomp(iodesc=iodesc2d)
-    if (s_axis)call wav_initdecomp(nz=len_s, iodesc=iodesc3ds)
-    if (m_axis)call wav_initdecomp(nz=len_m, iodesc=iodesc3dm)
-    if (p_axis)call wav_initdecomp(nz=len_p, iodesc=iodesc3dp)
-    if (k_axis)call wav_initdecomp(nz=len_k, iodesc=iodesc3dk)
+    call wav_pio_initdecomp(iodesc2d)
+    if (s_axis)call wav_pio_initdecomp(len_s, iodesc3ds)
+    if (m_axis)call wav_pio_initdecomp(len_m, iodesc3dm)
+    if (p_axis)call wav_pio_initdecomp(len_p, iodesc3dp)
+    if (k_axis)call wav_pio_initdecomp(len_k, iodesc3dk)
 
     ! write the time and spatial axis values (lat,lon,time)
     ierr = pio_inq_varid(pioid,  'lat', varid)
@@ -591,7 +555,7 @@ contains
     allocate(varloc(lb:ub))
 
     ! DEBUG
-    ! write(nds(1),'(a,2i6)')' writing variable ' //trim(vname)//' to history file ' &
+    ! write(*,'(a,2i6)')' writing variable ' //trim(vname)//' to history file ' &
     !    //trim(fname)//' with bounds ',lb,ub
 
     var3d = undef
@@ -618,72 +582,4 @@ contains
 
     deallocate(varloc)
   end subroutine write_var3d
-
-  !===============================================================================
-  subroutine handle_err(ierr,string)
-    use w3odatmd  , only : ndse
-    use w3servmd  , only : extcde
-
-    ! input/output variables
-    integer         , intent(in) :: ierr
-    character(len=*), intent(in) :: string
-
-    integer :: strerror_status
-    character(len=pio_max_name) :: err_msg
-
-    if (ierr /= PIO_NOERR) then
-      strerror_status = pio_strerror(ierr, err_msg)
-      write(ndse,*) "*** WAVEWATCH III netcdf error: ",trim(string),':',trim(err_msg)
-      call extcde ( 49 )
-    end if
-  end subroutine handle_err
-
-  !===============================================================================
-  subroutine wav_initdecomp_2d(iodesc)
-
-    type(io_desc_t), intent(out) :: iodesc
-
-    integer          :: n
-    integer, pointer :: dof2d(:)
-
-    allocate(dof2d(nseal_cpl))
-    dof2d = 0
-    n = 0
-    do jsea = 1,nseal_cpl
-      call init_get_isea(isea, jsea)
-      ix = mapsf(isea,1)                 ! global ix
-      iy = mapsf(isea,2)                 ! global iy
-      n = n+1
-      dof2d(n) = (iy-1)*nx + ix          ! local index : global index
-    end do
-    call pio_initdecomp(wav_pio_subsystem, PIO_REAL, (/nx,ny/), dof2d, iodesc)
-
-    deallocate(dof2d)
-  end subroutine wav_initdecomp_2d
-
-  !===============================================================================
-  subroutine wav_initdecomp_3d(nz, iodesc)
-
-    integer        , intent(in)  :: nz
-    type(io_desc_t), intent(out) :: iodesc
-
-    integer          :: k,n
-    integer, pointer :: dof3d(:)
-
-    allocate(dof3d(nz*nseal_cpl))
-    dof3d = 0
-    n = 0
-    do k = 1,nz
-      do jsea = 1,nseal_cpl
-        call init_get_isea(isea, jsea)
-        ix = mapsf(isea,1)     ! global ix
-        iy = mapsf(isea,2)     ! global iy
-        n = n+1
-        dof3d(n) = ((iy-1)*nx + ix) + (k-1)*nx*ny ! local index : global index
-      end do
-    end do
-    call pio_initdecomp(wav_pio_subsystem, PIO_REAL, (/nx,ny,nz/), dof3d, iodesc)
-
-    deallocate(dof3d)
-  end subroutine wav_initdecomp_3d
 end module w3iogoncmd_pio
