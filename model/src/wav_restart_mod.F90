@@ -68,6 +68,7 @@ contains
     vname = 'mapsta'
     ierr = pio_def_var(pioid, trim(vname), PIO_INT, (/xtid, ytid, timid/), varid)
     call handle_err(ierr, 'define variable '//trim(vname))
+    ierr = pio_put_att(pioid, varid, '_FillValue', nf90_fill_int)
 
     ! end variable definitions
     ierr = pio_enddef(pioid)
@@ -97,7 +98,7 @@ contains
     ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
     call pio_setframe(pioid, varid, int(1,kind=Pio_Offset_Kind))
-    call pio_write_darray(pioid, varid, iodesc2dint, lmap, ierr, fillval=int(0,4))
+    call pio_write_darray(pioid, varid, iodesc2dint, lmap, ierr)
     call handle_err(ierr, 'put variable '//trim(vname))
 
     ! write va

@@ -171,6 +171,7 @@ contains
     call handle_err(ierr, 'def_mapsta')
     ierr = pio_put_att(pioid, varid, 'units', 'unitless')
     ierr = pio_put_att(pioid, varid, 'long_name', 'map status')
+    ierr = pio_put_att(pioid, varid, '_FillValue', nf90_fill_int)
 
     if (gtype .eq. ungtype) then
       ierr = pio_def_var(pioid, 'nconn', PIO_INT, (/ztid,xeid/), varid)
@@ -250,11 +251,10 @@ contains
       iy = mapsf(isea,2)
       lmap(jsea) = mapsta(iy,ix)
     end do
-    print *,'XXX ',minval(lmap),maxval(lmap)
     ierr = pio_inq_varid(pioid,  'mapsta', varid)
     call handle_err(ierr, 'inquire variable mapsta ')
     call pio_setframe(pioid, varid, int(1,kind=Pio_Offset_Kind))
-    call pio_write_darray(pioid, varid, iodesc2dint, lmap, ierr, fillval=int(0,4))
+    call pio_write_darray(pioid, varid, iodesc2dint, lmap, ierr)
     call handle_err(ierr, 'put variable mapsta')
 
     ! write the requested variables
