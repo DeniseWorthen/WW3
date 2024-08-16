@@ -433,6 +433,8 @@ contains
 #ifdef W3_PDLIB
     use yowNodepool  , only : ng
 #endif
+    ! debug
+    use w3gdatmd, only : xgrd,ygrd
 
     ! input/output variables
     type(ESMF_GridComp)  :: gcomp
@@ -754,6 +756,9 @@ contains
       ix = mapsf(isea,1)
       iy = mapsf(isea,2)
       gindex_sea(jsea) = ix + (iy-1)*nx
+      !if (iaproc .eq. 16)print '(a,4i6,2f12.5)','XXX ',jsea,isea,ix,iy,xgrd(iy,ix),ygrd(iy,ix)
+      !if (iaproc .eq. 17)print '(a,4i6,2f12.5)','YYY ',jsea,isea,ix,iy,xgrd(iy,ix),ygrd(iy,ix)
+      !if (iaproc .eq.  7)print '(a,4i6,2f12.5)','ZZZ ',jsea,isea,ix,iy,xgrd(iy,ix),ygrd(iy,ix)
     end do
 
     if (unstr_mesh) then
