@@ -2940,6 +2940,7 @@ CONTAINS
       CALL EXTCDE( 31)
     ENDIF
 
+    USSP_WN = 0.0 ! initialize to 0s
     DO J=1,USSPF(2)
       USSP_WN(j) = STK_WN(J)
     ENDDO
@@ -3280,7 +3281,7 @@ CONTAINS
            JGS_TERMINATE_DIFFERENCE,                   &
            JGS_TERMINATE_NORM,                         &
            JGS_LIMITER,                                &
-           JGS_LIMITER_FUNC,                           & 
+           JGS_LIMITER_FUNC,                           &
            JGS_USE_JACOBI,                             &
            JGS_BLOCK_GAUSS_SEIDEL,                     &
            JGS_MAXITER,                                &
@@ -3617,7 +3618,7 @@ CONTAINS
       END SELECT
 
       IF (FSTOTALIMP .or. FSTOTALEXP) THEN
-        LPDLIB = .TRUE. 
+        LPDLIB = .TRUE.
       ENDIF
       !
       IF (SUM(UNSTSCHEMES).GT.1) WRITE(NDSO,1035)
