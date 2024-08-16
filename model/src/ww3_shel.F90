@@ -329,7 +329,7 @@ PROGRAM W3SHEL
        NDSEN, IERR, J, I, ILOOP, IPTS, NPTS,     &
        NDTNEW, MPI_COMM = -99,                   &
        FLAGTIDE, COUPL_COMM, IH, N_TOT
-  INTEGER             :: NDSF(-7:9), NDS(13), NTRACE(2), NDT(7:9), &
+  INTEGER             :: NDSF(-7:9), NDS(15), NTRACE(2), NDT(7:9), &
        TIME0(2), TIMEN(2), TTIME(2), TTT(2),     &
        NH(-7:10), THO(2,-7:10,NHMAX), RCLD(7:9), &
        NODATA(7:9), ODAT(40), IPRT(6) = 0,       &
