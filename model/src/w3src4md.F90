@@ -358,7 +358,7 @@ CONTAINS
     CALL W3FLX5 ( ZZWND, U, UDIR, TAUA, TAUADIR, DAIR,  &
          USTAR, USDIR, Z0, CD, CHARN )
 #else
-    Z0=0.
+    !Z0=0.
     CALL CALC_USTAR(U,TAUW,USTAR,Z0,CHARN)
     UNZ    = MAX ( 0.01 , U )
     CD     = (USTAR/UNZ)**2
