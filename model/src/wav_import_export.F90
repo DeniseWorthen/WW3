@@ -944,7 +944,6 @@ contains
       ! local variables
       type(ESMF_Distgrid) :: distgrid
       type(ESMF_Grid)     :: grid
-      real(ESMF_KIND_R8), pointer :: fldptr2d(:,:)
       character(len=*), parameter :: subname='(wav_import_export:SetScalarField)'
       ! ----------------------------------------------
 
@@ -960,11 +959,6 @@ contains
       field = ESMF_FieldCreate(name=trim(flds_scalar_name), grid=grid, typekind=ESMF_TYPEKIND_R8, &
            ungriddedLBound=(/1/), ungriddedUBound=(/flds_scalar_num/), gridToFieldMap=(/2/), rc=rc) ! num of scalar values
       if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, line=__LINE__, file=u_FILE_u)) return
-
-      ! initialize fldptr to zero
-      call ESMF_FieldGet(field, farrayPtr=fldptr2d, rc=rc)
-      if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      fldptr2d(:,:) = 0.0
 
     end subroutine SetScalarField
 
@@ -1038,64 +1032,40 @@ contains
   !!
   !! @param[inout] wrln             a 1-D pointer to a field on a mesh
   !!
-  !> @author T. J. Campbell, NRL
-  !> @date 09-Aug-2017
-  subroutine CalcRoughl ( wrln)
+  !> @author DeniseWorthen@noaa.gov
+  !> @date 15-Aug-2024
+  subroutine CalcRoughl (wrln)
 
-    ! Calculate wave roughness length for export
+    use w3gdatmd, only : mapsf, mapsta, aalpha
+    use w3adatmd, only : charn
+    use w3wdatmd, only : ust
+    use w3odatmd, only : runtype
 
-    use w3gdatmd,   only : nseal, nk, nth, sig, dmin, ecos, esin, dden, mapsf, mapsta, nspec
-    use w3adatmd,   only : dw, cg, wn, charn, u10, u10d
-    use w3wdatmd,   only : va, ust
-    use w3odatmd,   only : naproc, iaproc, runtype
-#ifdef W3_ST3
-    use w3src3md,   only : w3spr3
-#endif
-#ifdef W3_ST4
-    use w3src4md,   only : w3spr4
-#endif
-
+    ! debug
+    use w3gdatmd, only : xgrd,ygrd
+    use w3odatmd, only : iaproc
+    use w3wdatmd, only : time
     ! input/output variables
     real(r8), pointer :: wrln(:) ! 1D roughness length export field ponter
 
     ! local variables
     integer       :: isea, jsea, ix, iy
-    real          :: emean, fmean, fmean1, wnmean, amax, ustar, ustdr
-    real          :: tauwx, tauwy, cd, z0, fmeanws, dlwmean
-    logical       :: llws(nspec)
-    logical, save :: firstCall = .true.
 
-    !----------------------------------------------------------------------
-
-    jsea_loop: do jsea = 1,nseal_cpl
+    wrln = 0.0
+    do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
-      ix = mapsf(isea,1)
-      iy = mapsf(isea,2)
-      if ( firstCall ) then
-        if(( runtype == 'initial'  .and.     mapsta(iy,ix)  == 1 ) .or. &
-             ( runtype == 'continue' .and. abs(mapsta(iy,ix)) == 1 )) then
-          charn(jsea) = zero
-          llws(:) = .true.
-          ustar = zero
-          ustdr = zero
-          tauwx = zero
-          tauwy = zero
-#ifdef W3_ST3
-          call w3spr3( va(:,jsea), cg(1:nk,isea), wn(1:nk,isea), emean, fmean, fmean1, wnmean, &
-               amax, u10(isea), u10d(isea), ustar, ustdr, tauwx, tauwy, cd, z0, charn(jsea),   &
-               llws, fmeanws )
-#endif
-#ifdef W3_ST4
-          call w3spr4( va(:,jsea), cg(1:nk,isea), wn(1:nk,isea), emean, fmean, fmean1, wnmean, &
-               amax, u10(isea), u10d(isea), ustar, ustdr, tauwx, tauwy, cd, z0, charn(jsea),   &
-               llws, fmeanws, dlwmean )
-#endif
-        end if
-      endif !firstCall
-      wrln(jsea) = charn(jsea)*ust(isea)**2/grav
-    enddo jsea_loop
-
-    firstCall = .false.
+      ix  = mapsf(isea,1)                   ! global ix
+      iy  = mapsf(isea,2)                   ! global iy
+      if (mapsta(iy,ix) == 1) then          ! active sea point
+        wrln(jsea) = charn(jsea)*ust(isea)**2/grav
+      elseif (mapsta(iy,ix) < 0) then
+        wrln(jsea) = 1.0e12*aalpha*0.001*0.001/grav
+      end if
+      !if (iaproc .eq. 19)print '(a,4i6,2f12.5)','XXX ',jsea,isea,ix,iy,xgrd(iy,ix),ygrd(iy,ix)
+      !if(ix.eq.250.and.iy.eq.28)print '(a,i4,5g16.7)','XXX ',mapsta(iy,ix),xgrd(iy,ix),ygrd(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+      if(ix.eq.240.and.iy.eq.28)print '(a,2i12,i6,3g16.7)','XXX ',time,mapsta(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+      if(ix.eq.250.and.iy.eq.28)print '(a,2i12,i6,3g16.7)','YYY ',time,mapsta(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+    end do
 
   end subroutine CalcRoughl
 
