@@ -2221,6 +2221,17 @@ CONTAINS
       ENDIF
 #endif
     END IF
+    if(ix.eq.286.and.iy.eq.40) then
+      if(iaproc .eq. 16)print '(a,2i12,i6,3g16.7)','XXX5 ',time,mapsta(iy,ix),charn,ustar,z0
+    end if
+
+    if(ix.eq.287.and.iy.eq.40) then
+      if(iaproc .eq. 17)print '(a,2i12,i6,3g16.7)','YYY5 ',time,mapsta(iy,ix),charn,ustar,z0
+    end if
+
+    if(ix.eq.288.and.iy.eq.41) then
+      if(iaproc .eq. 7)print '(a,2i12,i6,3g16.7)','ZZZ5 ',time,mapsta(iy,ix),charn,ustar,z0
+    end if
     !
     !
     ! - - - - - - - - - - - - - - - - - - - - - -
@@ -2262,6 +2273,17 @@ CONTAINS
       CHARN = AALPHA
     ENDIF
 #endif
+    if(ix.eq.286.and.iy.eq.40) then
+      if(iaproc .eq. 16)print '(a,2i12,i6,3g16.7)','XXX6 ',time,mapsta(iy,ix),charn,ustar,z0
+    end if
+
+    if(ix.eq.287.and.iy.eq.40) then
+      if(iaproc .eq. 17)print '(a,2i12,i6,3g16.7)','YYY6 ',time,mapsta(iy,ix),charn,ustar,z0
+    end if
+
+    if(ix.eq.288.and.iy.eq.41) then
+      if(iaproc .eq. 7)print '(a,2i12,i6,3g16.7)','ZZZ6 ',time,mapsta(iy,ix),charn,ustar,z0
+    end if
     !
     ! 12. includes shoreline reflection --------------------------------------------- *
     !
