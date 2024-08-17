@@ -1059,15 +1059,15 @@ CONTAINS
            TAUWX, TAUWY, CD, Z0, CHARN, LLWS, FMEANWS, DLWMEAN)
 #endif
       if(ix.eq.286.and.iy.eq.40) then
-         if(iaproc .eq. 16)print '(a,2i12,i6,3g16.7)','XXX0 ',time,mapsta(iy,ix),charn,ustar,z0
+         if(iaproc .eq. 16)print '(a,2i12,i6,4g16.7)','XXX0 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
       end if
 
       if(ix.eq.287.and.iy.eq.40) then
-         if(iaproc .eq. 17)print '(a,2i12,i6,3g16.7)','YYY0 ',time,mapsta(iy,ix),charn,ustar,z0
+         if(iaproc .eq. 17)print '(a,2i12,i6,4g16.7)','YYY0 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
       end if
 
       if(ix.eq.288.and.iy.eq.41) then
-         if(iaproc .eq. 7)print '(a,2i12,i6,3g16.7)','ZZZ0 ',time,mapsta(iy,ix),charn,ustar,z0
+         if(iaproc .eq. 7)print '(a,2i12,i6,4g16.7)','ZZZ0 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
       end if
 #if defined(W3_DEBUGSRC) && defined(W3_ST4)
       IF (IX == DEBUG_NODE) THEN
@@ -1098,15 +1098,15 @@ CONTAINS
     END IF
 #endif
       if(ix.eq.286.and.iy.eq.40) then
-         if(iaproc .eq. 16)print '(a,2i12,i6,3g16.7)','XXX1 ',time,mapsta(iy,ix),charn,ustar,z0
+         if(iaproc .eq. 16)print '(a,2i12,i6,4g16.7)','XXX1 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
       end if
 
       if(ix.eq.287.and.iy.eq.40) then
-         if(iaproc .eq. 17)print '(a,2i12,i6,3g16.7)','YYY1 ',time,mapsta(iy,ix),charn,ustar,z0
+         if(iaproc .eq. 17)print '(a,2i12,i6,4g16.7)','YYY1 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
       end if
 
       if(ix.eq.288.and.iy.eq.41) then
-         if(iaproc .eq. 7)print '(a,2i12,i6,3g16.7)','ZZZ1 ',time,mapsta(iy,ix),charn,ustar,z0
+         if(iaproc .eq. 7)print '(a,2i12,i6,4g16.7)','ZZZ1 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
       end if
 #ifdef W3_ST4
     CALL W3SPR4 (SPEC, CG1, WN1, EMEAN, FMEAN, FMEAN1, WNMEAN, &
@@ -1122,15 +1122,15 @@ CONTAINS
     CALL W3SPR6 (SPEC, CG1, WN1, EMEAN, FMEAN, WNMEAN, AMAX, FP)
 #endif
     if(ix.eq.286.and.iy.eq.40) then
-      if(iaproc .eq. 16)print '(a,2i12,i6,3g16.7)','XXX2 ',time,mapsta(iy,ix),charn,ustar,z0
+      if(iaproc .eq. 16)print '(a,2i12,i6,4g16.7)','XXX2 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
     end if
 
     if(ix.eq.287.and.iy.eq.40) then
-      if(iaproc .eq. 17)print '(a,2i12,i6,3g16.7)','YYY2 ',time,mapsta(iy,ix),charn,ustar,z0
+      if(iaproc .eq. 17)print '(a,2i12,i6,4g16.7)','YYY2 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
     end if
 
     if(ix.eq.288.and.iy.eq.41) then
-      if(iaproc .eq. 7)print '(a,2i12,i6,3g16.7)','ZZZ2 ',time,mapsta(iy,ix),charn,ustar,z0
+      if(iaproc .eq. 7)print '(a,2i12,i6,4g16.7)','ZZZ2 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
     end if
     !
     ! 1.c2 Stores the initial data
@@ -1939,15 +1939,15 @@ CONTAINS
       ! 6.e  Update wave-supported stress----------------------------------- *
       !
       if(ix.eq.286.and.iy.eq.40) then
-         if(iaproc .eq. 16)print '(a,2i12,i6,3g16.7)','XXX3 ',time,mapsta(iy,ix),charn,ustar,z0
+         if(iaproc .eq. 16)print '(a,2i12,i6,4g16.7)','XXX3 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
       end if
 
       if(ix.eq.287.and.iy.eq.40) then
-         if(iaproc .eq. 17)print '(a,2i12,i6,3g16.7)','YYY3 ',time,mapsta(iy,ix),charn,ustar,z0
+         if(iaproc .eq. 17)print '(a,2i12,i6,4g16.7)','YYY3 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
       end if
 
       if(ix.eq.288.and.iy.eq.41) then
-         if(iaproc .eq. 7)print '(a,2i12,i6,3g16.7)','ZZZ3 ',time,mapsta(iy,ix),charn,ustar,z0
+         if(iaproc .eq. 7)print '(a,2i12,i6,4g16.7)','ZZZ3 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
       end if
 #ifdef W3_ST3
       CALL W3SIN3 ( SPEC, CG1, WN2, U10ABS, USTAR, DRAT, AS,      &
@@ -1967,15 +1967,15 @@ CONTAINS
            TAUWX, TAUWY, CD, Z0, CHARN, LLWS, FMEANWS, DLWMEAN)
 #endif
       if(ix.eq.286.and.iy.eq.40) then
-         if(iaproc .eq. 16)print '(a,2i12,i6,3g16.7)','XXX4 ',time,mapsta(iy,ix),charn,ustar,z0
+         if(iaproc .eq. 16)print '(a,2i12,i6,4g16.7)','XXX4 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
       end if
 
       if(ix.eq.287.and.iy.eq.40) then
-         if(iaproc .eq. 17)print '(a,2i12,i6,3g16.7)','YYY4 ',time,mapsta(iy,ix),charn,ustar,z0
+         if(iaproc .eq. 17)print '(a,2i12,i6,4g16.7)','YYY4 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
       end if
 
       if(ix.eq.288.and.iy.eq.41) then
-         if(iaproc .eq. 7)print '(a,2i12,i6,3g16.7)','ZZZ4 ',time,mapsta(iy,ix),charn,ustar,z0
+         if(iaproc .eq. 7)print '(a,2i12,i6,4g16.7)','ZZZ4 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
       end if
       !
       ! 7.  Check if integration complete ---------------------------------- *
@@ -2222,15 +2222,15 @@ CONTAINS
 #endif
     END IF
     if(ix.eq.286.and.iy.eq.40) then
-      if(iaproc .eq. 16)print '(a,2i12,i6,3g16.7)','XXX5 ',time,mapsta(iy,ix),charn,ustar,z0
+      if(iaproc .eq. 16)print '(a,2i12,i6,4g16.7)','XXX5 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
     end if
 
     if(ix.eq.287.and.iy.eq.40) then
-      if(iaproc .eq. 17)print '(a,2i12,i6,3g16.7)','YYY5 ',time,mapsta(iy,ix),charn,ustar,z0
+      if(iaproc .eq. 17)print '(a,2i12,i6,4g16.7)','YYY5 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
     end if
 
     if(ix.eq.288.and.iy.eq.41) then
-      if(iaproc .eq. 7)print '(a,2i12,i6,3g16.7)','ZZZ5 ',time,mapsta(iy,ix),charn,ustar,z0
+      if(iaproc .eq. 7)print '(a,2i12,i6,4g16.7)','ZZZ5 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
     end if
     !
     !
@@ -2274,15 +2274,15 @@ CONTAINS
     ENDIF
 #endif
     if(ix.eq.286.and.iy.eq.40) then
-      if(iaproc .eq. 16)print '(a,2i12,i6,3g16.7)','XXX6 ',time,mapsta(iy,ix),charn,ustar,z0
+      if(iaproc .eq. 16)print '(a,2i12,i6,4g16.7)','XXX6 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
     end if
 
     if(ix.eq.287.and.iy.eq.40) then
-      if(iaproc .eq. 17)print '(a,2i12,i6,3g16.7)','YYY6 ',time,mapsta(iy,ix),charn,ustar,z0
+      if(iaproc .eq. 17)print '(a,2i12,i6,4g16.7)','YYY6 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
     end if
 
     if(ix.eq.288.and.iy.eq.41) then
-      if(iaproc .eq. 7)print '(a,2i12,i6,3g16.7)','ZZZ6 ',time,mapsta(iy,ix),charn,ustar,z0
+      if(iaproc .eq. 7)print '(a,2i12,i6,4g16.7)','ZZZ6 ',time,mapsta(iy,ix),charn,ustar,ustdir,z0
     end if
     !
     ! 12. includes shoreline reflection --------------------------------------------- *

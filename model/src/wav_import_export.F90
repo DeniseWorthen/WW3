@@ -1038,7 +1038,7 @@ contains
 
     use w3gdatmd, only : mapsf, mapsta, aalpha
     use w3adatmd, only : charn
-    use w3wdatmd, only : ust
+    use w3wdatmd, only : ust, ustdir
     use w3odatmd, only : runtype
 
     ! debug
@@ -1064,15 +1064,15 @@ contains
       !if (iaproc .eq. 19)print '(a,4i6,2f12.5)','XXX ',jsea,isea,ix,iy,xgrd(iy,ix),ygrd(iy,ix)
       !if(ix.eq.250.and.iy.eq.28)print '(a,i4,5g16.7)','XXX ',mapsta(iy,ix),xgrd(iy,ix),ygrd(iy,ix),charn(jsea),ust(isea),wrln(jsea)
       if(ix.eq.286.and.iy.eq.40) then
-         if(iaproc .eq. 16)print '(a,2i12,i6,3g16.7)','XXX ',time,mapsta(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+         if(iaproc .eq. 16)print '(a,2i12,i6,4g16.7)','XXX ',time,mapsta(iy,ix),charn(jsea),ust(isea),ustdir(isea),wrln(jsea)
       end if
 
       if(ix.eq.287.and.iy.eq.40) then
-         if(iaproc .eq. 17)print '(a,2i12,i6,3g16.7)','YYY ',time,mapsta(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+         if(iaproc .eq. 17)print '(a,2i12,i6,4g16.7)','YYY ',time,mapsta(iy,ix),charn(jsea),ust(isea),ustdir(isea),wrln(jsea)
       end if
 
       if(ix.eq.288.and.iy.eq.41) then
-         if(iaproc .eq. 7)print '(a,2i12,i6,3g16.7)','ZZZ ',time,mapsta(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+         if(iaproc .eq. 7)print '(a,2i12,i6,4g16.7)','ZZZ ',time,mapsta(iy,ix),charn(jsea),ust(isea),ustdir(isea),wrln(jsea)
       end if
     end do
 
