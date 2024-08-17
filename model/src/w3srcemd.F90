@@ -1053,7 +1053,17 @@ CONTAINS
            USTAR, USTDIR,                                  &
            TAUWX, TAUWY, CD, Z0, CHARN, LLWS, FMEANWS, DLWMEAN)
 #endif
+      if(ix.eq.286.and.iy.eq.40) then
+         if(iaproc .eq. 16)print '(a,2i12,i6,3g16.7)','XXX0 ',time,mapsta(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+      end if
 
+      if(ix.eq.287.and.iy.eq.40) then
+         if(iaproc .eq. 17)print '(a,2i12,i6,3g16.7)','YYY0 ',time,mapsta(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+      end if
+
+      if(ix.eq.288.and.iy.eq.41) then
+         if(iaproc .eq. 7)print '(a,2i12,i6,3g16.7)','ZZZ0 ',time,mapsta(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+      end if
 #if defined(W3_DEBUGSRC) && defined(W3_ST4)
       IF (IX == DEBUG_NODE) THEN
         WRITE(740+IAPROC,*) '1: out value USTAR=', USTAR, ' USTDIR=', USTDIR
@@ -1082,7 +1092,17 @@ CONTAINS
       WRITE(740+IAPROC,*) '1: W3SIN4(min/max/sum)VDIN=', minval(VDIN), maxval(VDIN), sum(VDIN)
     END IF
 #endif
+      if(ix.eq.286.and.iy.eq.40) then
+         if(iaproc .eq. 16)print '(a,2i12,i6,3g16.7)','XXX1 ',time,mapsta(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+      end if
 
+      if(ix.eq.287.and.iy.eq.40) then
+         if(iaproc .eq. 17)print '(a,2i12,i6,3g16.7)','YYY1 ',time,mapsta(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+      end if
+
+      if(ix.eq.288.and.iy.eq.41) then
+         if(iaproc .eq. 7)print '(a,2i12,i6,3g16.7)','ZZZ1 ',time,mapsta(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+      end if
 #ifdef W3_ST4
     CALL W3SPR4 (SPEC, CG1, WN1, EMEAN, FMEAN, FMEAN1, WNMEAN, &
          AMAX, U10ABS, U10DIR,                         &
@@ -1096,6 +1116,17 @@ CONTAINS
 #ifdef W3_ST6
     CALL W3SPR6 (SPEC, CG1, WN1, EMEAN, FMEAN, WNMEAN, AMAX, FP)
 #endif
+    if(ix.eq.286.and.iy.eq.40) then
+      if(iaproc .eq. 16)print '(a,2i12,i6,3g16.7)','XXX2 ',time,mapsta(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+    end if
+
+    if(ix.eq.287.and.iy.eq.40) then
+      if(iaproc .eq. 17)print '(a,2i12,i6,3g16.7)','YYY2 ',time,mapsta(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+    end if
+
+    if(ix.eq.288.and.iy.eq.41) then
+      if(iaproc .eq. 7)print '(a,2i12,i6,3g16.7)','ZZZ2 ',time,mapsta(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+    end if
     !
     ! 1.c2 Stores the initial data
     !
@@ -1902,6 +1933,17 @@ CONTAINS
       !
       ! 6.e  Update wave-supported stress----------------------------------- *
       !
+      if(ix.eq.286.and.iy.eq.40) then
+         if(iaproc .eq. 16)print '(a,2i12,i6,3g16.7)','XXX3 ',time,mapsta(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+      end if
+
+      if(ix.eq.287.and.iy.eq.40) then
+         if(iaproc .eq. 17)print '(a,2i12,i6,3g16.7)','YYY3 ',time,mapsta(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+      end if
+
+      if(ix.eq.288.and.iy.eq.41) then
+         if(iaproc .eq. 7)print '(a,2i12,i6,3g16.7)','ZZZ3 ',time,mapsta(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+      end if
 #ifdef W3_ST3
       CALL W3SIN3 ( SPEC, CG1, WN2, U10ABS, USTAR, DRAT, AS,      &
            U10DIR, Z0, CD, TAUWX, TAUWY, TAUWAX, TAUWAY, &
@@ -1919,7 +1961,17 @@ CONTAINS
            USTAR, USTDIR,                                 &
            TAUWX, TAUWY, CD, Z0, CHARN, LLWS, FMEANWS, DLWMEAN)
 #endif
+      if(ix.eq.286.and.iy.eq.40) then
+         if(iaproc .eq. 16)print '(a,2i12,i6,3g16.7)','XXX4 ',time,mapsta(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+      end if
 
+      if(ix.eq.287.and.iy.eq.40) then
+         if(iaproc .eq. 17)print '(a,2i12,i6,3g16.7)','YYY4 ',time,mapsta(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+      end if
+
+      if(ix.eq.288.and.iy.eq.41) then
+         if(iaproc .eq. 7)print '(a,2i12,i6,3g16.7)','ZZZ4 ',time,mapsta(iy,ix),charn(jsea),ust(isea),wrln(jsea)
+      end if
       !
       ! 7.  Check if integration complete ---------------------------------- *
       !
