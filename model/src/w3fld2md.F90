@@ -442,6 +442,9 @@ CONTAINS
             !  TAUYW = TAUYW + DWAT * GRAV * DWN(K) * TAUINTY(K)
             TAUXW = TAUXW + DWAT * DWN(K) * TAUINTX(K)
             TAUYW = TAUYW + DWAT * DWN(K) * TAUINTY(K)
+            if(ix.eq.288.and.iy.eq.41) then
+              if(iaproc .eq. 7)print '(a,2i12,2i6,4g16.7)','zzz5ee ',time,k,its,tauintx(k),tauinty(k),tauxw,tauyw
+            end if
           ENDDO
           CDF = ( SQRT(TAUXW**2.0+TAUYW**2.0) / DAIR ) / wnd_10_mag**2.0
           if(ix.eq.288.and.iy.eq.41) then
