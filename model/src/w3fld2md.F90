@@ -389,14 +389,14 @@ CONTAINS
           wnd_10_mag = sqrt(wnd_10_x**2+wnd_10_y**2)
           wnd_10_dir = atan2(wnd_10_y,wnd_10_x)
         ENDIF
-        if(ix.eq.288.and.iy.eq.41) then
-          if(iaproc .eq. 7)print '(a,2i12,i6,6g16.7)','ZZZ5d ',time,mapsta(iy,ix),its,ustra,ustrb,taux,tauy
-        end if
         !
         ! Stress iteration (inside wind iteration solve for stress)
         ITS = 1 !ITS is counting stress iteration
         UST_IT_FLG(1)=.TRUE.
         UST_IT_FLG(2)=.TRUE.
+        if(ix.eq.288.and.iy.eq.41) then
+          if(iaproc .eq. 7)print '(a,2i12,i6,6g16.7)','ZZZ5d ',time,mapsta(iy,ix),its,ustra,ustrb,taux,tauy
+        end if
         DO WHILE ((UST_IT_FLG(1) .AND. UST_IT_FLG(2)) .AND. NO_ERR)
           !Get z0 from (guessed) stress and wind magnitude
           z0  = 10. / ( EXP( KAPPA * wnd_10_mag / USTRA ) )
@@ -441,6 +441,9 @@ CONTAINS
             !  TAUYW = TAUYW + DWAT * GRAV * DWN(K) * TAUINTY(K)
             TAUXW = TAUXW + DWAT * DWN(K) * TAUINTX(K)
             TAUYW = TAUYW + DWAT * DWN(K) * TAUINTY(K)
+            if(ix.eq.288.and.iy.eq.41) then
+              if(iaproc .eq. 7)print '(a,2i12,2i6,4g16.7)','zzz5ee ',time,k,its,tauintx(k),tauinty(k),tauxw,tauyw
+            end if
           ENDDO
           CDF = ( SQRT(TAUXW**2.0+TAUYW**2.0) / DAIR ) / wnd_10_mag**2.0
           if(ix.eq.288.and.iy.eq.41) then
