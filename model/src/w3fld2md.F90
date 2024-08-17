@@ -63,7 +63,7 @@ Module W3FLD2MD
 CONTAINS
   !/ ------------------------------------------------------------------- /
   SUBROUTINE W3FLD2(  ASPC,FPI, WNDX,WNDY, ZWND,                 &
-       DEPTH, RIB, DAIR, UST, USTD, Z0, TAUNUX,TAUNUY,CHARN)
+       DEPTH, RIB, DAIR, UST, USTD, Z0, TAUNUX,TAUNUY,ix,iy,CHARN)
     !/
     !/                  +-----------------------------------+
     !/                  | WAVEWATCH III      NOAA/NCEP/NOPP |
@@ -153,6 +153,11 @@ CONTAINS
     USE W3SERVMD, ONLY: STRACE
 #endif
     !/
+    ! debug
+    use w3gdatmd, only : mapsta
+    use w3gdatmd, only : xgrd,ygrd
+    use w3odatmd, only : iaproc
+    use w3wdatmd, only : time
     IMPLICIT NONE
     !/
     !/ ------------------------------------------------------------------- /
@@ -163,6 +168,8 @@ CONTAINS
     REAL, INTENT(OUT)       :: UST, USTD, Z0
     REAL, INTENT(OUT),OPTIONAL :: CHARN
     REAL, INTENT(INOUT)     :: TAUNUX, TAUNUY
+    ! debug
+    integer, intent(in) :: ix,iy
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -566,6 +573,15 @@ CONTAINS
       !ENDIF
     enddo
 
+    if(ix.eq.286.and.iy.eq.40) then
+      if(iaproc .eq. 16)print '(a,2i12,i6,6g16.7)','XXX5a ',time,mapsta(iy,ix),charn,ust,ustd,z0,taunux,taunuy
+    end if
+    if(ix.eq.287.and.iy.eq.40) then
+      if(iaproc .eq. 17)print '(a,2i12,i6,6g16.7)','YYY5a ',time,mapsta(iy,ix),charn,ust,ustd,z0,taunux,taunuy
+    end if
+    if(ix.eq.288.and.iy.eq.41) then
+      if(iaproc .eq. 7)print '(a,2i12,i6,6g16.7)','ZZZ5a ',time,mapsta(iy,ix),charn,ust,ustd,z0,taunux,taunuy
+    end if
     UST = USTRB
     USTD = ATAN2(TAUY, TAUX)
     CD = UST**2 / UREF**2
@@ -581,6 +597,15 @@ CONTAINS
       CD = UST**2/UREF**2
       USTD = UREFD
     ENDIF
+    if(ix.eq.286.and.iy.eq.40) then
+      if(iaproc .eq. 16)print '(a,2i12,i6,6g16.7)','XXX5b ',time,mapsta(iy,ix),charn,ust,ustd,z0,taunux,taunuy
+    end if
+    if(ix.eq.287.and.iy.eq.40) then
+      if(iaproc .eq. 17)print '(a,2i12,i6,6g16.7)','YYY5b ',time,mapsta(iy,ix),charn,ust,ustd,z0,taunux,taunuy
+    end if
+    if(ix.eq.288.and.iy.eq.41) then
+      if(iaproc .eq. 7)print '(a,2i12,i6,6g16.7)','ZZZ5b ',time,mapsta(iy,ix),charn,ust,ustd,z0,taunux,taunuy
+    end if
     DEALLOCATE( TAUINTY , TAUINTX , &
          SPC2, sig2, CP , DWN , WN )
     !STOP
