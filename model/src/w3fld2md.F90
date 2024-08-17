@@ -390,6 +390,9 @@ CONTAINS
           wnd_10_mag = sqrt(wnd_10_x**2+wnd_10_y**2)
           wnd_10_dir = atan2(wnd_10_y,wnd_10_x)
         ENDIF
+        if(ix.eq.288.and.iy.eq.41) then
+          if(iaproc .eq. 7)print '(a,2i12,i6,6g16.7)','ZZZ5d ',time,mapsta(iy,ix),its,ustra,ustrb,taux,tauy
+        end if
         !
         ! Stress iteration (inside wind iteration solve for stress)
         ITS = 1 !ITS is counting stress iteration
@@ -441,6 +444,9 @@ CONTAINS
             TAUYW = TAUYW + DWAT * DWN(K) * TAUINTY(K)
           ENDDO
           CDF = ( SQRT(TAUXW**2.0+TAUYW**2.0) / DAIR ) / wnd_10_mag**2.0
+          if(ix.eq.288.and.iy.eq.41) then
+            if(iaproc .eq. 7)print '(a,2i12,i6,6g16.7)','ZZZ5e ',time,mapsta(iy,ix),its,ustra,ustrb,taux,tauy
+          end if
           !|---------------------------------------------------------------------|
           !|----Solve for the smooth drag coefficient to use as initial guess----|
           !|----for the viscous stress-------------------------------------------|
@@ -482,6 +488,9 @@ CONTAINS
           B1 = ( USTRA - USTRB )
           B2 = ( USTRA + USTRB ) / 2.0
           ITS = ITS + 1
+          if(ix.eq.288.and.iy.eq.41) then
+            if(iaproc .eq. 7)print '(a,2i12,i6,6g16.7)','ZZZ5f ',time,mapsta(iy,ix),its,ustra,ustrb,taux,tauy
+          end if
           !Check for convergence
           UST_IT_FLG(1)=( ABS(B1*100.0/B2) .GE. 0.01)
           !If not converged after 20 iterations, quit.
