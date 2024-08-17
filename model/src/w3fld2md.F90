@@ -588,6 +588,15 @@ CONTAINS
     IF (PRESENT(CHARN)) THEN
       CHARN = 0.01/SQRT(SQRT( TAUNUX**2 + TAUNUY**2 )/(UST**2))
     ENDIF
+    if(ix.eq.286.and.iy.eq.40) then
+      if(iaproc .eq. 16)print '(a,2i12,i6,6g16.7)','XXX5b ',time,mapsta(iy,ix),charn,ust,ustd,z0,taunux,taunuy
+    end if
+    if(ix.eq.287.and.iy.eq.40) then
+      if(iaproc .eq. 17)print '(a,2i12,i6,6g16.7)','YYY5b ',time,mapsta(iy,ix),charn,ust,ustd,z0,taunux,taunuy
+    end if
+    if(ix.eq.288.and.iy.eq.41) then
+      if(iaproc .eq. 7)print '(a,2i12,i6,6g16.7)','ZZZ5b ',time,mapsta(iy,ix),charn,ust,ustd,z0,taunux,taunuy
+    end if
     IF (.not.((CD .LT. 0.01).AND.(CD .GT. 0.0005)).or. .not.(NO_ERR)) THEN
       !Fail safe to bulk
       print*,'Attn: W3FLD2 failed, using bulk stress'
@@ -598,13 +607,13 @@ CONTAINS
       USTD = UREFD
     ENDIF
     if(ix.eq.286.and.iy.eq.40) then
-      if(iaproc .eq. 16)print '(a,2i12,i6,6g16.7)','XXX5b ',time,mapsta(iy,ix),charn,ust,ustd,z0,taunux,taunuy
+      if(iaproc .eq. 16)print '(a,2i12,i6,6g16.7)','XXX5c ',time,mapsta(iy,ix),charn,ust,ustd,z0,taunux,taunuy
     end if
     if(ix.eq.287.and.iy.eq.40) then
-      if(iaproc .eq. 17)print '(a,2i12,i6,6g16.7)','YYY5b ',time,mapsta(iy,ix),charn,ust,ustd,z0,taunux,taunuy
+      if(iaproc .eq. 17)print '(a,2i12,i6,6g16.7)','YYY5c ',time,mapsta(iy,ix),charn,ust,ustd,z0,taunux,taunuy
     end if
     if(ix.eq.288.and.iy.eq.41) then
-      if(iaproc .eq. 7)print '(a,2i12,i6,6g16.7)','ZZZ5b ',time,mapsta(iy,ix),charn,ust,ustd,z0,taunux,taunuy
+      if(iaproc .eq. 7)print '(a,2i12,i6,6g16.7)','ZZZ5c ',time,mapsta(iy,ix),charn,ust,ustd,z0,taunux,taunuy
     end if
     DEALLOCATE( TAUINTY , TAUINTX , &
          SPC2, sig2, CP , DWN , WN )
