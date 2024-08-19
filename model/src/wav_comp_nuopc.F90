@@ -95,7 +95,7 @@ module wav_comp_nuopc
                                                            !! run with multigrid=true
 
   !TODO: deprecate, use use_rstwr and use_histwr which do not imply alarms are being used, only that
-  !output control is via some logical flag which is set in the cap (vs ww3's internal use of dttest etc
+  !output control is via some logical flag which is set in the cap (vs ww3's internal use of dttest etc)
   ! logical                 :: user_histalarm = .false.      !< logical flag for user to set history alarms
   !                                                          !! using ESMF. If history_option is present as config
   !                                                          !! option, user_histalarm will be true and will be
@@ -1039,13 +1039,16 @@ contains
     !------------------------
 
     use w3wavemd          , only : w3wave
-    use w3wdatmd          , only : time, w3setw, va
+    use w3wdatmd          , only : time, w3setw
     use wav_import_export , only : import_fields, export_fields
     use wav_shel_inp      , only : odat
     use w3odatmd          , only : rstwr, histwr
-    use wav_restart_mod   , only : write_restart
+    use wav_restart_mod   , only : write_restart, read_restart
     !debug
-    use w3timemd, only: set_user_timestring
+    use w3timemd, only : set_user_timestring
+    use w3adatmd, only : nsealm
+    use w3wdatmd, only : va
+    use w3gdatmd, only : mapsta, nx, ny, nspec
 
     ! arguments:
     type(ESMF_GridComp)  :: gcomp
@@ -1066,6 +1069,9 @@ contains
     ! debug
     character(len=16) :: user_timestring    !YYYY-MM-DD-SSSSS
     character(len=CL) :: fname
+    ! for read/write tests
+    real :: va_local(1:nspec,0:nsealm)
+    integer :: mapsta_local(ny,nx)
     !-------------------------------------------------------
 
     rc = ESMF_SUCCESS
@@ -1194,8 +1200,7 @@ contains
     call w3wave ( 1, odat, timen )
 #endif
     if(profile_memory) call ESMF_VMLogMemInfo("Exiting  WW3 Run : ")
-    ! field, restart,restart 2
-    !print *,'XXX strides ',odat(3),odat(18),odat(38)
+
     !------------
     ! Create export state
     !------------
@@ -1207,7 +1212,18 @@ contains
       call set_user_timestring(timen,user_timestring)
       fname = 'test.'//trim(user_timestring)//'.nc'
       call ESMF_LogWrite('XXX write '//trim(fname), ESMF_LOGMSG_INFO)
-      call write_restart (trim(fname), va)
+      va_local(:,:) = va(:,:)
+      mapsta_local(:,:) = mapsta(:,:)
+      call write_restart (trim(fname), va_local, mapsta_local)
+      !print *,'XXX ',iaproc,lbound(va,1),ubound(va,1),lbound(va,2),ubound(va,2)
+      !print *,'YYY ',iaproc,lbound(mapsta,1),ubound(mapsta,1),lbound(mapsta,2),ubound(mapsta,2)
+
+      if (trim(user_timestring) .eq. '2021-03-22-32400')then
+        call read_restart (trim(fname), va_local, mapsta_local)
+        fname = 'test.rewrite.'//trim(user_timestring)//'.nc'
+        call ESMF_LogWrite('XXX write '//trim(fname), ESMF_LOGMSG_INFO)
+        call write_restart (trim(fname), va_local, mapsta_local)
+      end if
     end if
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
@@ -1318,7 +1334,7 @@ contains
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
         !user_restalarm = .true.
         !use_rstwr = .true.
-        write(msgString,'(a,i10)')' Restarts will be written at restart2%stride freq ',odat(38)
+        write(msgString,'(a,i10)')' Restarts will be written at restart%stride freq ',restart_n
         call ESMF_LogWrite(trim(subname)//trim(msgString), ESMF_LOGMSG_INFO)
       else
         call NUOPC_CompAttributeGet(gcomp, name="restart_option", isPresent=isPresent, isSet=isSet, rc=rc)
@@ -1418,7 +1434,7 @@ contains
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
         !user_histalarm = .true.
         !use_histwr = .true.
-        write(msgString,'(a,i10)')' History will be written at field%stride freq ',odat(3)
+        write(msgString,'(a,i10)')' History will be written at field%stride freq ',history_n
         call ESMF_LogWrite(trim(subname)//trim(msgString), ESMF_LOGMSG_INFO)
       end if
     end if

@@ -261,29 +261,48 @@ contains
   end subroutine wav_pio_init
 
   !===============================================================================
-  subroutine wav_pio_initdecomp_2d(iodesc, use_int)
+  subroutine wav_pio_initdecomp_2d(iodesc, use_int, isglobal)
 
     type(io_desc_t),           intent(out) :: iodesc
     logical        , optional, intent(in)  :: use_int
+    logical        , optional, intent(in)  :: isglobal
 
     ! local variables
     integer          :: n, isea, jsea, ix, iy
     integer, pointer :: dof2d(:)
     logical          :: luse_int
+    logical          :: lisglobal
 
     luse_int = .false.
     if (present(use_int)) luse_int = use_int
+    lisglobal = .false.
+    if (present(isglobal)) then
+      lisglobal = isglobal
+    end if
 
-    allocate(dof2d(nseal_cpl))
-    dof2d = 0
-    n = 0
-    do jsea = 1,nseal_cpl
-      call init_get_isea(isea, jsea)
-      ix = mapsf(isea,1)                 ! global ix
-      iy = mapsf(isea,2)                 ! global iy
-      n = n+1
-      dof2d(n) = (iy-1)*nx + ix          ! local index : global index
-    end do
+    if (isglobal) then
+      allocate(dof2d(nx*ny))
+      dof2d = 0
+      n = 0
+      do iy = 1,ny
+        do ix = 1,nx
+          n = n+1
+          dof2d(n) = (iy-1)*nx + ix
+        end do
+      end do
+    else
+      allocate(dof2d(nseal_cpl))
+      dof2d = 0
+      n = 0
+      do jsea = 1,nseal_cpl
+        call init_get_isea(isea, jsea)
+        ix = mapsf(isea,1)                 ! global ix
+        iy = mapsf(isea,2)                 ! global iy
+        n = n+1
+        dof2d(n) = (iy-1)*nx + ix          ! local index : global index
+      end do
+    end if
+
     if (luse_int) then
       call pio_initdecomp(wav_pio_subsystem, PIO_INT,  (/nx,ny/), dof2d, iodesc)
     else

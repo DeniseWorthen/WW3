@@ -1,8 +1,8 @@
 module wav_restart_mod
 
   use w3parall          , only : init_get_isea
-  use w3adatmd          , only : mpi_comm_wave
-  use w3gdatmd          , only : nth, nk, nx, ny, nspec, mapsta, nseal, nsea
+  use w3adatmd          , only : mpi_comm_wave, nsealm
+  use w3gdatmd          , only : nth, nk, nx, ny, nspec, nseal, nsea
   use wav_import_export , only : nseal_cpl
   use wav_pio_mod       , only : pio_iotype, wav_pio_subsystem
   use wav_pio_mod       , only : handle_err, wav_pio_initdecomp
@@ -25,12 +25,16 @@ module wav_restart_mod
 contains
   !===============================================================================
 
-  subroutine write_restart (fname, a)
+  subroutine write_restart (fname, va, mapsta)
 
     use w3gdatmd , only : mapsf
     use w3odatmd , only : time_origin, calendar_name, elapsed_secs
+    ! eventually, and mapsta will come from module but for now, I want
+    ! to test a read/write cycle w/o changing the internal values
+    !use w3wdatmd, only : va
 
-    real            , intent(in) :: a(nth,nk,0:nseal)
+    real            , intent(in) :: va(1:nspec,0:nsealm)
+    integer         , intent(in) :: mapsta(:,:)
     character(len=*), intent(in) :: fname
 
     ! local variables
@@ -40,7 +44,7 @@ contains
     integer           :: isea, jsea
     integer           :: dimid(4)
     integer           :: lmap(1:nseal_cpl)
-    real              :: varout(1:nseal_cpl,1:nspec)
+    real              :: va_out(1:nseal_cpl,1:nspec)
 
     ! create the netcdf file
     pioid%fh = -1
@@ -103,13 +107,13 @@ contains
     call handle_err(ierr, 'put variable '//trim(vname))
 
     ! write va
-    varout(:,:) = 0.0
+    va_out(:,:) = 0.0
     do jsea = 1,nseal_cpl
       kk = 0
       do ik = 1,nk
         do ith = 1,nth
           kk = kk + 1
-          varout(jsea,kk) = a(ith,ik,jsea)
+          va_out(jsea,kk) = va(kk,jsea)
         end do
       end do
     end do
@@ -118,7 +122,7 @@ contains
     ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
     call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
-    call pio_write_darray(pioid, varid, iodesc3dk, varout, ierr)
+    call pio_write_darray(pioid, varid, iodesc3dk, va_out, ierr)
     call handle_err(ierr, 'put variable '//trim(vname))
 
     !call pio_syncfile(pioid)
@@ -128,18 +132,25 @@ contains
 
   end subroutine write_restart
 
-  subroutine read_restart (fname, vaout)
+  subroutine read_restart (fname, va_out, mapsta_out)
 
-    real            , intent(out) :: vaout(1:nspec,1:nsea)
+    ! debug
+    use w3odatmd, only : iaproc
+
+    real            , intent(out) :: va_out(1:nspec,0:nsealm)
+    integer         , intent(out) :: mapsta_out(ny,nx)
     character(len=*), intent(in)  :: fname
 
     ! local variables
+    integer           :: ik, ith, kk
+    integer           :: isea, jsea
     character(len=12) :: vname
     integer           :: ierr
     logical           :: exists
-    ! decompositions are real, need to make an integer one to write mapsta as int
-    real              :: maptmp(ny,nx)
-    real              :: atmp(nth,nk,0:nseal)
+    real              :: vatmp(1:nseal_cpl,1:nspec)
+    integer           :: mapsta_tmp(ny,nx)
+    ! debug
+    integer :: ix, iy
 
     ! open the netcdf file
     inquire(file = trim(fname), exist=exists)
@@ -151,21 +162,46 @@ contains
       !error out
     end if
 
+    va_out = -999.0
+    mapsta_out = -99
     ! initialize the decomp
-    call wav_pio_initdecomp(iodesc2dint)
+    call wav_pio_initdecomp(iodesc2dint, use_int=.true., isglobal=.true.)
     call wav_pio_initdecomp(nspec, iodesc3dk)
 
     vname = 'va'
     ierr = pio_inq_varid(pioid, trim(vname), varid)
-    call pio_read_darray(pioid, varid, iodesc3dk, atmp, ierr)
+    call pio_read_darray(pioid, varid, iodesc3dk, vatmp, ierr)
     call handle_err(ierr, 'get variable '//trim(vname))
+
+    do jsea = 1,nseal_cpl
+      kk = 0
+      do ik = 1,nk
+        do ith = 1,nth
+          kk = kk + 1
+          va_out(kk,jsea) = vatmp(jsea,kk)
+        end do
+      end do
+    end do
+
+    ! mapsta is global
+    ! lmap(:) = 0
+    ! do jsea = 1,nseal_cpl
+    !   call init_get_isea(isea, jsea)
+    !   ix = mapsf(isea,1)
+    !   iy = mapsf(isea,2)
+    !   lmap(jsea) = mapsta(iy,ix)
+    ! end do
 
     vname = 'mapsta'
     ierr = pio_inq_varid(pioid, trim(vname), varid)
-    call pio_read_darray(pioid, varid, iodesc2dint, maptmp, ierr)
+    call pio_read_darray(pioid, varid, iodesc2dint, mapsta_out, ierr)
     call handle_err(ierr, 'get variable '//trim(vname))
 
-    !mapsta = int(maptmp,4)
+    do ix = 1,nx
+      do iy = 1,ny
+        write(100+iaproc,*)iy,ix,mapsta_out(iy,ix)
+      end do
+    end do
 
     call pio_freedecomp(pioid, iodesc2dint)
     call pio_freedecomp(pioid, iodesc3dk)
