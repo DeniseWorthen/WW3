@@ -574,8 +574,14 @@ MODULE W3ODATMD
   logical            :: user_netcdf_grdout = .false. !<@public logical flag to use netCDF for gridded
                                                      !! field output
   logical            :: use_iogopio = .false.
-  logical            :: use_rstnc = .false.
+  logical            :: use_restartnc = .false.
+  logical            :: use_rstwr = .false.          !< True on restart write intervals, otherwise false.
+                                                     !! For CESM, defined using restart_n, restart_option.
+                                                     !! For UFS, defined using restart2%stride and restart_option = nseconds
 
+  logical            :: use_histwr = .false.         !< True on history write intervals, otherwise false.
+                                                     !! For CESM, defined using history_n, history_option.
+                                                     !! For UFS, defined using field%stride and history_option = nseconds
   character(len= 36) :: time_origin = ''             !< @public the time_origin used for netCDF output
   character(len= 36) :: calendar_name = ''           !< @public the calendar used for netCDF output
   integer(kind=8)    :: elapsed_secs = 0             !< @public the time in seconds from the time_origin

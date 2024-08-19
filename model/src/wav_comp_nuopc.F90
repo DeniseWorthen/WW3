@@ -45,7 +45,8 @@ module wav_comp_nuopc
   use wav_shr_mod           , only : merge_import, dbug_flag
   use w3odatmd              , only : nds, iaproc, napout
   use w3odatmd              , only : runtype, use_user_histname, user_histfname, use_user_restname, user_restfname
-  use w3odatmd              , only : user_netcdf_grdout, use_iogopio, use_rstnc
+  use w3odatmd              , only : user_netcdf_grdout, use_iogopio, use_restartnc
+  use w3odatmd              , only : use_histwr, use_rstwr
   use w3odatmd              , only : time_origin, calendar_name, elapsed_secs
   use wav_shr_mod           , only : casename, multigrid, inst_suffix, inst_index, unstr_mesh
   use wav_wrapper_mod       , only : ufs_settimer, ufs_logtimer, ufs_file_setlogunit, wtime
@@ -92,14 +93,15 @@ module wav_comp_nuopc
 #endif
   integer, allocatable :: tend(:,:)                        !< the ending time of ModelAdvance when
                                                            !! run with multigrid=true
-  logical                 :: user_histalarm = .false.      !< logical flag for user to set history alarms
-                                                           !! using ESMF. If history_option is present as config
-                                                           !! option, user_histalarm will be true and will be
-                                                           !! set using history_option, history_n and history_ymd
-  logical                 :: user_restalarm = .false.      !< logical flag for user to set restart alarms
-                                                           !! using ESMF. If restart_option is present as config
-                                                           !! option, user_restalarm will be true and will be
-                                                           !! set using restart_option, restart_n and restart_ymd
+
+  ! logical                 :: user_histalarm = .false.      !< logical flag for user to set history alarms
+  !                                                          !! using ESMF. If history_option is present as config
+  !                                                          !! option, user_histalarm will be true and will be
+  !                                                          !! set using history_option, history_n and history_ymd
+  ! logical                 :: user_restalarm = .false.      !< logical flag for user to set restart alarms
+  !                                                          !! using ESMF. If restart_option is present as config
+  !                                                          !! option, user_restalarm will be true and will be
+  !                                                          !! set using restart_option, restart_n and restart_ymd
   integer :: ymd                                           !< current year-month-day
   integer :: tod                                           !< current time of day (sec)
   integer :: time0(2)                                      !< start time stored as yyyymmdd,hhmmss
@@ -374,13 +376,13 @@ contains
     write(logmsg,'(A,l)') trim(subname)//': Wave use_iogopio setting is ',use_iogopio
     call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
 
-    use_rstnc = .false.
-    call NUOPC_CompAttributeGet(gcomp, name='use_rstnc', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    use_restartnc = .false.
+    call NUOPC_CompAttributeGet(gcomp, name='use_restartnc', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
     if (isPresent .and. isSet) then
-      use_rstnc=(trim(cvalue)=="true")
+      use_restartnc=(trim(cvalue)=="true")
     end if
-    write(logmsg,'(A,l)') trim(subname)//': Wave use_rstnc setting is ',use_rstnc
+    write(logmsg,'(A,l)') trim(subname)//': Wave use_restartnc setting is ',use_restartnc
     call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
 
     ! Determine wave-ice coupling
@@ -1141,7 +1143,7 @@ contains
     !------------
     if(profile_memory) call ESMF_VMLogMemInfo("Entering WW3 Run : ")
 
-    if (user_restalarm) then
+    !if (user_restalarm) then
       ! Determine if time to write ww3 restart files
       call ESMF_ClockGetAlarm(clock, alarmname='alarm_restart', alarm=alarm, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
@@ -1153,11 +1155,11 @@ contains
       else
         rstwr = .false.
       endif
-    else
-      rstwr = .false.
-    end if
+    !else
+    !  rstwr = .false.
+    !end if
 
-    if (user_histalarm) then
+    !if (user_histalarm) then
       ! Determine if time to write ww3 history files
       call ESMF_ClockGetAlarm(clock, alarmname='alarm_history', alarm=alarm, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
@@ -1169,9 +1171,9 @@ contains
       else
         histwr = .false.
       endif
-    else
-      histwr = .false.
-    end if
+    !else
+    !  histwr = .false.
+    !end if
     if ( root_task ) then
       !  write(nds(1),*) 'wav_comp_nuopc time', time, timen
       !  write(nds(1),*) 'ww3 hist flag ', histwr, hh
@@ -1219,6 +1221,8 @@ contains
   !> @author mvertens@ucar.edu, Denise.Worthen@noaa.gov
   !> @date 01-05-2022
   subroutine ModelSetRunClock(gcomp, rc)
+
+    use wav_shel_inp , only : odat
 
     ! input/output variables
     type(ESMF_GridComp)  :: gcomp
@@ -1314,12 +1318,14 @@ contains
 
         call ESMF_AlarmSet(restart_alarm, clock=mclock, rc=rc)
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
-        user_restalarm = .true.
+        !user_restalarm = .true.
+        use_rstwr = .true.
       else
         ! If attribute is not present - write restarts at native WW3 freq
-        restart_option = 'none'
-        restart_n = -999
-        user_restalarm = .false.
+        restart_option = 'nseconds'
+        restart_n = odat(38)
+        !user_restalarm = .false.
+        use_rstwr = .true.
       end if
 
       !----------------
@@ -1372,14 +1378,15 @@ contains
 
         call ESMF_AlarmSet(history_alarm, clock=mclock, rc=rc)
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
-        user_histalarm = .true.
+        !user_histalarm = .true.
+        use_histwr = .true.
       else
         ! If attribute is not present - write history output at native WW3 frequency
-        history_option = 'none'
-        history_n = -999
-        user_histalarm = .false.
+        history_option = 'nseconds'
+        history_n = odat(3)
+        !user_histalarm = .true.
+        use_histwr = .true.
       end if
-
     end if
 
     !--------------------------------
@@ -1602,6 +1609,8 @@ contains
     ! netcdf gridded output is used for CESM
     user_netcdf_grdout = .true.
     ! restart and history alarms are set for CESM by default through config
+    use_histwr = .true.
+    use_rstwr = .true.
 
     ! Read in initial/restart data and initialize the model
     ! ww3 read initialization occurs in w3iors (which is called by initmd in module w3initmd)
@@ -1699,6 +1708,13 @@ contains
     end if
     if (use_user_restname) then
       user_restfname = trim(casename)//'.ww3.r.'
+    end if
+
+    if (user_netcdf_grdout ) then
+      use_histwr = .true.
+    end if
+    if (use_restartnc) then
+      use_rstwr = .true.
     end if
 
     fnmpre = './'
