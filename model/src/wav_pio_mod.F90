@@ -36,7 +36,9 @@ contains
   !===============================================================================
 
   subroutine wav_pio_init(gcomp, rc)
-
+#ifdef CESMCOUPLED
+   use shr_pio_mod, only: shr_pio_getiosys, shr_pio_getiotype, shr_pio_getioformat
+#endif
     use ESMF         , only : ESMF_GridComp, ESMF_UtilStringUpperCase, ESMF_VM, ESMF_FAILURE
     use ESMF         , only : ESMF_SUCCESS, ESMF_LogWrite, ESMF_LOGMSG_ERROR
     use NUOPC        , only : NUOPC_CompAttributeGet
@@ -63,22 +65,25 @@ contains
     character(len=CS) :: subname='wav_pio_init'
     character(*), parameter :: u_FILE_u = &                  !< a character string for an ESMF log message
        __FILE__
-
     !-------------------------------------------------------------------------------
-
     rc = ESMF_SUCCESS
-    ! TODO: for now, hardwire  the io system
-    ! pio_iotype = PIO_IOTYPE_PNETCDF
-    ! nprocs = naproc
-     my_task = iaproc - 1
-     master_task = 0
-    ! istride = 4
-    ! basetask = 1
-    ! numiotasks = max((nprocs-basetask)/istride,1)
-    ! !numiotasks = 2
-    ! rearranger = PIO_REARR_BOX
-    !print '(a,5i8)','SETUP ',nprocs,iaproc,my_task,numiotasks,nseal_cpl
 
+#ifdef CESMCOUPLED
+    ! TODO: needs testing
+    wav_pio_subsystem => shr_pio_getiosys(inst_name)
+    pio_iotype =  shr_pio_getiotype(inst_name)
+    if ((pio_iotype==PIO_IOTYPE_NETCDF).or.(pio_iotype==PIO_IOTYPE_PNETCDF)) then
+      nmode0 = shr_pio_getioformat(inst_name)
+    else
+      nmode0 = 0
+    endif
+
+    call pio_seterrorhandling(wav_pio_subsystem, PIO_RETURN_ERROR)
+#else
+    my_task = iaproc - 1
+    master_task = 0
+
+    ! code lifted from CMEPS med_io_mod.F90
     ! query component specific PIO attributes
     ! pio_netcdf_format
     call NUOPC_CompAttributeGet(gcomp, name='pio_netcdf_format', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
@@ -252,7 +257,7 @@ contains
     call pio_init(my_task, MPI_COMM_WAVE, pio_numiotasks, master_task, pio_stride, pio_rearranger, &
          wav_pio_subsystem, base=pio_root)
     call pio_seterrorhandling(wav_pio_subsystem, PIO_RETURN_ERROR)
-
+#endif
   end subroutine wav_pio_init
 
   !===============================================================================

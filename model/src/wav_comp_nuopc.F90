@@ -744,20 +744,6 @@ contains
     end if
 
     !--------------------------------------------------------------------
-    ! Intialize the list of requested output variables for netCDF output
-    !--------------------------------------------------------------------
-
-    if (user_netcdf_grdout) then
-      call wavinit_grdout()
-    end if
-
-    !--------------------------------------------------------------------
-    ! initialize PIO
-    !--------------------------------------------------------------------
-
-    call wav_pio_init(gcomp, rc)
-
-    !--------------------------------------------------------------------
     ! Mesh initialization
     !--------------------------------------------------------------------
 
@@ -918,6 +904,20 @@ contains
       enddo
     end if
 #endif
+    !--------------------------------------------------------------------
+    ! Intialize the list of requested output variables for netCDF output
+    !--------------------------------------------------------------------
+
+    if (user_netcdf_grdout) then
+      call wavinit_grdout()
+    end if
+
+    !--------------------------------------------------------------------
+    ! initialize PIO
+    !--------------------------------------------------------------------
+
+    call wav_pio_init(gcomp, rc)
+
     if (root_task) call ufs_logtimer(nu_timer,time,start_tod,'InitializeRealize time: ',runtimelog,wtime)
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
@@ -1304,7 +1304,7 @@ contains
       if (.not. cesmcoupled) then
         ! Do not use attributes - write restarts at stride frequency (if use_restartnc=true, set in init_ufs)
         restart_option = 'nseconds'
-        restart_n = odat(38)
+        restart_n = odat(18)
         restart_ymd = -999
 
         call alarmInit(mclock, restart_alarm, restart_option, &
@@ -1744,7 +1744,7 @@ contains
       user_restfname = trim(casename)//'.ww3.r.'
     end if
 
-    if (user_netcdf_grdout ) then
+    if (user_netcdf_grdout) then
       use_histwr = .true.
     end if
     if (use_restartnc) then
