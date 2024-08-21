@@ -1043,12 +1043,12 @@ contains
     use wav_import_export , only : import_fields, export_fields
     use wav_shel_inp      , only : odat
     use w3odatmd          , only : rstwr, histwr
-    use wav_restart_mod   , only : write_restart, read_restart
+    !use wav_restart_mod   , only : write_restart, read_restart
     !debug
-    use w3timemd, only : set_user_timestring
-    use w3adatmd, only : nsealm
-    use w3wdatmd, only : va
-    use w3gdatmd, only : mapsta, nx, ny, nspec
+    !use w3timemd, only : set_user_timestring
+    !use w3adatmd, only : nsealm
+    !use w3wdatmd, only : va
+    !use w3gdatmd, only : mapsta, nx, ny, nspec
 
     ! arguments:
     type(ESMF_GridComp)  :: gcomp
@@ -1067,11 +1067,11 @@ contains
     character(ESMF_MAXSTR)  :: msgString
     character(len=*),parameter :: subname = '(wav_comp_nuopc:ModelAdvance) '
     ! debug
-    character(len=16) :: user_timestring    !YYYY-MM-DD-SSSSS
-    character(len=CL) :: fname
+    !character(len=16) :: user_timestring    !YYYY-MM-DD-SSSSS
+    !character(len=CL) :: fname
     ! for read/write tests
-    real :: va_local(1:nspec,0:nsealm)
-    integer :: mapsta_local(ny,nx)
+    !real :: va_local(1:nspec,0:nsealm)
+    !integer :: mapsta_local(ny,nx)
     !-------------------------------------------------------
 
     rc = ESMF_SUCCESS
@@ -1208,22 +1208,22 @@ contains
     call export_fields(gcomp, rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
-    if (rstwr) then
-      call set_user_timestring(timen,user_timestring)
-      fname = 'test.'//trim(user_timestring)//'.nc'
-      call ESMF_LogWrite('XXX write '//trim(fname), ESMF_LOGMSG_INFO)
-      va_local(:,:) = va(:,:)
-      mapsta_local(:,:) = mapsta(:,:)
-      call write_restart (trim(fname), va_local, mapsta_local)
-      !print *,'XXX ',iaproc,lbound(va,1),ubound(va,1),lbound(va,2),ubound(va,2)
-      !print *,'YYY ',iaproc,lbound(mapsta,1),ubound(mapsta,1),lbound(mapsta,2),ubound(mapsta,2)
-    end if
-    if (trim(user_timestring) .eq. '2021-03-22-28800')then
-      call read_restart (trim(fname), va_local, mapsta_local)
-      fname = 'test.rewrite.'//trim(user_timestring)//'.nc'
-      call ESMF_LogWrite('XXX write '//trim(fname), ESMF_LOGMSG_INFO)
-      call write_restart (trim(fname), va_local, mapsta_local)
-    end if
+    ! if (rstwr) then
+    !   call set_user_timestring(timen,user_timestring)
+    !   fname = 'test.'//trim(user_timestring)//'.nc'
+    !   call ESMF_LogWrite('XXX write '//trim(fname), ESMF_LOGMSG_INFO)
+    !   va_local(:,:) = va(:,:)
+    !   mapsta_local(:,:) = mapsta(:,:)
+    !   call write_restart (trim(fname), va_local, mapsta_local)
+    !   !print *,'XXX ',iaproc,lbound(va,1),ubound(va,1),lbound(va,2),ubound(va,2)
+    !   !print *,'YYY ',iaproc,lbound(mapsta,1),ubound(mapsta,1),lbound(mapsta,2),ubound(mapsta,2)
+    ! end if
+    ! if (trim(user_timestring) .eq. '2021-03-22-28800')then
+    !   call read_restart (trim(fname), va_local, mapsta_local)
+    !   fname = 'test.rewrite.'//trim(user_timestring)//'.nc'
+    !   call ESMF_LogWrite('XXX write '//trim(fname), ESMF_LOGMSG_INFO)
+    !   call write_restart (trim(fname), va_local, mapsta_local)
+    ! end if
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
     if (root_task) call ufs_logtimer(nu_timer,time,tod,'ModelAdvance time: ',runtimelog,wtime)

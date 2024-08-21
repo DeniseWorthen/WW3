@@ -491,9 +491,11 @@ CONTAINS
 #ifdef W3_TIMINGS
     USE W3PARALL, only : PRINT_MY_TIME
 #endif
-    use w3iogoncmd_pio, only : w3iogonc_pio
-    use w3iogoncdmd   , only : w3iogoncd
-    use w3odatmd      , only : histwr, rstwr, user_netcdf_grdout
+    use wav_restart_mod , only : write_restart
+    use w3iogoncmd_pio  , only : w3iogonc_pio
+    use w3iogoncdmd     , only : w3iogoncd
+    use w3odatmd        , only : histwr, rstwr, user_netcdf_grdout, user_histfname
+    use w3timemd        , only : set_user_timestring
     !
 #ifdef W3_MPI
     INCLUDE "mpif.h"
@@ -616,6 +618,9 @@ CONTAINS
     logical :: do_wavefield_separation_output
     logical :: do_startall
     logical :: do_w3outg
+
+    character(len=16)  :: user_timestring    !YYYY-MM-DD-SSSSS
+    character(len=256) :: fname
 
     !/ ------------------------------------------------------------------- /
     ! 0.  Initializations
@@ -2494,34 +2499,36 @@ CONTAINS
 #endif
         !
 #ifdef W3_MPI
-        IF ( FLOUT(4) .AND. NRQRS.NE.0 ) THEN
-          IF ( DSEC21(TIME,TONEXT(:,4)).EQ.0. ) THEN
-            CALL MPI_STARTALL ( NRQRS, IRQRS , IERR_MPI )
-            FLGMPI(4) = .TRUE.
-            NRQMAX    = MAX ( NRQMAX , NRQRS )
+        if (.not. use_restartnc) then
+          IF ( FLOUT(4) .AND. NRQRS.NE.0 ) THEN
+            IF ( DSEC21(TIME,TONEXT(:,4)).EQ.0. ) THEN
+              CALL MPI_STARTALL ( NRQRS, IRQRS , IERR_MPI )
+              FLGMPI(4) = .TRUE.
+              NRQMAX    = MAX ( NRQMAX , NRQRS )
 #endif
 #ifdef W3_MPIT
-            WRITE (NDST,9043) '4 ', NRQRS, NRQMAX, NAPRST
+              WRITE (NDST,9043) '4 ', NRQRS, NRQMAX, NAPRST
 #endif
 #ifdef W3_MPI
+            END IF
           END IF
-        END IF
 #endif
         !
 #ifdef W3_MPI
-        IF ( FLOUT(8) .AND. NRQRS.NE.0 ) THEN
-          IF ( DSEC21(TIME,TONEXT(:,8)).EQ.0. ) THEN
-            CALL MPI_STARTALL ( NRQRS, IRQRS , IERR_MPI )
-            FLGMPI(8) = .TRUE.
-            NRQMAX    = MAX ( NRQMAX , NRQRS )
+          IF ( FLOUT(8) .AND. NRQRS.NE.0 ) THEN
+            IF ( DSEC21(TIME,TONEXT(:,8)).EQ.0. ) THEN
+              CALL MPI_STARTALL ( NRQRS, IRQRS , IERR_MPI )
+              FLGMPI(8) = .TRUE.
+              NRQMAX    = MAX ( NRQMAX , NRQRS )
 #endif
 #ifdef W3_MPIT
-            WRITE (NDST,9043) '8 ', NRQRS, NRQMAX, NAPRST
+              WRITE (NDST,9043) '8 ', NRQRS, NRQMAX, NAPRST
 #endif
 #ifdef W3_MPI
+            END IF
           END IF
-        END IF
 #endif
+        end if !not restartnc
         !
 #ifdef W3_MPI
         IF ( FLOUT(5) .AND. NRQBP.NE.0 ) THEN
@@ -2581,11 +2588,11 @@ CONTAINS
             end if
             do_point_output                = (j .eq. 2)
             do_track_output                = (j .eq. 3)
-            if (w3_cesmcoupled_flag) then
+            !if (w3_cesmcoupled_flag) then
               do_restart_output = (j .eq. 4) .and. rstwr
-            else
-              do_restart_output = (j .eq. 4)
-            end if
+            !else
+            !  do_restart_output = (j .eq. 4)
+            !end if
             do_wavefield_separation_output = (j .eq. 5)
             do_sf_output                   = (j .eq. 6)
             do_coupler_output              = (j .eq. 7)
@@ -2650,9 +2657,14 @@ CONTAINS
                 CALL W3IOTR ( NDS(11), NDS(12), VA, IMOD )
 
               ELSE IF ( do_restart_output ) THEN
-                CALL W3IORS ('HOT', NDS(6), XXX, IMOD, FLOUT(8) )
-                ITEST = RSTYPE
-
+                if (use_restartnc) then
+                  call set_user_timestring(tend,user_timestring)
+                  fname = trim(user_histfname)//trim(user_timestring)//'.nc'
+                  call write_restart(trim(fname), va, mapsta)
+                else
+                  CALL W3IORS ('HOT', NDS(6), XXX, IMOD, FLOUT(8) )
+                  ITEST = RSTYPE
+                end if
               ELSE IF ( do_wavefield_separation_output ) THEN
                 IF ( IAPROC .EQ. NAPBPT ) THEN
 #ifdef W3_MPI
