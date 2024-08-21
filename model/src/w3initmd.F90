@@ -445,6 +445,9 @@ CONTAINS
 #ifdef W3_UOST
     USE W3UOSTMD, ONLY: UOST_SETGRID
 #endif
+    use w3timemd,        only : set_user_timestring
+    use w3odatmd,        only : runtype, use_restartnc, user_restfname
+    use wav_restart_mod, only : read_restart
     !/
 #ifdef W3_MPI
     INCLUDE "mpif.h"
@@ -513,6 +516,8 @@ CONTAINS
     INTEGER                 :: IScal(1), IPROC
 #endif
     integer                 :: memunit
+    character(len=16)       :: user_timestring    !YYYY-MM-DD-SSSSS
+    character(len=1024)     :: fname
     !/
     !/ ------------------------------------------------------------------- /
     !
@@ -958,34 +963,47 @@ CONTAINS
 #ifdef W3_TIMINGS
     CALL PRINT_MY_TIME("Before W3IORS")
 #endif
-    CALL W3IORS ( 'READ', NDS(6), SIG(NK), IMOD)
+    if (use_restartnc) then
+      if (runtype == 'continue') then
+        !fill in filename
+        call set_user_timestring(time,user_timestring)
+        call read_restart(trim(fname), va, mapsta)
+      elseif (runtype == 'init_from_binary') then
+        !dosomething
+      else
+        print '(a,2i12)','XXX ',time
+        call read_restart('none', va, mapsta)
+        mapsta = maptst
+      end if
+    else
+      CALL W3IORS ( 'READ', NDS(6), SIG(NK), IMOD)
 #ifdef W3_TIMINGS
-    CALL PRINT_MY_TIME("After W3IORS")
+      CALL PRINT_MY_TIME("After W3IORS")
 #endif
-    call print_memcheck(memunit, 'memcheck_____:'//' WW3_INIT SECTION 3a')
+      call print_memcheck(memunit, 'memcheck_____:'//' WW3_INIT SECTION 3a')
 
 #ifdef W3_DEBUGCOH
-    CALL ALL_VA_INTEGRAL_PRINT(IMOD, "After W3IORS call", 1)
+      CALL ALL_VA_INTEGRAL_PRINT(IMOD, "After W3IORS call", 1)
 #endif
-    FLCOLD = RSTYPE.LE.1  .OR. RSTYPE.EQ.4
-    IF ( IAPROC .EQ. NAPLOG ) THEN
-      IF (RSTYPE.EQ.0) THEN
-        WRITE (NDSO,930) 'cold start (idealized).'
-      ELSE IF ( RSTYPE .EQ. 1 ) THEN
-        WRITE (NDSO,930) 'cold start (wind).'
-      ELSE IF ( RSTYPE .EQ. 4 ) THEN
-        WRITE (NDSO,930) 'cold start (calm).'
-      ELSE
-        WRITE (NDSO,930) 'full restart.'
+      FLCOLD = RSTYPE.LE.1  .OR. RSTYPE.EQ.4
+      IF ( IAPROC .EQ. NAPLOG ) THEN
+        IF (RSTYPE.EQ.0) THEN
+          WRITE (NDSO,930) 'cold start (idealized).'
+        ELSE IF ( RSTYPE .EQ. 1 ) THEN
+          WRITE (NDSO,930) 'cold start (wind).'
+        ELSE IF ( RSTYPE .EQ. 4 ) THEN
+          WRITE (NDSO,930) 'cold start (calm).'
+        ELSE
+          WRITE (NDSO,930) 'full restart.'
+        END IF
       END IF
-    END IF
 #ifdef W3_DEBUGCOH
-    CALL ALL_VA_INTEGRAL_PRINT(IMOD, "W3INIT, step 4.2", 1)
+      CALL ALL_VA_INTEGRAL_PRINT(IMOD, "W3INIT, step 4.2", 1)
 #endif
 #ifdef W3_TIMINGS
-    CALL PRINT_MY_TIME("After restart inits")
+      CALL PRINT_MY_TIME("After restart inits")
 #endif
-
+    end if ! if (use_restartnc)
     !
     ! 3.b Compare MAPSTA from grid and restart
     !
@@ -1147,7 +1165,7 @@ CONTAINS
           DTTST   = DSEC21 ( TIME , TOUT )
           IF ( ( J.NE.4 .AND. DTTST.LT.0. ) .OR.                  &
                ( J.EQ.4 .AND. DTTST.LE.0. ) ) THEN
-            CALL TICK21 ( TOUT, DTOUT(J) )
+             CALL TICK21 ( TOUT, DTOUT(J) )
           ELSE
             EXIT
           END IF

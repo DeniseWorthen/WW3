@@ -263,9 +263,6 @@ contains
   !===============================================================================
   subroutine wav_pio_initdecomp_2d(iodesc, use_int)
 
-    !debug
-    use w3odatmd, only : iaproc
-
     type(io_desc_t),           intent(out) :: iodesc
     logical        , optional, intent(in)  :: use_int
 

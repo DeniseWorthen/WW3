@@ -571,7 +571,7 @@ MODULE W3ODATMD
                                                      !! if true => write history file (snapshot)
   logical            :: rstwr = .false.              !<@public logical to trigger restart write
                                                      !! if true => write restart
-  logical            :: user_netcdf_grdout = .false. !<@public logical flag to use netCDF for gridded
+  logical            :: use_historync = .false.      !<@public logical flag to use netCDF for gridded
                                                      !! field output
   logical            :: use_iogopio = .false.
   logical            :: use_restartnc = .false.

@@ -135,9 +135,10 @@ contains
   subroutine read_restart (fname, va_out, mapsta_out)
 
     use mpi
-    !use mpi_f08
+    !use mpi_f08  !? why doesn't this work
     use w3adatmd , only : mpi_comm_wave
-    use w3gdatmd , only : mapsf
+    use w3gdatmd , only : mapsf, sig
+    use w3wdatmd , only : tlev, tice, trho, tic1, tic5, wlv, asf, ice, fpis
 
     ! debug
     use w3odatmd , only : iaproc
@@ -157,14 +158,33 @@ contains
     ! debug
     integer :: ix, iy
 
-    ! open the netcdf file
-    inquire(file = trim(fname), exist=exists)
-    if (exists) then
-      pioid%fh = -1
-      ierr = pio_openfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), pio_write)
-      call handle_err(ierr, 'open file '//trim(fname))
+    ! open the netcdf file; should this be different routine?
+    if (trim(fname)  == 'none') then
+      !fill needed fields and return
+      tlev(1) = -1
+      tlev(2) =  0
+      tice(1) = -1
+      tice(2) =  0
+      trho(1) = -1
+      trho(2) =  0
+      tic1(1) = -1
+      tic1(2) =  0
+      tic5(1) = -1
+      tic5(2) =  0
+      wlv     =  0.
+      ice     =  0.
+      asf     =  1.
+      fpis    =  sig(nk)
+      return
     else
-      !error out
+      inquire(file = trim(fname), exist=exists)
+      if (exists) then
+        pioid%fh = -1
+        ierr = pio_openfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), pio_write)
+        call handle_err(ierr, 'open file '//trim(fname))
+      else
+        !error out
+      end if
     end if
 
     va_out = -999.0

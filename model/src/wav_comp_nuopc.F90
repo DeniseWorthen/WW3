@@ -45,7 +45,7 @@ module wav_comp_nuopc
   use wav_shr_mod           , only : merge_import, dbug_flag
   use w3odatmd              , only : nds, iaproc, napout
   use w3odatmd              , only : runtype, use_user_histname, user_histfname, use_user_restname, user_restfname
-  use w3odatmd              , only : user_netcdf_grdout, use_iogopio, use_restartnc
+  use w3odatmd              , only : use_historync, use_iogopio, use_restartnc
   use w3odatmd              , only : use_histwr, use_rstwr
   use w3odatmd              , only : time_origin, calendar_name, elapsed_secs
   use wav_shr_mod           , only : casename, multigrid, inst_suffix, inst_index, unstr_mesh
@@ -908,7 +908,7 @@ contains
     ! Intialize the list of requested output variables for netCDF output
     !--------------------------------------------------------------------
 
-    if (user_netcdf_grdout) then
+    if (use_historync) then
       call wavinit_grdout()
     end if
 
@@ -1417,7 +1417,7 @@ contains
         !user_histalarm = .true.
         !use_histwr = .true.
       else
-        ! If attribute is not present - write history output at stride frequency (if user_netcdf_grdout is true, set in init_ufs)
+        ! If attribute is not present - write history output at stride frequency (if use_historync is true, set in init_ufs)
         history_option = 'nseconds'
         history_n = odat(3)
         history_ymd = -999
@@ -1655,8 +1655,9 @@ contains
       user_histfname = trim(casename)//'.ww3.hi.'
     endif
 
-    ! netcdf gridded output is used for CESM
-    user_netcdf_grdout = .true.
+    ! netcdf is used for CESM history and restart
+    use_historync = .true.
+    use_restartnc = .true.
     ! restart and history alarms are set for CESM by default through config
     use_histwr = .true.
     use_rstwr = .true.
@@ -1705,6 +1706,7 @@ contains
     use w3odatmd     , only : fnmpre
     use w3gdatmd     , only : dtcfl, dtcfli, dtmax, dtmin
     use w3initmd     , only : w3init
+    use w3timemd     , only : set_user_timestring
     use wav_shel_inp , only : read_shel_config
     use wav_shel_inp , only : npts, odat, iprt, x, y, pnames, prtfrm
     use wav_shel_inp , only : flgrd, flgd, flgr2, flg2
@@ -1721,6 +1723,7 @@ contains
     logical           :: isPresent, isSet
     character(len=CL) :: cvalue
     integer           :: dt_in(4)
+    character(len=16) :: user_timestring    !YYYY-MM-DD-SSSSS
     character(len=*), parameter :: subname = '(wav_comp_nuopc:wavinit_ufs)'
     ! -------------------------------------------------------------------
 
@@ -1744,12 +1747,12 @@ contains
     write(logmsg,'(A,l)') trim(subname)//': Custom restart names in use ',use_user_restname
     call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
 
-    call NUOPC_CompAttributeGet(gcomp, name='gridded_netcdfout', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    call NUOPC_CompAttributeGet(gcomp, name='use_historync', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
     if (isPresent .and. isSet) then
-      user_netcdf_grdout=(trim(cvalue)=="true")
+      use_historync=(trim(cvalue)=="true")
     end if
-    write(logmsg,'(A,l)') trim(subname)//': Gridded netcdf output is requested ',user_netcdf_grdout
+    write(logmsg,'(A,l)') trim(subname)//': Gridded netcdf output is requested ',use_historync
     call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
 
     if (use_user_histname) then
@@ -1759,7 +1762,7 @@ contains
       user_restfname = trim(casename)//'.ww3.r.'
     end if
 
-    if (user_netcdf_grdout) then
+    if (use_historync) then
       use_histwr = .true.
     end if
     if (use_restartnc) then

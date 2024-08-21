@@ -494,7 +494,7 @@ CONTAINS
     use wav_restart_mod , only : write_restart
     use w3iogoncmd_pio  , only : w3iogonc_pio
     use w3iogoncdmd     , only : w3iogoncd
-    use w3odatmd        , only : histwr, rstwr, user_netcdf_grdout, user_histfname
+    use w3odatmd        , only : histwr, rstwr, use_historync, use_restartnc, user_restfname
     use w3timemd        , only : set_user_timestring
     !
 #ifdef W3_MPI
@@ -2610,7 +2610,7 @@ CONTAINS
                 if (use_iogopio) then
                   call w3iogonc_pio ( tend )
                 else
-                  if (user_netcdf_grdout) then
+                  if (use_historync) then
 #ifdef W3_MPI
                     IF ( FLGMPI(0) )CALL MPI_WAITALL( NRQGO, IRQGO, STATIO, IERR_MPI )
                     FLGMPI(0) = .FALSE.
@@ -2645,7 +2645,7 @@ CONTAINS
                         CALL W3IOGO( 'WRITE', NDS(7), ITEST, IMOD )
                       endif
                     end if
-                  end if ! user_netcdf_grdout
+                  end if ! use_historync
                 end if ! iogopio
               ELSE IF ( do_point_output ) THEN
                 IF ( IAPROC .EQ. NAPPNT ) THEN
@@ -2659,7 +2659,7 @@ CONTAINS
               ELSE IF ( do_restart_output ) THEN
                 if (use_restartnc) then
                   call set_user_timestring(tend,user_timestring)
-                  fname = trim(user_histfname)//trim(user_timestring)//'.nc'
+                  fname = trim(user_restfname)//trim(user_timestring)//'.nc'
                   call write_restart(trim(fname), va, mapsta)
                 else
                   CALL W3IORS ('HOT', NDS(6), XXX, IMOD, FLOUT(8) )
@@ -2786,7 +2786,7 @@ CONTAINS
         !
 #ifdef W3_MPI
         IF ( FLGMPI(0) ) CALL MPI_WAITALL ( NRQGO, IRQGO , STATIO, IERR_MPI )
-        if (user_netcdf_grdout) then
+        if (use_historync) then
           IF ( FLGMPI(1) .and. ( IAPROC .EQ. NAPFLD ) ) then
             CALL MPI_WAITALL ( NRQGO2, IRQGO2 , STATIO, IERR_MPI )
           end if
