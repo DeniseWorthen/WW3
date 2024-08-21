@@ -1217,13 +1217,12 @@ contains
       call write_restart (trim(fname), va_local, mapsta_local)
       !print *,'XXX ',iaproc,lbound(va,1),ubound(va,1),lbound(va,2),ubound(va,2)
       !print *,'YYY ',iaproc,lbound(mapsta,1),ubound(mapsta,1),lbound(mapsta,2),ubound(mapsta,2)
-
-      if (trim(user_timestring) .eq. '2021-03-22-32400')then
-        call read_restart (trim(fname), va_local, mapsta_local)
-        fname = 'test.rewrite.'//trim(user_timestring)//'.nc'
-        call ESMF_LogWrite('XXX write '//trim(fname), ESMF_LOGMSG_INFO)
-        call write_restart (trim(fname), va_local, mapsta_local)
-      end if
+    end if
+    if (trim(user_timestring) .eq. '2021-03-22-28800')then
+      call read_restart (trim(fname), va_local, mapsta_local)
+      fname = 'test.rewrite.'//trim(user_timestring)//'.nc'
+      call ESMF_LogWrite('XXX write '//trim(fname), ESMF_LOGMSG_INFO)
+      call write_restart (trim(fname), va_local, mapsta_local)
     end if
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)

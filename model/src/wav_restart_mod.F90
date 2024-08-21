@@ -34,7 +34,7 @@ contains
     !use w3wdatmd, only : va
 
     real            , intent(in) :: va(1:nspec,0:nsealm)
-    integer         , intent(in) :: mapsta(:,:)
+    integer         , intent(in) :: mapsta(ny,nx)
     character(len=*), intent(in) :: fname
 
     ! local variables
@@ -98,7 +98,7 @@ contains
       lmap(jsea) = mapsta(iy,ix)
     end do
 
-    ! write mapsta
+    ! write mapsta PE local mapsta
     vname = 'mapsta'
     ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
@@ -134,8 +134,13 @@ contains
 
   subroutine read_restart (fname, va_out, mapsta_out)
 
+    use mpi
+    !use mpi_f08
+    use w3adatmd , only : mpi_comm_wave
+    use w3gdatmd , only : mapsf
+
     ! debug
-    use w3odatmd, only : iaproc
+    use w3odatmd , only : iaproc
 
     real            , intent(out) :: va_out(1:nspec,0:nsealm)
     integer         , intent(out) :: mapsta_out(ny,nx)
@@ -148,7 +153,7 @@ contains
     integer           :: ierr
     logical           :: exists
     real              :: vatmp(1:nseal_cpl,1:nspec)
-    integer           :: mapsta_tmp(ny,nx)
+    integer           :: global_input(nsea), global_output(nsea)
     ! debug
     integer :: ix, iy
 
@@ -165,7 +170,7 @@ contains
     va_out = -999.0
     mapsta_out = -99
     ! initialize the decomp
-    call wav_pio_initdecomp(iodesc2dint, use_int=.true., isglobal=.true.)
+    call wav_pio_initdecomp(iodesc2dint, use_int=.true.)
     call wav_pio_initdecomp(nspec, iodesc3dk)
 
     vname = 'va'
@@ -197,11 +202,48 @@ contains
     call pio_read_darray(pioid, varid, iodesc2dint, mapsta_out, ierr)
     call handle_err(ierr, 'get variable '//trim(vname))
 
-    do ix = 1,nx
-      do iy = 1,ny
-        write(100+iaproc,*)iy,ix,mapsta_out(iy,ix)
-      end do
+    ! do jsea = 1,nseal_cpl
+    !   call init_get_isea(isea, jsea)
+    !   ix = mapsf(isea,1)
+    !   iy = mapsf(isea,2)
+    !   write(100+iaproc,*)jsea,isea,iy,ix,mapsta_out(iy,ix)
+    ! end do
+
+    ! fill global array with PE local values
+    global_input = 0
+    global_output = 0
+    do jsea = 1,nseal_cpl
+      call init_get_isea(isea, jsea)
+      ix = mapsf(isea,1)
+      iy = mapsf(isea,2)
+      if (mapsta_out(iy,ix) .ne. nf90_fill_int) then
+        global_input(isea) = mapsta_out(iy,ix)
+      end if
+      !write(200+iaproc,*)jsea,isea,iy,ix,mapsta_out(iy,ix),global_input(isea)
     end do
+
+    ! do isea = 1,nsea
+    !   ix = mapsf(isea,1)
+    !   iy = mapsf(isea,2)
+    !   write(300+iaproc,*)isea,iy,ix,global_input(isea)
+    ! end do
+
+    ! reduce across all PEs
+    call MPI_AllReduce(global_input, global_output, nsea, MPI_INTEGER, MPI_SUM, MPI_COMM_WAVE, ierr)
+
+    ! fill global array on each PE
+    mapsta_out = 0
+    do isea = 1,nsea
+      ix = mapsf(isea,1)
+      iy = mapsf(isea,2)
+      mapsta_out(iy,ix) = global_output(isea)
+    end do
+
+    ! do isea = 1,nsea
+    !   ix = mapsf(isea,1)
+    !   iy = mapsf(isea,2)
+    !   write(400+iaproc,*)isea,iy,ix,mapsta_out(iy,ix)
+    ! end do
 
     call pio_freedecomp(pioid, iodesc2dint)
     call pio_freedecomp(pioid, iodesc3dk)
