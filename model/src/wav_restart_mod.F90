@@ -125,7 +125,7 @@ contains
     call pio_write_darray(pioid, varid, iodesc3dk, va_out, ierr)
     call handle_err(ierr, 'put variable '//trim(vname))
 
-    !call pio_syncfile(pioid)
+    call pio_syncfile(pioid)
     call pio_freedecomp(pioid, iodesc2dint)
     call pio_freedecomp(pioid, iodesc3dk)
     call pio_closefile(pioid)
@@ -138,7 +138,7 @@ contains
     !use mpi_f08  !? why doesn't this work
     use w3adatmd , only : mpi_comm_wave
     use w3gdatmd , only : mapsf, sig
-    use w3wdatmd , only : tlev, tice, trho, tic1, tic5, wlv, asf, ice, fpis
+    use w3wdatmd , only : time, tlev, tice, trho, tic1, tic5, wlv, asf, ice, fpis
 
     ! debug
     use w3odatmd , only : iaproc
@@ -177,16 +177,22 @@ contains
       fpis    =  sig(nk)
       return
     else
-      inquire(file = trim(fname), exist=exists)
+      ! all times are restart times
+      tlev = time
+      tice = time
+      trho = time
+      tic1 = time
+      tic5 = time
+      inquire(file=trim(fname), exist=exists)
       if (exists) then
         pioid%fh = -1
-        ierr = pio_openfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), pio_write)
+        ierr = pio_openfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), pio_nowrite)
         call handle_err(ierr, 'open file '//trim(fname))
       else
         !error out
       end if
     end if
-
+    !debug
     va_out = -999.0
     mapsta_out = -99
     ! initialize the decomp
@@ -207,7 +213,6 @@ contains
         end do
       end do
     end do
-
     ! mapsta is global
     ! lmap(:) = 0
     ! do jsea = 1,nseal_cpl
@@ -221,7 +226,6 @@ contains
     ierr = pio_inq_varid(pioid, trim(vname), varid)
     call pio_read_darray(pioid, varid, iodesc2dint, mapsta_out, ierr)
     call handle_err(ierr, 'get variable '//trim(vname))
-
     ! do jsea = 1,nseal_cpl
     !   call init_get_isea(isea, jsea)
     !   ix = mapsf(isea,1)
@@ -265,6 +269,7 @@ contains
     !   write(400+iaproc,*)isea,iy,ix,mapsta_out(iy,ix)
     ! end do
 
+    call pio_syncfile(pioid)
     call pio_freedecomp(pioid, iodesc2dint)
     call pio_freedecomp(pioid, iodesc3dk)
     call pio_closefile(pioid)

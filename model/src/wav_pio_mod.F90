@@ -35,7 +35,7 @@ module wav_pio_mod
 contains
   !===============================================================================
 
-  subroutine wav_pio_init(gcomp, rc)
+  subroutine wav_pio_init(gcomp, mpi_comm, rc)
 #ifdef CESMCOUPLED
    use shr_pio_mod, only: shr_pio_getiosys, shr_pio_getiotype, shr_pio_getioformat
 #endif
@@ -43,12 +43,12 @@ contains
     use ESMF         , only : ESMF_SUCCESS, ESMF_LogWrite, ESMF_LOGMSG_ERROR
     use NUOPC        , only : NUOPC_CompAttributeGet
     use wav_kind_mod , only : CL=>SHR_KIND_CL, CS=>SHR_KIND_CS
-    use w3adatmd     , only : mpi_comm_wave
     use w3odatmd     , only : naproc, iaproc
     use wav_shr_mod  , only : chkerr
 
     ! input/output arguments
     type(ESMF_GridComp), intent(in)    :: gcomp
+    integer            , intent(in)    :: mpi_comm
     integer            , intent(out)   :: rc
 
     integer           :: pio_ioformat
@@ -254,7 +254,7 @@ contains
       write(logunit,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
     end if
 
-    call pio_init(my_task, MPI_COMM_WAVE, pio_numiotasks, master_task, pio_stride, pio_rearranger, &
+    call pio_init(my_task, mpi_comm, pio_numiotasks, master_task, pio_stride, pio_rearranger, &
          wav_pio_subsystem, base=pio_root)
     call pio_seterrorhandling(wav_pio_subsystem, PIO_RETURN_ERROR)
 #endif

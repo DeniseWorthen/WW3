@@ -621,6 +621,8 @@ CONTAINS
 
     character(len=16)  :: user_timestring    !YYYY-MM-DD-SSSSS
     character(len=256) :: fname
+    ! debug
+    integer :: i
 
     !/ ------------------------------------------------------------------- /
     ! 0.  Initializations
@@ -2489,79 +2491,80 @@ CONTAINS
             CALL MPI_STARTALL ( NRQPO, IRQPO1, IERR_MPI )
             FLGMPI(2) = .TRUE.
             NRQMAX    = MAX ( NRQMAX , NRQPO )
-#endif
+!#endif
 #ifdef W3_MPIT
             WRITE (NDST,9043) '2 ', NRQPO, NRQMAX, NAPPNT
 #endif
-#ifdef W3_MPI
+!#ifdef W3_MPI
           END IF
         END IF
-#endif
+!#endif
         !
-#ifdef W3_MPI
+!#ifdef W3_MPI
         if (.not. use_restartnc) then
           IF ( FLOUT(4) .AND. NRQRS.NE.0 ) THEN
             IF ( DSEC21(TIME,TONEXT(:,4)).EQ.0. ) THEN
               CALL MPI_STARTALL ( NRQRS, IRQRS , IERR_MPI )
               FLGMPI(4) = .TRUE.
               NRQMAX    = MAX ( NRQMAX , NRQRS )
-#endif
+!#endif
 #ifdef W3_MPIT
               WRITE (NDST,9043) '4 ', NRQRS, NRQMAX, NAPRST
 #endif
-#ifdef W3_MPI
+!#ifdef W3_MPI
             END IF
           END IF
-#endif
+!#endif
         !
-#ifdef W3_MPI
+!#ifdef W3_MPI
           IF ( FLOUT(8) .AND. NRQRS.NE.0 ) THEN
             IF ( DSEC21(TIME,TONEXT(:,8)).EQ.0. ) THEN
               CALL MPI_STARTALL ( NRQRS, IRQRS , IERR_MPI )
               FLGMPI(8) = .TRUE.
               NRQMAX    = MAX ( NRQMAX , NRQRS )
-#endif
+!#endif
 #ifdef W3_MPIT
               WRITE (NDST,9043) '8 ', NRQRS, NRQMAX, NAPRST
 #endif
-#ifdef W3_MPI
+!#ifdef W3_MPI
             END IF
           END IF
-#endif
+!#endif
         end if !not restartnc
         !
-#ifdef W3_MPI
+!#ifdef W3_MPI
         IF ( FLOUT(5) .AND. NRQBP.NE.0 ) THEN
           IF ( DSEC21(TIME,TONEXT(:,5)).EQ.0. ) THEN
             CALL MPI_STARTALL ( NRQBP , IRQBP1, IERR_MPI )
             FLGMPI(5) = .TRUE.
             NRQMAX    = MAX ( NRQMAX , NRQBP )
-#endif
+!#endif
 #ifdef W3_MPIT
             WRITE (NDST,9043) '5a', NRQBP, NRQMAX, NAPBPT
 #endif
-#ifdef W3_MPI
+!#ifdef W3_MPI
           END IF
         END IF
-#endif
+!#endif
         !
-#ifdef W3_MPI
+!#ifdef W3_MPI
         IF ( FLOUT(5) .AND. NRQBP2.NE.0 .AND. IAPROC.EQ.NAPBPT) THEN
           IF ( DSEC21(TIME,TONEXT(:,5)).EQ.0. ) THEN
             CALL MPI_STARTALL (NRQBP2,IRQBP2,IERR_MPI)
             NRQMAX    = MAX ( NRQMAX , NRQBP2 )
-#endif
+!#endif
 #ifdef W3_MPIT
             WRITE (NDST,9043) '5b', NRQBP2, NRQMAX, NAPBPT
 #endif
-#ifdef W3_MPI
+!#ifdef W3_MPI
           END IF
         END IF
-#endif
+!#endif
         !
-#ifdef W3_MPI
+!#ifdef W3_MPI
         IF ( NRQMAX .NE. 0 ) ALLOCATE ( STATIO(MPI_STATUS_SIZE,NRQMAX) )
 #endif
+        print '(a,8L)','BBB0 ',(flgmpi(i),i=1,8)
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP 2')
         !
         ! 4.c Reset next output time

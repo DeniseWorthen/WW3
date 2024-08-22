@@ -561,6 +561,7 @@ MODULE W3ODATMD
   character(len=8)   :: runtype = ''                 !< @public the run type (startup,branch,continue)
   character(len=256) :: initfile = ''                !< @public name of wave initial condition file
                                                      !! if runtype is startup or branch run, then initfile is used
+
   logical            :: use_user_histname = .false.  !<@public logical flag for user set history filenames
   logical            :: use_user_restname = .false.  !<@public logical flag for user set restart filenames
   character(len=512) :: user_histfname = ''          !<@public user history filename prefix, timestring

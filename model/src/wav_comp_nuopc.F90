@@ -567,7 +567,6 @@ contains
     naperr = 1
     if (iaproc == napout) root_task = .true.
 #endif
-
     !--------------------------------------------------------------------
     ! IO set-up
     !--------------------------------------------------------------------
@@ -692,6 +691,12 @@ contains
 #endif
 
     !--------------------------------------------------------------------
+    ! initialize PIO
+    !--------------------------------------------------------------------
+
+    call wav_pio_init(gcomp, mpi_comm, rc)
+
+    !--------------------------------------------------------------------
     ! Wave model initialization
     !--------------------------------------------------------------------
 
@@ -729,7 +734,6 @@ contains
     call waveinit_cesm(gcomp, ntrace, mpi_comm, mds, rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 #endif
-
     ! call mpi_barrier ( mpi_comm, ierr )
     if ( root_task ) then
       inquire(unit=nds(1), name=logfile)
@@ -912,12 +916,6 @@ contains
       call wavinit_grdout()
     end if
 
-    !--------------------------------------------------------------------
-    ! initialize PIO
-    !--------------------------------------------------------------------
-
-    call wav_pio_init(gcomp, rc)
-
     if (root_task) call ufs_logtimer(nu_timer,time,start_tod,'InitializeRealize time: ',runtimelog,wtime)
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
@@ -1043,6 +1041,7 @@ contains
     use wav_import_export , only : import_fields, export_fields
     use wav_shel_inp      , only : odat
     use w3odatmd          , only : rstwr, histwr
+    !
     !use wav_restart_mod   , only : write_restart, read_restart
     !debug
     !use w3timemd, only : set_user_timestring
@@ -1218,12 +1217,17 @@ contains
     !   !print *,'XXX ',iaproc,lbound(va,1),ubound(va,1),lbound(va,2),ubound(va,2)
     !   !print *,'YYY ',iaproc,lbound(mapsta,1),ubound(mapsta,1),lbound(mapsta,2),ubound(mapsta,2)
     ! end if
-    ! if (trim(user_timestring) .eq. '2021-03-22-28800')then
-    !   call read_restart (trim(fname), va_local, mapsta_local)
-    !   fname = 'test.rewrite.'//trim(user_timestring)//'.nc'
-    !   call ESMF_LogWrite('XXX write '//trim(fname), ESMF_LOGMSG_INFO)
-    !   call write_restart (trim(fname), va_local, mapsta_local)
-    ! end if
+
+    ! !call set_user_timestring(time,user_timestring)
+    ! !if (trim(user_timestring) .eq. '2021-03-22-64800')then
+    ! !fname = trim(user_restfname)//trim(user_timestring)//'.nc'
+    ! !fname = 'test.'//trim(user_timestring)//'.nc'
+    ! fname = 'ufs.cpld.ww3.r.2021-03-22-64800.nc'
+    ! call read_restart (trim(fname), va_local, mapsta_local)
+    ! fname = 'test.rewrite.ufs.cpld.ww3.r.2021-03-22-64800.nc'
+    ! call ESMF_LogWrite('YYY write '//trim(fname), ESMF_LOGMSG_INFO)
+    ! call write_restart (trim(fname), va_local, mapsta_local)
+    !end if
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
     if (root_task) call ufs_logtimer(nu_timer,time,tod,'ModelAdvance time: ',runtimelog,wtime)
