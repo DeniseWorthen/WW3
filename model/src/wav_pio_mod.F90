@@ -7,12 +7,14 @@
 
 module wav_pio_mod
 
-  use w3gdatmd          , only : nk, nx, ny, mapsf
-  use w3parall          , only : init_get_isea
-  use wav_import_export , only : nseal_cpl
+  use w3gdatmd    , only : nk, nx, ny, mapsf
+  use w3parall    , only : init_get_isea
+  use w3gdatmd    , only : nseal
   use pio
   use netcdf
-
+#ifdef W3_PDLIB
+  use yowNodepool , only : ng
+#endif
   implicit none
 
   private
@@ -267,10 +269,14 @@ contains
     logical        , optional, intent(in)  :: use_int
 
     ! local variables
-    integer          :: n, isea, jsea, ix, iy
+    integer          :: n, isea, jsea, ix, iy, nseal_cpl
     integer, pointer :: dof2d(:)
     logical          :: luse_int
-
+#ifdef W3_PDLIB
+    nseal_cpl = nseal - ng
+#else
+    nseal_cpl = nseal
+#endif
     luse_int = .false.
     if (present(use_int)) luse_int = use_int
 
@@ -290,6 +296,7 @@ contains
     else
       call pio_initdecomp(wav_pio_subsystem, PIO_REAL, (/nx,ny/), dof2d, iodesc)
     end if
+    deallocate(dof2d)
 
   end subroutine wav_pio_initdecomp_2d
 
@@ -300,9 +307,13 @@ contains
     type(io_desc_t) , intent(out) :: iodesc
 
     ! local variables
-    integer          :: n, k, isea, jsea, ix, iy
+    integer          :: n, k, isea, jsea, ix, iy, nseal_cpl
     integer, pointer :: dof3d(:)
-
+#ifdef W3_PDLIB
+    nseal_cpl = nseal - ng
+#else
+    nseal_cpl = nseal
+#endif
     allocate(dof3d(nz*nseal_cpl))
 
     dof3d = 0
@@ -316,9 +327,10 @@ contains
         dof3d(n) = ((iy-1)*nx + ix) + (k-1)*nx*ny ! local index : global index
       end do
     end do
-    call pio_initdecomp(wav_pio_subsystem, PIO_REAL, (/nx,ny,nz/), dof3d, iodesc)
 
+    call pio_initdecomp(wav_pio_subsystem, PIO_REAL, (/nx,ny,nz/), dof3d, iodesc)
     deallocate(dof3d)
+
   end subroutine wav_pio_initdecomp_3d
 
   !===============================================================================

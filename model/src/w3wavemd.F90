@@ -2564,7 +2564,6 @@ CONTAINS
 !#ifdef W3_MPI
         IF ( NRQMAX .NE. 0 ) ALLOCATE ( STATIO(MPI_STATUS_SIZE,NRQMAX) )
 #endif
-        print '(a,8L)','BBB0 ',(flgmpi(i),i=1,8)
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP 2')
         !
         ! 4.c Reset next output time

@@ -1,11 +1,13 @@
 module wav_restart_mod
 
-  use w3parall          , only : init_get_isea
-  use w3adatmd          , only : mpi_comm_wave, nsealm
-  use w3gdatmd          , only : nth, nk, nx, ny, nspec, nseal, nsea
-  use wav_import_export , only : nseal_cpl
-  use wav_pio_mod       , only : pio_iotype, wav_pio_subsystem
-  use wav_pio_mod       , only : handle_err, wav_pio_initdecomp
+  use w3parall      , only : init_get_isea
+  use w3adatmd      , only : mpi_comm_wave, nsealm
+  use w3gdatmd      , only : nth, nk, nx, ny, nspec, nseal, nsea
+  use wav_pio_mod   , only : pio_iotype, wav_pio_subsystem
+  use wav_pio_mod   , only : handle_err, wav_pio_initdecomp
+#ifdef W3_PDLIB
+    use yowNodepool , only : ng
+#endif
   use pio
   use netcdf
 
@@ -38,13 +40,20 @@ contains
     character(len=*), intent(in) :: fname
 
     ! local variables
-    character(len=12) :: vname
-    integer           :: timid, xtid, ytid, ztid, ierr
-    integer           :: ik, ith, ix, iy, kk
-    integer           :: isea, jsea
-    integer           :: dimid(4)
-    integer           :: lmap(1:nseal_cpl)
-    real              :: va_out(1:nseal_cpl,1:nspec)
+    character(len=12)    :: vname
+    integer              :: timid, xtid, ytid, ztid, ierr
+    integer              :: ik, ith, ix, iy, kk, nseal_cpl
+    integer              :: isea, jsea
+    integer              :: dimid(4)
+    integer, allocatable :: lmap(:)
+    real, allocatable    :: va_out(:,:)
+#ifdef W3_PDLIB
+    nseal_cpl = nseal - ng
+#else
+    nseal_cpl = nseal
+#endif
+    allocate(lmap(1:nseal_cpl))
+    allocate(va_out(1:nseal_cpl,1:nspec))
 
     ! create the netcdf file
     pioid%fh = -1
@@ -136,10 +145,9 @@ contains
 
     use mpi
     !use mpi_f08  !? why doesn't this work
-    use w3adatmd , only : mpi_comm_wave
-    use w3gdatmd , only : mapsf, sig
-    use w3wdatmd , only : time, tlev, tice, trho, tic1, tic5, wlv, asf, ice, fpis
-
+    use w3adatmd    , only : mpi_comm_wave
+    use w3gdatmd    , only : mapsf, sig, nseal
+    use w3wdatmd    , only : time, tlev, tice, trho, tic1, tic5, wlv, asf, ice, fpis
     ! debug
     use w3odatmd , only : iaproc
 
@@ -148,15 +156,26 @@ contains
     character(len=*), intent(in)  :: fname
 
     ! local variables
-    integer           :: ik, ith, kk
+    integer           :: ik, ith, kk, nseal_cpl
     integer           :: isea, jsea
     character(len=12) :: vname
     integer           :: ierr
     logical           :: exists
-    real              :: vatmp(1:nseal_cpl,1:nspec)
+    real, allocatable :: vatmp(:,:)
     integer           :: global_input(nsea), global_output(nsea)
+    integer           :: ifill
+    real              :: rfill
     ! debug
     integer :: ix, iy
+
+    !write va_out(jsea,kk) = va(kk,jsea)
+#ifdef W3_PDLIB
+    nseal_cpl = nseal - ng
+#else
+    nseal_cpl = nseal
+#endif
+    allocate(vatmp(1:nseal_cpl,1:nspec))
+    vatmp(:,:) = nf90_fill_float
 
     ! open the netcdf file; should this be different routine?
     if (trim(fname)  == 'none') then
@@ -185,24 +204,27 @@ contains
       tic5 = time
       inquire(file=trim(fname), exist=exists)
       if (exists) then
-        pioid%fh = -1
         ierr = pio_openfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), pio_nowrite)
         call handle_err(ierr, 'open file '//trim(fname))
       else
         !error out
       end if
     end if
+
     !debug
-    va_out = -999.0
-    mapsta_out = -99
+    va_out = nf90_fill_float
+    mapsta_out = nf90_fill_int
     ! initialize the decomp
-    call wav_pio_initdecomp(iodesc2dint, use_int=.true.)
+    call wav_pio_initdecomp(iodesc2dint,  use_int=.true.)
     call wav_pio_initdecomp(nspec, iodesc3dk)
 
     vname = 'va'
     ierr = pio_inq_varid(pioid, trim(vname), varid)
+    call handle_err(ierr, 'inquire variable '//trim(vname))
     call pio_read_darray(pioid, varid, iodesc3dk, vatmp, ierr)
     call handle_err(ierr, 'get variable '//trim(vname))
+    ierr = pio_get_att(pioid, varid, "_FillValue", rfill)
+    call handle_err(ierr, 'get variable _FillValue'//trim(vname))
 
     do jsea = 1,nseal_cpl
       kk = 0
@@ -213,6 +235,9 @@ contains
         end do
       end do
     end do
+    if (trim(fname) .eq. 'ufs.cpld.ww3.r.2021-03-22-64800.nc') then
+      print *,'XXX ',minval(va_out),maxval(va_out)
+    end if
     ! mapsta is global
     ! lmap(:) = 0
     ! do jsea = 1,nseal_cpl
@@ -224,8 +249,16 @@ contains
 
     vname = 'mapsta'
     ierr = pio_inq_varid(pioid, trim(vname), varid)
+    call handle_err(ierr, 'inquire variable '//trim(vname))
+    !call pio_setframe(pioid, varid, 1)
     call pio_read_darray(pioid, varid, iodesc2dint, mapsta_out, ierr)
     call handle_err(ierr, 'get variable '//trim(vname))
+    ierr = pio_get_att(pioid, varid, "_FillValue", ifill)
+    call handle_err(ierr, 'get variable _FillValue'//trim(vname))
+    if (trim(fname) .eq. 'ufs.cpld.ww3.r.2021-03-22-64800.nc') then
+      print *,'YYY ',minval(mapsta_out),maxval(mapsta_out)
+    end if
+
     ! do jsea = 1,nseal_cpl
     !   call init_get_isea(isea, jsea)
     !   ix = mapsf(isea,1)
@@ -243,14 +276,18 @@ contains
       if (mapsta_out(iy,ix) .ne. nf90_fill_int) then
         global_input(isea) = mapsta_out(iy,ix)
       end if
-      !write(200+iaproc,*)jsea,isea,iy,ix,mapsta_out(iy,ix),global_input(isea)
+      !if (trim(fname) .eq. 'ufs.cpld.ww3.r.2021-03-22-64800.nc') then
+      !  write(200+iaproc,*)jsea,isea,iy,ix,mapsta_out(iy,ix),global_input(isea)
+      !end if
     end do
 
-    ! do isea = 1,nsea
-    !   ix = mapsf(isea,1)
-    !   iy = mapsf(isea,2)
-    !   write(300+iaproc,*)isea,iy,ix,global_input(isea)
-    ! end do
+    ! if (trim(fname) .eq. 'ufs.cpld.ww3.r.2021-03-22-64800.nc') then
+    !   do isea = 1,nsea
+    !     ix = mapsf(isea,1)
+    !     iy = mapsf(isea,2)
+    !     write(300+iaproc,*)isea,iy,ix,global_input(isea)
+    !   end do
+    ! end if
 
     ! reduce across all PEs
     call MPI_AllReduce(global_input, global_output, nsea, MPI_INTEGER, MPI_SUM, MPI_COMM_WAVE, ierr)
@@ -263,11 +300,13 @@ contains
       mapsta_out(iy,ix) = global_output(isea)
     end do
 
-    ! do isea = 1,nsea
-    !   ix = mapsf(isea,1)
-    !   iy = mapsf(isea,2)
-    !   write(400+iaproc,*)isea,iy,ix,mapsta_out(iy,ix)
-    ! end do
+    if (trim(fname) .eq. 'ufs.cpld.ww3.r.2021-03-22-64800.nc') then
+      do isea = 1,nsea
+        ix = mapsf(isea,1)
+        iy = mapsf(isea,2)
+        write(400+iaproc,*)isea,iy,ix,mapsta_out(iy,ix)
+      end do
+    end if
 
     call pio_syncfile(pioid)
     call pio_freedecomp(pioid, iodesc2dint)

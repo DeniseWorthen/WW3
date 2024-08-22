@@ -968,7 +968,6 @@ CONTAINS
         call set_user_timestring(time,user_timestring)
         fname = trim(user_restfname)//trim(user_timestring)//'.nc'
         call read_restart(trim(fname), va, mapsta)
-        print *,'XXX ',minval(mapsta),maxval(mapsta)
       elseif (runtype == 'init_from_binary') then
         !dosomething
       else
