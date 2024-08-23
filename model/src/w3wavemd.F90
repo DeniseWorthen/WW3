@@ -2662,7 +2662,7 @@ CONTAINS
                 if (use_restartnc) then
                   call set_user_timestring(tend,user_timestring)
                   fname = trim(user_restfname)//trim(user_timestring)//'.nc'
-                  call write_restart(trim(fname), va, mapsta)
+                  call write_restart(trim(fname), va, mapsta+8*mapst2)
                 else
                   CALL W3IORS ('HOT', NDS(6), XXX, IMOD, FLOUT(8) )
                   ITEST = RSTYPE

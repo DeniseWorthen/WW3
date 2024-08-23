@@ -27,7 +27,7 @@ module wav_restart_mod
 contains
   !===============================================================================
 
-  subroutine write_restart (fname, va, mapsta)
+  subroutine write_restart (fname, va_in, map_in)
 
     use w3gdatmd , only : mapsf
     use w3odatmd , only : time_origin, calendar_name, elapsed_secs
@@ -35,8 +35,8 @@ contains
     ! to test a read/write cycle w/o changing the internal values
     !use w3wdatmd, only : va
 
-    real            , intent(in) :: va(1:nspec,0:nsealm)
-    integer         , intent(in) :: mapsta(ny,nx)
+    real            , intent(in) :: va_in(1:nspec,0:nsealm)
+    integer         , intent(in) :: map_in(ny,nx)
     character(len=*), intent(in) :: fname
 
     ! local variables
@@ -45,15 +45,15 @@ contains
     integer              :: ik, ith, ix, iy, kk, nseal_cpl
     integer              :: isea, jsea
     integer              :: dimid(4)
-    integer, allocatable :: lmap(:)
-    real, allocatable    :: va_out(:,:)
+    integer, allocatable :: locmap(:)
+    real, allocatable    :: locva(:,:)
 #ifdef W3_PDLIB
     nseal_cpl = nseal - ng
 #else
     nseal_cpl = nseal
 #endif
-    allocate(lmap(1:nseal_cpl))
-    allocate(va_out(1:nseal_cpl,1:nspec))
+    allocate(locmap(1:nseal_cpl))
+    allocate(locva(1:nseal_cpl,1:nspec))
 
     ! create the netcdf file
     pioid%fh = -1
@@ -78,11 +78,13 @@ contains
     ierr = pio_def_var(pioid, trim(vname), PIO_REAL, dimid, varid)
     call handle_err(ierr, 'define variable '//trim(vname))
     ierr = pio_put_att(pioid, varid, '_FillValue', nf90_fill_float)
+    call handle_err(ierr, 'define _FillValue '//trim(vname))
 
     vname = 'mapsta'
     ierr = pio_def_var(pioid, trim(vname), PIO_INT, (/xtid, ytid, timid/), varid)
     call handle_err(ierr, 'define variable '//trim(vname))
     ierr = pio_put_att(pioid, varid, '_FillValue', nf90_fill_int)
+    call handle_err(ierr, 'define _FillValue '//trim(vname))
 
     ! end variable definitions
     ierr = pio_enddef(pioid)
@@ -99,30 +101,30 @@ contains
     call handle_err(ierr, 'put time')
 
     ! mapsta is global
-    lmap(:) = 0
+    locmap(:) = 0
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
       ix = mapsf(isea,1)
       iy = mapsf(isea,2)
-      lmap(jsea) = mapsta(iy,ix)
+      locmap(jsea) = map_in(iy,ix)
     end do
 
-    ! write mapsta PE local mapsta
+    ! write PE local map
     vname = 'mapsta'
     ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
     call pio_setframe(pioid, varid, int(1,kind=Pio_Offset_Kind))
-    call pio_write_darray(pioid, varid, iodesc2dint, lmap, ierr)
+    call pio_write_darray(pioid, varid, iodesc2dint, locmap, ierr)
     call handle_err(ierr, 'put variable '//trim(vname))
 
     ! write va
-    va_out(:,:) = 0.0
+    locva(:,:) = 0.0
     do jsea = 1,nseal_cpl
       kk = 0
       do ik = 1,nk
         do ith = 1,nth
           kk = kk + 1
-          va_out(jsea,kk) = va(kk,jsea)
+          locva(jsea,kk) = va_in(kk,jsea)
         end do
       end do
     end do
@@ -131,7 +133,7 @@ contains
     ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
     call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
-    call pio_write_darray(pioid, varid, iodesc3dk, va_out, ierr)
+    call pio_write_darray(pioid, varid, iodesc3dk, locva, ierr)
     call handle_err(ierr, 'put variable '//trim(vname))
 
     call pio_syncfile(pioid)
@@ -141,30 +143,31 @@ contains
 
   end subroutine write_restart
 
-  subroutine read_restart (fname, va_out, mapsta_out)
+  subroutine read_restart (fname, va_out, map_out)
 
     use mpi
     !use mpi_f08  !? why doesn't this work
     use w3adatmd    , only : mpi_comm_wave
-    use w3gdatmd    , only : mapsf, sig, nseal
+    use w3gdatmd    , only : mapsf, mapst2, sig, nseal
     use w3wdatmd    , only : time, tlev, tice, trho, tic1, tic5, wlv, asf, ice, fpis
     ! debug
     use w3odatmd , only : iaproc
 
     real            , intent(out) :: va_out(1:nspec,0:nsealm)
-    integer         , intent(out) :: mapsta_out(ny,nx)
+    integer         , intent(out) :: map_out(ny,nx)
     character(len=*), intent(in)  :: fname
 
     ! local variables
-    integer           :: ik, ith, kk, nseal_cpl
-    integer           :: isea, jsea
-    character(len=12) :: vname
-    integer           :: ierr
-    logical           :: exists
-    real, allocatable :: vatmp(:,:)
-    integer           :: global_input(nsea), global_output(nsea)
-    integer           :: ifill
-    real              :: rfill
+    integer              :: ik, ith, kk, nseal_cpl
+    integer              :: isea, jsea
+    character(len=12)    :: vname
+    integer              :: ierr
+    logical              :: exists
+    integer              :: global_input(nsea), global_output(nsea)
+    integer              :: ifill
+    real                 :: rfill
+    real, allocatable    :: valoc(:,:)
+    integer, allocatable :: maploc(:,:)
     ! debug
     integer :: ix, iy
 
@@ -174,8 +177,9 @@ contains
 #else
     nseal_cpl = nseal
 #endif
-    allocate(vatmp(1:nseal_cpl,1:nspec))
-    vatmp(:,:) = nf90_fill_float
+    allocate(valoc(1:nseal_cpl,1:nspec))
+    allocate(maploc(1:ny,1:nx))
+    valoc(:,:) = nf90_fill_float
 
     ! open the netcdf file; should this be different routine?
     if (trim(fname)  == 'none') then
@@ -211,9 +215,6 @@ contains
       end if
     end if
 
-    !debug
-    va_out = nf90_fill_float
-    mapsta_out = nf90_fill_int
     ! initialize the decomp
     call wav_pio_initdecomp(iodesc2dint,  use_int=.true.)
     call wav_pio_initdecomp(nspec, iodesc3dk)
@@ -221,17 +222,18 @@ contains
     vname = 'va'
     ierr = pio_inq_varid(pioid, trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
-    call pio_read_darray(pioid, varid, iodesc3dk, vatmp, ierr)
+    call pio_read_darray(pioid, varid, iodesc3dk, valoc, ierr)
     call handle_err(ierr, 'get variable '//trim(vname))
     ierr = pio_get_att(pioid, varid, "_FillValue", rfill)
     call handle_err(ierr, 'get variable _FillValue'//trim(vname))
 
+    va_out = rfill
     do jsea = 1,nseal_cpl
       kk = 0
       do ik = 1,nk
         do ith = 1,nth
           kk = kk + 1
-          va_out(kk,jsea) = vatmp(jsea,kk)
+          va_out(kk,jsea) = valoc(jsea,kk)
         end do
       end do
     end do
@@ -250,20 +252,19 @@ contains
     vname = 'mapsta'
     ierr = pio_inq_varid(pioid, trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
-    !call pio_setframe(pioid, varid, 1)
-    call pio_read_darray(pioid, varid, iodesc2dint, mapsta_out, ierr)
+    call pio_read_darray(pioid, varid, iodesc2dint, maploc, ierr)
     call handle_err(ierr, 'get variable '//trim(vname))
     ierr = pio_get_att(pioid, varid, "_FillValue", ifill)
     call handle_err(ierr, 'get variable _FillValue'//trim(vname))
     if (trim(fname) .eq. 'ufs.cpld.ww3.r.2021-03-22-64800.nc') then
-      print *,'YYY ',minval(mapsta_out),maxval(mapsta_out)
+      print *,'YYY ',minval(maploc),maxval(maploc)
     end if
 
     ! do jsea = 1,nseal_cpl
     !   call init_get_isea(isea, jsea)
     !   ix = mapsf(isea,1)
     !   iy = mapsf(isea,2)
-    !   write(100+iaproc,*)jsea,isea,iy,ix,mapsta_out(iy,ix)
+    !   write(100+iaproc,*)jsea,isea,iy,ix,maploc(iy,ix)
     ! end do
 
     ! fill global array with PE local values
@@ -273,11 +274,11 @@ contains
       call init_get_isea(isea, jsea)
       ix = mapsf(isea,1)
       iy = mapsf(isea,2)
-      if (mapsta_out(iy,ix) .ne. nf90_fill_int) then
-        global_input(isea) = mapsta_out(iy,ix)
+      if (maploc(iy,ix) .ne. nf90_fill_int) then
+        global_input(isea) = maploc(iy,ix)
       end if
       !if (trim(fname) .eq. 'ufs.cpld.ww3.r.2021-03-22-64800.nc') then
-      !  write(200+iaproc,*)jsea,isea,iy,ix,mapsta_out(iy,ix),global_input(isea)
+      !  write(200+iaproc,*)jsea,isea,iy,ix,maploc(iy,ix),global_input(isea)
       !end if
     end do
 
@@ -289,24 +290,27 @@ contains
     !   end do
     ! end if
 
-    ! reduce across all PEs
+    ! reduce across all PEs to create global array
     call MPI_AllReduce(global_input, global_output, nsea, MPI_INTEGER, MPI_SUM, MPI_COMM_WAVE, ierr)
 
     ! fill global array on each PE
-    mapsta_out = 0
+    maploc = 0
     do isea = 1,nsea
       ix = mapsf(isea,1)
       iy = mapsf(isea,2)
-      mapsta_out(iy,ix) = global_output(isea)
+      maploc(iy,ix) = global_output(isea)
     end do
 
     if (trim(fname) .eq. 'ufs.cpld.ww3.r.2021-03-22-64800.nc') then
       do isea = 1,nsea
         ix = mapsf(isea,1)
         iy = mapsf(isea,2)
-        write(400+iaproc,*)isea,iy,ix,mapsta_out(iy,ix)
+        write(400+iaproc,*)isea,iy,ix,maploc(iy,ix)
       end do
     end if
+
+    map_out = mod(maploc+2,8) - 2
+    mapst2 = (maploc-map_out)/8
 
     call pio_syncfile(pioid)
     call pio_freedecomp(pioid, iodesc2dint)
