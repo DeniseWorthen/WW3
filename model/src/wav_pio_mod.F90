@@ -68,6 +68,7 @@ contains
     character(*), parameter :: u_FILE_u = &                  !< a character string for an ESMF log message
        __FILE__
     !-------------------------------------------------------------------------------
+
     rc = ESMF_SUCCESS
 
 #ifdef CESMCOUPLED

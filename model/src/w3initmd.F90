@@ -973,6 +973,7 @@ CONTAINS
       else
         call read_restart('none', va, mapsta)
         mapsta = maptst
+        flcold = .true.
       end if
     else
       CALL W3IORS ( 'READ', NDS(6), SIG(NK), IMOD)
