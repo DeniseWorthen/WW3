@@ -1151,7 +1151,7 @@ contains
     if(profile_memory) call ESMF_VMLogMemInfo("Entering WW3 Run : ")
 
     !if (user_restalarm) then
-    if (use_rstwr) then
+    !if (use_rstwr) then
       ! Determine if time to write ww3 restart files
       call ESMF_ClockGetAlarm(clock, alarmname='alarm_restart', alarm=alarm, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
@@ -1165,10 +1165,10 @@ contains
       endif
     !else
     !  rstwr = .false.
-    end if
+    !end if
 
     !if (user_histalarm) then
-    if (use_histwr) then
+    !if (use_histwr) then
       ! Determine if time to write ww3 history files
       call ESMF_ClockGetAlarm(clock, alarmname='alarm_history', alarm=alarm, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
@@ -1182,7 +1182,7 @@ contains
       endif
     !else
     !  histwr = .false.
-    end if
+    !end if
     if ( root_task ) then
       !  write(nds(1),*) 'wav_comp_nuopc time', time, timen
       !  write(nds(1),*) 'ww3 hist flag ', histwr, hh
