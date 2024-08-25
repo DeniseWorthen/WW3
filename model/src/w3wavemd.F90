@@ -227,7 +227,7 @@ CONTAINS
 
   SUBROUTINE W3WAVE ( IMOD, ODAT, TEND, STAMP, NO_OUT &
 #ifdef W3_OASIS
-       ,ID_LCOMM, TIMEN                 &
+       ,ID_LCOMM, TIMEN                               &
 #endif
        )
     !/
@@ -504,7 +504,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)           :: IMOD, TEND(2),ODAT(35)
+    INTEGER, INTENT(IN)           :: IMOD, TEND(2), ODAT(40)
     LOGICAL, INTENT(IN), OPTIONAL :: STAMP, NO_OUT
 #ifdef W3_OASIS
     INTEGER, INTENT(IN), OPTIONAL :: ID_LCOMM
@@ -2662,9 +2662,10 @@ CONTAINS
                 if (use_restartnc) then
                   call set_user_timestring(tend,user_timestring)
                   fname = trim(user_restfname)//trim(user_timestring)//'.nc'
+                  print *,'XXX write '//trim(fname)
                   call write_restart(trim(fname), va, mapsta+8*mapst2)
                 else
-                  CALL W3IORS ('HOT', NDS(6), XXX, IMOD, FLOUT(8) )
+                  CALL W3IORS ('HOT', NDS(6), XXX, IMOD, FLRSTRT=FLOUT(8) )
                   ITEST = RSTYPE
                 end if
               ELSE IF ( do_wavefield_separation_output ) THEN
@@ -2750,7 +2751,7 @@ CONTAINS
           TOUT(:) = TONEXT(:,J)
           DTTST   = DSEC21 ( TIME, TOUT )
           IF ( DTTST .EQ. 0. ) THEN
-            CALL W3IORS ('HOT', NDS(6), XXX, IMOD, FLOUT(8) )
+            CALL W3IORS ('HOT', NDS(6), XXX, IMOD, FLRSTRT=FLOUT(8) )
             ITEST = RSTYPE
             CALL TICK21 ( TOUT, DTOUT(J) )
             TONEXT(:,J) = TOUT

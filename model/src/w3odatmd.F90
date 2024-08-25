@@ -558,34 +558,36 @@ MODULE W3ODATMD
   LOGICAL, POINTER        :: FLFORM, FLCOMB, O6INIT
   INTEGER, POINTER        :: PTMETH   ! C. Bunney; Partitioning method
   REAL, POINTER           :: PTFCUT   ! C. Bunney; Part. 5 freq cut
-  character(len=8)   :: runtype = ''                 !< @public the run type (startup,branch,continue)
-  character(len=256) :: initfile = ''                !< @public name of wave initial condition file
-                                                     !! if runtype is startup or branch run, then initfile is used
 
-  logical            :: use_user_histname = .false.  !<@public logical flag for user set history filenames
-  logical            :: use_user_restname = .false.  !<@public logical flag for user set restart filenames
-  character(len=512) :: user_histfname = ''          !<@public user history filename prefix, timestring
-                                                     !! YYYY-MM-DD-SSSSS will be appended
-  character(len=512) :: user_restfname = ''          !<@public user restart filename prefix, timestring
-                                                     !! YYYY-MM-DD-SSSSS will be appended
-  logical            :: histwr = .false.             !<@public logical to trigger history write
-                                                     !! if true => write history file (snapshot)
-  logical            :: rstwr = .false.              !<@public logical to trigger restart write
-                                                     !! if true => write restart
-  logical            :: use_historync = .false.      !<@public logical flag to use netCDF for gridded
-                                                     !! field output
+  character(len=8)   :: runtype = ''                  !< @public the run type (startup,branch,continue)
+  character(len=256) :: initfile = ''                 !< @public name of wave initial condition file
+                                                      !! if runtype is startup or branch run, then initfile is used
+  logical            :: restart_from_binary = .false. !<@public logical flag for restarting from binary restart
+                                                      ! when use_restartnc is true
+  logical            :: use_user_histname = .false.   !<@public logical flag for user set history filenames
+  logical            :: use_user_restname = .false.   !<@public logical flag for user set restart filenames
+  character(len=512) :: user_histfname = ''           !<@public user history filename prefix, timestring
+                                                      !! YYYY-MM-DD-SSSSS will be appended
+  character(len=512) :: user_restfname = ''           !<@public user restart filename prefix, timestring
+                                                      !! YYYY-MM-DD-SSSSS will be appended
+  logical            :: histwr = .false.              !<@public logical to trigger history write
+                                                      !! if true => write history file (snapshot)
+  logical            :: rstwr = .false.               !<@public logical to trigger restart write
+                                                      !! if true => write restart
+  logical            :: use_historync = .false.       !<@public logical flag to use netCDF for gridded
+                                                      !! field output
   logical            :: use_iogopio = .false.
   logical            :: use_restartnc = .false.
-  logical            :: use_rstwr = .false.          !< True on restart write intervals, otherwise false.
-                                                     !! For CESM, defined using restart_n, restart_option.
-                                                     !! For UFS, defined using restart2%stride and restart_option = nseconds
+  ! logical            :: use_rstwr = .false.           !< True on restart write intervals, otherwise false.
+  !                                                     !! For CESM, defined using restart_n, restart_option.
+  !                                                     !! For UFS, defined using restart2%stride and restart_option = nseconds
 
-  logical            :: use_histwr = .false.         !< True on history write intervals, otherwise false.
-                                                     !! For CESM, defined using history_n, history_option.
-                                                     !! For UFS, defined using field%stride and history_option = nseconds
-  character(len= 36) :: time_origin = ''             !< @public the time_origin used for netCDF output
-  character(len= 36) :: calendar_name = ''           !< @public the calendar used for netCDF output
-  integer(kind=8)    :: elapsed_secs = 0             !< @public the time in seconds from the time_origin
+  ! logical            :: use_histwr = .false.          !< True on history write intervals, otherwise false.
+  !                                                     !! For CESM, defined using history_n, history_option.
+  !                                                     !! For UFS, defined using field%stride and history_option = nseconds
+  character(len= 36) :: time_origin = ''              !< @public the time_origin used for netCDF output
+  character(len= 36) :: calendar_name = ''            !< @public the calendar used for netCDF output
+  integer(kind=8)    :: elapsed_secs = 0              !< @public the time in seconds from the time_origin
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /

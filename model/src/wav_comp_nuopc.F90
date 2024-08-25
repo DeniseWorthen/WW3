@@ -45,8 +45,8 @@ module wav_comp_nuopc
   use wav_shr_mod           , only : merge_import, dbug_flag
   use w3odatmd              , only : nds, iaproc, napout
   use w3odatmd              , only : runtype, use_user_histname, user_histfname, use_user_restname, user_restfname
-  use w3odatmd              , only : use_historync, use_iogopio, use_restartnc
-  use w3odatmd              , only : use_histwr, use_rstwr
+  use w3odatmd              , only : use_historync, use_iogopio, use_restartnc, restart_from_binary
+  !use w3odatmd              , only : use_histwr, use_rstwr
   use w3odatmd              , only : time_origin, calendar_name, elapsed_secs
   use wav_shr_mod           , only : casename, multigrid, inst_suffix, inst_index, unstr_mesh
   use wav_wrapper_mod       , only : ufs_settimer, ufs_logtimer, ufs_file_setlogunit, wtime
@@ -385,6 +385,15 @@ contains
       use_restartnc=(trim(cvalue)=="true")
     end if
     write(logmsg,'(A,l)') trim(subname)//': Wave use_restartnc setting is ',use_restartnc
+    call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
+
+    restart_from_binary = .false.
+    call NUOPC_CompAttributeGet(gcomp, name='restart_from_binary', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    if (isPresent .and. isSet) then
+      restart_from_binary=(trim(cvalue)=="true")
+    end if
+    write(logmsg,'(A,l)') trim(subname)//': Wave restart_from_binary setting is ',restart_from_binary
     call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
 
     ! Determine wave-ice coupling
@@ -1041,13 +1050,6 @@ contains
     use wav_import_export , only : import_fields, export_fields
     use wav_shel_inp      , only : odat
     use w3odatmd          , only : rstwr, histwr
-    !
-    !use wav_restart_mod   , only : write_restart, read_restart
-    !debug
-    !use w3timemd, only : set_user_timestring
-    !use w3adatmd, only : nsealm
-    !use w3wdatmd, only : va
-    !use w3gdatmd, only : mapsta, nx, ny, nspec
 
     ! arguments:
     type(ESMF_GridComp)  :: gcomp
@@ -1163,6 +1165,7 @@ contains
       else
         rstwr = .false.
       endif
+      if(rstwr)print *,'YYY rstwr is true'
     !else
     !  rstwr = .false.
     !end if
@@ -1206,28 +1209,6 @@ contains
 
     call export_fields(gcomp, rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
-
-    ! if (rstwr) then
-    !   call set_user_timestring(timen,user_timestring)
-    !   fname = 'test.'//trim(user_timestring)//'.nc'
-    !   call ESMF_LogWrite('XXX write '//trim(fname), ESMF_LOGMSG_INFO)
-    !   va_local(:,:) = va(:,:)
-    !   mapsta_local(:,:) = mapsta(:,:)
-    !   call write_restart (trim(fname), va_local, mapsta_local)
-    !   !print *,'XXX ',iaproc,lbound(va,1),ubound(va,1),lbound(va,2),ubound(va,2)
-    !   !print *,'YYY ',iaproc,lbound(mapsta,1),ubound(mapsta,1),lbound(mapsta,2),ubound(mapsta,2)
-    ! end if
-
-    ! !call set_user_timestring(time,user_timestring)
-    ! !if (trim(user_timestring) .eq. '2021-03-22-64800')then
-    ! !fname = trim(user_restfname)//trim(user_timestring)//'.nc'
-    ! !fname = 'test.'//trim(user_timestring)//'.nc'
-    ! fname = 'ufs.cpld.ww3.r.2021-03-22-64800.nc'
-    ! call read_restart (trim(fname), va_local, mapsta_local)
-    ! fname = 'test.rewrite.ufs.cpld.ww3.r.2021-03-22-64800.nc'
-    ! call ESMF_LogWrite('YYY write '//trim(fname), ESMF_LOGMSG_INFO)
-    ! call write_restart (trim(fname), va_local, mapsta_local)
-    !end if
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
     if (root_task) call ufs_logtimer(nu_timer,time,tod,'ModelAdvance time: ',runtimelog,wtime)
@@ -1320,36 +1301,36 @@ contains
       ! Restart alarm
       !----------------
 
-      if (.not. cesmcoupled) then
-        ! Do not use attributes - write restarts at stride frequency (if use_restartnc=true, set in init_ufs)
-        restart_option = 'nseconds'
-        restart_n = odat(18)
-        restart_ymd = -999
+      ! if (.not. cesmcoupled) then
+      !   ! Do not use attributes - write restarts at stride frequency (if use_restartnc=true, set in init_ufs)
+      !   restart_option = 'nseconds'
+      !   restart_n = odat(18)
+      !   restart_ymd = -999
 
-        call alarmInit(mclock, restart_alarm, restart_option, &
-             opt_n   = restart_n,           &
-             opt_ymd = restart_ymd,         &
-             RefTime = mCurrTime,           &
-             alarmname = 'alarm_restart', rc=rc)
-        if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      !   call alarmInit(mclock, restart_alarm, restart_option, &
+      !        opt_n   = restart_n,           &
+      !        opt_ymd = restart_ymd,         &
+      !        RefTime = mCurrTime,           &
+      !        alarmname = 'alarm_restart', rc=rc)
+      !   if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
-        call ESMF_AlarmSet(restart_alarm, clock=mclock, rc=rc)
-        if (ChkErr(rc,__LINE__,u_FILE_u)) return
-        !user_restalarm = .true.
-        !use_rstwr = .true.
-        write(msgString,'(a,i10)')' Restarts will be written at restart%stride freq ',restart_n
-        call ESMF_LogWrite(trim(subname)//trim(msgString), ESMF_LOGMSG_INFO)
-      else
+      !   call ESMF_AlarmSet(restart_alarm, clock=mclock, rc=rc)
+      !   if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      !   !user_restalarm = .true.
+      !   !use_rstwr = .true.
+      !   write(msgString,'(a,i10)')' Restarts will be written at restart%stride freq ',restart_n
+      !   call ESMF_LogWrite(trim(subname)//trim(msgString), ESMF_LOGMSG_INFO)
+      ! else
         call NUOPC_CompAttributeGet(gcomp, name="restart_option", isPresent=isPresent, isSet=isSet, rc=rc)
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
         if (isPresent .and. isSet) then
           call NUOPC_CompAttributeGet(gcomp, name="restart_option", value=restart_option, rc=rc)
           if (ChkErr(rc,__LINE__,u_FILE_u)) return
-          restart_option = 'nhours'
+
           call NUOPC_CompAttributeGet(gcomp, name="restart_n", value=cvalue, rc=rc)
           if (ChkErr(rc,__LINE__,u_FILE_u)) return
           read(cvalue,*) restart_n
-          restart_n = 1
+
           call NUOPC_CompAttributeGet(gcomp, name="restart_ymd", value=cvalue, rc=rc)
           if (ChkErr(rc,__LINE__,u_FILE_u)) return
           read(cvalue,*) restart_ymd
@@ -1366,7 +1347,7 @@ contains
           !user_restalarm = .true.
           !use_rstwr = .true.
         end if
-      end if
+      !end if
 
       !----------------
       ! Stop alarm
@@ -1663,8 +1644,8 @@ contains
     use_historync = .true.
     use_restartnc = .true.
     ! restart and history alarms are set for CESM by default through config
-    use_histwr = .true.
-    use_rstwr = .true.
+    !use_histwr = .true.
+    !use_rstwr = .true.
 
     ! Read in initial/restart data and initialize the model
     ! ww3 read initialization occurs in w3iors (which is called by initmd in module w3initmd)
@@ -1766,12 +1747,12 @@ contains
       user_restfname = trim(casename)//'.ww3.r.'
     end if
 
-    if (use_historync) then
-      use_histwr = .true.
-    end if
-    if (use_restartnc) then
-      use_rstwr = .true.
-    end if
+    !if (use_historync) then
+    !  use_histwr = .true.
+    !end if
+    !if (use_restartnc) then
+    !  use_rstwr = .true.
+    !end if
 
     fnmpre = './'
 

@@ -20,7 +20,7 @@ module wav_restart_mod
   type(io_desc_t)   :: iodesc2dint
   type(io_desc_t)   :: iodesc3dk
 
-  integer(kind=Pio_Offset_Kind) :: lframe
+  integer(kind=Pio_Offset_Kind) :: frame
 
   public :: write_restart
   public :: read_restart
@@ -59,7 +59,7 @@ contains
     allocate(locva(1:nseal_cpl,1:nspec))
 
     ! create the netcdf file
-    lframe = 1
+    frame = 1
     pioid%fh = -1
     ierr = pio_createfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), pio_clobber)
     call handle_err(ierr, 'pio_create')
@@ -168,7 +168,7 @@ contains
     integer              :: isea, jsea
     character(len=12)    :: vname
     integer              :: ierr
-    logical              :: exists
+    !logical              :: exists
     integer              :: global_input(nsea), global_output(nsea)
     integer              :: ifill
     real                 :: rfill
@@ -215,14 +215,14 @@ contains
       trho = time
       tic1 = time
       tic5 = time
-      inquire(file=trim(fname), exist=exists)
-      if (exists) then
-        lframe = 1
+      !inquire(file=trim(fname), exist=exists)
+      !if (exists) then
+        frame = 1
         ierr = pio_openfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), pio_nowrite)
         call handle_err(ierr, 'open file '//trim(fname))
-      else
+      !else
         !error out
-      end if
+      !end if
     end if
 
     ! initialize the decomp
@@ -232,7 +232,7 @@ contains
     vname = 'va'
     ierr = pio_inq_varid(pioid, trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
-    call pio_setframe(pioid, varid, lframe)
+    call pio_setframe(pioid, varid, frame)
     call pio_read_darray(pioid, varid, iodesc3dk, valoc, ierr)
     call handle_err(ierr, 'get variable '//trim(vname))
     ierr = pio_get_att(pioid, varid, "_FillValue", rfill)
@@ -257,7 +257,7 @@ contains
     vname = 'mapsta'
     ierr = pio_inq_varid(pioid, trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
-    call pio_setframe(pioid, varid, lframe)
+    call pio_setframe(pioid, varid, frame)
     call pio_read_darray(pioid, varid, iodesc2dint, maploc, ierr)
     call handle_err(ierr, 'get variable '//trim(vname))
     ierr = pio_get_att(pioid, varid, "_FillValue", ifill)
