@@ -576,7 +576,7 @@ MODULE W3ODATMD
                                                       !! if true => write restart
   logical            :: use_historync = .false.       !<@public logical flag to use netCDF for gridded
                                                       !! field output
-  logical            :: use_iogopio = .false.
+  !logical            :: use_iogopio = .false.
   logical            :: use_restartnc = .false.
   ! logical            :: use_rstwr = .false.           !< True on restart write intervals, otherwise false.
   !                                                     !! For CESM, defined using restart_n, restart_option.

@@ -45,7 +45,7 @@ module wav_comp_nuopc
   use wav_shr_mod           , only : merge_import, dbug_flag
   use w3odatmd              , only : nds, iaproc, napout
   use w3odatmd              , only : runtype, use_user_histname, user_histfname, use_user_restname, user_restfname
-  use w3odatmd              , only : use_historync, use_iogopio, use_restartnc, restart_from_binary
+  use w3odatmd              , only : use_historync, use_restartnc, restart_from_binary
   !use w3odatmd              , only : use_histwr, use_rstwr
   use w3odatmd              , only : time_origin, calendar_name, elapsed_secs
   use wav_shr_mod           , only : casename, multigrid, inst_suffix, inst_index, unstr_mesh
@@ -369,14 +369,14 @@ contains
     write(logmsg,'(A,l)') trim(subname)//': Wave multigrid setting is ',multigrid
     call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
 
-    use_iogopio = .false.
-    call NUOPC_CompAttributeGet(gcomp, name='use_iogopio', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    if (isPresent .and. isSet) then
-      use_iogopio=(trim(cvalue)=="true")
-    end if
-    write(logmsg,'(A,l)') trim(subname)//': Wave use_iogopio setting is ',use_iogopio
-    call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
+    ! use_iogopio = .false.
+    ! call NUOPC_CompAttributeGet(gcomp, name='use_iogopio', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    ! if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    ! if (isPresent .and. isSet) then
+    !   use_iogopio=(trim(cvalue)=="true")
+    ! end if
+    ! write(logmsg,'(A,l)') trim(subname)//': Wave use_iogopio setting is ',use_iogopio
+    ! call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
 
     use_restartnc = .false.
     call NUOPC_CompAttributeGet(gcomp, name='use_restartnc', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
