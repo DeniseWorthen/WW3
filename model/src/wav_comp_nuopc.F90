@@ -46,7 +46,6 @@ module wav_comp_nuopc
   use w3odatmd              , only : nds, iaproc, napout
   use w3odatmd              , only : runtype, use_user_histname, user_histfname, use_user_restname, user_restfname
   use w3odatmd              , only : use_historync, use_restartnc, restart_from_binary
-  !use w3odatmd              , only : use_histwr, use_rstwr
   use w3odatmd              , only : time_origin, calendar_name, elapsed_secs
   use wav_shr_mod           , only : casename, multigrid, inst_suffix, inst_index, unstr_mesh
   use wav_wrapper_mod       , only : ufs_settimer, ufs_logtimer, ufs_file_setlogunit, wtime
@@ -93,17 +92,6 @@ module wav_comp_nuopc
 #endif
   integer, allocatable :: tend(:,:)                        !< the ending time of ModelAdvance when
                                                            !! run with multigrid=true
-
-  !TODO: deprecate, use use_rstwr and use_histwr which do not imply alarms are being used, only that
-  !output control is via some logical flag which is set in the cap (vs ww3's internal use of dttest etc)
-  ! logical                 :: user_histalarm = .false.      !< logical flag for user to set history alarms
-  !                                                          !! using ESMF. If history_option is present as config
-  !                                                          !! option, user_histalarm will be true and will be
-  !                                                          !! set using history_option, history_n and history_ymd
-  ! logical                 :: user_restalarm = .false.      !< logical flag for user to set restart alarms
-  !                                                          !! using ESMF. If restart_option is present as config
-  !                                                          !! option, user_restalarm will be true and will be
-  !                                                          !! set using restart_option, restart_n and restart_ymd
   integer :: ymd                                           !< current year-month-day
   integer :: tod                                           !< current time of day (sec)
   integer :: time0(2)                                      !< start time stored as yyyymmdd,hhmmss
@@ -368,15 +356,6 @@ contains
     end if
     write(logmsg,'(A,l)') trim(subname)//': Wave multigrid setting is ',multigrid
     call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
-
-    ! use_iogopio = .false.
-    ! call NUOPC_CompAttributeGet(gcomp, name='use_iogopio', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
-    ! if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    ! if (isPresent .and. isSet) then
-    !   use_iogopio=(trim(cvalue)=="true")
-    ! end if
-    ! write(logmsg,'(A,l)') trim(subname)//': Wave use_iogopio setting is ',use_iogopio
-    ! call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
 
     use_restartnc = .false.
     call NUOPC_CompAttributeGet(gcomp, name='use_restartnc', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
@@ -1067,12 +1046,6 @@ contains
     integer                 :: shrlogunit ! original log unit and level
     character(ESMF_MAXSTR)  :: msgString
     character(len=*),parameter :: subname = '(wav_comp_nuopc:ModelAdvance) '
-    ! debug
-    !character(len=16) :: user_timestring    !YYYY-MM-DD-SSSSS
-    !character(len=CL) :: fname
-    ! for read/write tests
-    !real :: va_local(1:nspec,0:nsealm)
-    !integer :: mapsta_local(ny,nx)
     !-------------------------------------------------------
 
     rc = ESMF_SUCCESS
@@ -1152,40 +1125,29 @@ contains
     !------------
     if(profile_memory) call ESMF_VMLogMemInfo("Entering WW3 Run : ")
 
-    !if (user_restalarm) then
-    !if (use_rstwr) then
-      ! Determine if time to write ww3 restart files
-      call ESMF_ClockGetAlarm(clock, alarmname='alarm_restart', alarm=alarm, rc=rc)
+    ! Determine if time to write ww3 restart files
+    call ESMF_ClockGetAlarm(clock, alarmname='alarm_restart', alarm=alarm, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    if (ESMF_AlarmIsRinging(alarm, rc=rc)) then
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      if (ESMF_AlarmIsRinging(alarm, rc=rc)) then
-        if (ChkErr(rc,__LINE__,u_FILE_u)) return
-        rstwr = .true.
-        call ESMF_AlarmRingerOff( alarm, rc=rc )
-        if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      else
-        rstwr = .false.
-      endif
-      if(rstwr)print *,'YYY rstwr is true'
-    !else
-    !  rstwr = .false.
-    !end if
+      rstwr = .true.
+      call ESMF_AlarmRingerOff( alarm, rc=rc )
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    else
+      rstwr = .false.
+    endif
 
-    !if (user_histalarm) then
-    !if (use_histwr) then
-      ! Determine if time to write ww3 history files
-      call ESMF_ClockGetAlarm(clock, alarmname='alarm_history', alarm=alarm, rc=rc)
+    ! Determine if time to write ww3 history files
+    call ESMF_ClockGetAlarm(clock, alarmname='alarm_history', alarm=alarm, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    if (ESMF_AlarmIsRinging(alarm, rc=rc)) then
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      if (ESMF_AlarmIsRinging(alarm, rc=rc)) then
-        if (ChkErr(rc,__LINE__,u_FILE_u)) return
-        histwr = .true.
-        call ESMF_AlarmRingerOff( alarm, rc=rc )
-        if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      else
-        histwr = .false.
-      endif
-    !else
-    !  histwr = .false.
-    !end if
+      histwr = .true.
+      call ESMF_AlarmRingerOff( alarm, rc=rc )
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    else
+      histwr = .false.
+    endif
     if ( root_task ) then
       !  write(nds(1),*) 'wav_comp_nuopc time', time, timen
       !  write(nds(1),*) 'ww3 hist flag ', histwr, hh
@@ -1301,53 +1263,30 @@ contains
       ! Restart alarm
       !----------------
 
-      ! if (.not. cesmcoupled) then
-      !   ! Do not use attributes - write restarts at stride frequency (if use_restartnc=true, set in init_ufs)
-      !   restart_option = 'nseconds'
-      !   restart_n = odat(18)
-      !   restart_ymd = -999
-
-      !   call alarmInit(mclock, restart_alarm, restart_option, &
-      !        opt_n   = restart_n,           &
-      !        opt_ymd = restart_ymd,         &
-      !        RefTime = mCurrTime,           &
-      !        alarmname = 'alarm_restart', rc=rc)
-      !   if (ChkErr(rc,__LINE__,u_FILE_u)) return
-
-      !   call ESMF_AlarmSet(restart_alarm, clock=mclock, rc=rc)
-      !   if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      !   !user_restalarm = .true.
-      !   !use_rstwr = .true.
-      !   write(msgString,'(a,i10)')' Restarts will be written at restart%stride freq ',restart_n
-      !   call ESMF_LogWrite(trim(subname)//trim(msgString), ESMF_LOGMSG_INFO)
-      ! else
-        call NUOPC_CompAttributeGet(gcomp, name="restart_option", isPresent=isPresent, isSet=isSet, rc=rc)
+      call NUOPC_CompAttributeGet(gcomp, name="restart_option", isPresent=isPresent, isSet=isSet, rc=rc)
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      if (isPresent .and. isSet) then
+        call NUOPC_CompAttributeGet(gcomp, name="restart_option", value=restart_option, rc=rc)
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
-        if (isPresent .and. isSet) then
-          call NUOPC_CompAttributeGet(gcomp, name="restart_option", value=restart_option, rc=rc)
-          if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
-          call NUOPC_CompAttributeGet(gcomp, name="restart_n", value=cvalue, rc=rc)
-          if (ChkErr(rc,__LINE__,u_FILE_u)) return
-          read(cvalue,*) restart_n
+        call NUOPC_CompAttributeGet(gcomp, name="restart_n", value=cvalue, rc=rc)
+        if (ChkErr(rc,__LINE__,u_FILE_u)) return
+        read(cvalue,*) restart_n
 
-          call NUOPC_CompAttributeGet(gcomp, name="restart_ymd", value=cvalue, rc=rc)
-          if (ChkErr(rc,__LINE__,u_FILE_u)) return
-          read(cvalue,*) restart_ymd
+        call NUOPC_CompAttributeGet(gcomp, name="restart_ymd", value=cvalue, rc=rc)
+        if (ChkErr(rc,__LINE__,u_FILE_u)) return
+        read(cvalue,*) restart_ymd
 
-          call alarmInit(mclock, restart_alarm, restart_option, &
-               opt_n   = restart_n,           &
-               opt_ymd = restart_ymd,         &
-               RefTime = mCurrTime,           &
-               alarmname = 'alarm_restart', rc=rc)
-          if (ChkErr(rc,__LINE__,u_FILE_u)) return
+        call alarmInit(mclock, restart_alarm, restart_option, &
+             opt_n   = restart_n,           &
+             opt_ymd = restart_ymd,         &
+             RefTime = mCurrTime,           &
+             alarmname = 'alarm_restart', rc=rc)
+        if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
-          call ESMF_AlarmSet(restart_alarm, clock=mclock, rc=rc)
-          if (ChkErr(rc,__LINE__,u_FILE_u)) return
-          !user_restalarm = .true.
-          !use_rstwr = .true.
-        end if
-      !end if
+        call ESMF_AlarmSet(restart_alarm, clock=mclock, rc=rc)
+        if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      end if
 
       !----------------
       ! Stop alarm
@@ -1376,6 +1315,7 @@ contains
       !----------------
       ! History alarm
       !----------------
+
       call NUOPC_CompAttributeGet(gcomp, name="history_option", isPresent=isPresent, isSet=isSet, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
       if (isPresent .and. isSet) then
@@ -1399,10 +1339,8 @@ contains
 
         call ESMF_AlarmSet(history_alarm, clock=mclock, rc=rc)
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
-        !user_histalarm = .true.
-        !use_histwr = .true.
       else
-        ! If attribute is not present - write history output at stride frequency (if use_historync is true, set in init_ufs)
+        ! If attribute is not present - write history output at stride frequency
         history_option = 'nseconds'
         history_n = odat(3)
         history_ymd = -999
@@ -1416,8 +1354,6 @@ contains
 
         call ESMF_AlarmSet(history_alarm, clock=mclock, rc=rc)
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
-        !user_histalarm = .true.
-        !use_histwr = .true.
         write(msgString,'(a,i10)')' History will be written at field%stride freq ',history_n
         call ESMF_LogWrite(trim(subname)//trim(msgString), ESMF_LOGMSG_INFO)
       end if
@@ -1643,9 +1579,6 @@ contains
     ! netcdf is used for CESM history and restart
     use_historync = .true.
     use_restartnc = .true.
-    ! restart and history alarms are set for CESM by default through config
-    !use_histwr = .true.
-    !use_rstwr = .true.
 
     ! Read in initial/restart data and initialize the model
     ! ww3 read initialization occurs in w3iors (which is called by initmd in module w3initmd)
@@ -1708,7 +1641,6 @@ contains
     logical           :: isPresent, isSet
     character(len=CL) :: cvalue
     integer           :: dt_in(4)
-    character(len=16) :: user_timestring    !YYYY-MM-DD-SSSSS
     character(len=*), parameter :: subname = '(wav_comp_nuopc:wavinit_ufs)'
     ! -------------------------------------------------------------------
 
@@ -1746,13 +1678,6 @@ contains
     if (use_user_restname) then
       user_restfname = trim(casename)//'.ww3.r.'
     end if
-
-    !if (use_historync) then
-    !  use_histwr = .true.
-    !end if
-    !if (use_restartnc) then
-    !  use_rstwr = .true.
-    !end if
 
     fnmpre = './'
 

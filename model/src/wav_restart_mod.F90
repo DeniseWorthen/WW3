@@ -1,6 +1,6 @@
 !> @file wav_restart_mod
 !!
-!> @brief Write WW3 restart files as netCDF using PIO
+!> @brief Handle WW3 restart files as netCDF using PIO
 !!
 !> @author Denise.Worthen@noaa.gov
 !> @date 08-26-2024
@@ -49,8 +49,6 @@ contains
 
     use w3gdatmd , only : mapsf
     use w3odatmd , only : time_origin, calendar_name, elapsed_secs
-    !debug
-    use w3odatmd , only : iaproc
 
     real            , intent(in) :: va_in(1:nspec,0:nsealm)
     integer         , intent(in) :: map_in(ny,nx)
@@ -181,9 +179,6 @@ contains
     use w3adatmd    , only : mpi_comm_wave
     use w3gdatmd    , only : mapsf, mapst2, sig, nseal
     use w3wdatmd    , only : time, tlev, tice, trho, tic1, tic5, wlv, asf, ice, fpis
-    ! debug
-    !use w3odatmd , only : iaproc
-    !use w3gdatmd , only : xgrd, ygrd
 
     real            , intent(out) :: va_out(1:nspec,0:nsealm)
     integer         , intent(out) :: map_out(ny,nx)
@@ -195,15 +190,12 @@ contains
     integer              :: isea, jsea
     character(len=12)    :: vname
     integer              :: ierr
-    !logical              :: exists
     integer              :: global_input(nsea), global_output(nsea)
     integer              :: ifill
     real                 :: rfill
     real, allocatable    :: valoc(:,:)
     integer, allocatable :: maploc2d(:,:)
     integer, allocatable :: maploc(:)
-    ! debug
-    !integer :: ix, iy
     !-------------------------------------------------------------------------------
 
     wave_communicator%mpi_val = MPI_COMM_WAVE
@@ -243,14 +235,9 @@ contains
       trho = time
       tic1 = time
       tic5 = time
-      !inquire(file=trim(fname), exist=exists)
-      !if (exists) then
-        frame = 1
-        ierr = pio_openfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), pio_nowrite)
-        call handle_err(ierr, 'open file '//trim(fname))
-      !else
-        !error out
-      !end if
+      frame = 1
+      ierr = pio_openfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), pio_nowrite)
+      call handle_err(ierr, 'open file '//trim(fname))
     end if
 
     ! initialize the decomp
@@ -278,9 +265,6 @@ contains
         end do
       end do
     end do
-    !if (trim(fname) .eq. 'ufs.cpld.ww3.r.2021-03-22-64800.nc') then
-    !  print *,'XXX ',minval(va_out),maxval(va_out)
-    !end if
 
     vname = 'mapsta'
     ierr = pio_inq_varid(pioid, trim(vname), varid)
@@ -290,32 +274,6 @@ contains
     call handle_err(ierr, 'get variable '//trim(vname))
     ierr = pio_get_att(pioid, varid, "_FillValue", ifill)
     call handle_err(ierr, 'get variable _FillValue'//trim(vname))
-    !if (trim(fname) .eq. 'ufs.cpld.ww3.r.2021-03-22-64800.nc') then
-    !  print *,'YYY ',minval(maploc),maxval(maploc)
-    !end if
-
-    ! mapsta is local on this PE
-    ! locmap(:) = 0
-    ! do jsea = 1,nseal_cpl
-    !   call init_get_isea(isea, jsea)
-    !   ix = mapsf(isea,1)
-    !   iy = mapsf(isea,2)
-    !   locmap(jsea) = maploc(iy,ix)
-    ! end do
-
-    ! !if (trim(fname) .eq. 'ufs.cpld.ww3.r.2021-03-22-64800.nc') then
-    !   do jsea = 1,nseal_cpl
-    !     call init_get_isea(isea, jsea)
-    !     ix = mapsf(isea,1)
-    !     iy = mapsf(isea,2)
-    !     write(100+iaproc,'(5i8,2f12.5)')jsea,isea,iy,ix,maploc(jsea),xgrd(iy,ix),ygrd(iy,ix)
-    !   end do
-    !   !do iy = 1,ny
-    !   !  do ix = 1,nx
-    !   !    write(100+iaproc,'(3i8,2f12.5)')iy,ix,maploc(iy,ix),xgrd(iy,ix),ygrd(iy,ix)
-    !   !  end do
-    !   !end do
-    ! end if
 
     ! fill global array with PE local values
     global_input = 0
@@ -327,25 +285,7 @@ contains
       if (maploc(jsea) .ne. ifill) then
         global_input(isea) = maploc(jsea)
       end if
-      !if (trim(fname) .eq. 'ufs.cpld.ww3.r.2021-03-22-64800.nc') then
-      !  write(200+iaproc,'(5i6,2f12.5)')jsea,isea,iy,ix,global_input(isea),xgrd(iy,ix),ygrd(iy,ix)
-      !end if
     end do
-
-    !do isea = 1,nsea
-    !  ix = mapsf(isea,1)
-    !  iy = mapsf(isea,2)
-    !  global_input(isea) = maploc(iy,ix)
-    !end do
-
-    ! if (trim(fname) .eq. 'ufs.cpld.ww3.r.2021-03-22-64800.nc') then
-    !   do isea = 1,nsea
-    !     ix = mapsf(isea,1)
-    !     iy = mapsf(isea,2)
-    !     write(300+iaproc,'(4i8,2f12.5)')isea,iy,ix,global_input(isea),xgrd(iy,ix),ygrd(iy,ix)
-    !   end do
-    ! end if
-
     ! reduce across all PEs to create global array
     call MPI_AllReduce(global_input, global_output, nsea, MPI_INTEGER, MPI_SUM, wave_communicator, ierr)
 
@@ -356,14 +296,6 @@ contains
       iy = mapsf(isea,2)
       maploc2d(iy,ix) = global_output(isea)
     end do
-
-    ! if (trim(fname) .eq. 'ufs.cpld.ww3.r.2021-03-22-64800.nc') then
-    !   do isea = 1,nsea
-    !     ix = mapsf(isea,1)
-    !     iy = mapsf(isea,2)
-    !     write(400+iaproc,*)isea,iy,ix,maploc2d(iy,ix)
-    !   end do
-    ! end if
 
     map_out = mod(maploc2d+2,8) - 2
     mapst2 = (maploc2d-map_out)/8

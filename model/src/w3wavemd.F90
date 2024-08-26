@@ -2416,7 +2416,7 @@ CONTAINS
           IF ( LOCAL .AND. FLPART ) CALL W3CPRT ( IMOD )
           IF ( LOCAL .AND. (FLOUTG .OR. FLOUTG2) ) then
             CALL W3OUTG ( VA, FLPFLD, FLOUTG, FLOUTG2 )
-          END IF
+          end if
         end if ! if (use_historync) then
         !
         if (use_restartnc) then
