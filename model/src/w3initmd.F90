@@ -969,7 +969,7 @@ CONTAINS
         inquire(file=trim(fname), exist=exists)
         if (exists) then
           if (restart_from_binary) then
-            call w3iors ( 'read', nds(6), sig(nk), imod, filename=trim(fname))
+            call w3iors('READ', nds(6), sig(nk), imod, filename=trim(fname))
           else
             call read_restart(trim(fname), va, mapsta)
           end if

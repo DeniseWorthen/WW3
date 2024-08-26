@@ -1,7 +1,7 @@
 module wav_restart_mod
 
   use w3parall      , only : init_get_isea
-  use w3adatmd      , only : mpi_comm_wave, nsealm
+  use w3adatmd      , only : nsealm
   use w3gdatmd      , only : nth, nk, nx, ny, nspec, nseal, nsea
   use wav_pio_mod   , only : pio_iotype, wav_pio_subsystem
   use wav_pio_mod   , only : handle_err, wav_pio_initdecomp
@@ -150,8 +150,7 @@ contains
   !===============================================================================
   subroutine read_restart (fname, va_out, map_out)
 
-    use mpi
-    !use mpi_f08  !? why doesn't this work
+    use mpi_f08
     use w3adatmd    , only : mpi_comm_wave
     use w3gdatmd    , only : mapsf, mapst2, sig, nseal
     use w3wdatmd    , only : time, tlev, tice, trho, tic1, tic5, wlv, asf, ice, fpis
@@ -164,6 +163,7 @@ contains
     character(len=*), intent(in)  :: fname
 
     ! local variables
+    type(MPI_Comm)       :: wave_communicator  ! needed for mpi_f08
     integer              :: ik, ith, ix, iy, kk, nseal_cpl
     integer              :: isea, jsea
     character(len=12)    :: vname
@@ -179,6 +179,7 @@ contains
     !integer :: ix, iy
     !-------------------------------------------------------------------------------
 
+    wave_communicator%mpi_val = MPI_COMM_WAVE
 #ifdef W3_PDLIB
     nseal_cpl = nseal - ng
 #else
@@ -319,7 +320,7 @@ contains
     ! end if
 
     ! reduce across all PEs to create global array
-    call MPI_AllReduce(global_input, global_output, nsea, MPI_INTEGER, MPI_SUM, MPI_COMM_WAVE, ierr)
+    call MPI_AllReduce(global_input, global_output, nsea, MPI_INTEGER, MPI_SUM, wave_communicator, ierr)
 
     ! fill global array on each PE
     maploc2d = 0
