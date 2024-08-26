@@ -1,3 +1,9 @@
+!> @file wav_restart_mod
+!!
+!> @brief Write WW3 restart files as netCDF using PIO
+!!
+!> @author Denise.Worthen@noaa.gov
+!> @date 08-26-2024
 module wav_restart_mod
 
   use w3parall      , only : init_get_isea
@@ -28,7 +34,17 @@ module wav_restart_mod
   !===============================================================================
 contains
   !===============================================================================
-
+  !> Write a WW3 restart file
+  !!
+  !! @details Called by w3wavemd to write a restart file at a given frequency or
+  !! time
+  !!
+  !! @param[in]     fname    the time-stamped file name
+  !! @param[in]     va_in    the current VA array
+  !! @param[in]     map_in   the current MAPSTA array
+  !!
+  !> author DeniseWorthen@noaa.gov
+  !> @date 08-26-2024
   subroutine write_restart (fname, va_in, map_in)
 
     use w3gdatmd , only : mapsf
@@ -148,6 +164,17 @@ contains
   end subroutine write_restart
 
   !===============================================================================
+  !> Read a WW3 restart file
+  !!
+  !> @details Called by w3init to read a restart file which is known to exist or to
+  !! initialize a set of variables when the filename is "none".
+  !!
+  !! @param[in]     fname     the time-stamped file name
+  !! @param[out]    va_out    the VA array
+  !! @param[out]    map_out   the MAPSTA array
+  !!
+  !> author DeniseWorthen@noaa.gov
+  !> @date 08-26-2024
   subroutine read_restart (fname, va_out, map_out)
 
     use mpi_f08

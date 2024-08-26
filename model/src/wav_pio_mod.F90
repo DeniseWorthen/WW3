@@ -1,10 +1,9 @@
 !> @file wav_pio
 !!
-!> @brief Manage WAV PIO
+!> @brief Manage PIO for WW3
 !!
 !> @author Denise.Worthen@noaa.gov
 !> @date 08-02-2024
-
 module wav_pio_mod
 
   use w3gdatmd    , only : nk, nx, ny, mapsf
@@ -36,7 +35,17 @@ module wav_pio_mod
   !===============================================================================
 contains
   !===============================================================================
-
+  !> Configure PIO for WW3
+  !!
+  !> @details Use either CESM shr code or configuration variables to configure PIO.
+  !! This configuration code is lifted from CMEPS.
+  !!
+  !! @param       gcomp             an ESMF_GridComp object
+  !! @param       mpi_comm          the MPI communicator
+  !! @param[out]  rc                a return code
+  !!
+  !> @author Denise.Worthen@noaa.gov
+  !> @date 08-02-2024
   subroutine wav_pio_init(gcomp, mpi_comm, rc)
 #ifdef CESMCOUPLED
    use shr_pio_mod, only: shr_pio_getiosys, shr_pio_getiotype, shr_pio_getioformat
@@ -50,7 +59,7 @@ contains
 
     ! input/output arguments
     type(ESMF_GridComp), intent(in)    :: gcomp
-    integer            , intent(in)    :: mpi_comm
+    integer            , intent(in)    :: mpi_comm  !TODO: should this be an integer or a type?
     integer            , intent(out)   :: rc
 
     integer           :: pio_ioformat
@@ -264,6 +273,13 @@ contains
   end subroutine wav_pio_init
 
   !===============================================================================
+  !> Define a decomposition for a 2d variable in WW3
+  !!
+  !! @param[out]  iodesc   the PIO decomposition handle
+  !! @param[out]  use_int  define a decomposition for an integer array
+  !!
+  !> @author Denise.Worthen@noaa.gov
+  !> @date 08-02-2024
   subroutine wav_pio_initdecomp_2d(iodesc, use_int)
 
     type(io_desc_t),           intent(out) :: iodesc
@@ -302,6 +318,13 @@ contains
   end subroutine wav_pio_initdecomp_2d
 
   !===============================================================================
+  !> Define a decomposition for a 3d variable in WW3
+  !!
+  !! @param[in]   nz       the non-spatial dimension
+  !! @param[out]  iodesc   the PIO decomposition handle
+  !!
+  !> @author Denise.Worthen@noaa.gov
+  !> @date 08-02-2024
   subroutine wav_pio_initdecomp_3d(nz, iodesc)
 
     integer ,         intent(in)  :: nz
@@ -335,6 +358,13 @@ contains
   end subroutine wav_pio_initdecomp_3d
 
   !===============================================================================
+  !> Handle errors
+  !!
+  !! @param[in]  ierr        the error code
+  !! @param[in]  string      the error message
+  !!
+  !> @author Denise.Worthen@noaa.gov
+  !> @date 08-02-2024
   subroutine handle_err(ierr,string)
 
     use w3odatmd  , only : ndse

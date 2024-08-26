@@ -1,3 +1,17 @@
+!> @file wav_grdout
+!!
+!> Create a list of fields for output
+!!
+!> @details Utilizes the list of variables specified via WW3's flout array
+!! to define the variables written to the file. The elements of the flout
+!! array are here referred to as "tags". Tags are not 1:1 with output fields.
+!! For example, the tag "CUR" means that the ocean currents, comprising two
+!! directional values are requested. They will both be requested via the single
+!! CUR tag. The tag "SXY" means that three components of radiation stresses
+!! are requested (XX,YY,XY).
+!!
+!> @author Denise.Worthen@noaa.gov
+!> @date 09-19-2022
 module wav_grdout
 
   use w3odatmd    , only: nogrp, ngrpp
@@ -30,8 +44,10 @@ module wav_grdout
   !===============================================================================
 contains
   !===============================================================================
-
-  !====================================================================================
+  !> Scan through all possible fields to determine a list of requested variables
+  !!
+  !> @author Denise.Worthen@noaa.gov
+  !> @date 09-19-2022
   subroutine wavinit_grdout
 
     use w3gdatmd    , only: e3df, p2msf, us3df, usspf
@@ -121,6 +137,10 @@ contains
   end subroutine wavinit_grdout
 
   !====================================================================================
+  !> Define the available output fields and their attributes
+  !!
+  !> @author Denise.Worthen@noaa.gov
+  !> @date 09-19-2022
   subroutine initialize_gridout
 
     gridoutdefs(:,:)%tag = ""

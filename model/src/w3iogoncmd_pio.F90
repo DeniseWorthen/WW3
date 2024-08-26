@@ -1,10 +1,9 @@
 !> @file w3iogoncmd
 !!
-!> @brief Write gridded model output as netCDF
+!> @brief Write gridded model output as netCDF using PIO
 !!
 !> @author mvertens@ucar.edu, Denise.Worthen@noaa.gov
 !> @date 01-05-2022
-
 module w3iogoncmd_pio
 
   use constants         , only : rade
@@ -49,7 +48,12 @@ module w3iogoncmd_pio
   !===============================================================================
 contains
   !===============================================================================
-
+  !> Write the requested list of fields using parallel netCDF via PIO
+  !!
+  !! @param[in]     timen    the timestamp for the file
+  !!
+  !> author DeniseWorthen@noaa.gov
+  !> @date 08-26-2024
   subroutine w3iogonc_pio ( timen )
 
     use w3odatmd   , only : fnmpre
@@ -428,16 +432,28 @@ contains
   end subroutine w3iogonc_pio
 
   !===============================================================================
+  !>  Write an array of (nseal) points as (nx,ny)
+  !!
+  !! @details  If dir is present, the written variable will represent either the X
+  !! or Y component of the variable. If mask is present and true, use mapsta=1 to
+  !! mask values. If init0 is present and false, do not initialize values for mapsta<0.
+  !! This prevents group 1 variables being set undef over ice. If init2 is present and
+  !! true, apply a second initialization where mapsta==2. If fldir is present and true
+  !! then the directions will be converted to degrees. If global is present and true,
+  !! write pe-local copy of global field
+  !!
+  !! @param[in]    vname      the variable name
+  !! @param[in]    var        the variable array
+  !! @param[in]    dir        the direction array, optional
+  !! @param[in]    usemask    a flag for variable masking, optional
+  !! @param[in]    init0      a flag for variable initialization, optional
+  !! @param[in]    init2      a flag for a second initialization type, optional
+  !! @param[in]    fldir      a flag for unit conversion for direction, optional
+  !! @param[in]    global     a flag for a global variable, optional
+  !!
+  !> author DeniseWorthen@noaa.gov
+  !> @date 08-26-2024
   subroutine write_var2d(vname, var, dir, usemask, init0, init2, fldir, global)
-    ! write (nseal) array as (nx,ny)
-    ! if dir is present, write x or y component of (nsea) array as (nx,ny)
-    ! if mask is present and true, use mapsta=1 to mask values
-    ! if init0 is present and false, do not initialize values
-    ! for mapsta<0. this prevents group 1 variables being set undef over
-    ! ice. if init2 is present and true, apply a second initialization to
-    ! a subset of variables for where mapsta==2. if fldir is present and true
-    ! then the directions will be converted to degrees. if global is present and
-    ! true, write pe-local copy of global field
 
     character(len=*),           intent(in) :: vname
     real            ,           intent(in) :: var(:)
@@ -529,11 +545,21 @@ contains
   end subroutine write_var2d
 
   !===============================================================================
+  !>  Write an array of (nseal,:) points as (nx,ny,:)
+  !!
+  !! @details If init2 is present and true, apply a second initialization to a
+  !! subset of variables for where mapsta==2. If fldir is present and true then
+  !! the directions will be converted to degrees.
+  !!
+  !! @param[in]   iodesc      the PIO decomposition handle
+  !! @param[in]   vname       the variable name
+  !! @param[in]   var         the variable array
+  !! @param[in]   init2       a flag for a second initialization type, optional
+  !! @param[in]   fldir       a flag for unit conversion for direction, optional
+  !!
+  !> author DeniseWorthen@noaa.gov
+  !> @date 08-26-2024
   subroutine write_var3d(iodesc, vname, var, init2, fldir)
-    ! write (nseal,:) array as (nx,ny,:)
-    ! if init2 is present and true, apply a second initialization to
-    ! a subset of variables for where mapsta==2. if fldir is present and true
-    ! then the directions will be converted to degrees.
 
     type(io_desc_t),         intent(inout) :: iodesc
     character(len=*),           intent(in) :: vname
