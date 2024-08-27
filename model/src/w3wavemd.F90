@@ -492,7 +492,7 @@ CONTAINS
     USE W3PARALL, only : PRINT_MY_TIME
 #endif
     use wav_restart_mod , only : write_restart
-    use w3iogoncmd_pio  , only : w3iogonc_pio
+    use w3iogoncmd      , only : w3iogonc
     use w3odatmd        , only : histwr, rstwr, use_historync, use_restartnc, user_restfname
     use w3timemd        , only : set_user_timestring
     !
@@ -2390,7 +2390,7 @@ CONTAINS
           if (histwr) then
             if (flout(6))call w3cprt ( imod )
             call w3outg ( va, flpfld, .true., .false. )
-            call w3iogonc_pio(tend)
+            call w3iogonc(tend)
           end if
         else
           IF ( FLOUT(1) ) THEN

@@ -683,12 +683,10 @@ CONTAINS
       IFT    = LEN_TRIM(TFILE)
       J      = LEN_TRIM(FNMPRE)
       !
-!#ifndef W3_CESMCOUPLED
       IF ( OUTPTS(IMOD)%IAPROC .EQ. OUTPTS(IMOD)%NAPLOG )             &
            OPEN (MDS(1),FILE=FNMPRE(:J)//LFILE(:IFL),ERR=888,IOSTAT=IERR)
-!#endif
       !
-    end if
+    end if ! if (.not. logfile_is_assigned)
     IF ( MDS(3).NE.MDS(1) .AND. MDS(3).NE.MDS(4) .AND. TSTOUT ) THEN
       INQUIRE (MDS(3),OPENED=OPENED)
       IF ( .NOT. OPENED ) OPEN (MDS(3),FILE=FNMPRE(:J)//TFILE(:IFT), ERR=889, &

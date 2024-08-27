@@ -45,7 +45,7 @@ module wav_comp_nuopc
   use wav_shr_mod           , only : merge_import, dbug_flag
   use w3odatmd              , only : nds, iaproc, napout
   use w3odatmd              , only : runtype, use_user_histname, user_histfname, use_user_restname, user_restfname
-  use w3odatmd              , only : use_historync, use_restartnc, restart_from_binary
+  use w3odatmd              , only : use_historync, use_restartnc, restart_from_binary, logfile_is_assigned
   use w3odatmd              , only : time_origin, calendar_name, elapsed_secs
   use wav_shr_mod           , only : casename, multigrid, inst_suffix, inst_index, unstr_mesh
   use wav_wrapper_mod       , only : ufs_settimer, ufs_logtimer, ufs_file_setlogunit, wtime
@@ -573,7 +573,7 @@ contains
       endif
     else
       if ( root_task ) then
-        open (newunit=stdout, file='test.ww3.log')
+        open (newunit=stdout, file='log.ww3')
         logfile_is_assigned = .true.
       else
         stdout = 6
@@ -581,7 +581,6 @@ contains
     end if
 
     if (.not. multigrid) call set_shel_io(stdout,mds,ntrace)
-
     if ( root_task ) then
       write(stdout,'(a)')'      *** WAVEWATCH III Program shell ***      '
       write(stdout,'(a)')'==============================================='
@@ -730,8 +729,8 @@ contains
 #endif
     ! call mpi_barrier ( mpi_comm, ierr )
     if ( root_task ) then
-      inquire(unit=nds(1), name=logfile)
-      print *,'WW3 log written to '//trim(logfile)
+      inquire(unit=stdout, name=logfile)
+      write(*,'(a)')'WW3 log written to '//trim(logfile)
     end if
 
     if (wav_coupling_to_cice) then
@@ -1049,7 +1048,7 @@ contains
     type(ESMF_Time)         :: currTime, nextTime, startTime, stopTime
     integer                 :: yy,mm,dd,hh,ss
     integer                 :: imod
-    integer                 :: shrlogunit ! original log unit and level
+    !integer                 :: shrlogunit ! original log unit and level
     character(ESMF_MAXSTR)  :: msgString
     character(len=*),parameter :: subname = '(wav_comp_nuopc:ModelAdvance) '
     !-------------------------------------------------------
@@ -1086,7 +1085,7 @@ contains
     time0(1) = ymd
     time0(2) = hh*10000 + mm*100 + ss
     if ( root_task ) then
-      write(nds(1),'(a,3i4,i10)') 'ymd2date currTime wav_comp_nuopc hh,mm,ss,ymd', hh,mm,ss,ymd
+      if (dbug_flag > 5)write(nds(1),'(a,3i4,i10)') 'ymd2date currTime wav_comp_nuopc hh,mm,ss,ymd', hh,mm,ss,ymd
     end if
     if (root_task) call ufs_logtimer(nu_timer,time,tod,'ModelAdvance time since last step: ',runtimelog,wtime)
     call ufs_settimer(wtime)
@@ -1154,10 +1153,6 @@ contains
     else
       histwr = .false.
     endif
-    if ( root_task ) then
-      !  write(nds(1),*) 'wav_comp_nuopc time', time, timen
-      !  write(nds(1),*) 'ww3 hist flag ', histwr, hh
-    end if
 
     ! Advance the wave model
 #ifndef W3_CESMCOUPLED
@@ -1452,7 +1447,7 @@ contains
     ! local variables
     integer           :: ierr
     integer           :: unitn  ! namelist unit number
-    integer           :: shrlogunit
+    !integer           :: shrlogunit
     logical           :: isPresent, isSet
     real(r8)          :: dtmax_in  ! Maximum overall time step.
     real(r8)          :: dtmin_in  ! Minimum dynamic time step for source
@@ -1654,7 +1649,7 @@ contains
     rc = ESMF_SUCCESS
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
 
-    stdout = mds(1) ! this is test.ww3.log
+    stdout = mds(1) ! this is log.ww3
 
     ! restart and history alarms are optional for UFS and used via allcomp config settings
     call NUOPC_CompAttributeGet(gcomp, name='user_sets_histname', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
@@ -1663,8 +1658,6 @@ contains
       use_user_histname=(trim(cvalue)=="true")
     end if
     if (root_task) write(stdout,'(a,l)') trim(subname)//': Custom history names in use ',use_user_histname
-    !write(logmsg,'(a,l)') trim(subname)//': Custom history names in use ',use_user_histname
-    !call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
 
     call NUOPC_CompAttributeGet(gcomp, name='user_sets_restname', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
@@ -1672,8 +1665,6 @@ contains
       use_user_restname=(trim(cvalue)=="true")
     end if
     if (root_task) write(stdout,'(a,l)') trim(subname)//': Custom restart names in use ',use_user_restname
-    !write(logmsg,'(a,l)') trim(subname)//': Custom restart names in use ',use_user_restname
-    !call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
 
     call NUOPC_CompAttributeGet(gcomp, name='use_historync', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
@@ -1681,8 +1672,6 @@ contains
       use_historync=(trim(cvalue)=="true")
     end if
     if (root_task) write(stdout,'(a,l)') trim(subname)//': Gridded netcdf output is requested ',use_historync
-    !write(logmsg,'(a,l)') trim(subname)//': Gridded netcdf output is requested ',use_historync
-    !call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
 
     if (use_user_histname) then
       user_histfname = trim(casename)//'.ww3.hi.'
@@ -1694,7 +1683,6 @@ contains
     fnmpre = './'
 
     if (root_task) write(stdout,'(a)') trim(subname)//' call read_shel_config'
-    !call ESMF_LogWrite(trim(subname)//' call read_shel_config', ESMF_LOGMSG_INFO)
     call read_shel_config(mpi_comm, mds, time0_overwrite=time0, timen_overwrite=timen)
 
     call ESMF_LogWrite(trim(subname)//' call w3init', ESMF_LOGMSG_INFO)
@@ -1702,8 +1690,6 @@ contains
          npts, x, y, pnames, iprt, prtfrm, mpi_comm )
 
     if (root_task) write(stdout,'(a,4f10.2)') trim(subname)//': mod_def timesteps file  ',dtmax,dtcfl,dtcfli,dtmin
-    !write(logmsg,'(a,4f10.2)') trim(subname)//': mod_def timesteps file  ',dtmax,dtcfl,dtcfli,dtmin
-    !call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
     call NUOPC_CompAttributeGet(gcomp, name='dt_in', isPresent=isPresent, isSet=isSet, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
     if (isPresent .and. isSet) then
@@ -1715,8 +1701,6 @@ contains
       dtcfli = real(dt_in(3),4)
       dtmin  = real(dt_in(4),4)
       if (root_task) write(stdout,'(a,4f10.2)') trim(subname)//': mod_def timesteps reset ',dtmax,dtcfl,dtcfli,dtmin
-      !write(logmsg,'(a,4f10.2)') trim(subname)//': mod_def timesteps reset ',dtmax,dtcfl,dtcfli,dtmin
-      !call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
     end if
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
   end subroutine waveinit_ufs

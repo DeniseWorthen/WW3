@@ -86,6 +86,8 @@ contains
     do i = 5,size(mds)
       call ESMF_UtilIOUnitGet(mds(i))
       open(unit=mds(i), status='scratch')
+    end do
+    do i = 5,size(mds)
       close(mds(i))
     end do
 

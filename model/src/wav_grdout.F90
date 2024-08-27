@@ -52,10 +52,12 @@ contains
   !> @date 09-19-2022
   subroutine wavinit_grdout(stdout)
 
-    use w3gdatmd    , only: e3df, p2msf, us3df, usspf
-    use w3odatmd    , only: iaproc, napout
-    use w3iogomd    , only: fldout
-    use w3servmd    , only: strsplit
+    use w3gdatmd, only: e3df, p2msf, us3df, usspf
+    use w3odatmd, only: iaproc, napout
+    use w3iogomd, only: fldout
+    use w3servmd, only: strsplit
+
+    integer, intent(in) :: stdout
 
     ! local variables
     character(len=100)      :: inptags(100) = ''
@@ -122,6 +124,7 @@ contains
     end do
 
     ! check
+
     if ( iaproc == napout ) then
       write(stdout,*)
       write(stdout,'(a)')' --------------------------------------------------'
