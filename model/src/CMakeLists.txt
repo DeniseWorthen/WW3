@@ -139,8 +139,7 @@ if(UFS_CAP)
   endif()
 
   target_sources(ww3_lib PRIVATE ${cap_src})
-  target_link_libraries(ww3_lib PUBLIC esmf
-                                       PIO::PIO_Fortran)
+  target_link_libraries(ww3_lib PUBLIC esmf)
   # Don't build executables when building WW3 ESMF library
   set(programs "")
 endif()
