@@ -46,12 +46,14 @@ contains
   !===============================================================================
   !> Scan through all possible fields to determine a list of requested variables
   !!
+  !! @param[in]   stdout            the logfile on the root_task
+  !!
   !> @author Denise.Worthen@noaa.gov
   !> @date 09-19-2022
-  subroutine wavinit_grdout
+  subroutine wavinit_grdout(stdout)
 
     use w3gdatmd    , only: e3df, p2msf, us3df, usspf
-    use w3odatmd    , only: nds, iaproc, napout
+    use w3odatmd    , only: iaproc, napout
     use w3iogomd    , only: fldout
     use w3servmd    , only: strsplit
 
@@ -121,17 +123,17 @@ contains
 
     ! check
     if ( iaproc == napout ) then
-      write(nds(1),*)
-      write(nds(1),'(a)')' --------------------------------------------------'
-      write(nds(1),'(a)')'  Requested gridded output variables : '
-      write(nds(1),'(a)')' --------------------------------------------------'
-      write(nds(1),*)
+      write(stdout,*)
+      write(stdout,'(a)')' --------------------------------------------------'
+      write(stdout,'(a)')'  Requested gridded output variables : '
+      write(stdout,'(a)')' --------------------------------------------------'
+      write(stdout,*)
       do n = 1,nout
-        write(nds(1),'(i5,2a12,a50)')n,'  '//trim(outvars(n)%tag), &
+        write(stdout,'(i5,2a12,a50)')n,'  '//trim(outvars(n)%tag), &
              '  '//trim(outvars(n)%var_name), &
              '  '//trim(outvars(n)%long_name)
       end do
-      write(nds(1),*)
+      write(stdout,*)
     end if
 
   end subroutine wavinit_grdout

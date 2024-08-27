@@ -42,11 +42,12 @@ contains
   !!
   !! @param       gcomp             an ESMF_GridComp object
   !! @param       mpi_comm          the MPI communicator
+  !! @param[in]   stdout            the logfile on the root_task
   !! @param[out]  rc                a return code
   !!
   !> @author Denise.Worthen@noaa.gov
   !> @date 08-02-2024
-  subroutine wav_pio_init(gcomp, mpi_comm, rc)
+  subroutine wav_pio_init(gcomp, mpi_comm, stdout, rc)
 #ifdef CESMCOUPLED
    use shr_pio_mod, only: shr_pio_getiosys, shr_pio_getiotype, shr_pio_getioformat
 #endif
@@ -59,7 +60,8 @@ contains
 
     ! input/output arguments
     type(ESMF_GridComp), intent(in)    :: gcomp
-    integer            , intent(in)    :: mpi_comm  !TODO: should this be an integer or a type?
+    integer            , intent(in)    :: mpi_comm
+    integer            , intent(in)    :: stdout
     integer            , intent(out)   :: rc
 
     integer           :: pio_ioformat
@@ -71,8 +73,6 @@ contains
     logical           :: isPresent, isSet
     integer           :: my_task
     integer           :: master_task
-    ! TODO: get right logunit
-    integer           :: logunit = 6
     character(len=CS) :: subname='wav_pio_init'
     character(*), parameter :: u_FILE_u = &                  !< a character string for an ESMF log message
        __FILE__
@@ -119,7 +119,7 @@ contains
        cvalue = '64BIT_OFFSET'
        pio_ioformat = PIO_64BIT_OFFSET
     end if
-    if (my_task == 0) write(logunit,*) trim(subname), ' : pio_netcdf_format = ', trim(cvalue), pio_ioformat
+    if (my_task == 0) write(stdout,*) trim(subname), ' : pio_netcdf_format = ', trim(cvalue), pio_ioformat
 
     ! pio_typename
     call NUOPC_CompAttributeGet(gcomp, name='pio_typename', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
@@ -145,7 +145,7 @@ contains
        cvalue = 'NETCDF'
        pio_iotype = PIO_IOTYPE_NETCDF
     end if
-    if (my_task == 0) write(logunit,*) trim(subname), ' : pio_typename = ', trim(cvalue), pio_iotype
+    if (my_task == 0) write(stdout,*) trim(subname), ' : pio_typename = ', trim(cvalue), pio_iotype
 
     ! pio_root
     call NUOPC_CompAttributeGet(gcomp, name='pio_root', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
@@ -160,7 +160,7 @@ contains
     else
        pio_root = 1
     end if
-    if (my_task == 0) write(logunit,*) trim(subname), ' : pio_root = ', pio_root
+    if (my_task == 0) write(stdout,*) trim(subname), ' : pio_root = ', pio_root
 
     ! pio_stride
     call NUOPC_CompAttributeGet(gcomp, name='pio_stride', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
@@ -171,7 +171,7 @@ contains
     else
        pio_stride = -99
     end if
-    if (my_task == 0) write(logunit,*) trim(subname), ' : pio_stride = ', pio_stride
+    if (my_task == 0) write(stdout,*) trim(subname), ' : pio_stride = ', pio_stride
 
     ! pio_numiotasks
     call NUOPC_CompAttributeGet(gcomp, name='pio_numiotasks', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
@@ -182,7 +182,7 @@ contains
     else
        pio_numiotasks = -99
     end if
-    if (my_task == 0) write(logunit,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
+    if (my_task == 0) write(stdout,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
 
     ! check for parallel IO, it requires at least two io pes
     if (naproc > 1 .and. pio_numiotasks == 1 .and. &
@@ -190,24 +190,24 @@ contains
        pio_numiotasks = 2
        pio_stride = min(pio_stride, naproc/2)
        if (my_task == 0) then
-          write(logunit,*) ' parallel io requires at least two io pes - following parameters are updated:'
-          write(logunit,*) trim(subname), ' : pio_stride = ', pio_stride
-          write(logunit,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
+          write(stdout,*) ' parallel io requires at least two io pes - following parameters are updated:'
+          write(stdout,*) trim(subname), ' : pio_stride = ', pio_stride
+          write(stdout,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
        end if
     endif
 
     ! check/set/correct io pio parameters
     if (pio_stride > 0 .and. pio_numiotasks < 0) then
        pio_numiotasks = max(1, naproc/pio_stride)
-       if (my_task == 0) write(logunit,*) trim(subname), ' : update pio_numiotasks = ', pio_numiotasks
+       if (my_task == 0) write(stdout,*) trim(subname), ' : update pio_numiotasks = ', pio_numiotasks
     else if(pio_numiotasks > 0 .and. pio_stride < 0) then
        pio_stride = max(1, naproc/pio_numiotasks)
-       if (my_task == 0) write(logunit,*) trim(subname), ' : update pio_stride = ', pio_stride
+       if (my_task == 0) write(stdout,*) trim(subname), ' : update pio_stride = ', pio_stride
     else if(pio_numiotasks < 0 .and. pio_stride < 0) then
        pio_stride = max(1,naproc/4)
        pio_numiotasks = max(1,naproc/pio_stride)
-       if (my_task == 0) write(logunit,*) trim(subname), ' : update pio_numiotasks = ', pio_numiotasks
-       if (my_task == 0) write(logunit,*) trim(subname), ' : update pio_stride = ', pio_stride
+       if (my_task == 0) write(stdout,*) trim(subname), ' : update pio_numiotasks = ', pio_numiotasks
+       if (my_task == 0) write(stdout,*) trim(subname), ' : update pio_stride = ', pio_stride
     end if
     if (pio_stride == 1) then
        pio_root = 0
@@ -230,10 +230,10 @@ contains
           pio_root = 0
        end if
        if (my_task == 0) then
-          write(logunit,*) 'pio_stride, iotasks or root out of bounds - resetting to defaults:'
-          write(logunit,*) trim(subname), ' : pio_root = ', pio_root
-          write(logunit,*) trim(subname), ' : pio_stride = ', pio_stride
-          write(logunit,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
+          write(stdout,*) 'pio_stride, iotasks or root out of bounds - resetting to defaults:'
+          write(stdout,*) trim(subname), ' : pio_root = ', pio_root
+          write(stdout,*) trim(subname), ' : pio_stride = ', pio_stride
+          write(stdout,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
        end if
     end if
 
@@ -256,14 +256,14 @@ contains
        cvalue = 'SUBSET'
        pio_rearranger = PIO_REARR_SUBSET
     end if
-    if (my_task == 0) write(logunit,*) trim(subname), ' : pio_rearranger = ', trim(cvalue), pio_rearranger
+    if (my_task == 0) write(stdout,*) trim(subname), ' : pio_rearranger = ', trim(cvalue), pio_rearranger
 
     ! init PIO
     if (my_task == 0) then
-      write(logunit,*) trim(subname),' calling pio init'
-      write(logunit,*) trim(subname), ' : pio_root = ', pio_root
-      write(logunit,*) trim(subname), ' : pio_stride = ', pio_stride
-      write(logunit,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
+      write(stdout,*) trim(subname),' calling pio init'
+      write(stdout,*) trim(subname), ' : pio_root = ', pio_root
+      write(stdout,*) trim(subname), ' : pio_stride = ', pio_stride
+      write(stdout,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
     end if
 
     call pio_init(my_task, mpi_comm, pio_numiotasks, master_task, pio_stride, pio_rearranger, &

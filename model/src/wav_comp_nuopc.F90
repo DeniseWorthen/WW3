@@ -567,11 +567,17 @@ contains
         call NUOPC_CompAttributeGet(gcomp, name="logfile", value=logfile, rc=rc)
         if (chkerr(rc,__LINE__,u_FILE_u)) return
         open (newunit=stdout, file=trim(diro)//"/"//trim(logfile))
+        logfile_is_assigned = .true.
       else
         stdout = 6
       endif
     else
-      stdout = 6
+      if ( root_task ) then
+        open (newunit=stdout, file='test.ww3.log')
+        logfile_is_assigned = .true.
+      else
+        stdout = 6
+      end if
     end if
 
     if (.not. multigrid) call set_shel_io(stdout,mds,ntrace)
@@ -682,7 +688,7 @@ contains
     ! initialize PIO
     !--------------------------------------------------------------------
 
-    call wav_pio_init(gcomp, mpi_comm, rc)
+    call wav_pio_init(gcomp, mpi_comm, stdout, rc)
 
     !--------------------------------------------------------------------
     ! Wave model initialization
@@ -901,7 +907,7 @@ contains
     !--------------------------------------------------------------------
 
     if (use_historync) then
-      call wavinit_grdout()
+      call wavinit_grdout(stdout)
     end if
 
     if (root_task) call ufs_logtimer(nu_timer,time,start_tod,'InitializeRealize time: ',runtimelog,wtime)
@@ -1637,15 +1643,18 @@ contains
     integer, intent(out) :: rc
 
     ! local variables
-    character(len=CL) :: logmsg
+    !character(len=CL) :: logmsg
     logical           :: isPresent, isSet
     character(len=CL) :: cvalue
     integer           :: dt_in(4)
+    integer           :: stdout
     character(len=*), parameter :: subname = '(wav_comp_nuopc:wavinit_ufs)'
     ! -------------------------------------------------------------------
 
     rc = ESMF_SUCCESS
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
+
+    stdout = mds(1) ! this is test.ww3.log
 
     ! restart and history alarms are optional for UFS and used via allcomp config settings
     call NUOPC_CompAttributeGet(gcomp, name='user_sets_histname', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
@@ -1653,24 +1662,27 @@ contains
     if (isPresent .and. isSet) then
       use_user_histname=(trim(cvalue)=="true")
     end if
-    write(logmsg,'(A,l)') trim(subname)//': Custom history names in use ',use_user_histname
-    call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
+    if (root_task) write(stdout,'(a,l)') trim(subname)//': Custom history names in use ',use_user_histname
+    !write(logmsg,'(a,l)') trim(subname)//': Custom history names in use ',use_user_histname
+    !call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
 
     call NUOPC_CompAttributeGet(gcomp, name='user_sets_restname', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
     if (isPresent .and. isSet) then
       use_user_restname=(trim(cvalue)=="true")
     end if
-    write(logmsg,'(A,l)') trim(subname)//': Custom restart names in use ',use_user_restname
-    call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
+    if (root_task) write(stdout,'(a,l)') trim(subname)//': Custom restart names in use ',use_user_restname
+    !write(logmsg,'(a,l)') trim(subname)//': Custom restart names in use ',use_user_restname
+    !call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
 
     call NUOPC_CompAttributeGet(gcomp, name='use_historync', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
     if (isPresent .and. isSet) then
       use_historync=(trim(cvalue)=="true")
     end if
-    write(logmsg,'(A,l)') trim(subname)//': Gridded netcdf output is requested ',use_historync
-    call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
+    if (root_task) write(stdout,'(a,l)') trim(subname)//': Gridded netcdf output is requested ',use_historync
+    !write(logmsg,'(a,l)') trim(subname)//': Gridded netcdf output is requested ',use_historync
+    !call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
 
     if (use_user_histname) then
       user_histfname = trim(casename)//'.ww3.hi.'
@@ -1681,15 +1693,17 @@ contains
 
     fnmpre = './'
 
-    call ESMF_LogWrite(trim(subname)//' call read_shel_config', ESMF_LOGMSG_INFO)
+    if (root_task) write(stdout,'(a)') trim(subname)//' call read_shel_config'
+    !call ESMF_LogWrite(trim(subname)//' call read_shel_config', ESMF_LOGMSG_INFO)
     call read_shel_config(mpi_comm, mds, time0_overwrite=time0, timen_overwrite=timen)
 
     call ESMF_LogWrite(trim(subname)//' call w3init', ESMF_LOGMSG_INFO)
     call w3init ( 1, .false., 'ww3', mds, ntrace, odat, flgrd, flgr2, flgd, flg2, &
          npts, x, y, pnames, iprt, prtfrm, mpi_comm )
 
-    write(logmsg,'(A,4f10.2)') trim(subname)//': mod_def timesteps file  ',dtmax,dtcfl,dtcfli,dtmin
-    call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
+    if (root_task) write(stdout,'(a,4f10.2)') trim(subname)//': mod_def timesteps file  ',dtmax,dtcfl,dtcfli,dtmin
+    !write(logmsg,'(a,4f10.2)') trim(subname)//': mod_def timesteps file  ',dtmax,dtcfl,dtcfli,dtmin
+    !call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
     call NUOPC_CompAttributeGet(gcomp, name='dt_in', isPresent=isPresent, isSet=isSet, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
     if (isPresent .and. isSet) then
@@ -1700,8 +1714,9 @@ contains
       dtcfl  = real(dt_in(2),4)
       dtcfli = real(dt_in(3),4)
       dtmin  = real(dt_in(4),4)
-      write(logmsg,'(A,4f10.2)') trim(subname)//': mod_def timesteps reset ',dtmax,dtcfl,dtcfli,dtmin
-      call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
+      if (root_task) write(stdout,'(a,4f10.2)') trim(subname)//': mod_def timesteps reset ',dtmax,dtcfl,dtcfli,dtmin
+      !write(logmsg,'(a,4f10.2)') trim(subname)//': mod_def timesteps reset ',dtmax,dtcfl,dtcfli,dtmin
+      !call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
     end if
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
   end subroutine waveinit_ufs

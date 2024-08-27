@@ -447,6 +447,7 @@ CONTAINS
 #endif
     use w3timemd,        only : set_user_timestring
     use w3odatmd,        only : runtype, restart_from_binary, use_restartnc, user_restfname
+    use w3odatmd,        only : logfile_is_assigned
     use wav_restart_mod, only : read_restart
     !/
 #ifdef W3_MPI
@@ -661,32 +662,33 @@ CONTAINS
       STOP
     ENDIF
 #endif
-
     !
     ! 1.c Open files without unpacking MDS ,,,
     !
-    IE     = LEN_TRIM(FEXT)
-    LFILE  = 'log.' // FEXT(:IE)
-    IFL    = LEN_TRIM(LFILE)
+    if (.not. logfile_is_assigned) then
+      IE     = LEN_TRIM(FEXT)
+      LFILE  = 'log.' // FEXT(:IE)
+      IFL    = LEN_TRIM(LFILE)
 #ifdef W3_SHRD
-    TFILE  = 'test.' // FEXT(:IE)
+      TFILE  = 'test.' // FEXT(:IE)
 #endif
 #ifdef W3_DIST
-    IW     = 1 + INT ( LOG10 ( REAL(NAPROC) + 0.5 ) )
-    IW     = MAX ( 3 , MIN ( 9 , IW ) )
-    WRITE (FORMAT,'(A5,I1.1,A1,I1.1,A4)')                    &
-         '(A4,I', IW, '.', IW, ',2A)'
-    WRITE (TFILE,FORMAT) 'test',                             &
-         OUTPTS(IMOD)%IAPROC, '.', FEXT(:IE)
+      IW     = 1 + INT ( LOG10 ( REAL(NAPROC) + 0.5 ) )
+      IW     = MAX ( 3 , MIN ( 9 , IW ) )
+      WRITE (FORMAT,'(A5,I1.1,A1,I1.1,A4)')                    &
+           '(A4,I', IW, '.', IW, ',2A)'
+      WRITE (TFILE,FORMAT) 'test',                             &
+           OUTPTS(IMOD)%IAPROC, '.', FEXT(:IE)
 #endif
-    IFT    = LEN_TRIM(TFILE)
-    J      = LEN_TRIM(FNMPRE)
-    !
-#ifndef W3_CESMCOUPLED
-    IF ( OUTPTS(IMOD)%IAPROC .EQ. OUTPTS(IMOD)%NAPLOG )             &
-         OPEN (MDS(1),FILE=FNMPRE(:J)//LFILE(:IFL),ERR=888,IOSTAT=IERR)
-#endif
-    !
+      IFT    = LEN_TRIM(TFILE)
+      J      = LEN_TRIM(FNMPRE)
+      !
+!#ifndef W3_CESMCOUPLED
+      IF ( OUTPTS(IMOD)%IAPROC .EQ. OUTPTS(IMOD)%NAPLOG )             &
+           OPEN (MDS(1),FILE=FNMPRE(:J)//LFILE(:IFL),ERR=888,IOSTAT=IERR)
+!#endif
+      !
+    end if
     IF ( MDS(3).NE.MDS(1) .AND. MDS(3).NE.MDS(4) .AND. TSTOUT ) THEN
       INQUIRE (MDS(3),OPENED=OPENED)
       IF ( .NOT. OPENED ) OPEN (MDS(3),FILE=FNMPRE(:J)//TFILE(:IFT), ERR=889, &

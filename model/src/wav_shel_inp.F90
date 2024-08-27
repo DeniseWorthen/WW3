@@ -52,6 +52,9 @@ contains
     integer , intent(in)   :: stdout
     integer , intent(out)  :: mds(13), ntrace(2)
 
+    ! local variables
+    integer :: i
+
     ! Note that nds is set to mds in w3initmd.F90 - mds is a local array
     ! The following units are referenced in module w3initmd
     ! NDS(1) ! OUTPUT LOG: General output unit number ("log file")
@@ -80,17 +83,11 @@ contains
     ! By default, unit numbers between 50 and 99 are scanned to find an
     ! unopened unit number
 
-    call ESMF_UtilIOUnitGet(mds(5)) ; open(unit=mds(5)  , status='scratch')
-    call ESMF_UtilIOUnitGet(mds(6)) ; open(unit=mds(6)  , status='scratch')
-    call ESMF_UtilIOUnitGet(mds(7)) ; open(unit=mds(7)  , status='scratch')
-    call ESMF_UtilIOUnitGet(mds(8)) ; open(unit=mds(8)  , status='scratch')
-    call ESMF_UtilIOUnitGet(mds(9)) ; open(unit=mds(9)  , status='scratch')
-    call ESMF_UtilIOUnitGet(mds(10)); open(unit=mds(10) , status='scratch')
-    call ESMF_UtilIOUnitGet(mds(11)); open(unit=mds(11) , status='scratch')
-    call ESMF_UtilIOUnitGet(mds(12)); open(unit=mds(12) , status='scratch')
-    call ESMF_UtilIOUnitGet(mds(13)); open(unit=mds(13) , status='scratch')
-    close(mds(5)); close(mds(6)); close(mds(7)); close(mds(8)); close(mds(9)); close(mds(10))
-    close(mds(11)); close(mds(12)); close(mds(13))
+    do i = 5,size(mds)
+      call ESMF_UtilIOUnitGet(mds(i))
+      open(unit=mds(i), status='scratch')
+      close(mds(i))
+    end do
 
     ntrace(1) = mds(3)
     ntrace(2) = 10
