@@ -701,10 +701,10 @@ contains
 
       ! user filenaming is required with netcdf restarts or restart_from_binary. If netcdf restarts are not used,
       ! only native WW3 file naming is possible
-      if (use_restartnc) then
+      !if (use_restartnc) then
         user_restfname = trim(casename)//'.ww3.r.'
         if (root_task) write(stdout,'(a)') trim(subname)//': Custom restart prefix is '//trim(user_restfname)
-      end if
+      !end if
 
       call NUOPC_CompAttributeGet(gcomp, name='use_historync', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return

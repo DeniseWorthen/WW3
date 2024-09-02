@@ -336,6 +336,8 @@ CONTAINS
     USE W3SERVMD, ONLY: STRACE
 #endif
     !
+    use w3timemd, only: set_user_timestring
+    use w3odatmd, only: user_restfname
 #ifdef W3_MPI
     INCLUDE "mpif.h"
 #endif
@@ -380,10 +382,11 @@ CONTAINS
     LOGICAL                 :: NDSROPN
     CHARACTER(LEN=4)        :: TYPE
     CHARACTER(LEN=10)       :: VERTST
-    CHARACTER(LEN=40)       :: FNAME
+    CHARACTER(LEN=512)       :: FNAME
     CHARACTER(LEN=26)       :: IDTST
     CHARACTER(LEN=30)       :: TNAME
     CHARACTER(LEN=15)       :: TIMETAG
+    character(len=16)       :: user_timestring    !YYYY-MM-DD-SSSSS
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -499,15 +502,27 @@ CONTAINS
         CALL EXTCDE ( 15 )
       ENDIF
 
-      IF ( WRITE ) THEN
-        IF ( .NOT.IOSFLG .OR. IAPROC.EQ.NAPRST )                    &
-             OPEN (NDSR,FILE=FNMPRE(:J)//FNAME,form='UNFORMATTED', convert=file_endian,       &
+      call set_user_timestring(time,user_timestring)
+      fname = trim(user_restfname)//trim(user_timestring)
+      if ( write ) then
+        IF ( .NOT.IOSFLG .OR. IAPROC.EQ.NAPRST )        &
+             open (ndsr,file=trim(fname), form='unformatted', convert=file_endian,       &
              ACCESS='STREAM',ERR=800,IOSTAT=IERR)
-      ELSE
-        OPEN (NDSR,FILE=FNMPRE(:J)//FNAME,form='UNFORMATTED', convert=file_endian,       &
-             ACCESS='STREAM',ERR=800,IOSTAT=IERR,                  &
+      ELSE  ! READ
+        open (ndsr, file=trim(fname), form='unformatted', convert=file_endian,       &
+             ACCESS='STREAM',ERR=800,IOSTAT=IERR,           &
              STATUS='OLD',ACTION='READ')
       END IF
+
+      ! IF ( WRITE ) THEN
+      !   IF ( .NOT.IOSFLG .OR. IAPROC.EQ.NAPRST )                    &
+      !        OPEN (NDSR,FILE=FNMPRE(:J)//FNAME,form='UNFORMATTED', convert=file_endian,       &
+      !        ACCESS='STREAM',ERR=800,IOSTAT=IERR)
+      ! ELSE
+      !   OPEN (NDSR,FILE=FNMPRE(:J)//FNAME,form='UNFORMATTED', convert=file_endian,       &
+      !        ACCESS='STREAM',ERR=800,IOSTAT=IERR,                  &
+      !        STATUS='OLD',ACTION='READ')
+      ! END IF
     end if ! if (present(filename))
     !
     ! test info ---------------------------------------------------------- *
