@@ -731,6 +731,12 @@ CONTAINS
     ! 2.a Read model definition file
     !
     CALL W3IOGR ( 'READ', NDS(5), IMOD, FEXT )
+
+    do iy = 1,ny
+      write(910,'(360i4)')(mapsta(iy,ix),ix=1,nx)
+      write(920,'(360i4)')(mapst2(iy,ix),ix=1,nx)
+    end do
+
     IF (GTYPE .eq. UNGTYPE) THEN
       CALL SPATIAL_GRID
       CALL NVECTRI
@@ -993,6 +999,11 @@ CONTAINS
       CALL PRINT_MY_TIME("After W3IORS")
 #endif
       call print_memcheck(memunit, 'memcheck_____:'//' WW3_INIT SECTION 3a')
+      do iy = 1,ny
+         write(2010,'(360i4)')(mapsta(iy,ix),ix=1,nx)
+         write(2020,'(360i4)')(mapst2(iy,ix),ix=1,nx)
+         write(2030,'(360i4)')(maptst(iy,ix),ix=1,nx)
+      end do
 
 #ifdef W3_DEBUGCOH
       CALL ALL_VA_INTEGRAL_PRINT(IMOD, "After W3IORS call", 1)
@@ -1376,6 +1387,12 @@ CONTAINS
     !
     MAPST2 = MAPST2 + 2*MAPTST
     !
+    do iy = 1,ny
+       write(3010,'(360i4)')(mapsta(iy,ix),ix=1,nx)
+       write(3020,'(360i4)')(mapst2(iy,ix),ix=1,nx)
+       write(3030,'(360i4)')(maptst(iy,ix),ix=1,nx)
+    end do
+
     DEALLOCATE ( MAPTST )
     call print_memcheck(memunit, 'memcheck_____:'//' WW3_INIT SECTION 6')
     !

@@ -2794,6 +2794,13 @@ CONTAINS
     ALLOCATE ( MAPTMP(NY,NX) )
     IF ( WRITE ) THEN
       MAPTMP = MAPSTA + 8*MAPST2
+      if (trim(timetag) == '20210322.121200')then
+        do iy = 1,ny
+          write(1010,'(360i4)')(mapsta(iy,ix),ix=1,nx)
+          write(1020,'(360i4)')(mapst2(iy,ix),ix=1,nx)
+          write(1030,'(360i4)')(maptmp(iy,ix),ix=1,nx)
+        end do
+      end if
       WRITE (NDSOG)                                               &
            ((MAPTMP(IY,IX),IX=1,NX),IY=1,NY)
     ELSE
