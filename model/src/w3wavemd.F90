@@ -2726,6 +2726,7 @@ CONTAINS
           TOUT(:) = TONEXT(:,J)
           DTTST   = DSEC21 ( TIME, TOUT )
           IF ( DTTST .EQ. 0. ) THEN
+            print '(a,i5,2i12)','XXX calling w3iors',iaproc,tend
             CALL W3IORS ('HOT', NDS(6), XXX, IMOD, FLOUT(8) )
             ITEST = RSTYPE
             CALL TICK21 ( TOUT, DTOUT(J) )

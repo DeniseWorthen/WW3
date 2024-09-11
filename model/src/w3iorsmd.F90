@@ -505,10 +505,12 @@ CONTAINS
       call set_user_timestring(time,user_timestring)
       fname = trim(user_restfname)//trim(user_timestring)
       if ( write ) then
+        !print *,'XXX writing '//trim(fname)
         IF ( .NOT.IOSFLG .OR. IAPROC.EQ.NAPRST )        &
              open (ndsr,file=trim(fname), form='unformatted', convert=file_endian,       &
              ACCESS='STREAM',ERR=800,IOSTAT=IERR)
       ELSE  ! READ
+        print *,'XXX reading '//trim(fname)
         open (ndsr, file=trim(fname), form='unformatted', convert=file_endian,       &
              ACCESS='STREAM',ERR=800,IOSTAT=IERR,           &
              STATUS='OLD',ACTION='READ')
@@ -543,8 +545,8 @@ CONTAINS
       !
     ELSE
       READ (NDSR,POS=1,ERR=802,IOSTAT=IERR)                       &
-           IDTST, VERTST, TNAME, TYPE, NSEAT, MSPEC, FLOGOA
-      !
+          IDTST, VERTST, TNAME, TYPE, NSEAT, MSPEC, FLOGOA
+
       IF ( IDTST .NE. IDSTR ) THEN
         IF ( IAPROC .EQ. NAPERR )                               &
              WRITE (NDSE,901) IDTST, IDSTR
@@ -868,55 +870,59 @@ CONTAINS
           WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
           WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)           &
                TLEV, TICE, TRHO
-          DO IPART=1,NPART
-            NREC  = NREC + 1
-            RPOS  = 1_8 + LRECL*(NREC-1_8)
-            WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
-            WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)         &
-                 (WLV(ISEA),ISEA=1+(IPART-1)*NSIZE,          &
-                 MIN(NSEA,IPART*NSIZE))
-          END DO
-          DO IPART=1,NPART
-            NREC  = NREC + 1
-            RPOS  = 1_8 + LRECL*(NREC-1_8)
-            WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
-            WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)         &
-                 (ICE(ISEA),ISEA=1+(IPART-1)*NSIZE,          &
-                 MIN(NSEA,IPART*NSIZE))
-          END DO
+          ! DO IPART=1,NPART
+!             NREC  = NREC + 1
+!             RPOS  = 1_8 + LRECL*(NREC-1_8)
+!             WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
+!             !WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)         &
+!             !     (WLV(ISEA),ISEA=1+(IPART-1)*NSIZE,          &
+!             !     MIN(NSEA,IPART*NSIZE))
+!           END DO
+!           DO IPART=1,NPART
+!             NREC  = NREC + 1
+!             RPOS  = 1_8 + LRECL*(NREC-1_8)
+!             WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
+!             !WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)         &
+!             !     (ICE(ISEA),ISEA=1+(IPART-1)*NSIZE,          &
+!             !     MIN(NSEA,IPART*NSIZE))
+!           END DO
 
-#ifdef W3_WRST
-          ! The WRST switch saves the values of wind in the
-          ! restart file and then uses the wind for the first
-          ! time step here.  This is needed when coupling with
-          ! an atm model that does not have 10m wind speeds at
-          ! initialization.  If there is no restart, wind is zero
-#endif
+! #ifdef W3_WRST
+!           ! The WRST switch saves the values of wind in the
+!           ! restart file and then uses the wind for the first
+!           ! time step here.  This is needed when coupling with
+!           ! an atm model that does not have 10m wind speeds at
+!           ! initialization.  If there is no restart, wind is zero
 
-#ifdef W3_WRST
-          DO IX=1, NX
-            DO IPART=1,NPRTY2
-              NREC  = NREC + 1
-              RPOS  = 1_8 + LRECL*(NREC-1_8)
-              WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
-              WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)       &
-                   (WXN(IX,IYL),IYL=1+(IPART-1)*NSIZE,         &
-                   MIN(NY,IPART*NSIZE))
-            END DO
-          END DO
-          DO IX=1, NX
-            DO IPART=1,NPRTY2
-              NREC  = NREC + 1
-              RPOS  = 1_8 + LRECL*(NREC-1_8)
-              WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
-              WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)       &
-                   (WYN(IX,IYL),IYL=1+(IPART-1)*NSIZE,         &
-                   MIN(NY,IPART*NSIZE))
-            END DO
-          END DO
-#endif
+!           DO IX=1, NX
+!             DO IPART=1,NPRTY2
+!               NREC  = NREC + 1
+!               RPOS  = 1_8 + LRECL*(NREC-1_8)
+!               WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
+!               WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)       &
+!                    (WXN(IX,IYL),IYL=1+(IPART-1)*NSIZE,         &
+!                    MIN(NY,IPART*NSIZE))
+!             END DO
+!           END DO
+!           DO IX=1, NX
+!             DO IPART=1,NPRTY2
+!               NREC  = NREC + 1
+!               RPOS  = 1_8 + LRECL*(NREC-1_8)
+!               WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
+!               WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)       &
+!                    (WYN(IX,IYL),IYL=1+(IPART-1)*NSIZE,         &
+!                    MIN(NY,IPART*NSIZE))
+!             END DO
+!           END DO
+! #endif
           ALLOCATE ( MAPTMP(NY,NX) )
           MAPTMP = MAPSTA + 8*MAPST2
+          !if (trim(fname)=='ufs.cpld.ww3.r.2021-03-22-43200') then
+          !  do iy = 1,ny
+          !    write(4010+iaproc,'(360i4)')(mapsta(iy,ix),ix=1,nx)
+          !    write(4020+iaproc,'(360i4)')(mapst2(iy,ix),ix=1,nx)
+          !  end do
+          !end if
           DO IY=1, NY
             DO IPART=1,NPRTX2
               NREC  = NREC + 1
@@ -929,38 +935,38 @@ CONTAINS
             END DO
           END DO
           DEALLOCATE ( MAPTMP )
-          DO IPART=1,NPART
-            NREC  = NREC + 1
-            RPOS  = 1_8 + LRECL*(NREC-1_8)
-            WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
-            WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)         &
-                 (UST(ISEA),ISEA=1+(IPART-1)*NSIZE,          &
-                 MIN(NSEA,IPART*NSIZE))
-          END DO
-          DO IPART=1,NPART
-            NREC  = NREC + 1
-            RPOS  = 1_8 + LRECL*(NREC-1_8)
-            WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
-            WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)         &
-                 (USTDIR(ISEA),ISEA=1+(IPART-1)*NSIZE,       &
-                 MIN(NSEA,IPART*NSIZE))
-          END DO
-          DO IPART=1,NPART
-            NREC  = NREC + 1
-            RPOS  = 1_8 + LRECL*(NREC-1_8)
-            WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
-            WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)         &
-                 (ASF(ISEA),ISEA=1+(IPART-1)*NSIZE,          &
-                 MIN(NSEA,IPART*NSIZE))
-          END DO
-          DO IPART=1,NPART
-            NREC  = NREC + 1
-            RPOS  = 1_8 + LRECL*(NREC-1_8)
-            WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
-            WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)         &
-                 (FPIS(ISEA),ISEA=1+(IPART-1)*NSIZE,         &
-                 MIN(NSEA,IPART*NSIZE))
-          END DO
+          ! DO IPART=1,NPART
+          !   NREC  = NREC + 1
+          !   RPOS  = 1_8 + LRECL*(NREC-1_8)
+          !   WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
+          !   !WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)         &
+          !   !     (UST(ISEA),ISEA=1+(IPART-1)*NSIZE,          &
+          !   !     MIN(NSEA,IPART*NSIZE))
+          ! END DO
+          ! DO IPART=1,NPART
+          !   NREC  = NREC + 1
+          !   RPOS  = 1_8 + LRECL*(NREC-1_8)
+          !   WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
+          !   !WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)         &
+          !   !     (USTDIR(ISEA),ISEA=1+(IPART-1)*NSIZE,       &
+          !   !     MIN(NSEA,IPART*NSIZE))
+          ! END DO
+          ! DO IPART=1,NPART
+          !   NREC  = NREC + 1
+          !   RPOS  = 1_8 + LRECL*(NREC-1_8)
+          !   WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
+          !   !WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)         &
+          !   !     (ASF(ISEA),ISEA=1+(IPART-1)*NSIZE,          &
+          !   !     MIN(NSEA,IPART*NSIZE))
+          ! END DO
+          ! DO IPART=1,NPART
+          !   NREC  = NREC + 1
+          !   RPOS  = 1_8 + LRECL*(NREC-1_8)
+          !   WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
+          !   !WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)         &
+          !   !     (FPIS(ISEA),ISEA=1+(IPART-1)*NSIZE,         &
+          !   !     MIN(NSEA,IPART*NSIZE))
+          ! END DO
           IF (OARST) THEN
 #ifdef W3_MPI
             CALL W3XETA ( IGRD, NDSE, NDST )
@@ -1036,7 +1042,7 @@ CONTAINS
 #ifdef W3_MPI
             CALL W3SETA ( IGRD, NDSE, NDST )
 #endif
-          ENDIF
+          ENDIF !oarst
 #ifdef W3_T
           WRITE (NDST,9007)
         ELSE
@@ -1051,43 +1057,44 @@ CONTAINS
     ELSE
       IF (TYPE.EQ.'FULL') THEN
         RPOS = 1_8 + LRECL*(NREC-1_8)
-        READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)                &
-             TLEV, TICE, TRHO
-        DO IPART=1,NPART
-          NREC  = NREC + 1
-          RPOS = 1_8 + LRECL*(NREC-1_8)
-          READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)              &
-               (WLV(ISEA),ISEA=1+(IPART-1)*NSIZE,              &
-               MIN(NSEA,IPART*NSIZE))
-        END DO
-        DO IPART=1,NPART
-          NREC  = NREC + 1
-          RPOS = 1_8 + LRECL*(NREC-1_8)
-          READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)              &
-               (ICE(ISEA),ISEA=1+(IPART-1)*NSIZE,              &
-               MIN(NSEA,IPART*NSIZE))
-        END DO
-#ifdef W3_WRST
-        DO IX=1, NX
-          DO IPART=1,NPRTY2
-            NREC  = NREC + 1
-            RPOS = 1_8 + LRECL*(NREC-1_8)
-            READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)              &
-                 (WXNwrst(IX,IYL),IYL=1+(IPART-1)*NSIZE,         &
-                 MIN(NY,IPART*NSIZE))
-          END DO
-        END DO
-        DO IX=1, NX
-          DO IPART=1,NPRTY2
-            NREC  = NREC + 1
-            RPOS = 1_8 + LRECL*(NREC-1_8)
-            READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)              &
-                 (WYNwrst(IX,IYL),IYL=1+(IPART-1)*NSIZE,         &
-                 MIN(NY,IPART*NSIZE))
-          END DO
-        END DO
-#endif
+         READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)                &
+              TLEV, TICE, TRHO
+!         DO IPART=1,NPART
+!           NREC  = NREC + 1
+!           RPOS = 1_8 + LRECL*(NREC-1_8)
+!           READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)              &
+!                (WLV(ISEA),ISEA=1+(IPART-1)*NSIZE,              &
+!                MIN(NSEA,IPART*NSIZE))
+!         END DO
+!         DO IPART=1,NPART
+!           NREC  = NREC + 1
+!           RPOS = 1_8 + LRECL*(NREC-1_8)
+!           READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)              &
+!                (ICE(ISEA),ISEA=1+(IPART-1)*NSIZE,              &
+!                MIN(NSEA,IPART*NSIZE))
+!         END DO
+! #ifdef W3_WRST
+!         DO IX=1, NX
+!           DO IPART=1,NPRTY2
+!             NREC  = NREC + 1
+!             RPOS = 1_8 + LRECL*(NREC-1_8)
+!             READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)              &
+!                  (WXNwrst(IX,IYL),IYL=1+(IPART-1)*NSIZE,         &
+!                  MIN(NY,IPART*NSIZE))
+!           END DO
+!         END DO
+!         DO IX=1, NX
+!           DO IPART=1,NPRTY2
+!             NREC  = NREC + 1
+!             RPOS = 1_8 + LRECL*(NREC-1_8)
+!             READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)              &
+!                  (WYNwrst(IX,IYL),IYL=1+(IPART-1)*NSIZE,         &
+!                  MIN(NY,IPART*NSIZE))
+!           END DO
+!         END DO
+! #endif
         ALLOCATE ( MAPTMP(NY,NX) )
+        maptmp = -999
         DO IY=1, NY
           DO IPART=1,NPRTX2
             NREC  = NREC + 1
@@ -1099,6 +1106,12 @@ CONTAINS
         END DO
         MAPSTA = MOD(MAPTMP+2,8) - 2
         MAPST2 = (MAPTMP-MAPSTA) / 8
+        !if (trim(fname)=='ufs.cpld.ww3.r.2021-03-22-43200') then
+        !  do iy = 1,ny
+        !    write(4010+iaproc,'(360i4)')(mapsta(iy,ix),ix=1,nx)
+        !    write(4020+iaproc,'(360i4)')(mapst2(iy,ix),ix=1,nx)
+        !  end do
+        !end if
         DEALLOCATE ( MAPTMP )
         !
         ! Updates reflections maps:
@@ -1110,34 +1123,34 @@ CONTAINS
 #endif
         ENDIF
         !
-        DO IPART=1,NPART
-          NREC  = NREC + 1
-          RPOS  = 1_8 + LRECL*(NREC-1_8)
-          READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)              &
-               (UST(ISEA),ISEA=1+(IPART-1)*NSIZE,              &
-               MIN(NSEA,IPART*NSIZE))
-        END DO
-        DO IPART=1,NPART
-          NREC  = NREC + 1
-          RPOS  = 1_8 + LRECL*(NREC-1_8)
-          READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)              &
-               (USTDIR(ISEA),ISEA=1+(IPART-1)*NSIZE,           &
-               MIN(NSEA,IPART*NSIZE))
-        END DO
-        DO IPART=1,NPART
-          NREC  = NREC + 1
-          RPOS  = 1_8 + LRECL*(NREC-1_8)
-          READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)              &
-               (ASF(ISEA),ISEA=1+(IPART-1)*NSIZE,              &
-               MIN(NSEA,IPART*NSIZE))
-        END DO
-        DO IPART=1,NPART
-          NREC  = NREC + 1
-          RPOS  = 1_8 + LRECL*(NREC-1_8)
-          READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)              &
-               (FPIS(ISEA),ISEA=1+(IPART-1)*NSIZE,             &
-               MIN(NSEA,IPART*NSIZE))
-        END DO
+        ! DO IPART=1,NPART
+        !   NREC  = NREC + 1
+        !   RPOS  = 1_8 + LRECL*(NREC-1_8)
+        !   READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)              &
+        !        (UST(ISEA),ISEA=1+(IPART-1)*NSIZE,              &
+        !        MIN(NSEA,IPART*NSIZE))
+        ! END DO
+        ! DO IPART=1,NPART
+        !   NREC  = NREC + 1
+        !   RPOS  = 1_8 + LRECL*(NREC-1_8)
+        !   READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)              &
+        !        (USTDIR(ISEA),ISEA=1+(IPART-1)*NSIZE,           &
+        !        MIN(NSEA,IPART*NSIZE))
+        ! END DO
+        ! DO IPART=1,NPART
+        !   NREC  = NREC + 1
+        !   RPOS  = 1_8 + LRECL*(NREC-1_8)
+        !   READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)              &
+        !        (ASF(ISEA),ISEA=1+(IPART-1)*NSIZE,              &
+        !        MIN(NSEA,IPART*NSIZE))
+        ! END DO
+        ! DO IPART=1,NPART
+        !   NREC  = NREC + 1
+        !   RPOS  = 1_8 + LRECL*(NREC-1_8)
+        !   READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)              &
+        !        (FPIS(ISEA),ISEA=1+(IPART-1)*NSIZE,             &
+        !        MIN(NSEA,IPART*NSIZE))
+        ! END DO
         IF (OARST) THEN
           IF ( FLOGOA(1,2) ) THEN
             READ (NDSR,ERR=802,IOSTAT=IERR) CX(1:NSEA)
