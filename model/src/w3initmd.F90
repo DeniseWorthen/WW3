@@ -1548,7 +1548,9 @@ CONTAINS
         WRITE (NDSO,990) DTME21
       END IF
       !
-      WRITE (NDSO,984)
+      if (.not. logfile_is_assigned) then
+        WRITE (NDSO,984)
+      end if
       !
     END IF
     !

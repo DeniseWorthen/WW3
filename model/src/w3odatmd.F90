@@ -558,27 +558,28 @@ MODULE W3ODATMD
   LOGICAL, POINTER        :: FLFORM, FLCOMB, O6INIT
   INTEGER, POINTER        :: PTMETH   ! C. Bunney; Partitioning method
   REAL, POINTER           :: PTFCUT   ! C. Bunney; Part. 5 freq cut
-  character(len=8)   :: runtype = ''                 !< @public the run type (startup,branch,continue)
-  character(len=256) :: initfile = ''                !< @public name of wave initial condition file
-                                                     !! if runtype is startup or branch run, then initfile is used
-  character(len=512) :: user_histfname = ''          !<@public user history filename prefix, timestring
-                                                     !! YYYY-MM-DD-SSSSS will be appended
-  character(len=512) :: user_restfname = ''          !<@public user restart filename prefix, timestring
-                                                     !! YYYY-MM-DD-SSSSS will be appended
-  logical            :: histwr = .false.             !<@public logical to trigger history write
-                                                     !! if true => write history file (snapshot)
-  logical            :: rstwr = .false.              !<@public logical to trigger restart write
-                                                     !! if true => write restart
-  logical            :: use_historync = .false.       !<@public logical flag to use netCDF for gridded
-                                                     !! field output
-  logical            :: use_restartnc = .false.       !<@public logical flag to read and write netCDF restarts
-  logical            :: restart_from_binary = .false. !<@public logical flag for restarting from binary restart
+  character(len=8)   :: runtype = ''                  !< @public the run type (startup,branch,continue)
+  character(len=256) :: initfile = ''                 !< @public name of wave initial condition file
+                                                      !! if runtype is startup or branch run, then initfile is used
+  character(len=512) :: user_histfname = ''           !< @public user history filename prefix, timestring
+                                                      !! YYYY-MM-DD-SSSSS will be appended
+  character(len=512) :: user_restfname = ''           !< @public user restart filename prefix, timestring
+                                                      !! YYYY-MM-DD-SSSSS will be appended
+  logical            :: histwr = .false.              !< @public logical to trigger history write
+                                                      !! if true => write history file (snapshot)
+  logical            :: rstwr = .false.               !< @public logical to trigger restart write
+                                                      !! if true => write restart
+  logical            :: use_historync = .false.       !< @public logical flag to use netCDF for gridded
+                                                      !! field output
+  logical            :: use_restartnc = .false.       !< @public logical flag to read and write netCDF restarts
+  logical            :: restart_from_binary = .false. !< @public logical flag for restarting from binary restart
                                                       ! when use_restartnc is true
-  logical            :: logfile_is_assigned = .false. !<@public logical flag for assignment of nds(1) to specified
+  logical            :: logfile_is_assigned = .false. !< @public logical flag for assignment of nds(1) to specified
                                                       !! log file in mesh cap
-  character(len= 36) :: time_origin = ''             !< @public the time_origin used for netCDF output
-  character(len= 36) :: calendar_name = ''           !< @public the calendar used for netCDF output
-  integer(kind=8)    :: elapsed_secs = 0             !< @public the time in seconds from the time_origin
+  logical            :: verboselog = .true.           !< @public logical flag to enable verbose WW3 native logging
+  character(len= 36) :: time_origin = ''              !< @public the time_origin used for netCDF output
+  character(len= 36) :: calendar_name = ''            !< @public the calendar used for netCDF output
+  integer(kind=8)    :: elapsed_secs = 0              !< @public the time in seconds from the time_origin
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /

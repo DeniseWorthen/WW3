@@ -494,6 +494,7 @@ CONTAINS
     use wav_restart_mod , only : write_restart
     use wav_history_mod , only : write_history
     use w3odatmd        , only : histwr, rstwr, use_historync, use_restartnc, user_restfname
+    use w3odatmd        , only : verboselog
     use w3timemd        , only : set_user_timestring
     !
 #ifdef W3_MPI
@@ -673,7 +674,7 @@ CONTAINS
       FLPFLD = FLPFLD .OR. FLOGRD(4,J) .OR. FLOGR2(4,J)
     END DO
     !
-    IF ( IAPROC .EQ. NAPLOG ) BACKSPACE ( NDSO )
+    !IF ( IAPROC .EQ. NAPLOG ) BACKSPACE ( NDSO )
     !
     IF ( FLCOLD ) THEN
       DTDYN = 0.
@@ -2316,7 +2317,7 @@ CONTAINS
           DTG    = DTTST / REAL(NT-IT)
         END IF
         !
-        IF ( FLACT .AND. IT.NE.NT .AND. IAPROC.EQ.NAPLOG ) THEN
+        IF ( FLACT .AND. IT.NE.NT .AND. IAPROC.EQ.NAPLOG .and. verboselog) THEN
           CALL STME21 ( TIME , IDTIME )
           IF ( IDLAST .NE. TIME(1) ) THEN
             WRITE (NDSO,900) ITIME, IPASS, IDTIME(01:19), IDACT, OUTID
@@ -2783,7 +2784,7 @@ CONTAINS
       !
       ! 5.  Update log file ------------------------------------------------ /
       !
-      IF ( IAPROC.EQ.NAPLOG ) THEN
+      IF ( IAPROC.EQ.NAPLOG .and. verboselog) THEN
         !
         CALL STME21 ( TIME , IDTIME )
         IF ( FLCUR ) THEN
@@ -2836,7 +2837,7 @@ CONTAINS
       WRITE (SCREEN,951) STTIME
     END IF
 
-    IF ( IAPROC .EQ. NAPLOG ) WRITE (NDSO,902)
+    IF ( IAPROC .EQ. NAPLOG .and. verboselog) WRITE (NDSO,902)
     !
     DEALLOCATE(FIELD)
     DEALLOCATE(TAUWX, TAUWY)

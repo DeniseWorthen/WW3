@@ -76,6 +76,7 @@ contains
     use w3wdatmd   , only : wlv, ice, icef, iceh, berg, ust, ustdir, asf, rhoair
     use w3gdatmd   , only : e3df, p2msf, us3df, usspf
     use w3odatmd   , only : noswll
+    use w3odatmd   , only : ndso, iaproc
     use w3adatmd   , only : dw, ua, ud, as, cx, cy, taua, tauadir
     use w3adatmd   , only : hs, wlm, t02, t0m1, t01, fp0, thm, ths, thp0, wbt, wnmean
     use w3adatmd   , only : dtdyn
@@ -134,6 +135,7 @@ contains
     endif
     ierr = pio_createfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), nmode)
     call handle_err(ierr, 'pio_create')
+    if (iaproc == 1) write(ndso,'(a)')' Writing history file '//trim(fname)
 
     len_s = noswll + 1                  ! 0:noswll
     len_m = p2msf(3)-p2msf(2) + 1       ! ?
@@ -641,7 +643,7 @@ contains
   subroutine wav_history_init(stdout)
 
     use w3gdatmd, only: e3df, p2msf, us3df, usspf
-    use w3odatmd, only: iaproc, napout, nogrp, ngrpp
+    use w3odatmd, only: iaproc, nogrp, ngrpp
     use w3iogomd, only: fldout
     use w3servmd, only: strsplit
 
@@ -715,7 +717,7 @@ contains
     end do
 
     ! check
-    if ( iaproc == napout ) then
+    if ( iaproc == 1 ) then
       write(stdout,*)
       write(stdout,'(a)')' --------------------------------------------------'
       write(stdout,'(a)')'  Requested gridded output variables : '
@@ -727,6 +729,7 @@ contains
              '  '//trim(outvars(n)%long_name)
       end do
       write(stdout,*)
+      call flush (stdout)
     end if
 
   end subroutine wav_history_init
