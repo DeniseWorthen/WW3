@@ -121,14 +121,14 @@ contains
 
     ! native WW3 file naming
     if (len_trim(user_histfname) == 0) then
-      write(fname,'(a,i8.8,a1,i6.6,a)')trim(fnmpre),timen(1),'.',timen(2),'.out_grd.'//trim(filext)//'.nc'
+      write(fname,'(a,i8.8,a1,i6.6,a)')trim(fnmpre),timen(1),'.',timen(2),'.out_grd.ww3.nc'
     else
       call set_user_timestring(timen,user_timestring)
       fname = trim(user_histfname)//trim(user_timestring)//'.nc'
     end if
 
     pioid%fh = -1
-    nmode = pio_noclobber
+    nmode = pio_clobber
     ! only applies to classic NETCDF files.
     if (pio_iotype == PIO_IOTYPE_NETCDF .or. pio_iotype == PIO_IOTYPE_PNETCDF) then
       nmode = ior(nmode,pio_ioformat)
@@ -636,7 +636,7 @@ contains
   !! CUR tag. The tag "SXY" means that three components of radiation stresses
   !! are requested (XX,YY,XY).
   !!
-  !! @param[in]   stdout            the logfile on the root_task
+  !! @param[in]   stdout            the logfile unit on the root_task
   !!
   !> @author Denise.Worthen@noaa.gov
   !> @date 09-19-2022

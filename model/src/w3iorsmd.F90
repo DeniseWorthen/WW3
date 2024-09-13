@@ -338,6 +338,8 @@ CONTAINS
     !
     use w3timemd, only: set_user_timestring
     use w3odatmd, only: user_restfname
+    ! debug
+    use w3odatmd, only: addice
 #ifdef W3_MPI
     INCLUDE "mpif.h"
 #endif
@@ -878,15 +880,17 @@ CONTAINS
 !             !     (WLV(ISEA),ISEA=1+(IPART-1)*NSIZE,          &
 !             !     MIN(NSEA,IPART*NSIZE))
 !           END DO
-!           DO IPART=1,NPART
-!             NREC  = NREC + 1
-!             RPOS  = 1_8 + LRECL*(NREC-1_8)
-!             WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
-!             !WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)         &
-!             !     (ICE(ISEA),ISEA=1+(IPART-1)*NSIZE,          &
-!             !     MIN(NSEA,IPART*NSIZE))
-!           END DO
 
+          if (addice) then
+            DO IPART=1,NPART
+              NREC  = NREC + 1
+              RPOS  = 1_8 + LRECL*(NREC-1_8)
+              WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR) WRITEBUFF
+              WRITE (NDSR,POS=RPOS,ERR=803,IOSTAT=IERR)         &
+                   (ICE(ISEA),ISEA=1+(IPART-1)*NSIZE,          &
+                   MIN(NSEA,IPART*NSIZE))
+            END DO
+          end if
 ! #ifdef W3_WRST
 !           ! The WRST switch saves the values of wind in the
 !           ! restart file and then uses the wind for the first
@@ -1066,13 +1070,15 @@ CONTAINS
 !                (WLV(ISEA),ISEA=1+(IPART-1)*NSIZE,              &
 !                MIN(NSEA,IPART*NSIZE))
 !         END DO
-!         DO IPART=1,NPART
-!           NREC  = NREC + 1
-!           RPOS = 1_8 + LRECL*(NREC-1_8)
-!           READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)              &
-!                (ICE(ISEA),ISEA=1+(IPART-1)*NSIZE,              &
-!                MIN(NSEA,IPART*NSIZE))
-!         END DO
+         if (addice) then
+           DO IPART=1,NPART
+             NREC  = NREC + 1
+             RPOS = 1_8 + LRECL*(NREC-1_8)
+             READ (NDSR,POS=RPOS,ERR=802,IOSTAT=IERR)              &
+                  (ICE(ISEA),ISEA=1+(IPART-1)*NSIZE,              &
+                  MIN(NSEA,IPART*NSIZE))
+           END DO
+         end if
 ! #ifdef W3_WRST
 !         DO IX=1, NX
 !           DO IPART=1,NPRTY2

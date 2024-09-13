@@ -504,7 +504,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    INTEGER, INTENT(IN)           :: IMOD, TEND(2),ODAT(35)
+    INTEGER, INTENT(IN)           :: IMOD, TEND(2),ODAT(40)
     LOGICAL, INTENT(IN), OPTIONAL :: STAMP, NO_OUT
 #ifdef W3_OASIS
     INTEGER, INTENT(IN), OPTIONAL :: ID_LCOMM
@@ -2337,7 +2337,7 @@ CONTAINS
 #endif
         !
         !
-      END DO
+      END DO ! DO IT = IT0, NT
 
 #ifdef W3_TIMINGS
       CALL PRINT_MY_TIME("W3WAVE, step 6.21.1")
@@ -2358,6 +2358,7 @@ CONTAINS
       !     Delay if data assimilation time.
       !
       !
+      if (dsec21(time,tend) == 0.0) then    ! req'd in case waves are running in slow loop
       if (use_historync) then
         floutg = .false.
         floutg2 = .false.
@@ -2373,6 +2374,7 @@ CONTAINS
           call set_user_timestring(tend,user_timestring)
           fname = trim(user_restfname)//trim(user_timestring)//'.nc'
           call write_restart(trim(fname), va, mapsta+8*mapst2)
+          end if
         end if
       end if
 
@@ -2626,12 +2628,7 @@ CONTAINS
                   !   Gets the necessary spectral data
                   !
                   CALL W3IOPE ( VA )
-#ifdef W3_BIN2NC
-                  CALL W3IOPON ( 'WRITE', NDS(8), ITEST, IMOD )
-#else
-                  CALL W3IOPO ( 'WRITE', NDS(8), ITEST, IMOD &
-                          )
-#endif
+                  CALL W3IOPO ( 'WRITE', NDS(8), ITEST, IMOD )
                   END IF
                 !
               ELSE IF ( J .EQ. 3 ) THEN
@@ -2727,7 +2724,6 @@ CONTAINS
           TOUT(:) = TONEXT(:,J)
           DTTST   = DSEC21 ( TIME, TOUT )
           IF ( DTTST .EQ. 0. ) THEN
-            print '(a,i5,2i12)','XXX calling w3iors',iaproc,tend
             CALL W3IORS ('HOT', NDS(6), XXX, IMOD, FLOUT(8) )
             ITEST = RSTYPE
             CALL TICK21 ( TOUT, DTOUT(J) )

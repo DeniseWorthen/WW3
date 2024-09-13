@@ -44,7 +44,7 @@ contains
   !!
   !! @param       gcomp             an ESMF_GridComp object
   !! @param       mpi_comm          the MPI communicator
-  !! @param[in]   stdout            the logfile on the root_task
+  !! @param[in]   stdout            the logfile unit on the root_task
   !! @param[in]   numprocs          naproc/nthrds
   !! @param[out]  rc                a return code
   !!

@@ -8,7 +8,7 @@ module wav_restart_mod
 
   use w3parall      , only : init_get_isea
   use w3adatmd      , only : nsealm
-  use w3gdatmd      , only : nth, nk, nx, ny, nspec, nseal, nsea
+  use w3gdatmd      , only : nth, nk, nx, ny, mapsf, nspec, nseal, nsea
   use w3odatmd      , only : ndso, iaproc
   use wav_pio_mod   , only : pio_iotype, pio_ioformat, wav_pio_subsystem
   use wav_pio_mod   , only : handle_err, wav_pio_initdecomp
@@ -32,6 +32,10 @@ module wav_restart_mod
   public :: write_restart
   public :: read_restart
 
+  ! used/reused in module
+  character(len=12) :: vname
+  integer           :: ik, ith, ix, iy, kk, nseal_cpl, isea, jsea, ierr
+
   !===============================================================================
 contains
   !===============================================================================
@@ -41,28 +45,25 @@ contains
   !! time
   !!
   !! @param[in]     fname    the time-stamped file name
-  !! @param[in]     va_in    the current VA array
-  !! @param[in]     map_in   the current MAPSTA array
+  !! @param[in]     va       the va array
+  !! @param[in]     mapsta   the mapsta + 8*mapst2 array
   !!
   !> author DeniseWorthen@noaa.gov
   !> @date 08-26-2024
-  subroutine write_restart (fname, va_in, map_in)
+  subroutine write_restart (fname, va, mapsta)
 
-    use w3gdatmd , only : mapsf
     use w3odatmd , only : time_origin, calendar_name, elapsed_secs
 
-    real            , intent(in) :: va_in(1:nspec,0:nsealm)
-    integer         , intent(in) :: map_in(ny,nx)
+    real            , intent(in) :: va(1:nspec,0:nsealm)
+    integer         , intent(in) :: mapsta(ny,nx)
     character(len=*), intent(in) :: fname
 
     ! local variables
-    character(len=12)    :: vname
-    integer              :: timid, xtid, ytid, ztid, ierr
-    integer              :: ik, ith, ix, iy, kk, nseal_cpl
-    integer              :: isea, jsea, nmode
+    integer              :: timid, xtid, ytid, ztid
+    integer              :: nmode
     integer              :: dimid(4)
-    integer, allocatable :: locmap(:)
-    real, allocatable    :: locva(:,:)
+    real   , allocatable :: lva(:,:)
+    integer, allocatable :: lmap(:)
     !-------------------------------------------------------------------------------
 
 #ifdef W3_PDLIB
@@ -70,8 +71,8 @@ contains
 #else
     nseal_cpl = nseal
 #endif
-    allocate(locmap(1:nseal_cpl))
-    allocate(locva(1:nseal_cpl,1:nspec))
+    allocate(lmap(1:nseal_cpl))
+    allocate(lva(1:nseal_cpl,1:nspec))
 
     ! create the netcdf file
     frame = 1
@@ -126,12 +127,12 @@ contains
     call handle_err(ierr, 'put time')
 
     ! mapsta is global
-    locmap(:) = 0
+    lmap(:) = 0
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
       ix = mapsf(isea,1)
       iy = mapsf(isea,2)
-      locmap(jsea) = map_in(iy,ix)
+      lmap(jsea) = mapsta(iy,ix)
     end do
 
     ! write PE local map
@@ -139,17 +140,17 @@ contains
     ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
     call pio_setframe(pioid, varid, int(1,kind=Pio_Offset_Kind))
-    call pio_write_darray(pioid, varid, iodesc2dint, locmap, ierr)
+    call pio_write_darray(pioid, varid, iodesc2dint, lmap, ierr)
     call handle_err(ierr, 'put variable '//trim(vname))
 
     ! write va
-    locva(:,:) = 0.0
+    lva(:,:) = 0.0
     do jsea = 1,nseal_cpl
       kk = 0
       do ik = 1,nk
         do ith = 1,nth
           kk = kk + 1
-          locva(jsea,kk) = va_in(kk,jsea)
+          lva(jsea,kk) = va(kk,jsea)
         end do
       end do
     end do
@@ -158,7 +159,7 @@ contains
     ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
     call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
-    call pio_write_darray(pioid, varid, iodesc3dk, locva, ierr)
+    call pio_write_darray(pioid, varid, iodesc3dk, lva, ierr)
     call handle_err(ierr, 'put variable '//trim(vname))
 
     call pio_syncfile(pioid)
@@ -175,51 +176,37 @@ contains
   !! initialize a set of variables when the filename is "none".
   !!
   !! @param[in]     fname     the time-stamped file name
-  !! @param[out]    va_out    the VA array
-  !! @param[out]    map_out   the MAPSTA array
+  !! @param[out]    va        the va array, optional
+  !! @param[out]    mapsta    the mapsta array, optional
+  !! @param[inout]  mapst2    the mapst2 array, optional
   !!
   !> author DeniseWorthen@noaa.gov
   !> @date 08-26-2024
-  subroutine read_restart (fname, va_out, map_out)
-
+  subroutine read_restart (fname, va, mapsta, mapst2)
+  !subroutine read_restart (fname, va, mapsta)
     use mpi_f08
     use w3adatmd    , only : mpi_comm_wave
-    use w3gdatmd    , only : mapsf, mapst2, sig, nseal
+    use w3gdatmd    , only : sig
     use w3wdatmd    , only : time, tlev, tice, trho, tic1, tic5, wlv, asf, ice, fpis
 
-    real            , intent(out) :: va_out(1:nspec,0:nsealm)
-    integer         , intent(out) :: map_out(ny,nx)
-    character(len=*), intent(in)  :: fname
+    character(len=*)  , intent(in)    :: fname
+    real   , optional , intent(out)   :: va(1:nspec,0:nsealm)
+    integer, optional , intent(out)   :: mapsta(ny,nx)
+    integer, optional , intent(inout) :: mapst2(ny,nx)
 
     ! local variables
     type(MPI_Comm)       :: wave_communicator  ! needed for mpi_f08
-    integer              :: ik, ith, ix, iy, kk, nseal_cpl
-    integer              :: isea, jsea
-    character(len=12)    :: vname
-    integer              :: ierr
     integer              :: global_input(nsea), global_output(nsea)
     integer              :: ifill
     real                 :: rfill
-    real, allocatable    :: valoc(:,:)
-    integer, allocatable :: maploc2d(:,:)
-    integer, allocatable :: maploc(:)
+    real   , allocatable :: lva(:,:)
+    integer, allocatable :: lmap(:)
+    integer, allocatable :: lmap2d(:,:)
+    integer, allocatable :: st2init(:,:)
     !-------------------------------------------------------------------------------
 
-    wave_communicator%mpi_val = MPI_COMM_WAVE
-#ifdef W3_PDLIB
-    nseal_cpl = nseal - ng
-#else
-    nseal_cpl = nseal
-#endif
-    allocate(valoc(1:nseal_cpl,1:nspec))
-    allocate(maploc2d(1:ny,1:nx))
-    allocate(maploc(1:nseal_cpl))
-    valoc(:,:) = 0.0
-    maploc2d(:,:) = 0
-    maploc(:) = 0
-
+    ! cold start, set initial values and return.
     if (trim(fname)  == 'none') then
-      !fill needed fields and return
       tlev(1) = -1
       tlev(2) =  0
       tice(1) = -1
@@ -237,6 +224,23 @@ contains
       if (iaproc == 1) write(ndso,'(a)')' Initializing WW3 at rest '
       return
     end if
+
+    ! read a netcdf restart
+    wave_communicator%mpi_val = MPI_COMM_WAVE
+#ifdef W3_PDLIB
+    nseal_cpl = nseal - ng
+#else
+    nseal_cpl = nseal
+#endif
+    allocate(lva(1:nseal_cpl,1:nspec))
+    allocate(lmap2d(1:ny,1:nx))
+    allocate(st2init(1:ny,1:nx))
+    allocate(lmap(1:nseal_cpl))
+    lva(:,:) = 0.0
+    lmap2d(:,:) = 0
+    lmap(:) = 0
+    ! save a copy of initial mapst2 from mod_def
+    st2init = mapst2
 
     ! all times are restart times
     tlev = time
@@ -257,19 +261,19 @@ contains
     ierr = pio_inq_varid(pioid, trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
     call pio_setframe(pioid, varid, frame)
-    call pio_read_darray(pioid, varid, iodesc3dk, valoc, ierr)
+    call pio_read_darray(pioid, varid, iodesc3dk, lva, ierr)
     call handle_err(ierr, 'get variable '//trim(vname))
     ierr = pio_get_att(pioid, varid, "_FillValue", rfill)
     call handle_err(ierr, 'get variable _FillValue'//trim(vname))
 
-    va_out = 0.0
+    va = 0.0
     do jsea = 1,nseal_cpl
       kk = 0
       do ik = 1,nk
         do ith = 1,nth
           kk = kk + 1
-          if (valoc(jsea,kk) .ne. rfill) then
-            va_out(kk,jsea) = valoc(jsea,kk)
+          if (lva(jsea,kk) .ne. rfill) then
+            va(kk,jsea) = lva(jsea,kk)
           end if
         end do
       end do
@@ -279,7 +283,7 @@ contains
     ierr = pio_inq_varid(pioid, trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
     call pio_setframe(pioid, varid, frame)
-    call pio_read_darray(pioid, varid, iodesc2dint, maploc, ierr)
+    call pio_read_darray(pioid, varid, iodesc2dint, lmap, ierr)
     call handle_err(ierr, 'get variable '//trim(vname))
     ierr = pio_get_att(pioid, varid, "_FillValue", ifill)
     call handle_err(ierr, 'get variable _FillValue'//trim(vname))
@@ -291,23 +295,23 @@ contains
       call init_get_isea(isea, jsea)
       ix = mapsf(isea,1)
       iy = mapsf(isea,2)
-      if (maploc(jsea) .ne. ifill) then
-        global_input(isea) = maploc(jsea)
+      if (lmap(jsea) .ne. ifill) then
+        global_input(isea) = lmap(jsea)
       end if
     end do
     ! reduce across all PEs to create global array
     call MPI_AllReduce(global_input, global_output, nsea, MPI_INTEGER, MPI_SUM, wave_communicator, ierr)
 
     ! fill global array on each PE
-    maploc2d = 0
+    lmap2d = 0
     do isea = 1,nsea
       ix = mapsf(isea,1)
       iy = mapsf(isea,2)
-      maploc2d(iy,ix) = global_output(isea)
+      lmap2d(iy,ix) = global_output(isea)
     end do
 
-    map_out = mod(maploc2d+2,8) - 2
-    mapst2 = (maploc2d-map_out)/8
+    mapsta = mod(lmap2d+2,8) - 2
+    mapst2 = st2init + (lmap2d-mapsta)/8
 
     call pio_syncfile(pioid)
     call pio_freedecomp(pioid, iodesc2dint)

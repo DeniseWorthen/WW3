@@ -58,6 +58,8 @@ module wav_comp_nuopc
   use w3adatmd              , only : flcold, fliwnd
 #endif
   use constants             , only : is_esmf_component
+  !debug
+  use w3odatmd              , only : addice
 
   implicit none
   private ! except
@@ -383,6 +385,12 @@ contains
     write(logmsg,*) verboselog
     call ESMF_LogWrite('WW3_cap: Verbose WW3 native logging is = '//trim(logmsg), ESMF_LOGMSG_INFO)
 
+    ! debug
+    call NUOPC_CompAttributeGet(gcomp, name="addice", value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    if (isPresent .and. isSet) addice=(trim(cvalue)=="true")
+
+
     call advertise_fields(importState, exportState, flds_scalar_name, rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
@@ -415,7 +423,7 @@ contains
   !> @date 01-05-2022
   subroutine InitializeRealize(gcomp, importState, exportState, clock, rc)
 
-    use w3odatmd        , only : w3nout, w3seto, naproc, iaproc, naperr, napout
+    use w3odatmd        , only : w3nout, w3seto, naproc, naperr
     use w3timemd        , only : stme21
     use w3adatmd        , only : w3naux, w3seta
     use w3idatmd        , only : w3seti, w3ninp
@@ -599,7 +607,7 @@ contains
       runtype = "branch"
     end if
     if ( root_task ) then
-      write(stdout,*) 'WW3 runtype is '//trim(runtype)
+      write(stdout,'(a)') 'WW3 runtype is '//trim(runtype)
     end if
     call ESMF_LogWrite('WW3 runtype is '//trim(runtype), ESMF_LOGMSG_INFO)
 
@@ -778,7 +786,7 @@ contains
       end do
       call ESMF_LogWrite(trim(subname)//' done = wminit', ESMF_LOGMSG_INFO)
     else
-      call waveinit_ufs(gcomp, ntrace, mpi_comm, mds, rc)
+      call waveinit_ufs(gcomp, stdout, ntrace, mpi_comm, mds, rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
     end if
 #else
@@ -987,12 +995,9 @@ contains
 984 format (//                                                       &
          37x,'  |         input         |      output      |'/       &
          37x,'  |-----------------------|------------------|'/       &
-         2x,'   step | pass |    date      time   |',                &
-         ' b w l c t r i i1 i5 d | g p t r b f c r2 |'/              &
-         2x,'--------|------|---------------------|',                &
-         '-----------------------|------------------|'/              &
-         2x,'--------+------+---------------------+',                &
-         '---------------------------+--------------+')
+          2x,'   step | pass |    date      time   | b w l c t r i i1 i5 d | g p t r b f c r2 |'/ &
+          2x,'--------|------|---------------------|-----------------------|------------------|'/ &
+          2x,'--------+------+---------------------+---------------------------+--------------+')
 
   end subroutine InitializeRealize
 
@@ -1670,6 +1675,7 @@ contains
   !! ww3_shel.nml file. Calls w3init to initialize the wave model
   !!
   !! @param[in]    gcomp        an ESMF_GridComp object
+  !! @param[in]    stdout       the logfile unit on the root task
   !! @param[in]    ntrace       unit numbers for trace
   !! @param[in]    mpi_comm     an mpi communicator
   !! @param[in]    mds          unit numbers
@@ -1677,7 +1683,7 @@ contains
   !!
   !> @author mvertens@ucar.edu, Denise.Worthen@noaa.gov
   !> @date 01-05-2022
-  subroutine waveinit_ufs( gcomp, ntrace, mpi_comm, mds, rc)
+  subroutine waveinit_ufs( gcomp, stdout, ntrace, mpi_comm, mds, rc)
 
     ! Initialize ww3 for ufs (called from InitializeRealize)
 
@@ -1691,6 +1697,7 @@ contains
 
     ! input/output variables
     type(ESMF_GridComp)  :: gcomp
+    integer, intent(in)  :: stdout
     integer, intent(in)  :: ntrace(:)
     integer, intent(in)  :: mpi_comm
     integer, intent(in)  :: mds(:)
@@ -1700,14 +1707,12 @@ contains
     logical           :: isPresent, isSet
     character(len=CL) :: cvalue
     integer           :: dt_in(4)
-    integer           :: stdout
     character(len=*), parameter :: subname = '(wav_comp_nuopc:wavinit_ufs)'
     ! -------------------------------------------------------------------
 
     rc = ESMF_SUCCESS
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
 
-    stdout = mds(1) ! this is log.ww3
 
     fnmpre = './'
 
@@ -1718,7 +1723,8 @@ contains
     call w3init ( 1, .false., 'ww3', mds, ntrace, odat, flgrd, flgr2, flgd, flg2, &
          npts, x, y, pnames, iprt, prtfrm, mpi_comm )
 
-    if (root_task) write(stdout,'(a,4f10.2)') trim(subname)//': mod_def timesteps file  ',dtmax,dtcfl,dtcfli,dtmin
+    write(cvalue,'(4f10.1)')dtmax,dtcfl,dtcfli,dtmin
+    if (root_task) write(stdout,'(a)') trim(subname)//': WW3 timesteps from mod_def '//trim(cvalue)
     call NUOPC_CompAttributeGet(gcomp, name='dt_in', isPresent=isPresent, isSet=isSet, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
     if (isPresent .and. isSet) then
@@ -1729,8 +1735,10 @@ contains
       dtcfl  = real(dt_in(2),4)
       dtcfli = real(dt_in(3),4)
       dtmin  = real(dt_in(4),4)
-      if (root_task) write(stdout,'(a,4f10.2)') trim(subname)//': mod_def timesteps reset ',dtmax,dtcfl,dtcfli,dtmin
     end if
+    !TODO: why doesn't this line get written?
+    write(cvalue,'(4f10.1)')dtmax,dtcfl,dtcfli,dtmin
+    if (root_task) write(stdout,'(a)') trim(subname)//': WW3 timesteps '//trim(cvalue)
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
   end subroutine waveinit_ufs
 

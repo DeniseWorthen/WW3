@@ -203,8 +203,9 @@ contains
     memunit = 740+IAPROC
     call print_logmsg(740+IAPROC, 'read_shel_config, step 1', w3_debuginit_flag)
 
-    ! ndso, ndse, ndst are set in w3initmd using mds;  w3initmd is called by either
-    ! cesm_init or uwm_int after calling the read_shel_config routine
+    ! module variables ndso, ndse, ndst are set in w3initmd using mds;  w3initmd is
+    ! called by either cesm_init or uwm_int after calling the read_shel_config routine.
+    ! these nd units are local variables here
     ndso =  mds(1)
     ndse =  mds(1)
     ndst =  mds(1)

@@ -686,12 +686,12 @@ CONTAINS
       IF ( OUTPTS(IMOD)%IAPROC .EQ. OUTPTS(IMOD)%NAPLOG )             &
            OPEN (MDS(1),FILE=FNMPRE(:J)//LFILE(:IFL),ERR=888,IOSTAT=IERR)
       !
-    end if ! if (.not. logfile_is_assigned)
     IF ( MDS(3).NE.MDS(1) .AND. MDS(3).NE.MDS(4) .AND. TSTOUT ) THEN
       INQUIRE (MDS(3),OPENED=OPENED)
       IF ( .NOT. OPENED ) OPEN (MDS(3),FILE=FNMPRE(:J)//TFILE(:IFT), ERR=889, &
            IOSTAT=IERR)
     END IF
+    end if ! if (.not. logfile_is_assigned)
     !
     ! 1.d Dataset unit numbers
     !
@@ -977,14 +977,14 @@ CONTAINS
           if (restart_from_binary) then
             call w3iors('READ', nds(6), sig(nk), imod, filename=trim(fname))
           else
-            call read_restart(trim(fname), va, mapsta)
+            call read_restart(trim(fname), va=va, mapsta=mapsta, mapst2=mapst2)
           end if
         else
           call extcde (60, msg="required restart file " // trim(fname) // " does not exist")
         end if
       else
-        call read_restart('none', va, mapsta)
-        mapsta = maptst
+        call read_restart('none')
+        ! mapst2 is module variable defined in read of mod_def; maptst is from 2.b above
         flcold = .true.
       end if
     else
