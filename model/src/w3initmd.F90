@@ -686,11 +686,11 @@ CONTAINS
       IF ( OUTPTS(IMOD)%IAPROC .EQ. OUTPTS(IMOD)%NAPLOG )             &
            OPEN (MDS(1),FILE=FNMPRE(:J)//LFILE(:IFL),ERR=888,IOSTAT=IERR)
       !
-    IF ( MDS(3).NE.MDS(1) .AND. MDS(3).NE.MDS(4) .AND. TSTOUT ) THEN
-      INQUIRE (MDS(3),OPENED=OPENED)
-      IF ( .NOT. OPENED ) OPEN (MDS(3),FILE=FNMPRE(:J)//TFILE(:IFT), ERR=889, &
-           IOSTAT=IERR)
-    END IF
+      IF ( MDS(3).NE.MDS(1) .AND. MDS(3).NE.MDS(4) .AND. TSTOUT ) THEN
+        INQUIRE (MDS(3),OPENED=OPENED)
+        IF ( .NOT. OPENED ) OPEN (MDS(3),FILE=FNMPRE(:J)//TFILE(:IFT), ERR=889, &
+             IOSTAT=IERR)
+      END IF
     end if ! if (.not. logfile_is_assigned)
     !
     ! 1.d Dataset unit numbers

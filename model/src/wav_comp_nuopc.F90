@@ -438,7 +438,7 @@ contains
     use wav_shel_inp    , only : set_shel_io
     use wav_history_mod , only : wav_history_init
     use wav_pio_mod     , only : wav_pio_init
-    use wav_shr_mod     , only : diagnose_mesh, write_meshdecomp
+    use wav_shr_mod     , only : diagnose_mesh, write_meshdecomp, wav_loginit
 #ifdef W3_PDLIB
     use yowNodepool     , only : ng
 #endif
@@ -796,7 +796,7 @@ contains
     call waveinit_cesm(gcomp, ntrace, mpi_comm, mds, rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 #endif
-    ! call mpi_barrier ( mpi_comm, ierr )
+    !call mpi_barrier ( mpi_comm, ierr )
     if ( root_task ) then
       inquire(unit=stdout, name=logfile)
       write(*,'(a)')'WW3 log written to '//trim(logfile)
@@ -985,19 +985,12 @@ contains
     !--------------------------------------------------------------------
 
     if (root_task) then
-      if (verboselog) write(stdout,984)
+      if (verboselog) call wav_loginit(stdout)
     end if
 
     if (root_task) call ufs_logtimer(nu_timer,time,start_tod,'InitializeRealize time: ',runtimelog,wtime)
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
-
-984 format (//                                                       &
-         37x,'  |         input         |      output      |'/       &
-         37x,'  |-----------------------|------------------|'/       &
-          2x,'   step | pass |    date      time   | b w l c t r i i1 i5 d | g p t r b f c r2 |'/ &
-          2x,'--------|------|---------------------|-----------------------|------------------|'/ &
-          2x,'--------+------+---------------------+---------------------------+--------------+')
 
   end subroutine InitializeRealize
 
@@ -1713,9 +1706,7 @@ contains
     rc = ESMF_SUCCESS
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
 
-
     fnmpre = './'
-
     if (root_task) write(stdout,'(a)') trim(subname)//' call read_shel_config'
     call read_shel_config(mpi_comm, mds, time0_overwrite=time0, timen_overwrite=timen)
 

@@ -608,9 +608,12 @@ CONTAINS
     integer            :: memunit
     character(len=16)  :: user_timestring    !YYYY-MM-DD-SSSSS
     character(len=256) :: fname
+    ! debug
+    integer :: lcount = 0
     !/ ------------------------------------------------------------------- /
     ! 0.  Initializations
     !
+    lcount = lcount+1
     XXX = undef
     memunit = 40000+iaproc
     ! 0.a Set pointers to data structure
@@ -1268,10 +1271,14 @@ CONTAINS
           END IF
           !
           IF ( IDACT(13:13).NE.' ' ) THEN
+            if (iaproc==1)print '(a,i5,f8.2,2(2i12),a,2g15.7)','XXX0 w3uice at ',lcount,dti0,time,tin,&
+                 '  '//idact(13:13)//' ',minval(icei),maxval(icei)
             CALL W3UICE ( VA )
             DTI0   = 0.
             FLACT  = .TRUE.
             FLMAP  = .TRUE.
+          else
+            if (iaproc==1)print '(a,i5,f8.2,2(2i12),2g15.7)','XXX1 w3uice at ',lcount,dti0,time,tin,minval(icei),maxval(icei)
           END IF
         END IF
 #ifdef W3_DEBUGCOH
@@ -2301,10 +2308,6 @@ CONTAINS
         END DO
         IF (IT.GT.0) DTG=DTGTEMP
 #endif
-
-
-
-
         !
         !
         ! 3.8 Update global time step.
@@ -2359,21 +2362,21 @@ CONTAINS
       !
       !
       if (dsec21(time,tend) == 0.0) then    ! req'd in case waves are running in slow loop
-      if (use_historync) then
-        floutg = .false.
-        floutg2 = .false.
-        if (histwr) then
-          call w3cprt (imod)
-          call w3outg (va, flpfld, .true., .false. )
-          call write_history(tend)
+        if (use_historync) then
+          floutg = .false.
+          floutg2 = .false.
+          if (histwr) then
+            call w3cprt (imod)
+            call w3outg (va, flpfld, .true., .false. )
+            call write_history(tend)
+          end if
         end if
-      end if
 
-      if (use_restartnc) then
-        if (rstwr) then
-          call set_user_timestring(tend,user_timestring)
-          fname = trim(user_restfname)//trim(user_timestring)//'.nc'
-          call write_restart(trim(fname), va, mapsta+8*mapst2)
+        if (use_restartnc) then
+          if (rstwr) then
+            call set_user_timestring(tend,user_timestring)
+            fname = trim(user_restfname)//trim(user_timestring)//'.nc'
+            call write_restart(trim(fname), va, mapsta+8*mapst2)
           end if
         end if
       end if
@@ -2629,7 +2632,7 @@ CONTAINS
                   !
                   CALL W3IOPE ( VA )
                   CALL W3IOPO ( 'WRITE', NDS(8), ITEST, IMOD )
-                  END IF
+                END IF
                 !
               ELSE IF ( J .EQ. 3 ) THEN
                 !

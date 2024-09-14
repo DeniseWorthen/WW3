@@ -1072,8 +1072,8 @@ contains
       ix = mapsf(isea,1)
       iy = mapsf(isea,2)
       if ( firstCall ) then
-        if(( runtype == 'initial'  .and.     mapsta(iy,ix)  == 1 ) .or. &
-             ( runtype == 'continue' .and. abs(mapsta(iy,ix)) == 1 )) then
+        if(( trim(runtype) == 'initial'  .and.     mapsta(iy,ix)  == 1 ) .or. &
+             ( trim(runtype) == 'continue' .and. abs(mapsta(iy,ix)) == 1 )) then
           charn(jsea) = zero
           llws(:) = .true.
           ustar = zero
