@@ -73,9 +73,9 @@ MODULE W3UOSTMD
 
 
   TYPE UOST_SOURCETERM
-    REAL, ALLOCATABLE :: COSTH(:), SINTH(:)
-    REAL :: GAMMAUP = 10
-    REAL :: GAMMADOWN = 20
+    REAL, ALLOCATABLE   :: COSTH(:), SINTH(:)
+    REAL                :: GAMMAUP = 10
+    REAL                :: GAMMADOWN = 20
     ! griddata is a pointer to the grid actually computed
     TYPE(GRID), POINTER :: GRD
     TYPE(SGRD), POINTER :: SGD
@@ -87,9 +87,9 @@ MODULE W3UOSTMD
     !compute_se: estimates the shadow effect (private method)
     PROCEDURE, PASS, PRIVATE :: COMPUTE_SE => UOST_SOURCETERM_COMPUTE_SE
     !compute: estimates the whole dissipation
-    PROCEDURE, PASS :: COMPUTE => UOST_SOURCETERM_COMPUTE
+    PROCEDURE, PASS          :: COMPUTE => UOST_SOURCETERM_COMPUTE
     !setgrid: sets grd pointer and computes some cached structures
-    PROCEDURE, PASS :: SETGRID => UOST_SOURCETERM_SETGRID
+    PROCEDURE, PASS          :: SETGRID => UOST_SOURCETERM_SETGRID
   END TYPE UOST_SOURCETERM
 
   ! srctrm: global singleton source term
@@ -159,11 +159,12 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN) :: IGRID
+    INTEGER,          INTENT(IN) :: IGRID
     CHARACTER(LEN=*), INTENT(IN) :: FILELOCAL, FILESHADOW
-    REAL, INTENT(IN) :: LOCALFACTOR, SHADOWFACTOR
-    TYPE(GRID), POINTER :: GRD
-    TYPE(SGRD), POINTER :: SGD
+    REAL,             INTENT(IN) :: LOCALFACTOR, SHADOWFACTOR
+
+    TYPE(GRID), POINTER          :: GRD
+    TYPE(SGRD), POINTER          :: SGD
     REAL :: CGMAX, MINSIZE
 #ifdef W3_S
     INTEGER, SAVE           :: IENT   = 0
@@ -326,11 +327,11 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN) :: IX, IY
-    REAL, INTENT(IN) :: DT
-    REAL, INTENT(IN) :: SPEC(SRCTRM%SGD%NSPEC), CG(SRCTRM%SGD%NK)
-    REAL, INTENT(IN) :: U10ABS, U10DIR
-    REAL, INTENT(OUT) :: S(SRCTRM%SGD%NSPEC), D(SRCTRM%SGD%NSPEC)
+    INTEGER, INTENT(IN)  :: IX, IY
+    REAL,    INTENT(IN)  :: DT
+    REAL,    INTENT(IN)  :: SPEC(SRCTRM%SGD%NSPEC), CG(SRCTRM%SGD%NK)
+    REAL,    INTENT(IN)  :: U10ABS, U10DIR
+    REAL,    INTENT(OUT) :: S(SRCTRM%SGD%NSPEC), D(SRCTRM%SGD%NSPEC)
 #ifdef W3_S
     INTEGER, SAVE           :: IENT   = 0
 #endif
@@ -389,8 +390,9 @@ CONTAINS
     IMPLICIT NONE
 
     TYPE(GRID), INTENT(INOUT) :: GRD
-    TYPE(SGRD), INTENT(IN) :: SGD
-    INTEGER, INTENT(IN) :: FILEUNIT
+    TYPE(SGRD), INTENT(IN)    :: SGD
+    INTEGER,    INTENT(IN)    :: FILEUNIT
+
     CHARACTER(256) :: FILENAME
     LOGICAL :: FILEEXISTS
     INTEGER :: JG, J, L, I, IX, IY
@@ -505,12 +507,13 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     IMPLICIT NONE
 
-    CHARACTER(*), INTENT(IN) :: FILENAME
-    REAL, INTENT(IN) :: MULTFACTOR
-    INTEGER, INTENT(IN) :: FILEUNIT, NX, NY, NK, NTH
-    INTEGER*1, INTENT(INOUT) :: ALPHAMTX(:,:,:,:), BETAMTX(:,:,:,:)
-    REAL*4, INTENT(INOUT) ::  CELLSIZE(:,:,:)
-    LOGICAL, INTENT(INOUT) ::  ISOBSTRUCTED(:,:)
+    CHARACTER(*), INTENT(IN)    :: FILENAME
+    REAL,         INTENT(IN)    :: MULTFACTOR
+    INTEGER,      INTENT(IN)    :: FILEUNIT, NX, NY, NK, NTH
+    INTEGER*1,    INTENT(INOUT) :: ALPHAMTX(:,:,:,:), BETAMTX(:,:,:,:)
+    REAL*4,       INTENT(INOUT) :: CELLSIZE(:,:,:)
+    LOGICAL,      INTENT(INOUT) :: ISOBSTRUCTED(:,:)
+
     CHARACTER(LEN=600) :: LINE
     INTEGER :: FIOSTAT
     LOGICAL :: HEADER, FILESTART, READINGCELLSIZE, READINGALPHA
@@ -638,8 +641,9 @@ CONTAINS
     IMPLICIT NONE
 
     CLASS(UOST_SOURCETERM), INTENT(INOUT) :: THIS
-    TYPE(GRID), TARGET, INTENT(IN) :: GRD
-    TYPE(SGRD), TARGET, INTENT(IN) :: SGD
+    TYPE(GRID), TARGET,     INTENT(IN)    :: GRD
+    TYPE(SGRD), TARGET,     INTENT(IN)    :: SGD
+
     INTEGER :: ITH, NTH
 #ifdef W3_S
     INTEGER, SAVE           :: IENT   = 0
@@ -832,11 +836,11 @@ CONTAINS
     IMPLICIT NONE
 
     CLASS(UOST_SOURCETERM), INTENT(INOUT) :: THIS
-    INTEGER, INTENT(IN) :: IX, IY
-    REAL, INTENT(IN) :: SPEC(THIS%SGD%NSPEC), CG(THIS%SGD%NK)
-    REAL, INTENT(OUT) :: S(THIS%SGD%NSPEC), D(THIS%SGD%NSPEC)
-    REAL, INTENT(IN) :: U10ABS, U10DIR
-    REAL, INTENT(IN) :: DT
+    INTEGER,                INTENT(IN)    :: IX, IY
+    REAL,                   INTENT(IN)    :: SPEC(THIS%SGD%NSPEC), CG(THIS%SGD%NK)
+    REAL,                   INTENT(OUT)   :: S(THIS%SGD%NSPEC), D(THIS%SGD%NSPEC)
+    REAL,                   INTENT(IN)    :: U10ABS, U10DIR
+    REAL,                   INTENT(IN)    :: DT
 
     INTEGER :: IK, ITH, ISP, NK, NTH
     REAL :: ALPHA, BETA, CGI, CELLSIZE, SPECI, SFC
@@ -959,11 +963,11 @@ CONTAINS
     IMPLICIT NONE
 
     CLASS(UOST_SOURCETERM), INTENT(INOUT), TARGET :: THIS
-    INTEGER, INTENT(IN) :: IX, IY
-    REAL, INTENT(IN) :: SPEC(THIS%SGD%NSPEC), CG(THIS%SGD%NK)
-    REAL, INTENT(OUT) :: S(THIS%SGD%NSPEC), D(THIS%SGD%NSPEC)
-    REAL, INTENT(IN) :: U10ABS, U10DIR
-    REAL, INTENT(IN) :: DT
+    INTEGER,                INTENT(IN)            :: IX, IY
+    REAL,                   INTENT(IN)            :: SPEC(THIS%SGD%NSPEC), CG(THIS%SGD%NK)
+    REAL,                   INTENT(OUT)           :: S(THIS%SGD%NSPEC), D(THIS%SGD%NSPEC)
+    REAL,                   INTENT(IN)            :: U10ABS, U10DIR
+    REAL,                   INTENT(IN)            :: DT
 
     INTEGER :: IK, ITH, IS
     REAL :: CGI, SPECI, SFC, CELLSIZE, &
@@ -1095,11 +1099,11 @@ CONTAINS
     IMPLICIT NONE
 
     CLASS(UOST_SOURCETERM), INTENT(INOUT) :: THIS
-    INTEGER, INTENT(IN) :: IX, IY
-    REAL, INTENT(IN) :: SPEC(THIS%SGD%NSPEC), CG(THIS%SGD%NK)
-    REAL, INTENT(IN) :: DT
-    REAL, INTENT(IN) :: U10ABS, U10DIR
-    REAL, INTENT(OUT) :: S(THIS%SGD%NSPEC), D(THIS%SGD%NSPEC)
+    INTEGER,                INTENT(IN)    :: IX, IY
+    REAL,                   INTENT(IN)    :: SPEC(THIS%SGD%NSPEC), CG(THIS%SGD%NK)
+    REAL,                   INTENT(IN)    :: DT
+    REAL,                   INTENT(IN)    :: U10ABS, U10DIR
+    REAL,                   INTENT(OUT)   :: S(THIS%SGD%NSPEC), D(THIS%SGD%NSPEC)
 
     REAL :: S_LD(THIS%SGD%NSPEC), S_SE(THIS%SGD%NSPEC)
     REAL :: D_LD(THIS%SGD%NSPEC), D_SE(THIS%SGD%NSPEC)

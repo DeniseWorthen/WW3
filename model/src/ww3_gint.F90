@@ -133,15 +133,15 @@ PROGRAM W3GRID_INTERP
   !/ Local data structure
   !/
   TYPE GR_WT
-    INTEGER              :: NP
-    INTEGER, ALLOCATABLE :: IP(:), JP(:)
-    REAL,    ALLOCATABLE :: WT(:)
-    REAL                 :: AR
+    INTEGER                  :: NP
+    INTEGER,     ALLOCATABLE :: IP(:), JP(:)
+    REAL,        ALLOCATABLE :: WT(:)
+    REAL                     :: AR
   END TYPE GR_WT
   !
   TYPE GR_INT
-    INTEGER              :: NGRDS
-    INTEGER, ALLOCATABLE :: GDID(:)
+    INTEGER                  :: NGRDS
+    INTEGER,     ALLOCATABLE :: GDID(:)
     TYPE(GR_WT), ALLOCATABLE :: IND_WTS(:)
   END TYPE GR_INT
   !/
@@ -149,25 +149,26 @@ PROGRAM W3GRID_INTERP
   !/
 
   TYPE(GR_INT), TARGET, ALLOCATABLE :: GR_INTS(:)
-  INTEGER                 :: I, J, IERR, NG, IG, JG, ISEA, IX, IY, IXT
-  INTEGER                 :: IYT, NS, COUNTF, COUNTG, NOSWLL_MIN, ITOUT
-  INTEGER                 :: NDSM, NDSI, NDSE, NDSO, NDSTRC, NTRACE, IOTST
-  INTEGER                 :: INTMETHOD, NSEA_FILE
-  INTEGER, ALLOCATABLE    :: FIDOUT(:), MAP(:,:), TMP_INDX(:)
-  REAL                    :: SXT, SYT, XT, YT, XTT
-  DOUBLE PRECISION        :: DAREA, SAREA
-  REAL                    :: XCRNR(5),YCRNR(5),DT(4),DX,DY,XSUB,YSUB
-  INTEGER                 :: TOUT(2), NOUT, IOUT
-  REAL                    :: DTREQ, DTEST
-  INTEGER                 :: IS(4), JS(4)
-  INTEGER                 :: MAPINT
-  REAL                    :: RW(4), SUMWT
+
+  INTEGER              :: I, J, IERR, NG, IG, JG, ISEA, IX, IY, IXT
+  INTEGER              :: IYT, NS, COUNTF, COUNTG, NOSWLL_MIN, ITOUT
+  INTEGER              :: NDSM, NDSI, NDSE, NDSO, NDSTRC, NTRACE, IOTST
+  INTEGER              :: INTMETHOD, NSEA_FILE
+  INTEGER, ALLOCATABLE :: FIDOUT(:), MAP(:,:), TMP_INDX(:)
+  REAL                 :: SXT, SYT, XT, YT, XTT
+  DOUBLE PRECISION     :: DAREA, SAREA
+  REAL                 :: XCRNR(5),YCRNR(5),DT(4),DX,DY,XSUB,YSUB
+  INTEGER              :: TOUT(2), NOUT, IOUT
+  REAL                 :: DTREQ, DTEST
+  INTEGER              :: IS(4), JS(4)
+  INTEGER              :: MAPINT
+  REAL                 :: RW(4), SUMWT
 #ifdef W3_S
-  INTEGER, SAVE           :: IENT = 0
+  INTEGER, SAVE        :: IENT = 0
 #endif
-  REAL, ALLOCATABLE       :: INT_MAP(:,:)
-  LOGICAL                 :: L360=.FALSE., LPLC, INGRD, BRNCHCL, BRNCHCR, INGRID
-  CHARACTER               :: COMSTR*1, IDTIME*23, FNAMEWHT*32
+  REAL, ALLOCATABLE    :: INT_MAP(:,:)
+  LOGICAL              :: L360=.FALSE., LPLC, INGRD, BRNCHCL, BRNCHCR, INGRID
+  CHARACTER            :: COMSTR*1, IDTIME*23, FNAMEWHT*32
   !
   !---------------------------------------------------------------------------
   ! 1. Initialization
