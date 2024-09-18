@@ -334,7 +334,7 @@ contains
         if (vname .eq.      'AS') call write_var2d(vname, as       (1:nsea), init0='false', global='true')
         if (vname .eq.     'WLV') call write_var2d(vname, wlv      (1:nsea), init0='false', global='true')
         if (vname .eq.     'ICE') call write_var2d(vname, ice      (1:nsea), init0='false', global='true')
-        if (vname .eq.    'BERG') call write_var2d(vname, berg     (1:nsea), init0='false', global='true')
+        if (vname .eq.     'IBG') call write_var2d(vname, berg     (1:nsea), init0='false', global='true')
         if (vname .eq.    'TAUX') call write_var2d(vname, taua     (1:nsea), dir=cos(tauadir(1:nsea)), init0='false', global='true')
         if (vname .eq.    'TAUY') call write_var2d(vname, taua     (1:nsea), dir=sin(tauadir(1:nsea)), init0='false', global='true')
         if (vname .eq.  'RHOAIR') call write_var2d(vname, rhoair   (1:nsea), init0='false', global='true')

@@ -10,6 +10,7 @@ module wav_restart_mod
   use w3adatmd      , only : nsealm
   use w3gdatmd      , only : nth, nk, nx, ny, mapsf, nspec, nseal, nsea
   use w3odatmd      , only : ndso, iaproc
+  use w3wdatmd      , only : ice
   use wav_pio_mod   , only : pio_iotype, pio_ioformat, wav_pio_subsystem
   use wav_pio_mod   , only : handle_err, wav_pio_initdecomp
 #ifdef W3_PDLIB
@@ -25,6 +26,7 @@ module wav_restart_mod
   type(file_desc_t) :: pioid
   type(var_desc_t)  :: varid
   type(io_desc_t)   :: iodesc2dint
+  type(io_desc_t)   :: iodesc2d
   type(io_desc_t)   :: iodesc3dk
 
   integer(kind=Pio_Offset_Kind) :: frame
@@ -64,6 +66,7 @@ contains
     integer              :: dimid(4)
     real   , allocatable :: lva(:,:)
     integer, allocatable :: lmap(:)
+    real   , allocatable :: lvar(:)
     !-------------------------------------------------------------------------------
 
 #ifdef W3_PDLIB
@@ -73,6 +76,7 @@ contains
 #endif
     allocate(lmap(1:nseal_cpl))
     allocate(lva(1:nseal_cpl,1:nspec))
+    allocate(lvar(1:nseal_cpl))
 
     ! create the netcdf file
     frame = 1
@@ -112,12 +116,19 @@ contains
     ierr = pio_put_att(pioid, varid, '_FillValue', nf90_fill_int)
     call handle_err(ierr, 'define _FillValue '//trim(vname))
 
+    vname = 'ice'
+    ierr = pio_def_var(pioid, trim(vname), PIO_REAL, (/xtid, ytid, timid/), varid)
+    call handle_err(ierr, 'define variable '//trim(vname))
+    ierr = pio_put_att(pioid, varid, '_FillValue', nf90_fill_float)
+    call handle_err(ierr, 'define _FillValue '//trim(vname))
+
     ! end variable definitions
     ierr = pio_enddef(pioid)
     call handle_err(ierr, 'end variable definition')
 
     ! initialize the decomp
     call wav_pio_initdecomp(iodesc2dint, use_int=.true.)
+    call wav_pio_initdecomp(iodesc2d)
     call wav_pio_initdecomp(nspec, iodesc3dk)
 
     ! write the time
@@ -162,7 +173,23 @@ contains
     call pio_write_darray(pioid, varid, iodesc3dk, lva, ierr)
     call handle_err(ierr, 'put variable '//trim(vname))
 
+    ! ice is global
+    lvar(:) = 0.0
+    do jsea = 1,nseal_cpl
+      call init_get_isea(isea, jsea)
+      lvar(jsea) = ice(isea)
+    end do
+
+    ! write PE local ice
+    vname = 'ice'
+    ierr = pio_inq_varid(pioid,  trim(vname), varid)
+    call handle_err(ierr, 'inquire variable '//trim(vname))
+    call pio_setframe(pioid, varid, int(1,kind=Pio_Offset_Kind))
+    call pio_write_darray(pioid, varid, iodesc2d, lvar, ierr)
+    call handle_err(ierr, 'put variable '//trim(vname))
+
     call pio_syncfile(pioid)
+    call pio_freedecomp(pioid, iodesc2d)
     call pio_freedecomp(pioid, iodesc2dint)
     call pio_freedecomp(pioid, iodesc3dk)
     call pio_closefile(pioid)
@@ -183,11 +210,11 @@ contains
   !> author DeniseWorthen@noaa.gov
   !> @date 08-26-2024
   subroutine read_restart (fname, va, mapsta, mapst2)
-  !subroutine read_restart (fname, va, mapsta)
+
     use mpi_f08
     use w3adatmd    , only : mpi_comm_wave
     use w3gdatmd    , only : sig
-    use w3wdatmd    , only : time, tlev, tice, trho, tic1, tic5, wlv, asf, ice, fpis
+    use w3wdatmd    , only : time, tlev, tice, trho, tic1, tic5, wlv, asf, fpis
 
     character(len=*)  , intent(in)    :: fname
     real   , optional , intent(out)   :: va(1:nspec,0:nsealm)
@@ -197,9 +224,11 @@ contains
     ! local variables
     type(MPI_Comm)       :: wave_communicator  ! needed for mpi_f08
     integer              :: global_input(nsea), global_output(nsea)
+    real                 :: rglobal_input(nsea), rglobal_output(nsea)
     integer              :: ifill
     real                 :: rfill
     real   , allocatable :: lva(:,:)
+    real   , allocatable :: lvar(:)
     integer, allocatable :: lmap(:)
     integer, allocatable :: lmap2d(:,:)
     integer, allocatable :: st2init(:,:)
@@ -233,10 +262,12 @@ contains
     nseal_cpl = nseal
 #endif
     allocate(lva(1:nseal_cpl,1:nspec))
+    allocate(lvar(1:nseal_cpl))
     allocate(lmap2d(1:ny,1:nx))
     allocate(st2init(1:ny,1:nx))
     allocate(lmap(1:nseal_cpl))
     lva(:,:) = 0.0
+    lvar(:) = 0.0
     lmap2d(:,:) = 0
     lmap(:) = 0
     ! save a copy of initial mapst2 from mod_def
@@ -255,6 +286,7 @@ contains
 
     ! initialize the decomp
     call wav_pio_initdecomp(iodesc2dint, use_int=.true.)
+    call wav_pio_initdecomp(iodesc2d)
     call wav_pio_initdecomp(nspec, iodesc3dk)
 
     vname = 'va'
@@ -313,7 +345,37 @@ contains
     mapsta = mod(lmap2d+2,8) - 2
     mapst2 = st2init + (lmap2d-mapsta)/8
 
+    vname = 'ice'
+    ierr = pio_inq_varid(pioid, trim(vname), varid)
+    call handle_err(ierr, 'inquire variable '//trim(vname))
+    call pio_setframe(pioid, varid, frame)
+    call pio_read_darray(pioid, varid, iodesc2d, lvar, ierr)
+    call handle_err(ierr, 'get variable '//trim(vname))
+    ierr = pio_get_att(pioid, varid, "_FillValue", rfill)
+    call handle_err(ierr, 'get variable _FillValue'//trim(vname))
+
+    ! TODO: do mapsta reduction w/ reals, then only one set of global_in/out is required
+    ! fill global array with PE local values
+    rglobal_input = 0.0
+    rglobal_output = 0.0
+    do jsea = 1,nseal_cpl
+      call init_get_isea(isea, jsea)
+      if (lmap(jsea) .ne. rfill) then
+        rglobal_input(isea) = lvar(jsea)
+      end if
+    end do
+    ! reduce across all PEs to create global array
+    call MPI_AllReduce(rglobal_input, rglobal_output, nsea, MPI_REAL, MPI_SUM, wave_communicator, ierr)
+
+    ! fill global array on each PE
+    ice = 0.0
+    do isea = 1,nsea
+      ix = mapsf(isea,1)
+      iy = mapsf(isea,2)
+      ice(isea) = rglobal_output(isea)
+    end do
     call pio_syncfile(pioid)
+    call pio_freedecomp(pioid, iodesc2d)
     call pio_freedecomp(pioid, iodesc2dint)
     call pio_freedecomp(pioid, iodesc3dk)
     call pio_closefile(pioid)
