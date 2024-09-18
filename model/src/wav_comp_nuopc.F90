@@ -221,6 +221,8 @@ contains
   subroutine InitializeAdvertise(gcomp, importState, exportState, clock, rc)
 
     use wav_shr_flags, only : w3_pdlib_flag
+    use w3odatmd,      only : addice
+
     ! input/output arguments
     type(ESMF_GridComp)  :: gcomp
     type(ESMF_State)     :: importState, exportState
@@ -383,6 +385,11 @@ contains
     write(logmsg,*) verboselog
     call ESMF_LogWrite('WW3_cap: Verbose WW3 native logging is = '//trim(logmsg), ESMF_LOGMSG_INFO)
 
+    call NUOPC_CompAttributeGet(gcomp, name="addice", value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    if (isPresent .and. isSet) addice=(trim(cvalue)=="true")
+    write(logmsg,*) addice
+    call ESMF_LogWrite('WW3_cap: Add ice to/from restart = '//trim(logmsg), ESMF_LOGMSG_INFO)
     call advertise_fields(importState, exportState, flds_scalar_name, rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
