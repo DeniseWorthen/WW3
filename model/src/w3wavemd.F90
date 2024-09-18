@@ -608,6 +608,10 @@ CONTAINS
     integer            :: memunit
     character(len=16)  :: user_timestring    !YYYY-MM-DD-SSSSS
     character(len=256) :: fname
+    ! debug
+    real :: tmpice(nx,ny)
+    character(len=40) :: icefilename,mapfilename
+    integer :: iceio,mapio
     !/ ------------------------------------------------------------------- /
     ! 0.  Initializations
     !
@@ -1033,6 +1037,7 @@ CONTAINS
 #ifdef W3_T
       WRITE (NDST,9020) IT0, NT, DTGA
 #endif
+      if (iaproc==1)print '(a,2i6,f8.2,4(2i12))','YY0 ',it0,nt,dtga,time,tice,tin,tofrst
       !
       ! ==================================================================== /
       !
@@ -1254,6 +1259,36 @@ CONTAINS
         ! 3.3.1 Update ice coverage (if new ice map).
         !     Need to be run on output nodes too, to update MAPSTx
         !
+
+        if (iaproc == 1) then
+
+          if (it == 0) then
+            write(icefilename,'(a,i8.8,a,i6.6,a)')'ice00.',time(1),'.',time(2),'.dat'
+            write(mapfilename,'(a,i8.8,a,i6.6,a)')'map00.',time(1),'.',time(2),'.dat'
+          else
+            write(icefilename,'(a,i8.8,a,i6.6,a)')'ice0.',time(1),'.',time(2),'.dat'
+            write(mapfilename,'(a,i8.8,a,i6.6,a)')'map0.',time(1),'.',time(2),'.dat'
+          end if
+
+          open(newunit=iceio,file=trim(icefilename))
+          tmpice = 0.0
+          do isea = 1,nsea
+            ix = mapsf(isea,1)
+            iy = mapsf(isea,2)
+            tmpice(ix,iy) = ice(isea)
+          end do
+          do iy = 1,ny
+            write(iceio,'(360f8.2)')(tmpice(ix,iy),ix=1,nx)
+          end do
+          close(iceio)
+
+          open(newunit=mapio,file=trim(mapfilename))
+          do iy = 1,ny
+            write(mapio,'(360i4)')(mapsta(iy,ix),ix=1,nx)
+          end do
+          close(mapio)
+        end if
+
         IF ( FLICE .AND. DTI0.NE.0. ) THEN
           !
           IF ( TICE(1).GE.0 ) THEN
@@ -1274,6 +1309,37 @@ CONTAINS
             FLMAP  = .TRUE.
           END IF
         END IF
+
+        if (iaproc == 1) then
+
+          if (it == 0) then
+            write(icefilename,'(a,i8.8,a,i6.6,a)')'ice11.',time(1),'.',time(2),'.dat'
+            write(mapfilename,'(a,i8.8,a,i6.6,a)')'map11.',time(1),'.',time(2),'.dat'
+          else
+            write(icefilename,'(a,i8.8,a,i6.6,a)')'ice1.',time(1),'.',time(2),'.dat'
+            write(mapfilename,'(a,i8.8,a,i6.6,a)')'map1.',time(1),'.',time(2),'.dat'
+          end if
+
+          open(newunit=iceio,file=trim(icefilename))
+          tmpice = 0.0
+          do isea = 1,nsea
+            ix = mapsf(isea,1)
+            iy = mapsf(isea,2)
+            tmpice(ix,iy) = ice(isea)
+          end do
+          do iy = 1,ny
+            write(iceio,'(360f8.2)')(tmpice(ix,iy),ix=1,nx)
+          end do
+          close(iceio)
+
+          open(newunit=mapio,file=trim(mapfilename))
+          do iy = 1,ny
+            write(mapio,'(360i4)')(mapsta(iy,ix),ix=1,nx)
+          end do
+          close(mapio)
+
+        end if
+
 #ifdef W3_DEBUGCOH
         CALL ALL_VA_INTEGRAL_PRINT(IMOD, "After FLICE and DTI0", 1)
 #endif

@@ -1105,6 +1105,10 @@ contains
     use wav_import_export , only : import_fields, export_fields
     use wav_shel_inp      , only : odat
     use w3odatmd          , only : rstwr, histwr
+    ! debug
+    use w3gdatmd, only : nsea, mapsf, mapsta
+    use w3wdatmd, only : ice
+    use w3idatmd, only : icei
 
     ! arguments:
     type(ESMF_GridComp)  :: gcomp
@@ -1122,6 +1126,9 @@ contains
     !integer                 :: shrlogunit ! original log unit and level
     character(ESMF_MAXSTR)  :: msgString
     character(len=*),parameter :: subname = '(wav_comp_nuopc:ModelAdvance) '
+    ! debug
+    integer :: ix,iy,isea
+    logical, save         :: firstcall = .true.
     !-------------------------------------------------------
 
     rc = ESMF_SUCCESS
@@ -1195,6 +1202,20 @@ contains
     !------------
     call import_fields(gcomp, time0, timen, rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
+
+    if (trim(runtype) == 'continue') then
+      if (firstcall) then
+        ice = 0.0
+        do isea = 1,nsea
+          ix = mapsf(isea,1)
+          iy = mapsf(isea,2)
+          ice(isea) = icei(ix,iy)
+        end do
+      end if
+      firstcall = .false.
+    else
+      firstcall = .false.
+    end if
 
     !------------
     ! Run the wave model for the given interval
