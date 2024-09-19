@@ -390,6 +390,7 @@ contains
     if (isPresent .and. isSet) addice=(trim(cvalue)=="true")
     write(logmsg,*) addice
     call ESMF_LogWrite('WW3_cap: Add ice to/from restart = '//trim(logmsg), ESMF_LOGMSG_INFO)
+
     call advertise_fields(importState, exportState, flds_scalar_name, rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 

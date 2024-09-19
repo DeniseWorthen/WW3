@@ -226,8 +226,8 @@ contains
 
     ! local variables
     type(MPI_Comm)       :: wave_communicator  ! needed for mpi_f08
-    integer              :: global_input(nsea), global_output(nsea)
-    real                 :: rglobal_input(nsea), rglobal_output(nsea)
+    !integer              :: global_input(nsea), global_output(nsea)
+    real                 :: global_input(nsea), global_output(nsea)
     integer              :: ifill
     real                 :: rfill
     real   , allocatable :: lva(:,:)
@@ -324,25 +324,25 @@ contains
     call handle_err(ierr, 'get variable _FillValue'//trim(vname))
 
     ! fill global array with PE local values
-    global_input = 0
-    global_output = 0
+    global_input = 0.0
+    global_output = 0.0
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
       ix = mapsf(isea,1)
       iy = mapsf(isea,2)
       if (lmap(jsea) .ne. ifill) then
-        global_input(isea) = lmap(jsea)
+        global_input(isea) = real(lmap(jsea))
       end if
     end do
     ! reduce across all PEs to create global array
-    call MPI_AllReduce(global_input, global_output, nsea, MPI_INTEGER, MPI_SUM, wave_communicator, ierr)
+    call MPI_AllReduce(global_input, global_output, nsea, MPI_REAL, MPI_SUM, wave_communicator, ierr)
 
     ! fill global array on each PE
     lmap2d = 0
     do isea = 1,nsea
       ix = mapsf(isea,1)
       iy = mapsf(isea,2)
-      lmap2d(iy,ix) = global_output(isea)
+      lmap2d(iy,ix) = int(global_output(isea))
     end do
 
     mapsta = mod(lmap2d+2,8) - 2
@@ -358,25 +358,24 @@ contains
       ierr = pio_get_att(pioid, varid, "_FillValue", rfill)
       call handle_err(ierr, 'get variable _FillValue'//trim(vname))
 
-      ! TODO: do mapsta reduction w/ reals, then only one set of global_in/out is required
       ! fill global array with PE local values
-      rglobal_input = 0.0
-      rglobal_output = 0.0
+      global_input = 0.0
+      global_output = 0.0
       do jsea = 1,nseal_cpl
         call init_get_isea(isea, jsea)
         if (lmap(jsea) .ne. rfill) then
-          rglobal_input(isea) = lvar(jsea)
+          global_input(isea) = lvar(jsea)
         end if
       end do
       ! reduce across all PEs to create global array
-      call MPI_AllReduce(rglobal_input, rglobal_output, nsea, MPI_REAL, MPI_SUM, wave_communicator, ierr)
+      call MPI_AllReduce(global_input, global_output, nsea, MPI_REAL, MPI_SUM, wave_communicator, ierr)
 
       ! fill global array on each PE
       ice = 0.0
       do isea = 1,nsea
         ix = mapsf(isea,1)
         iy = mapsf(isea,2)
-        ice(isea) = rglobal_output(isea)
+        ice(isea) = global_output(isea)
       end do
     end if
     call pio_syncfile(pioid)

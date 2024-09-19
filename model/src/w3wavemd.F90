@@ -1278,7 +1278,7 @@ CONTAINS
             tmpice(ix,iy) = ice(isea)
           end do
           do iy = 1,ny
-            write(iceio,'(360f8.2)')(tmpice(ix,iy),ix=1,nx)
+            write(iceio,'(360f8.4)')(tmpice(ix,iy),ix=1,nx)
           end do
           close(iceio)
 
@@ -1303,6 +1303,7 @@ CONTAINS
           END IF
           !
           IF ( IDACT(13:13).NE.' ' ) THEN
+            if (iaproc == 1)print '(a,2f8.2,2(2i12))','YY1 call w3uice at ',dttst,dti0,time,tin
             CALL W3UICE ( VA )
             DTI0   = 0.
             FLACT  = .TRUE.
@@ -1328,7 +1329,7 @@ CONTAINS
             tmpice(ix,iy) = ice(isea)
           end do
           do iy = 1,ny
-            write(iceio,'(360f8.2)')(tmpice(ix,iy),ix=1,nx)
+            write(iceio,'(360f8.4)')(tmpice(ix,iy),ix=1,nx)
           end do
           close(iceio)
 
