@@ -9,7 +9,7 @@ module wav_restart_mod
   use w3parall      , only : init_get_isea
   use w3adatmd      , only : nsealm
   use w3gdatmd      , only : nth, nk, nx, ny, mapsf, nspec, nseal, nsea
-  use w3odatmd      , only : ndso, iaproc, addice
+  use w3odatmd      , only : ndso, iaproc, couple_slow
   use w3wdatmd      , only : ice
   use wav_pio_mod   , only : pio_iotype, pio_ioformat, wav_pio_subsystem
   use wav_pio_mod   , only : handle_err, wav_pio_initdecomp
@@ -116,7 +116,7 @@ contains
     ierr = pio_put_att(pioid, varid, '_FillValue', nf90_fill_int)
     call handle_err(ierr, 'define _FillValue '//trim(vname))
 
-    if (addice) then
+    if (couple_slow) then
       vname = 'ice'
       ierr = pio_def_var(pioid, trim(vname), PIO_REAL, (/xtid, ytid, timid/), varid)
       call handle_err(ierr, 'define variable '//trim(vname))
@@ -174,7 +174,7 @@ contains
     call pio_write_darray(pioid, varid, iodesc3dk, lva, ierr)
     call handle_err(ierr, 'put variable '//trim(vname))
 
-    if (addice) then
+    if (couple_slow) then
       ! ice is global
       lvar(:) = 0.0
       do jsea = 1,nseal_cpl
@@ -192,7 +192,7 @@ contains
     end if
 
     call pio_syncfile(pioid)
-    call pio_freedecomp(pioid, iodesc2d)
+    if (couple_slow) call pio_freedecomp(pioid, iodesc2d)
     call pio_freedecomp(pioid, iodesc2dint)
     call pio_freedecomp(pioid, iodesc3dk)
     call pio_closefile(pioid)
@@ -348,7 +348,7 @@ contains
     mapsta = mod(lmap2d+2,8) - 2
     mapst2 = st2init + (lmap2d-mapsta)/8
 
-    if (addice) then
+    if (couple_slow) then
       vname = 'ice'
       ierr = pio_inq_varid(pioid, trim(vname), varid)
       call handle_err(ierr, 'inquire variable '//trim(vname))
@@ -379,7 +379,7 @@ contains
       end do
     end if
     call pio_syncfile(pioid)
-    call pio_freedecomp(pioid, iodesc2d)
+    if (couple_slow) call pio_freedecomp(pioid, iodesc2d)
     call pio_freedecomp(pioid, iodesc2dint)
     call pio_freedecomp(pioid, iodesc3dk)
     call pio_closefile(pioid)

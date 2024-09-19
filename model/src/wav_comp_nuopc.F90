@@ -221,7 +221,6 @@ contains
   subroutine InitializeAdvertise(gcomp, importState, exportState, clock, rc)
 
     use wav_shr_flags, only : w3_pdlib_flag
-    use w3odatmd,      only : addice
 
     ! input/output arguments
     type(ESMF_GridComp)  :: gcomp
@@ -384,12 +383,6 @@ contains
     if (isPresent .and. isSet) verboselog=(trim(cvalue)=="true")
     write(logmsg,*) verboselog
     call ESMF_LogWrite('WW3_cap: Verbose WW3 native logging is = '//trim(logmsg), ESMF_LOGMSG_INFO)
-
-    call NUOPC_CompAttributeGet(gcomp, name="addice", value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    if (isPresent .and. isSet) addice=(trim(cvalue)=="true")
-    write(logmsg,*) addice
-    call ESMF_LogWrite('WW3_cap: Add ice to/from restart = '//trim(logmsg), ESMF_LOGMSG_INFO)
 
     call advertise_fields(importState, exportState, flds_scalar_name, rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
@@ -1681,7 +1674,7 @@ contains
 
     ! Initialize ww3 for ufs (called from InitializeRealize)
 
-    use w3odatmd     , only : fnmpre
+    use w3odatmd     , only : fnmpre, couple_slow
     use w3gdatmd     , only : dtcfl, dtcfli, dtmax, dtmin
     use w3initmd     , only : w3init
     use w3timemd     , only : set_user_timestring
@@ -1698,9 +1691,10 @@ contains
     integer, intent(out) :: rc
 
     ! local variables
-    logical           :: isPresent, isSet
-    character(len=CL) :: cvalue
-    integer           :: dt_in(4)
+    logical            :: isPresent, isSet
+    character(len=CL)  :: cvalue
+    character(len=CL)  :: logmsg
+    integer            :: dt_in(4)
     character(len=*), parameter :: subname = '(wav_comp_nuopc:wavinit_ufs)'
     ! -------------------------------------------------------------------
 
@@ -1732,6 +1726,23 @@ contains
     !TODO: why doesn't this line get written?
     write(cvalue,'(4f10.1)')dtmax,dtcfl,dtcfli,dtmin
     if (root_task) write(stdout,'(a)') trim(subname)//': WW3 timesteps '//trim(cvalue)
+
+    ! Determine if waves are in the slow loop
+    couple_slow = .false.
+    call NUOPC_CompAttributeGet(gcomp, name='couple_slow', value=cvalue, isPresent=isPresent, &
+         isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    if (isPresent .and. isSet) then
+       read(cvalue,*) couple_slow
+    end if
+    write(logmsg,'(A,l)') trim(subname)//': Wave couple_slow setting is ',couple_slow
+    call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
+
+    if (wav_coupling_to_cice .and. couple_slow) then
+      if (root_task) write(stdout,'(a)') 'Wave-ice coupling requires fast loop coupling '
+      call ESMF_LogWrite('Wave-ice coupling requires fast loop coupling ', ESMF_LOGMSG_INFO)
+      call ESMF_Finalize(endflag=ESMF_END_ABORT)
+    end if
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
   end subroutine waveinit_ufs

@@ -577,11 +577,11 @@ MODULE W3ODATMD
   logical            :: logfile_is_assigned = .false. !< @public logical flag for assignment of nds(1) to specified
                                                       !! log file in mesh cap
   logical            :: verboselog = .true.           !< @public logical flag to enable verbose WW3 native logging
+  logical            :: couple_slow = .false.         !< @public logical flag to indicate slow loop coupling, which
+                                                      !! requires ice to be written to the restart file
   character(len= 36) :: time_origin = ''              !< @public the time_origin used for netCDF output
   character(len= 36) :: calendar_name = ''            !< @public the calendar used for netCDF output
   integer(kind=8)    :: elapsed_secs = 0              !< @public the time in seconds from the time_origin
-  ! debug
-  logical :: addice = .false.
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
