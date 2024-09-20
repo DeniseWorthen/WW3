@@ -234,7 +234,6 @@ contains
 
     ! local variables
     type(MPI_Comm)       :: wave_communicator  ! needed for mpi_f08
-    !integer              :: global_input(nsea), global_output(nsea)
     real                 :: global_input(nsea), global_output(nsea)
     integer              :: ifill
     real                 :: rfill
@@ -356,7 +355,7 @@ contains
 
     ! read additional restart fields
     if (addrstflds) then
-      do i = 1,size(rstfldlist)
+      do i = 1,rstfldcnt
         vname = trim(rstfldlist(i))
         ierr = pio_inq_varid(pioid, trim(vname), varid)
         call handle_err(ierr, 'inquire variable '//trim(vname))

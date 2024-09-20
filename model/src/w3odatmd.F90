@@ -580,7 +580,7 @@ MODULE W3ODATMD
   logical            :: verboselog = .true.            !< @public logical flag to enable verbose WW3 native logging
   logical            :: addrstflds = .false.           !< @public logical flag for additional restart fields
   integer            :: rstfldcnt = 0                  !< @public the actual number of additional restart fields
-  character(len=10), dimension(10) :: rstfldlist = ''  !< @public a list of additional fields for the restart fields,
+  character(len=10), dimension(10) :: rstfldlist = ''  !< @public a list of additional fields for the restart file,
                                                        !! currently set to a maximum of 10. Additional restart fields
                                                        !! are required only when waves are in the slow loop and ice
                                                        !! is present. Note that waves should not be in the slow loop
