@@ -9,7 +9,7 @@ module wav_restart_mod
   use w3parall      , only : init_get_isea
   use w3adatmd      , only : nsealm
   use w3gdatmd      , only : nth, nk, nx, ny, mapsf, nspec, nseal, nsea
-  use w3odatmd      , only : ndso, iaproc, couple_slow
+  use w3odatmd      , only : ndso, iaproc, addrstflds, rstfldlist, rstfldcnt
   use w3wdatmd      , only : ice
   use wav_pio_mod   , only : pio_iotype, pio_ioformat, wav_pio_subsystem
   use wav_pio_mod   , only : handle_err, wav_pio_initdecomp
@@ -36,7 +36,7 @@ module wav_restart_mod
 
   ! used/reused in module
   character(len=12) :: vname
-  integer           :: ik, ith, ix, iy, kk, nseal_cpl, isea, jsea, ierr
+  integer           :: ik, ith, ix, iy, kk, nseal_cpl, isea, jsea, ierr, i
 
   !===============================================================================
 contains
@@ -116,12 +116,15 @@ contains
     ierr = pio_put_att(pioid, varid, '_FillValue', nf90_fill_int)
     call handle_err(ierr, 'define _FillValue '//trim(vname))
 
-    if (couple_slow) then
-      vname = 'ice'
-      ierr = pio_def_var(pioid, trim(vname), PIO_REAL, (/xtid, ytid, timid/), varid)
-      call handle_err(ierr, 'define variable '//trim(vname))
-      ierr = pio_put_att(pioid, varid, '_FillValue', nf90_fill_float)
-      call handle_err(ierr, 'define _FillValue '//trim(vname))
+    ! define any requested additional fields
+    if (addrstflds) then
+      do i = 1,rstfldcnt
+        vname = trim(rstfldlist(i))
+        ierr = pio_def_var(pioid, trim(vname), PIO_REAL, (/xtid, ytid, timid/), varid)
+        call handle_err(ierr, 'define variable '//trim(vname))
+        ierr = pio_put_att(pioid, varid, '_FillValue', nf90_fill_float)
+        call handle_err(ierr, 'define _FillValue '//trim(vname))
+      end do
     end if
     ! end variable definitions
     ierr = pio_enddef(pioid)
@@ -129,7 +132,7 @@ contains
 
     ! initialize the decomp
     call wav_pio_initdecomp(iodesc2dint, use_int=.true.)
-    call wav_pio_initdecomp(iodesc2d)
+    if (addrstflds) call wav_pio_initdecomp(iodesc2d)
     call wav_pio_initdecomp(nspec, iodesc3dk)
 
     ! write the time
@@ -174,25 +177,30 @@ contains
     call pio_write_darray(pioid, varid, iodesc3dk, lva, ierr)
     call handle_err(ierr, 'put variable '//trim(vname))
 
-    if (couple_slow) then
-      ! ice is global
-      lvar(:) = 0.0
-      do jsea = 1,nseal_cpl
-        call init_get_isea(isea, jsea)
-        lvar(jsea) = ice(isea)
-      end do
+    ! write requested additional fields
+    if (addrstflds) then
+      do i = 1,rstfldcnt
+        vname = trim(rstfldlist(i))
+        ! TODO: make generic routine (in=ice, out=lvar)
+        if (vname == 'ice') then
+          lvar(:) = 0.0
+          do jsea = 1,nseal_cpl
+            call init_get_isea(isea, jsea)
+            lvar(jsea) = ice(isea)
+          end do
+        end if
 
-      ! write PE local ice
-      vname = 'ice'
-      ierr = pio_inq_varid(pioid,  trim(vname), varid)
-      call handle_err(ierr, 'inquire variable '//trim(vname))
-      call pio_setframe(pioid, varid, int(1,kind=Pio_Offset_Kind))
-      call pio_write_darray(pioid, varid, iodesc2d, lvar, ierr)
-      call handle_err(ierr, 'put variable '//trim(vname))
+        ! write PE local field
+        ierr = pio_inq_varid(pioid,  trim(vname), varid)
+        call handle_err(ierr, 'inquire variable '//trim(vname))
+        call pio_setframe(pioid, varid, int(1,kind=Pio_Offset_Kind))
+        call pio_write_darray(pioid, varid, iodesc2d, lvar, ierr)
+        call handle_err(ierr, 'put variable '//trim(vname))
+      end do
     end if
 
     call pio_syncfile(pioid)
-    if (couple_slow) call pio_freedecomp(pioid, iodesc2d)
+    if (addrstflds) call pio_freedecomp(pioid, iodesc2d)
     call pio_freedecomp(pioid, iodesc2dint)
     call pio_freedecomp(pioid, iodesc3dk)
     call pio_closefile(pioid)
@@ -289,7 +297,7 @@ contains
 
     ! initialize the decomp
     call wav_pio_initdecomp(iodesc2dint, use_int=.true.)
-    call wav_pio_initdecomp(iodesc2d)
+    if (addrstflds) call wav_pio_initdecomp(iodesc2d)
     call wav_pio_initdecomp(nspec, iodesc3dk)
 
     vname = 'va'
@@ -328,8 +336,6 @@ contains
     global_output = 0.0
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
-      ix = mapsf(isea,1)
-      iy = mapsf(isea,2)
       if (lmap(jsea) .ne. ifill) then
         global_input(isea) = real(lmap(jsea))
       end if
@@ -348,38 +354,43 @@ contains
     mapsta = mod(lmap2d+2,8) - 2
     mapst2 = st2init + (lmap2d-mapsta)/8
 
-    if (couple_slow) then
-      vname = 'ice'
-      ierr = pio_inq_varid(pioid, trim(vname), varid)
-      call handle_err(ierr, 'inquire variable '//trim(vname))
-      call pio_setframe(pioid, varid, frame)
-      call pio_read_darray(pioid, varid, iodesc2d, lvar, ierr)
-      call handle_err(ierr, 'get variable '//trim(vname))
-      ierr = pio_get_att(pioid, varid, "_FillValue", rfill)
-      call handle_err(ierr, 'get variable _FillValue'//trim(vname))
+    ! read additional restart fields
+    if (addrstflds) then
+      do i = 1,size(rstfldlist)
+        vname = trim(rstfldlist(i))
+        ierr = pio_inq_varid(pioid, trim(vname), varid)
+        call handle_err(ierr, 'inquire variable '//trim(vname))
+        call pio_setframe(pioid, varid, frame)
+        call pio_read_darray(pioid, varid, iodesc2d, lvar, ierr)
+        call handle_err(ierr, 'get variable '//trim(vname))
+        ierr = pio_get_att(pioid, varid, "_FillValue", rfill)
+        call handle_err(ierr, 'get variable _FillValue'//trim(vname))
 
-      ! fill global array with PE local values
-      global_input = 0.0
-      global_output = 0.0
-      do jsea = 1,nseal_cpl
-        call init_get_isea(isea, jsea)
-        if (lmap(jsea) .ne. rfill) then
-          global_input(isea) = lvar(jsea)
+        ! fill global array with PE local values
+        global_input = 0.0
+        global_output = 0.0
+        do jsea = 1,nseal_cpl
+          call init_get_isea(isea, jsea)
+          if (lvar(jsea) .ne. rfill) then
+            global_input(isea) = lvar(jsea)
+          end if
+        end do
+        ! reduce across all PEs to create global array
+        call MPI_AllReduce(global_input, global_output, nsea, MPI_REAL, MPI_SUM, wave_communicator, ierr)
+
+        if (vname == 'ice') then
+          ! fill global array on each PE
+          ! TODO : make generic routine (in=global_ouput, out=ice)
+          ice = 0.0
+          do isea = 1,nsea
+            ice(isea) = global_output(isea)
+          end do
         end if
       end do
-      ! reduce across all PEs to create global array
-      call MPI_AllReduce(global_input, global_output, nsea, MPI_REAL, MPI_SUM, wave_communicator, ierr)
-
-      ! fill global array on each PE
-      ice = 0.0
-      do isea = 1,nsea
-        ix = mapsf(isea,1)
-        iy = mapsf(isea,2)
-        ice(isea) = global_output(isea)
-      end do
     end if
+
     call pio_syncfile(pioid)
-    if (couple_slow) call pio_freedecomp(pioid, iodesc2d)
+    if (addrstflds) call pio_freedecomp(pioid, iodesc2d)
     call pio_freedecomp(pioid, iodesc2dint)
     call pio_freedecomp(pioid, iodesc3dk)
     call pio_closefile(pioid)

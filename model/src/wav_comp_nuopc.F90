@@ -601,7 +601,7 @@ contains
       runtype = "branch"
     end if
     if ( root_task ) then
-      write(stdout,'(a)') 'WW3 runtype is '//trim(runtype)
+      write(stdout,'(a)') ' WW3 runtype is '//trim(runtype)
     end if
     call ESMF_LogWrite('WW3 runtype is '//trim(runtype), ESMF_LOGMSG_INFO)
 
@@ -676,7 +676,7 @@ contains
     call stme21 ( time0 , dtme21 )
     if ( root_task ) then
       write (stdout,'(a)')' Starting time : '//trim(dtme21)
-      write (stdout,'(a,i8,2x,i8)') 'start_ymd, stop_ymd = ',start_ymd, stop_ymd
+      write (stdout,'(a,i8,2x,i8)') ' start_ymd, stop_ymd = ',start_ymd, stop_ymd
     end if
 #ifndef W3_CESMCOUPLED
     stime = time0
@@ -1674,9 +1674,10 @@ contains
 
     ! Initialize ww3 for ufs (called from InitializeRealize)
 
-    use w3odatmd     , only : fnmpre, couple_slow
+    use w3odatmd     , only : fnmpre, addrstflds, rstfldlist, rstfldcnt
     use w3gdatmd     , only : dtcfl, dtcfli, dtmax, dtmin
     use w3initmd     , only : w3init
+    use w3servmd     , only : strsplit
     use w3timemd     , only : set_user_timestring
     use wav_shel_inp , only : read_shel_config
     use wav_shel_inp , only : npts, odat, iprt, x, y, pnames, prtfrm
@@ -1694,7 +1695,10 @@ contains
     logical            :: isPresent, isSet
     character(len=CL)  :: cvalue
     character(len=CL)  :: logmsg
+    character(len=CL)  :: fldrst = ''
+    character(len=100) :: tmplist(100) = ''
     integer            :: dt_in(4)
+    integer            :: i, cnt
     character(len=*), parameter :: subname = '(wav_comp_nuopc:wavinit_ufs)'
     ! -------------------------------------------------------------------
 
@@ -1703,7 +1707,7 @@ contains
 
     fnmpre = './'
     if (root_task) write(stdout,'(a)') trim(subname)//' call read_shel_config'
-    call read_shel_config(mpi_comm, mds, time0_overwrite=time0, timen_overwrite=timen)
+    call read_shel_config(mpi_comm, mds, time0_overwrite=time0, timen_overwrite=timen, rstfldlist=fldrst)
 
     call ESMF_LogWrite(trim(subname)//' call w3init', ESMF_LOGMSG_INFO)
     call w3init ( 1, .false., 'ww3', mds, ntrace, odat, flgrd, flgr2, flgd, flg2, &
@@ -1723,25 +1727,25 @@ contains
       dtcfli = real(dt_in(3),4)
       dtmin  = real(dt_in(4),4)
     end if
-    !TODO: why doesn't this line get written?
     write(cvalue,'(4f10.1)')dtmax,dtcfl,dtcfli,dtmin
     if (root_task) write(stdout,'(a)') trim(subname)//': WW3 timesteps '//trim(cvalue)
 
-    ! Determine if waves are in the slow loop
-    couple_slow = .false.
-    call NUOPC_CompAttributeGet(gcomp, name='couple_slow', value=cvalue, isPresent=isPresent, &
-         isSet=isSet, rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    if (isPresent .and. isSet) then
-       read(cvalue,*) couple_slow
-    end if
-    write(logmsg,'(A,l)') trim(subname)//': Wave couple_slow setting is ',couple_slow
-    call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO)
+    ! Define any additional restart fields
+    if(len_trim(fldrst) > 0) then
+      addrstflds = .true.
+      call strsplit(fldrst, tmplist)
 
-    if (wav_coupling_to_cice .and. couple_slow) then
-      if (root_task) write(stdout,'(a)') 'Wave-ice coupling requires fast loop coupling '
-      call ESMF_LogWrite('Wave-ice coupling requires fast loop coupling ', ESMF_LOGMSG_INFO)
-      call ESMF_Finalize(endflag=ESMF_END_ABORT)
+      do i = 1,size(rstfldlist)
+        rstfldlist(i) = trim(tmplist(i))
+        if (len_trim(rstfldlist(i)) > 0) rstfldcnt = rstfldcnt + 1
+      end do
+      if (root_task) then
+        do i = 1,rstfldcnt
+          write(stdout,'(a,i3,a)') trim(subname)//': WW3 additional restart field : ',i,'  '//trim(rstfldlist(i))
+        end do
+      end if
+    else
+      if (root_task) write(stdout,'(/,a)') trim(subname)//': WW3 NO additional restart fields will be written '
     end if
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)

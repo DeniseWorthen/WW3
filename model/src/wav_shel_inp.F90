@@ -100,10 +100,14 @@ contains
   !> Read ww3_shel.inp Or ww3_shel.nml
   !!
   !! @param[in]  mpi_comm           mpi communicator
+  !! @param[in]  mds                an array of unit numbers
+  !! @param[in]  time0_overwrite    the initial time for overwriting the nml file, optional
+  !! @param[in]  timen_overwrite    the endding time for overwriting the nml file, optional
+  !! @param[out] rstfldlist         a list of additional restart fields, optional
   !!
   !> @author mvertens@ucar.edu, Denise.Worthen@noaa.gov
   !> @date 01-05-2022
-  subroutine read_shel_config(mpi_comm, mds, time0_overwrite, timen_overwrite)
+  subroutine read_shel_config(mpi_comm, mds, time0_overwrite, timen_overwrite, rstfldlist)
 
     use wav_shr_flags
     use w3nmlshelmd    , only : nml_domain_t, nml_input_t, nml_output_type_t
@@ -127,12 +131,14 @@ contains
 #ifdef W3_NL5
     use w3wdatmd       , only : qi5tbeg
 #endif
+    use wav_kind_mod  , only : CL => shr_kind_cl
 
     ! input/output parameters
-    integer, intent(in) :: mpi_comm
-    integer, intent(in) :: mds(:)
-    integer, intent(in), optional :: time0_overwrite(2)
-    integer, intent(in), optional :: timen_overwrite(2)
+    integer,           intent(in) :: mpi_comm
+    integer,           intent(in) :: mds(:)
+    integer,           intent(in),  optional :: time0_overwrite(2)
+    integer,           intent(in),  optional :: timen_overwrite(2)
+    character(len=CL), intent(out), optional :: rstfldlist
 
     ! local parameters
     integer, parameter  :: nhmax =    200
@@ -639,6 +645,7 @@ contains
       ! Extra fields to be written in the restart
       fldrst = nml_output_type%restart%extra
       call w3flgrdflag ( ndso, ndso, ndse, fldrst, flogr, flogrr, iaproc, napout, ierr )
+      if (present(rstfldlist))rstfldlist = trim(fldrst)
       if ( ierr .ne. 0 ) goto 2222
 
       ! force minimal allocation to avoid memory seg fault
