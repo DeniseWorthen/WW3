@@ -520,6 +520,10 @@ CONTAINS
     integer                 :: memunit
     character(len=16)       :: user_timestring    !YYYY-MM-DD-SSSSS
     character(len=1024)     :: fname
+    !debug
+    real :: tmpice(nx,ny)
+    character(len=40) :: icefilename, mapfilename
+    integer :: iceio, mapio
     !/
     !/ ------------------------------------------------------------------- /
     !

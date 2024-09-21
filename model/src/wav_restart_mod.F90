@@ -225,6 +225,7 @@ contains
     use mpi_f08
     use w3adatmd    , only : mpi_comm_wave
     use w3gdatmd    , only : sig
+    use w3idatmd    , only : icei
     use w3wdatmd    , only : time, tlev, tice, trho, tic1, tic5, wlv, asf, fpis
 
     character(len=*)  , intent(in)    :: fname
@@ -242,6 +243,9 @@ contains
     integer, allocatable :: lmap(:)
     integer, allocatable :: lmap2d(:,:)
     integer, allocatable :: st2init(:,:)
+    ! debug
+    character(len=40) :: icefilename, mapfilename
+    integer :: iceio, mapio
     !-------------------------------------------------------------------------------
 
     ! cold start, set initial values and return.
@@ -377,11 +381,16 @@ contains
         ! reduce across all PEs to create global array
         call MPI_AllReduce(global_input, global_output, nsea, MPI_REAL, MPI_SUM, wave_communicator, ierr)
 
+        !icei(ix,iy)
         if (vname == 'ice') then
           ! fill global array on each PE
           ! TODO : make generic routine (in=global_ouput, out=ice)
           ice = 0.0
+          icei = 0.0
           do isea = 1,nsea
+            ix = mapsf(isea,1)
+            iy = mapsf(isea,2)
+            icei(ix,iy) = global_output(isea)
             ice(isea) = global_output(isea)
           end do
         end if
@@ -393,6 +402,16 @@ contains
     call pio_freedecomp(pioid, iodesc2dint)
     call pio_freedecomp(pioid, iodesc3dk)
     call pio_closefile(pioid)
+
+    if ( iaproc == 1 ) then
+      write(icefilename,'(a,i8.8,a,i6.6,a)')'icerst_read.',time(1),'.',time(2),'.dat'
+      open(newunit=iceio,file=trim(icefilename))
+
+      do iy = 1,ny
+        write(iceio,'(360f8.4)')(icei(ix,iy),ix=1,nx)
+      end do
+      close(iceio)
+    end if
 
   end subroutine read_restart
 end module wav_restart_mod

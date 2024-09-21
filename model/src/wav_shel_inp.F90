@@ -645,7 +645,13 @@ contains
       ! Extra fields to be written in the restart
       fldrst = nml_output_type%restart%extra
       call w3flgrdflag ( ndso, ndso, ndse, fldrst, flogr, flogrr, iaproc, napout, ierr )
-      if (present(rstfldlist))rstfldlist = trim(fldrst)
+      if (present(rstfldlist)) then
+        if (trim(fldrst) .ne. 'unset')then
+          rstfldlist = trim(fldrst)
+        else
+          rstfldlist = ' '
+        end if
+      end if
       if ( ierr .ne. 0 ) goto 2222
 
       ! force minimal allocation to avoid memory seg fault

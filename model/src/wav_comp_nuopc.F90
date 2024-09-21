@@ -1709,12 +1709,22 @@ contains
     if (root_task) write(stdout,'(a)') trim(subname)//' call read_shel_config'
     call read_shel_config(mpi_comm, mds, time0_overwrite=time0, timen_overwrite=timen, rstfldlist=fldrst)
 
-    call ESMF_LogWrite(trim(subname)//' call w3init', ESMF_LOGMSG_INFO)
+    ! Define any additional restart fields
+    if(len_trim(fldrst) > 0) then
+      addrstflds = .true.
+      call strsplit(fldrst, tmplist)
+      do i = 1,size(rstfldlist)
+        rstfldlist(i) = trim(tmplist(i))
+        if (len_trim(rstfldlist(i)) > 0) rstfldcnt = rstfldcnt + 1
+      end do
+    end if
+
+    if (root_task) write(stdout,'(a,/)') trim(subname)//' call w3init'
     call w3init ( 1, .false., 'ww3', mds, ntrace, odat, flgrd, flgr2, flgd, flg2, &
          npts, x, y, pnames, iprt, prtfrm, mpi_comm )
 
     write(cvalue,'(4f10.1)')dtmax,dtcfl,dtcfli,dtmin
-    if (root_task) write(stdout,'(a)') trim(subname)//': WW3 timesteps from mod_def '//trim(cvalue)
+    write(logmsg,'(a)')trim(subname)//': WW3 timesteps from mod_def '//trim(cvalue)
 
     call NUOPC_CompAttributeGet(gcomp, name='dt_in', isPresent=isPresent, isSet=isSet, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
@@ -1727,25 +1737,20 @@ contains
       dtcfli = real(dt_in(3),4)
       dtmin  = real(dt_in(4),4)
     end if
-    write(cvalue,'(4f10.1)')dtmax,dtcfl,dtcfli,dtmin
-    if (root_task) write(stdout,'(a)') trim(subname)//': WW3 timesteps '//trim(cvalue)
 
-    ! Define any additional restart fields
-    if(len_trim(fldrst) > 0) then
-      addrstflds = .true.
-      call strsplit(fldrst, tmplist)
+    ! log info
+    if (root_task) then
+      write(stdout,'(a)') trim(logmsg)
+      write(cvalue,'(4f10.1)')dtmax,dtcfl,dtcfli,dtmin
+      write(stdout,'(a)') trim(subname)//': WW3 timesteps '//trim(cvalue)
 
-      do i = 1,size(rstfldlist)
-        rstfldlist(i) = trim(tmplist(i))
-        if (len_trim(rstfldlist(i)) > 0) rstfldcnt = rstfldcnt + 1
-      end do
-      if (root_task) then
+      if (addrstflds) then
         do i = 1,rstfldcnt
           write(stdout,'(a,i3,a)') trim(subname)//': WW3 additional restart field : ',i,'  '//trim(rstfldlist(i))
         end do
+      else
+        write(stdout,'(/,a)') trim(subname)//': WW3 NO additional restart fields will be written '
       end if
-    else
-      if (root_task) write(stdout,'(/,a)') trim(subname)//': WW3 NO additional restart fields will be written '
     end if
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
