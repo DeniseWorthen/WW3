@@ -312,8 +312,8 @@ contains
 
     ! local variables
     integer          :: n, isea, jsea, ix, iy, nseal_cpl
-    integer, pointer :: dof2d(:)
     logical          :: luse_int
+    integer(kind=8), allocatable :: dof2d(:)
 #ifdef W3_PDLIB
     nseal_cpl = nseal - ng
 #else
@@ -356,8 +356,8 @@ contains
     type(io_desc_t) , intent(out) :: iodesc
 
     ! local variables
-    integer          :: n, k, isea, jsea, ix, iy, nseal_cpl
-    integer, pointer :: dof3d(:)
+    integer :: n, k, isea, jsea, ix, iy, nseal_cpl
+    integer(kind=8), allocatable :: dof3d(:)
 #ifdef W3_PDLIB
     nseal_cpl = nseal - ng
 #else

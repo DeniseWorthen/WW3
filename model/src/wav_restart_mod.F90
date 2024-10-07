@@ -27,7 +27,6 @@ module wav_restart_mod
   type(var_desc_t)  :: varid
   type(io_desc_t)   :: iodesc2dint
   type(io_desc_t)   :: iodesc2d
-  type(io_desc_t)   :: iodesc3dk
 
   integer(kind=Pio_Offset_Kind) :: frame
 
@@ -132,8 +131,7 @@ contains
 
     ! initialize the decomp
     call wav_pio_initdecomp(iodesc2dint, use_int=.true.)
-    if (addrstflds) call wav_pio_initdecomp(iodesc2d)
-    call wav_pio_initdecomp(nspec, iodesc3dk)
+    call wav_pio_initdecomp(iodesc2d)
 
     ! write the time
     ierr = pio_inq_varid(pioid,  'time', varid)
@@ -172,8 +170,10 @@ contains
     ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
     call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
-    call pio_write_darray(pioid, varid, iodesc3dk, lva, ierr)
-    call handle_err(ierr, 'put variable '//trim(vname))
+    do k = 1,nspec
+       call pio_write_darray(pioid, varid, iodesc2d, lva(:,k), ierr)
+       call handle_err(ierr, 'put variable '//trim(vname))
+    end do
 
     ! write requested additional global(nsea) fields
     if (addrstflds) then
@@ -184,9 +184,8 @@ contains
     end if
 
     call pio_syncfile(pioid)
-    if (addrstflds) call pio_freedecomp(pioid, iodesc2d)
+    call pio_freedecomp(pioid, iodesc2d)
     call pio_freedecomp(pioid, iodesc2dint)
-    call pio_freedecomp(pioid, iodesc3dk)
     call pio_closefile(pioid)
 
   end subroutine write_restart
@@ -280,17 +279,18 @@ contains
 
     ! initialize the decomp
     call wav_pio_initdecomp(iodesc2dint, use_int=.true.)
-    if (addrstflds) call wav_pio_initdecomp(iodesc2d)
-    call wav_pio_initdecomp(nspec, iodesc3dk)
+    call wav_pio_initdecomp(iodesc2d)
 
     vname = 'va'
     ierr = pio_inq_varid(pioid, trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
     call pio_setframe(pioid, varid, frame)
-    call pio_read_darray(pioid, varid, iodesc3dk, lva, ierr)
-    call handle_err(ierr, 'get variable '//trim(vname))
     ierr = pio_get_att(pioid, varid, "_FillValue", rfill)
     call handle_err(ierr, 'get variable _FillValue'//trim(vname))
+    do k = 1,nspec
+       call pio_read_darray(pioid, varid, iodesc2d, lva(:,k), ierr)
+       call handle_err(ierr, 'get variable '//trim(vname))
+    end do
 
     va = 0.0
     do jsea = 1,nseal_cpl
@@ -349,9 +349,8 @@ contains
     end if
 
     call pio_syncfile(pioid)
-    if (addrstflds) call pio_freedecomp(pioid, iodesc2d)
+    call pio_freedecomp(pioid, iodesc2d)
     call pio_freedecomp(pioid, iodesc2dint)
-    call pio_freedecomp(pioid, iodesc3dk)
     call pio_closefile(pioid)
 
   end subroutine read_restart
