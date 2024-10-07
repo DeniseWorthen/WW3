@@ -170,8 +170,8 @@ contains
     ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
     call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
-    do k = 1,nspec
-       call pio_write_darray(pioid, varid, iodesc2d, lva(:,k), ierr)
+    do kk = 1,nspec
+       call pio_write_darray(pioid, varid, iodesc2d, lva(:,kk), ierr)
        call handle_err(ierr, 'put variable '//trim(vname))
     end do
 
@@ -287,8 +287,8 @@ contains
     call pio_setframe(pioid, varid, frame)
     ierr = pio_get_att(pioid, varid, "_FillValue", rfill)
     call handle_err(ierr, 'get variable _FillValue'//trim(vname))
-    do k = 1,nspec
-       call pio_read_darray(pioid, varid, iodesc2d, lva(:,k), ierr)
+    do kk = 1,nspec
+       call pio_read_darray(pioid, varid, iodesc2d, lva(:,kk), ierr)
        call handle_err(ierr, 'get variable '//trim(vname))
     end do
 
