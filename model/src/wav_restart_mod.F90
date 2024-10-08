@@ -63,7 +63,7 @@ contains
     ! local variables
     integer              :: timid, xtid, ytid, ztid
     integer              :: nseal_cpl, nmode
-    integer              :: dimid(4)
+    integer              :: dimid(3)
     real   , allocatable :: lva(:,:)
     integer, allocatable :: lmap(:)
     !-------------------------------------------------------------------------------
@@ -107,7 +107,7 @@ contains
     do kk = 1,nspec
        write(cspec,'(i4.4)')kk
        vname = 'va'//cspec
-       dimid = (/xtid, ytid, ztid, timid/)
+       dimid = (/xtid, ytid, timid/)
        ierr = pio_def_var(pioid, trim(vname), PIO_REAL, dimid, varid)
        call handle_err(ierr, 'define variable '//trim(vname))
        ierr = pio_put_att(pioid, varid, '_FillValue', nf90_fill_float)
