@@ -311,8 +311,8 @@ contains
     logical        , optional, intent(in)  :: use_int
 
     ! local variables
-    integer          :: n, isea, jsea, ix, iy, nseal_cpl
-    logical          :: luse_int
+    integer :: n, isea, jsea, ix, iy, nseal_cpl
+    logical :: luse_int
     integer(kind=8), allocatable :: dof2d(:)
 #ifdef W3_PDLIB
     nseal_cpl = nseal - ng
