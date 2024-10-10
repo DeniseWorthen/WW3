@@ -576,7 +576,7 @@ contains
   !> @date 08-26-2024
   subroutine write_var3d(iodesc, vname, var, init2, fldir)
 
-    type(io_desc_t),            intent(inout) :: iodesc
+    type(io_desc_t),         intent(inout) :: iodesc
     character(len=*),           intent(in) :: vname
     real            ,           intent(in) :: var(:,:)
     character(len=*), optional, intent(in) :: init2
