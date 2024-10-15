@@ -61,7 +61,7 @@ contains
     character(len=*), intent(in) :: fname
 
     ! local variables
-    integer              :: timid, xtid, ytid, ztid
+    integer              :: timid, xtid, ytid
     integer              :: nseal_cpl, nmode
     integer              :: dimid(3)
     real   , allocatable :: lva(:,:)
@@ -92,16 +92,23 @@ contains
 
     ierr = pio_def_dim(pioid,    'nx',    nx, xtid)
     ierr = pio_def_dim(pioid,    'ny',    ny, ytid)
-    ierr = pio_def_dim(pioid, 'nspec', nspec, ztid)
     ierr = pio_def_dim(pioid,  'time', PIO_UNLIMITED, timid)
 
-    !define the time variable
+    ! define the time variable
     ierr = pio_def_var(pioid, 'time', PIO_DOUBLE, (/timid/), varid)
     call handle_err(ierr,'def_timevar')
     ierr = pio_put_att(pioid, varid, 'units', trim(time_origin))
     call handle_err(ierr,'def_time_units')
     ierr = pio_put_att(pioid, varid, 'calendar', trim(calendar_name))
     call handle_err(ierr,'def_time_calendar')
+
+    ! define the nth,nk sizes
+    ierr = pio_def_var(pioid, 'nth', PIO_INT, varid)
+    call handle_err(ierr,'def_nth')
+    ierr = pio_put_att(pioid, varid, 'long_name', 'number of direction bins')
+    ierr = pio_def_var(pioid, 'nk', PIO_INT, varid)
+    call handle_err(ierr,'def_nk')
+    ierr = pio_put_att(pioid, varid, 'long_name', 'number of frequencies')
 
     ! write each nspec as separate variable
     do kk = 1,nspec
@@ -133,6 +140,16 @@ contains
     ! end variable definitions
     ierr = pio_enddef(pioid)
     call handle_err(ierr, 'end variable definition')
+
+    ! write the freq and direction sizes
+    ierr = pio_inq_varid(pioid, 'nth', varid)
+    call handle_err(ierr, 'inquire variable nth ')
+    ierr = pio_put_var(pioid, varid, nth)
+    call handle_err(ierr, 'put nth')
+    ierr = pio_inq_varid(pioid, 'nk', varid)
+    call handle_err(ierr, 'inquire variable nk ')
+    ierr = pio_put_var(pioid, varid, nk)
+    call handle_err(ierr, 'put nk')
 
     ! initialize the decomp
     call wav_pio_initdecomp(iodesc2dint, use_int=.true.)
@@ -282,6 +299,9 @@ contains
     ierr = pio_openfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), pio_nowrite)
     call handle_err(ierr, 'open file '//trim(fname))
     if (iaproc == 1) write(ndso,'(a)')' Reading restart file '//trim(fname)
+
+    ! check the field dimensions and sizes against the current values
+    call checkfile()
 
     ! initialize the decomp
     call wav_pio_initdecomp(iodesc2dint, use_int=.true.)
@@ -457,4 +477,62 @@ contains
     end do
 
   end subroutine read_globalfield
+
+  !===============================================================================
+  !>  Check that a restart file has the expected dimensions and sizes
+  !!
+  !> author DeniseWorthen@noaa.gov
+  !> @date 10-15-2024
+  subroutine checkfile()
+
+    use w3odatmd  , only : ndse
+    use w3servmd  , only : extcde
+
+    integer :: dimid, ivar
+    integer(kind=PIO_OFFSET_KIND) :: dimlen
+
+    ! check dimension nx
+    vname = 'nx'
+    ierr = pio_inq_dimid(pioid, vname, dimid)
+    call handle_err(ierr, 'inquire dimension '//trim(vname))
+    ierr = pio_inq_dimlen(pioid, dimid, dimlen)
+    if (dimlen /= int(nx,PIO_OFFSET_KIND)) then
+      write(ndse,*) '*** WAVEWATCH III restart error: '//trim(vname)//' does not match expected value'
+      call extcde ( 49 )
+    end if
+
+    ! check dimension ny
+    vname = 'ny'
+    ierr = pio_inq_dimid(pioid, vname, dimid)
+    call handle_err(ierr, 'inquire dimension '//trim(vname))
+    ierr = pio_inq_dimlen(pioid, dimid, dimlen)
+    if (dimlen /= int(ny,PIO_OFFSET_KIND)) then
+      write(ndse,*) '*** WAVEWATCH III restart error: '//trim(vname)//' does not match expected value'
+      call extcde ( 49 )
+    end if
+
+    ! check number of directions
+    vname = 'nth'
+    ierr = pio_inq_varid(pioid, vname, varid)
+    call handle_err(ierr, 'inquire variable '//trim(vname))
+    ierr = pio_get_var(pioid, varid, ivar)
+    call handle_err(ierr, 'get variable '//trim(vname))
+    if (ivar .ne. nth) then
+      write(ndse,*) '*** WAVEWATCH III restart error: '//trim(vname)//' does not match expected value'
+      call extcde ( 49 )
+    end if
+
+    ! check number of frequencies
+    vname = 'nk'
+    ierr = pio_inq_varid(pioid, vname, varid)
+    call handle_err(ierr, 'inquire variable '//trim(vname))
+    ierr = pio_get_var(pioid, varid, ivar)
+    call handle_err(ierr, 'get variable '//trim(vname))
+    if (ivar .ne. nk) then
+      write(ndse,*) '*** WAVEWATCH III restart error: '//trim(vname)//' does not match expected value'
+      call extcde ( 49 )
+    end if
+
+  end subroutine checkfile
+
 end module wav_restart_mod
