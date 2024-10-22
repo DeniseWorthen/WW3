@@ -838,7 +838,6 @@ contains
       ! create distGrid from global index array of sea points with no ghost points
       DistGrid = ESMF_DistGridCreate(arbSeqIndexList=gindex_sea, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      deallocate(gindex_sea)
     else
       ! create a global index array for non-sea (i.e. land points)
       allocate(mask_global(nx*ny), mask_local(nx*ny))
@@ -884,8 +883,6 @@ contains
           gindex(ncnt) = gindex_lnd(ncnt-nseal_cpl)
         end if
       end do
-      deallocate(gindex_sea)
-      deallocate(gindex_lnd)
 
       ! create distGrid from global index array
       DistGrid = ESMF_DistGridCreate(arbSeqIndexList=gindex, rc=rc)
@@ -895,14 +892,23 @@ contains
     ! get the mesh file name
     call NUOPC_CompAttributeGet(gcomp, name='mesh_wav', value=cvalue, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
-
-    ! read in the mesh with the above DistGrid
+    ! read in the mesh with the the DistGrid
     EMesh = ESMF_MeshCreate(filename=trim(cvalue), fileformat=ESMF_FILEFORMAT_ESMFMESH, &
          elementDistgrid=Distgrid,rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
+
     if (dbug_flag > 5) then
-      call diagnose_mesh(EMesh, size(gindex), 'EMesh', rc=rc)
-      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      if (unstr_mesh) then
+        call diagnose_mesh(EMesh, size(gindex_sea), 'EMesh', rc=rc)
+        if (ChkErr(rc,__LINE__,u_FILE_u)) return
+        deallocate(gindex_sea)
+      else
+        call diagnose_mesh(EMesh, size(gindex), 'EMesh', rc=rc)
+        if (ChkErr(rc,__LINE__,u_FILE_u)) return
+        deallocate(gindex)
+        deallocate(gindex_sea)
+        deallocate(gindex_lnd)
+      end if
     end if
 
     if (.not. unstr_mesh) then
@@ -934,7 +940,6 @@ contains
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
       end if
       deallocate(meshmask)
-      deallocate(gindex)
     end if
 
     if (dbug_flag > 5) then
