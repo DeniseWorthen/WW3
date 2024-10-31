@@ -648,8 +648,8 @@ CONTAINS
         else
           dir = 0.0
         end if
-        ua(isea) = mag*cos(dir)
-        ud(isea) = mag*sin(dir)
+        ua(isea) = mag
+        ud(isea) = dir
         as(isea) = dt0(ix,iy)
       end do
     else
