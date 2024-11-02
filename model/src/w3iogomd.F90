@@ -1084,6 +1084,9 @@ CONTAINS
     CASE('TOC')
       I = 6
       J = 13
+    CASE('USSH')
+      I = 6
+      J = 14
       !
       ! Group 7
       !
@@ -1296,23 +1299,11 @@ CONTAINS
          ICPRT, DTPRT, WSCUT, NOSWLL, FLOGRD, FLOGR2,&
          NOGRP, NGRPP
     USE W3ADATMD, ONLY: NSEALM
-#ifdef W3_CESMCOUPLED
-    ! USSX, USSY   : surface Stokes drift (SD)
-    ! USSXH, USSYH : surface layer (SL) averaged SD
-    ! LANGMT       : La_t
-    ! LAPROJ       : La_{Proj}
-    ! LASL         : La_{SL}
-    ! LASLPJ       : La_{SL,Proj}
-    ! ALPHAL       : angle between wind and Langmuir cells (SL averaged)
-    ! ALPHALS      : angle between wind and Langmuir cells (surface)
-    ! UD           : wind direction
-    ! LAMULT       : enhancement factor
-    ! HML          : mixing layer depth (from coupler)
-    USE W3ADATMD, ONLY: LAMULT, USSXH, USSYH, LANGMT, LAPROJ, &
-         ALPHAL, ALPHALS, LASL, UD, LASLPJ
-    USE W3IDATMD, ONLY: HML
-    USE W3WDATMD, ONLY: ASF
-#endif
+      ! USSHX, USSHY : surface layer (SL) averaged SD
+      ! HSL          : surface layer depth (1/5 of the mixed layer depth
+      !                from the coupler)
+    USE W3ADATMD, ONLY: USSHX, USSHY
+    USE W3IDATMD, ONLY: HSL
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
 #endif
@@ -1370,17 +1361,12 @@ CONTAINS
     REAL                       USSCO, FT1
     REAL, SAVE              :: HSMIN = 0.01
     LOGICAL                 :: FLOLOC(NOGRP,NGRPP)
-#ifdef W3_CESMCOUPLED
     ! SWW: angle between wind and waves
-    ! HSL: surface layer depth (=0.2*HML)
-    REAL                    :: SWW !angle between wind and waves
-    REAL                    :: HSL !surface layer depth (=0.2*HML)
-    ! tmp variables for surface and SL averaged SD
-    REAL                    :: ETUSSX(NSEAL),        &
-         ETUSSY(NSEAL),        &
-         ETUSSXH(NSEAL),       &
-         ETUSSYH(NSEAL)
-#endif
+    ! LHSL: local surface layer depth
+    REAL                    :: SWW
+    REAL                    :: LHSL
+    ! tmp variable for surface layer averaged Stokes drift
+    REAL                    :: USSCOH
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -1487,25 +1473,10 @@ CONTAINS
     QP    = UNDEF
     WBT    = UNDEF
     !
-#ifdef W3_CESMCOUPLED
-    ETUSSX  = 0.
-    ETUSSY  = 0.
     ETUSCX  = 0.
     ETUSCY  = 0.
-    ETUSSXH  = 0.
-    ETUSSYH  = 0
-    LANGMT = UNDEF
-    LAPROJ = UNDEF
-    LASL   = UNDEF
-    LASLPJ = UNDEF
-    ALPHAL = UNDEF
-    ALPHALS = UNDEF
-    USSX   = 0.
-    USSY   = 0.
-    USSXH  = 0.
-    USSYH  = 0.
-    LAMULT  = 1.
-#endif
+    USSHX  = 0.
+    USSHY  = 0.
     !
     ! 2.  Integral over discrete part of spectrum ------------------------ *
     !
@@ -1631,12 +1602,16 @@ CONTAINS
           TPMS(JSEA) = TPI/SIG(IK)
         END IF
 
-#ifdef W3_CESMCOUPLED
-        ! Get surface layer depth
-        IX    = MAPSF(ISEA,1)
-        IY    = MAPSF(ISEA,2)
-        HSL   = HML(IX,IY)/5.     ! depth over which SD is averaged
-#endif
+        IF (LMPENABLED) then
+            IF (HSLMODE.EQ.0) then
+              LHSL = 10.0 ! a constant value for testing purposes
+            ELSE
+              ! Get surface layer depth from coupler
+              IX    = MAPSF(ISEA,1)
+              IY    = MAPSF(ISEA,2)
+              LHSL  = HSL(IX,IY)      ! depth over which SD is averaged
+            END IF
+        END IF
 
         !
         ! Directional moments in the last freq. band
@@ -1677,39 +1652,14 @@ CONTAINS
           USSCO=FKD*SIG(IK)*WN(IK,ISEA)*COSH(2.*KD)
           BHD(JSEA) = BHD(JSEA) +                             &
                GRAV*WN(IK,ISEA) * EBD(IK,JSEA) / (SINH(2.*KD))
-#ifdef W3_CESMCOUPLED
-          ! Surface Stokes Drift
-          ETUSSX(JSEA)  = ETUSSX(JSEA) + ABX(JSEA)*FACTOR*SIG(IK) &
-               *WN(IK,ISEA)*COSH(2*WN(IK,ISEA)*DW(ISEA))          &
-               /(SINH(WN(IK,ISEA)*DW(ISEA)))**2
-          ETUSSY(JSEA)  = ETUSSY(JSEA) + ABY(JSEA)*FACTOR*SIG(IK) &
-               *WN(IK,ISEA)*COSH(2*WN(IK,ISEA)*DW(ISEA))          &
-               /(SINH(WN(IK,ISEA)*DW(ISEA)))**2
-          ! Depth averaged Stokes Drift
-          ETUSSXH(JSEA)  = ETUSSXH(JSEA) + ABX(JSEA)*FACTOR*SIG(IK) &
-               *(1.-EXP(-2.*WN(IK,ISEA)*HSL))/2./HSL                &
-               *COSH(2*WN(IK,ISEA)*DW(ISEA))                        &
-               /(SINH(WN(IK,ISEA)*DW(ISEA)))**2
-          ETUSSYH(JSEA)  = ETUSSYH(JSEA) + ABY(JSEA)*FACTOR*SIG(IK) &
-               *(1.-EXP(-2.*WN(IK,ISEA)*HSL))/2./HSL                &
-               *COSH(2*WN(IK,ISEA)*DW(ISEA))                        &
-               /(SINH(WN(IK,ISEA)*DW(ISEA)))**2
-#endif
+          IF (LMPENABLED) THEN
+            USSCOH=0.5*FKD*SIG(IK)*(1.-EXP(-2.*WN(IK,ISEA)*LHSL))/LHSL*COSH(2.*KD)
+          ENDIF
         ELSE
           USSCO=FACTOR*SIG(IK)*2.*WN(IK,ISEA)
-#ifdef W3_CESMCOUPLED
-          ! deep water limit
-          ! Surface Stokes Drift
-          ETUSSX(JSEA)  = ETUSSX(JSEA) + ABX(JSEA)*FACTOR*SIG(IK) &
-               *2.*WN(IK,ISEA)
-          ETUSSY(JSEA)  = ETUSSY(JSEA) + ABY(JSEA)*FACTOR*SIG(IK) &
-               *2.*WN(IK,ISEA)
-          ! Depth averaged Stokes Drift
-          ETUSSXH(JSEA)  = ETUSSXH(JSEA) + ABX(JSEA)*FACTOR*SIG(IK) &
-               *(1.-EXP(-2.*WN(IK,ISEA)*HSL))/HSL
-          ETUSSYH(JSEA)  = ETUSSYH(JSEA) + ABY(JSEA)*FACTOR*SIG(IK) &
-               *(1.-EXP(-2.*WN(IK,ISEA)*HSL))/HSL
-#endif
+          IF (LMPENABLED) THEN
+            USSCOH=FACTOR*SIG(IK)*(1.-EXP(-2.*WN(IK,ISEA)*LHSL))/LHSL
+          ENDIF
         END IF
         !
         ABXX(JSEA)   = MAX ( 0. , ABXX(JSEA) ) * FACTOR
@@ -1725,6 +1675,10 @@ CONTAINS
         !
         USSX(JSEA)  = USSX(JSEA) + ABX(JSEA)*USSCO
         USSY(JSEA)  = USSY(JSEA) + ABY(JSEA)*USSCO
+        IF (LMPENABLED) THEN
+          USSHX(JSEA) = USSHX(JSEA) + ABX(JSEA)*USSCOH
+          USSHY(JSEA) = USSHY(JSEA) + ABY(JSEA)*USSCOH
+        ENDIF
         !
         ! Fills the 3D Stokes drift spectrum array
         !  ! The US3D Stokes drift specrum array is now calculated in a
@@ -1998,11 +1952,17 @@ CONTAINS
     !
     DO JSEA=1, NSEAL
       CALL INIT_GET_ISEA(ISEA, JSEA)
-#ifdef W3_CESMCOUPLED
-      IX = MAPSF(ISEA,1)
-      IY = MAPSF(ISEA,2)
-      HS = HML(IX,IY)/5.     ! depth over which SD is averaged
-#endif
+
+      IF (LMPENABLED) then
+        IF (HSLMODE.EQ.0) then
+          LHSL = 10.0 ! a constant value for testing purposes
+        ELSE
+          ! Get surface layer depth from coupler
+          IX    = MAPSF(ISEA,1)
+          IY    = MAPSF(ISEA,2)
+          LHSL  = HSL(IX,IY)      ! depth over which SD is averaged
+        END IF
+      END IF
       !
       ! 3.a Directional mss parameters
       !     NB: the slope PDF is proportional to ell1=ETYY*EC2-2*ETXY*ECS+ETXX*ES2 = C*EC2-2*B*ECS+A*ES2
@@ -2032,16 +1992,23 @@ CONTAINS
       SXX(JSEA) = SXX(JSEA) + FTE * ABXX(JSEA) / CG(NK,ISEA)
       SYY(JSEA) = SYY(JSEA) + FTE * ABYY(JSEA) / CG(NK,ISEA)
       SXY(JSEA) = SXY(JSEA) + FTE * ABXY(JSEA) / CG(NK,ISEA)
-#ifdef W3_CESMCOUPLED
-      ! tail for SD
-      ETUSSX(JSEA)  = ETUSSX(JSEA) + 2*GRAV*ETUSCX(JSEA)/SIG(NK)
-      ETUSSY(JSEA)  = ETUSSY(JSEA) + 2*GRAV*ETUSCY(JSEA)/SIG(NK)
-#endif
       !
       ! Tail for surface stokes drift is commented out: very sensitive to tail power
       !
       !       USSX(JSEA)  = USSX(JSEA) + 2*GRAV*ETUSCX(JSEA)/SIG(NK)
       !       USSY(JSEA)  = USSY(JSEA) + 2*GRAV*ETUSCY(JSEA)/SIG(NK)
+
+      ! Add tail contribution for surface and layer averaged Stokes drift
+      IF (LMPENABLED.and.SDTAIL) then
+        USSX(JSEA)  = USSX(JSEA) + 2*GRAV*ETUSCX(JSEA)/SIG(NK)
+        USSY(JSEA)  = USSY(JSEA) + 2*GRAV*ETUSCY(JSEA)/SIG(NK)
+        USSHX(JSEA) = USSHX(JSEA) + 2*GRAV*ETUSCX(JSEA)/SIG(NK)     &
+          *(1.-(1.-4.*LHSL*WN(NK,ISEA))*EXP(-2.*WN(NK,ISEA)*LHSL))    &
+          /6./WN(NK,ISEA)/LHSL
+        USSHY(JSEA)  = USSHY(JSEA) + 2*GRAV*ETUSCY(JSEA)/SIG(NK)    &
+          *(1.-(1.-4.*LHSL*WN(NK,ISEA))*EXP(-2.*WN(NK,ISEA)*LHSL))    &
+          /6./WN(NK,ISEA)/LHSL
+      END IF
       UBS(JSEA) = UBS(JSEA) + FTWL * EBAND/GRAV
     END DO
     !
@@ -2110,87 +2077,6 @@ CONTAINS
           T02(JSEA) = TPI / SIG(NK)
           T01(JSEA)= T02(JSEA)
         ENDIF
-#ifdef W3_CESMCOUPLED
-        !TODO is this affected by the NXXX vs. NSEALM?
-        ! Should LAMULT, etc. be NSEAML length?
-        ! Output Stokes drift and Langmuir numbers
-        ! USERO(JSEA,1) = HS(JSEA) / MAX ( 0.001 , DW(JSEA) )
-        ! USERO(JSEA,2) = ASF(ISEA)
-        IF (ETUSSX(JSEA) .NE. 0. .OR. ETUSSY(JSEA) .NE. 0.) THEN
-
-          USSX(JSEA) = ETUSSX(JSEA)
-          USSY(JSEA) = ETUSSY(JSEA)
-          USSXH(JSEA) = ETUSSXH(JSEA)
-          USSYH(JSEA) = ETUSSYH(JSEA)
-
-          ! this check is to divide by zeror error with gx17
-          ! is there a better way to do this check?
-          IF( SQRT(USSX(JSEA)**2 + USSY(JSEA)**2) .GT. 0) THEN
-            IF( SQRT(USSXH(JSEA)**2+USSYH(JSEA)**2) .GT. 0) THEN
-
-              LANGMT(JSEA) = SQRT ( UST(ISEA) * ASF(ISEA)        &
-                   * SQRT ( DAIR / DWAT )                   &
-                   / SQRT ( USSX(JSEA)**2 + USSY(JSEA)**2 ) )
-              ! Calculating Langmuir Number for misaligned wind and waves
-              ! see Van Roekel et al., 2012
-              ! take z1 = 4 * HS
-              ! SWW: angle between Stokes drift and wind
-
-              ! no Stokes depth
-              SWW = ATAN2(USSY(JSEA),USSX(JSEA)) - UD(ISEA)
-              ! ALPHALS: angle between wind and LC direction, Surface
-              ! Stokes drift
-              ! LR check for divide by zero
-              if ((LANGMT(JSEA)**2  &
-                   /0.4*LOG(MAX(ABS(HML(IX,IY)/4./HS(JSEA)),1.0))+COS(SWW)).eq.0.) then
-                print *, 'LR warning A denom 0.'
-                ! This appears to be a decimal precision error
-                ! The first term equals minus the second term to 6 decimal places
-                ! The denominator should be a very small number (e-7)
-                ! ATAN(sin(sww)/small number) tends to pi/2
-                ! So I hardcoded this here.
-                ALPHALS(JSEA) = -1.5707956594501575
-              else
-
-                ALPHALS(JSEA) = ATAN(SIN(SWW) / (LANGMT(JSEA)**2  &
-                     /0.4*LOG(MAX(ABS(HML(IX,IY)/4./HS(JSEA)),1.0))+COS(SWW)))
-              end if
-
-
-              ALPHALS(JSEA) = ATAN( SIN(SWW) / ( LANGMT(JSEA)**2  &
-                   /0.4*LOG(MAX(ABS(HML(IX,IY)/4./HS(JSEA)),1.0))+COS(SWW)))
-              LAPROJ(JSEA) = LANGMT(JSEA) &
-                   * SQRT(ABS(COS(ALPHALS(JSEA))) &
-                   / ABS(COS(SWW-ALPHALS(JSEA))))
-              ! Stokes depth
-              SWW = ATAN2(USSYH(JSEA),USSXH(JSEA)) - UD(ISEA)
-              ! ALPHAL: angle between wind and LC direction
-
-              ! LR check for divide by zero (same as above)
-              if ((LANGMT(JSEA)**2  &
-                   /0.4*LOG(MAX(ABS(HML(IX,IY)/4./HS(JSEA)),1.0))+COS(SWW)).eq.0.) then
-                print *, 'LR warning B denom 0.'
-                ALPHAL(JSEA) = -1.5707956594501575
-              else
-
-                ALPHAL(JSEA) = ATAN(SIN(SWW) / (LANGMT(JSEA)**2  &
-                     /0.4*LOG(MAX(ABS(HML(IX,IY)/4./HS(JSEA)),1.0))+COS(SWW)))
-              end if
-              LASL(JSEA) = SQRT(UST(ISEA)*ASF(ISEA)         &
-                   * SQRT(DAIR/DWAT)                       &
-                   / SQRT(USSXH(JSEA)**2+USSYH(JSEA)**2))
-              LASLPJ(JSEA) = LASL(JSEA) * SQRT(ABS(COS(ALPHAL(JSEA))) &
-                   / ABS(COS(SWW-ALPHAL(JSEA))))
-              ! LAMULT
-              LAMULT(JSEA) = MIN(5.0, ABS(COS(ALPHAL(JSEA))) * &
-                   SQRT(1.0+(1.5*LASLPJ(JSEA))**(-2)+(5.4*real(LASLPJ(JSEA),kind=8))**(-4)))
-              ! user defined output
-              USERO(JSEA,1) = HML(IX,IY)
-              !USERO(JSEA,2) = COS(ALPHAL(JSEA)
-            END IF
-          END IF
-        END IF
-#endif
         !
         !  Add here USERO(JSEA,1) ...
         !
@@ -2669,6 +2555,7 @@ CONTAINS
          TH1M, STH1M, TH2M, STH2M, HSIG, PHICE, TAUICE,&
          STMAXE, STMAXD, HMAXE, HCMAXE, HMAXD, HCMAXD,&
          USSP, TAUOCX, TAUOCY
+    USE W3ADATMD, ONLY: USSHX, USSHY
     !/
     USE W3ODATMD, ONLY: NOGRP, NGRPP, IDOUT, UNDEF, NDST, NDSE,     &
          FLOGRD, IPASS => IPASS1, WRITE => WRITE1,   &
@@ -2683,8 +2570,6 @@ CONTAINS
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
 #endif
-    use w3timemd   , only: set_user_timestring
-    use w3odatmd   , only: use_user_histname, user_histfname
     !
     !/
     !/ ------------------------------------------------------------------- /
@@ -2713,8 +2598,6 @@ CONTAINS
 #endif
     CHARACTER(LEN=30)       :: IDTST, TNAME
     CHARACTER(LEN=10)       :: VERTST
-    CHARACTER(len=512)      :: FNAME
-    character(len=16)       :: user_timestring    !YYYY-MM-DD-SSSSS
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -2766,25 +2649,15 @@ CONTAINS
     IF ( IPASS.EQ.1 .AND. OFILES(1) .EQ. 0) THEN
       I      = LEN_TRIM(FILEXT)
       J      = LEN_TRIM(FNMPRE)
-      if (use_user_histname) then
-        if (len_trim(user_histfname) == 0 ) then
-          call extcde (60, MSG="user history filename requested"// &
-               " but not provided")
-        end if
-        call set_user_timestring(time,user_timestring)
-        fname = trim(user_histfname)//trim(user_timestring)
-      else
-        fname = 'out_grd.'//FILEXT(:I)
-      end if
       !
 #ifdef W3_T
-      WRITE (NDST,9001) FNMPRE(:J)//trim(fname)
+      WRITE (NDST,9001) FNMPRE(:J)//'out_grd.'//FILEXT(:I)
 #endif
       IF ( WRITE ) THEN
-        OPEN (NDSOG,FILE=FNMPRE(:J)//trim(fname),     &
+        OPEN (NDSOG,FILE=FNMPRE(:J)//'out_grd.'//FILEXT(:I),    &
              form='UNFORMATTED', convert=file_endian,ERR=800,IOSTAT=IERR)
       ELSE
-        OPEN (NDSOG,FILE=FNMPRE(:J)//trim(fname),     &
+        OPEN (NDSOG,FILE=FNMPRE(:J)//'out_grd.'//FILEXT(:I),    &
              form='UNFORMATTED', convert=file_endian,ERR=800,IOSTAT=IERR,STATUS='OLD')
       END IF
       !
@@ -2843,30 +2716,19 @@ CONTAINS
         CALL EXTCDE ( 2 )
       END IF
     END IF
-
     !
     IF ( IPASS.GE.1 .AND. OFILES(1) .EQ. 1) THEN
       I      = LEN_TRIM(FILEXT)
       J      = LEN_TRIM(FNMPRE)
-      if (use_user_histname) then
-        if (len_trim(user_histfname) == 0 ) then
-          call extcde (60, MSG="user history filename requested"// &
-               " but not provided")
-        end if
-        call set_user_timestring(time,user_timestring)
-        fname = trim(user_histfname)//trim(user_timestring)
-      else
-        !
-        ! Create TIMETAG for file name using YYYYMMDD.HHMMS prefix
-        WRITE(TIMETAG,"(i8.8,'.'i6.6)")TIME(1),TIME(2)
+      !
+      ! Create TIMETAG for file name using YYYYMMDD.HHMMS prefix
+      WRITE(TIMETAG,"(i8.8,'.'i6.6)")TIME(1),TIME(2)
 #ifdef W3_T
-        WRITE (NDST,9001) FNMPRE(:J)//TIMETAG//'.out_grd.'//FILEXT(:I)
+      WRITE (NDST,9001) FNMPRE(:J)//TIMETAG//'.out_grd.'//FILEXT(:I)
 #endif
-        fname = TIMETAG//'.out_grd.'//FILEXT(:I)
-      end if
       IF ( WRITE ) THEN
-        OPEN (NDSOG,FILE=FNMPRE(:J)//trim(fname),  &
-             form='UNFORMATTED', convert=file_endian,ERR=800,IOSTAT=IERR)
+        OPEN (NDSOG,FILE=FNMPRE(:J)//TIMETAG//'.out_grd.'  &
+             //FILEXT(:I),form='UNFORMATTED', convert=file_endian,ERR=800,IOSTAT=IERR)
       ELSE
         OPEN (NDSOG,FILE=FNMPRE(:J)//'out_grd.'//FILEXT(:I),    &
              form='UNFORMATTED', convert=file_endian,ERR=800,IOSTAT=IERR,STATUS='OLD')
@@ -3042,6 +2904,10 @@ CONTAINS
           IF ( FLOGRD( 6, 13) ) THEN
             TAUOCX(ISEA) = UNDEF
             TAUOCY(ISEA) = UNDEF
+          END IF
+          IF ( FLOGRD( 6, 14) ) THEN
+            USSHX (ISEA) = UNDEF
+            USSHY (ISEA) = UNDEF
           END IF
           !
           IF ( FLOGRD( 7, 1) ) THEN
@@ -3366,6 +3232,9 @@ CONTAINS
             ELSE IF ( IFI .EQ. 6 .AND. IFJ .EQ. 13 ) THEN
               WRITE ( NDSOG ) TAUOCX(1:NSEA)
               WRITE ( NDSOG ) TAUOCY(1:NSEA)
+            ELSE IF ( IFI .EQ. 6 .AND. IFJ .EQ. 14 ) THEN
+              WRITE ( NDSOG ) USSHX(1:NSEA)
+              WRITE ( NDSOG ) USSHY(1:NSEA)
               !
               !     Section 7)
               !
@@ -3707,6 +3576,11 @@ CONTAINS
                    TAUOCX(1:NSEA)
               READ (NDSOG,END=801,ERR=802,IOSTAT=IERR)         &
                    TAUOCY(1:NSEA)
+            ELSE IF ( IFI .EQ. 6 .AND. IFJ .EQ. 14 ) THEN
+              READ (NDSOG,END=801,ERR=802,IOSTAT=IERR)         &
+                   USSHX(1:NSEA)
+              READ (NDSOG,END=801,ERR=802,IOSTAT=IERR)         &
+                   USSHY(1:NSEA)
 
               !
               !     Section 7)

@@ -20,7 +20,7 @@ module wav_import_export
   use wav_shr_mod  , only : chkerr
   use wav_shr_mod  , only : state_diagnose, state_reset, state_getfldptr, state_fldchk
   use wav_shr_mod  , only : wav_coupling_to_cice, nwav_elev_spectrum, merge_import, dbug_flag, multigrid, unstr_mesh
-  use constants    , only : grav, tpi, dwat
+  use constants    , only : grav, tpi, dwat, dair
   use w3parall     , only : init_get_isea
 
   implicit none
@@ -140,9 +140,9 @@ contains
     end if
     if (cesmcoupled) then
       call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_lamult' )
+      call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_lasl' )
       call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_ustokes')
       call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_vstokes')
-      !call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_hstokes')
     else
       call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_z0')
     end if
@@ -154,7 +154,7 @@ contains
     ! will be implemented soon based on receiving USSP and USSPF from the coupler instead of the mod_def file. This will
     ! also ensure compatibility with the ocean component since ocean will also receive these from the coupler.
     if (wav_coupling_to_cice) then
-      call fldlist_add(fldsFrWav_num, fldsFrWav, 'wave_elevation_spectrum', &
+      call fldlist_add(fldsFrWav_num, fldsFrWav, 'Sw_elevation_spectrum', &
            ungridded_lbound=1, ungridded_ubound=nwav_elev_spectrum)
     end if
 
@@ -267,7 +267,7 @@ contains
     use w3odatmd    , only: w3seto
     use w3wdatmd    , only: time, w3setw
 #ifdef W3_CESMCOUPLED
-    use w3idatmd    , only: HML
+    use w3idatmd    , only: HSL
 #else
     use wmupdtmd    , only: wmupd2
     use wmmdatmd    , only: wmsetm
@@ -358,7 +358,6 @@ contains
         call SetGlobalInput(importState, 'So_u', vm, global_data, rc)
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
         call FillGlobalInput(global_data, CX0)
-        call FillGlobalInput(global_data, CXN)
       end if
 
       CY0(:,:) = def_value   ! ocn v current
@@ -367,7 +366,6 @@ contains
         call SetGlobalInput(importState, 'So_v', vm, global_data, rc)
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
         call FillGlobalInput(global_data, CY0)
-        call FillGlobalInput(global_data, CYN)
       end if
     end if
 
@@ -406,14 +404,12 @@ contains
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
         if (merge_import) then
           call FillGlobalInput(global_data, import_mask, wxdata, WX0)
-          call FillGlobalInput(global_data, import_mask, wxdata, WXN)
           if (dbug_flag > 10) then
             call check_globaldata(gcomp, 'wx0', wx0, nx*ny, rc)
             if (ChkErr(rc,__LINE__,u_FILE_u)) return
           end if
         else
           call FillGlobalInput(global_data, WX0)
-          call FillGlobalInput(global_data, WXN)
         end if
       end if
 
@@ -426,14 +422,12 @@ contains
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
         if (merge_import) then
           call FillGlobalInput(global_data, import_mask, wydata, WY0)
-          call FillGlobalInput(global_data, import_mask, wydata, WYN)
           if (dbug_flag > 10) then
             call check_globaldata(gcomp, 'wy0', wy0, nx*ny, rc)
             if (ChkErr(rc,__LINE__,u_FILE_u)) return
           end if
         else
           call FillGlobalInput(global_data, WY0)
-          call FillGlobalInput(global_data, WYN)
         end if
       end if
 
@@ -450,7 +444,6 @@ contains
         ! So_tbot - So_t
         global_data = global_data - global_data2
         call FillGlobalInput(global_data, DT0)
-        call FillGlobalInput(global_data, DTN)
         deallocate(global_data2)
       end if
       ! Deallocate memory for merge_import
@@ -459,6 +452,7 @@ contains
         deallocate(wydata)
       end if
     end if
+
 
     ! ---------------
     ! INFLAGS1(4) - ice fraction field
@@ -480,8 +474,8 @@ contains
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
     ! ocn mixing layer depth
-    global_data = max(global_data, 5.)
-    call FillGlobalInput(global_data, HML)
+    global_data = max(global_data, 5.)*0.2
+    call FillGlobalInput(global_data, HSL)
 #endif
     ! ---------------
     ! INFLAGS1(5) - atm momentum fields
@@ -496,7 +490,6 @@ contains
         call SetGlobalInput(importState, 'Faxa_taux', vm, global_data, rc)
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
         call FillGlobalInput(global_data, UX0)
-        call FillGlobalInput(global_data, UXN)
       end if
 
       UY0(:,:) = def_value   ! atm v momentum
@@ -506,7 +499,6 @@ contains
         call SetGlobalInput(importState, 'Faxa_tauy', vm, global_data, rc)
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
         call FillGlobalInput(global_data, UY0)
-        call FillGlobalInput(global_data, UYN)
       end if
     end if
     ! ---------------
@@ -588,7 +580,9 @@ contains
     use w3gdatmd      , only : nseal, mapsf, MAPSTA, USSPF, NK, w3setg
     use w3iogomd      , only : CALC_U3STOKES
 #ifdef W3_CESMCOUPLED
-    use w3adatmd      , only : LAMULT
+    use w3wdatmd      , only : ASF, UST
+    use w3adatmd      , only : USSHX, USSHY, UD, HS
+    use w3idatmd      , only : HSL
 #else
     use wmmdatmd      , only : mdse, mdst, wmsetm
 #endif
@@ -600,6 +594,7 @@ contains
     ! Local variables
 #ifdef W3_CESMCOUPLED
     real(R8)          :: fillvalue = 1.0e30_R8                 ! special missing value
+    real              :: sww, langmt, lasl, laslpj, alphal
 #else
     real(R8)          :: fillvalue = zero                      ! special missing value
 #endif
@@ -616,6 +611,7 @@ contains
     real(r8), pointer :: syyn(:)
 
     real(r8), pointer :: sw_lamult(:)
+    real(r8), pointer :: sw_lasl(:)
     real(r8), pointer :: sw_ustokes(:)
     real(r8), pointer :: sw_vstokes(:)
 
@@ -653,11 +649,43 @@ contains
         call init_get_isea(isea, jsea)
         ix  = mapsf(isea,1)
         iy  = mapsf(isea,2)
-        if (mapsta(iy,ix) == 1) then
-          sw_lamult(jsea) = LAMULT(jsea)
+        if (mapsta(iy,ix) == 1 .and. HS(jsea) > zero .and. &
+            sqrt(USSX(jsea)**2+USSY(jsea)**2)>zero .and. sqrt(USSHX(jsea)**2+USSHY(jsea)**2)>zero ) then
+           sww = atan2(USSHY(jsea),USSHX(jsea)) - UD(isea)
+           alphal = atan( sin(sww) / (                                       &
+                          2.5 * UST(isea)*ASF(isea)*sqrt(dair/dwat)          &
+                        / max(1.e-14_r8, sqrt(USSX(jsea)**2+USSY(jsea)**2))     &
+                        * log(max(1.0, abs(1.25*HSL(ix,iy)/HS(jsea))))       &
+                        + cos(sww)   )                                       &
+                        )
+           lasl = sqrt(ust(isea) * asf(isea) * sqrt(dair/dwat) &
+                                 / sqrt(usshx(jsea)**2 + usshy(jsea)**2 ))
+           laslpj = lasl * sqrt(abs(cos(alphal)) &
+               / abs(cos(sww-alphal)))
+           sw_lamult(jsea) = min(5.0, abs(cos(alphal)) * &
+                              sqrt(1.0+(1.5*laslpj)**(-2)+(5.4_r8*laslpj)**(-4)))
         else
           sw_lamult(jsea)  = 1.
         endif
+      enddo
+    end if
+    if (state_fldchk(exportState, 'Sw_lasl')) then
+      call state_getfldptr(exportState, 'Sw_lasl', sw_lasl, rc=rc)
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      sw_lasl(:) = fillvalue
+      do jsea=1, nseal
+         isea = iaproc + (jsea-1)*naproc
+         ix  = mapsf(isea,1)
+         iy  = mapsf(isea,2)
+         if (mapsta(iy,ix) == 1) then
+            ! note: an arbitrary minimum value of 0.2 is set to avoid zero
+            !       Langmuir number which may result from zero surface friction
+            !       velocity but may cause unphysically strong Langmuir mixing
+            sw_lasl(jsea) = max(0.2, sqrt(UST(isea)*ASF(isea)*sqrt(dair/dwat) &
+                          / max(1.e-14, sqrt(USSHX(jsea)**2+USSHY(jsea)**2))))
+         else
+            sw_lasl(jsea)  = 1.e6
+         endif
       enddo
     end if
 #endif
@@ -729,7 +757,7 @@ contains
       call CalcRadstr2D( va, sxxn, sxyn, syyn)
     end if
     if (wav_coupling_to_cice) then
-      call state_getfldptr(exportState, 'wave_elevation_spectrum', wave_elevation_spectrum, rc=rc)
+      call state_getfldptr(exportState, 'Sw_elevation_spectrum', wave_elevation_spectrum, rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
       ! Initialize wave elevation spectrum
       wave_elevation_spectrum(:,:) = fillvalue
@@ -908,6 +936,7 @@ contains
       ! local variables
       type(ESMF_Distgrid) :: distgrid
       type(ESMF_Grid)     :: grid
+      real(ESMF_KIND_R8), pointer :: fldptr2d(:,:)
       character(len=*), parameter :: subname='(wav_import_export:SetScalarField)'
       ! ----------------------------------------------
 
@@ -923,6 +952,11 @@ contains
       field = ESMF_FieldCreate(name=trim(flds_scalar_name), grid=grid, typekind=ESMF_TYPEKIND_R8, &
            ungriddedLBound=(/1/), ungriddedUBound=(/flds_scalar_num/), gridToFieldMap=(/2/), rc=rc) ! num of scalar values
       if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, line=__LINE__, file=u_FILE_u)) return
+
+      ! initialize fldptr to zero
+      call ESMF_FieldGet(field, farrayPtr=fldptr2d, rc=rc)
+      if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      fldptr2d(:,:) = 0.0
 
     end subroutine SetScalarField
 
