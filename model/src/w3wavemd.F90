@@ -2619,13 +2619,13 @@ CONTAINS
                 !
                 !   Point output
                 !
-                IF ( IAPROC .EQ. NAPPNT ) THEN
+                !IF ( IAPROC .EQ. NAPPNT ) THEN
                   !
                   !   Gets the necessary spectral data
                   !
-                  CALL W3IOPE ( VA )
-                  CALL W3IOPO ( 'WRITE', NDS(8), ITEST, IMOD )
-                END IF
+                 ! CALL W3IOPE ( VA )
+                 ! CALL W3IOPO ( 'WRITE', NDS(8), ITEST, IMOD )
+                !END IF
                 !
               ELSE IF ( J .EQ. 3 ) THEN
                 !

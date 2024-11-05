@@ -557,7 +557,6 @@ contains
               do
                  read (ndsl,'(a)',err=2004,iostat=ierr) tmpline
 
-                 print *,'AAA0 ',trim(tmpline)
                 ! if end of file or stopstring, then exit
                 if ( ierr.ne.0 .or. index(tmpline,"STOPSTRING").ne.0 ) exit
 
@@ -570,7 +569,6 @@ contains
                   ! otherwise, backup to beginning of line
                   backspace ( ndsl, err=2004, iostat=ierr)
                   read (ndsl,*,err=2004,iostat=ierr) xx, yy, pn
-                  print *,'XYXY0 ',iloop,xx,yy,trim(pn)
                 end if
                 ipts = ipts + 1
                 if ( iloop .eq. 1 ) cycle
@@ -597,11 +595,6 @@ contains
               end do ! end of file
             end do ! iloop
             close(ndsl)
-
-            do i = 1,ipts
-               print *,'XYXY1 ',i,x(i),y(i)
-            end do
-
 
           else if ( j .eq. 3 ) then
 

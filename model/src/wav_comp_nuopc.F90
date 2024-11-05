@@ -1,4 +1,4 @@
- !> @file wav_comp_nuopc
+!> @file wav_comp_nuopc
 !!
 !> A NUOPC interface for WAVEWATCH III using the CMEPS mediator
 !!
@@ -36,7 +36,7 @@ module wav_comp_nuopc
   use NUOPC_Model           , only : model_label_SetRunClock    => label_SetRunClock
   use NUOPC_Model           , only : model_label_Finalize       => label_Finalize
   use NUOPC_Model           , only : NUOPC_ModelGet, SetVM
-  use wav_kind_mod          , only : r8=>shr_kind_r8, i8=>shr_kind_i8, i4=>shr_kind_i4
+  use wav_kind_mod          , only : r8=>shr_kind_r8, i8=>shr_kind_i8, i4=>shr_kind_i4, r4=>shr_kind_r4
   use wav_kind_mod          , only : cl=>shr_kind_cl, cs=>shr_kind_cs
   use wav_import_export     , only : advertise_fields, realize_fields, nseal_cpl
   use wav_shr_mod           , only : state_diagnose, state_getfldptr, state_fldchk
@@ -994,6 +994,9 @@ contains
     if (root_task) call ufs_logtimer(nu_timer,time,start_tod,'InitializeRealize time: ',runtimelog,wtime)
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
+    !debug
+    !call ModelFinalize(gcomp, rc)
+    !if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
   end subroutine InitializeRealize
 
@@ -1710,7 +1713,7 @@ contains
     integer            :: i, cnt
     character(len=*), parameter :: subname = '(wav_comp_nuopc:wavinit_ufs)'
     ! debug
-    integer :: i
+    !integer :: i
     ! -------------------------------------------------------------------
 
     rc = ESMF_SUCCESS
@@ -1733,10 +1736,6 @@ contains
     if (root_task) write(stdout,'(a,/)') trim(subname)//' call w3init'
     call w3init ( 1, .false., 'ww3', mds, ntrace, odat, flgrd, flgr2, flgd, flg2, &
          npts, x, y, pnames, iprt, prtfrm, mpi_comm )
-    print *,'ZZZ2 ',npts,size(x),size(y)
-    do i = 1,npts
-      print *,'ZZZ2 ',i,x(i),y(i)
-    end do
 
     write(cvalue,'(4f10.1)')dtmax,dtcfl,dtcfli,dtmin
     write(logmsg,'(a)')trim(subname)//': WW3 timesteps from mod_def '//trim(cvalue)
@@ -1781,20 +1780,22 @@ contains
     integer             :: rc
 
     type(ESMF_VM)          :: vm
-    type(ESMF_LocStream)   :: LS, ptsLS
+    type(ESMF_LocStream)   :: LS, LS2, ptsLS
     type(ESMF_Field)       :: ptfield, lfield
     type(ESMF_RouteHandle) :: ptRH
-    type(ESMF_FieldBundle) :: FBTemp
+    type(ESMF_Distgrid)    :: ptDG
 
-    integer                        :: iam
-    integer                        :: i,lsize_src
-    integer,  pointer              :: mshptr(:)
-    integer,  pointer              :: lsptr4(:)
-    real(r8), pointer              :: lsptr8(:), ptptr8(:)
-    character(len=6), dimension(3) :: lfieldlist
-    real(r8), pointer              :: lat8(:), lon8(:)
-
+    integer                     :: srcTermProcessing_Value = 0
+    integer                     :: i,ndims,nelements
+    real(R4), pointer           :: mshptr(:)
+    real(R4), pointer           :: lsptr4(:)
+    real(R8), pointer           :: lsptr8(:)
+    real(R8), pointer           :: lon8(:), lat8(:)
+    real(R8), pointer           :: xx(:), yy(:)
     character(len=*), parameter :: subname = '(wav_comp_nuopc:setup_locstream) '
+    !debug
+    integer :: elb, eub,ecnt
+    integer :: nsmall
     !-------------------------------------------------------
 
     rc = ESMF_SUCCESS
@@ -1803,138 +1804,146 @@ contains
     call ESMF_GridCompGet(gcomp, vm=vm, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
-    call ESMF_VMGet(vm, localPet=iam, rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    iam = iam + 1
-
-    !print *,'XXX ',iam,nopts,npts,size(ptloc,2),size(x),size(y)
-    do i = 1,size(ptloc,2)
-     ! print *,'XXX0 ',iam,i,ptloc(1,i),ptloc(2,i), x(i), y(i)
+    nsmall = 15
+    allocate(xx(nsmall))
+    allocate(yy(nsmall))
+    do i = 1,nsmall
+      xx(i) = real(x(i),8)
+      yy(i) = real(y(i),8)
+      !print *,'XY0 ',iaproc,i,yy(i),xx(i)
     end do
-    !print *,'XXX1 ',iam,minval(x),maxval(x),minval(y),maxval(y)
-    !allocate(lat8(1:npts))
-    !allocate(lon8(1:npts))
-    do i = 1,npts
-       !lat8(i) = real(y(i),8)
-       !lon8(i) = real(x(i),8)
-       print '(a,i6,2f10.2)','XXX2 ',iam,x(i),y(i)
-    end do
-    !print '(a,i6,4f10.2)','XXX2 ',iam,minval(lat8),maxval(lat8),minval(lon8),maxval(lon8)
 
-    ! set up a locstream and find which proc holds each point
-    LS=ESMF_LocStreamCreate(maxindex=npts, rc=rc)
+    LS = ESMF_LocStreamCreate(maxIndex=nsmall, indexflag=ESMF_INDEX_GLOBAL, rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    call ESMF_LocStreamGetBounds(LS, exclusiveLBound=elb, exclusiveUBound=eub, exclusiveCount=ecnt,rc=rc)
+    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    print *,'XXX0 bounds ',iaproc,elb,eub,ecnt
+
+    LS2 = ESMF_LocStreamCreate(localcount=ecnt, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
 
-    call ESMF_LocStreamAddKey(LS, keyName="ESMF:Lat", keyUnits="Degrees", keyLongName="Latitude", &
-         KeyTypeKind=ESMF_TYPEKIND_R8, rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-    call ESMF_LocStreamAddKey(LS, keyName="ESMF:Lon", keyUnits="Degrees", keyLongName="Longitude", &
-         KeyTypeKind=ESMF_TYPEKIND_R8, rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
+    if (ecnt > 0) then
+      call ESMF_LocStreamAddKey(LS2, keyName="ESMF:Lat", farray=yy(elb:eub), &
+           datacopyflag=ESMF_DATACOPY_VALUE, keyUnits="Degrees", keyLongName="Latitude", rc=rc)
+      if (chkerr(rc,__LINE__,u_FILE_u)) return
 
-    ! Get the locstream data
-    call ESMF_LocStreamGetKey(LS, keyName="ESMF:Lat", farray=lat8, rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-    call ESMF_LocStreamGetKey(LS, keyName="ESMF:Lon", farray=lon8, rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
+      call ESMF_LocStreamAddKey(LS2, keyName="ESMF:Lon", farray=xx(elb:eub), &
+           datacopyflag=ESMF_DATACOPY_VALUE, keyUnits="Degrees", keyLongName="Longitude", rc=rc)
+      if (chkerr(rc,__LINE__,u_FILE_u)) return
+    end if
 
-    ! &
-    !      !     farray=real(y,8), datacopyflag=ESMF_DATACOPY_REFERENCE, &
-    !      farray=real(y,8),  &
+    !LS=ESMF_LocStreamCreate(ptDG, indexflag=ESMF_INDEX_GLOBAL, coordSys=ESMF_COORDSYS_SPH_DEG, rc=rc)
+    ! !ptDG = ESMF_DistGridCreate(minIndex=(/1/), maxIndex=(/nsmall/), rc=rc)
+    ! !if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ! ! set up a locstream
+    ! !LS=ESMF_LocStreamCreate(ptDG, indexflag=ESMF_INDEX_GLOBAL, coordSys=ESMF_COORDSYS_SPH_DEG, rc=rc)
+
+    ! call ESMF_LocStreamAddKey(LS, keyName="ESMF:Lat", farray=yy, &
+    !      datacopyflag=ESMF_DATACOPY_VALUE, keyUnits="Degrees", keyLongName="Latitude", rc=rc)
+    ! if (chkerr(rc,__LINE__,u_FILE_u)) return
+
+    ! call ESMF_LocStreamAddKey(LS, keyName="ESMF:Lon", farray=xx, &
+    !      datacopyflag=ESMF_DATACOPY_VALUE, keyUnits="Degrees", keyLongName="Longitude", rc=rc)
+    ! if (chkerr(rc,__LINE__,u_FILE_u)) return
+
+    ! call ESMF_LocStreamGetBounds(LS, exclusiveLBound=elb, exclusiveUBound=eub, exclusiveCount=ecnt,rc=rc)
+    ! if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ! print *,'XXX0 bounds ',iaproc,elb,eub,ecnt
+
+    ! call ESMF_LocStreamAddKey(LS, keyName="ESMF:Lat", KeyTypeKind=ESMF_TYPEKIND_R8, &
     !      keyUnits="Degrees", keyLongName="Latitude", rc=rc)
     ! if (chkerr(rc,__LINE__,u_FILE_u)) return
-    ! call ESMF_LocStreamAddKey(LS, keyName="ESMF:Lon",       &
-    !      !     farray=real(x,8), datacopyflag=ESMF_DATACOPY_REFERENCE, &
-    !      farray=real(x,8), &
+    ! call ESMF_LocStreamAddKey(LS, keyName="ESMF:Lon", KeyTypeKind=ESMF_TYPEKIND_R8, &
     !      keyUnits="Degrees", keyLongName="Longitude", rc=rc)
     ! if (chkerr(rc,__LINE__,u_FILE_u)) return
 
+    ! call ESMF_LocStreamGetKey(LS, keyName="ESMF:Lat", farray=yy, rc=rc)
+    ! if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ! call ESMF_LocStreamGetKey(LS, keyName="ESMF:Lon", farray=xx, rc=rc)
+    ! if (chkerr(rc,__LINE__,u_FILE_u)) return
+
+    ! call ESMF_LocStreamGetBounds(LS, exclusiveLBound=elb, exclusiveUBound=eub, exclusiveCount=ecnt,rc=rc)
+    ! if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ! !print *,'XXX0 b4 projection bounds ',iaproc,elb,eub,ecnt
+    ! call ESMF_LocStreamGetKey(LS, keyName="ESMF:Lat", farray=lat8, rc=rc)
+    ! if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ! call ESMF_LocStreamGetKey(LS, keyName="ESMF:Lon", farray=lon8, rc=rc)
+    ! if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ! print '(a,7i5)','XXX0 b4 projection ',iaproc,elb,eub,ecnt,size(lat8),lbound(lat8),ubound(lat8)
+
     ! project locstream onto mesh
-    ptsLS = ESMF_LocstreamCreate(LS, background=EmeshIn, rc=rc)
+    ptsLS = ESMF_LocstreamCreate(LS2, background=EmeshIn, unmappedaction=ESMF_UNMAPPEDACTION_IGNORE, rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
+    print *,'XXX0 here'
 
-    ptfield = ESMF_FieldCreate(ptsLS, typekind=ESMF_TYPEKIND_I4, name='ptde', rc=rc)
+    call ESMF_LocStreamGetBounds(ptsLS, exclusiveLBound=elb, exclusiveUBound=eub, exclusiveCount=ecnt,rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
-    call ESMF_FieldGet(ptfield, farrayPtr=lsptr4, rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-    lsptr4 = 0
-    print '(a,i6,i6)','XXX3 ',iam,size(lsptr4)
+    print *,'XXX0 bounds on Mesh ',iaproc,elb,eub,ecnt
+    ! call ESMF_LocStreamGetKey(ptsLS, keyName="ESMF:Lat", farray=lat8, rc=rc)
+    ! if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ! call ESMF_LocStreamGetKey(ptsLS, keyName="ESMF:Lon", farray=lon8, rc=rc)
+    ! if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ! print '(a,7i5)','XXX0 af projection ',iaproc,elb,eub,ecnt,size(lat8),lbound(lat8),ubound(lat8)
+    ! do i = elb,eub
+    !   !lat8(i) = real(y(i),8)
+    !   !lon8(i) = real(x(i),8)
+    !   print *,'XXX1 ',iaproc,i,lat8(i),lon8(i)
+    ! end do
 
-    call ESMF_MeshGet(EMeshIn, numOwnedElements=lsize_src, rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-    lfield = ESMF_FieldCreate(EMeshIn, ESMF_TYPEKIND_I4, meshloc=ESMF_MESHLOC_ELEMENT, rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-    call ESMF_FieldGet(lfield, farrayPtr=mshptr, rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-    do i = 1,lsize_src
-      mshptr(i) = iaproc
-    end do
+    ! ptfield = ESMF_FieldCreate(ptsLS, typekind=ESMF_TYPEKIND_R4, name='ptde', rc=rc)
+    ! if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ! call ESMF_FieldGet(ptfield, farrayPtr=lsptr4, rc=rc)
+    ! if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ! lsptr4 = 0.0
+    ! ! print *,'XXX2 ',iaproc,size(lsptr4)
+    ! ! do i=1,size(lsptr4)
+    ! !   print '(a,i6,f8.2)','XXX3 ',iaproc,lsptr4(i)
+    ! ! end do
 
-    call ESMF_FieldRegridStore(srcField=lfield, dstField=ptfield,       &
-         routeHandle=ptRH, regridmethod=ESMF_REGRIDMETHOD_NEAREST_STOD, &
-         unmappedaction=ESMF_UNMAPPEDACTION_IGNORE, rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-    call ESMF_FieldRegrid(lfield, ptfield, routeHandle=ptRH, rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-    do i = 1,size(lsptr4)
-      if(size(lsptr4)>0)print '(a,4i6,2f10.2)','YYY ',iam,i,iaproc,lsptr4(i),x(i),y(i)
-    end do
 
-    ! if (dbug_flag > 5) then
-    !   ! create a temporary FB to write the fields
-    !   FBtemp = ESMF_FieldBundleCreate(rc=rc)
-    !   if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ! call ESMF_MeshGet(EMeshIn, spatialDim=ndims, numOwnedElements=nelements, rc=rc)
+    ! if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ! lfield = ESMF_FieldCreate(EMeshIn, ESMF_TYPEKIND_R4, meshloc=ESMF_MESHLOC_ELEMENT, rc=rc)
+    ! if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ! call ESMF_FieldGet(lfield, farrayPtr=mshptr, rc=rc)
+    ! if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ! mshptr = 0.0
+    ! do i = 1,ndims*nelements/2
+    !   mshptr(i) = real(iaproc,4)
+    !   !if(i .eq. 1)print *,'XXX4 ',iam,i,mshptr(i)
+    ! end do
 
-    !   lfieldlist = (/'ptde  ', 'coordx', 'coordy'/)
+    ! ! do i = 1,size(mshptr)
+    ! !   if (mshptr(i) .ne. iaproc)print *,'XXX5 ',i,iaproc,mshptr(i)
+    ! ! end do
 
-    !   ! add ptde and coords to the FB
-    !   call ESMF_FieldBundleAdd(FBTemp, (/ptfield/), rc=rc)
-    !   if (chkerr(rc,__LINE__,u_FILE_u)) return
-    !   do i = 2,size(lfieldlist)
-    !     ptfield = ESMF_FieldCreate(ptsLS, typekind=ESMF_TYPEKIND_R8, name=trim(lfieldlist(i)), rc=rc)
-    !     if (chkerr(rc,__LINE__,u_FILE_u)) return
-    !     call ESMF_FieldBundleAdd(FBTemp, (/ptfield/), rc=rc)
-    !     if (chkerr(rc,__LINE__,u_FILE_u)) return
-    !   end do
 
-    !   !add coords
-    !   call ESMF_FieldBundleGet(FBtemp, fieldName='coordx', field=ptfield, rc=rc)
-    !   if (chkerr(rc,__LINE__,u_FILE_u)) return
-    !   call ESMF_FieldGet(ptfield, farrayPtr=ptptr8, rc=rc)
-    !   if (chkerr(rc,__LINE__,u_FILE_u)) return
-    !   call ESMF_LocStreamGetKey(ptsLS, "ESMF:Lon", farray=lsptr8, rc=rc)
-    !   if (chkerr(rc,__LINE__,u_FILE_u)) return
-    !   if (size(ptptr8) > 0) then
-    !      print '(a,3i6)','XXXLon ',iam,size(lsptr8),size(ptptr8)
-    !      ptptr8(:) = lsptr8(:)
-    !      do i = 1,size(lsptr8)
-    !         print *,'XXXLon ',iam,i,lsptr8(i),ptptr8(i)
-    !      end do
-    !   end if
+    ! ! call ESMF_FieldRegridStore(fldsrc, flddst, routehandle=routehandles(mapfillv_bilnr), &
+    ! !      srcMaskValues=(/srcMaskValue/), &
+    ! !      dstMaskValues=(/dstMaskValue/), &
+    ! !      regridmethod=ESMF_REGRIDMETHOD_BILINEAR, &
+    ! !      polemethod=polemethod, &
+    ! !      srcTermProcessing=srcTermProcessing_Value, &
+    ! !      ignoreDegenerate=.true., &
+    ! !      dstStatusField=dststatusfield, &
+    ! !      unmappedaction=ESMF_UNMAPPEDACTION_IGNORE, rc=rc)
 
-    !   call ESMF_FieldBundleGet(FBtemp, fieldName='coordy', field=ptfield, rc=rc)
-    !   if (chkerr(rc,__LINE__,u_FILE_u)) return
-    !   call ESMF_FieldGet(ptfield, farrayPtr=ptptr8, rc=rc)
-    !   if (chkerr(rc,__LINE__,u_FILE_u)) return
-    !   call ESMF_LocStreamGetKey(ptsLS, "ESMF:Lat", farray=lsptr8, rc=rc)
-    !   if (chkerr(rc,__LINE__,u_FILE_u)) return
-    !   if (size(ptptr8) > 0) then
-    !      print '(a,3i6)','XXXLat ',iam,size(lsptr8),size(ptptr8)
-    !      ptptr8(:) = lsptr8(:)
-    !      do i = 1,size(lsptr8)
-    !         print *,'XXXLat ',iam,i,lsptr8(i),ptptr8(i)
-    !      end do
-    !   end if
 
-    !   call ESMF_FieldBundleWrite(FBtemp, filename='ptlocs.nc', overwrite=.true., rc=rc)
-    !   if (chkerr(rc,__LINE__,u_FILE_u)) return
-    !   call ESMF_FieldBundleDestroy(FBtemp, rc=rc)
-    !   if (chkerr(rc,__LINE__,u_FILE_u)) return
-    ! end if
+    ! call ESMF_FieldRegridStore(srcField=lfield, dstField=ptfield, routeHandle=ptRH, &
+    !      regridmethod=ESMF_REGRIDMETHOD_NEAREST_STOD,                               &
+    !      srcTermProcessing=srcTermProcessing_Value,                                 &
+    !      ignoreDegenerate=.true.,                                                   &
+    !      unmappedaction=ESMF_UNMAPPEDACTION_IGNORE, rc=rc)
+    ! if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ! call ESMF_FieldRegrid(lfield, ptfield, routeHandle=ptRH, rc=rc)
+    ! if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ! ! do i = 1,nsmall
+    ! !   print '(a,2i10,3f10.2)','YYY ',iaproc,i,lsptr4(i),x(i),y(i)
+    ! ! end do
 
-    call ESMF_FieldWrite(ptfield, filename='test.nc', overwrite=.true., rc=rc)
-    if (chkerr(rc,__LINE__,u_FILE_u)) return
-    if (dbug_flag  > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
+    ! call ESMF_FieldWrite(ptfield, filename='test.nc', overwrite=.true., rc=rc)
+    ! if (chkerr(rc,__LINE__,u_FILE_u)) return
+    ! if (dbug_flag  > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
 
   end subroutine setup_locstream
 
