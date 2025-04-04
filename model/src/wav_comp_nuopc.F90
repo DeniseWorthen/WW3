@@ -104,6 +104,8 @@ module wav_comp_nuopc
   character(*), parameter :: u_FILE_u = &                  !< a character string for an ESMF log message
        __FILE__
 
+  type(ESMF_Mesh) :: Emesh
+  integer :: stdout
   !===============================================================================
 contains
   !===============================================================================
@@ -224,6 +226,26 @@ contains
 
     use wav_shr_flags, only : w3_pdlib_flag
 
+    use w3odatmd        , only : w3nout, w3seto, naproc, naperr
+    use w3timemd        , only : stme21
+    use w3adatmd        , only : w3naux, w3seta
+    use w3idatmd        , only : w3seti, w3ninp
+    use w3gdatmd        , only : nk, nseal, nsea, nx, ny, mapsf, w3nmod, w3setg
+    use w3gdatmd        , only : rlgtype, ungtype, gtype
+    use w3wdatmd        , only : va, time, w3ndat, w3dimw, w3setw
+    use w3parall        , only : init_get_isea
+#ifndef W3_CESMCOUPLED
+    use wminitmd        , only : wminit, wminitnml
+    use wmunitmd        , only : wmuget, wmuset
+#endif
+    use wav_shel_inp    , only : set_shel_io
+    use wav_history_mod , only : wav_history_init
+    use wav_pio_mod     , only : wav_pio_init
+    use wav_shr_mod     , only : diagnose_mesh, write_meshdecomp, wav_loginit
+#ifdef W3_PDLIB
+    use yowNodepool     , only : ng
+#endif
+
     ! input/output arguments
     type(ESMF_GridComp)  :: gcomp
     type(ESMF_State)     :: importState, exportState
@@ -234,6 +256,48 @@ contains
     character(len=CL) :: logmsg
     logical           :: isPresent, isSet
     character(len=CL) :: cvalue
+
+    ! local variables
+    type(ESMF_DistGrid)            :: distGrid
+    type(ESMF_Array)               :: elemMaskArray
+    type(ESMF_VM)                  :: vm
+    type(ESMF_Time)                :: esmfTime, startTime, currTime, stopTime
+    type(ESMF_TimeInterval)        :: TimeOffset
+    type(ESMF_TimeInterval)        :: TimeStep
+    type(ESMF_Calendar)            :: calendar
+    type(ESMF_Info)                :: info
+    integer                        :: shrlogunit
+    integer                        :: yy,mm,dd,hh,ss
+    integer                        :: start_ymd         ! start date (yyyymmdd)
+    integer                        :: start_tod         ! start time of day (sec)
+    integer                        :: stop_ymd          ! stop date (yyyymmdd)
+    integer                        :: stop_tod          ! stop time of day (sec)
+    integer                        :: ix, iy
+    character(CL)                  :: starttype
+    integer                        :: ntrace(2)
+    integer                        :: n, jsea,isea, ncnt
+    integer                        :: nlnd, nlnd_global, nlnd_local
+    integer                        :: my_lnd_start, my_lnd_end
+    integer, allocatable, target   :: mask_global(:)
+    integer, allocatable, target   :: mask_local(:)
+    integer, allocatable           :: gindex_lnd(:)
+    integer, allocatable           :: gindex_sea(:)
+    integer, allocatable           :: gindex(:)
+    integer(i4)                    :: maskmin
+    integer(i4), pointer           :: meshmask(:)
+    character(23)                  :: dtme21
+    integer                        :: iam, mpi_comm, num_threads
+    character(ESMF_MAXSTR)         :: msgString
+    character(ESMF_MAXSTR)         :: diro
+    character(CL)                  :: logfile
+    logical                        :: local
+    integer                        :: imod, idsi, idso, idss, idst, idse
+    integer                        :: mds(15) ! Note that nds is set to this in w3initmod
+    integer                        :: petcount
+    real(r8)                       :: toff
+    character(ESMF_MAXSTR)         :: preamb = './'
+    character(ESMF_MAXSTR)         :: ifname = 'ww3_multi.inp'
+
     character(len=*), parameter :: subname=trim(modName)//':(InitializeAdvertise) '
     !-------------------------------------------------------------------------------
 
@@ -391,111 +455,6 @@ contains
 
     call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
 
-  end subroutine InitializeAdvertise
-
-  !========================================================================
-  !> Realize the import and export fields.
-
-  !> @details Called by NUOPC to realize the import and export fields
-  !! for the wave model. After the wave model initializes, the global index
-  !! for all sea points is retrieved using the WW3 mapsf array. A global index
-  !! array is then constructed which contains both land and sea points, with
-  !! the land points at the end of the array. An ESMF Distgrid object is created
-  !! using this global index array. The distgrid is then transfered to the ESMF
-  !! Mesh provided for the wave model domain. If the provided Mesh does not contain
-  !! a grid mask, then the internal WW3 mask is transfered to the Mesh, otherwise
-  !! the mask provided with the mesh file will be used. This mask is used by
-  !! CMEPS to map to and from the wave model. Once the mesh has been created, the
-  !! advertised fields are realized on the mesh.
-  !!
-  !! @param[in]    gcomp           an ESMF_GridComp object
-  !! @param[in]    importState     an ESMF_State object for import fields
-  !! @param[in]    exportState     an ESMF_State object for export fields
-  !! @param[in]    clock           an ESMF_Clock object
-  !! @param[out]   rc              return code
-  !!
-  !> @author mvertens@ucar.edu, Denise.Worthen@noaa.gov
-  !> @date 01-05-2022
-  subroutine InitializeRealize(gcomp, importState, exportState, clock, rc)
-
-    use w3odatmd        , only : w3nout, w3seto, naproc, naperr
-    use w3timemd        , only : stme21
-    use w3adatmd        , only : w3naux, w3seta
-    use w3idatmd        , only : w3seti, w3ninp
-    use w3gdatmd        , only : nk, nseal, nsea, nx, ny, mapsf, w3nmod, w3setg
-    use w3gdatmd        , only : rlgtype, ungtype, gtype
-    use w3wdatmd        , only : va, time, w3ndat, w3dimw, w3setw
-    use w3parall        , only : init_get_isea
-#ifndef W3_CESMCOUPLED
-    use wminitmd        , only : wminit, wminitnml
-    use wmunitmd        , only : wmuget, wmuset
-#endif
-    use wav_shel_inp    , only : set_shel_io
-    use wav_history_mod , only : wav_history_init
-    use wav_pio_mod     , only : wav_pio_init
-    use wav_shr_mod     , only : diagnose_mesh, write_meshdecomp, wav_loginit
-#ifdef W3_PDLIB
-    use yowNodepool     , only : ng
-#endif
-
-    ! input/output variables
-    type(ESMF_GridComp)  :: gcomp
-    type(ESMF_State)     :: importState
-    type(ESMF_State)     :: exportState
-    type(ESMF_Clock)     :: clock
-    integer, intent(out) :: rc
-
-    ! local variables
-    type(ESMF_DistGrid)            :: distGrid
-    type(ESMF_Mesh)                :: Emesh
-    type(ESMF_Array)               :: elemMaskArray
-    type(ESMF_VM)                  :: vm
-    type(ESMF_Time)                :: esmfTime, startTime, currTime, stopTime
-    type(ESMF_TimeInterval)        :: TimeOffset
-    type(ESMF_TimeInterval)        :: TimeStep
-    type(ESMF_Calendar)            :: calendar
-    type(ESMF_Info)                :: info
-    character(CL)                  :: cvalue
-    integer                        :: shrlogunit
-    integer                        :: yy,mm,dd,hh,ss
-    integer                        :: start_ymd         ! start date (yyyymmdd)
-    integer                        :: start_tod         ! start time of day (sec)
-    integer                        :: stop_ymd          ! stop date (yyyymmdd)
-    integer                        :: stop_tod          ! stop time of day (sec)
-    integer                        :: ix, iy
-    character(CL)                  :: starttype
-    integer                        :: ntrace(2)
-    integer                        :: n, jsea,isea, ncnt
-    integer                        :: nlnd, nlnd_global, nlnd_local
-    integer                        :: my_lnd_start, my_lnd_end
-    integer, allocatable, target   :: mask_global(:)
-    integer, allocatable, target   :: mask_local(:)
-    integer, allocatable           :: gindex_lnd(:)
-    integer, allocatable           :: gindex_sea(:)
-    integer, allocatable           :: gindex(:)
-    integer(i4)                    :: maskmin
-    integer(i4), pointer           :: meshmask(:)
-    character(23)                  :: dtme21
-    integer                        :: iam, mpi_comm, num_threads
-    character(ESMF_MAXSTR)         :: msgString
-    character(ESMF_MAXSTR)         :: diro
-    character(CL)                  :: logfile
-    logical                        :: local
-    integer                        :: imod, idsi, idso, idss, idst, idse
-    integer                        :: mds(15) ! Note that nds is set to this in w3initmod
-    integer                        :: stdout
-    integer                        :: petcount
-    real(r8)                       :: toff
-    logical                        :: isPresent, isSet
-    character(ESMF_MAXSTR)         :: preamb = './'
-    character(ESMF_MAXSTR)         :: ifname = 'ww3_multi.inp'
-    character(len=*), parameter    :: subname = '(wav_comp_nuopc:InitializeRealize)'
-    ! -------------------------------------------------------------------
-
-    rc = ESMF_SUCCESS
-    if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
-
-    call ufs_settimer(wtime)
     !--------------------------------------------------------------------
     ! Set up data structures
     !--------------------------------------------------------------------
@@ -948,6 +907,63 @@ contains
       call write_meshdecomp(Emesh, 'emesh', rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
     end if
+
+  end subroutine InitializeAdvertise
+
+  !========================================================================
+  !> Realize the import and export fields.
+
+  !> @details Called by NUOPC to realize the import and export fields
+  !! for the wave model. After the wave model initializes, the global index
+  !! for all sea points is retrieved using the WW3 mapsf array. A global index
+  !! array is then constructed which contains both land and sea points, with
+  !! the land points at the end of the array. An ESMF Distgrid object is created
+  !! using this global index array. The distgrid is then transfered to the ESMF
+  !! Mesh provided for the wave model domain. If the provided Mesh does not contain
+  !! a grid mask, then the internal WW3 mask is transfered to the Mesh, otherwise
+  !! the mask provided with the mesh file will be used. This mask is used by
+  !! CMEPS to map to and from the wave model. Once the mesh has been created, the
+  !! advertised fields are realized on the mesh.
+  !!
+  !! @param[in]    gcomp           an ESMF_GridComp object
+  !! @param[in]    importState     an ESMF_State object for import fields
+  !! @param[in]    exportState     an ESMF_State object for export fields
+  !! @param[in]    clock           an ESMF_Clock object
+  !! @param[out]   rc              return code
+  !!
+  !> @author mvertens@ucar.edu, Denise.Worthen@noaa.gov
+  !> @date 01-05-2022
+  subroutine InitializeRealize(gcomp, importState, exportState, clock, rc)
+
+    use w3odatmd        , only : w3seto, naproc
+    use w3adatmd        , only : w3seta
+    use w3idatmd        , only : w3seti
+    use w3gdatmd        , only : w3setg
+    use w3wdatmd        , only : va, time, w3setw
+    use wav_history_mod , only : wav_history_init
+    use wav_shr_mod     , only : wav_loginit
+
+    ! input/output variables
+    type(ESMF_GridComp)  :: gcomp
+    type(ESMF_State)     :: importState
+    type(ESMF_State)     :: exportState
+    type(ESMF_Clock)     :: clock
+    integer, intent(out) :: rc
+
+    ! local variables
+    integer                        :: start_tod         ! start time of day (sec)
+    logical                        :: local
+    integer                        :: imod
+    logical                        :: isPresent, isSet
+    character(ESMF_MAXSTR)         :: preamb = './'
+    character(ESMF_MAXSTR)         :: ifname = 'ww3_multi.inp'
+    character(len=*), parameter    :: subname = '(wav_comp_nuopc:InitializeRealize)'
+    ! -------------------------------------------------------------------
+
+    rc = ESMF_SUCCESS
+    if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
+
+    call ufs_settimer(wtime)
 
     !--------------------------------------------------------------------
     ! Realize the actively coupled fields
