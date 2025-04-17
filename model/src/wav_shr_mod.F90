@@ -1344,16 +1344,16 @@ contains
   !===============================================================================
   !> Write the verbose WW3 log header
   !!
-  !! @param[in] stdout      the logfile unit on the root task
+  !! @param[in] logstdout      the logfile unit on the root task
   !!
   !> @author Denise.Worthen@noaa.gov
   !> @date 09-14-2024
 
-  subroutine wav_loginit(stdout)
+  subroutine wav_loginit(logstdout)
 
-    integer, intent(in) :: stdout
+    integer, intent(in) :: logstdout
 
-    write(stdout,984)
+    write(logstdout,984)
 984 format (//                                                     &
          37x,'|         input         |      output      |'/       &
          37x,'|-----------------------|------------------|'/       &

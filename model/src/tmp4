@@ -1,0 +1,57 @@
+    ! if (cesmcoupled) then
+    !   if (len_trim(inst_suffix) > 0) then
+    !     user_restfname = trim(casename)//'.ww3'//trim(inst_suffix)//'.r.'
+    !     user_histfname = trim(casename)//'.ww3'//trim(inst_suffix)//'.hi.'
+    !   else
+    !     user_restfname = trim(casename)//'.ww3.r.'
+    !     user_histfname = trim(casename)//'.ww3.hi.'
+    !   endif
+
+    !   ! netcdf is used for CESM history and restart
+    !   use_historync = .true.
+    !   use_restartnc = .true.
+    ! else
+    !   call NUOPC_CompAttributeGet(gcomp, name='use_restartnc', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    !   if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    !   if (isPresent .and. isSet) then
+    !     use_restartnc=(trim(cvalue)=="true")
+    !   end if
+    !   if (root_task) write(stdout,'(a,l4)') trim(subname)//': Wave use_restartnc setting is ',use_restartnc
+
+    !   ! user filenaming is required with netcdf restarts or restart_from_binary. If netcdf restarts are not used,
+    !   ! only native WW3 file naming is possible
+    !   if (use_restartnc) then
+    !     user_restfname = trim(casename)//'.ww3.r.'
+    !     if (root_task) write(stdout,'(a)') trim(subname)//': Custom restart prefix is '//trim(user_restfname)
+    !   end if
+
+    !   call NUOPC_CompAttributeGet(gcomp, name='use_historync', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    !   if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    !   if (isPresent .and. isSet) then
+    !     use_historync=(trim(cvalue)=="true")
+    !   end if
+    !   if (root_task) write(stdout,'(a,l4)') trim(subname)//': Wave use_historync setting is ',use_historync
+
+    !   ! user filenaming is optional with netcdf output. If netcdf history is not used, only native WW3
+    !   ! naming is possible
+    !   if (use_historync) then
+    !     call NUOPC_CompAttributeGet(gcomp, name='user_histname', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    !     if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    !     if (trim(cvalue)=="true") then
+    !       user_histfname = trim(casename)//'.ww3.hi.'
+    !       if (root_task) write(stdout,'(a)') trim(subname)//': Custom history prefix is '//trim(user_histfname)
+    !     else
+    !       user_histfname = ''
+    !     end if
+    !   end if
+    ! end if ! if (cesmcoupled)
+
+    ! ! allow startup from binary restarts as special case
+    ! if (use_restartnc) then
+    !   call NUOPC_CompAttributeGet(gcomp, name='restart_from_binary', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    !   if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    !   if (isPresent .and. isSet) then
+    !     restart_from_binary=(trim(cvalue)=="true")
+    !   end if
+    !   if (root_task) write(stdout,'(a,l4)') trim(subname)//': Wave restart_from_binary setting is ',restart_from_binary
+    ! end if

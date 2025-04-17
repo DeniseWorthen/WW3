@@ -38,18 +38,18 @@ contains
   !===============================================================================
   !> Set IO unit numbers
   !!
-  !! @param[in]    logstdout        logfile unit on the root task, otherwise 6
+  !! @param[in]    stdout           unit number for stdout
   !! @param[out]   mds              an array of 13 unit numbers
   !! @param[out]   ntrace           an array of 2 unit numbers used for trace output
   !!
   !> @author mvertens@ucar.edu, Denise.Worthen@noaa.gov
   !> @date 01-05-2022
-  subroutine set_shel_io(logstdout,mds,ntrace)
+  subroutine set_shel_io(stdout,mds,ntrace)
 
     use ESMF, only : ESMF_UtilIOUnitGet
 
     ! Input parameter
-    integer , intent(in)   :: logstdout
+    integer , intent(in)   :: stdout
     integer , intent(out)  :: mds(15), ntrace(2)
 
     ! local variables
@@ -70,10 +70,10 @@ contains
     ! NDS( 8) ! OUTPUT DATA: unit for output for FLOUT(2) flag point unformmatted output
     ! etc through 13
 
-    mds(1) = logstdout
-    mds(2) = logstdout
-    mds(3) = logstdout
-    mds(4) = logstdout
+    mds(1) = stdout
+    mds(2) = stdout
+    mds(3) = stdout
+    mds(4) = stdout
 
     ! Identify available unit numbers
     ! Each ESMF_UtilIOUnitGet is followed by an OPEN statement for that
@@ -179,6 +179,8 @@ contains
     character(len=80)   :: msg1
     logical             :: is_open
     integer             :: memunit
+    !debug
+    character(len=10) :: logfile
 
     data idflds / 'ice param. 1 ' , 'ice param. 2 ' , &
          'ice param. 3 ' , 'ice param. 4 ' ,          &
@@ -266,6 +268,7 @@ contains
     !--------------------
 
     inquire(file=trim(fnmpre)//"ww3_shel.nml", exist=flgnml)
+    !call mpi_barrier ( mpi_comm, ierr )
 
     if (flgnml) then
       open(newunit=ndsi, file=trim(fnmpre)//"ww3_shel.nml", status='old', iostat=ierr)
@@ -537,6 +540,7 @@ contains
             ! type 2: point output
             open (newunit=ndsl, file=trim(fnmpre)//trim(nml_output_type%point%file), &
                  form='formatted', status='old', err=2104, iostat=ierr)
+            print *,iaproc,ndso,napout,' ZZZ0 '//trim(fnmpre)//trim(nml_output_type%point%file)
 
             ! first loop to count the number of points
             ! second loop to allocate the array and store the points
@@ -641,6 +645,7 @@ contains
 
           end if ! j
         end if ! odat
+        flush(ndso)
       end do ! j
 
       ! Extra fields to be written in the restart
@@ -1329,30 +1334,56 @@ contains
       end if
     end if
 
-    ! TODO: the following documents the output dates according to
-    ! the nml/inp files. Check if it be removed if user controls
-    ! output w/ alarms
-
     ! 2.4 Output dates
+    call mpi_barrier ( mpi_comm, ierr )
+    if (iaproc .eq. napout) then
+      do j = 1, notype
+        if ( odat(5*(j-1)+3) .ne. 0 ) then
+          print *,iaproc,' ZZZ5 ',j, odat(5*(j-1)+3),ndso
+          write (ndso,941) j, idotyp(j)
+          ttime(1) = odat(5*(j-1)+1)
+          ttime(2) = odat(5*(j-1)+2)
+          call stme21 ( ttime , dtme21 )
+          write (ndso,942) dtme21
+          ttime(1) = odat(5*(j-1)+4)
+          ttime(2) = odat(5*(j-1)+5)
+          call stme21 ( ttime , dtme21 )
+          write (ndso,943) dtme21
+          ttime(1) = 0
+          ttime(2) = 0
+          dttst    = real ( odat(5*(j-1)+3) )
+          call tick21 ( ttime , dttst  )
+          call stme21 ( ttime , dtme21 )
+          if ( odat(5*(j-1)+1) .ne. odat(5*(j-1)+4) .or. odat(5*(j-1)+2) .ne. odat(5*(j-1)+5)) then
+            if ( dtme21(9:9) .ne. '0' ) then
+              write (ndso,1944) dtme21( 9:19)
+            else if ( dtme21(10:10) .ne. '0' ) then
+              write (ndso,2944) dtme21(10:19)
+            else
+              write (ndso,3944) dtme21(12:19)
+            end if
+          end if
+        end if
+      end do
 
-    do j = 1, notype
-      if ( odat(5*(j-1)+3) .ne. 0 ) then
-        if ( iaproc .eq. napout ) write (ndso,941) j, idotyp(j)
+      ! CHECKPOINT
+      j=8
+      if (odat(5*(j-1)+3) .ne. 0) then
+        write (ndso,941) j, idotyp(j)
         ttime(1) = odat(5*(j-1)+1)
         ttime(2) = odat(5*(j-1)+2)
         call stme21 ( ttime , dtme21 )
-        if ( iaproc .eq. napout ) write (ndso,942) dtme21
+        write (ndso,942) dtme21
         ttime(1) = odat(5*(j-1)+4)
         ttime(2) = odat(5*(j-1)+5)
         call stme21 ( ttime , dtme21 )
-        if ( iaproc .eq. napout ) write (ndso,943) dtme21
+        write (ndso,943) dtme21
         ttime(1) = 0
         ttime(2) = 0
         dttst    = real ( odat(5*(j-1)+3) )
         call tick21 ( ttime , dttst  )
         call stme21 ( ttime , dtme21 )
-        if ( ( odat(5*(j-1)+1) .ne. odat(5*(j-1)+4) .or. odat(5*(j-1)+2) .ne. odat(5*(j-1)+5) ) &
-             .and. iaproc .eq. napout ) then
+        if ( odat(5*(j-1)+1) .ne. odat(5*(j-1)+4) .or. odat(5*(j-1)+2) .ne. odat(5*(j-1)+5)) then
           if ( dtme21(9:9) .ne. '0' ) then
             write (ndso,1944) dtme21( 9:19)
           else if ( dtme21(10:10) .ne. '0' ) then
@@ -1360,36 +1391,6 @@ contains
           else
             write (ndso,3944) dtme21(12:19)
           end if
-        end if
-      end if
-    end do
-
-    ! CHECKPOINT
-    j=8
-    if (odat(5*(j-1)+3) .ne. 0) then
-      if ( iaproc .eq. napout ) write (ndso,941) j, idotyp(j)
-      ttime(1) = odat(5*(j-1)+1)
-      ttime(2) = odat(5*(j-1)+2)
-      call stme21 ( ttime , dtme21 )
-      if ( iaproc .eq. napout ) write (ndso,942) dtme21
-      ttime(1) = odat(5*(j-1)+4)
-      ttime(2) = odat(5*(j-1)+5)
-      call stme21 ( ttime , dtme21 )
-      if ( iaproc .eq. napout ) write (ndso,943) dtme21
-      ttime(1) = 0
-      ttime(2) = 0
-      dttst    = real ( odat(5*(j-1)+3) )
-      call tick21 ( ttime , dttst  )
-      call stme21 ( ttime , dtme21 )
-      if ( ( odat(5*(j-1)+1) .ne. odat(5*(j-1)+4) .or.        &
-           odat(5*(j-1)+2) .ne. odat(5*(j-1)+5) ) .and.       &
-           iaproc .eq. napout ) then
-        if ( dtme21(9:9) .ne. '0' ) then
-          write (ndso,1944) dtme21( 9:19)
-        else if ( dtme21(10:10) .ne. '0' ) then
-          write (ndso,2944) dtme21(10:19)
-        else
-          write (ndso,3944) dtme21(12:19)
         end if
       end if
     end if
@@ -1409,45 +1410,49 @@ contains
       ! This is usefull for IOSTYP=3 (Multiple dedicated output processes)
       ! to avoid the definition of dedicated proc. for unused output.
       !
-      do j = 1, notype
+      if (iaproc .eq. napout) then
+        do j = 1, notype
+          dttst  = dsec21 ( time0 , odat(5*(j-1)+4:5*(j-1)+5) )
+          if ( dttst .lt. 0 ) then
+            odat(5*(j-1)+3) = 0
+            write (ndso,8945) trim(idotyp(j))
+            continue
+          end if
+          dttst  = dsec21 ( odat(5*(j-1)+1:5*(j-1)+2), timen )
+          if ( dttst .lt. 0 ) then
+            odat(5*(j-1)+3) = 0
+            write (ndso,8945) trim(idotyp(j))
+            continue
+          end if
+        end do
+
+        ! checkpoint
+        j = 8
         dttst  = dsec21 ( time0 , odat(5*(j-1)+4:5*(j-1)+5) )
         if ( dttst .lt. 0 ) then
           odat(5*(j-1)+3) = 0
-          if ( iaproc .eq. napout )  write (ndso,8945) trim(idotyp(j))
+          write (ndso,8945) trim(idotyp(j))
           continue
         end if
         dttst  = dsec21 ( odat(5*(j-1)+1:5*(j-1)+2), timen )
         if ( dttst .lt. 0 ) then
           odat(5*(j-1)+3) = 0
-          if ( iaproc .eq. napout )  write (ndso,8945) trim(idotyp(j))
+          write (ndso,8945) trim(idotyp(j))
           continue
         end if
-      end do
+      end if
     end if
 
-    ! checkpoint
-    j = 8
-    dttst  = dsec21 ( time0 , odat(5*(j-1)+4:5*(j-1)+5) )
-    if ( dttst .lt. 0 ) then
-      odat(5*(j-1)+3) = 0
-      if ( iaproc .eq. napout )  write (ndso,8945) trim(idotyp(j))
-      continue
-    end if
-    dttst  = dsec21 ( odat(5*(j-1)+1:5*(j-1)+2), timen )
-    if ( dttst .lt. 0 ) then
-      odat(5*(j-1)+3) = 0
-      if ( iaproc .eq. napout )  write (ndso,8945) trim(idotyp(j))
-      continue
-    end if
+    !call flush(ndso)
 
     call print_memcheck(memunit, 'memcheck_____:'//' read_shel_config SECTION 5')
 
     !--- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    if ( iaproc .eq. napout ) write (ndso,951) 'Wave model ...'
-    goto 2222
+      if ( iaproc .eq. napout ) write (ndso,951) 'Wave model ...'
+      goto 2222
 
-    ! Error escape locations
+      ! Error escape locations
 2001 CONTINUE
     IF ( IAPROC .EQ. NAPERR ) WRITE (NDSE,1001)
     CALL EXTCDE ( 1001 )

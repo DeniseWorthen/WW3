@@ -1,0 +1,10 @@
+
+    !--------------------------------------------------------------------
+    ! Intialize the list of requested output variables for netCDF output.
+    ! This needs to occur after mod_def has been read in w3init since
+    ! some variables are available only if they are defined in the mod_def
+    !--------------------------------------------------------------------
+
+    if (use_historync) then
+      call wav_history_init(stdout)
+    end if

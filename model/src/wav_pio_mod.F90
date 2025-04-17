@@ -44,13 +44,13 @@ contains
   !!
   !! @param       gcomp             an ESMF_GridComp object
   !! @param       mpi_comm          the MPI communicator
-  !! @param[in]   stdout            the logfile unit on the root_task
+  !! @param[in]   logstdout         the logfile unit on the root_task
   !! @param[in]   numprocs          naproc/nthrds
   !! @param[out]  rc                a return code
   !!
   !> @author Denise.Worthen@noaa.gov
   !> @date 08-02-2024
-  subroutine wav_pio_init(gcomp, mpi_comm, stdout, numprocs, rc)
+  subroutine wav_pio_init(gcomp, mpi_comm, logstdout, numprocs, rc)
 
 #ifdef CESMCOUPLED
     use shr_pio_mod, only : shr_pio_getiosys, shr_pio_getiotype, shr_pio_getioformat
@@ -65,7 +65,7 @@ contains
     ! input/output arguments
     type(ESMF_GridComp), intent(in)    :: gcomp
     integer            , intent(in)    :: mpi_comm
-    integer            , intent(in)    :: stdout
+    integer            , intent(in)    :: logstdout
     integer            , intent(in)    :: numprocs
     integer            , intent(out)   :: rc
 
@@ -123,7 +123,7 @@ contains
        cvalue = '64BIT_OFFSET'
        pio_ioformat = PIO_64BIT_OFFSET
     end if
-    if (my_task == 0) write(stdout,*) trim(subname), ' : pio_netcdf_format = ', trim(cvalue), pio_ioformat
+    if (my_task == 0) write(logstdout,*) trim(subname), ' : pio_netcdf_format = ', trim(cvalue), pio_ioformat
 
     ! pio_typename
     call NUOPC_CompAttributeGet(gcomp, name='pio_typename', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
@@ -149,7 +149,7 @@ contains
        cvalue = 'NETCDF'
        pio_iotype = PIO_IOTYPE_NETCDF
     end if
-    if (my_task == 0) write(stdout,*) trim(subname), ' : pio_typename = ', trim(cvalue), pio_iotype
+    if (my_task == 0) write(logstdout,*) trim(subname), ' : pio_typename = ', trim(cvalue), pio_iotype
 
     ! pio_root
     call NUOPC_CompAttributeGet(gcomp, name='pio_root', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
@@ -164,7 +164,7 @@ contains
     else
        pio_root = 1
     end if
-    if (my_task == 0) write(stdout,*) trim(subname), ' : pio_root = ', pio_root
+    if (my_task == 0) write(logstdout,*) trim(subname), ' : pio_root = ', pio_root
 
     ! pio_stride
     call NUOPC_CompAttributeGet(gcomp, name='pio_stride', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
@@ -175,7 +175,7 @@ contains
     else
        pio_stride = -99
     end if
-    if (my_task == 0) write(stdout,*) trim(subname), ' : pio_stride = ', pio_stride
+    if (my_task == 0) write(logstdout,*) trim(subname), ' : pio_stride = ', pio_stride
 
     ! pio_numiotasks
     call NUOPC_CompAttributeGet(gcomp, name='pio_numiotasks', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
@@ -186,7 +186,7 @@ contains
     else
        pio_numiotasks = -99
     end if
-    if (my_task == 0) write(stdout,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
+    if (my_task == 0) write(logstdout,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
 
     ! check for parallel IO, it requires at least two io pes
     if (numprocs > 1 .and. pio_numiotasks == 1 .and. &
@@ -194,24 +194,24 @@ contains
        pio_numiotasks = 2
        pio_stride = min(pio_stride, numprocs/2)
        if (my_task == 0) then
-          write(stdout,*) ' parallel io requires at least two io pes - following parameters are updated:'
-          write(stdout,*) trim(subname), ' : pio_stride = ', pio_stride
-          write(stdout,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
+          write(logstdout,*) ' parallel io requires at least two io pes - following parameters are updated:'
+          write(logstdout,*) trim(subname), ' : pio_stride = ', pio_stride
+          write(logstdout,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
        end if
     endif
 
     ! check/set/correct io pio parameters
     if (pio_stride > 0 .and. pio_numiotasks < 0) then
        pio_numiotasks = max(1, numprocs/pio_stride)
-       if (my_task == 0) write(stdout,*) trim(subname), ' : update pio_numiotasks = ', pio_numiotasks
+       if (my_task == 0) write(logstdout,*) trim(subname), ' : update pio_numiotasks = ', pio_numiotasks
     else if(pio_numiotasks > 0 .and. pio_stride < 0) then
        pio_stride = max(1, numprocs/pio_numiotasks)
-       if (my_task == 0) write(stdout,*) trim(subname), ' : update pio_stride = ', pio_stride
+       if (my_task == 0) write(logstdout,*) trim(subname), ' : update pio_stride = ', pio_stride
     else if(pio_numiotasks < 0 .and. pio_stride < 0) then
        pio_stride = max(1,numprocs/4)
        pio_numiotasks = max(1,numprocs/pio_stride)
-       if (my_task == 0) write(stdout,*) trim(subname), ' : update pio_numiotasks = ', pio_numiotasks
-       if (my_task == 0) write(stdout,*) trim(subname), ' : update pio_stride = ', pio_stride
+       if (my_task == 0) write(logstdout,*) trim(subname), ' : update pio_numiotasks = ', pio_numiotasks
+       if (my_task == 0) write(logstdout,*) trim(subname), ' : update pio_stride = ', pio_stride
     end if
     if (pio_stride == 1) then
        pio_root = 0
@@ -234,10 +234,10 @@ contains
           pio_root = 0
        end if
        if (my_task == 0) then
-          write(stdout,*) 'pio_stride, iotasks or root out of bounds - resetting to defaults:'
-          write(stdout,*) trim(subname), ' : pio_root = ', pio_root
-          write(stdout,*) trim(subname), ' : pio_stride = ', pio_stride
-          write(stdout,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
+          write(logstdout,*) 'pio_stride, iotasks or root out of bounds - resetting to defaults:'
+          write(logstdout,*) trim(subname), ' : pio_root = ', pio_root
+          write(logstdout,*) trim(subname), ' : pio_stride = ', pio_stride
+          write(logstdout,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
        end if
     end if
 
@@ -260,14 +260,14 @@ contains
        cvalue = 'SUBSET'
        pio_rearranger = PIO_REARR_SUBSET
     end if
-    if (my_task == 0) write(stdout,*) trim(subname), ' : pio_rearranger = ', trim(cvalue), pio_rearranger
+    if (my_task == 0) write(logstdout,*) trim(subname), ' : pio_rearranger = ', trim(cvalue), pio_rearranger
 
     ! init PIO
     if (my_task == 0) then
-      write(stdout,*) trim(subname),' calling pio init'
-      write(stdout,*) trim(subname), ' : pio_root = ', pio_root
-      write(stdout,*) trim(subname), ' : pio_stride = ', pio_stride
-      write(stdout,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
+      write(logstdout,*) trim(subname),' calling pio init'
+      write(logstdout,*) trim(subname), ' : pio_root = ', pio_root
+      write(logstdout,*) trim(subname), ' : pio_stride = ', pio_stride
+      write(logstdout,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
     end if
 
     allocate(wav_pio_subsystem)
@@ -288,7 +288,7 @@ contains
     else
       pio_debug_level = 0
     end if
-    if (my_task == 0) write(stdout,*) trim(subname), ' : pio_debug_level = ', pio_debug_level
+    if (my_task == 0) write(logstdout,*) trim(subname), ' : pio_debug_level = ', pio_debug_level
 
     ! set PIO debug level
     call pio_setdebuglevel(pio_debug_level)

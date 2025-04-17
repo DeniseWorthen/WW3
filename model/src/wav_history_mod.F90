@@ -651,18 +651,18 @@ contains
   !! CUR tag. The tag "SXY" means that three components of radiation stresses
   !! are requested (XX,YY,XY).
   !!
-  !! @param[in]   stdout            the logfile unit on the root_task
+  !! @param[in]   logstdout            the logfile unit on the root_task
   !!
   !> @author Denise.Worthen@noaa.gov
   !> @date 09-19-2022
-  subroutine wav_history_init(stdout)
+  subroutine wav_history_init(logstdout)
 
     use w3gdatmd, only: e3df, p2msf, us3df, usspf
     use w3odatmd, only: iaproc, nogrp, ngrpp
     use w3iogomd, only: fldout
     use w3servmd, only: strsplit
 
-    integer, intent(in) :: stdout
+    integer, intent(in) :: logstdout
 
     ! local variables
     integer, parameter :: maxvars = 25  ! maximum number of variables/group
@@ -733,18 +733,18 @@ contains
 
     ! check
     if ( iaproc == 1 ) then
-      write(stdout,*)
-      write(stdout,'(a)')' --------------------------------------------------'
-      write(stdout,'(a)')'  Requested gridded output variables : '
-      write(stdout,'(a)')' --------------------------------------------------'
-      write(stdout,*)
+      write(logstdout,*)
+      write(logstdout,'(a)')' --------------------------------------------------'
+      write(logstdout,'(a)')'  Requested gridded output variables : '
+      write(logstdout,'(a)')' --------------------------------------------------'
+      write(logstdout,*)
       do n = 1,nout
-        write(stdout,'(i5,2a12,a50)')n,'  '//trim(outvars(n)%tag), &
+        write(logstdout,'(i5,2a12,a50)')n,'  '//trim(outvars(n)%tag), &
              '  '//trim(outvars(n)%var_name), &
              '  '//trim(outvars(n)%long_name)
       end do
-      write(stdout,*)
-      call flush (stdout)
+      write(logstdout,*)
+      call flush (logstdout)
     end if
 
   end subroutine wav_history_init
