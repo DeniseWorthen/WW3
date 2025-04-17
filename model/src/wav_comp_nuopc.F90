@@ -86,6 +86,7 @@ module wav_comp_nuopc
   logical :: cesmcoupled = .false.                         !< logical to indicate non-CESM use case
   type(is_restart_fh_type)     :: restartfh_info           ! For flexible restarts in UFS
 #endif
+  integer :: logstdout                                     !< the log file on the root_task, otherwise unit=6
   integer :: ymd                                           !< current year-month-day
   integer :: tod                                           !< current time of day (sec)
   integer :: time0(2)                                      !< start time stored as yyyymmdd,hhmmss
@@ -226,7 +227,8 @@ contains
     use wav_shel_inp    , only : set_shel_io
     use wav_history_mod , only : wav_history_init
     use wav_pio_mod     , only : wav_pio_init
-    use wav_shr_mod     , only : diagnose_mesh, write_meshdecomp, wav_loginit
+    !use wav_shr_mod     , only : diagnose_mesh, write_meshdecomp, wav_loginit
+    use wav_shr_mod     , only : diagnose_mesh, write_meshdecomp
     use wav_shr_flags   , only : w3_pdlib_flag
 
     ! input/output arguments
@@ -241,7 +243,7 @@ contains
     type(ESMF_Calendar)         :: calendar
     type(ESMF_Info)             :: info
     type(ESMF_VM)               :: vm
-    integer                     :: stdout
+    !integer                     :: stdout
     integer                     :: shrlogunit
     integer                     :: yy,mm,dd,hh,ss
     integer                     :: start_ymd         ! start date (yyyymmdd)
@@ -512,27 +514,27 @@ contains
         if (chkerr(rc,__LINE__,u_FILE_u)) return
         call NUOPC_CompAttributeGet(gcomp, name="logfile", value=logfile, rc=rc)
         if (chkerr(rc,__LINE__,u_FILE_u)) return
-        open (newunit=stdout, file=trim(diro)//"/"//trim(logfile))
+        open (newunit=logstdout, file=trim(diro)//"/"//trim(logfile))
         logfile_is_assigned = .true.
       else
-        stdout = 6
+        logstdout = 6
       endif
     else
       if ( root_task ) then
-        open (newunit=stdout, file='log.ww3')
+        open (newunit=logstdout, file='log.ww3')
         logfile_is_assigned = .true.
       else
-        stdout = 6
+        logstdout = 6
       end if
     end if
 
-    call set_shel_io(stdout,mds,ntrace)
+    call set_shel_io(logstdout,mds,ntrace)
 
     if ( root_task ) then
-      write(stdout,'(a)')'      *** WAVEWATCH III Program shell ***      '
-      write(stdout,'(a)')'==============================================='
-      write(stdout,'(/)')
-      write(stdout,'(a,l)')' Wave wav_coupling_to_cice setting is ',wav_coupling_to_cice
+      write(logstdout,'(a)')'      *** WAVEWATCH III Program shell ***      '
+      write(logstdout,'(a)')'==============================================='
+      write(logstdout,'(/)')
+      write(logstdout,'(a,l)')' Wave wav_coupling_to_cice setting is ',wav_coupling_to_cice
     end if
 
     !--------------------------------------------------------------------
@@ -549,7 +551,7 @@ contains
       runtype = "branch"
     end if
     if ( root_task ) then
-      write(stdout,'(a)') ' WW3 runtype is '//trim(runtype)
+      write(logstdout,'(a)') ' WW3 runtype is '//trim(runtype)
     end if
     call ESMF_LogWrite('WW3 runtype is '//trim(runtype), ESMF_LOGMSG_INFO)
 
@@ -561,8 +563,8 @@ contains
     ! NOTE - are not setting TIMEN here
 
     if ( root_task ) then
-      write(stdout,'(a)')'  Time interval : '
-      write(stdout,'(a)')'--------------------------------------------------'
+      write(logstdout,'(a)')'  Time interval : '
+      write(logstdout,'(a)')'--------------------------------------------------'
     end if
 
     call ESMF_ClockPrint(clock, options="startTime", preString="Model Start Time: ", &
@@ -623,8 +625,8 @@ contains
 
     call stme21 ( time0 , dtme21 )
     if ( root_task ) then
-      write (stdout,'(a)')' Starting time : '//trim(dtme21)
-      write (stdout,'(a,i8,2x,i8)') ' start_ymd, stop_ymd = ',start_ymd, stop_ymd
+      write (logstdout,'(a)')' Starting time : '//trim(dtme21)
+      write (logstdout,'(a,i8,2x,i8)') ' start_ymd, stop_ymd = ',start_ymd, stop_ymd
     end if
 
     !--------------------------------------------------------------------
@@ -651,13 +653,13 @@ contains
       if (isPresent .and. isSet) then
         use_restartnc=(trim(cvalue)=="true")
       end if
-      if (root_task) write(stdout,'(a,l4)') trim(subname)//': Wave use_restartnc setting is ',use_restartnc
+      if (root_task) write(logstdout,'(a,l4)') trim(subname)//': Wave use_restartnc setting is ',use_restartnc
 
       ! user filenaming is required with netcdf restarts or restart_from_binary. If netcdf restarts are not used,
       ! only native WW3 file naming is possible
       if (use_restartnc) then
         user_restfname = trim(casename)//'.ww3.r.'
-        if (root_task) write(stdout,'(a)') trim(subname)//': Custom restart prefix is '//trim(user_restfname)
+        if (root_task) write(logstdout,'(a)') trim(subname)//': Custom restart prefix is '//trim(user_restfname)
       end if
 
       call NUOPC_CompAttributeGet(gcomp, name='use_historync', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
@@ -665,7 +667,7 @@ contains
       if (isPresent .and. isSet) then
         use_historync=(trim(cvalue)=="true")
       end if
-      if (root_task) write(stdout,'(a,l4)') trim(subname)//': Wave use_historync setting is ',use_historync
+      if (root_task) write(logstdout,'(a,l4)') trim(subname)//': Wave use_historync setting is ',use_historync
 
       ! user filenaming is optional with netcdf output. If netcdf history is not used, only native WW3
       ! naming is possible
@@ -674,7 +676,7 @@ contains
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
         if (trim(cvalue)=="true") then
           user_histfname = trim(casename)//'.ww3.hi.'
-          if (root_task) write(stdout,'(a)') trim(subname)//': Custom history prefix is '//trim(user_histfname)
+          if (root_task) write(logstdout,'(a)') trim(subname)//': Custom history prefix is '//trim(user_histfname)
         else
           user_histfname = ''
         end if
@@ -688,21 +690,24 @@ contains
       if (isPresent .and. isSet) then
         restart_from_binary=(trim(cvalue)=="true")
       end if
-      if (root_task) write(stdout,'(a,l4)') trim(subname)//': Wave restart_from_binary setting is ',restart_from_binary
+      if (root_task) write(logstdout,'(a,l4)') trim(subname)//': Wave restart_from_binary setting is ',restart_from_binary
     end if
 
      if (use_restartnc .or. use_historync) then
-       call wav_pio_init(gcomp, mpi_comm, stdout, naproc/num_threads, rc)
+       call wav_pio_init(gcomp, mpi_comm, logstdout, naproc/num_threads, rc)
        if (ChkErr(rc,__LINE__,u_FILE_u)) return
      end if
+     !flush(logstdout)
 
     !--------------------------------------------------------------------
     ! Wave model initialization
     !--------------------------------------------------------------------
 
+     print *,iaproc,'XXX before w3init ',logstdout
 #ifndef W3_CESMCOUPLED
-    call waveinit_ufs(gcomp, stdout, ntrace, mpi_comm, mds, rc)
+    call waveinit_ufs(gcomp, logstdout, ntrace, mpi_comm, mds, rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    print *,iaproc,'XXX after w3init ',logstdout
 #else
     !time = time0
     call ESMF_ClockGet( clock, timeStep=timeStep, rc=rc)
@@ -712,7 +717,7 @@ contains
 #endif
     !call mpi_barrier ( mpi_comm, ierr )
     if ( root_task ) then
-      inquire(unit=stdout, name=logfile)
+      inquire(unit=logstdout, name=logfile)
       write(*,'(a)')'WW3 log written to '//trim(logfile)
     end if
 
@@ -730,35 +735,35 @@ contains
     !--------------------------------------------------------------------
 
     if (use_historync) then
-      call wav_history_init(stdout)
+      call wav_history_init(logstdout)
     end if
 
-    !--------------------------------------------------------------------
-    ! Write the header string for WW3 native logging
-    !--------------------------------------------------------------------
+    ! !--------------------------------------------------------------------
+    ! ! Write the header string for WW3 native logging
+    ! !--------------------------------------------------------------------
 
-    if (root_task) then
-      if (verboselog) call wav_loginit(stdout)
-    end if
+    ! if (root_task) then
+    !   if (verboselog) call wav_loginit(logstdout)
+    ! end if
 
     call advertise_fields(importState, exportState, flds_scalar_name, rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
+
+    if (root_task) call ufs_logtimer(nu_timer,time0,start_tod,'InitializeAdvertise time: ',runtimelog,wtime)
 
     call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
 
   end subroutine InitializeAdvertise
   !========================================================================
-  !! XX FIX
   !> Realize the import and export fields.
 
   !> @details Called by NUOPC to realize the import and export fields
-  !! for the wave model. After the wave model initializes, the global index
-  !! for all sea points is retrieved using the WW3 mapsf array. A global index
-  !! array is then constructed which contains both land and sea points, with
-  !! the land points at the end of the array. An ESMF Distgrid object is created
-  !! using this global index array. The distgrid is then transfered to the ESMF
-  !! Mesh provided for the wave model domain. If the provided Mesh does not contain
-  !! a grid mask, then the internal WW3 mask is transfered to the Mesh, otherwise
+  !! for the wave model. The global index for all sea points is retrieved
+  !! using the WW3 mapsf array. A global index array is then constructed which
+  !! contains both land and sea points, with the land points at the end of the array.
+  !! An ESMF Distgrid object is created using this global index array. The distgrid is then
+  !! transfered to the ESMF Mesh provided for the wave model domain. If the provided Mesh
+  !! does not contain a grid mask, then the internal WW3 mask is transfered to the Mesh, otherwise
   !! the mask provided with the mesh file will be used. This mask is used by
   !! CMEPS to map to and from the wave model. Once the mesh has been created, the
   !! advertised fields are realized on the mesh.
@@ -781,14 +786,14 @@ contains
     !    use w3gdatmd        , only : nk, nseal, nsea, nx, ny, mapsf, w3nmod, w3setg
     use w3gdatmd        , only : mapsf
     use w3gdatmd        , only : nx, ny, ungtype, gtype, nseal, nsea
-!    use w3wdatmd        , only : time
+    use w3wdatmd        , only : time
 !    use w3wdatmd        , only : va, time, w3ndat, w3dimw, w3setw
     use w3parall        , only : init_get_isea
 !    use wav_shel_inp    , only : set_shel_io
 !    use wav_history_mod , only : wav_history_init
 !    use wav_pio_mod     , only : wav_pio_init
-    !    use wav_shr_mod     , only : diagnose_mesh, write_meshdecomp, wav_loginit
-    use wav_shr_mod     , only : diagnose_mesh, write_meshdecomp
+    use wav_shr_mod     , only : diagnose_mesh, write_meshdecomp, wav_loginit
+    !use wav_shr_mod     , only : diagnose_mesh, write_meshdecomp
 #ifdef W3_PDLIB
     use yowNodepool     , only : ng
 #endif
@@ -805,6 +810,7 @@ contains
      type(ESMF_Mesh)                :: Emesh
      type(ESMF_Array)               :: elemMaskArray
      type(ESMF_VM)                  :: vm
+     type(ESMF_Time)                :: startTime
     ! type(ESMF_Time)                :: esmfTime, startTime, currTime, stopTime
     ! type(ESMF_TimeInterval)        :: TimeOffset
     ! type(ESMF_TimeInterval)        :: TimeStep
@@ -812,9 +818,9 @@ contains
     ! type(ESMF_Info)                :: info
      character(CL)                  :: cvalue
     ! integer                        :: shrlogunit
-    ! integer                        :: yy,mm,dd,hh,ss
+     integer                        :: yy,mm,dd,hh,ss
     ! integer                        :: start_ymd         ! start date (yyyymmdd)
-    ! integer                        :: start_tod         ! start time of day (sec)
+     integer                        :: start_tod         ! start time of day (sec)
     ! integer                        :: stop_ymd          ! stop date (yyyymmdd)
     ! integer                        :: stop_tod          ! stop time of day (sec)
      integer                        :: ix, iy
@@ -839,7 +845,7 @@ contains
     ! logical                        :: local
     ! integer                        :: imod, idsi, idso, idss, idst, idse
     ! integer                        :: mds(15) ! Note that nds is set to this in w3initmod
-    ! integer                        :: stdout
+    ! integer                        :: logstdout
     ! integer                        :: petcount
     ! real(r8)                       :: toff
     ! logical                        :: isPresent, isSet
@@ -900,27 +906,27 @@ contains
 !         if (chkerr(rc,__LINE__,u_FILE_u)) return
 !         call NUOPC_CompAttributeGet(gcomp, name="logfile", value=logfile, rc=rc)
 !         if (chkerr(rc,__LINE__,u_FILE_u)) return
-!         open (newunit=stdout, file=trim(diro)//"/"//trim(logfile))
+!         open (newunit=logstdout, file=trim(diro)//"/"//trim(logfile))
 !         logfile_is_assigned = .true.
 !       else
-!         stdout = 6
+!         logstdout = 6
 !       endif
 !     else
 !       if ( root_task ) then
-!         open (newunit=stdout, file='log.ww3')
+!         open (newunit=logstdout, file='log.ww3')
 !         logfile_is_assigned = .true.
 !       else
-!         stdout = 6
+!         logstdout = 6
 !       end if
 !     end if
 
-!     call set_shel_io(stdout,mds,ntrace)
+!     call set_shel_io(logstdout,mds,ntrace)
 
 !     if ( root_task ) then
-!       write(stdout,'(a)')'      *** WAVEWATCH III Program shell ***      '
-!       write(stdout,'(a)')'==============================================='
-!       write(stdout,'(/)')
-!       write(stdout,'(a,l)')' Wave wav_coupling_to_cice setting is ',wav_coupling_to_cice
+!       write(logstdout,'(a)')'      *** WAVEWATCH III Program shell ***      '
+!       write(logstdout,'(a)')'==============================================='
+!       write(logstdout,'(/)')
+!       write(logstdout,'(a,l)')' Wave wav_coupling_to_cice setting is ',wav_coupling_to_cice
 !     end if
 
 !     !--------------------------------------------------------------------
@@ -937,7 +943,7 @@ contains
 !       runtype = "branch"
 !     end if
 !     if ( root_task ) then
-!       write(stdout,'(a)') ' WW3 runtype is '//trim(runtype)
+!       write(logstdout,'(a)') ' WW3 runtype is '//trim(runtype)
 !     end if
 !     call ESMF_LogWrite('WW3 runtype is '//trim(runtype), ESMF_LOGMSG_INFO)
 
@@ -949,8 +955,8 @@ contains
 !     ! NOTE - are not setting TIMEN here
 
 !     if ( root_task ) then
-!       write(stdout,'(a)')'  Time interval : '
-!       write(stdout,'(a)')'--------------------------------------------------'
+!       write(logstdout,'(a)')'  Time interval : '
+!       write(logstdout,'(a)')'--------------------------------------------------'
 !     end if
 
 !     call ESMF_ClockPrint(clock, options="startTime", preString="Model Start Time: ", &
@@ -959,7 +965,8 @@ contains
 !     call ESMF_ClockPrint(clock, options="currTime", preString="Model Current Time: ", &
 !          unit=msgString, rc=rc)
 !     call ESMF_LogWrite(trim(msgString), ESMF_LOGMSG_INFO)
-!     call ESMF_ClockGet( clock, startTime=startTime, currTime=currTime, rc=rc)
+    call ESMF_ClockGet( clock, startTime=startTime, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
 !     TimeOffset = currTime - startTime
 !     call ESMF_TimeIntervalGet(TimeOffset, h_r8=toff, rc=rc)
 !     write(msgstring,'(a,g14.7)')'TimeOffset: CurrTime - StartTime = ',toff
@@ -985,8 +992,8 @@ contains
 !     else if (calendar == ESMF_CALKIND_NOLEAP) then
 !       calendar_name = 'noleap'
 !     end if
-!     call ESMF_TimeGet( esmfTime, yy=yy, mm=mm, dd=dd, s=start_tod, rc=rc )
-!     if (ChkErr(rc,__LINE__,u_FILE_u)) return
+     call ESMF_TimeGet( startTime, yy=yy, mm=mm, dd=dd, s=start_tod, rc=rc )
+     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 !     call ymd2date(yy, mm, dd, start_ymd)
 
 !     hh = start_tod/3600
@@ -1011,8 +1018,8 @@ contains
 
 !     call stme21 ( time0 , dtme21 )
 !     if ( root_task ) then
-!       write (stdout,'(a)')' Starting time : '//trim(dtme21)
-!       write (stdout,'(a,i8,2x,i8)') ' start_ymd, stop_ymd = ',start_ymd, stop_ymd
+!       write (logstdout,'(a)')' Starting time : '//trim(dtme21)
+!       write (logstdout,'(a,i8,2x,i8)') ' start_ymd, stop_ymd = ',start_ymd, stop_ymd
 !     end if
 
 !     !--------------------------------------------------------------------
@@ -1039,13 +1046,13 @@ contains
 !       if (isPresent .and. isSet) then
 !         use_restartnc=(trim(cvalue)=="true")
 !       end if
-!       if (root_task) write(stdout,'(a,l4)') trim(subname)//': Wave use_restartnc setting is ',use_restartnc
+!       if (root_task) write(logstdout,'(a,l4)') trim(subname)//': Wave use_restartnc setting is ',use_restartnc
 
 !       ! user filenaming is required with netcdf restarts or restart_from_binary. If netcdf restarts are not used,
 !       ! only native WW3 file naming is possible
 !       if (use_restartnc) then
 !         user_restfname = trim(casename)//'.ww3.r.'
-!         if (root_task) write(stdout,'(a)') trim(subname)//': Custom restart prefix is '//trim(user_restfname)
+!         if (root_task) write(logstdout,'(a)') trim(subname)//': Custom restart prefix is '//trim(user_restfname)
 !       end if
 
 !       call NUOPC_CompAttributeGet(gcomp, name='use_historync', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
@@ -1053,7 +1060,7 @@ contains
 !       if (isPresent .and. isSet) then
 !         use_historync=(trim(cvalue)=="true")
 !       end if
-!       if (root_task) write(stdout,'(a,l4)') trim(subname)//': Wave use_historync setting is ',use_historync
+!       if (root_task) write(logstdout,'(a,l4)') trim(subname)//': Wave use_historync setting is ',use_historync
 
 !       ! user filenaming is optional with netcdf output. If netcdf history is not used, only native WW3
 !       ! naming is possible
@@ -1062,7 +1069,7 @@ contains
 !         if (ChkErr(rc,__LINE__,u_FILE_u)) return
 !         if (trim(cvalue)=="true") then
 !           user_histfname = trim(casename)//'.ww3.hi.'
-!           if (root_task) write(stdout,'(a)') trim(subname)//': Custom history prefix is '//trim(user_histfname)
+!           if (root_task) write(logstdout,'(a)') trim(subname)//': Custom history prefix is '//trim(user_histfname)
 !         else
 !           user_histfname = ''
 !         end if
@@ -1076,11 +1083,11 @@ contains
 !       if (isPresent .and. isSet) then
 !         restart_from_binary=(trim(cvalue)=="true")
 !       end if
-!       if (root_task) write(stdout,'(a,l4)') trim(subname)//': Wave restart_from_binary setting is ',restart_from_binary
+!       if (root_task) write(logstdout,'(a,l4)') trim(subname)//': Wave restart_from_binary setting is ',restart_from_binary
 !     end if
 
 !     if (use_restartnc .or. use_historync) then
-!       call wav_pio_init(gcomp, mpi_comm, stdout, naproc/num_threads, rc)
+!       call wav_pio_init(gcomp, mpi_comm, logstdout, naproc/num_threads, rc)
 !       if (ChkErr(rc,__LINE__,u_FILE_u)) return
 !     end if
 
@@ -1089,7 +1096,7 @@ contains
 !     !--------------------------------------------------------------------
 
 ! #ifndef W3_CESMCOUPLED
-!     call waveinit_ufs(gcomp, stdout, ntrace, mpi_comm, mds, rc)
+!     call waveinit_ufs(gcomp, logstdout, ntrace, mpi_comm, mds, rc)
 !     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 ! #else
 !     time = time0
@@ -1100,7 +1107,7 @@ contains
 ! #endif
 !     !call mpi_barrier ( mpi_comm, ierr )
 !     if ( root_task ) then
-!       inquire(unit=stdout, name=logfile)
+!       inquire(unit=logstdout, name=logfile)
 !       write(*,'(a)')'WW3 log written to '//trim(logfile)
 !     end if
 
@@ -1264,24 +1271,24 @@ contains
 
     ! !--------------------------------------------------------------------
     ! ! Intialize the list of requested output variables for netCDF output.
+
     ! ! This needs to occur after mod_def has been read in w3init since
     ! ! some variables are available only if they are defined in the mod_def
     ! !--------------------------------------------------------------------
 
     ! if (use_historync) then
-    !   call wav_history_init(stdout)
+    !   call wav_history_init(logstdout)
     ! end if
 
-    ! !--------------------------------------------------------------------
-    ! ! Write the header string for WW3 native logging
-    ! !--------------------------------------------------------------------
+    !--------------------------------------------------------------------
+    ! Write the header string for WW3 native logging
+    !--------------------------------------------------------------------
 
-    ! if (root_task) then
-    !   if (verboselog) call wav_loginit(stdout)
-    ! end if
+    if (root_task) then
+      if (verboselog) call wav_loginit(logstdout)
+    end if
 
-    ! FIX: needs start_tod value
-    !if (root_task) call ufs_logtimer(nu_timer,time,start_tod,'InitializeRealize time: ',runtimelog,wtime)
+    if (root_task) call ufs_logtimer(nu_timer,time,start_tod,'InitializeRealize time: ',runtimelog,wtime)
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
 
@@ -1318,10 +1325,6 @@ contains
     real(r8), pointer :: wave_elevation_spectrum(:,:)
     character(len=*),parameter :: subname = '(wav_comp_nuopc:DataInitialize)'
     ! -------------------------------------------------------------------
-
-    !--------------------------------------------------------------------
-    ! Create export state
-    !--------------------------------------------------------------------
 
     rc = ESMF_SUCCESS
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
@@ -1526,6 +1529,7 @@ contains
     ! Advance the wave model
     call w3wave ( 1, odat, timen )
     if(profile_memory) call ESMF_VMLogMemInfo("Exiting  WW3 Run : ")
+    !if (root_task ) flush(logstdout)
 
     !------------
     ! Create export state
@@ -1580,7 +1584,6 @@ contains
     character(len=128)       :: name
     integer                  :: alarmcount, dt_cpl
     character(len=*),parameter :: subname=trim(modName)//':(ModelSetRunClock) '
-
     !-------------------------------------------------------------------------------
 
     rc = ESMF_SUCCESS
@@ -1814,7 +1817,7 @@ contains
     real(r8)          :: dtmin_in  ! Minimum dynamic time step for source
     real(r8)          :: dtcfl_in  ! Maximum CFL time step X-Y propagation.
     real(r8)          :: dtcfli_in ! Maximum CFL time step X-Y propagation intra-spectral
-    integer           :: stdout
+    integer           :: logstdout
     character(len=*), parameter    :: subname = '(wav_comp_nuopc:wavinit_cesm)'
     ! -------------------------------------------------------------------
 
@@ -1837,22 +1840,22 @@ contains
       close (unitn)
 
       ! Write out input
-      stdout = mds(1)
-      write(stdout,*)
-      write(stdout,'(a)')' --------------------------------------------------'
-      write(stdout,'(a)')'  Initializations : '
-      write(stdout,'(a)')' --------------------------------------------------'
-      write(stdout,'(a)')' Case Name is '//trim(casename)
-      write(stdout,'(a)') trim(subname)//' inst_name   = '//trim(inst_name)
-      write(stdout,'(a)') trim(subname)//' inst_suffix = '//trim(inst_suffix)
-      write(stdout,'(a,i4)') trim(subname)//' inst_index  = ',inst_index
-      write(stdout,'(a)')' Read in ww3_inparm namelist from wav_in'//trim(inst_suffix)
-      write(stdout,'(a)')' initfile = '//trim(initfile)
-      write(stdout,'(a, 2x, f10.3)')' dtcfl    = ',dtcfl
-      write(stdout,'(a, 2x, f10.3)')' dtcfli   = ',dtcfli
-      write(stdout,'(a, 2x, f10.3)')' dtmax    = ',dtmax
-      write(stdout,'(a, 2x, f10.3)')' dtmin    = ',dtmin
-      write(stdout,*)
+      logstdout = mds(1)
+      write(logstdout,*)
+      write(logstdout,'(a)')' --------------------------------------------------'
+      write(logstdout,'(a)')'  Initializations : '
+      write(logstdout,'(a)')' --------------------------------------------------'
+      write(logstdout,'(a)')' Case Name is '//trim(casename)
+      write(logstdout,'(a)') trim(subname)//' inst_name   = '//trim(inst_name)
+      write(logstdout,'(a)') trim(subname)//' inst_suffix = '//trim(inst_suffix)
+      write(logstdout,'(a,i4)') trim(subname)//' inst_index  = ',inst_index
+      write(logstdout,'(a)')' Read in ww3_inparm namelist from wav_in'//trim(inst_suffix)
+      write(logstdout,'(a)')' initfile = '//trim(initfile)
+      write(logstdout,'(a, 2x, f10.3)')' dtcfl    = ',dtcfl
+      write(logstdout,'(a, 2x, f10.3)')' dtcfli   = ',dtcfli
+      write(logstdout,'(a, 2x, f10.3)')' dtmax    = ',dtmax
+      write(logstdout,'(a, 2x, f10.3)')' dtmin    = ',dtmin
+      write(logstdout,*)
     end if
 
     ! ESMF does not have a broadcast for chars
@@ -1955,7 +1958,7 @@ contains
   !! ww3_shel.nml file. Calls w3init to initialize the wave model
   !!
   !! @param[in]    gcomp        an ESMF_GridComp object
-  !! @param[in]    stdout       the logfile unit on the root task
+  !! @param[in]    logstdout       the logfile unit on the root task
   !! @param[in]    ntrace       unit numbers for trace
   !! @param[in]    mpi_comm     an mpi communicator
   !! @param[in]    mds          unit numbers
@@ -1963,7 +1966,7 @@ contains
   !!
   !> @author mvertens@ucar.edu, Denise.Worthen@noaa.gov
   !> @date 01-05-2022
-  subroutine waveinit_ufs( gcomp, stdout, ntrace, mpi_comm, mds, rc)
+  subroutine waveinit_ufs( gcomp, logstdout, ntrace, mpi_comm, mds, rc)
 
     ! Initialize ww3 for ufs (called from InitializeRealize)
 
@@ -1978,7 +1981,7 @@ contains
 
     ! input/output variables
     type(ESMF_GridComp)  :: gcomp
-    integer, intent(in)  :: stdout
+    integer, intent(in)  :: logstdout
     integer, intent(in)  :: ntrace(:)
     integer, intent(in)  :: mpi_comm
     integer, intent(in)  :: mds(:)
@@ -1998,8 +2001,10 @@ contains
     rc = ESMF_SUCCESS
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
 
+    print *,'YYY init ',iaproc,logstdout
+
     fnmpre = './'
-    if (root_task) write(stdout,'(a)') trim(subname)//' call read_shel_config'
+    if (root_task) write(logstdout,'(a)') trim(subname)//' call read_shel_config'
     call read_shel_config(mpi_comm, mds, time0_overwrite=time0, timen_overwrite=timen, rstfldlist=fldrst)
 
     ! Define any additional restart fields
@@ -2012,11 +2017,7 @@ contains
       end do
     end if
 
-    print *,'XXX0',mds
-    print *,'XXX1',ntrace,odat
-    print *,'XXX2',stdout
-
-    if (root_task) write(stdout,'(a,/)') trim(subname)//' call w3init'
+    if (root_task) write(logstdout,'(a,/)') trim(subname)//' call w3init'
     call w3init ( 1, .false., 'ww3', mds, ntrace, odat, flgrd, flgr2, flgd, flg2, &
          npts, x, y, pnames, iprt, prtfrm, mpi_comm )
 
@@ -2037,18 +2038,19 @@ contains
 
     ! log info
     if (root_task) then
-      write(stdout,'(a)') trim(logmsg)
+      write(logstdout,'(a)') trim(logmsg)
       write(cvalue,'(4f10.1)')dtmax,dtcfl,dtcfli,dtmin
-      write(stdout,'(a)') trim(subname)//': WW3 timesteps '//trim(cvalue)
+      write(logstdout,'(a)') trim(subname)//': WW3 timesteps '//trim(cvalue)
 
       if (addrstflds) then
         do i = 1,rstfldcnt
-          write(stdout,'(a,i3,a)') trim(subname)//': WW3 additional restart field : ',i,'  '//trim(rstfldlist(i))
+          write(logstdout,'(a,i3,a)') trim(subname)//': WW3 additional restart field : ',i,'  '//trim(rstfldlist(i))
         end do
       else
-        write(stdout,'(/,a)') trim(subname)//': WW3 NO additional restart fields will be written '
+        write(logstdout,'(/,a)') trim(subname)//': WW3 NO additional restart fields will be written '
       end if
     end if
+    !flush(logstdout)
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
   end subroutine waveinit_ufs
