@@ -52,7 +52,6 @@ module wav_comp_nuopc
 #ifndef W3_CESMCOUPLED
   use shr_is_restart_fh_mod , only : init_is_restart_fh, is_restart_fh, is_restart_fh_type
 #endif
-  use constants             , only : is_esmf_component
 
   implicit none
   private ! except
@@ -703,13 +702,11 @@ contains
     ! Wave model initialization
     !--------------------------------------------------------------------
 
-     print *,iaproc,'XXX before w3init ',logstdout
+     time = time0
 #ifndef W3_CESMCOUPLED
     call waveinit_ufs(gcomp, logstdout, ntrace, mpi_comm, mds, rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    print *,iaproc,'XXX after w3init ',logstdout
 #else
-    !time = time0
     call ESMF_ClockGet( clock, timeStep=timeStep, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
     call waveinit_cesm(gcomp, ntrace, mpi_comm, mds, rc)
@@ -1817,7 +1814,7 @@ contains
     real(r8)          :: dtmin_in  ! Minimum dynamic time step for source
     real(r8)          :: dtcfl_in  ! Maximum CFL time step X-Y propagation.
     real(r8)          :: dtcfli_in ! Maximum CFL time step X-Y propagation intra-spectral
-    integer           :: logstdout
+    integer           :: stdout
     character(len=*), parameter    :: subname = '(wav_comp_nuopc:wavinit_cesm)'
     ! -------------------------------------------------------------------
 
@@ -1840,22 +1837,22 @@ contains
       close (unitn)
 
       ! Write out input
-      logstdout = mds(1)
-      write(logstdout,*)
-      write(logstdout,'(a)')' --------------------------------------------------'
-      write(logstdout,'(a)')'  Initializations : '
-      write(logstdout,'(a)')' --------------------------------------------------'
-      write(logstdout,'(a)')' Case Name is '//trim(casename)
-      write(logstdout,'(a)') trim(subname)//' inst_name   = '//trim(inst_name)
-      write(logstdout,'(a)') trim(subname)//' inst_suffix = '//trim(inst_suffix)
-      write(logstdout,'(a,i4)') trim(subname)//' inst_index  = ',inst_index
-      write(logstdout,'(a)')' Read in ww3_inparm namelist from wav_in'//trim(inst_suffix)
-      write(logstdout,'(a)')' initfile = '//trim(initfile)
-      write(logstdout,'(a, 2x, f10.3)')' dtcfl    = ',dtcfl
-      write(logstdout,'(a, 2x, f10.3)')' dtcfli   = ',dtcfli
-      write(logstdout,'(a, 2x, f10.3)')' dtmax    = ',dtmax
-      write(logstdout,'(a, 2x, f10.3)')' dtmin    = ',dtmin
-      write(logstdout,*)
+      stdout = mds(1)
+      write(stdout,*)
+      write(stdout,'(a)')' --------------------------------------------------'
+      write(stdout,'(a)')'  Initializations : '
+      write(stdout,'(a)')' --------------------------------------------------'
+      write(stdout,'(a)')' Case Name is '//trim(casename)
+      write(stdout,'(a)') trim(subname)//' inst_name   = '//trim(inst_name)
+      write(stdout,'(a)') trim(subname)//' inst_suffix = '//trim(inst_suffix)
+      write(stdout,'(a,i4)') trim(subname)//' inst_index  = ',inst_index
+      write(stdout,'(a)')' Read in ww3_inparm namelist from wav_in'//trim(inst_suffix)
+      write(stdout,'(a)')' initfile = '//trim(initfile)
+      write(stdout,'(a, 2x, f10.3)')' dtcfl    = ',dtcfl
+      write(stdout,'(a, 2x, f10.3)')' dtcfli   = ',dtcfli
+      write(stdout,'(a, 2x, f10.3)')' dtmax    = ',dtmax
+      write(stdout,'(a, 2x, f10.3)')' dtmin    = ',dtmin
+      write(stdout,*)
     end if
 
     ! ESMF does not have a broadcast for chars
@@ -1958,7 +1955,7 @@ contains
   !! ww3_shel.nml file. Calls w3init to initialize the wave model
   !!
   !! @param[in]    gcomp        an ESMF_GridComp object
-  !! @param[in]    logstdout       the logfile unit on the root task
+  !! @param[in]    logstdout    the logfile unit on the root task
   !! @param[in]    ntrace       unit numbers for trace
   !! @param[in]    mpi_comm     an mpi communicator
   !! @param[in]    mds          unit numbers
@@ -1974,7 +1971,6 @@ contains
     use w3gdatmd     , only : dtcfl, dtcfli, dtmax, dtmin
     use w3initmd     , only : w3init
     use w3servmd     , only : strsplit
-    use w3timemd     , only : set_user_timestring
     use wav_shel_inp , only : read_shel_config
     use wav_shel_inp , only : npts, odat, iprt, x, y, pnames, prtfrm
     use wav_shel_inp , only : flgrd, flgd, flgr2, flg2
@@ -2000,8 +1996,6 @@ contains
 
     rc = ESMF_SUCCESS
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
-
-    print *,'YYY init ',iaproc,logstdout
 
     fnmpre = './'
     if (root_task) write(logstdout,'(a)') trim(subname)//' call read_shel_config'
