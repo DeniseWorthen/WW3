@@ -222,6 +222,7 @@ contains
     use w3odatmd        , only : w3nout, w3seto
     use w3odatmd        , only : naproc, naperr
     use w3timemd        , only : stme21
+    use w3wdatmd        , only : time
     use w3gdatmd        , only : nk
     use wav_shel_inp    , only : set_shel_io
     use wav_history_mod , only : wav_history_init
