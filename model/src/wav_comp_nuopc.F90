@@ -228,7 +228,7 @@ contains
     use wav_history_mod , only : wav_history_init
     use wav_pio_mod     , only : wav_pio_init
     !use wav_shr_mod     , only : diagnose_mesh, write_meshdecomp, wav_loginit
-    use wav_shr_mod     , only : diagnose_mesh, write_meshdecomp
+    !use wav_shr_mod     , only : diagnose_mesh, write_meshdecomp
     use wav_shr_flags   , only : w3_pdlib_flag
 
     ! input/output arguments
@@ -874,7 +874,7 @@ contains
 !     ! Generate local mpi comm
 !     !----------------------------------------------------------------------------
 
-    call ESMF_GridCompGet(gcomp, vm=vm, rc=rc)
+    call ESMF_GridCompGet(gcomp, vm=vm, localPet=iam, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
 !     call ESMF_VMGet(vm, mpiCommunicator=mpi_comm, peCount=petcount, localPet=iam, rc=rc)
@@ -890,8 +890,6 @@ contains
 !     napout = 1
 !     naperr = 1
 !     if (iaproc == napout) root_task = .true.
-
-    iam = iaproc - 1
 
 !     !--------------------------------------------------------------------
 !     ! IO set-up
