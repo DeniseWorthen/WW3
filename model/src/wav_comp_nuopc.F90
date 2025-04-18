@@ -874,8 +874,8 @@ contains
 !     ! Generate local mpi comm
 !     !----------------------------------------------------------------------------
 
-!     call ESMF_GridCompGet(gcomp, vm=vm, rc=rc)
-!     if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    call ESMF_GridCompGet(gcomp, vm=vm, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
 !     call ESMF_VMGet(vm, mpiCommunicator=mpi_comm, peCount=petcount, localPet=iam, rc=rc)
 !     if (ChkErr(rc,__LINE__,u_FILE_u)) return
