@@ -464,82 +464,102 @@ CONTAINS
     ! Loop over output points if saved weights do not exist
     !
     IF (.NOT. pnt_wght_exists) THEN
-      DO IPT=1, NPT
-        !
+      if (iaproc .eq. 1) then
+        DO IPT=1, NPT
+          !
 #ifdef W3_T
-        WRITE (NDST,9010) IPT, XPT(IPT), YPT(IPT), PNAMES(IPT)
+          WRITE (NDST,9010) IPT, XPT(IPT), YPT(IPT), PNAMES(IPT)
 #endif
-        !
+          !
 #ifdef W3_RTD
-        !!   Need to wrap rotated Elon values greater than X0.  JGLi12Jun2012
-        XPT(IPT) = MOD( EquLon(IPT)+360.0, 360.0 )
-        IF( XPT(IPT) .LT. X0 )  XPT(IPT) = XPT(IPT) + 360.0
+          !!   Need to wrap rotated Elon values greater than X0.  JGLi12Jun2012
+          XPT(IPT) = MOD( EquLon(IPT)+360.0, 360.0 )
+          IF( XPT(IPT) .LT. X0 )  XPT(IPT) = XPT(IPT) + 360.0
 #endif
-        !
-        !     Check if point within grid and compute interpolation weights
-        !
-        IF (GTYPE .NE. UNGTYPE) THEN
-          INGRID = W3GRMP( GSU, XPT(IPT), YPT(IPT), IX, IY, RD )
-        ELSE
-          CALL IS_IN_UNGRID(IMOD, DBLE(XPT(IPT)), DBLE(YPT(IPT)), itout, IX, IY, RD)
-          INGRID = (ITOUT.GT.0)
-        END IF
-        !
-        IF ( .NOT.INGRID ) THEN
-          IF ( IAPROC .EQ. NAPERR ) THEN
-            IF ( FLAGLL ) THEN
-              WRITE (NDSE,1000) XPT(IPT), YPT(IPT), PNAMES(IPT)
-            ELSE
-              WRITE (NDSE,1001) XPT(IPT), YPT(IPT), PNAMES(IPT)
-            END IF
+          !
+          !     Check if point within grid and compute interpolation weights
+          !
+          IF (GTYPE .NE. UNGTYPE) THEN
+            INGRID = W3GRMP( GSU, XPT(IPT), YPT(IPT), IX, IY, RD )
+          ELSE
+            CALL IS_IN_UNGRID(IMOD, DBLE(XPT(IPT)), DBLE(YPT(IPT)), itout, IX, IY, RD)
+            INGRID = (ITOUT.GT.0)
           END IF
-          CYCLE
-        END IF
-        !
+          !
+          IF ( .NOT.INGRID ) THEN
+            IF ( IAPROC .EQ. NAPERR ) THEN
+              IF ( FLAGLL ) THEN
+                WRITE (NDSE,1000) XPT(IPT), YPT(IPT), PNAMES(IPT)
+              ELSE
+                WRITE (NDSE,1001) XPT(IPT), YPT(IPT), PNAMES(IPT)
+              END IF
+            END IF
+            CYCLE
+          END IF
+          !
 #ifdef W3_T
-        DO K = 1,4
-          WRITE (NDST,9012) IX(K), IY(K), RD(K)
-        END DO
+          DO K = 1,4
+            WRITE (NDST,9012) IX(K), IY(K), RD(K)
+          END DO
 #endif
-        !
-        !     Check if point not on land
-        !
-        IF ( MAPSTA(IY(1),IX(1)) .EQ. 0 .AND. &
-             MAPSTA(IY(2),IX(2)) .EQ. 0 .AND. &
-             MAPSTA(IY(3),IX(3)) .EQ. 0 .AND. &
-             MAPSTA(IY(4),IX(4)) .EQ. 0 ) THEN
-          IF ( IAPROC .EQ. NAPERR ) THEN
-            IF ( FLAGLL ) THEN
-              WRITE (NDSE,1002) XPT(IPT), YPT(IPT), PNAMES(IPT)
-            ELSE
-              WRITE (NDSE,1003) XPT(IPT), YPT(IPT), PNAMES(IPT)
+          !
+          !     Check if point not on land
+          !
+          IF ( MAPSTA(IY(1),IX(1)) .EQ. 0 .AND. &
+               MAPSTA(IY(2),IX(2)) .EQ. 0 .AND. &
+               MAPSTA(IY(3),IX(3)) .EQ. 0 .AND. &
+               MAPSTA(IY(4),IX(4)) .EQ. 0 ) THEN
+            IF ( IAPROC .EQ. NAPERR ) THEN
+              IF ( FLAGLL ) THEN
+                WRITE (NDSE,1002) XPT(IPT), YPT(IPT), PNAMES(IPT)
+              ELSE
+                WRITE (NDSE,1003) XPT(IPT), YPT(IPT), PNAMES(IPT)
+              END IF
             END IF
+            CYCLE
           END IF
-          CYCLE
-        END IF
-        !
-        !     Store interpolation data
-        !
-        NOPTS  = NOPTS + 1
-        !
-        PTLOC (1,NOPTS) = XPT(IPT)
-        PTLOC (2,NOPTS) = YPT(IPT)
+          !
+          !     Store interpolation data
+          !
+          NOPTS  = NOPTS + 1
+          !
+          PTLOC (1,NOPTS) = XPT(IPT)
+          PTLOC (2,NOPTS) = YPT(IPT)
 #ifdef W3_RTD
-        !!   Store the standard lon/lat in PTLOC for output purpose, assuming
-        !!   they are not used for any inside calculation.  JGLi12Jun2012
-        PTLOC (1,NOPTS) = StdLon(IPT)
-        PTLOC (2,NOPTS) = StdLat(IPT)
+          !!   Store the standard lon/lat in PTLOC for output purpose, assuming
+          !!   they are not used for any inside calculation.  JGLi12Jun2012
+          PTLOC (1,NOPTS) = StdLon(IPT)
+          PTLOC (2,NOPTS) = StdLat(IPT)
 #endif
-        !
-        DO K = 1,4
-          IPTINT(1,K,NOPTS) = IX(K)
-          IPTINT(2,K,NOPTS) = IY(K)
-          PTIFAC(K,NOPTS) = RD(K)
-        END DO
+          !
+          DO K = 1,4
+            IPTINT(1,K,NOPTS) = IX(K)
+            IPTINT(2,K,NOPTS) = IY(K)
+            PTIFAC(K,NOPTS) = RD(K)
+          END DO
 
-        PTNME(NOPTS) = PNAMES(IPT)
-        !
-      END DO ! End loop over output points (IPT).
+          PTNME(NOPTS) = PNAMES(IPT)
+          !
+        END DO ! End loop over output points (IPT).
+      end if ! iaproc = 1
+#ifdef W3_MPI
+      ! Broadcast weight info from iaproc=1 to all MPI tasks:
+
+      !First broadcast NOPTS, used in the next calls:
+      CALL MPI_BCAST(NOPTS,1,MPI_INTEGER,0,MPI_COMM_IOPP,IERR_MPI)
+      CALL MPI_Barrier(MPI_COMM_IOPP,IERR_MPI)
+
+      CALL MPI_BCAST(PTLOC,2*NPT,MPI_REAL,0,MPI_COMM_IOPP,IERR_MPI)
+      CALL MPI_BCAST(PTIFAC,4*NPT,MPI_REAL,0,MPI_COMM_IOPP,IERR_MPI)
+      CALL MPI_BCAST(IPTINT(:,:,1:NOPTS),2*4*NOPTS,MPI_INTEGER,0,MPI_COMM_IOPP,IERR_MPI)
+
+      !Send point names individually
+      DO IPT=1, NOPTS
+        CALL MPI_BCAST(PTNME(IPT),40,MPI_CHARACTER,0,MPI_COMM_IOPP,IERR_MPI)
+      ENDDO
+
+      CALL MPI_Barrier(MPI_COMM_IOPP,IERR_MPI)
+#endif
     ELSE
       ! Saved weight file exists, read weights from file
       IF ( IAPROC .EQ. 1 ) THEN
@@ -576,25 +596,25 @@ CONTAINS
         ncerr = nf90_inq_varid(fh, VNAME_PTLOC, v_ptloc)
         if (nf90_err(ncerr) .ne. 0) return
         ncerr = nf90_get_var(fh, v_ptloc, PTLOC, start = (/ 1, 1/), &
-          count = (/ d_vsize_len, d_nopts_len /))
+             count = (/ d_vsize_len, d_nopts_len /))
         if (nf90_err(ncerr) .ne. 0) return
 
         ncerr = nf90_inq_varid(fh, VNAME_PTNME, v_ptnme)
         if (nf90_err(ncerr) .ne. 0) return
         ncerr = nf90_get_var(fh, v_ptnme, PTNME, start = (/ 1, 1/), &
-          count = (/ d_namelen_len, d_nopts_len /))
+             count = (/ d_namelen_len, d_nopts_len /))
         if (nf90_err(ncerr) .ne. 0) return
 
         ncerr = nf90_inq_varid(fh, VNAME_IPTINT, v_iptint)
         if (nf90_err(ncerr) .ne. 0) return
         ncerr = nf90_get_var(fh, v_iptint, IPTINT, start = (/ 1, 1/), &
-          count = (/ d_vsize_len, d_wghtlen_len, d_nopts_len /))
+             count = (/ d_vsize_len, d_wghtlen_len, d_nopts_len /))
         if (nf90_err(ncerr) .ne. 0) return
 
         ncerr = nf90_inq_varid(fh, VNAME_PTIFAC, v_ptifac)
         if (nf90_err(ncerr) .ne. 0) return
         ncerr = nf90_get_var(fh, v_ptifac, PTIFAC, start = (/ 1, 1/), &
-          count = (/ d_wghtlen_len, d_nopts_len /))
+             count = (/ d_wghtlen_len, d_nopts_len /))
         if (nf90_err(ncerr) .ne. 0) return
 
         ! Close the file.
@@ -604,19 +624,19 @@ CONTAINS
       END IF
 
 #ifdef W3_MPI
-      ! Broadcast weight info to all MPI tasks:
+      ! Broadcast weight info from iaproc=1 to all MPI tasks:
 
       !First broadcast NOPTS, used in the next calls:
-      CALL MPI_BCAST(NOPTS,1,MPI_INTEGER,IAPROC-1,MPI_COMM_IOPP,IERR_MPI)
+      CALL MPI_BCAST(NOPTS,1,MPI_INTEGER,0,MPI_COMM_IOPP,IERR_MPI)
       CALL MPI_Barrier(MPI_COMM_IOPP,IERR_MPI)
 
-      CALL MPI_BCAST(PTLOC,2*NPT,MPI_REAL,IAPROC-1,MPI_COMM_IOPP,IERR_MPI)
-      CALL MPI_BCAST(PTIFAC,4*NPT,MPI_REAL,IAPROC-1,MPI_COMM_IOPP,IERR_MPI)
-      CALL MPI_BCAST(IPTINT(:,:,1:NOPTS),2*4*NOPTS,MPI_INTEGER,IAPROC-1,MPI_COMM_IOPP,IERR_MPI)
+      CALL MPI_BCAST(PTLOC,2*NPT,MPI_REAL,0,MPI_COMM_IOPP,IERR_MPI)
+      CALL MPI_BCAST(PTIFAC,4*NPT,MPI_REAL,0,MPI_COMM_IOPP,IERR_MPI)
+      CALL MPI_BCAST(IPTINT(:,:,1:NOPTS),2*4*NOPTS,MPI_INTEGER,0,MPI_COMM_IOPP,IERR_MPI)
 
       !Send point names individually
       DO IPT=1, NOPTS
-        CALL MPI_BCAST(PTNME(IPT),40,MPI_CHARACTER,IAPROC-1,MPI_COMM_IOPP,IERR_MPI)
+        CALL MPI_BCAST(PTNME(IPT),40,MPI_CHARACTER,0,MPI_COMM_IOPP,IERR_MPI)
       ENDDO
 
       CALL MPI_Barrier(MPI_COMM_IOPP,IERR_MPI)

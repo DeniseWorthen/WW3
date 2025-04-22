@@ -899,7 +899,7 @@ CONTAINS
         ZLOG     = MIN(ALOG(ZMU),0.)
         ZBETA        = CONST1*ZMU*ZLOG**4
         !
-        ! Optional addition of capillary wave peak if SINTAIL2=1 
+        ! Optional addition of capillary wave peak if SINTAIL2=1
         !
         IF (SINTAILPAR(3).GT.0) THEN
           IF (USTR.LT.CM) THEN
@@ -1940,7 +1940,7 @@ CONTAINS
         ! Computation of sea surface roughness and charnock coefficient based
         ! on Donelan (2018). Determines minimum charnock; reduction for winds
         ! above a particular threshold
-        CHATH  = CAPCHNK(2) + 0.5 * (CAPCHNK(3) - CAPCHNK(2)) * (1 & 
+        CHATH  = CAPCHNK(2) + 0.5 * (CAPCHNK(3) - CAPCHNK(2)) * (1 &
                  - TANH((WINDSPEED-CAPCHNK(4))/CAPCHNK(5)))
         XMIN   = 0.15 * (CAPCHNK(3)-CHATH)
       ELSE
@@ -2588,8 +2588,8 @@ CONTAINS
       IS0=(IK-1)*NTH
       COEF4(IK) = C*C*SUM(BRLAMBDA(IS0+1:IS0+NTH))                          &
            *2.*PI/GRAV*SSDSC(7) * DDEN(IK)/(SIG(IK)*CG(IK))
-      COEF5(IK) = C**3*SUM(BRLAMBDA(IS0+1:IS0+NTH)                           &
-           *BRM12(IK))                       	       &
+      COEF5(IK) = C**3*SUM(BRLAMBDA(IS0+1:IS0+NTH)                          &
+           *BRM12(IK))                                                      &
            *AAIRGB/GRAV * DDEN(IK)/(SIG(IK)*CG(IK))
       !        COEF4(IK) = SUM(BRLAMBDA((IK-1)*NTH+1:IK*NTH) * DTH) *(2*PI/K(IK)) *  &
       !                    SSDSC(7) * DDEN(IK)/(DTH*SIG(IK)*CG(IK))
