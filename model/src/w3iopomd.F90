@@ -493,7 +493,6 @@ CONTAINS
               ELSE
                 WRITE (NDSE,1001) XPT(IPT), YPT(IPT), PNAMES(IPT)
               END IF
-              END IF
             END IF
             CYCLE
           END IF
