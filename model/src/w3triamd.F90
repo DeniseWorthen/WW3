@@ -1619,7 +1619,7 @@ CONTAINS
   !> @author Fabrice Ardhuin
   !> @date   26-Jan-2014
   !>
-  SUBROUTINE IS_IN_UNGRID(IMOD, XTIN, YTIN, ITOUT, IS, JS, RW)
+  SUBROUTINE IS_IN_UNGRID(ipt, IMOD, XTIN, YTIN, ITOUT, IS, JS, RW)
     !/ -------------------------------------------------------------------
     !/                  +-----------------------------------+
     !/                  | WAVEWATCH III           NOAA/NCEP |
@@ -1721,6 +1721,8 @@ CONTAINS
     USE W3SERVMD, ONLY: STRACE
 #endif
     USE W3ODATMD, ONLY: NDSE
+    !debug
+    USE W3ODATMD, only : IAPROC
     IMPLICIT NONE
 
     !/ ------------------------------------------------------------------- /
@@ -1731,6 +1733,7 @@ CONTAINS
     INTEGER, INTENT(OUT)           :: itout
     INTEGER, INTENT(OUT)           :: IS(4), JS(4)
     REAL, INTENT(OUT)              :: RW(4)
+    integer, intent(in) :: ipt
     !/ ------------------------------------------------------------------- /
     !local parameters
 
@@ -1798,6 +1801,7 @@ CONTAINS
         RW(2)=s2/sg2
         RW(3)=1.-RW(1)-RW(2)  !s3/sg3
         RW(4)=0.
+        write(2000+iaproc,'(2i8,2f10.2,3i8,3g14.7)')ipt,itri,xtin,ytin,is(1:3),rw(1:3)
       END IF
     ENDDO
   END SUBROUTINE IS_IN_UNGRID

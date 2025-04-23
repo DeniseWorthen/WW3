@@ -465,7 +465,7 @@ CONTAINS
     !
     IF (.NOT. pnt_wght_exists) THEN
       if (iaproc .eq. 1) then
-        DO IPT=1, NPT
+        DO IPT=1, 10
           !
 #ifdef W3_T
           WRITE (NDST,9010) IPT, XPT(IPT), YPT(IPT), PNAMES(IPT)
@@ -482,7 +482,7 @@ CONTAINS
           IF (GTYPE .NE. UNGTYPE) THEN
             INGRID = W3GRMP( GSU, XPT(IPT), YPT(IPT), IX, IY, RD )
           ELSE
-            CALL IS_IN_UNGRID(IMOD, DBLE(XPT(IPT)), DBLE(YPT(IPT)), itout, IX, IY, RD)
+            CALL IS_IN_UNGRID(ipt,IMOD, DBLE(XPT(IPT)), DBLE(YPT(IPT)), itout, IX, IY, RD)
             INGRID = (ITOUT.GT.0)
           END IF
           !
@@ -492,6 +492,7 @@ CONTAINS
                 WRITE (NDSE,1000) XPT(IPT), YPT(IPT), PNAMES(IPT)
               ELSE
                 WRITE (NDSE,1001) XPT(IPT), YPT(IPT), PNAMES(IPT)
+              END IF
               END IF
             END IF
             CYCLE

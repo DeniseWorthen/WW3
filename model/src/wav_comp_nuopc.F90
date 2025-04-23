@@ -711,6 +711,11 @@ contains
 #ifdef W3_PDLIB
     use yowNodepool , only : ng
 #endif
+    ! debug
+    use w3gdatmd   , only : filext, trigp, ntri
+    use w3triamd   , only : fix_periodcity
+    use w3gdatmd   , only : xgrd, ygrd
+    use wav_shel_inp, only : npts, x, y, pnames
 
     ! input/output variables
     type(ESMF_GridComp)  :: gcomp
@@ -741,6 +746,15 @@ contains
     integer(i4), pointer         :: meshmask(:)
     integer                      :: iam
     character(len=*), parameter  :: subname = '(wav_comp_nuopc:InitializeRealize)'
+    ! debug
+    integer :: ipt,i1,i2,i3
+    integer :: gind
+    integer :: is(4), js(4)
+    real    :: rw(4)
+    real(8) :: x1, x2, x3, xtinmod, xtin, ytin, xavg, y1,y2, y3, s1, s2, s3, sg1, sg2, sg3
+    real(8) :: pt(3,2)
+    logical :: found
+    integer :: foundcount
     ! -------------------------------------------------------------------
 
     rc = ESMF_SUCCESS
@@ -785,6 +799,8 @@ contains
       ix = mapsf(isea,1)
       iy = mapsf(isea,2)
       gindex_sea(jsea) = ix + (iy-1)*nx
+      !if (gindex_sea(jsea) .eq. 57267)print *,'XXX0 ',ix,iy,jsea
+      write(3000+iaproc,*)jsea,ix,iy,gindex_sea(jsea),isea
     end do
 
     if (unstr_mesh) then
@@ -854,12 +870,12 @@ contains
       if (unstr_mesh) then
         call diagnose_mesh(EMesh, size(gindex_sea), 'EMesh', rc=rc)
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
-        deallocate(gindex_sea)
+        !deallocate(gindex_sea)
       else
         call diagnose_mesh(EMesh, size(gindex), 'EMesh', rc=rc)
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
-        deallocate(gindex)
-        deallocate(gindex_sea)
+        !deallocate(gindex)
+        !deallocate(gindex_sea)
         deallocate(gindex_lnd)
       end if
     end if
@@ -906,6 +922,97 @@ contains
     call realize_fields(gcomp, mesh=Emesh, flds_scalar_name=flds_scalar_name, &
          flds_scalar_num=flds_scalar_num, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    ! debug
+    !do ipt = 1,npt
+    !CALL IS_IN_UNGRID(IMOD, DBLE(XPT(IPT)), DBLE(YPT(IPT)), itout, IX, IY, RD)
+    !INGRID = (ITOUT.GT.0)
+    ! ...w3triad ungrid
+    ! itout = 0
+    ! nbFound=0
+    ! ITRI = 0
+    ! DO WHILE (nbFound.EQ.0.AND.ITRI.LT.GRIDS(IMOD)%NTRI)
+    !   ITRI = ITRI +1
+    !   I1=GRIDS(IMOD)%TRIGP(1,ITRI)
+    !   I2=GRIDS(IMOD)%TRIGP(2,ITRI)
+    !   I3=GRIDS(IMOD)%TRIGP(3,ITRI)
+    !end do
+    ! --> ungrid returns ix(3),iy(3), and rd (or rw(4)) which are the weights
+    ! ...w3iopomd
+    ! if not found, note that not in grid
+    ! if mapsta of ix,iys are land...log on land
+    ! otherwise increment nopts by one, save them...
+    print *,'XXX0 ',size(trigp,2),ntri,nseal,nseal_cpl
+    foundcount = 0
+    do ipt = 1,10
+      ! point lat,lon
+      xtin = real(x(ipt),8)
+      ytin = real(y(ipt),8)
+      found = .false.
+      print *,'XXX1 ',ipt,xtin,ytin
+      do jsea = 1,nseal_cpl
+        if (.not. found) then
+          !if (mod(jsea,100) .eq. 0)write(1000+iaproc,*)ipt,jsea,nseal_cpl,foundcount
+          gind = gindex_sea(jsea)
+          i1 = trigp(1,gind)
+          i2 = trigp(2,gind)
+          i3 = trigp(3,gind)
+          !print *,'XXX ',jsea,gind,trigp(1,gind),trigp(2,gind),trigp(3,gind)
+          ! domain lat,lon
+          !call init_get_isea(isea, jsea)
+          !ix = mapsf(isea,1)
+          !iy = mapsf(isea,2)
+          !grlat = real(xgrid(iy,ix),8)
+          !grlon = real(ygrid(iy,ix),8)
+          call fix_periodcity(i1,i2,i3,real(xgrd,8),real(ygrd,8),pt)
+          ! coordinates of the first vertex a
+          x1 = pt(1,1)
+          y1 = pt(1,2)
+          ! coordinates of the 2nd vertex b
+          x2 = pt(2,1)
+          y2 = pt(2,2)
+          !coordinates of the 3rd vertex c
+          x3 = pt(3,1)
+          y3 = pt(3,2)
+          !ensure xtin is defined with same coordinates as element
+          xavg=(x1+x2+x3)/3
+          if (abs(xtin-xavg).gt.180) then
+            xtinmod=xtin-sign(360.0d0,(xtin-xavg))
+          else
+            xtinmod=xtin
+          end if
+          !with m = (xtinmod,ytin) the target point ...
+          !vector product of ab and ac
+          sg3=(y3-y1)*(x2-x1)-(x3-x1)*(y2-y1)
+          !vector product of ab and am
+          s3=(ytin-y1)*(x2-x1)-(xtinmod-x1)*(y2-y1)
+          !vector product of bc and ba
+          sg1=(y1-y2)*(x3-x2)-(x1-x2)*(y3-y2)
+          !vector product of bc and bm
+          s1=(ytin-y2)*(x3-x2)-(xtinmod-x2)*(y3-y2)
+          !vector product of ca and cb
+          sg2=(y2-y3)*(x1-x3)-(x2-x3)*(y1-y3)
+          !vector product of ca and cm
+          s2=(ytin-y3)*(x1-x3)-(xtinmod-x3)*(y1-y3)
+          if ((s1*sg1.ge.0).and.(s2*sg2.ge.0).and.(s3*sg3.ge.0)) then
+            !itout=itri
+            !nbfound=nbfound+1
+            found = .true.
+            foundcount = foundcount + 1
+            is(1)=i1
+            is(2)=i2
+            is(3)=i3
+            is(4)=1
+            js(:)=1
+            rw(1)=s1/sg1
+            rw(2)=s2/sg2
+            rw(3)=1.-rw(1)-rw(2)  !s3/sg3
+            rw(4)=0.
+            write(1000+iaproc,'(2i8,2f10.2,3i8,3g14.7)')ipt,gind,xtin,ytin,is(1:3),rw(1:3)
+            !write(1000+iaproc,*)ipt,gind,xtin,ytin,is,rw
+          end if
+        end if
+      enddo
+    end do
 
     !--------------------------------------------------------------------
     ! Write the header string for WW3 native logging
