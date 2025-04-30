@@ -132,6 +132,7 @@ contains
     use w3wdatmd       , only : qi5tbeg
 #endif
     use wav_kind_mod  , only : CL => shr_kind_cl
+    use w3odatmd      , only : use_historync
 
     ! input/output parameters
     integer,           intent(in) :: mpi_comm
@@ -520,6 +521,11 @@ contains
       if (w3_cou_flag) then
         notype = 7
       end if
+      ! history frequency is determined by history_n and history_option
+      if (use_historync .and. odat(3) .eq. 0) then
+        fldout = nml_output_type%field%list
+      end if
+
       do j = 1, notype
 
         ! outpts(i)%ofiles(j)=ofiles(j)
