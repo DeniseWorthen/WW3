@@ -524,6 +524,7 @@ contains
       ! history frequency is determined by history_n and history_option
       if (use_historync .and. odat(3) .eq. 0) then
         fldout = nml_output_type%field%list
+        call w3flgrdflag ( ndso, ndso, ndse, fldout, flgd, flgrd, iaproc, napout, ierr )
       end if
 
       do j = 1, notype
