@@ -776,8 +776,8 @@ contains
          varatts( "WLV  ", "WLV       ", "Water levels                                    ", "m         ", "  ", .false.) , &
          varatts( "ICE  ", "ICE       ", "Ice coverage                                    ", "nd        ", "  ", .false.) , &
          varatts( "IBG  ", "BERG      ", "Iceberg-induced damping                         ", "km-1      ", "  ", .false.) , &
-         varatts( "TAUA ", "TAUAX     ", "Atm momentum x                                  ", "Pa        ", "  ", .false.) , &
-         varatts( "TAUA ", "TAUAY     ", "Atm momentum y                                  ", "Pa        ", "  ", .false.) , &
+         varatts( "TAU  ", "TAUAX     ", "Atm momentum x                                  ", "Pa        ", "  ", .false.) , &
+         varatts( "TAU  ", "TAUAY     ", "Atm momentum y                                  ", "Pa        ", "  ", .false.) , &
          varatts( "RHO  ", "RHOAIR    ", "Air density                                     ", "kg m-3    ", "  ", .false.) , &
          varatts( "IC1  ", "ICEH      ", "Ice thickness                                   ", "m         ", "  ", .false.) , &
          varatts( "IC5  ", "ICEF      ", "Ice floe diameter                               ", "m         ", "  ", .false.)   &
