@@ -766,7 +766,7 @@ contains
     gridoutdefs(:,:)%validout = .false.
 
     !  1   Forcing Fields
-    gridoutdefs(1,1:14) = [ &
+    gridoutdefs(1,1:15) = [ &
          varatts( "DPT  ", "DW        ", "Water depth                                     ", "m         ", "  ", .false.) , &
          varatts( "CUR  ", "CX        ", "Mean current, x-component                       ", "m s-1     ", "  ", .false.) , &
          varatts( "CUR  ", "CY        ", "Mean current, y-component                       ", "m s-1     ", "  ", .false.) , &
@@ -779,12 +779,13 @@ contains
          varatts( "TAU  ", "TAUAX     ", "Atm momentum x                                  ", "Pa        ", "  ", .false.) , &
          varatts( "TAU  ", "TAUAY     ", "Atm momentum y                                  ", "Pa        ", "  ", .false.) , &
          varatts( "RHO  ", "RHOAIR    ", "Air density                                     ", "kg m-3    ", "  ", .false.) , &
+         varatts( "D50  ", "D50       ", "Grain size                                      ", "phi scale ", "  ", .false.) , &
          varatts( "IC1  ", "ICEH      ", "Ice thickness                                   ", "m         ", "  ", .false.) , &
          varatts( "IC5  ", "ICEF      ", "Ice floe diameter                               ", "m         ", "  ", .false.)   &
          ]
 
     !  2   Standard mean wave Parameters
-    gridoutdefs(2,1:18) = [ &
+    gridoutdefs(2,1:19) = [ &
          varatts( "HS   ", "HS        ", "Significant wave height                         ", "m         ", "  ", .false.) , &
          varatts( "LM   ", "WLM       ", "Mean wave length                                ", "m         ", "  ", .false.) , &
          varatts( "T02  ", "T02       ", "Mean wave period (Tm0,2)                        ", "s         ", "  ", .false.) , &
@@ -802,6 +803,7 @@ contains
          varatts( "SDMH ", "HMAXD     ", "St Dev of MXC (STE)                             ", "m         ", "  ", .false.) , &
          varatts( "SDMHC", "HCMAXD    ", "St Dev of MXHC (STE)                            ", "m         ", "  ", .false.) , &
          varatts( "WBT  ", "WBT       ", "Dominant wave breaking probability (b_T)        ", "nd        ", "  ", .false.) , &
+         varatts( "TP   ", "TP        ", "Dominant wave peak period                       ", "s         ", "  ", .false.) , &
          varatts( "WNM  ", "WNMEAN    ", "Mean wave number                                ", "m-1       ", "  ", .false.)   &
          ]
 
@@ -850,7 +852,7 @@ contains
          varatts( "TWA  ", "TAUWNY    ", "Negative part of the wave-supported stress y    ", "m2 s-2    ", "  ", .false.) , &
          varatts( "WCC  ", "WCC       ", "Whitecap coverage                               ", "nd        ", "  ", .false.) , &
          varatts( "WCF  ", "WCF       ", "Whitecap foam thickness                         ", "m         ", "  ", .false.) , &
-         varatts( "WCH  ", "WCH       ", "Mean breaking wave heigh                        ", "m         ", "  ", .false.) , &
+         varatts( "WCH  ", "WCH       ", "Whitecap mean breaking wave height              ", "m         ", "  ", .false.) , &
          varatts( "WCM  ", "WCM       ", "Whitecap moment                                 ", "nd        ", "  ", .false.) , &
          varatts( "FWS  ", "TWS       ", "Wind sea mean period                            ", "s         ", "  ", .false.)   &
          ]
@@ -899,16 +901,18 @@ contains
          ]
 
     !  8   Spectrum parameters
-    gridoutdefs(8,1:9) = [ &
-         varatts( "MSS  ", "MSSX      ", "Surface mean square slope x                     ", "nd        ", "  ", .false.) , &
-         varatts( "MSS  ", "MSSY      ", "Surface mean square slope y                     ", "nd        ", "  ", .false.) , &
-         varatts( "MSC  ", "MSCX      ", "Spectral level at high frequency tail x         ", "nd        ", "  ", .false.) , &
-         varatts( "MSC  ", "MSCY      ", "Spectral level at high frequency tail y         ", "nd        ", "  ", .false.) , &
-         varatts( "WL02 ", "WL02X     ", "East/X North/Y mean wavelength component        ", "nd        ", "  ", .false.) , &
-         varatts( "WL02 ", "WL02Y     ", "East/X North/Y mean wavelength component        ", "nd        ", "  ", .false.) , &
-         varatts( "AXT  ", "ALPXT     ", "Correl sea surface gradients (x,t)              ", "nd        ", "  ", .false.) , &
-         varatts( "AYT  ", "ALPYT     ", "Correl sea surface gradients (y,t)              ", "nd        ", "  ", .false.) , &
-         varatts( "AXY  ", "ALPXY     ", "Correl sea surface gradients (x,y)              ", "nd        ", "  ", .false.)   &
+    gridoutdefs(8,1:11) = [ &
+         varatts( "MSS  ", "MSSU      ", "Downwave mean square slope                      ", "nd        ", "  ", .false.) , &
+         varatts( "MSS  ", "MSSC      ", "Crosswave mean square slope                     ", "nd        ", "  ", .false.) , &
+         varatts( "MSC  ", "MSCX      ", "Eastward phillips constant                      ", "nd        ", "  ", .false.) , &
+         varatts( "MSC  ", "MSCY      ", "Northward phillips constant                     ", "nd        ", "  ", .false.) , &
+         varatts( "MSD  ", "MSD       ", "U direction for mss                             ", "nd        ", "  ", .false.) , &
+         varatts( "MCD  ", "MCD       ", "X direction for msc                             ", "nd        ", "  ", .false.) , &
+         varatts( "QP   ", "QP        ", "Peakedness                                      ", "nd        ", "  ", .false.) , &
+         varatts( "QKK  ", "QKK       ", "K-peakedness                                    ", "nd        ", "  ", .false.) , &
+         varatts( "SKW  ", "SKW       ", "Skewness                                        ", "nd        ", "  ", .false.) , &
+         varatts( "EMB  ", "EMB       ", "EM-bias                                         ", "nd        ", "  ", .false.) , &
+         varatts( "EMC  ", "EMC       ", "Tracker bias                                    ", "nd        ", "  ", .false.)   &
          ]
 
     !  9   Numerical diagnostics
