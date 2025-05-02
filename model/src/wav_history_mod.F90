@@ -85,7 +85,8 @@ contains
     use w3adatmd   , only : pthp0, pqp, ppe, pgw, psw, ptm1, pt1, pt2
     use w3adatmd   , only : pep, tauox, tauoy, tauwix, tauwiy
     use w3adatmd   , only : phiaw, phioc, tusx, tusy, prms, tpms
-    use w3adatmd   , only : ussx, ussy, mssx, mssy, mscx, mscy
+    use w3adatmd   , only : ussx, ussy, mssx, mssy, mscx, mscy, mscd, mssd
+    use w3adatmd   , only : qp, qkk, skew, embia1, embia2
     use w3adatmd   , only : tauwnx, tauwny, charn, tws, bhd
     use w3adatmd   , only : phibbl, taubbl, whitecap, bedforms, cge, ef
     use w3adatmd   , only : cflxymax, cflthmax, cflkmax, p2sms, us3d
@@ -365,6 +366,7 @@ contains
         if (vname .eq.   'HMAXD') call write_var2d(vname, hmaxd    (1:nseal_cpl) )
         if (vname .eq.  'HCMAXD') call write_var2d(vname, hcmaxd   (1:nseal_cpl) )
         if (vname .eq.     'WBT') call write_var2d(vname, wbt      (1:nseal_cpl) )
+        if (vname .eq.      'TP') call write_var2d(vname, fp0      (1:nseal_cpl) )
         if (vname .eq.  'WNMEAN') call write_var2d(vname, wnmean   (1:nseal_cpl), init0='false')
 
         ! Group 4
@@ -408,6 +410,7 @@ contains
         if (vname .eq.  'TAUOCY') call write_var2d(vname, tauocy   (1:nseal_cpl) )
         if (vname .eq.   'USSHX') call write_var2d(vname, usshx    (1:nseal_cpl) )
         if (vname .eq.   'USSHY') call write_var2d(vname, usshy    (1:nseal_cpl) )
+
         ! Group 7
         if (vname .eq.    'ABAX') call write_var2d(vname, aba      (1:nseal_cpl), dir=cos(abd(1:nseal_cpl)) )
         if (vname .eq.    'ABAY') call write_var2d(vname, aba      (1:nseal_cpl), dir=sin(abd(1:nseal_cpl)) )
@@ -425,6 +428,13 @@ contains
         if (vname .eq.    'MSSY') call write_var2d(vname, mssy     (1:nseal_cpl) )
         if (vname .eq.    'MSCX') call write_var2d(vname, mscx     (1:nseal_cpl) )
         if (vname .eq.    'MSCY') call write_var2d(vname, mscy     (1:nseal_cpl) )
+        if (vname .eq.    'MSSD') call write_var2d(vname, mssd     (1:nseal_cpl) )
+        if (vname .eq.    'MSCD') call write_var2d(vname, mscd     (1:nseal_cpl) )
+        if (vname .eq.      'QP') call write_var2d(vname, qp       (1:nseal_cpl) )
+        if (vname .eq.     'QKK') call write_var2d(vname, qkk      (1:nseal_cpl) )
+        if (vname .eq.     'SKW') call write_var2d(vname, skew     (1:nseal_cpl) )
+        if (vname .eq.     'EMB') call write_var2d(vname, embia1   (1:nseal_cpl) )
+        if (vname .eq.     'EMC') call write_var2d(vname, embia2   (1:nseal_cpl) )
         !TODO: remaining variables have inconsistency between shel_inp listing and iogo code
 
         ! Group 9
@@ -766,7 +776,7 @@ contains
     gridoutdefs(:,:)%validout = .false.
 
     !  1   Forcing Fields
-    gridoutdefs(1,1:15) = [ &
+    gridoutdefs(1,1:14) = [ &
          varatts( "DPT  ", "DW        ", "Water depth                                     ", "m         ", "  ", .false.) , &
          varatts( "CUR  ", "CX        ", "Mean current, x-component                       ", "m s-1     ", "  ", .false.) , &
          varatts( "CUR  ", "CY        ", "Mean current, y-component                       ", "m s-1     ", "  ", .false.) , &
@@ -779,7 +789,6 @@ contains
          varatts( "TAU  ", "TAUAX     ", "Atm momentum x                                  ", "Pa        ", "  ", .false.) , &
          varatts( "TAU  ", "TAUAY     ", "Atm momentum y                                  ", "Pa        ", "  ", .false.) , &
          varatts( "RHO  ", "RHOAIR    ", "Air density                                     ", "kg m-3    ", "  ", .false.) , &
-         varatts( "D50  ", "D50       ", "Grain size                                      ", "phi scale ", "  ", .false.) , &
          varatts( "IC1  ", "ICEH      ", "Ice thickness                                   ", "m         ", "  ", .false.) , &
          varatts( "IC5  ", "ICEF      ", "Ice floe diameter                               ", "m         ", "  ", .false.)   &
          ]
@@ -854,11 +863,11 @@ contains
          varatts( "WCF  ", "WCF       ", "Whitecap foam thickness                         ", "m         ", "  ", .false.) , &
          varatts( "WCH  ", "WCH       ", "Whitecap mean breaking wave height              ", "m         ", "  ", .false.) , &
          varatts( "WCM  ", "WCM       ", "Whitecap moment                                 ", "nd        ", "  ", .false.) , &
-         varatts( "FWS  ", "TWS       ", "Wind sea mean period                            ", "s         ", "  ", .false.)   &
+         varatts( "FWS  ", "FWS       ", "Wind sea mean period T0M1                       ", "s         ", "  ", .false.)   &
          ]
 
     !  6   Wave-ocean layer
-    gridoutdefs(6,1:25) = [ &
+    gridoutdefs(6,1:23) = [ &
          varatts( "SXY  ", "SXX       ", "Radiation stresses xx                           ", "N m-1     ", "  ", .false.) , &
          varatts( "SXY  ", "SYY       ", "Radiation stresses yy                           ", "N m-1     ", "  ", .false.) , &
          varatts( "SXY  ", "SXY       ", "Radiation stresses xy                           ", "N m-1     ", "  ", .false.) , &
@@ -880,8 +889,6 @@ contains
          varatts( "FIC  ", "PHICE     ", "Wave to sea ice energy flux                     ", "W m-2     ", "  ", .false.) , &
          varatts( "USP  ", "USSPX     ", "Partitioned surface Stokes drift x              ", "m s-1     ", "p ", .false.) , &
          varatts( "USP  ", "USSPY     ", "Partitioned surface Stokes drift y              ", "m s-1     ", "p ", .false.) , &
-         varatts( "TWC  ", "TAUOCX    ", "Total wave to ocean stress x                    ", "Pa        ", "  ", .false.) , &
-         varatts( "TWC  ", "TAUOCY    ", "Total wave to ocean stress y                    ", "Pa        ", "  ", .false.) , &
          varatts( "USSH ", "USSHX     ", "Surface layer averaged Stokes drift x           ", "m s-1     ", "  ", .false.) , &
          varatts( "USSH ", "USSHY     ", "Surface layer averaged Stokes drift y           ", "m s-1     ", "  ", .false.)   &
          ]
