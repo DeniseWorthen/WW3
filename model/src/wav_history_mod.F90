@@ -424,12 +424,12 @@ contains
         if (vname .eq. 'TAUBBLY') call write_var2d(vname, taubbl   (1:nseal_cpl,2), init2='true')
 
         ! Group 8
-        if (vname .eq.    'MSSX') call write_var2d(vname, mssx     (1:nseal_cpl) )
-        if (vname .eq.    'MSSY') call write_var2d(vname, mssy     (1:nseal_cpl) )
+        if (vname .eq.    'MSSU') call write_var2d(vname, mssx     (1:nseal_cpl) )
+        if (vname .eq.    'MSSC') call write_var2d(vname, mssy     (1:nseal_cpl) )
         if (vname .eq.    'MSCX') call write_var2d(vname, mscx     (1:nseal_cpl) )
         if (vname .eq.    'MSCY') call write_var2d(vname, mscy     (1:nseal_cpl) )
-        if (vname .eq.    'MSSD') call write_var2d(vname, mssd     (1:nseal_cpl) )
-        if (vname .eq.    'MSCD') call write_var2d(vname, mscd     (1:nseal_cpl) )
+        if (vname .eq.     'MSD') call write_var2d(vname, mssd     (1:nseal_cpl) )
+        if (vname .eq.     'MCD') call write_var2d(vname, mscd     (1:nseal_cpl) )
         if (vname .eq.      'QP') call write_var2d(vname, qp       (1:nseal_cpl) )
         if (vname .eq.     'QKK') call write_var2d(vname, qkk      (1:nseal_cpl) )
         if (vname .eq.     'SKW') call write_var2d(vname, skew     (1:nseal_cpl) )
