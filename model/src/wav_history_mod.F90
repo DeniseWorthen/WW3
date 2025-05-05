@@ -269,8 +269,6 @@ contains
       call handle_err(ierr, 'put trigp')
     end if
 
-    ! TODO: tried init decomp w/ use_int=.true. but getting garbage
-    ! land values....sea values OK
     ! mapsta is global
     lmap(:) = 0
     do jsea = 1,nseal_cpl
@@ -326,7 +324,7 @@ contains
         if(vname .eq.    'STH1M') call write_var3d(iodesc3dk, vname, ef       (1:nseal_cpl,e3df(2,3):e3df(3,3)) )
         if(vname .eq.     'TH2M') call write_var3d(iodesc3dk, vname, ef       (1:nseal_cpl,e3df(2,4):e3df(3,4)) )
         if(vname .eq.    'STH2M') call write_var3d(iodesc3dk, vname, ef       (1:nseal_cpl,e3df(2,5):e3df(3,5)) )
-        !TODO: wn has reversed indices (1:nk, 1:nseal_cpl)
+        if(vname .eq.       'WN') call write_var3d(iodesc3dk, vname, transpose(wn) )
         ! Group 6
         if (vname .eq.   'US3DX') call write_var3d(iodesc3dk, vname, us3d     (1:nseal_cpl,   us3df(2):us3df(3)) )
         if (vname .eq.   'US3DY') call write_var3d(iodesc3dk, vname, us3d     (1:nseal_cpl,nk+us3df(2):nk+us3df(3)) )
@@ -435,7 +433,6 @@ contains
         if (vname .eq.     'SKW') call write_var2d(vname, skew     (1:nseal_cpl) )
         if (vname .eq.     'EMB') call write_var2d(vname, embia1   (1:nseal_cpl) )
         if (vname .eq.     'EMC') call write_var2d(vname, embia2   (1:nseal_cpl) )
-        !TODO: remaining variables have inconsistency between shel_inp listing and iogo code
 
         ! Group 9
         if (vname .eq.   'DTDYN') call write_var2d(vname, dtdyn    (1:nseal_cpl) )
@@ -823,7 +820,6 @@ contains
          varatts( "STH1M", "STH1M     ", "Directional spreading from a1,b2                ", "deg       ", "k ", .false.) , &
          varatts( "TH2M ", "TH2M      ", "Mean wave direction from a2,b2                  ", "deg       ", "k ", .false.) , &
          varatts( "STH2M", "STH2M     ", "Directional spreading from a2,b2                ", "deg       ", "k ", .false.) , &
-         !TODO: has reverse indices (nk,nsea)
          varatts( "WN   ", "WN        ", "Wavenumber array                                ", "m-1       ", "k ", .false.)   &
          ]
 
