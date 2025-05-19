@@ -1654,6 +1654,92 @@ contains
 
   end subroutine CalcT0M1
 
+  !===============================================================================
+  !> Calculate partitioned stokes drift for export
+  !!
+  !> @details Calculates P-stokes independently of w3iogomd using method 2 to ensure
+  !! that fields sent to ocn component are updated at the coupling frequency
+  !!
+  !! @param[in]    a                input spectra
+  !! @param[in]    fval             fill value
+  !! @param[in]    nbins            number of partitioned bins
+  !! @param[inout] sw_pstokes_x     a 2-D pointer to a field on a mesh
+  !! @param[inout] sw_pstokes_y     a 2-D pointer to a field on a mesh
+  !!
+  !> @author Denise.Worthen@noaa.gov
+  !> @date 05-19-2025
+  subroutine CalcPStokes(a, sw_pstokes_x, sw_pstokes_y, nbins, fval)
+
+    ! input/output variables
+    real,                        intent(in)    :: a(nth,nk,0:nseal)
+    real(ESMF_KIND_R8),          intent(in)    :: fval
+    integer,                     intent(in)    :: nbins
+    real(ESMF_KIND_R8), pointer, intent(inout) :: sw_pstokes_x(:,:)
+    real(ESMF_KIND_R8), pointer, intent(inout) :: sw_pstokes_y(:,:)
+
+    use w3gdatmd,  only : nth, nk, nseal, mapsf, mapsta, dden, ecos, esin
+    use w3adatmd,  only : dw, cg, wn
+    use w3gdatmd,  only : sig
+    use w3parall,  only : init_get_isea
+
+    ! local variables
+    real    :: factor, kd, abx, aby, fkd, ussco, us1(nk), vs1(nk), up(nbins), vp(nbins)
+    integer :: ik, ith, isea, jsea, ix, iy
+
+    do jsea = 1,nseal_cpl
+      call init_get_isea(isea, jsea)
+      ix  = mapsf(isea,1)                   ! global ix
+      iy  = mapsf(isea,2)                   ! global iy
+      if (mapsta(iy,ix) == 1) then          ! active sea point
+        us1 = 0.0
+        vs1 = 0.0
+        do ik = 1,nk
+          factor = dden(ik) / cg(ik,isea)
+          abx = 0.0
+          aby = 0.0
+          do ith = 1,nth
+            abx = abx + a(ith,ik,jsea)*ecos(ith)
+            aby = aby + a(ith,ik,jsea)*esin(ith)
+          end do
+
+          kd = max ( 0.001 , wn(ik,isea) * dw(isea) )
+          if (kd .lt. 6.0) then
+            fkd =  factor / sinh(kd)**2
+            ussco = fkd*sig(ik)*wn(ik,isea)*cosh(2.0*kd)
+          else
+            ussco = factor*sig(ik)*2.0*wn(ik,isea)
+          end if
+          us1(ik) = us1(ik) + abx*ussco
+          vs1(ik) = vs1(ik) + aby*ussco
+        end do !ik
+
+        up(:) = 0.0
+        vp(:) = 0.0
+        do ik = 1,nk
+          ! match each spectral component to the nearest partition
+          mindiff = 1.0e8
+          spc2bnd(ik) = 1
+          mindiff=abs(ussp_wn(1)-wn(ik,isea))
+          do ib=2,nbins
+            if (mindiff .gt. abs(ussp_wn(ib)-wn(ik,isea))) then
+              spc2bnd(ik) = ib
+              mindiff = abs(ussp_wn(ib)-wn(ik,isea))
+            endif
+          enddo
+          !put spectral energey into whichever band central wavenumber fits in
+          up(spc2bnd(ik)) = up(spc2bnd(ik)) + us1(ik)
+          vp(spc2bnd(ik)) = vp(spc2bnd(ik)) + vs1(ik)
+        end do
+        sw_pstokes_x(:,jsea) = up(:)
+        sw_pstokes_y(:,jsea) = vp(:)
+      else
+        sw_pstokes_x(:,jsea) = fval
+        sw_pstokes_y(:,jsea) = fval
+      end if
+    end do
+
+  end subroutine CalcPStokes
+
   !====================================================================================
   !> Create a global field across all PEs
   !!
