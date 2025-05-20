@@ -1687,7 +1687,7 @@ contains
     real    :: factor, kd, abx, aby, fkd, ussco, mindiff
     real    :: us1(nk), vs1(nk), up(nbins), vp(nbins)
     integer :: ib, ik, ith, isea, jsea, ix, iy
-    integer :: spc2bnd(nk)
+    integer :: spc2bnd
 
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
@@ -1707,7 +1707,7 @@ contains
 
           kd = max ( 0.001 , wn(ik,isea) * dw(isea) )
           if (kd .lt. 6.0) then
-            fkd =  factor / sinh(kd)**2
+            fkd = factor / sinh(kd)**2
             ussco = fkd*sig(ik)*wn(ik,isea)*cosh(2.0*kd)
           else
             ussco = factor*sig(ik)*2.0*wn(ik,isea)
@@ -1721,17 +1721,17 @@ contains
         do ik = 1,nk
           ! match each spectral component to the nearest partition
           mindiff = 1.0e8
-          spc2bnd(ik) = 1
+          spc2bnd = 1
           mindiff=abs(ussp_wn(1)-wn(ik,isea))
           do ib=2,nbins
             if (mindiff .gt. abs(ussp_wn(ib)-wn(ik,isea))) then
-              spc2bnd(ik) = ib
+              spc2bnd = ib
               mindiff = abs(ussp_wn(ib)-wn(ik,isea))
             endif
           enddo
           ! put spectral energey into whichever band central wavenumber fits in
-          up(spc2bnd(ik)) = up(spc2bnd(ik)) + us1(ik)
-          vp(spc2bnd(ik)) = vp(spc2bnd(ik)) + vs1(ik)
+          up(spc2bnd) = up(spc2bnd) + us1(ik)
+          vp(spc2bnd) = vp(spc2bnd) + vs1(ik)
         end do
         sw_pstokes_x(:,jsea) = up(:)
         sw_pstokes_y(:,jsea) = vp(:)
@@ -1740,7 +1740,7 @@ contains
         sw_pstokes_y(:,jsea) = fval
       end if
     end do
-    print *,'XXX pstokes done'
+
   end subroutine CalcPStokes
 
   !====================================================================================
