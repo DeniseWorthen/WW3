@@ -755,18 +755,19 @@ contains
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
       sw_pstokes_x(:,:) = fillvalue
       sw_pstokes_y(:,:) = fillvalue
-      if (USSPF(1) > 0) then ! Partitioned Stokes drift computation is turned on in mod_def file.
-        call CALC_U3STOKES(va, 2)
-        do ib = 1, USSPF(2)
-          do jsea = 1, nseal_cpl
-            call init_get_isea(isea, jsea)
-            ix  = mapsf(isea,1)
-            iy  = mapsf(isea,2)
-            sw_pstokes_x(ib,jsea) = ussp(jsea,ib)
-            sw_pstokes_y(ib,jsea) = ussp(jsea,nk+ib)
-          enddo
-        end do
-      end if
+      call CalcPStokes(va, sw_pstokes_x, sw_pstokes_y, usspf(2), fillvalue)
+      ! if (USSPF(1) > 0) then ! Partitioned Stokes drift computation is turned on in mod_def file.
+      !   call CALC_U3STOKES(va, 2)
+      !   do ib = 1, USSPF(2)
+      !     do jsea = 1, nseal_cpl
+      !       call init_get_isea(isea, jsea)
+      !       ix  = mapsf(isea,1)
+      !       iy  = mapsf(isea,2)
+      !       sw_pstokes_x(ib,jsea) = ussp(jsea,ib)
+      !       sw_pstokes_y(ib,jsea) = ussp(jsea,nk+ib)
+      !     enddo
+      !   end do
+      ! end if
     endif
 
     if (state_fldchk(exportState, 'Sw_hs')) then
@@ -1670,6 +1671,11 @@ contains
   !> @date 05-19-2025
   subroutine CalcPStokes(a, sw_pstokes_x, sw_pstokes_y, nbins, fval)
 
+    use w3gdatmd,  only : nth, nk, nseal, mapsf, mapsta, dden, ecos, esin
+    use w3adatmd,  only : dw, cg, wn
+    use w3gdatmd,  only : sig, ussp_wn
+    use w3parall,  only : init_get_isea
+
     ! input/output variables
     real,                        intent(in)    :: a(nth,nk,0:nseal)
     real(ESMF_KIND_R8),          intent(in)    :: fval
@@ -1677,14 +1683,11 @@ contains
     real(ESMF_KIND_R8), pointer, intent(inout) :: sw_pstokes_x(:,:)
     real(ESMF_KIND_R8), pointer, intent(inout) :: sw_pstokes_y(:,:)
 
-    use w3gdatmd,  only : nth, nk, nseal, mapsf, mapsta, dden, ecos, esin
-    use w3adatmd,  only : dw, cg, wn
-    use w3gdatmd,  only : sig
-    use w3parall,  only : init_get_isea
-
     ! local variables
-    real    :: factor, kd, abx, aby, fkd, ussco, us1(nk), vs1(nk), up(nbins), vp(nbins)
-    integer :: ik, ith, isea, jsea, ix, iy
+    real    :: factor, kd, abx, aby, fkd, ussco, mindiff
+    real    :: us1(nk), vs1(nk), up(nbins), vp(nbins)
+    integer :: ib, ik, ith, isea, jsea, ix, iy
+    integer :: spc2bnd(nk)
 
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
@@ -1726,7 +1729,7 @@ contains
               mindiff = abs(ussp_wn(ib)-wn(ik,isea))
             endif
           enddo
-          !put spectral energey into whichever band central wavenumber fits in
+          ! put spectral energey into whichever band central wavenumber fits in
           up(spc2bnd(ik)) = up(spc2bnd(ik)) + us1(ik)
           vp(spc2bnd(ik)) = vp(spc2bnd(ik)) + vs1(ik)
         end do
@@ -1737,7 +1740,7 @@ contains
         sw_pstokes_y(:,jsea) = fval
       end if
     end do
-
+    print *,'XXX pstokes done'
   end subroutine CalcPStokes
 
   !====================================================================================
