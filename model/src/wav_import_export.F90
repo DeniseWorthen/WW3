@@ -612,6 +612,9 @@ contains
     real(r8), pointer :: sw_pstokes_x(:,:)
     real(r8), pointer :: sw_pstokes_y(:,:)
     character(len=*), parameter :: subname='(wav_import_export:export_fields)'
+    ! debug
+    character(len=10) :: pstoke_method
+
     !---------------------------------------------------------------------------
 
     rc = ESMF_SUCCESS
@@ -620,6 +623,9 @@ contains
     ! Get export state
     call NUOPC_ModelGet(gcomp, exportState=exportState, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
+
+
+    call NUOPC_CompAttributeGet(gcomp, name='pstoke_method', value=pstoke_method, rc=rc)
 
 #ifdef W3_CESMCOUPLED
     if (state_fldchk(exportState, 'Sw_lamult')) then
@@ -755,19 +761,22 @@ contains
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
       sw_pstokes_x(:,:) = fillvalue
       sw_pstokes_y(:,:) = fillvalue
-      call CalcPStokes(va, sw_pstokes_x, sw_pstokes_y, usspf(2), fillvalue)
-      ! if (USSPF(1) > 0) then ! Partitioned Stokes drift computation is turned on in mod_def file.
-      !   call CALC_U3STOKES(va, 2)
-      !   do ib = 1, USSPF(2)
-      !     do jsea = 1, nseal_cpl
-      !       call init_get_isea(isea, jsea)
-      !       ix  = mapsf(isea,1)
-      !       iy  = mapsf(isea,2)
-      !       sw_pstokes_x(ib,jsea) = ussp(jsea,ib)
-      !       sw_pstokes_y(ib,jsea) = ussp(jsea,nk+ib)
-      !     enddo
-      !   end do
-      ! end if
+      if (USSPF(1) > 0) then ! Partitioned Stokes drift computation is turned on in mod_def file.
+        if (trim(pstoke_method) == 'new') then
+          call CalcPStokes(va, sw_pstokes_x, sw_pstokes_y, usspf(2), fillvalue)
+        else
+          call CALC_U3STOKES(va, 2)
+          do ib = 1, USSPF(2)
+            do jsea = 1, nseal_cpl
+              call init_get_isea(isea, jsea)
+              ix  = mapsf(isea,1)
+              iy  = mapsf(isea,2)
+              sw_pstokes_x(ib,jsea) = ussp(jsea,ib)
+              sw_pstokes_y(ib,jsea) = ussp(jsea,nk+ib)
+            enddo
+          end do
+        end if
+      end if
     endif
 
     if (state_fldchk(exportState, 'Sw_hs')) then
