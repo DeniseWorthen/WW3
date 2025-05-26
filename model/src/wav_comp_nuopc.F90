@@ -1600,6 +1600,8 @@ contains
     use wav_shel_inp , only : read_shel_config
     use wav_shel_inp , only : npts, odat, iprt, x, y, pnames, prtfrm
     use wav_shel_inp , only : flgrd, flgd, flgr2, flg2
+    use w3nmlgridmd  , only : nml_timesteps_t, read_timesteps_nml
+    use w3odatmd     , only : fnmpre, dtnml
 
     ! input/output variables
     type(ESMF_GridComp)  :: gcomp
@@ -1610,13 +1612,16 @@ contains
     integer, intent(out) :: rc
 
     ! local variables
-    logical            :: isPresent, isSet
-    character(len=CL)  :: cvalue
-    character(len=CL)  :: logmsg
-    character(len=CL)  :: fldrst = ''
-    character(len=100) :: tmplist(100) = ''
-    integer            :: dt_in(4)
-    integer            :: i
+    type(nml_timesteps_t) :: nml_timesteps
+    logical               :: isPresent, isSet
+    logical               :: flgnml
+    logical               :: reset_dts
+    character(len=CL)     :: cvalue
+    character(len=CL)     :: logmsg
+    character(len=CL)     :: fldrst = ''
+    character(len=100)    :: tmplist(100) = ''
+    integer               :: i, ndsi, ierr
+    real                  :: sum
     character(len=*), parameter :: subname = '(wav_comp_nuopc:wavinit_ufs)'
     ! -------------------------------------------------------------------
 
@@ -1637,24 +1642,29 @@ contains
       end do
     end if
 
+    ! Override mod_def values of dt if using nml and values are set
+    inquire(file=trim(fnmpre)//"ww3_shel.nml", exist=flgnml)
+    if (flgnml) then
+      open(newunit=ndsi, file=trim(fnmpre)//"ww3_shel.nml", status='old', iostat=ierr)
+      call read_timesteps_nml(ndsi, nml_timesteps)
+      close(ndsi)
+      sum = nml_timesteps%dtmax + nml_timesteps%dtxy + nml_timesteps%dtkth + nml_timesteps%dtmin
+      if (sum > 0.0) then
+        reset_dts = .true.
+        dtnml(1) = nml_timesteps%dtmax
+        dtnml(2) = nml_timesteps%dtxy
+        dtnml(3) = nml_timesteps%dtkth
+        dtnml(4) = nml_timesteps%dtmin
+      else
+        reset_dts = .false.
+      end if
+    else
+      reset_dts = .false.
+    end if
+
     if (root_task) write(stdout,'(a,/)') trim(subname)//' call w3init'
     call w3init ( 1, .false., 'ww3', mds, ntrace, odat, flgrd, flgr2, flgd, flg2, &
-         npts, x, y, pnames, iprt, prtfrm, mpi_comm )
-
-    write(cvalue,'(4f10.1)')dtmax,dtcfl,dtcfli,dtmin
-    write(logmsg,'(a)')trim(subname)//': WW3 timesteps from mod_def '//trim(cvalue)
-
-    call NUOPC_CompAttributeGet(gcomp, name='dt_in', isPresent=isPresent, isSet=isSet, rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    if (isPresent .and. isSet) then
-      call NUOPC_CompAttributeGet(gcomp, name='dt_in', value=cvalue, rc=rc)
-      if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      read(cvalue,*)dt_in
-      dtmax  = real(dt_in(1),4)
-      dtcfl  = real(dt_in(2),4)
-      dtcfli = real(dt_in(3),4)
-      dtmin  = real(dt_in(4),4)
-    end if
+         npts, x, y, pnames, iprt, prtfrm, mpi_comm, reset_dts=reset_dts)
 
     ! log info
     if (root_task) then

@@ -788,13 +788,11 @@ CONTAINS
 #ifdef W3_S
     CALL STRACE (IENT, 'READ_TIMESTEPS_NML')
 #endif
-
     ! set default values for timesteps structure
     TIMESTEPS%DTMAX      = 0.
     TIMESTEPS%DTXY       = 0.
     TIMESTEPS%DTKTH      = 0.
     TIMESTEPS%DTMIN      = 0.
-
     ! read timesteps namelist
     REWIND (NDSI)
     READ (NDSI, nml=TIMESTEPS_NML, iostat=IERR, iomsg=MSG)

@@ -160,7 +160,7 @@ CONTAINS
   !> @author H. L. Tolman  @date 03-Sep-2012
   !>
   SUBROUTINE W3INIT ( IMOD, IsMulti, FEXT, MDS, MTRACE, ODAT, FLGRD,  FLGR2, FLGD, &
-       FLG2, NPT, XPT, YPT, PNAMES, IPRT, PRTFRM, MPI_COMM, FLAGSTIDEIN)
+       FLG2, NPT, XPT, YPT, PNAMES, IPRT, PRTFRM, MPI_COMM, FLAGSTIDEIN, reset_dts)
     !/
     !/                  +-----------------------------------+
     !/                  | WAVEWATCH III           NOAA/NCEP |
@@ -450,7 +450,8 @@ CONTAINS
 #endif
     use w3timemd,        only : set_user_timestring
     use w3odatmd,        only : runtype, restart_from_binary, use_restartnc, user_restfname
-    use w3odatmd,        only : logfile_is_assigned
+    use w3odatmd,        only : logfile_is_assigned, dtnml
+    use w3gdatmd,        only : dtcfli, dtmin
 #ifdef W3_PIO
     use wav_restart_mod, only : read_restart
 #endif
@@ -473,7 +474,7 @@ CONTAINS
     CHARACTER, INTENT(IN)         :: FEXT*(*)
     CHARACTER(LEN=40), INTENT(IN) :: PNAMES(NPT)
     LOGICAL, INTENT(IN), OPTIONAL :: FLAGSTIDEIN(4)
-    INTEGER                       :: NSEALout, NSEALMout
+    logical, intent(in), optional :: reset_dts
     !/
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
@@ -483,6 +484,7 @@ CONTAINS
          NTTARG, IK, IP, ITH, IX, IY, &
          J, J0, TOUT(2), TLST(2), ISEA, IS,   &
          K, I1, I2, JSEA, NTTMAX
+    INTEGER                 :: NSEALout, NSEALMout
 #ifdef W3_DIST
     INTEGER                 :: ISTEP, ISP, IW
 #endif
@@ -522,7 +524,9 @@ CONTAINS
     INTEGER                 :: IScal(1), IPROC
 #endif
     logical                 :: exists
+    logical                 :: lreset
     integer                 :: memunit
+    character(len=40)       :: cvalue
     character(len=16)       :: user_timestring    !YYYY-MM-DD-SSSSS
     character(len=1024)     :: fname
     !/
@@ -736,6 +740,23 @@ CONTAINS
     ! 2.a Read model definition file
     !
     CALL W3IOGR ( 'READ', NDS(5), IMOD, FEXT )
+
+    if (present(reset_dts)) then
+      lreset = reset_dts
+    else
+      lreset = .false.
+    end if
+
+    if (lreset) then
+      write(cvalue,'(4f10.1)')dtmax,dtcfl,dtcfli,dtmin
+      if (iaproc .eq. naplog) write(naplog,'(a)')'WW3 timesteps from mod_def: '//trim(cvalue)
+      dtmax = dtnml(1)
+      dtcfl = dtnml(2)
+      dtcfli = dtnml(3)
+      dtmin = dtnml(4)
+      write(cvalue,'(4f10.1)')dtmax,dtcfl,dtcfli,dtmin
+      if (iaproc .eq. naplog) write(naplog,'(a)')'WW3 timesteps reset to: '//trim(cvalue)
+    end if
 
     IF (GTYPE .eq. UNGTYPE) THEN
       CALL SPATIAL_GRID
@@ -991,7 +1012,7 @@ CONTAINS
           if (exists) then
             call w3iors('READ', nds(6), sig(nk), imod, filename=trim(fname))
           else
-            call extcde (60, msg="required restart file " // trim(fname) // " does not exist") 
+            call extcde (60, msg="required restart file " // trim(fname) // " does not exist")
           end if
         else
           call read_restart('none')
@@ -1291,11 +1312,11 @@ CONTAINS
     !
     ! 4.d Preprocessing for point output.
     !
-#ifdef W3_MPI    
+#ifdef W3_MPI
     IF ( FLOUT(2) ) CALL W3IOPP ( NPT, XPT, YPT, PNAMES, IMOD, MPI_COMM_WAVE )
-#else 
+#else
     IF ( FLOUT(2) ) CALL W3IOPP ( NPT, XPT, YPT, PNAMES, IMOD, 1 )
-#endif 
+#endif
 #ifdef W3_PDLIB
     CALL DEALLOCATE_PDLIB_GLOBAL(IMOD)
 #endif
