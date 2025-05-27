@@ -5164,28 +5164,24 @@ CONTAINS
           DO K=0,2
             XPK = 0.5*FLOAT(K)
             XN = XMU(2,0,0)**XPI*XMU(0,2,0)**XPJ*XMU(0,0,2)**XPK  ! denom in Srokosz eq. 11
-            IF (XN .NE. 0.0) THEN
+            IF (XN .NE. 0) THEN
               XLAMBDA(I,J,K) = XMU(I,J,K)/XN
             ELSE
-              XLAMBDA(I,J,K) = 0.0
+              XLAMBDA(I,J,K) = 0
             END IF
           END DO
         END DO
       END DO
       IF ( XMU(2,0,0) .GT. 1.E-7 ) THEN
         SKEW(JSEA)=XLAMBDA(3,0,0)
-        if ((1.0 - XLAMBDA(0,1,1)**2) .ne. 0.0) then
-          DELTA = ( XLAMBDA(1,2,0) + XLAMBDA(1,0,2)      &
-               - 2.0*XLAMBDA(0,1,1)*XLAMBDA(1,1,1) )/    &
-               (1.0 - XLAMBDA(0,1,1)**2)               ! this is called gamma eq. 20
-        else
-          delta = 0.0
-        end if
-        EMBIA1(JSEA)=-0.125*DELTA                        ! EM Bias coefficient
+        DELTA = ( XLAMBDA(1,2,0) + XLAMBDA(1,0,2)           &
+                  - 2.0*XLAMBDA(0,1,1)*XLAMBDA(1,1,1) )/    &
+                   (1.0 - XLAMBDA(0,1,1)**2)             ! this is called gamma eq. 20
+        EMBIA1(JSEA)=-0.125*DELTA                             ! EM Bias coefficient
         EMBIA2(JSEA)=-0.125*XLAMBDA(3,0,0)/3.0           ! tracker bias (least squares only)
       END IF
     END DO  ! end of loop on JSEA
-    !
+        !
 #ifdef W3_OMPG
     !$OMP END PARALLEL DO
 #endif
