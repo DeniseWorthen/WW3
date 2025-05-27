@@ -906,7 +906,7 @@ contains
          ]
 
     !  8   Spectrum parameters
-    gridoutdefs(8,1:11) = [ &
+    gridoutdefs(8,1:8) = [ &
          varatts( "MSS  ", "MSSU      ", "Downwave mean square slope                      ", "nd        ", "  ", .false.) , &
          varatts( "MSS  ", "MSSC      ", "Crosswave mean square slope                     ", "nd        ", "  ", .false.) , &
          varatts( "MSC  ", "MSCX      ", "Eastward phillips constant                      ", "nd        ", "  ", .false.) , &
@@ -915,9 +915,9 @@ contains
          varatts( "MCD  ", "MCD       ", "X direction for msc                             ", "nd        ", "  ", .false.) , &
          varatts( "QP   ", "QP        ", "Peakedness                                      ", "nd        ", "  ", .false.) , &
          varatts( "QKK  ", "QKK       ", "K-peakedness                                    ", "nd        ", "  ", .false.) , &
-         varatts( "SKW  ", "SKW       ", "Skewness                                        ", "nd        ", "  ", .false.) , &
-         varatts( "EMB  ", "EMB       ", "EM-bias                                         ", "nd        ", "  ", .false.) , &
-         varatts( "EMC  ", "EMC       ", "Tracker bias                                    ", "nd        ", "  ", .false.)   &
+         !varatts( "SKW  ", "SKW       ", "Skewness                                        ", "nd        ", "  ", .false.) , &
+         !varatts( "EMB  ", "EMB       ", "EM-bias                                         ", "nd        ", "  ", .false.) , &
+         !varatts( "EMC  ", "EMC       ", "Tracker bias                                    ", "nd        ", "  ", .false.)   &
          ]
 
     !  9   Numerical diagnostics
