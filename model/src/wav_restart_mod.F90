@@ -150,7 +150,7 @@ contains
 
     ! initialize the decomp
     call wav_pio_initdecomp(iodesc2dint, use_int=.true.)
-    call wav_pio_initdecomp(iodesc2d)
+    if (addrstflds) call wav_pio_initdecomp(iodesc2d)
     call wav_pio_initdecomp(nspec, iodesc3dk)
 
     ! write the time
@@ -202,7 +202,7 @@ contains
     end if
 
     call pio_syncfile(pioid)
-    call pio_freedecomp(pioid, iodesc2d)
+    if (addrstflds) call pio_freedecomp(pioid, iodesc2d)
     call pio_freedecomp(pioid, iodesc2dint)
     call pio_freedecomp(pioid, iodesc3dk)
     call pio_closefile(pioid)
@@ -301,7 +301,7 @@ contains
 
     ! initialize the decomp
     call wav_pio_initdecomp(iodesc2dint, use_int=.true.)
-    call wav_pio_initdecomp(iodesc2d)
+    if (addrstflds) call wav_pio_initdecomp(iodesc2d)
     call wav_pio_initdecomp(nspec, iodesc3dk)
 
     vname = 'va'
@@ -370,7 +370,7 @@ contains
     end if
 
     call pio_syncfile(pioid)
-    call pio_freedecomp(pioid, iodesc2d)
+    if (addrstflds) call pio_freedecomp(pioid, iodesc2d)
     call pio_freedecomp(pioid, iodesc2dint)
     call pio_freedecomp(pioid, iodesc3dk)
     call pio_closefile(pioid)
