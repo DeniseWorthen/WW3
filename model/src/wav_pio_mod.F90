@@ -307,14 +307,14 @@ contains
   !> @date 08-02-2024
   subroutine wav_pio_initdecomp_2d(iodesc, use_int)
 
-    type(io_desc_t),           intent(out) :: iodesc
+    type(io_desc_t),           intent(inout) :: iodesc
     logical        , optional, intent(in)  :: use_int
 
     ! local variables
     integer :: n, isea, jsea, ix, iy, nseal_cpl
     logical :: luse_int
     integer(kind=PIO_OFFSET_KIND) :: lnx,lny
-    integer(kind=PIO_OFFSET_KIND), allocatable :: dof2d(:)
+    integer(kind=PIO_OFFSET_KIND), pointer :: dof2d(:)
 #ifdef W3_PDLIB
     nseal_cpl = nseal - ng
 #else
@@ -357,12 +357,12 @@ contains
   subroutine wav_pio_initdecomp_3d(nz, iodesc)
 
     integer ,         intent(in)  :: nz
-    type(io_desc_t) , intent(out) :: iodesc
+    type(io_desc_t) , intent(inout) :: iodesc
 
     ! local variables
     integer :: n, k, isea, jsea, ix, iy, nseal_cpl
     integer(kind=PIO_OFFSET_KIND) :: lnx,lny
-    integer(kind=PIO_OFFSET_KIND), allocatable :: dof3d(:)
+    integer(kind=PIO_OFFSET_KIND), pointer :: dof3d(:)
 #ifdef W3_PDLIB
     nseal_cpl = nseal - ng
 #else

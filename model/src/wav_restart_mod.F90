@@ -29,7 +29,7 @@ module wav_restart_mod
   type(io_desc_t)   :: iodesc2d
   type(io_desc_t)   :: iodesc3dk
 
-  integer(kind=Pio_Offset_Kind) :: frame
+  integer(kind=PIO_OFFSET_KIND) :: frame
 
   public :: write_restart
   public :: read_restart
@@ -171,21 +171,23 @@ contains
     vname = 'mapsta'
     ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
-    call pio_setframe(pioid, varid, int(1,kind=Pio_Offset_Kind))
+    call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
     call pio_write_darray(pioid, varid, iodesc2dint, lmap, ierr)
     call handle_err(ierr, 'put variable '//trim(vname))
 
     ! write va
-    do jsea = 1,nseal_cpl
-      kk = 0
-      do ik = 1,nk
-        do ith = 1,nth
-          kk = kk + 1
-          lva(jsea,kk) = va(kk,jsea)
-        end do
-      end do
-    end do
-
+    ! do jsea = 1,nseal_cpl
+    !   kk = 0
+    !   do ik = 1,nk
+    !     do ith = 1,nth
+    !       kk = kk + 1
+    !       lva(jsea,kk) = va(kk,jsea)
+    !     end do
+    !   end do
+    ! end do
+    !lva = transpose(va)
+    lva = -999.
+    print *,'XXX ',size(lva,1),size(lva,2)
     vname = 'va'
     ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
@@ -406,7 +408,7 @@ contains
     !write PE local field
     ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
-    call pio_setframe(pioid, varid, int(1,kind=Pio_Offset_Kind))
+    call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
     call pio_write_darray(pioid, varid, iodesc2d, lvar, ierr)
     call handle_err(ierr, 'put variable '//trim(vname))
 

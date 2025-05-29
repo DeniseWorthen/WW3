@@ -280,7 +280,7 @@ contains
     end do
     ierr = pio_inq_varid(pioid,  'mapsta', varid)
     call handle_err(ierr, 'inquire variable mapsta ')
-    call pio_setframe(pioid, varid, int(1,kind=Pio_Offset_Kind))
+    call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
     call pio_write_darray(pioid, varid, iodesc2dint, lmap, ierr)
     call handle_err(ierr, 'put variable mapsta')
 
@@ -568,7 +568,7 @@ contains
 
     ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
-    call pio_setframe(pioid, varid, int(1,kind=Pio_Offset_Kind))
+    call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
     call pio_write_darray(pioid, varid, iodesc2d, varout, ierr)
     call handle_err(ierr, 'put variable '//trim(vname))
 
