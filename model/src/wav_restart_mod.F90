@@ -185,9 +185,9 @@ contains
     !     end do
     !   end do
     ! end do
-    !lva = transpose(va)
-    lva = -999.
-    print *,'XXX ',size(lva,1),size(lva,2)
+    lva = transpose(va)
+    !lva = -999.
+    !print *,'XXX ',size(lva,1),size(lva,2)
     vname = 'va'
     ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))

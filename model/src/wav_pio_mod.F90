@@ -313,7 +313,7 @@ contains
     ! local variables
     integer :: n, isea, jsea, ix, iy, nseal_cpl
     logical :: luse_int
-    integer(kind=PIO_OFFSET_KIND) :: lnx,lny
+    integer(kind=PIO_OFFSET_KIND)          :: lnx,lny
     integer(kind=PIO_OFFSET_KIND), pointer :: dof2d(:)
 #ifdef W3_PDLIB
     nseal_cpl = nseal - ng
@@ -321,7 +321,9 @@ contains
     nseal_cpl = nseal
 #endif
     luse_int = .false.
-    if (present(use_int)) luse_int = use_int
+    if (present(use_int)) then
+      luse_int = use_int
+    end if
 
     allocate(dof2d(nseal_cpl))
     dof2d = 0
@@ -331,10 +333,11 @@ contains
     n = 0
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
-      ix = mapsf(isea,1)                 ! global ix
-      iy = mapsf(isea,2)                 ! global iy
+      ix = mapsf(isea,1)                  ! global ix
+      iy = mapsf(isea,2)                  ! global iy
       n = n+1
-      dof2d(n) = (iy-1)*lnx + ix         ! local index : global index
+      dof2d(n) = (int((iy-1),kind=PIO_OFFSET_KIND)*lnx &
+           + int(ix,kind=PIO_OFFSET_KIND) ! local index : global index
     end do
 
     if (luse_int) then
@@ -361,7 +364,7 @@ contains
 
     ! local variables
     integer :: n, k, isea, jsea, ix, iy, nseal_cpl
-    integer(kind=PIO_OFFSET_KIND) :: lnx,lny
+    integer(kind=PIO_OFFSET_KIND)          :: lnx,lny
     integer(kind=PIO_OFFSET_KIND), pointer :: dof3d(:)
 #ifdef W3_PDLIB
     nseal_cpl = nseal - ng
@@ -378,10 +381,12 @@ contains
     do k = 1,nz
       do jsea = 1,nseal_cpl
         call init_get_isea(isea, jsea)
-        ix = mapsf(isea,1)                           ! global ix
-        iy = mapsf(isea,2)                           ! global iy
+        ix = mapsf(isea,1)                             ! global ix
+        iy = mapsf(isea,2)                             ! global iy
         n = n+1
-        dof3d(n) = ((iy-1)*lnx + ix) + (k-1)*lnx*lny ! local index : global index
+        dof3d(n) = (int((iy-1),kind=PIO_OFFSET_KIND)*lnx &
+             + int(ix,kind=PIO_OFFSET_KIND)              &
+             + int((k-1),kind=PIO_OFFSET_KIND)*lnx*lny ! local index : global index
       end do
     end do
 
