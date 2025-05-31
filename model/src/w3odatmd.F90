@@ -583,6 +583,7 @@ MODULE W3ODATMD
                                                        ! when use_restartnc is true
   logical            :: logfile_is_assigned = .false.  !< @public logical flag for assignment of nds(1) to specified
                                                        !! log file in mesh cap
+  logical            :: multifield = .true .           !< @public logical flag to control VA format in netcdf restarts
   logical            :: verboselog = .true.            !< @public logical flag to enable verbose WW3 native logging
   logical            :: addrstflds = .false.           !< @public logical flag for additional restart fields
   integer            :: rstfldcnt = 0                  !< @public the actual number of additional restart fields
@@ -937,7 +938,7 @@ CONTAINS
     IDOUT( 8, 6)  = 'kxky-peakdness      '
     IDOUT( 8, 7)  = 'Skewness            '
     IDOUT( 8, 8)  = 'EM bias(l120+l102)/8'
-    IDOUT( 8, 9)  = 'Tracker bias:-l300/8'            
+    IDOUT( 8, 9)  = 'Tracker bias:-l300/8'
     !      IDOUT( 8, 3)  = 'Lx-Ly mean wvlength'
     !      IDOUT( 8, 4)  = 'Surf grad correl XT'
     !      IDOUT( 8, 5)  = 'Surf grad correl YT'
@@ -1135,9 +1136,9 @@ CONTAINS
     CHECK_ALLOC_STATUS ( ISTAT )
     !
     OUTPTS(IMOD)%OUT2%O2INIT = .TRUE.
-    !Initialize: 
-    OUTPTS(IMOD)%OUT2%IPTINT=0 
-    OUTPTS(IMOD)%OUT2%PTNME='' 
+    !Initialize:
+    OUTPTS(IMOD)%OUT2%IPTINT=0
+    OUTPTS(IMOD)%OUT2%PTNME=''
     OUTPTS(IMOD)%OUT2%PTLOC=0.
     OUTPTS(IMOD)%OUT2%PTIFAC=0.
     !

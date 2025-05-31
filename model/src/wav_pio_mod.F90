@@ -314,7 +314,7 @@ contains
     integer :: n, isea, jsea, ix, iy, nseal_cpl
     logical :: luse_int
     integer(kind=PIO_OFFSET_KIND) :: lnx,lny
-    integer(kind=PIO_OFFSET_KIND), allocatable :: dof2d(:)
+    integer(kind=PIO_OFFSET_KIND), pointer :: dof2d(:)
 #ifdef W3_PDLIB
     nseal_cpl = nseal - ng
 #else
@@ -362,7 +362,7 @@ contains
     ! local variables
     integer :: n, k, isea, jsea, ix, iy, nseal_cpl
     integer(kind=PIO_OFFSET_KIND) :: lnx,lny
-    integer(kind=PIO_OFFSET_KIND), allocatable :: dof3d(:)
+    integer(kind=PIO_OFFSET_KIND), pointer :: dof3d(:)
 #ifdef W3_PDLIB
     nseal_cpl = nseal - ng
 #else
