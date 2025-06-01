@@ -324,7 +324,8 @@ contains
     if (present(use_int)) luse_int = use_int
 
     allocate(dof2d(nseal_cpl))
-    dof2d = 0
+
+    dof2d(:) = 0_PIO_OFFSET_KIND
     lnx = int(nx,PIO_OFFSET_KIND)
     lny = int(ny,PIO_OFFSET_KIND)
 
@@ -370,7 +371,7 @@ contains
 #endif
     allocate(dof3d(nz*nseal_cpl))
 
-    dof3d = 0
+    dof3d(:) = 0_PIO_OFFSET_KIND
     lnx = int(nx,PIO_OFFSET_KIND)
     lny = int(ny,PIO_OFFSET_KIND)
 
