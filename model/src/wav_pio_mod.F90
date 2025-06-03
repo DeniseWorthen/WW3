@@ -26,6 +26,7 @@ module wav_pio_mod
   integer                        :: pio_iotype
   integer                        :: pio_ioformat
   type(iosystem_desc_t), pointer :: wav_pio_subsystem
+  type(pio_rearr_opt_t)          :: pio_rearr_opts
 
   public :: wav_pio_init
   public :: pio_iotype
@@ -74,6 +75,14 @@ contains
     integer           :: pio_rearranger
     integer           :: pio_root
     integer           :: pio_debug_level
+    integer           :: pio_rearr_comm_type
+    integer           :: pio_rearr_comm_fcd
+    logical           :: pio_rearr_comm_enable_hs_comp2io
+    logical           :: pio_rearr_comm_enable_isend_comp2io
+    integer           :: pio_rearr_comm_max_pend_req_comp2io
+    logical           :: pio_rearr_comm_enable_hs_io2comp
+    logical           :: pio_rearr_comm_enable_isend_io2comp
+    integer           :: pio_rearr_comm_max_pend_req_io2comp
     character(len=CS) :: cvalue
     logical           :: isPresent, isSet
     integer           :: my_task, master_task
@@ -270,9 +279,143 @@ contains
       write(stdout,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
     end if
 
+    ! query shared PIO rearranger attributes
+    ! pio_rearr_comm_type
+    call NUOPC_CompAttributeGet(gcomp, name='pio_rearr_comm_type', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+
+    if (isPresent .and. isSet) then
+      cvalue = ESMF_UtilStringUpperCase(cvalue)
+      if (trim(cvalue) .eq. 'P2P') then
+        pio_rearr_comm_type = PIO_REARR_COMM_P2P
+      else if (trim(cvalue) .eq. 'COLL') then
+        pio_rearr_comm_type = PIO_REARR_COMM_COLL
+      else
+        call shr_log_error(trim(subname)//': need to provide valid option for pio_rearr_comm_type (P2P|COLL)', rc=rc)
+        return
+      end if
+    else
+      cvalue = 'P2P'
+      pio_rearr_comm_type = PIO_REARR_COMM_P2P
+    end if
+    if (my_task == 0) write(stdout,*) trim(subname), ' : pio_rearr_comm_type = ', trim(cvalue), pio_rearr_comm_type
+
+    ! pio_rearr_comm_fcd
+    call NUOPC_CompAttributeGet(gcomp, name='pio_rearr_comm_fcd', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+
+    if (isPresent .and. isSet) then
+      cvalue = ESMF_UtilStringUpperCase(cvalue)
+      if (trim(cvalue) .eq. '2DENABLE') then
+        pio_rearr_comm_fcd = PIO_REARR_COMM_FC_2D_ENABLE
+      else if (trim(cvalue) .eq. 'IO2COMP') then
+        pio_rearr_comm_fcd = PIO_REARR_COMM_FC_1D_IO2COMP
+      else if (trim(cvalue) .eq. 'COMP2IO') then
+        pio_rearr_comm_fcd = PIO_REARR_COMM_FC_1D_COMP2IO
+      else if (trim(cvalue) .eq. '2DDISABLE') then
+        pio_rearr_comm_fcd = PIO_REARR_COMM_FC_2D_DISABLE
+      else
+        call shr_log_error(trim(subname)//': need to provide valid option for pio_rearr_comm_fcd (2DENABLE|IO2COMP|COMP2IO|2DDISABLE)', rc=rc)
+        return
+      end if
+    else
+      cvalue = '2DENABLE'
+      pio_rearr_comm_fcd = PIO_REARR_COMM_FC_2D_ENABLE
+    end if
+    if (my_task == 0) write(stdout,*) trim(subname), ' : pio_rearr_comm_fcd = ', trim(cvalue), pio_rearr_comm_fcd
+
+    ! pio_rearr_comm_enable_hs_comp2io
+    call NUOPC_CompAttributeGet(gcomp, name='pio_rearr_comm_enable_hs_comp2io', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+
+    if (isPresent .and. isSet) then
+      read(cvalue,*) pio_rearr_comm_enable_hs_comp2io
+    else
+      pio_rearr_comm_enable_hs_comp2io = .true.
+    end if
+
+    ! pio_rearr_comm_enable_isend_comp2io
+    call NUOPC_CompAttributeGet(gcomp, name='pio_rearr_comm_enable_isend_comp2io', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+
+    if (isPresent .and. isSet) then
+      read(cvalue,*) pio_rearr_comm_enable_isend_comp2io
+    else
+      pio_rearr_comm_enable_isend_comp2io = .false.
+    end if
+
+    ! pio_rearr_comm_max_pend_req_comp2io
+    call NUOPC_CompAttributeGet(gcomp, name='pio_rearr_comm_max_pend_req_comp2io', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+
+    if (isPresent .and. isSet) then
+      read(cvalue,*) pio_rearr_comm_max_pend_req_comp2io
+    else
+      pio_rearr_comm_max_pend_req_comp2io = 0
+    end if
+
+    ! pio_rearr_comm_enable_hs_io2comp
+    call NUOPC_CompAttributeGet(gcomp, name='pio_rearr_comm_enable_hs_io2comp', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+
+    if (isPresent .and. isSet) then
+      read(cvalue,*) pio_rearr_comm_enable_hs_io2comp
+    else
+      pio_rearr_comm_enable_hs_io2comp = .false.
+    end if
+
+    ! pio_rearr_comm_enable_isend_io2comp
+    call NUOPC_CompAttributeGet(gcomp, name='pio_rearr_comm_enable_isend_io2comp', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+
+    if (isPresent .and. isSet) then
+      read(cvalue,*) pio_rearr_comm_enable_isend_io2comp
+    else
+      pio_rearr_comm_enable_isend_io2comp = .true.
+    end if
+
+    ! pio_rearr_comm_max_pend_req_io2comp
+    call NUOPC_CompAttributeGet(gcomp, name='pio_rearr_comm_max_pend_req_io2comp', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+
+    if (isPresent .and. isSet) then
+      read(cvalue,*) pio_rearr_comm_max_pend_req_io2comp
+    else
+      pio_rearr_comm_max_pend_req_io2comp = 64
+    end if
+
+    ! init PIO
+    if (my_task == 0) then
+      write(stdout,*) trim(subname),' calling pio init'
+      write(stdout,*) trim(subname), ' : pio_root = ', pio_root
+      write(stdout,*) trim(subname), ' : pio_stride = ', pio_stride
+      write(stdout,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
+    end if
+
+    ! print out PIO rearranger parameters
+    if (my_task == 0) then
+      write(stdout,*) trim(subname), ' : pio_rearr_comm_enable_hs_comp2io = ', pio_rearr_comm_enable_hs_comp2io
+      write(stdout,*) trim(subname), ' : pio_rearr_comm_enable_isend_comp2io = ', pio_rearr_comm_enable_isend_comp2io
+      write(stdout,*) trim(subname), ' : pio_rearr_comm_max_pend_req_comp2io = ', pio_rearr_comm_max_pend_req_comp2io
+      write(stdout,*) trim(subname), ' : pio_rearr_comm_enable_hs_io2comp = ', pio_rearr_comm_enable_hs_io2comp
+      write(stdout,*) trim(subname), ' : pio_rearr_comm_enable_isend_io2comp = ', pio_rearr_comm_enable_isend_io2comp
+      write(stdout,*) trim(subname), ' : pio_rearr_comm_max_pend_req_io2comp = ', pio_rearr_comm_max_pend_req_io2comp
+    end if
+    pio_rearr_opts%comm_type = pio_rearr_comm_type
+    pio_rearr_opts%fcd = pio_rearr_comm_fcd
+
+    pio_rearr_opts%comm_fc_opts_comp2io%max_pend_req = pio_rearr_comm_max_pend_req_comp2io
+    pio_rearr_opts%comm_fc_opts_comp2io%enable_hs = pio_rearr_comm_enable_hs_comp2io
+    pio_rearr_opts%comm_fc_opts_comp2io%enable_isend = pio_rearr_comm_enable_isend_comp2io
+
+    pio_rearr_opts%comm_fc_opts_io2comp%max_pend_req = pio_rearr_comm_max_pend_req_io2comp
+    pio_rearr_opts%comm_fc_opts_io2comp%enable_hs = pio_rearr_comm_enable_hs_io2comp
+    pio_rearr_opts%comm_fc_opts_io2comp%enable_isend = pio_rearr_comm_enable_isend_io2comp
+
+    ! initialize pio
     allocate(wav_pio_subsystem)
     call pio_init(my_task, mpi_comm, pio_numiotasks, master_task, pio_stride, pio_rearranger, &
-         wav_pio_subsystem, base=pio_root)
+         wav_pio_subsystem, base=pio_root, rearr_opts=pio_rearr_opts)
 
     ! PIO debug related options
     ! pio_debug_level
