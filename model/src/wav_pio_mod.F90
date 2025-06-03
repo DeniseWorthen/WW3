@@ -291,7 +291,9 @@ contains
       else if (trim(cvalue) .eq. 'COLL') then
         pio_rearr_comm_type = PIO_REARR_COMM_COLL
       else
-        call shr_log_error(trim(subname)//': need to provide valid option for pio_rearr_comm_type (P2P|COLL)', rc=rc)
+        call ESMF_LogWrite(trim(subname)//': need to provide valid option for pio_rearr_comm_type (P2P|COLL)', &
+             ESMF_LOGMSG_ERROR)
+        rc = ESMF_FAILURE
         return
       end if
     else
@@ -315,7 +317,9 @@ contains
       else if (trim(cvalue) .eq. '2DDISABLE') then
         pio_rearr_comm_fcd = PIO_REARR_COMM_FC_2D_DISABLE
       else
-        call shr_log_error(trim(subname)//': need to provide valid option for pio_rearr_comm_fcd (2DENABLE|IO2COMP|COMP2IO|2DDISABLE)', rc=rc)
+        call ESMF_LogWrite(trim(subname)//': need to provide valid option for pio_rearr_comm_fcd (2DENABLE|IO2COMP|COMP2IO|2DDISABLE)', &
+             ESMF_LOGMSG_ERROR)
+        rc = ESMF_FAILURE
         return
       end if
     else
