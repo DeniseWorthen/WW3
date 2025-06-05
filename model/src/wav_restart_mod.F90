@@ -57,7 +57,7 @@ contains
 
     use w3odatmd , only : time_origin, calendar_name, elapsed_secs
 
-    real            , intent(in) :: va(1:nspec,0:nsealm)
+    real            , intent(in) :: va(:,:)
     integer         , intent(in) :: mapsta(ny,nx)
     character(len=*), intent(in) :: fname
 
@@ -69,7 +69,7 @@ contains
     real   , allocatable :: lva(:,:)
     integer, allocatable :: lmap(:)
     ! debug
-    !integer :: old_mode
+    integer :: old_mode
     !-------------------------------------------------------------------------------
 
 #ifdef W3_PDLIB
@@ -94,6 +94,8 @@ contains
     ierr = pio_createfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), nmode)
     call handle_err(ierr, 'pio_create')
     if (iaproc == 1) write(ndso,'(a)')' Writing restart file '//trim(fname)
+    ierr = pio_set_fill(pioid, PIO_NOFILL, old_mode)
+    call handle_err(ierr, 'setting NC_NOFILL')
 
     ierr = pio_def_dim(pioid,    'nx',    nx, xtid)
     ierr = pio_def_dim(pioid,    'ny',    ny, ytid)
@@ -157,8 +159,6 @@ contains
     ! end variable definitions
     ierr = pio_enddef(pioid)
     call handle_err(ierr, 'end variable definition')
-    !ierr = pio_set_fill(pioid, PIO_NOFILL, old_mode)
-    !call handle_err(ierr, 'setting NC_NOFILL')
 
     ! write the freq and direction sizes
     ierr = pio_inq_varid(pioid, 'nth', varid)
@@ -198,24 +198,24 @@ contains
     call handle_err(ierr, 'put variable '//trim(vname))
 
     ! write va
-    do jsea = 1,nseal_cpl
-      kk = 0
-      do ik = 1,nk
-        do ith = 1,nth
-          kk = kk + 1
-          lva(jsea,kk) = va(kk,jsea)
-        end do
-      end do
-    end do
+    ! do jsea = 1,nseal_cpl
+    !   kk = 0
+    !   do ik = 1,nk
+    !     do ith = 1,nth
+    !       kk = kk + 1
+    !       lva(jsea,kk) = va(kk,jsea)
+    !     end do
+    !   end do
+    ! end do
 
-    !lva = transpose(va)
+    lva = transpose(va)
     if (multifield) then
       do kk = 1,nspec
         write(cspec,'(i4.4)')kk
         vname = 'va'//cspec
         ierr = pio_inq_varid(pioid,  trim(vname), varid)
         call handle_err(ierr, 'inquire variable '//trim(vname))
-        !call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
+        call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
         call pio_write_darray(pioid, varid, iodesc2d, lva(:,kk), ierr, fillval=nf90_fill_float)
         call handle_err(ierr, 'put variable '//trim(vname))
       end do
@@ -223,7 +223,7 @@ contains
       vname = 'va'
       ierr = pio_inq_varid(pioid,  trim(vname), varid)
       call handle_err(ierr, 'inquire variable '//trim(vname))
-      !call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
+      call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
       call pio_write_darray(pioid, varid, iodesc3dk, lva, ierr, fillval=nf90_fill_float)
       !do kk = 1,nspec
       !   call pio_setframe(pioid, varid, int(kk, kind=PIO_OFFSET_KIND))
