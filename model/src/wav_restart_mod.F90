@@ -68,6 +68,8 @@ contains
     integer              :: dimid4(4)
     real   , allocatable :: lva(:,:)
     integer, allocatable :: lmap(:)
+    ! debug
+    !integer :: old_mode
     !-------------------------------------------------------------------------------
 
 #ifdef W3_PDLIB
@@ -75,6 +77,7 @@ contains
 #else
     nseal_cpl = nseal
 #endif
+    !nseal_cpl = ubound(va,2)
     allocate(lva(1:nseal_cpl,1:nspec))
     allocate(lmap(1:nseal_cpl))
     lva(:,:) = 0.0
@@ -154,6 +157,8 @@ contains
     ! end variable definitions
     ierr = pio_enddef(pioid)
     call handle_err(ierr, 'end variable definition')
+    !ierr = pio_set_fill(pioid, PIO_NOFILL, old_mode)
+    !call handle_err(ierr, 'setting NC_NOFILL')
 
     ! write the freq and direction sizes
     ierr = pio_inq_varid(pioid, 'nth', varid)
@@ -189,7 +194,7 @@ contains
     ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
     call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
-    call pio_write_darray(pioid, varid, iodesc2dint, lmap, ierr)
+    call pio_write_darray(pioid, varid, iodesc2dint, lmap, ierr, fillval=nf90_fill_int)
     call handle_err(ierr, 'put variable '//trim(vname))
 
     ! write va
@@ -203,30 +208,37 @@ contains
       end do
     end do
 
+    !lva = transpose(va)
     if (multifield) then
       do kk = 1,nspec
         write(cspec,'(i4.4)')kk
         vname = 'va'//cspec
         ierr = pio_inq_varid(pioid,  trim(vname), varid)
         call handle_err(ierr, 'inquire variable '//trim(vname))
-        call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
-        call pio_write_darray(pioid, varid, iodesc2d, lva(:,kk), ierr)
+        !call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
+        call pio_write_darray(pioid, varid, iodesc2d, lva(:,kk), ierr, fillval=nf90_fill_float)
         call handle_err(ierr, 'put variable '//trim(vname))
       end do
     else
       vname = 'va'
       ierr = pio_inq_varid(pioid,  trim(vname), varid)
       call handle_err(ierr, 'inquire variable '//trim(vname))
-      call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
-      call pio_write_darray(pioid, varid, iodesc3dk, lva, ierr)
-      call handle_err(ierr, 'put variable '//trim(vname))
+      !call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
+      call pio_write_darray(pioid, varid, iodesc3dk, lva, ierr, fillval=nf90_fill_float)
+      !do kk = 1,nspec
+      !   call pio_setframe(pioid, varid, int(kk, kind=PIO_OFFSET_KIND))
+      !   call pio_write_darray(pioid, varid, iodesc3dk, lva(:,kk), ierr)
+      !   call handle_err(ierr, 'put variable '//trim(vname))
+         !call pio_setframe(pioid, varid, int(kk,kind=PIO_OFFSET_KIND))
+         !call pio_advanceframe(pioid, varid)
+      !end do
     end if
 
     ! write requested additional global(nsea) fields
     if (addrstflds) then
       do i = 1,rstfldcnt
         vname = trim(rstfldlist(i))
-        if (vname == 'ice')call write_globalfield(vname, nseal_cpl, ice(1:nsea))
+        if (vname == 'ice')call write_globalfield(vname, nseal_cpl, ice(1:nsea), nf90_fill_float)
       end do
     end if
 
@@ -416,11 +428,12 @@ contains
   !!
   !> author DeniseWorthen@noaa.gov
   !> @date 09-22-2024
-  subroutine write_globalfield(vname, nseal_cpl, global_input)
+  subroutine write_globalfield(vname, nseal_cpl, global_input, lfillvalue)
 
     character(len=*) , intent(in)    :: vname
     integer          , intent(in)    :: nseal_cpl
     real             , intent(in)    :: global_input(:)
+    real             , intent(in)    :: lfillvalue
 
     ! local variable
     real, allocatable :: lvar(:)
@@ -437,7 +450,7 @@ contains
     ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
     call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
-    call pio_write_darray(pioid, varid, iodesc2d, lvar, ierr)
+    call pio_write_darray(pioid, varid, iodesc2d, lvar, ierr, fillval=lfillvalue)
     call handle_err(ierr, 'put variable '//trim(vname))
 
   end subroutine write_globalfield

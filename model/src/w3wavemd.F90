@@ -492,8 +492,9 @@ CONTAINS
     USE W3PARALL, only : PRINT_MY_TIME
 #endif
 #ifdef W3_PIO
-    use wav_restart_mod , only : write_restart
-    use wav_history_mod , only : write_history
+    use wav_restart_mod  , only : write_restart
+    use wav_history_mod  , only : write_history
+    use wav_import_export, only : nseal_cpl
 #endif
     use w3odatmd        , only : histwr, rstwr, use_historync, use_restartnc, user_restfname
     use w3odatmd        , only : logfile_is_assigned, verboselog
