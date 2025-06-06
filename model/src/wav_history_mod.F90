@@ -79,7 +79,7 @@ contains
     use w3odatmd   , only : ndso, iaproc
     use w3adatmd   , only : dw, ua, ud, as, cx, cy, taua, tauadir
     use w3adatmd   , only : hs, wlm, t02, t0m1, t01, fp0, thm, ths, thp0, wbt, wnmean
-    use w3adatmd   , only : dtdyn
+    use w3adatmd   , only : wn, dtdyn
     use w3adatmd   , only : fcut, aba, abd, uba, ubd, sxx, syy, sxy
     use w3adatmd   , only : phs, ptp, plp, pdir, psi, pws, pwst, pnr
     use w3adatmd   , only : pthp0, pqp, ppe, pgw, psw, ptm1, pt1, pt2
@@ -914,11 +914,11 @@ contains
          varatts( "MSD  ", "MSD       ", "U direction for mss                             ", "nd        ", "  ", .false.) , &
          varatts( "MCD  ", "MCD       ", "X direction for msc                             ", "nd        ", "  ", .false.) , &
          varatts( "QP   ", "QP        ", "Peakedness                                      ", "nd        ", "  ", .false.) , &
-         varatts( "QKK  ", "QKK       ", "K-peakedness                                    ", "nd        ", "  ", .false.) , &
+         varatts( "QKK  ", "QKK       ", "K-peakedness                                    ", "nd        ", "  ", .false.)   &
+         ]
          !varatts( "SKW  ", "SKW       ", "Skewness                                        ", "nd        ", "  ", .false.) , &
          !varatts( "EMB  ", "EMB       ", "EM-bias                                         ", "nd        ", "  ", .false.) , &
          !varatts( "EMC  ", "EMC       ", "Tracker bias                                    ", "nd        ", "  ", .false.)   &
-         ]
 
     !  9   Numerical diagnostics
     gridoutdefs(9,1:5) = [ &
@@ -926,13 +926,13 @@ contains
          varatts( "FC   ", "FCUT      ", "Cut-off frequency                               ", "s-1       ", "  ", .false.) , &
          varatts( "CFX  ", "CFLXYMAX  ", "Max. CFL number for spatial advection           ", "nd        ", "  ", .false.) , &
          varatts( "CFD  ", "CFLTHMAX  ", "Max. CFL number for theta-advection             ", "nd        ", "  ", .false.) , &
-         varatts( "CFK  ", "CFLKMAX   ", "Max. CFL number for k-advection                 ", "nd        ", "  ", .false.)  &
+         varatts( "CFK  ", "CFLKMAX   ", "Max. CFL number for k-advection                 ", "nd        ", "  ", .false.)   &
          ]
 
     !  10   User defined
     gridoutdefs(10,1:2) = [ &
          varatts( "U1   ", "U1        ", "User defined 1                                  ", "nd        ", "  ", .false.) , &
-         varatts( "U2   ", "U2        ", "User defined 2                                  ", "nd        ", "  ", .false.)  &
+         varatts( "U2   ", "U2        ", "User defined 2                                  ", "nd        ", "  ", .false.)   &
          ]
   end subroutine define_fields
 end module wav_history_mod
