@@ -26,6 +26,7 @@ module wav_pio_mod
   integer                        :: pio_iotype
   integer                        :: pio_ioformat
   type(iosystem_desc_t), pointer :: wav_pio_subsystem
+  ! debug
   type(pio_rearr_opt_t)          :: pio_rearr_opts
 
   public :: wav_pio_init
@@ -75,6 +76,15 @@ contains
     integer           :: pio_rearranger
     integer           :: pio_root
     integer           :: pio_debug_level
+    character(len=CS) :: cvalue
+    logical           :: isPresent, isSet
+    integer           :: my_task, master_task
+    character(len=CS) :: subname='wav_pio_init'
+    character(*), parameter :: u_FILE_u = &                  !< a character string for an ESMF log message
+         __FILE__
+    !debug
+    integer :: blimit
+    integer(kind=PIO_OFFSET_KIND) :: pio_buffer_limit
     integer           :: pio_rearr_comm_type
     integer           :: pio_rearr_comm_fcd
     logical           :: pio_rearr_comm_enable_hs_comp2io
@@ -83,12 +93,6 @@ contains
     logical           :: pio_rearr_comm_enable_hs_io2comp
     logical           :: pio_rearr_comm_enable_isend_io2comp
     integer           :: pio_rearr_comm_max_pend_req_io2comp
-    character(len=CS) :: cvalue
-    logical           :: isPresent, isSet
-    integer           :: my_task, master_task
-    character(len=CS) :: subname='wav_pio_init'
-    character(*), parameter :: u_FILE_u = &                  !< a character string for an ESMF log message
-         __FILE__
     !-------------------------------------------------------------------------------
 
     rc = ESMF_SUCCESS
@@ -271,14 +275,6 @@ contains
     end if
     if (my_task == 0) write(stdout,*) trim(subname), ' : pio_rearranger = ', trim(cvalue), pio_rearranger
 
-    ! init PIO
-    if (my_task == 0) then
-      write(stdout,*) trim(subname),' calling pio init'
-      write(stdout,*) trim(subname), ' : pio_root = ', pio_root
-      write(stdout,*) trim(subname), ' : pio_stride = ', pio_stride
-      write(stdout,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
-    end if
-
     ! query shared PIO rearranger attributes
     ! pio_rearr_comm_type
     call NUOPC_CompAttributeGet(gcomp, name='pio_rearr_comm_type', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
@@ -388,16 +384,11 @@ contains
       pio_rearr_comm_max_pend_req_io2comp = 64
     end if
 
-    ! init PIO
     if (my_task == 0) then
-      write(stdout,*) trim(subname),' calling pio init'
+      write(stdout,*) trim(subname),' calling pio init with the following settings : '
       write(stdout,*) trim(subname), ' : pio_root = ', pio_root
       write(stdout,*) trim(subname), ' : pio_stride = ', pio_stride
       write(stdout,*) trim(subname), ' : pio_numiotasks = ', pio_numiotasks
-    end if
-
-    ! print out PIO rearranger parameters
-    if (my_task == 0) then
       write(stdout,*) trim(subname), ' : pio_rearr_comm_enable_hs_comp2io = ', pio_rearr_comm_enable_hs_comp2io
       write(stdout,*) trim(subname), ' : pio_rearr_comm_enable_isend_comp2io = ', pio_rearr_comm_enable_isend_comp2io
       write(stdout,*) trim(subname), ' : pio_rearr_comm_max_pend_req_comp2io = ', pio_rearr_comm_max_pend_req_comp2io
@@ -420,6 +411,16 @@ contains
     allocate(wav_pio_subsystem)
     call pio_init(my_task, mpi_comm, pio_numiotasks, master_task, pio_stride, pio_rearranger, &
          wav_pio_subsystem, base=pio_root, rearr_opts=pio_rearr_opts)
+
+    ! set pio_buffer size
+    call NUOPC_CompAttributeGet(gcomp, name='pio_buffer_limit', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    if (isPresent .and. isSet) then
+      read(cvalue,*) blimit
+      pio_buffer_limit = blimit*1024*1024
+      call pio_set_buffer_size_limit(pio_buffer_limit)
+      if (my_task == 0) write(stdout,*) trim(subname), ' : pio_buffer_limit = ', blimit,'MB ',pio_buffer_limit
+    end if
 
     ! PIO debug related options
     ! pio_debug_level
