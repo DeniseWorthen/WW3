@@ -28,6 +28,7 @@ module wav_pio_mod
   type(iosystem_desc_t), pointer :: wav_pio_subsystem
   ! debug
   type(pio_rearr_opt_t)          :: pio_rearr_opts
+  integer(kind=PIO_OFFSET_KIND)  :: pio_buffer_limit
 
   public :: wav_pio_init
   public :: pio_iotype
@@ -35,6 +36,7 @@ module wav_pio_mod
   public :: wav_pio_subsystem
   public :: wav_pio_initdecomp
   public :: handle_err
+  public :: pio_buffer_limit
 
   !===============================================================================
 contains
@@ -84,7 +86,6 @@ contains
          __FILE__
     !debug
     integer :: blimit
-    integer(kind=PIO_OFFSET_KIND) :: pio_buffer_limit
     integer           :: pio_rearr_comm_type
     integer           :: pio_rearr_comm_fcd
     logical           :: pio_rearr_comm_enable_hs_comp2io

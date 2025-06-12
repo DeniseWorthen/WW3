@@ -68,6 +68,8 @@ contains
     integer              :: dimid4(4)
     real   , allocatable :: lva(:,:)
     integer, allocatable :: lmap(:)
+    ! debug
+    integer :: old_mode
     !-------------------------------------------------------------------------------
 
 #ifdef W3_PDLIB
@@ -91,6 +93,8 @@ contains
     ierr = pio_createfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), nmode)
     call handle_err(ierr, 'pio_create')
     if (iaproc == 1) write(ndso,'(a)')' Writing restart file '//trim(fname)
+    ierr = pio_set_fill(pioid, PIO_NOFILL, old_mode)
+    call handle_err(ierr, 'setting NC_NOFILL')
 
     ierr = pio_def_dim(pioid,    'nx',    nx, xtid)
     ierr = pio_def_dim(pioid,    'ny',    ny, ytid)
@@ -210,7 +214,7 @@ contains
         ierr = pio_inq_varid(pioid,  trim(vname), varid)
         call handle_err(ierr, 'inquire variable '//trim(vname))
         call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
-        call pio_write_darray(pioid, varid, iodesc2d, lva(:,kk), ierr)
+        call pio_write_darray(pioid, varid, iodesc2d, lva(:,kk), ierr, fillval=nf90_fill_float)
         call handle_err(ierr, 'put variable '//trim(vname))
       end do
     else
@@ -218,7 +222,7 @@ contains
       ierr = pio_inq_varid(pioid,  trim(vname), varid)
       call handle_err(ierr, 'inquire variable '//trim(vname))
       call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
-      call pio_write_darray(pioid, varid, iodesc3dk, lva, ierr)
+      call pio_write_darray(pioid, varid, iodesc3dk, lva, ierr, fillval=nf90_fill_float)
       call handle_err(ierr, 'put variable '//trim(vname))
     end if
 
