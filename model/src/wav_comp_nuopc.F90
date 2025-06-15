@@ -44,7 +44,7 @@ module wav_comp_nuopc
   use wav_shr_mod           , only : wav_coupling_to_cice, nwav_elev_spectrum
   use wav_shr_mod           , only : merge_import, dbug_flag
   use w3odatmd              , only : nds, iaproc, napout
-  use w3odatmd              , only : runtype, user_histfname, user_restfname, verboselog, multifield
+  use w3odatmd              , only : runtype, user_histfname, user_restfname, verboselog, multifield, setnofillmode
   use w3odatmd              , only : use_historync, use_restartnc, restart_from_binary, logfile_is_assigned
   use w3odatmd              , only : time_origin, calendar_name, elapsed_secs
   use wav_shr_mod           , only : casename, inst_suffix, inst_index, unstr_mesh
