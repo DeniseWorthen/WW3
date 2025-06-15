@@ -408,6 +408,11 @@ contains
     write(logmsg,*) multifield
     call ESMF_LogWrite('WW3_cap: VA multifield restart is = '//trim(logmsg), ESMF_LOGMSG_INFO)
 
+    call NUOPC_CompAttributeGet(gcomp, name="setnofillmode", value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    if (isPresent .and. isSet) setnofillmode=(trim(cvalue)=="true")
+    write(logmsg,*) setnofillmode
+    call ESMF_LogWrite('WW3_cap: setnofillmode is = '//trim(logmsg), ESMF_LOGMSG_INFO)
     !--------------------------------------------------------------------
     ! Set up data structures
     !--------------------------------------------------------------------

@@ -584,6 +584,7 @@ MODULE W3ODATMD
   logical            :: logfile_is_assigned = .false.  !< @public logical flag for assignment of nds(1) to specified
                                                        !! log file in mesh cap
   logical            :: multifield = .true.            !< @public logical flag to control VA format in netcdf restarts
+  logical            :: setnofillmode = .false.
   logical            :: verboselog = .true.            !< @public logical flag to enable verbose WW3 native logging
   logical            :: addrstflds = .false.           !< @public logical flag for additional restart fields
   integer            :: rstfldcnt = 0                  !< @public the actual number of additional restart fields
