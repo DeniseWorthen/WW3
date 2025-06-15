@@ -9,7 +9,7 @@ module wav_restart_mod
   use w3parall      , only : init_get_isea
   use w3adatmd      , only : nsealm
   use w3gdatmd      , only : nth, nk, nx, ny, mapsf, nspec, nseal, nsea
-  use w3odatmd      , only : ndso, iaproc, addrstflds, rstfldlist, rstfldcnt, multifield
+  use w3odatmd      , only : ndso, iaproc, addrstflds, rstfldlist, rstfldcnt, multifield, setnofillmode
   use w3wdatmd      , only : ice
   use wav_pio_mod   , only : pio_iotype, pio_ioformat, wav_pio_subsystem
   use wav_pio_mod   , only : handle_err, wav_pio_initdecomp
@@ -17,7 +17,10 @@ module wav_restart_mod
     use yowNodepool , only : ng
 #endif
   use pio
-  use netcdf
+  !use netcdf
+  use netcdf, only : nf90_fill_int, nf90_fill_float
+  !debug
+  use wav_pio_mod , only : pio_buffer_limit
 
   implicit none
 
@@ -57,7 +60,7 @@ contains
 
     use w3odatmd , only : time_origin, calendar_name, elapsed_secs
 
-    real            , intent(in) :: va(1:nspec,0:nsealm)
+    real            , intent(in) :: va(1:nspec,1:nsealm)
     integer         , intent(in) :: mapsta(ny,nx)
     character(len=*), intent(in) :: fname
 
@@ -77,10 +80,14 @@ contains
 #else
     nseal_cpl = nseal
 #endif
-    allocate(lva(1:nseal_cpl,1:nspec))
+    print *,'XXX ',iaproc,nseal,nseal_cpl,nsealm
+
     allocate(lmap(1:nseal_cpl))
-    lva(:,:) = 0.0
     lmap(:) = 0
+    if (.not. multifield) then
+      allocate(lva(1:nsealm,1:nspec))
+      lva = transpose(va)
+    end if
 
     ! create the netcdf file
     frame = 1
@@ -93,8 +100,13 @@ contains
     ierr = pio_createfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), nmode)
     call handle_err(ierr, 'pio_create')
     if (iaproc == 1) write(ndso,'(a)')' Writing restart file '//trim(fname)
-    ierr = pio_set_fill(pioid, PIO_NOFILL, old_mode)
-    call handle_err(ierr, 'setting NC_NOFILL')
+    if (setnofillmode) then
+      ierr = pio_set_fill(pioid, PIO_NOFILL, old_mode)
+      call handle_err(ierr, 'setting NC_NOFILL')
+      if (iaproc == 1) write(ndso,'(a)')' Setting nofillmode for restart file '//trim(fname)
+   else
+      if (iaproc == 1) write(ndso,'(a)')' Using fillmode for restart file '//trim(fname)
+    end if
 
     ierr = pio_def_dim(pioid,    'nx',    nx, xtid)
     ierr = pio_def_dim(pioid,    'ny',    ny, ytid)
@@ -189,23 +201,24 @@ contains
     end do
 
     ! write PE local map
-    vname = 'mapsta'
-    ierr = pio_inq_varid(pioid,  trim(vname), varid)
-    call handle_err(ierr, 'inquire variable '//trim(vname))
-    call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
-    call pio_write_darray(pioid, varid, iodesc2dint, lmap, ierr)
-    call handle_err(ierr, 'put variable '//trim(vname))
+    ! vname = 'mapsta'
+    ! ierr = pio_inq_varid(pioid,  trim(vname), varid)
+    ! call handle_err(ierr, 'inquire variable '//trim(vname))
+    ! call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
+    ! call pio_write_darray(pioid, varid, iodesc2dint, lmap, ierr)
+    ! call handle_err(ierr, 'put variable '//trim(vname))
 
+    !va(1:nspec,1:nsealm)
     ! write va
-    do jsea = 1,nseal_cpl
-      kk = 0
-      do ik = 1,nk
-        do ith = 1,nth
-          kk = kk + 1
-          lva(jsea,kk) = va(kk,jsea)
-        end do
-      end do
-    end do
+    ! do jsea = 1,nseal_cpl
+    !   kk = 0
+    !   do ik = 1,nk
+    !     do ith = 1,nth
+    !       kk = kk + 1
+    !       lva(jsea,kk) = va(kk,jsea)
+    !     end do
+    !   end do
+    ! end do
 
     if (multifield) then
       do kk = 1,nspec
@@ -214,7 +227,7 @@ contains
         ierr = pio_inq_varid(pioid,  trim(vname), varid)
         call handle_err(ierr, 'inquire variable '//trim(vname))
         call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
-        call pio_write_darray(pioid, varid, iodesc2d, lva(:,kk), ierr, fillval=nf90_fill_float)
+        call pio_write_darray(pioid, varid, iodesc2d, va(kk,:), ierr, fillval=nf90_fill_float)
         call handle_err(ierr, 'put variable '//trim(vname))
       end do
     else
@@ -227,12 +240,12 @@ contains
     end if
 
     ! write requested additional global(nsea) fields
-    if (addrstflds) then
-      do i = 1,rstfldcnt
-        vname = trim(rstfldlist(i))
-        if (vname == 'ice')call write_globalfield(vname, nseal_cpl, ice(1:nsea))
-      end do
-    end if
+    ! if (addrstflds) then
+    !   do i = 1,rstfldcnt
+    !     vname = trim(rstfldlist(i))
+    !     if (vname == 'ice')call write_globalfield(vname, nseal_cpl, ice(1:nsea))
+    !   end do
+    ! end if
 
     call pio_syncfile(pioid)
     call pio_freedecomp(pioid, iodesc2d)

@@ -6,6 +6,7 @@
 !> @date 08-02-2024
 module wav_pio_mod
 
+  use w3adatmd    , only : nsealm
   use w3gdatmd    , only : nk, nx, ny, mapsf
   use w3parall    , only : init_get_isea
   use w3gdatmd    , only : nseal
@@ -472,19 +473,24 @@ contains
     luse_int = .false.
     if (present(use_int)) luse_int = use_int
 
-    allocate(dof2d(nseal_cpl))
+    !allocate(dof2d(nseal_cpl))
+    allocate(dof2d(nsealm))
 
     dof2d(:) = 0_PIO_OFFSET_KIND
     lnx = int(nx,PIO_OFFSET_KIND)
     lny = int(ny,PIO_OFFSET_KIND)
 
     n = 0
-    do jsea = 1,nseal_cpl
-      call init_get_isea(isea, jsea)
-      ix = mapsf(isea,1)                 ! global ix
-      iy = mapsf(isea,2)                 ! global iy
+    do jsea = 1,nsealm
       n = n+1
-      dof2d(n) = (iy-1)*lnx + ix         ! local index : global index
+      if (jsea > nseal_cpl) then
+        dof2d(n) = 0_PIO_OFFSET_KIND
+      else
+        call init_get_isea(isea, jsea)
+        ix = mapsf(isea,1)                 ! global ix
+        iy = mapsf(isea,2)                 ! global iy
+        dof2d(n) = (iy-1)*lnx + ix         ! local index : global index
+      end if
     end do
 
     if (luse_int) then
@@ -518,7 +524,8 @@ contains
 #else
     nseal_cpl = nseal
 #endif
-    allocate(dof3d(nz*nseal_cpl))
+    !allocate(dof3d(nz*nseal_cpl))
+    allocate(dof3d(nz*nsealm))
 
     dof3d(:) = 0_PIO_OFFSET_KIND
     lnx = int(nx,PIO_OFFSET_KIND)
@@ -527,11 +534,15 @@ contains
     n = 0
     do k = 1,nz
       do jsea = 1,nseal_cpl
-        call init_get_isea(isea, jsea)
-        ix = mapsf(isea,1)                           ! global ix
-        iy = mapsf(isea,2)                           ! global iy
         n = n+1
-        dof3d(n) = ((iy-1)*lnx + ix) + (k-1)*lnx*lny ! local index : global index
+        if (jsea > nseal_cpl) then
+          dof3d(n) = 0_PIO_OFFSET_KIND
+        else
+          call init_get_isea(isea, jsea)
+          ix = mapsf(isea,1)                           ! global ix
+          iy = mapsf(isea,2)                           ! global iy
+          dof3d(n) = ((iy-1)*lnx + ix) + (k-1)*lnx*lny ! local index : global index
+        end if
       end do
     end do
 

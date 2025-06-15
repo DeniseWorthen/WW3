@@ -449,7 +449,7 @@ CONTAINS
 
     USE W3IOBCMD, only : W3IOBC
     USE W3IOGOMD, only : W3IOGO, W3OUTG
-    USE W3IOPOMD, only : W3IOPO, W3IOPE
+    USE W3IOPOMD, only : W3IOPO, W3IOPE, W3IOPON
     USE W3IORSMD, only : W3IORS
     USE W3IOSFMD, only : W3IOSF, W3CPRT
     USE W3IOTRMD, only : W3IOTR
@@ -537,12 +537,14 @@ CONTAINS
     USE W3PARALL, only : PRINT_MY_TIME
 #endif
 #ifdef W3_PIO
+    use w3adatmd       , only : nsealm
     use w3gdatmd       , only : mapst2
     use wav_restart_mod, only : write_restart
     use wav_history_mod, only : write_history
 #endif
     use w3odatmd       , only : histwr, rstwr, use_historync, use_restartnc, user_restfname
     use w3odatmd       , only : logfile_is_assigned, verboselog
+    use w3odatmd       , only : fnmrst
     use w3timemd       , only : set_user_timestring
 #ifdef W3_MPI
     INCLUDE "mpif.h"
@@ -2430,7 +2432,7 @@ CONTAINS
           if (rstwr) then
             call set_user_timestring(tend,user_timestring)
             fname = trim(FNMRST)//trim(user_restfname)//trim(user_timestring)//'.nc'
-            call write_restart(trim(fname), va, mapsta+8*mapst2)
+            call write_restart(trim(fname), va(1:nspec,1:nsealm), mapsta+8*mapst2)
           end if
         end if
 
