@@ -18,9 +18,6 @@ module wav_restart_mod
 #endif
   use pio
   use netcdf, only : nf90_fill_int, nf90_fill_float
-  !debug
-  use wav_pio_mod , only : pio_buffer_limit
-
   implicit none
 
   private
@@ -68,7 +65,7 @@ contains
     integer              :: nseal_cpl, nmode
     integer              :: dimid3(3)
     integer              :: dimid4(4)
-    real   , allocatable :: lva(:,:)
+    !real   , allocatable :: lva(:,:)
     integer, allocatable :: lmap(:)
     ! debug
     integer :: old_mode
@@ -79,14 +76,12 @@ contains
 #else
     nseal_cpl = nseal
 #endif
-    !print *,'XXX ',iaproc,nseal,nseal_cpl,nsealm
-
     allocate(lmap(1:nseal_cpl))
     lmap(:) = 0
-    if (.not. multifield) then
-      allocate(lva(1:nseal_cpl,1:nspec))
-      lva = transpose(va(:,1:nseal_cpl))
-    end if
+    ! if (.not. multifield) then
+    !   allocate(lva(1:nsealm,1:nspec))
+    !   lva = transpose(va)
+    ! end if
 
     ! create the netcdf file
     frame = 1
@@ -227,7 +222,7 @@ contains
         ierr = pio_inq_varid(pioid,  trim(vname), varid)
         call handle_err(ierr, 'inquire variable '//trim(vname))
         call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
-        call pio_write_darray(pioid, varid, iodesc2d, va(kk,1:nseal_cpl), ierr, fillval=nf90_fill_float)
+        call pio_write_darray(pioid, varid, iodesc2d, va(kk,1:nseal_cpl), ierr)
         call handle_err(ierr, 'put variable '//trim(vname))
       end do
     else
@@ -235,7 +230,7 @@ contains
       ierr = pio_inq_varid(pioid,  trim(vname), varid)
       call handle_err(ierr, 'inquire variable '//trim(vname))
       call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
-      call pio_write_darray(pioid, varid, iodesc3dk, lva, ierr, fillval=nf90_fill_float)
+      call pio_write_darray(pioid, varid, iodesc3dk, transpose(va(1:nspec,1:nseal_cpl)), ierr)
       call handle_err(ierr, 'put variable '//trim(vname))
     end if
 
