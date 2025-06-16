@@ -6407,6 +6407,7 @@ CONTAINS
 #ifdef W3_REF1
     USE W3GDATMD, only: REFPARS
 #endif
+    use w3adatmd, only : cg
 
     IMPLICIT NONE
 
@@ -6546,7 +6547,10 @@ CONTAINS
         DO IP = 1, npa
           DTSI(IP) = DBLE(DTMAXGL)/DBLE(ITER(IK))/PDLIB_SI(IP) ! Some precalculations for the time integration.
         END DO
-
+      else
+        do ip = 1,npa
+          cgsig(ip) = cg(ik,iplg(IP))
+        end do
       END IF ! LCALC
 
       ! Exact and convert Wave Action - should be some subroutine function or whatever

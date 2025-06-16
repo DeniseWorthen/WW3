@@ -451,7 +451,7 @@ CONTAINS
     USE PDLIB_W3PROFSMD, only : PDLIB_W3XYPUG, PDLIB_W3XYPUG_BLOCK_IMPLICIT, PDLIB_W3XYPUG_BLOCK_EXPLICIT
     USE PDLIB_W3PROFSMD, only : ALL_VA_INTEGRAL_PRINT, ALL_VAOLD_INTEGRAL_PRINT, ALL_FIELD_INTEGRAL_PRINT
     USE W3PARALL, only : PDLIB_NSEAL, PDLIB_NSEALM
-    USE yowNodepool, only: npa, iplg, np
+    USE yowNodepool, only: npa, iplg, np, ng
 #endif
     !/
     USE W3SERVMD
@@ -2385,7 +2385,7 @@ CONTAINS
           if (rstwr) then
             call set_user_timestring(tend,user_timestring)
             fname = trim(FNMRST)//trim(user_restfname)//trim(user_timestring)//'.nc'
-            call write_restart(trim(fname), va, mapsta+8*mapst2)
+            call write_restart(trim(fname), va(1:nspec,1:nsealm), mapsta+8*mapst2)
           end if
         end if
 
