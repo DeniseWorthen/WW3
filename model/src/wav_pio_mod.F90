@@ -28,7 +28,6 @@ module wav_pio_mod
   type(iosystem_desc_t), pointer :: wav_pio_subsystem
   ! debug
   type(pio_rearr_opt_t)          :: pio_rearr_opts
-  integer(kind=PIO_OFFSET_KIND)  :: pio_buffer_limit
 
   public :: wav_pio_init
   public :: pio_iotype
@@ -36,7 +35,6 @@ module wav_pio_mod
   public :: wav_pio_subsystem
   public :: wav_pio_initdecomp
   public :: handle_err
-  public :: pio_buffer_limit
 
   !===============================================================================
 contains
@@ -85,15 +83,15 @@ contains
     character(*), parameter :: u_FILE_u = &                  !< a character string for an ESMF log message
          __FILE__
     !debug
-    integer :: blimit
-    integer           :: pio_rearr_comm_type
-    integer           :: pio_rearr_comm_fcd
-    logical           :: pio_rearr_comm_enable_hs_comp2io
-    logical           :: pio_rearr_comm_enable_isend_comp2io
-    integer           :: pio_rearr_comm_max_pend_req_comp2io
-    logical           :: pio_rearr_comm_enable_hs_io2comp
-    logical           :: pio_rearr_comm_enable_isend_io2comp
-    integer           :: pio_rearr_comm_max_pend_req_io2comp
+    integer :: blimit,pio_buffer_limit
+    integer :: pio_rearr_comm_type
+    integer :: pio_rearr_comm_fcd
+    logical :: pio_rearr_comm_enable_hs_comp2io
+    logical :: pio_rearr_comm_enable_isend_comp2io
+    integer :: pio_rearr_comm_max_pend_req_comp2io
+    logical :: pio_rearr_comm_enable_hs_io2comp
+    logical :: pio_rearr_comm_enable_isend_io2comp
+    integer :: pio_rearr_comm_max_pend_req_io2comp
     !-------------------------------------------------------------------------------
 
     rc = ESMF_SUCCESS
@@ -463,7 +461,7 @@ contains
     integer :: n, isea, jsea, ix, iy, nseal_cpl
     logical :: luse_int
     integer(kind=PIO_OFFSET_KIND) :: lnx,lny
-    integer(kind=PIO_OFFSET_KIND), pointer :: dof2d(:)
+    integer(kind=PIO_OFFSET_KIND), allocatable :: dof2d(:)
 #ifdef W3_PDLIB
     nseal_cpl = nseal - ng
 #else
@@ -474,7 +472,7 @@ contains
 
     allocate(dof2d(nseal_cpl))
 
-    dof2d(:) = 0_PIO_OFFSET_KIND
+    dof2d(:) = 0
     lnx = int(nx,PIO_OFFSET_KIND)
     lny = int(ny,PIO_OFFSET_KIND)
 
@@ -512,7 +510,7 @@ contains
     ! local variables
     integer :: n, k, isea, jsea, ix, iy, nseal_cpl
     integer(kind=PIO_OFFSET_KIND) :: lnx,lny
-    integer(kind=PIO_OFFSET_KIND), pointer :: dof3d(:)
+    integer(kind=PIO_OFFSET_KIND), allocatable :: dof3d(:)
 #ifdef W3_PDLIB
     nseal_cpl = nseal - ng
 #else
@@ -520,7 +518,7 @@ contains
 #endif
     allocate(dof3d(nz*nseal_cpl))
 
-    dof3d(:) = 0_PIO_OFFSET_KIND
+    dof3d(:) = 0
     lnx = int(nx,PIO_OFFSET_KIND)
     lny = int(ny,PIO_OFFSET_KIND)
 
