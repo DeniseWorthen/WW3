@@ -72,6 +72,8 @@ contains
 #else
     nseal_cpl = nseal
 #endif
+    allocate(lmap(1:nseal_cpl))
+    lmap(:) = 0
 
     ! create the netcdf file
     frame = 1
