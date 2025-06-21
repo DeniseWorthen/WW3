@@ -907,10 +907,10 @@ contains
       deallocate(meshmask)
     end if
 
-    if (dbug_flag > 5) then
+    !if (dbug_flag > 5) then
       call write_meshdecomp(Emesh, 'emesh', rc=rc)
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    end if
+    !end if
 
     !--------------------------------------------------------------------
     ! Realize the actively coupled fields

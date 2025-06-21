@@ -53,10 +53,10 @@ contains
   !> author DeniseWorthen@noaa.gov
   !> @date 08-26-2024
   subroutine write_restart (fname, va, mapsta)
-
+    use ESMF
     use w3odatmd , only : time_origin, calendar_name, elapsed_secs
 
-    real            , intent(in) :: va(1:nspec,1:nsealm)
+    real            , intent(in) :: va(1:nspec,1:nseal)
     integer         , intent(in) :: mapsta(ny,nx)
     character(len=*), intent(in) :: fname
 
@@ -68,9 +68,12 @@ contains
     !real   , allocatable :: lva(:,:)
     integer, allocatable :: lmap(:)
     ! debug
+    integer :: rc
     integer :: old_mode
-    !-------------------------------------------------------------------------------
+    logical, save       :: first_call = .true.
+    !------------------------------------------------------------------------------
 
+    call ESMF_TraceRegionEnter("write_restart", rc=rc)
 #ifdef W3_PDLIB
     nseal_cpl = nseal - ng
 #else
@@ -83,6 +86,7 @@ contains
     !   lva = transpose(va)
     ! end if
 
+    call ESMF_TraceRegionEnter("create_file", rc=rc)
     ! create the netcdf file
     frame = 1
     pioid%fh = -1
@@ -93,6 +97,8 @@ contains
     endif
     ierr = pio_createfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), nmode)
     call handle_err(ierr, 'pio_create')
+    call ESMF_TraceRegionExit("create_file", rc=rc)
+
     if (iaproc == 1) write(ndso,'(a)')' Writing restart file '//trim(fname)
     if (setnofillmode) then
       ierr = pio_set_fill(pioid, PIO_NOFILL, old_mode)
@@ -102,13 +108,16 @@ contains
       if (iaproc == 1) write(ndso,'(a)')' Using fillmode for restart file '//trim(fname)
     end if
 
+    call ESMF_TraceRegionEnter("define_dims", rc=rc)
     ierr = pio_def_dim(pioid,    'nx',    nx, xtid)
     ierr = pio_def_dim(pioid,    'ny',    ny, ytid)
     if (.not. multifield) then
       ierr = pio_def_dim(pioid, 'nspec', nspec, ztid)
     end if
     ierr = pio_def_dim(pioid,  'time', PIO_UNLIMITED, timid)
+    call ESMF_TraceRegionExit("define_dims", rc=rc)
 
+    call ESMF_TraceRegionEnter("define_time", rc=rc)
     ! define the time variable
     ierr = pio_def_var(pioid, 'time', PIO_DOUBLE, (/timid/), varid)
     call handle_err(ierr,'def_timevar')
@@ -116,7 +125,9 @@ contains
     call handle_err(ierr,'def_time_units')
     ierr = pio_put_att(pioid, varid, 'calendar', trim(calendar_name))
     call handle_err(ierr,'def_time_calendar')
+    call ESMF_TraceRegionExit("define_time", rc=rc)
 
+    call ESMF_TraceRegionEnter("define_nth_nk", rc=rc)
     ! define the nth,nk sizes
     ierr = pio_def_var(pioid, 'nth', PIO_INT, varid)
     call handle_err(ierr,'def_nth')
@@ -124,7 +135,10 @@ contains
     ierr = pio_def_var(pioid, 'nk', PIO_INT, varid)
     call handle_err(ierr,'def_nk')
     ierr = pio_put_att(pioid, varid, 'long_name', 'number of frequencies')
+    call ESMF_TraceRegionExit("define_nth_nk", rc=rc)
 
+    call ESMF_TraceRegionEnter("define_fields", rc=rc)
+    call ESMF_TraceRegionEnter("define_va_field", rc=rc)
     if (multifield) then
       ! write each nspec as separate variable
       do kk = 1,nspec
@@ -144,12 +158,15 @@ contains
       ierr = pio_put_att(pioid, varid, '_FillValue', nf90_fill_float)
       call handle_err(ierr, 'define _FillValue '//trim(vname))
     end if
+    call ESMF_TraceRegionExit("define_va_field", rc=rc)
 
+    call ESMF_TraceRegionEnter("define_mapsta_field", rc=rc)
     vname = 'mapsta'
     ierr = pio_def_var(pioid, trim(vname), PIO_INT, (/xtid, ytid, timid/), varid)
     call handle_err(ierr, 'define variable '//trim(vname))
     ierr = pio_put_att(pioid, varid, '_FillValue', nf90_fill_int)
     call handle_err(ierr, 'define _FillValue '//trim(vname))
+    call ESMF_TraceRegionExit("define_mapsta_field", rc=rc)
 
     ! define any requested additional fields
     if (addrstflds) then
@@ -161,10 +178,12 @@ contains
         call handle_err(ierr, 'define _FillValue '//trim(vname))
       end do
     end if
+    call ESMF_TraceRegionExit("define_fields", rc=rc)
     ! end variable definitions
     ierr = pio_enddef(pioid)
     call handle_err(ierr, 'end variable definition')
 
+    call ESMF_TraceRegionEnter("put_nth_nk", rc=rc)
     ! write the freq and direction sizes
     ierr = pio_inq_varid(pioid, 'nth', varid)
     call handle_err(ierr, 'inquire variable nth ')
@@ -174,18 +193,27 @@ contains
     call handle_err(ierr, 'inquire variable nk ')
     ierr = pio_put_var(pioid, varid, nk)
     call handle_err(ierr, 'put nk')
+    call ESMF_TraceRegionExit("put_nth_nk", rc=rc)
 
+    call ESMF_TraceRegionEnter("init_decomp", rc=rc)
     ! initialize the decomp
-    call wav_pio_initdecomp(iodesc2dint, use_int=.true.)
-    call wav_pio_initdecomp(iodesc2d)
-    call wav_pio_initdecomp(nspec, iodesc3dk)
+    if (first_call) then
+      call wav_pio_initdecomp(iodesc2dint, use_int=.true.)
+      call wav_pio_initdecomp(iodesc2d)
+      call wav_pio_initdecomp(nspec, iodesc3dk)
+      first_call = .false.
+    end if
+    call ESMF_TraceRegionExit("init_decomp", rc=rc)
 
+    call ESMF_TraceRegionEnter("put_time", rc=rc)
     ! write the time
     ierr = pio_inq_varid(pioid,  'time', varid)
     call handle_err(ierr, 'inquire variable time ')
     ierr = pio_put_var(pioid, varid, (/1/), real(elapsed_secs,8))
     call handle_err(ierr, 'put time')
+    call ESMF_TraceRegionExit("put_time", rc=rc)
 
+    call ESMF_TraceRegionEnter("write_mapsta", rc=rc)
     ! mapsta is global
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
@@ -198,9 +226,10 @@ contains
     vname = 'mapsta'
     ierr = pio_inq_varid(pioid,  trim(vname), varid)
     call handle_err(ierr, 'inquire variable '//trim(vname))
-    call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
-    call pio_write_darray(pioid, varid, iodesc2dint, lmap, ierr)
+    !call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
+    !call pio_write_darray(pioid, varid, iodesc2dint, lmap, ierr)
     call handle_err(ierr, 'put variable '//trim(vname))
+    call ESMF_TraceRegionExit("write_mapsta", rc=rc)
 
     ! write va
     ! do jsea = 1,nseal_cpl
@@ -213,17 +242,18 @@ contains
     !   end do
     ! end do
 
+    call ESMF_TraceRegionEnter("write_va", rc=rc)
     !va(1:nspec,1:nsealm)
     !lva(1:nseal_cpl,1:nspec)
     if (multifield) then
       do kk = 1,nspec
         write(cspec,'(i4.4)')kk
         vname = 'va'//cspec
-        ierr = pio_inq_varid(pioid,  trim(vname), varid)
-        call handle_err(ierr, 'inquire variable '//trim(vname))
-        call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
-        call pio_write_darray(pioid, varid, iodesc2d, va(kk,1:nseal_cpl), ierr)
-        call handle_err(ierr, 'put variable '//trim(vname))
+        !ierr = pio_inq_varid(pioid,  trim(vname), varid)
+        !call handle_err(ierr, 'inquire variable '//trim(vname))
+        !call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
+        !call pio_write_darray(pioid, varid, iodesc2d, va(kk,1:nseal_cpl), ierr)
+        !call handle_err(ierr, 'put variable '//trim(vname))
       end do
     else
       vname = 'va'
@@ -233,6 +263,7 @@ contains
       call pio_write_darray(pioid, varid, iodesc3dk, transpose(va(1:nspec,1:nseal_cpl)), ierr)
       call handle_err(ierr, 'put variable '//trim(vname))
     end if
+    call ESMF_TraceRegionExit("write_va", rc=rc)
 
     ! write requested additional global(nsea) fields
     if (addrstflds) then
@@ -243,11 +274,12 @@ contains
     end if
 
     call pio_syncfile(pioid)
-    call pio_freedecomp(pioid, iodesc2d)
-    call pio_freedecomp(pioid, iodesc2dint)
-    call pio_freedecomp(pioid, iodesc3dk)
+    !call pio_freedecomp(pioid, iodesc2d)
+    !call pio_freedecomp(pioid, iodesc2dint)
+    !call pio_freedecomp(pioid, iodesc3dk)
     call pio_closefile(pioid)
 
+    call ESMF_TraceRegionExit("write_restart", rc=rc)
   end subroutine write_restart
 
   !===============================================================================
