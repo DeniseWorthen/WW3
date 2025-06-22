@@ -6,6 +6,7 @@
 !> @date 08-02-2024
 module wav_pio_mod
 
+
   use w3gdatmd    , only : nk, nx, ny, mapsf
   use w3parall    , only : init_get_isea
   use w3gdatmd    , only : nseal
@@ -14,6 +15,8 @@ module wav_pio_mod
 #ifdef W3_PDLIB
   use yowNodepool , only : ng
 #endif
+  !debug
+  use ESMF
   implicit none
 
   private
@@ -37,7 +40,8 @@ module wav_pio_mod
   public :: wav_pio_initdecomp
   public :: handle_err
   public :: pio_buffer_limit
-
+  !debug
+  integer :: rc
   !===============================================================================
 contains
   !===============================================================================
@@ -478,6 +482,7 @@ contains
     lnx = int(nx,PIO_OFFSET_KIND)
     lny = int(ny,PIO_OFFSET_KIND)
 
+    call ESMF_TraceRegionEnter("init_dof2", rc=rc)
     n = 0
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
@@ -492,6 +497,7 @@ contains
     else
       call pio_initdecomp(wav_pio_subsystem, PIO_REAL, (/nx,ny/), dof2d, iodesc)
     end if
+    call ESMF_TraceRegionExit("init_dof2", rc=rc)
     deallocate(dof2d)
 
   end subroutine wav_pio_initdecomp_2d
@@ -524,6 +530,7 @@ contains
     lnx = int(nx,PIO_OFFSET_KIND)
     lny = int(ny,PIO_OFFSET_KIND)
 
+    call ESMF_TraceRegionEnter("init_dof3", rc=rc)
     n = 0
     do k = 1,nz
       do jsea = 1,nseal_cpl
@@ -536,6 +543,7 @@ contains
     end do
 
     call pio_initdecomp(wav_pio_subsystem, PIO_REAL, (/nx,ny,nz/), dof3d, iodesc)
+    call ESMF_TraceRegionExit("init_dof3", rc=rc)
     deallocate(dof3d)
 
   end subroutine wav_pio_initdecomp_3d
