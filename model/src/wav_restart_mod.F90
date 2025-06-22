@@ -184,32 +184,33 @@ contains
         call handle_err(ierr, 'define _FillValue '//trim(vname))
       end do
     end if
-    call ESMF_TraceRegionExit("define_fields", rc=rc)
+
     ! end variable definitions
     ierr = pio_enddef(pioid)
     call handle_err(ierr, 'end variable definition')
+    call ESMF_TraceRegionExit("define_fields", rc=rc)
 
-    ! call ESMF_TraceRegionEnter("put_nth_nk", rc=rc)
-    ! ! write the freq and direction sizes
-    ! ierr = pio_inq_varid(pioid, 'nth', varid)
-    ! call handle_err(ierr, 'inquire variable nth ')
-    ! ierr = pio_put_var(pioid, varid, nth)
-    ! call handle_err(ierr, 'put nth')
-    ! ierr = pio_inq_varid(pioid, 'nk', varid)
-    ! call handle_err(ierr, 'inquire variable nk ')
-    ! ierr = pio_put_var(pioid, varid, nk)
-    ! call handle_err(ierr, 'put nk')
-    ! call ESMF_TraceRegionExit("put_nth_nk", rc=rc)
+    call ESMF_TraceRegionEnter("put_nth_nk", rc=rc)
+    ! write the freq and direction sizes
+    ierr = pio_inq_varid(pioid, 'nth', varid)
+    call handle_err(ierr, 'inquire variable nth ')
+    ierr = pio_put_var(pioid, varid, nth)
+    call handle_err(ierr, 'put nth')
+    ierr = pio_inq_varid(pioid, 'nk', varid)
+    call handle_err(ierr, 'inquire variable nk ')
+    ierr = pio_put_var(pioid, varid, nk)
+    call handle_err(ierr, 'put nk')
+    call ESMF_TraceRegionExit("put_nth_nk", rc=rc)
 
     ! initialize the decomp
-    if (first_call) then
+    !if (first_call) then
       call ESMF_TraceRegionEnter("init_decomp", rc=rc)
       call wav_pio_initdecomp(iodesc2dint, use_int=.true.)
       call wav_pio_initdecomp(iodesc2d)
       call wav_pio_initdecomp(nk, iodesc3dk)
-      first_call = .false.
+      !first_call = .false.
       call ESMF_TraceRegionExit("init_decomp", rc=rc)
-    end if
+    !end if
 
     call ESMF_TraceRegionEnter("put_time", rc=rc)
     ! write the time
@@ -289,9 +290,9 @@ contains
     end if
 
     call pio_syncfile(pioid)
-    !call pio_freedecomp(pioid, iodesc2d)
-    !call pio_freedecomp(pioid, iodesc2dint)
-    !call pio_freedecomp(pioid, iodesc3dk)
+    call pio_freedecomp(pioid, iodesc2d)
+    call pio_freedecomp(pioid, iodesc2dint)
+    call pio_freedecomp(pioid, iodesc3dk)
     call pio_closefile(pioid)
 
     call ESMF_TraceRegionExit("write_restart", rc=rc)

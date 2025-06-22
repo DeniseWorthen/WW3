@@ -413,9 +413,11 @@ contains
     pio_rearr_opts%comm_fc_opts_io2comp%enable_isend = pio_rearr_comm_enable_isend_io2comp
 
     ! initialize pio
+    call ESMF_TraceRegionEnter("call_pio_init", rc=rc)
     allocate(wav_pio_subsystem)
     call pio_init(my_task, mpi_comm, pio_numiotasks, master_task, pio_stride, pio_rearranger, &
          wav_pio_subsystem, base=pio_root, rearr_opts=pio_rearr_opts)
+    call ESMF_TraceRegionExit("call_pio_init", rc=rc)
 
     ! set pio_buffer size
     call NUOPC_CompAttributeGet(gcomp, name='pio_buffer_limit', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
