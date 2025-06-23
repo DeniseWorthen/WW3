@@ -100,9 +100,8 @@ contains
     endif
     ierr = pio_createfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), nmode)
     call handle_err(ierr, 'pio_create')
-    call ESMF_TraceRegionExit("create_file", rc=rc)
-
     if (iaproc == 1) write(ndso,'(a)')' Writing restart file '//trim(fname)
+
     if (setnofillmode) then
       ierr = pio_set_fill(pioid, PIO_NOFILL, old_mode)
       call handle_err(ierr, 'setting NC_NOFILL')
@@ -110,6 +109,7 @@ contains
    else
       if (iaproc == 1) write(ndso,'(a)')' Using fillmode for restart file '//trim(fname)
     end if
+    call ESMF_TraceRegionExit("create_file", rc=rc)
 
     call ESMF_TraceRegionEnter("define_dims", rc=rc)
     ierr = pio_def_dim(pioid,    'nx',    nx, xtid)
