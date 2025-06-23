@@ -88,15 +88,15 @@ contains
     ierr = pio_createfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), nmode)
     call handle_err(ierr, 'pio_create')
     if (iaproc == 1) write(ndso,'(a)')' Writing restart file '//trim(fname)
-    call ESMF_TraceRegionExit("create_file", rc=rc)
 
-    !  if (setnofillmode) then
-    !    ierr = pio_set_fill(pioid, PIO_NOFILL, old_mode)
-    !    call handle_err(ierr, 'setting NC_NOFILL')
-    !    if (iaproc == 1) write(ndso,'(a)')' Setting nofillmode for restart file '//trim(fname)
-    ! else
-    !    if (iaproc == 1) write(ndso,'(a)')' Using fillmode for restart file '//trim(fname)
-    !  end if
+    if (setnofillmode) then
+      ierr = pio_set_fill(pioid, PIO_NOFILL, old_mode)
+      call handle_err(ierr, 'setting NC_NOFILL')
+      if (iaproc == 1) write(ndso,'(a)')' Setting nofillmode for restart file '//trim(fname)
+    else
+      if (iaproc == 1) write(ndso,'(a)')' Using fillmode for restart file '//trim(fname)
+    end if
+    call ESMF_TraceRegionExit("create_file", rc=rc)
 
     call ESMF_TraceRegionEnter("define_dims", rc=rc)
     ierr = pio_def_dim(pioid,    'nx',    nx, xtid)
