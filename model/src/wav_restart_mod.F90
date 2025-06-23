@@ -289,9 +289,9 @@ contains
       end do
     end if
 
-    call ESMF_TraceRegionEnter("sync_file", rc=rc)
-    call pio_syncfile(pioid)
-    call ESMF_TraceRegionExit("sync_file", rc=rc)
+    !call ESMF_TraceRegionEnter("sync_file", rc=rc)
+    !call pio_syncfile(pioid)
+    !call ESMF_TraceRegionExit("sync_file", rc=rc)
     call pio_freedecomp(pioid, iodesc2d)
     call pio_freedecomp(pioid, iodesc2dint)
     call ESMF_TraceRegionEnter("close_file", rc=rc)
