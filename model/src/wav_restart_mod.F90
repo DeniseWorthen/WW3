@@ -68,6 +68,7 @@ contains
     integer :: old_mode, rc
     !-------------------------------------------------------------------------------
 
+    call ESMF_TraceRegionEnter("write_restart", rc=rc)
 #ifdef W3_PDLIB
     nseal_cpl = nseal - ng
 #else
@@ -233,6 +234,7 @@ contains
     call ESMF_TraceRegionEnter("close_file", rc=rc)
     call pio_closefile(pioid)
     call ESMF_TraceRegionExit("close_file", rc=rc)
+    call ESMF_TraceRegionExit("write_restart", rc=rc)
 
   end subroutine write_restart
 
