@@ -85,9 +85,10 @@ contains
 #endif
     allocate(lmap(1:nseal_cpl))
     lmap(:) = 0
-     if (.not. multifield) then
-       allocate(lva(1:nseal,1:nk))
-     end if
+    if (.not. multifield) then
+      allocate(lva(1:nseal,1:nk))
+    end if
+    lva = 0.0
 
     call ESMF_TraceRegionEnter("create_file", rc=rc)
     ! create the netcdf file
