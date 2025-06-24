@@ -277,6 +277,11 @@ contains
        call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
        call pio_write_darray(pioid, varid, iodesc3dk, lva, ierr)
        call handle_err(ierr, 'put variable '//trim(vname))
+       if (mod(kk,2) .eq. 0)then
+         call ESMF_TraceRegionEnter("sync_file"//trim(vname), rc=rc)
+         call pio_syncfile(pioid)
+         call ESMF_TraceRegionExit("sync_file"//trim(vname), rc=rc)
+       end if
      end do
    end if
    call ESMF_TraceRegionExit("write_va", rc=rc)
