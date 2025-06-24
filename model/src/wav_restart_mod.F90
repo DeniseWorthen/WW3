@@ -207,6 +207,9 @@ contains
     call handle_err(ierr, 'put variable '//trim(vname))
     call ESMF_TraceRegionExit("write_mapsta", rc=rc)
 
+    call ESMF_TraceRegionEnter("sync_file pre va", rc=rc)
+    call pio_syncfile(pioid)
+    call ESMF_TraceRegionExit("sync_file pre va", rc=rc)
 
     call ESMF_TraceRegionEnter("write_va", rc=rc)
     !va(1:nspec,1:nsealm)
@@ -225,7 +228,7 @@ contains
         call ESMF_TraceRegionExit("sync_file"//trim(vname), rc=rc)
       end if
     end do
-   call ESMF_TraceRegionExit("write_va", rc=rc)
+    call ESMF_TraceRegionExit("write_va", rc=rc)
 
     ! write requested additional global(nsea) fields
     if (addrstflds) then
