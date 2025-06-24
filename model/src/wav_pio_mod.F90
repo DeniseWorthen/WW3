@@ -30,6 +30,7 @@ module wav_pio_mod
   type(pio_rearr_opt_t)          :: pio_rearr_opts
 
   public :: wav_pio_init
+  public :: wav_pio_finalize
   public :: pio_iotype
   public :: pio_ioformat
   public :: wav_pio_subsystem
@@ -537,7 +538,28 @@ contains
     deallocate(dof3d)
 
   end subroutine wav_pio_initdecomp_3d
+!===============================================================================
+  !> blahblah
+  !!
+  !!
+  !> @author Denise.Worthen@noaa.gov
+  !> @date 08-02-2024
+  subroutine wav_pio_finalize(rc)
 
+    use ESMF , only : ESMF_SUCCESS, ESMF_FAILURE
+
+    integer , intent(out)   :: rc
+
+    integer :: ierr
+
+    rc = ESMF_SUCCESS
+
+    call pio_finalize(wav_pio_subsystem, ierr)
+    if (ierr /= 0)then
+      rc = ESMF_FAILURE
+    end if
+
+  end subroutine wav_pio_finalize
   !===============================================================================
   !> Handle errors
   !!

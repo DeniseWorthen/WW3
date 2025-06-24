@@ -44,7 +44,7 @@ module wav_comp_nuopc
   use wav_shr_mod           , only : wav_coupling_to_cice, nwav_elev_spectrum
   use wav_shr_mod           , only : merge_import, dbug_flag
   use w3odatmd              , only : nds, iaproc, napout
-  use w3odatmd              , only : runtype, user_histfname, user_restfname, verboselog, multifield, setnofillmode
+  use w3odatmd              , only : runtype, user_histfname, user_restfname, verboselog, multifield, setnofillmode, syncfreq
   use w3odatmd              , only : use_historync, use_restartnc, restart_from_binary, logfile_is_assigned
   use w3odatmd              , only : time_origin, calendar_name, elapsed_secs
   use wav_shr_mod           , only : casename, inst_suffix, inst_index, unstr_mesh
@@ -222,7 +222,7 @@ contains
     use w3odatmd        , only : naproc, naperr
     use w3timemd        , only : stme21
     use w3wdatmd        , only : time
-    use w3gdatmd        , only : nk
+    use w3gdatmd        , only : nk,  nspec
     use wav_shel_inp    , only : set_shel_io
     use wav_history_mod , only : wav_history_init
     use wav_pio_mod     , only : wav_pio_init
@@ -413,6 +413,17 @@ contains
     if (isPresent .and. isSet) setnofillmode=(trim(cvalue)=="true")
     write(logmsg,*) setnofillmode
     call ESMF_LogWrite('WW3_cap: setnofillmode is = '//trim(logmsg), ESMF_LOGMSG_INFO)
+
+    call NUOPC_CompAttributeGet(gcomp, name="syncfreq", value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    if (isPresent .and. isSet) then
+      read(cvalue, *)syncfreq
+    else
+      syncfreq = nspec
+    end if
+    write(logmsg,'(i6)')syncfreq
+    call ESMF_LogWrite('WW3_cap: syncfreq is = '//trim(logmsg), ESMF_LOGMSG_INFO)
+
     !--------------------------------------------------------------------
     ! Set up data structures
     !--------------------------------------------------------------------
@@ -1384,6 +1395,8 @@ contains
   !> @date 01-05-2022
   subroutine ModelFinalize(gcomp, rc)
 
+    use wav_pio_mod, only : wav_pio_finalize
+
     ! input/output variables
     type(ESMF_GridComp)  :: gcomp
     integer, intent(out) :: rc
@@ -1401,6 +1414,12 @@ contains
       write(nds(1),F91)
       write(nds(1),F00) 'WW3: end of main integration loop'
       write(nds(1),F91)
+
+      if (use_restartnc .or. use_historync) then
+        write(nds(1),'(a)')'Finalizing PIO '
+        call wav_pio_finalize(rc)
+        if (ChkErr(rc,__LINE__,u_FILE_u)) return
+      end if
     end if
 
     call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)

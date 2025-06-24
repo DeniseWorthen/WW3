@@ -9,7 +9,7 @@ module wav_restart_mod
   use w3parall      , only : init_get_isea
   use w3adatmd      , only : nsealm
   use w3gdatmd      , only : nth, nk, nx, ny, mapsf, nspec, nseal, nsea
-  use w3odatmd      , only : ndso, iaproc, addrstflds, rstfldlist, rstfldcnt, multifield, setnofillmode
+  use w3odatmd      , only : ndso, iaproc, addrstflds, rstfldlist, rstfldcnt, multifield, setnofillmode, syncfreq
   use w3wdatmd      , only : ice
   use wav_pio_mod   , only : pio_iotype, pio_ioformat, wav_pio_subsystem
   use wav_pio_mod   , only : handle_err, wav_pio_initdecomp
@@ -89,6 +89,8 @@ contains
     ierr = pio_createfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), nmode)
     call handle_err(ierr, 'pio_create')
     if (iaproc == 1) write(ndso,'(a)')' Writing restart file '//trim(fname)
+
+    if (iaproc == 1) write(ndso,'(a,i8)')' Syncfreq ',syncfreq
 
     if (setnofillmode) then
       ierr = pio_set_fill(pioid, PIO_NOFILL, old_mode)
@@ -205,6 +207,7 @@ contains
     call handle_err(ierr, 'put variable '//trim(vname))
     call ESMF_TraceRegionExit("write_mapsta", rc=rc)
 
+
     call ESMF_TraceRegionEnter("write_va", rc=rc)
     !va(1:nspec,1:nsealm)
     do kk = 1,nspec
@@ -216,7 +219,7 @@ contains
       call pio_write_darray(pioid, varid, iodesc2d, va(kk,1:nseal_cpl), ierr)
       call handle_err(ierr, 'put variable '//trim(vname))
 
-      if(mod(kk,nk*2) .eq. 0)then
+      if(mod(kk,syncfreq) .eq. 0)then
         call ESMF_TraceRegionEnter("sync_file"//trim(vname), rc=rc)
         call pio_syncfile(pioid)
         call ESMF_TraceRegionExit("sync_file"//trim(vname), rc=rc)
