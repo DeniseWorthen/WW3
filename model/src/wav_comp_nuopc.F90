@@ -223,7 +223,7 @@ contains
     use w3odatmd        , only : naproc, naperr
     use w3timemd        , only : stme21
     use w3wdatmd        , only : time
-    use w3gdatmd        , only : nk,  nspec
+    use w3gdatmd        , only : nk, nspec
     use wav_shel_inp    , only : set_shel_io
     use wav_history_mod , only : wav_history_init
     use wav_pio_mod     , only : wav_pio_init
@@ -417,16 +417,6 @@ contains
     if (isPresent .and. isSet) setnofillmode=(trim(cvalue)=="true")
     write(logmsg,*) setnofillmode
     call ESMF_LogWrite('WW3_cap: setnofillmode is = '//trim(logmsg), ESMF_LOGMSG_INFO)
-
-    call NUOPC_CompAttributeGet(gcomp, name="syncfreq", value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    if (isPresent .and. isSet) then
-      read(cvalue, *)syncfreq
-    else
-      syncfreq = nspec
-    end if
-    write(logmsg,'(i6)')syncfreq
-    call ESMF_LogWrite('WW3_cap: syncfreq is = '//trim(logmsg), ESMF_LOGMSG_INFO)
 
     !--------------------------------------------------------------------
     ! Set up data structures
@@ -686,6 +676,17 @@ contains
         call ESMF_Finalize(endflag=ESMF_END_ABORT)
       end if
     end if
+
+    ! must occur after wave initialization
+    call NUOPC_CompAttributeGet(gcomp, name="syncfreq", value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    if (isPresent .and. isSet) then
+      read(cvalue, *)syncfreq
+    else
+      syncfreq = nspec
+    end if
+    write(logmsg,'(i6)')syncfreq
+    call ESMF_LogWrite('WW3_cap: syncfreq is = '//trim(logmsg), ESMF_LOGMSG_INFO)
 
     !--------------------------------------------------------------------
     ! Intialize the list of requested output variables for netCDF output.
