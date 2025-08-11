@@ -283,6 +283,11 @@ contains
     use w3wdatmd    , only: w3setw
 #ifdef W3_CESMCOUPLED
     use w3idatmd    , only: HSL
+#else
+    use wav_shr_mod , only : casename
+#ifdef W3_MPI
+    use wmmdatmd    , only: mpi_comm_grd
+#endif
 #endif
 
     ! input/output variables
@@ -299,6 +304,8 @@ contains
     real(r4)                :: def_value
     character(len=10)       :: uwnd
     character(len=10)       :: vwnd
+    integer                 :: isea
+    real(r4), parameter     :: fillv = 9.99e20
     real(r4), allocatable   :: wxdata(:)      ! only needed if merge_import
     real(r4), allocatable   :: wydata(:)      ! only needed if merge_import
     character(len=*), parameter :: subname='(wav_import_export:import_fields)'
@@ -357,8 +364,15 @@ contains
       if (state_fldchk(importState, 'So_u')) then
         call SetGlobalInput(importState, 'So_u', vm, global_data, rc)
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
+
+        if(trim(casename) == 'ufs.hafs') then
+          do isea = 1,nsea
+            if(abs(global_data(isea)-fillv).lt.0.01) then
+              global_data(isea)=0.0
+            end if
+          end do
+        end if
         call FillGlobalInput(global_data, CX0)
-        call FillGlobalInput(global_data, CXN)
       end if
 
       CY0(:,:) = def_value   ! ocn v current
@@ -366,8 +380,14 @@ contains
       if (state_fldchk(importState, 'So_v')) then
         call SetGlobalInput(importState, 'So_v', vm, global_data, rc)
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
+        if(trim(casename) == 'ufs.hafs') then
+          do isea = 1,nsea
+            if(abs(global_data(isea)-fillv).lt.0.01) then
+              global_data(isea)=0.0
+            end if
+          end do
+        end if
         call FillGlobalInput(global_data, CY0)
-        call FillGlobalInput(global_data, CYN)
       end if
     end if
 
@@ -406,14 +426,12 @@ contains
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
         if (merge_import) then
           call FillGlobalInput(global_data, import_mask, wxdata, WX0)
-          call FillGlobalInput(global_data, import_mask, wxdata, WXN)
           if (dbug_flag > 10) then
             call check_globaldata(gcomp, 'wx0', wx0, nx*ny, rc)
             if (ChkErr(rc,__LINE__,u_FILE_u)) return
           end if
         else
           call FillGlobalInput(global_data, WX0)
-          call FillGlobalInput(global_data, WXN)
         end if
       end if
 
@@ -426,14 +444,12 @@ contains
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
         if (merge_import) then
           call FillGlobalInput(global_data, import_mask, wydata, WY0)
-          call FillGlobalInput(global_data, import_mask, wydata, WYN)
           if (dbug_flag > 10) then
             call check_globaldata(gcomp, 'wy0', wy0, nx*ny, rc)
             if (ChkErr(rc,__LINE__,u_FILE_u)) return
           end if
         else
           call FillGlobalInput(global_data, WY0)
-          call FillGlobalInput(global_data, WYN)
         end if
       end if
 
@@ -450,7 +466,6 @@ contains
         ! So_tbot - So_t
         global_data = global_data - global_data2
         call FillGlobalInput(global_data, DT0)
-        call FillGlobalInput(global_data, DTN)
         deallocate(global_data2)
       end if
       ! Deallocate memory for merge_import
@@ -496,7 +511,6 @@ contains
         call SetGlobalInput(importState, 'Faxa_taux', vm, global_data, rc)
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
         call FillGlobalInput(global_data, UX0)
-        call FillGlobalInput(global_data, UXN)
       end if
 
       UY0(:,:) = def_value   ! atm v momentum
@@ -506,7 +520,6 @@ contains
         call SetGlobalInput(importState, 'Faxa_tauy', vm, global_data, rc)
         if (ChkErr(rc,__LINE__,u_FILE_u)) return
         call FillGlobalInput(global_data, UY0)
-        call FillGlobalInput(global_data, UYN)
       end if
     end if
     ! ---------------
