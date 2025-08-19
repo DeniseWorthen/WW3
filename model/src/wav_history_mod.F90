@@ -46,6 +46,7 @@ module wav_history_mod
   type(io_desc_t)   :: iodesc3dm   !m-axis variables
   type(io_desc_t)   :: iodesc3dp   !p-axis variables
   type(io_desc_t)   :: iodesc3dk   !k-axis variables
+  type(io_desc_t)   :: iodesc3dnk  !nk-axis variables for wavenumber (nk.ne.k-axis)
 
   ! variable attributes
   type :: varatts
@@ -70,11 +71,12 @@ contains
   !> @date 08-26-2024
   subroutine write_history ( timen )
 
+    use constants  , only : tpiinv
     use w3odatmd   , only : FNMGRD
     use w3gdatmd   , only : trigp, ntri, ungtype, gtype
     use w3servmd   , only : extcde
     use w3wdatmd   , only : wlv, ice, icef, iceh, berg, ust, ustdir, asf, rhoair
-    use w3gdatmd   , only : e3df, p2msf, us3df, usspf
+    use w3gdatmd   , only : e3df, p2msf, us3df, usspf, sig
     use w3odatmd   , only : noswll
     use w3odatmd   , only : ndso, iaproc
     use w3adatmd   , only : dw, ua, ud, as, cx, cy, taua, tauadir
@@ -113,11 +115,12 @@ contains
     character(len=256)  :: log_fname          ! log file name
     integer             :: log_unit = 28888   ! unit number for log file
 
-    integer :: n, xtid, ytid, xeid, ztid, stid, mtid, ptid, ktid, timid, nmode
-    integer :: len_s, len_m, len_p, len_k
+    integer :: n, k, xtid, ytid, xeid, ztid, stid, mtid, ptid, ktid, timid, nmode
+    integer :: len_s, len_m, len_p, len_k, len_nk
     logical :: s_axis = .false., m_axis = .false., p_axis = .false., k_axis = .false.
 
     integer :: lmap(nseal_cpl)
+    real(kind=8), allocatable  :: freq_wn(:), freq_ef(:)
 
     ! -------------------------------------------------------------
     ! create the netcdf file
@@ -148,6 +151,7 @@ contains
     len_m = p2msf(3)-p2msf(2) + 1       ! ?
     len_p = usspf(2)                    ! partitions
     len_k = e3df(3,1) - e3df(2,1) + 1   ! frequencies
+    len_nk = nk                         ! frequencies for wavenumber
 
     ! define the dimensions required for the requested gridded fields
     do n = 1,size(outvars)
@@ -156,6 +160,7 @@ contains
         if(trim(outvars(n)%dims) == 'm')m_axis = .true.
         if(trim(outvars(n)%dims) == 'p')p_axis = .true.
         if(trim(outvars(n)%dims) == 'k')k_axis = .true.
+        if(trim(outvars(n)%dims) == 'nk')nk_axis = .true.
       end if
     end do
 
@@ -164,6 +169,10 @@ contains
     if (m_axis) allocate(var3dm(1:nseal_cpl,len_m))
     if (p_axis) allocate(var3dp(1:nseal_cpl,len_p))
     if (k_axis) allocate(var3dk(1:nseal_cpl,len_k))
+    if (nk_axis) allocate(var3dnk(1:nseal_cpl,len_nk))
+
+    if ( k_axis ) allocate(freq_ef(1:len_k))
+    if ( nk_axis ) allocate(freq_wn(1:len_nk))
 
     ierr = pio_def_dim(pioid, 'nx', nx, xtid)
     ierr = pio_def_dim(pioid, 'ny', ny, ytid)
@@ -172,7 +181,9 @@ contains
     if (s_axis) ierr = pio_def_dim(pioid, 'noswll', len_s, stid)
     if (m_axis) ierr = pio_def_dim(pioid, 'nm'    , len_m, mtid)
     if (p_axis) ierr = pio_def_dim(pioid, 'np'    , len_p, ptid)
-    if (k_axis) ierr = pio_def_dim(pioid, 'freq'  , len_k, ktid)
+    if (k_axis) ierr = pio_def_dim(pioid, 'nf_ef'  , len_k, ktid)
+    if (nk_axis) ierr = pio_def_dim(pioid, 'nf_wn'  , len_nk, nktid)
+
     if (gtype .eq. ungtype) then
       ierr = pio_def_dim(pioid, 'ne'  , ntri, xeid)
       ierr = pio_def_dim(pioid, 'nn'  ,    3, ztid)
@@ -208,6 +219,18 @@ contains
       ierr = pio_put_att(pioid, varid, 'long_name', 'node connectivity')
     end if
 
+    ! define the frequency  axis variables for wavenumber(wn) and spectra(ef)
+    if (k_axis) then
+      ierr = pio_def_var(pioid, 'freq_ef', PIO_DOUBLE, (/ktid/), varid)
+      call handle_err(ierr,'def_freq')
+      ierr = pio_put_att(pioid, varid, 'units', 's-1')
+    end if
+    if (nk_axis) then
+      ierr = pio_def_var(pioid, 'freq_wn', PIO_DOUBLE, (/nktid/), varid)
+      call handle_err(ierr,'def_freq')
+      ierr = pio_put_att(pioid, varid, 'units', 's-1')
+    end if
+
     ! define the variables
     dimid3(1:2) = (/xtid, ytid/)
     dimid4(1:2) = (/xtid, ytid/)
@@ -223,6 +246,9 @@ contains
         dimid => dimid4
       else if (trim(outvars(n)%dims) == 'k') then
         dimid4(3:4) = (/ktid, timid/)
+        dimid => dimid4
+      else if (trim(outvars(n)%dims) == 'nk') then ! wavenumber
+        dimid4(3:4) = (/nktid, timid/)
         dimid => dimid4
       else
         dimid3(3) = timid
@@ -262,6 +288,26 @@ contains
     ierr = pio_put_var(pioid, varid, (/1/), real(elapsed_secs,8))
     call handle_err(ierr, 'put time')
 
+    if (k_axis) then
+      do k=1,len_k
+        freq_ef(k)=SIG( e3df(2,1) + k -1 ) * TPIINV
+      enddo
+      ierr = pio_inq_varid(pioid,  'freq_ef', varid)
+      call handle_err(ierr, 'inquire variable freq EF')
+      ierr = pio_put_var(pioid, varid, freq_ef(1:len_k)  )
+      call handle_err(ierr, 'put freq EF')
+    end if
+
+    if (nk_axis) then
+      do k=1,len_nk
+        freq_wn(k)=SIG( e3df(2,1) + k -1 ) * TPIINV
+      enddo
+      ierr = pio_inq_varid(pioid,  'freq_wn', varid)
+      call handle_err(ierr, 'inquire variable freq WN')
+      ierr = pio_put_var(pioid, varid, freq_wn(1:len_nk)  )
+      call handle_err(ierr, 'put freq WN')
+    end if
+
     if (gtype .eq. ungtype) then
       ierr = pio_inq_varid(pioid,  'nconn', varid)
       call handle_err(ierr, 'inquire variable nconn ')
@@ -285,7 +331,7 @@ contains
 
     ! write the requested variables
     do n = 1,size(outvars)
-       vname = trim(outvars(n)%var_name)
+      vname = trim(outvars(n)%var_name)
       if (trim(outvars(n)%dims) == 's') then
         var3d => var3ds
         ! Group 4
@@ -316,6 +362,11 @@ contains
         if (vname .eq.   'USSPX') call write_var3d(iodesc3dp, vname, ussp     (1:nseal_cpl,   1:usspf(2)) )
         if (vname .eq.   'USSPY') call write_var3d(iodesc3dp, vname, ussp     (1:nseal_cpl,nk+1:nk+usspf(2)) )
 
+      else if (trim(outvars(n)%dims) == 'nk') then                           ! freq + 1 axis for wavenumber
+        var3d => var3dnk
+        !if(vname .eq.       'WN') call write_var3d_transpose(iodesc3dnk, vname, wn (1:len_nk  ,1:nseal_cpl)   )
+        if(vname .eq.       'WN') call write_var3d(iodesc3dk, vname, transpose(wn(1:nk,1:nsea)), global='true')
+
       else if (trim(outvars(n)%dims) == 'k') then                           ! freq axis
         var3d => var3dk
         ! Group 3
@@ -324,7 +375,7 @@ contains
         if(vname .eq.    'STH1M') call write_var3d(iodesc3dk, vname, ef       (1:nseal_cpl,e3df(2,3):e3df(3,3)) )
         if(vname .eq.     'TH2M') call write_var3d(iodesc3dk, vname, ef       (1:nseal_cpl,e3df(2,4):e3df(3,4)) )
         if(vname .eq.    'STH2M') call write_var3d(iodesc3dk, vname, ef       (1:nseal_cpl,e3df(2,5):e3df(3,5)) )
-        if(vname .eq.       'WN') call write_var3d(iodesc3dk, vname, transpose(wn) )
+
         ! Group 6
         if (vname .eq.   'US3DX') call write_var3d(iodesc3dk, vname, us3d     (1:nseal_cpl,   us3df(2):us3df(3)) )
         if (vname .eq.   'US3DY') call write_var3d(iodesc3dk, vname, us3d     (1:nseal_cpl,nk+us3df(2):nk+us3df(3)) )
@@ -449,6 +500,10 @@ contains
     if (m_axis) deallocate(var3dm)
     if (p_axis) deallocate(var3dp)
     if (k_axis) deallocate(var3dk)
+    if (nk_axis) deallocate(var3dnk)
+
+    if (k_axis ) deallocate(freq_ef)
+    if (nk_axis) deallocate(freq_wn)
 
     call pio_freedecomp(pioid,iodesc2d)
     call pio_freedecomp(pioid,iodesc2dint)
@@ -593,20 +648,22 @@ contains
   !! @param[in]   var         the variable array
   !! @param[in]   init2       a flag for a second initialization type, optional
   !! @param[in]   fldir       a flag for unit conversion for direction, optional
-  !!
+  !! @param[in]    global     a flag for a global variable, optional
+
   !> author DeniseWorthen@noaa.gov
   !> @date 08-26-2024
-  subroutine write_var3d(iodesc, vname, var, init2, fldir)
+  subroutine write_var3d(iodesc, vname, var, init2, fldir, global)
 
     type(io_desc_t),            intent(inout) :: iodesc
     character(len=*),           intent(in) :: vname
     real            ,           intent(in) :: var(:,:)
     character(len=*), optional, intent(in) :: init2
     character(len=*), optional, intent(in) :: fldir
+    character(len=*), optional, intent(in) :: global
 
     ! local variables
     real, allocatable, dimension(:) :: varloc
-    logical                         :: linit2, lfldir
+    logical                         :: linit2, lfldir, lglobal
     integer                         :: lb, ub
 
     linit2 = .false.
@@ -617,6 +674,10 @@ contains
     if (present(fldir)) then
       lfldir = (trim(fldir) == "true")
     end if
+    lglobal = .false.
+    if (present(global)) then
+      lglobal = (trim(global) == "true")
+    end if
 
     lb = lbound(var,2)
     ub = ubound(var,2)
@@ -626,7 +687,11 @@ contains
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
       ! initialization
-      varloc(:) = var(jsea,:)
+      if (lglobal) then
+        varloc(:) = var(isea,:)
+      else
+        varloc(:) = var(jsea,:)
+      end if
       if (mapsta(mapsf(isea,2),mapsf(isea,1)) < 0) varloc(:) = undef
       if (linit2) then
         if (mapsta(mapsf(isea,2),mapsf(isea,1)) == 2) varloc(:) = undef
@@ -916,9 +981,9 @@ contains
          varatts( "QP   ", "QP        ", "Peakedness                                      ", "nd        ", "  ", .false.) , &
          varatts( "QKK  ", "QKK       ", "K-peakedness                                    ", "nd        ", "  ", .false.)   &
          ]
-         !varatts( "SKW  ", "SKW       ", "Skewness                                        ", "nd        ", "  ", .false.) , &
-         !varatts( "EMB  ", "EMB       ", "EM-bias                                         ", "nd        ", "  ", .false.) , &
-         !varatts( "EMC  ", "EMC       ", "Tracker bias                                    ", "nd        ", "  ", .false.)   &
+    !varatts( "SKW  ", "SKW       ", "Skewness                                        ", "nd        ", "  ", .false.) , &
+    !varatts( "EMB  ", "EMB       ", "EM-bias                                         ", "nd        ", "  ", .false.) , &
+    !varatts( "EMC  ", "EMC       ", "Tracker bias                                    ", "nd        ", "  ", .false.)   &
 
     !  9   Numerical diagnostics
     gridoutdefs(9,1:5) = [ &
