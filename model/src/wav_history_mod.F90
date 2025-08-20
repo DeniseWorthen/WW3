@@ -34,6 +34,7 @@ module wav_history_mod
   real, allocatable, target :: var3dm(:,:)
   real, allocatable, target :: var3dp(:,:)
   real, allocatable, target :: var3dk(:,:)
+  real, allocatable, target :: var3dnk(:,:)
 
   ! output variable for (nx,ny,nz) fields
   real, pointer :: var3d(:,:)
@@ -95,7 +96,6 @@ contains
     use w3adatmd   , only : hsig, phice, tauice
     use w3adatmd   , only : stmaxe, stmaxd, hmaxe, hcmaxe, hmaxd, hcmaxd, ussp, tauocx, tauocy
     use w3adatmd   , only : usshx, usshy
-
     use w3timemd   , only : set_user_timestring
     use w3odatmd   , only : time_origin, calendar_name, elapsed_secs
     use w3odatmd   , only : user_histfname
@@ -115,9 +115,9 @@ contains
     character(len=256)  :: log_fname          ! log file name
     integer             :: log_unit = 28888   ! unit number for log file
 
-    integer :: n, k, xtid, ytid, xeid, ztid, stid, mtid, ptid, ktid, timid, nmode
+    integer :: n, k, xtid, ytid, xeid, ztid, stid, mtid, ptid, ktid, nktid, timid, nmode
     integer :: len_s, len_m, len_p, len_k, len_nk
-    logical :: s_axis = .false., m_axis = .false., p_axis = .false., k_axis = .false.
+    logical :: s_axis = .false., m_axis = .false., p_axis = .false., k_axis = .false., nk_axis = .false.
 
     integer :: lmap(nseal_cpl)
     real(kind=8), allocatable  :: freq_wn(:), freq_ef(:)
@@ -271,6 +271,7 @@ contains
     if (m_axis)call wav_pio_initdecomp(len_m, iodesc3dm)
     if (p_axis)call wav_pio_initdecomp(len_p, iodesc3dp)
     if (k_axis)call wav_pio_initdecomp(len_k, iodesc3dk)
+    if (nk_axis)call wav_pio_initdecomp(len_nk, iodesc3dnk)
 
     ! write the time and spatial axis values (lat,lon,time)
     ierr = pio_inq_varid(pioid,  'lat', varid)
@@ -300,7 +301,7 @@ contains
 
     if (nk_axis) then
       do k=1,len_nk
-        freq_wn(k)=SIG( e3df(2,1) + k -1 ) * TPIINV
+        freq_wn(k)=sig( e3df(2,1) + k -1 ) * tpiinv
       enddo
       ierr = pio_inq_varid(pioid,  'freq_wn', varid)
       call handle_err(ierr, 'inquire variable freq WN')
@@ -364,8 +365,7 @@ contains
 
       else if (trim(outvars(n)%dims) == 'nk') then                           ! freq + 1 axis for wavenumber
         var3d => var3dnk
-        !if(vname .eq.       'WN') call write_var3d_transpose(iodesc3dnk, vname, wn (1:len_nk  ,1:nseal_cpl)   )
-        if(vname .eq.       'WN') call write_var3d(iodesc3dk, vname, transpose(wn(1:nk,1:nsea)), global='true')
+        if(vname .eq.       'WN') call write_var3d(iodesc3dnk, vname, transpose(wn(1:nk,1:nsea)), global='true')
 
       else if (trim(outvars(n)%dims) == 'k') then                           ! freq axis
         var3d => var3dk
@@ -511,6 +511,7 @@ contains
     if (m_axis) call pio_freedecomp(pioid, iodesc3dm)
     if (p_axis) call pio_freedecomp(pioid, iodesc3dp)
     if (k_axis) call pio_freedecomp(pioid, iodesc3dk)
+    if (nk_axis) call pio_freedecomp(pioid, iodesc3dnk)
 
     call pio_closefile(pioid)
 
@@ -692,6 +693,7 @@ contains
       else
         varloc(:) = var(jsea,:)
       end if
+
       if (mapsta(mapsf(isea,2),mapsf(isea,1)) < 0) varloc(:) = undef
       if (linit2) then
         if (mapsta(mapsf(isea,2),mapsf(isea,1)) == 2) varloc(:) = undef
@@ -885,7 +887,7 @@ contains
          varatts( "STH1M", "STH1M     ", "Directional spreading from a1,b2                ", "deg       ", "k ", .false.) , &
          varatts( "TH2M ", "TH2M      ", "Mean wave direction from a2,b2                  ", "deg       ", "k ", .false.) , &
          varatts( "STH2M", "STH2M     ", "Directional spreading from a2,b2                ", "deg       ", "k ", .false.) , &
-         varatts( "WN   ", "WN        ", "Wavenumber array                                ", "m-1       ", "k ", .false.)   &
+         varatts( "WN   ", "WN        ", "Wavenumber array                                ", "m-1       ", "nk ", .false.)   &
          ]
 
     !  4   Spectral Partition Parameters
