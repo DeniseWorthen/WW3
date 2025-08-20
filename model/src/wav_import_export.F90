@@ -285,9 +285,6 @@ contains
     use w3idatmd    , only: HSL
 #else
     use wav_shr_mod , only : casename
-#ifdef W3_MPI
-    use wmmdatmd    , only: mpi_comm_grd
-#endif
 #endif
 
     ! input/output variables
