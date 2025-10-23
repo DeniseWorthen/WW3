@@ -52,6 +52,7 @@ module wav_comp_nuopc
 #ifndef W3_CESMCOUPLED
   use shr_is_restart_fh_mod , only : init_is_restart_fh, is_restart_fh, is_restart_fh_type
 #endif
+  use ufs_trace_mod
 
   implicit none
   private ! except
@@ -96,6 +97,7 @@ module wav_comp_nuopc
   character(*), parameter :: u_FILE_u = &                  !< a character string for an ESMF log message
        __FILE__
 
+  integer :: mype = -1
   !===============================================================================
 contains
   !===============================================================================
@@ -112,9 +114,18 @@ contains
     integer, intent(out) :: rc
 
     character(len=*),parameter  :: subname=trim(modName)//':(SetServices) '
+    type(ESMF_VM)                 :: vm
 
     rc = ESMF_SUCCESS
     call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
+
+    call ESMF_GridCompGet(gcomp, vm=vm,rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    call ESMF_VMGet(vm, localpet=mype, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+
+    if (mype == 0) call ufs_trace_init()
+    if (mype == 0) call ufs_trace("wave", "SetServices", "B")
 
     ! the NUOPC gcomp component will register the generic methods
     call NUOPC_CompDerive(gcomp, model_routine_SS, rc=rc)
@@ -156,6 +167,7 @@ contains
 
     call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
 
+    if (mype == 0) call ufs_trace("wave", "SetServices", "E")
   end subroutine SetServices
 
   !===============================================================================
@@ -180,12 +192,14 @@ contains
     !-------------------------------------------------------------------------------
 
     rc = ESMF_SUCCESS
+    if (mype == 0) call ufs_trace("wave", "InitializeP0", "B")
 
     ! Switch to IPDv01 by filtering all other phaseMap entries
 
     call NUOPC_CompFilterPhaseMap(gcomp, ESMF_METHOD_INITIALIZE, acceptStringList=(/"IPDv01p"/), rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
+    if (mype == 0) call ufs_trace("wave", "InitializeP0", "E")
   end subroutine InitializeP0
 
   !===============================================================================
@@ -263,6 +277,7 @@ contains
     character(len=*), parameter :: subname=trim(modName)//':(InitializeAdvertise) '
     !-------------------------------------------------------------------------------
 
+    if (mype == 0) call ufs_trace("wave", "InitializeAdvertise", "B")
     call ufs_settimer(wtime)
     rc = ESMF_SUCCESS
     call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
@@ -705,6 +720,8 @@ contains
 
     call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
 
+    if (mype == 0) call ufs_trace("wave", "InitializeAdvertise", "E")
+
   end subroutine InitializeAdvertise
   !========================================================================
   !> Realize the import and export fields.
@@ -773,6 +790,8 @@ contains
 
     rc = ESMF_SUCCESS
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
+
+    if (mype == 0) call ufs_trace("wave", "InitializeRealize", "B")
 
     call ufs_settimer(wtime)
 
@@ -947,6 +966,7 @@ contains
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
 
+    if (mype == 0) call ufs_trace("wave", "InitializeRealize", "E")
   end subroutine InitializeRealize
 
   !===============================================================================
@@ -983,6 +1003,7 @@ contains
 
     rc = ESMF_SUCCESS
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
+    if (mype == 0) call ufs_trace("wave", "DataInitialize", "B")
 
     call NUOPC_ModelGet(gcomp, exportState=exportState, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
@@ -1036,6 +1057,7 @@ contains
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
 
+    if (mype == 0) call ufs_trace("wave", "DataInitialize", "E")
   end subroutine DataInitialize
 
   !=====================================================================
@@ -1084,6 +1106,7 @@ contains
 
     rc = ESMF_SUCCESS
     if (dbug_flag  > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
+    if (mype == 0) call ufs_trace("wave", "ModelAdvance", "B")
 
     !------------
     ! query the Component for its importState, exportState and clock
@@ -1194,6 +1217,7 @@ contains
     if (root_task) call ufs_logtimer(nu_timer,time,tod,'ModelAdvance time: ',runtimelog,wtime)
     call ufs_settimer(wtime)
 
+    if (mype == 0) call ufs_trace("wave", "ModelAdvance", "E")
   end subroutine ModelAdvance
 
   !===============================================================================
@@ -1240,6 +1264,7 @@ contains
 
     rc = ESMF_SUCCESS
     call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
+    if (mype == 0) call ufs_trace("wave", "ModelSetRunClock", "B")
 
     ! query the Component for its clocks
     call NUOPC_ModelGet(gcomp, driverClock=dclock, modelClock=mclock, rc=rc)
@@ -1388,6 +1413,7 @@ contains
 
     call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
 
+    if (mype == 0) call ufs_trace("wave", "ModelSetRunClock", "E")
   end subroutine ModelSetRunClock
 
   !===============================================================================
@@ -1414,6 +1440,7 @@ contains
 
     rc = ESMF_SUCCESS
     call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
+    if (mype == 0) call ufs_trace("wave", "ModelFinalize", "B")
 
     if ( root_task ) then
       write(nds(1),F91)
@@ -1430,6 +1457,7 @@ contains
     call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
     if(root_task) call ufs_logtimer(nu_timer,timen,tod,'ModelFinalize time: ',runtimelog,wtime)
 
+    if (mype == 0) call ufs_trace("wave", "ModelFinalize", "E")
   end subroutine ModelFinalize
 
   !===============================================================================
