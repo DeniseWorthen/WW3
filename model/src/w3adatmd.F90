@@ -361,6 +361,9 @@ MODULE W3ADATMD
   !/ ------------------------------------------------------------------- /
 
   use w3servmd, only : print_memcheck
+#ifdef W3_MPI
+  use mpi_f08, only  : MPI_COMM, MPI_Request, MPI_Datatype
+#endif
 
   ! module default
   implicit none
@@ -550,9 +553,9 @@ MODULE W3ADATMD
     !
     INTEGER, POINTER      :: IAPPRO(:)
 #ifdef W3_MPI
-    INTEGER               :: MPI_COMM_WAVE, MPI_COMM_WCMP,        &
-         WW3_FIELD_VEC, WW3_SPEC_VEC,         &
-         NRQSG1 = 0, NRQSG2, IBFLOC, ISPLOC,  &
+    type(MPI_COMM)        :: MPI_COMM_WAVE, MPI_COMM_WCMP
+    type(MPI_Datatype)    :: WW3_FIELD_VEC, WW3_SPEC_VEC
+    INTEGER               :: NRQSG1 = 0, NRQSG2, IBFLOC, ISPLOC,  &
          NSPLOC
 #endif
 #ifdef W3_PDLIB
@@ -560,7 +563,7 @@ MODULE W3ADATMD
 #endif
 #ifdef W3_MPI
     INTEGER               :: BSTAT(MPIBUF), BISPL(MPIBUF)
-    INTEGER, POINTER      :: IRQSG1(:,:), IRQSG2(:,:)
+    type(MPI_Request), POINTER :: IRQSG1(:,:), IRQSG2(:,:)
     REAL, POINTER         :: GSTORE(:,:), SSTORE(:,:)
 #endif
     REAL, POINTER         :: SPPNT(:,:,:)
@@ -680,12 +683,11 @@ MODULE W3ADATMD
   !
   INTEGER, POINTER        :: IAPPRO(:)
 #ifdef W3_MPI
-  INTEGER, POINTER        :: MPI_COMM_WAVE, MPI_COMM_WCMP,        &
-       WW3_FIELD_VEC, WW3_SPEC_VEC,         &
-       NRQSG1, NRQSG2, IBFLOC, ISPLOC,      &
-       NSPLOC
+  type(MPI_COMM), POINTER :: MPI_COMM_WAVE, MPI_COMM_WCMP
+  type(MPI_Datatype), POINTER :: WW3_FIELD_VEC, WW3_SPEC_VEC
+  INTEGER, POINTER        :: NRQSG1, NRQSG2, IBFLOC, ISPLOC, NSPLOC
   INTEGER, POINTER        :: BSTAT(:), BISPL(:)
-  INTEGER, POINTER        :: IRQSG1(:,:), IRQSG2(:,:)
+  type(MPI_Request), POINTER :: IRQSG1(:,:), IRQSG2(:,:)
   REAL, POINTER           :: GSTORE(:,:), SSTORE(:,:)
 #endif
   REAL, POINTER           :: SPPNT(:,:,:)
@@ -762,7 +764,6 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     USE W3GDATMD, ONLY: NGRIDS
     USE W3SERVMD, ONLY: EXTCDE
-    USE W3ODATMD, ONLY: IAPROC
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
 #endif
@@ -931,11 +932,9 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS, ONLY : LPDLIB
-    USE W3GDATMD, ONLY: NGRIDS, IGRID, W3SETG, NK, NX, NY, NSEA,    &
-         NSEAL, NSPEC, NTH, E3DF, P2MSF, US3DF,      &
-         USSPF, GTYPE, UNGTYPE
-    USE W3ODATMD, ONLY: IAPROC, NAPROC, NTPROC, NAPFLD,             &
-         NOSWLL, NOEXTR, UNDEF, FLOGRD, FLOGR2
+    USE W3GDATMD, ONLY: NGRIDS, IGRID, W3SETG, NK, NX, NY, NSEA,        &
+         NSEAL, NSPEC, NTH, E3DF, P2MSF, US3DF, USSPF, GTYPE, UNGTYPE
+    USE W3ODATMD, ONLY: IAPROC, NAPROC, NOSWLL, NOEXTR, UNDEF
     USE W3IDATMD, ONLY: FLCUR, FLWIND, FLTAUA, FLRHOA
     USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
@@ -953,7 +952,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER       :: JGRID, NXXX, NSEAL_tmp
+    INTEGER       :: JGRID, NXXX
     integer       :: memunit
     integer       :: allocsize
 #ifdef W3_S
@@ -1559,12 +1558,8 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD, ONLY: NGRIDS, IGRID, W3SETG, NK, NX, NY, NSEA,    &
-         NSEAL, NSPEC, NTH, E3DF, P2MSF, US3DF,      &
-         USSPF, GTYPE, UNGTYPE
-    USE W3ODATMD, ONLY: IAPROC, NAPROC, NTPROC, NAPFLD,             &
-         NOSWLL, NOEXTR, UNDEF, FLOGRD, FLOGR2,      &
-         NOGRP, NGRPP
+    USE W3GDATMD, ONLY: NGRIDS, IGRID, W3SETG, NK, E3DF, P2MSF, UNGTYPE
+    USE W3ODATMD, ONLY: IAPROC, NAPROC, NOSWLL, NOEXTR, UNDEF, NOGRP, NGRPP
     USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
@@ -1581,11 +1576,11 @@ CONTAINS
     !/ Local parameters
     !/
     INTEGER                 :: JGRID, NXXX, I
+    integer :: memunit
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
     CALL STRACE (IENT, 'W3XDMA')
 #endif
-    integer :: memunit
     !
     ! -------------------------------------------------------------------- /
     ! 1.  Test input and module status
@@ -2524,9 +2519,7 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD, ONLY: NGRIDS, IGRID, NK, NX, NY, NSEA, NSEAL,     &
-         NSPEC, NTH, GTYPE, UNGTYPE
-    USE W3ODATMD, ONLY: NAPROC
+    USE W3GDATMD, ONLY: NGRIDS, UNGTYPE
     USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
@@ -2740,7 +2733,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !
     USE W3IDATMD, ONLY: INPUTS
-    USE W3GDATMD, ONLY: E3DF, P2MSF, US3DF, USSPF, GTYPE, UNGTYPE
+    USE W3GDATMD, ONLY: GTYPE, UNGTYPE
     !
     USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
@@ -3170,8 +3163,7 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !
-    USE W3IDATMD, ONLY: INPUTS
-    USE W3GDATMD, ONLY: E3DF, P2MSF, US3DF, USSPF, GTYPE, UNGTYPE
+    USE W3GDATMD, ONLY: UNGTYPE
     !
     USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S

@@ -304,7 +304,7 @@ CONTAINS
          UBA, UBD, PHIBBL, TAUBBL, TAUOCX, TAUOCY,   &
          WNMEAN
     !/
-    USE W3GDATMD, ONLY: NX, NY, NSEA, NSEAL, NSPEC, MAPSTA, MAPST2, &
+    USE W3GDATMD, ONLY: NX, NY, NSEA, NSPEC, MAPSTA, MAPST2, &
          GNAME, FILEXT, GTYPE, UNGTYPE
     USE W3TRIAMD, ONLY: SET_UG_IOBP
     USE W3WDATMD, only : DINIT, VA, TIME, TLEV, TICE, TRHO, ICE, UST
@@ -314,22 +314,29 @@ CONTAINS
     USE W3IDATMD, ONLY: WXNwrst, WYNwrst
 #endif
     USE W3ODATMD, ONLY: NDSE, NDST, IAPROC, NAPROC, NAPERR, NAPRST, &
-         IFILE => IFILE4, FNMPRE, FNMRST, NTPROC, IOSTYP,    &
+         IFILE => IFILE4, FNMPRE, FNMRST, IOSTYP,    &
          FLOGRR, NOGRP, NGRPP, SCREEN
+#ifdef W3_T
+    USE W3ODATMD, ONLY: NTPROC
+#endif
+    !/
 #ifdef W3_MPI
     USE W3ODATMD, ONLY: NRQRS, NBLKRS, RSBLKS, IRQRS, IRQRSS,  &
          VAAUX
     USE W3ADATMD, ONLY: MPI_COMM_WCMP
+    USE mpi_f08 
+#endif
+    !/
+#if defined(W3_T) || defined(W3_MPI)
+    USE W3GDATMD, ONLY: NSEAL
 #endif
     !/
     USE W3SERVMD, ONLY: EXTCDE, EXTIOF
     USE CONSTANTS, only: LPDLIB, file_endian
     USE W3PARALL, ONLY: INIT_GET_ISEA, INIT_GET_JSEA_ISPROC
-    USE W3GDATMD, ONLY: NK, NTH
 #ifdef W3_TIMINGS
     USE W3PARALL, ONLY: PRINT_MY_TIME
 #endif
-    USE w3odatmd, ONLY : RUNTYPE
     USE w3adatmd, ONLY : USSHX, USSHY
 #ifdef W3_PDLIB
     USE PDLIB_FIELD_VEC
@@ -338,9 +345,8 @@ CONTAINS
     USE W3SERVMD, ONLY: STRACE
 #endif
     !
-#ifdef W3_MPI
-    INCLUDE "mpif.h"
-#endif
+    IMPLICIT NONE
+    !
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -360,19 +366,21 @@ CONTAINS
     !
     INTEGER                 :: IGRD, I, J, LRECL, NSIZE, IERR,      &
          NSEAT, MSPEC, TTIME(2), ISEA, JSEA,  &
-         NREC, NPART, IPART, IX, IY, IXL, IP, &
-         NPRTX2, NPRTY2, IYL, ITMP
+         NREC, NPART, IPART, IY, IXL, NPRTX2, NPRTY2, ITMP
     INTEGER, ALLOCATABLE    :: MAPTMP(:,:)
+#ifdef W3_WRST
+    INTEGER                 :: IX, IYL
+#endif
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
 #endif
 #ifdef W3_MPI
     INTEGER                 :: IERR_MPI, IH, IB, ISEA0, ISEAN, &
-         NRQ, NSEAL_MIN
+         NRQ, NSEAL_MIN, IP
 #endif
     INTEGER(KIND=8)         :: RPOS
 #ifdef W3_MPI
-    INTEGER, ALLOCATABLE    :: STAT1(:,:), STAT2(:,:)
+    type(MPI_STATUS), ALLOCATABLE :: STAT1(:), STAT2(:)
     REAL, ALLOCATABLE       :: VGBUFF(:), VLBUFF(:)
 #endif
     REAL(KIND=LRB), ALLOCATABLE :: WRITEBUFF(:), TMP(:), TMP2(:)
@@ -452,7 +460,8 @@ CONTAINS
     IF ( IAPROC .LE. NAPROC ) VA(:,0) = 0.
     !
     LRECL  = MAX ( LRB*NSPEC ,                                      &
-         LRB*(6+(25/LRB)+(9/LRB)+(29/LRB)+(3/LRB)) )
+         LRB*(6+ INT(25.0/LRB) + INT(9.0/LRB) + INT(29.0/LRB) +     &
+         INT(3.0/LRB)) )
     NSIZE  = LRECL / LRB
     !     --- Allocate buffer array with zeros (used to
     !         fill bytes up to size LRECL). ---
@@ -574,7 +583,7 @@ CONTAINS
         END IF
         IF (TYPE.EQ.'FULL') THEN
           RSTYPE = 2
-        ELSE IF (TYPE.EQ.'WIND') THEN
+        ELSE IF (TYPE.EQ.'WIND' .OR. TYPE.EQ.'FTCH') THEN
           RSTYPE = 1
         ELSE IF (TYPE.EQ.'CALM') THEN
           RSTYPE = 4
@@ -724,7 +733,7 @@ CONTAINS
               NRQ    = NAPROC
             END IF
             !
-            ALLOCATE ( STAT1(MPI_STATUS_SIZE,NRQ) )
+            ALLOCATE ( STAT1(NRQ) )
             IF ( IAPROC .EQ. NAPRST ) CALL MPI_STARTALL    &
                  ( NRQ, IRQRSS, IERR_MPI )
             !
@@ -736,11 +745,11 @@ CONTAINS
                 !
                 IH     = 1 + NRQ * (IB-1)
                 CALL MPI_WAITALL                         &
-                     ( NRQ, IRQRSS(IH), STAT1, IERR_MPI )
+                     ( NRQ, IRQRSS(IH:IH+NRQ-1), STAT1, IERR_MPI )
                 IF ( IB .LT. NBLKRS ) THEN
                   IH     = 1 + NRQ * IB
                   CALL MPI_STARTALL                    &
-                       ( NRQ, IRQRSS(IH), IERR_MPI )
+                       ( NRQ, IRQRSS(IH:IH+NRQ-1), IERR_MPI )
                 END IF
                 !
                 DO ISEA=ISEA0, ISEAN
@@ -762,9 +771,9 @@ CONTAINS
               ELSE
                 !
                 CALL MPI_STARTALL                        &
-                     ( 1, IRQRSS(IB), IERR_MPI )
+                     ( 1, IRQRSS(IB:IB), IERR_MPI )
                 CALL MPI_WAITALL                         &
-                     ( 1, IRQRSS(IB), STAT1, IERR_MPI )
+                     ( 1, IRQRSS(IB:IB), STAT1(1:1), IERR_MPI )
                 !
               END IF
             END DO
@@ -894,7 +903,7 @@ CONTAINS
           !
 #ifdef W3_MPI
           if (associated(irqrs)) then
-            ALLOCATE ( STAT2(MPI_STATUS_SIZE,NRQRS) )
+            ALLOCATE ( STAT2(NRQRS) )
             CALL MPI_WAITALL                               &
                  ( NRQRS, IRQRS , STAT2, IERR_MPI )
             DEALLOCATE ( STAT2 )
