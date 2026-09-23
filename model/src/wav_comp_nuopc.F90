@@ -448,16 +448,6 @@ contains
     write(logmsg,*) setnofillmode
     call ESMF_LogWrite('WW3_cap: setnofillmode is = '//trim(logmsg), ESMF_LOGMSG_INFO)
 
-    call NUOPC_CompAttributeGet(gcomp, name="syncfreq", value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    if (isPresent .and. isSet) then
-      read(cvalue, *)syncfreq
-    else
-      syncfreq = nspec
-    end if
-    write(logmsg,'(i6)')syncfreq
-    call ESMF_LogWrite('WW3_cap: syncfreq is = '//trim(logmsg), ESMF_LOGMSG_INFO)
-
     !--------------------------------------------------------------------
     ! Set up data structures
     !--------------------------------------------------------------------
@@ -716,6 +706,17 @@ contains
         call ESMF_Finalize(endflag=ESMF_END_ABORT)
       end if
     end if
+
+    ! must occur after wave initialization
+    call NUOPC_CompAttributeGet(gcomp, name="syncfreq", value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    if (ChkErr(rc,__LINE__,u_FILE_u)) return
+    if (isPresent .and. isSet) then
+      read(cvalue, *)syncfreq
+    else
+      syncfreq = nspec
+    end if
+    write(logmsg,'(i6)')syncfreq
+    call ESMF_LogWrite('WW3_cap: syncfreq is = '//trim(logmsg), ESMF_LOGMSG_INFO)
 
     !--------------------------------------------------------------------
     ! Intialize the list of requested output variables for netCDF output.
