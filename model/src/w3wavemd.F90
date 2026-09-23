@@ -577,6 +577,7 @@ CONTAINS
 #ifdef W3_MPI
     use mpi_f08
 #endif
+    use w3adatmd      , only : nsealm
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -2470,8 +2471,6 @@ CONTAINS
 
       end if
 #endif
-
-
       IF ( TOFRST(1)  .EQ. -1 ) THEN
         DTTST  = 1.
       ELSE
