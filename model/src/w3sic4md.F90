@@ -140,7 +140,6 @@ CONTAINS
     !/    11-Jan-2024 : Method 9 added (Rogers et al., 2021)
     !/                                      denoted "RYW2021" (E. Rogers)
     !/    14-Aug-2024 : Method 10 added (Meylan et al. 2021)  (E. Thomas)
-    !/    15-Aug-2025 : Safety fix for negative hice          (E. Rogers)
     !/
     !/        FIXME   : Move field input to W3SRCE and provide
     !/     (S.Zieger)   input parameter to W3SIC1 to make the subroutine
@@ -371,21 +370,20 @@ CONTAINS
     !  7. Remarks :
     !
     !     If ice parameter 1 is zero, no calculations are made.
-    !     For questions, comments and/or corrections, please contact the
-    !     authors in the updates list, above.
+    !     For questions, comments and/or corrections, please refer to:
+    !        Method 1 : C. Collins
+    !        Method 2 : C. Collins
+    !        Method 3 : C. Collins
+    !        Method 4 : C. Collins
+    !        Method 5 : E. Rogers
+    !        Method 6 : E. Rogers
+    !        Method 7 : E. Rogers
     !
     !     ALPHA = 2 * WN_I
     !     Though it may seem redundant/unnecessary to have *both* in the
     !       code, we do it this way to make the code easier to read and
     !       relate to other codes and source material, and hopefully avoid
     !       mistakes.
-    !
-    !     For sub-methods M3, M7, M8, and M9, ICECOEF1 (ICEP1) is used
-    !     to represent ice thickness. When ice thickness is taken from an
-    !     ice model such as CICE, we have encountered cases with spurious,
-    !     small, negative values, which can result in NaNs in WW3. Thus,
-    !     for these sub-methods, we set a lower limit of zero for ICECOEF1.
-    !
     !/ ------------------------------------------------------------------- /
     !
     !  8. Structure :
@@ -577,7 +575,7 @@ CONTAINS
       WN_I = 0.5 * ALPHA
 
     CASE (3) ! IC4M3 : Quadratic fit to Kohout & Meylan'08 in Horvat & Tziperman'15
-      HICE=MAX(0.0,ICECOEF1) ! For this method, ICECOEF1=ice thickness, which cannot be less than zero
+      HICE=ICECOEF1 ! For this method, ICECOEF1=ice thickness
       KARG1 = -0.3203 + 2.058*HICE - 0.9375*(TPI/SIG)
       KARG2 = -0.4269*HICE**2 + 0.1566*HICE*(TPI/SIG)
       KARG3 =  0.0006 * (TPI/SIG)**2
@@ -654,7 +652,7 @@ CONTAINS
 
     CASE (7) ! Doble et al. (GRL 2015)
 
-      HICE=MAX(0.0,ICECOEF1) ! For this method, ICECOEF1=ice thickness, which cannot be less than zero
+      HICE=ICECOEF1 ! For this method, ICECOEF1=ice thickness
       DO IK=1,NK
         ALPHA(IK)  = 0.2*(FREQ(IK)**2.13)*HICE
       END DO
@@ -676,7 +674,7 @@ CONTAINS
       ENDIF
 
       ! Rename variable, for clarity
-      hice=MAX(0.0,ICECOEF1) ! For this method, ICECOEF1 is ice thickness, which cannot be less than zero
+      hice=ICECOEF1 ! For this method, ICECOEF1 is ice thickness
 
       DO IK=1,NK
         WN_I(IK)  = Chf*hice*(FREQ(IK)**3)
@@ -700,7 +698,7 @@ CONTAINS
       ENDIF
 
       ! Rename variable, for clarity
-      hice=MAX(0.0,ICECOEF1) ! For this method, ICECOEF1 is ice thickness, which cannot be less than zero
+      hice=ICECOEF1 ! For this method, ICECOEF1 is ice thickness
       ! Compute
       mpow=0.5*npow-1.0 ! Denoted "m" in documentation
       DO IK=1,NK

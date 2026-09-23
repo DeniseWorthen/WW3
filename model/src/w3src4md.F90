@@ -225,11 +225,12 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    !USE W3ODATMD, ONLY: IAPROC
+    USE W3ODATMD, ONLY: IAPROC
     USE CONSTANTS, ONLY: TPIINV, GRAV, nu_air
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, DDEN, WWNMEANP, &
-         WWNMEANPTAIL, FTE, FTF, SSTXFTWN,&
-         SSTXFTFTAIL, ESIN, ECOS, SSDSC
+    USE W3GDATMD, ONLY: NK, NTH, NSPEC, SIG, DTH, DDEN, WWNMEANP, &
+         WWNMEANPTAIL, FTE, FTF, SSTXFTF, SSTXFTWN,&
+         SSTXFTFTAIL, SSWELLF, ESIN, ECOS, AAIRCMIN, &
+         AAIRGB, AALPHA, ZZWND, SSDSC
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
 #endif
@@ -240,7 +241,6 @@ CONTAINS
     !
 #ifdef W3_FLX5
     USE W3FLX5MD
-    USE W3GDATMD, ONLY: ZZWND
 #endif
     IMPLICIT NONE
     !/
@@ -506,11 +506,10 @@ CONTAINS
          RADE,                                      &
 #endif
          DELAB,ABMIN
-    USE W3GDATMD, ONLY: NK, NTH, NSPEC, DDEN, SIG, SIG2,         &
-         ESIN, ECOS, ZZWND, AALPHA, BBETA, ZZALP,&
+    USE W3GDATMD, ONLY: NK, NTH, NSPEC, DDEN, SIG, SIG2, TH,         &
+         ESIN, ECOS, EC2, ZZWND, AALPHA, BBETA, ZZALP,&
          TTAUWSHELTER, SSWELLF, DDEN2, DTH, SSINTHP,  &
-         ZZ0RAT, SINTAILPAR
-    !USE W3GDATMD, ONLY: SSINBR
+         ZZ0RAT, SSINBR, SINTAILPAR
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
 #endif
@@ -520,7 +519,7 @@ CONTAINS
 #ifdef W3_T0
     USE W3ODATMD, ONLY: NDST
 #endif
-    !USE W3ODATMD, ONLY: IAPROC
+    USE W3ODATMD, ONLY: IAPROC
 #ifdef W3_T0
     USE W3ARRYMD, ONLY: PRT2DS
 #endif
@@ -547,17 +546,15 @@ CONTAINS
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
 #endif
-    REAL                    :: FACLN1, FACLN2
+    REAL                    :: FACLN1, FACLN2, LAMBDA
     REAL                    :: COSU, SINU, TAUX, TAUY, USDIRP, USTP
     REAL                    :: TAUPX, TAUPY, UST2, TAUW, TAUWB
     REAL   , PARAMETER      :: EPS1 = 0.00001, EPS2 = 0.000001
-#if defined(W3_T) || defined(W3_STAB3)
     REAL                    :: Usigma           !standard deviation of U due to gustiness
     REAL                    :: USTARsigma       !standard deviation of USTAR due to gustiness
-#endif
     REAL                    :: CM,UCN,ZCN, &
          Z0VISC, Z0NOZ, EB,  &
-         EBX, EBY, AORB, AORB1, FW, UORB,  &
+         EBX, EBY, AORB, AORB1, FW, UORB, TH2, &
          RE, FU, FUD, SWELLCOEFV, SWELLCOEFT
     REAL                   ::  PTURB, PVISC, SMOOTH
     REAL XI,DELI1,DELI2
@@ -575,8 +572,8 @@ CONTAINS
     REAL   , PARAMETER      :: KM=363.,CMM=0.2325  ! K and C at phase speed minimum in rad/m
     REAL                    :: OMEGACC, OMEGA, ZZ0, ZX, ZBETA, USTR, TAUR,  &
          CONST1, LEVTAIL0, X0, Y, DELY, YC, ZMU,      &
-         LEVTAIL, CGTAIL, ALPHAM, FM, ALPHAT
-    !REAL                    :: FMEAN
+         LEVTAIL, CGTAIL, ALPHAM, FM, ALPHAT, FMEAN
+
     REAL, ALLOCATABLE       :: W(:)
 #ifdef W3_T0
     REAL                    :: DOUT(NK,NTH)
@@ -1067,10 +1064,10 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS, ONLY: TPIINV, RADE, GRAV
-    !USE W3ODATMD,  ONLY: NDSE
+    USE W3ODATMD,  ONLY: NDSE
     USE W3DISPMD,  ONLY: WAVNU2
     USE W3GDATMD,  ONLY: SIG, DSIP, NK, NTH, TTAUWSHELTER,             &
-         SSDSDTH, SSDSCOS, TH, DTH, XFR, ECOS,         &
+         SSDSDTH, SSDSCOS, TH, DTH, XFR, ECOS, ESIN,   &
          SSDSC,  SSDSBRF1, SSDSBCK, SSDSBINT, SSDSPBK, &
          SSDSABK, SSDSHCK, IKTAB, DCKI, SATINDICES,    &
          SATWEIGHTS, CUMULW, NKHS, NKD, NDTAB, QBI,    &
@@ -1483,8 +1480,7 @@ CONTAINS
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
 #endif
-    USE W3GDATMD, ONLY: AALPHA, BBETA, ZZALP, ZZ0MAX
-    !USE W3GDATMD, ONLY: FACHFE
+    USE W3GDATMD, ONLY: AALPHA, BBETA, ZZALP, FACHFE, ZZ0MAX
 #ifdef W3_T
     USE W3ODATMD, ONLY: NDST
 #endif
@@ -1655,8 +1651,8 @@ CONTAINS
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
 #endif
-    USE W3GDATMD, ONLY: AALPHA, BBETA, ZZALP
-    !USE W3GDATMD, ONLY: FACHFE
+    USE W3GDATMD, ONLY: AALPHA, BBETA, ZZALP, FACHFE,  &
+         TTAUWSHELTER, ZZ0MAX
     USE W3ODATMD, ONLY: NDSE
 #ifdef W3_T
     USE W3ODATMD, ONLY: NDST
@@ -2119,8 +2115,10 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS,ONLY: GRAV, DWAT, PI, TPI, RADE, DEBUG_NODE
     USE W3GDATMD, ONLY: NSPEC, NTH, NK, SSDSBR, SSDSBT, DDEN,      &
-         SSDSC, SIG, SSDSP, ECOS, ESIN, DTH, AAIRGB,       &
-         SSDSDTH, SSDSBM, AAIRCMIN, IKTAB, DCKI,           &
+         SSDSC, EC2, ES2, ESC,                      &
+         SIG, SSDSP, ECOS, ESIN, DTH, AAIRGB,       &
+         SSDSISO, SSDSDTH, SSDSBM, AAIRCMIN,        &
+         SSDSBRFDF, SSDSBCK, IKTAB, DCKI,           &
          SATINDICES, SATWEIGHTS, CUMULW, NKHS, NKD, &
          NDTAB, QBI, DSIP, SSDSBRF1,XFR
 #ifdef W3_IG1
@@ -2155,11 +2153,12 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IS, IS2, IS0, IKL, ID, NKL
+    INTEGER                 :: IS, IS2, IS0, IKL, IKC, ID, NKL
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
 #endif
-    INTEGER                 :: IK, IK1, ITH, IK2, IKHS, IKD, IT
+    INTEGER                 :: IK, IK1, ITH, IK2, JTH, ITH2,             &
+         IKHS, IKD, SDSNTH, IT, IKM, NKM
     INTEGER                 :: NSMOOTH(NK)
     REAL                    :: C, C2, CUMULWISO, COSWIND, ASUM, SDIAGISO
     REAL                    :: COEF1, COEF2, COEF4(NK),      &
@@ -2173,12 +2172,12 @@ CONTAINS
     REAL                    :: DK(NK), HS(NK), KBAR(NK), DCK(NK)
     REAL                    :: EFDF(NK)     ! Energy integrated over a spectral band
     INTEGER                 :: IKSUP(NK)
-    REAL                    :: FACSAT, DKHS, FACSTRAINL
+    REAL                    :: FACSAT, DKHS, FACSTRAINB, FACSTRAINL
     REAL                    :: BTH0(NK)     !saturation spectrum
     REAL                    :: BTH(NSPEC)   !saturation spectrum
-    REAL                    :: MSSSUM(NK,5)
+    REAL                    :: MSSSUM(NK,5),  FACHF
     REAL                    :: MSSLONG
-    REAL                    :: MSSPCS, MSSPC2, MSSPS2, MSSP, MSSD
+    REAL                    :: MSSPCS, MSSPC2, MSSPS2, MSSP, MSSD, MSSTH
     REAL                    :: MICHE, X, KLOC
 #ifdef W3_T0
     REAL                    :: DOUT(NK,NTH)

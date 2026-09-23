@@ -276,5 +276,7 @@ status=dc_read_free(Wrkdir+'fdate',fdate)
  endfor
  endfor
 
+;GOTO, FileAgain
+
  END
 

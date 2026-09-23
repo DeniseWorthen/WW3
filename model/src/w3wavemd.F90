@@ -406,126 +406,62 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE CONSTANTS, ONLY : UNDEF, RADIUS, DERA, DAIR, SRCE_DIRECT, LPDLIB,  &
-                          SRCE_IMP_POST, SRCE_IMP_PRE, TPIINV
+    USE CONSTANTS
     !/
-    USE W3GDATMD,  ONLY : IGRID, NSEAL, NSPEC, NX, NY, NK,                 &
-                          GTYPE, UNGTYPE, SMCTYPE, RSTYPE,                 &
-                          MAPSF, MAPFS, MAPSTA, IOBP, CTHG0S,              &
-                          FLCTH, FSREFRACTION, FLCK, FSFREQSHIFT, FLAGLL,  &
-                          FLDRY, FSTOTALIMP, FLCX, FLCY, FLSOU, FLAGST,    &
-                          SIG, CLATS, TRNX, TRNY, DTMAX, DTCFLI, DTH,      &
-                          DMIN, W3SETG
+    USE W3GDATMD
+    USE W3WDATMD
+    USE W3ADATMD
+    USE W3IDATMD
+    USE W3ODATMD
     !/
-    USE W3WDATMD,  ONLY : UST, IWDATA, TIME, TLEV, TICE, TIC1, VA, ASF,    &
-                          RHOAIR, USTDIR, ICE, ICEH, ICEF, ICEDMAX, BERG,  &
-                          FPIS, W3SETW
-    !/
-    USE W3ADATMD,  ONLY : FLIWND, FLCOLD,  IAPPRO, IDLAST, IADATA, IPASS,  &
-                          ITIME, CFLXYMAX, CFLTHMAX, CFLKMAX, DTDYN,       &
-                          CG, DW, CX, CY, DCDX, DCDY, DCXDX, DCXDY, DCYDX, &
-                          DCYDY, AS, TAUOX, TAUOY, TAUWIX, TAUWIY, TAUWNX, &
-                          TAUWNY, DDDX, DDDY, ALPHA, WN, U10, U10D, TAUA,  &
-                          TAUADIR, FCUT, WHITECAP, BEDFORMS, TAUBBL,       &
-                          TAUICE, PHIBBL, TAUOCX, TAUOCY, WNMEAN, PHIAW,   &
-                          PHIOC, TWS, PHICE, CHARN, W3SETA, ITSTEP
-    !/
-    USE W3IDATMD,  ONLY : IIDATA, INFLAGS1, FLLEV, FLCUR, FLWIND, FLICE,   &
-                          FLTAUA, FLRHOA, FLIC1,                           &
-                          TLN, TC0, TCN, TW0, TWN, TIN, TU0, TUN,          &
-                          TI1, TGN, TG0, GA0, GAN, GD0, GDN, TDN, TRN,     &
-                          TR0, W3SETI
-    !/
-    USE W3ODATMD,  ONLY : FLOUT, FLOGRD, FLOGR2, FLBPI, NOGE,              &
-                          NDS, NOGE, NAPLOG, NAPOUT, NDSO, NDSE, NDST,     &
-                          NAPROC, NAPERR, SCREEN, IAPROC, IOUTP, NOTYPE,   &
-                          NAPBPT, TOFRST, TONEXT, TBPIN, TBPI0, TOLAST,    &
-                          DTOUT, NAPFLD, NAPPNT, W3SETO
-    !/
-    USE W3UPDTMD,  ONLY : W3DZXY, W3UWND, W3UINI, W3UTAU, W3URHO, W3UBPT,  &
-                          W3UICE, W3ULEV, W3UCUR, W3UIC1, W3UTRN
-    !/
-    USE W3SRCEMD,  ONLY : W3SRCE
-    !/
-#ifdef W3_MPI
-    USE W3ODATMD,  ONLY : NRQGO, NRQGO2, IRQGO, IRQGO2, NRQPO, IRQPO1
-    USE W3ODATMD,  ONLY : NRQRS, IRQRS, IRQPO1, NRQBP, IRQBP1, IRQBP2,     &
-                          NRQBP2
-    USE W3ADATMD,  ONLY : NRQSG1, IRQSG1, NRQSG1
-#endif
-#if defined(W3_MPI) && defined(W3_SMC)
-    USE W3ADATMD,  ONLY : MPI_COMM_WAVE
-#endif
-#ifdef W3_NL5
-    USE W3ODATMD, ONLY : TOSNL5
-#endif
-#ifdef W3_BIN2NC
-    USE W3IOPOMD, ONLY : W3IOPON
-#endif
-#ifdef W3_SEC1
-    USE W3GDATMD, ONLY : NITERSEC1
-#endif
-#ifdef W3_REF1
-    USE W3GDATMD, ONLY : RLGTYPE, SX, SY, CLGTYPE, HPFAC, HQFAC, REFLC, REFLD
-#endif
-#ifdef W3_BT4
-    USE W3GDATMD, ONLY : SED_D50, SED_PSIC
-#endif
+    USE W3UPDTMD
+    USE W3SRCEMD
 #ifdef W3_PR1
-    USE W3PRO1MD, ONLY : W3MAP1, W3XYP1, W3KTP1
+    USE W3PRO1MD
 #endif
 #ifdef W3_PR2
-    USE W3PRO2MD, ONLY : W3XYP2, W3MAP2, W3KTP2
+    USE W3PRO2MD
 #endif
 #ifdef W3_PR3
-    USE W3PRO3MD, ONLY : W3MAPT, W3XYP3, W3CFLXY, W3MAP3, W3KTP3
+    USE W3PRO3MD
 #endif
 #ifdef W3_SMC
-    USE W3PSMCMD, ONLY : SMCDHXY, SMCDCXY, W3SCATSMC, W3GATHSMC, W3PSMC, W3KRTN
-    USE W3GDATMD, only : ANGARC, ARCTC, NBAC, NBGL, NGLO, NCel, ICLBAC, SPCBAC
-    USE W3ADATMD, only : DHDX, DHDY, DHLMT
-    USE W3GDATMD, only : NTH
-    USE W3SERVMD, only : W3ACTURN
+    USE W3PSMCMD
 #endif
     !
 #ifdef W3_PR1
-    USE W3PROFSMD, ONLY : W3XYPUG
+    USE W3PROFSMD
 #endif
 #ifdef W3_PR2
-    USE W3PROFSMD, ONLY : W3XYPUG
+    USE W3PROFSMD
 #endif
 #ifdef W3_PR3
-    USE W3PROFSMD, ONLY : W3XYPUG, W3CFLUG
+    USE W3PROFSMD
 #endif
     !/
-    USE W3TRIAMD,  ONLY : UG_GRADIENTS
-    USE W3IOGOMD,  ONLY : W3IOGO, W3OUTG
-    USE W3IOPOMD,  ONLY : W3IOPO, W3IOPE
-    USE W3IOTRMD,  ONLY : W3IOTR
-    USE W3IORSMD,  ONLY : W3IORS
-    USE W3IOBCMD,  ONLY : W3IOBC
-    USE W3IOSFMD,  ONLY : W3IOSF, W3CPRT
+    USE W3TRIAMD
+    USE W3IOGRMD
+    USE W3IOGOMD
+    USE W3IOPOMD
+    USE W3IOTRMD
+    USE W3IORSMD
+    USE W3IOBCMD
+    USE W3IOSFMD
 #ifdef W3_PDLIB
     USE PDLIB_W3PROFSMD, only : APPLY_BOUNDARY_CONDITION_VA
     USE PDLIB_W3PROFSMD, only : PDLIB_W3XYPUG, PDLIB_W3XYPUG_BLOCK_IMPLICIT, PDLIB_W3XYPUG_BLOCK_EXPLICIT
     USE PDLIB_W3PROFSMD, only : ALL_VA_INTEGRAL_PRINT, ALL_VAOLD_INTEGRAL_PRINT, ALL_FIELD_INTEGRAL_PRINT
-    USE yowNodepool, only: np
-    USE W3WDATMD,  ONLY : VAOLD, VSTOT, VDTOT, SHAVETOT
-    USE W3GDATMD,  ONLY : FSSOURCE, FSTOTALEXP
-    USE W3GDATMD,  ONLY : IOBP_LOC, IOBPA_LOC, IOBDP_LOC
+    USE W3PARALL, only : PDLIB_NSEAL, PDLIB_NSEALM
+    USE yowNodepool, only: npa, iplg, np
 #endif
     !/
-    USE W3SERVMD,  ONLY : EXTCDE, WWTIME
-    USE W3TIMEMD,  ONLY : DSEC21, TICK21, STME21
+    USE W3SERVMD
+    USE W3TIMEMD
 #ifdef W3_IC3
-    USE W3SIC3MD,  ONLY : CALLEDIC3TABLE, IC3TABLE_CHENG, W3IC3WNCG_V1, W3IC3WNCG_CHENG
-    USE W3GDATMD,  ONLY : IC3PARS
-    USE W3IDATMD,  ONLY : ICEP1, ICEP2, ICEP3, ICEP4, FLIC2, FLIC3, FLIC4
+    USE W3SIC3MD
 #endif
 #ifdef W3_IS2
-    USE W3WDATMD,  ONLY : TIC5
-    USE W3IDATMD,  ONLY : TI5, FLIC5
-    USE W3UPDTMD,  ONLY : W3UIC5
+    USE W3SIS2MD
 #endif
 #ifdef W3_UOST
     USE W3UOSTMD, ONLY: UOST_SETGRID
@@ -537,7 +473,6 @@ CONTAINS
 
 #ifdef W3_OASIS
     USE W3OACPMD, ONLY: ID_OASIS_TIME, CPLT0
-    USE W3WDATMD, ONLY: TIME00, TIMEEND
 #endif
 #ifdef W3_OASOCM
     USE W3OGCMMD, ONLY: SND_FIELDS_TO_OCEAN
@@ -551,7 +486,7 @@ CONTAINS
 
 #ifdef W3_PDLIB
     USE PDLIB_FIELD_VEC, only : DO_OUTPUT_EXCHANGES
-    USE PDLIB_W3PROFSMD, ONLY: ASPAR_JAC, B_JAC
+    USE PDLIB_W3PROFSMD, ONLY: ASPAR_JAC, ASPAR_DIAG_ALL, B_JAC
     USE W3PARALL, only : LSLOC
 #endif
 #ifdef W3_TIMINGS
@@ -560,25 +495,13 @@ CONTAINS
 #ifdef W3_PIO
     use wav_restart_mod , only : write_restart
     use wav_history_mod , only : write_history
-    use w3odatmd        , only : histwr, rstwr, user_restfname
-    use w3timemd        , only : set_user_timestring
-    USE W3ODATMD,         ONLY : FNMRST
-    USE W3GDATMD,         ONLY : MAPST2
 #endif
-    use w3odatmd        , only : use_historync, use_restartnc
+    use w3odatmd        , only : histwr, rstwr, use_historync, use_restartnc, user_restfname
     use w3odatmd        , only : logfile_is_assigned, verboselog
-#if defined(W3_T) || defined(W3_REFRX)
-    USE W3GDATMD,  ONLY : NSEA
-#endif
-#if defined(W3_T) || defined(W3_SBS)
-    USE W3GDATMD,  ONLY : FILEXT
-#endif
-#ifdef W3_PDLIB
-    USE yowExchangeModule, only : PDLIB_exchange2Dreal_zero
-#endif
+    use w3timemd        , only : set_user_timestring
     !
-#ifdef W3_MPI 
-    use mpi_f08
+#ifdef W3_MPI
+    INCLUDE "mpif.h"
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -587,7 +510,7 @@ CONTAINS
     INTEGER, INTENT(IN)           :: IMOD, TEND(2),ODAT(40)
     LOGICAL, INTENT(IN), OPTIONAL :: STAMP, NO_OUT
 #ifdef W3_OASIS
-    type(MPI_COMM), INTENT(IN), OPTIONAL :: ID_LCOMM
+    INTEGER, INTENT(IN), OPTIONAL :: ID_LCOMM
     INTEGER, INTENT(IN), OPTIONAL :: TIMEN(2)
 #endif
     !/
@@ -600,16 +523,15 @@ CONTAINS
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
 #endif
+    INTEGER                 :: IP
     INTEGER                 :: TCALC(2), IT, IT0, NT, ITEST,        &
-                               ITLOC, ITLOCH, NTLOC, ISEA, JSEA,    &
-                               IX, IY, ISPEC, J, TOUT(2), TLST(2),  &
-                               REFLED(6), IK, NKCFL
+         ITLOC, ITLOCH, NTLOC, ISEA, JSEA,    &
+         IX, IY, ISPEC, J, TOUT(2), TLST(2),  &
+         REFLED(6), IK, ITH, IS, NKCFL
+    INTEGER                 :: ISP, IP_glob
     INTEGER                 :: TTEST(2),DTTEST
+    REAL                    :: ICEDAVE
     !
-#ifdef W3_DEBUGRUN
-    INTEGER                 :: IS
-    LOGICAL                 :: FLAG0 = .FALSE. 
-#endif
 #ifdef W3_MPI
     LOGICAL                 :: SBSED
 #endif
@@ -621,19 +543,17 @@ CONTAINS
 #endif
 #ifdef W3_MPI
     INTEGER                 :: IERR_MPI, NRQMAX
-    type(MPI_STATUS), ALLOCATABLE    :: STATCO(:), STATIO(:)
+    INTEGER, ALLOCATABLE    :: STATCO(:,:), STATIO(:,:)
 #endif
     INTEGER                 :: IXrel
     REAL                    :: DTTST, DTTST1, DTTST2, DTTST3,       &
-                               DTL0, DTI0, DTI10, DTGA, DTG, DTRES, &
-                               FAC, VGX, VGY, FACK, FACTH,          &
-                               FACX, XXX, REFLEC(4),                &
-                               DELX, DELY, DELA, DEPTH, D50, PSIC
+         DTL0, DTI0, DTR0, DTI10, DTI50,      &
+         DTGA, DTG, DTGpre, DTRES,            &
+         FAC, VGX, VGY, FACK, FACTH,          &
+         FACX, XXX, REFLEC(4),                &
+         DELX, DELY, DELA, DEPTH, D50, PSIC
     REAL                     :: VSioDummy(NSPEC), VDioDummy(NSPEC), VAoldDummy(NSPEC)
     LOGICAL                  :: SHAVETOTioDummy
-#ifdef W3_IS2
-    REAL                    :: DTI50
-#endif
 #ifdef W3_SEC1
     REAL                    :: DTGTEMP
 #endif
@@ -653,11 +573,9 @@ CONTAINS
     !
     LOGICAL                 :: FLACT, FLZERO, FLFRST, FLMAP, TSTAMP,&
          SKIP_O, FLAG_O, FLDDIR, READBC,      &
-         FLOUTG = .false., FLPFLD,            &
+         FLAG0 = .FALSE., FLOUTG = .false., FLPFLD,     &
          FLPART, LOCAL, FLOUTG2 = .false.
-#ifdef W3_DEBUGRUN
-    LOGICAL                 :: FLAG0 = .FALSE.
-#endif
+    !
 #ifdef W3_MPI
     LOGICAL                 :: FLGMPI(0:8)
 #endif
@@ -670,9 +588,11 @@ CONTAINS
     CHARACTER(LEN=21)       :: IDACT
     CHARACTER(LEN=16)       :: OUTID
     CHARACTER(LEN=23)       :: IDTIME
+    INTEGER eIOBP
+    INTEGER ITH_F
 #ifdef W3_PDLIB
-    REAL                    :: DTGpre
-    INTEGER                 :: IP
+    REAL ::             VS_SPEC(NSPEC)
+    REAL ::             VD_SPEC(NSPEC)
 #endif
     !
 #ifdef W3_SBS
@@ -689,10 +609,8 @@ CONTAINS
     REAL                    :: BACANGL
 #endif
     integer            :: memunit
-#ifdef W3_PIO
     character(len=16)  :: user_timestring    !YYYY-MM-DD-SSSSS
     character(len=256) :: fname
-#endif
     !/ ------------------------------------------------------------------- /
     ! 0.  Initializations
     !
@@ -1332,10 +1250,7 @@ CONTAINS
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 7')
 
 #ifdef W3_PDLIB
-        IF ( FLBPI ) THEN
-          CALL APPLY_BOUNDARY_CONDITION_VA
-          CALL PDLIB_exchange2DREAL_zero(VA)
-        END IF
+        CALL APPLY_BOUNDARY_CONDITION_VA
 #ifdef W3_DEBUGCOH
         CALL ALL_VA_INTEGRAL_PRINT(IMOD, "After FLBPI and LOCAL", 1)
 #endif
@@ -1947,8 +1862,8 @@ CONTAINS
                 !
 #ifdef W3_MPI
                 IF ( NRQSG1 .GT. 0 ) THEN
-                  CALL MPI_STARTALL (NRQSG1, IRQSG1(1:NRQSG1,1), IERR_MPI)
-                  CALL MPI_STARTALL (NRQSG1, IRQSG1(1:NRQSG1,2), IERR_MPI)
+                  CALL MPI_STARTALL (NRQSG1, IRQSG1(1,1), IERR_MPI)
+                  CALL MPI_STARTALL (NRQSG1, IRQSG1(1,2), IERR_MPI)
                 END IF
 #endif
                 !
@@ -2023,9 +1938,9 @@ CONTAINS
                 !
 #ifdef W3_MPI
                 IF ( NRQSG1 .GT. 0 ) THEN
-                  ALLOCATE ( STATCO(NRQSG1) )
-                  CALL MPI_WAITALL (NRQSG1, IRQSG1(1:NRQSG1,1), STATCO, IERR_MPI)
-                  CALL MPI_WAITALL (NRQSG1, IRQSG1(1:NRQSG1,2), STATCO, IERR_MPI)
+                  ALLOCATE ( STATCO(MPI_STATUS_SIZE,NRQSG1) )
+                  CALL MPI_WAITALL (NRQSG1, IRQSG1(1,1), STATCO, IERR_MPI)
+                  CALL MPI_WAITALL (NRQSG1, IRQSG1(1,2), STATCO, IERR_MPI)
                   DEALLOCATE ( STATCO )
                 END IF
 #endif
@@ -2661,7 +2576,7 @@ CONTAINS
 #endif
         !
 #ifdef W3_MPI
-        IF ( NRQMAX .NE. 0 ) ALLOCATE ( STATIO(NRQMAX) )
+        IF ( NRQMAX .NE. 0 ) ALLOCATE ( STATIO(MPI_STATUS_SIZE,NRQMAX) )
 #endif
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE AFTER TIME LOOP 2')
         !
@@ -3152,21 +3067,18 @@ CONTAINS
     USE W3SERVMD, ONLY: STRACE
 #endif
     !/
-    USE W3GDATMD, ONLY: NX, NY, NSEA, MAPSF
+    USE W3GDATMD, ONLY: NSPEC, NX, NY, NSEA, NSEAL, MAPSF, DMIN
     USE W3PARALL, ONLY: INIT_GET_ISEA
     USE W3WDATMD, ONLY: A => VA
 #ifdef W3_MPI
     USE W3ADATMD, ONLY: MPIBUF, BSTAT, IBFLOC, ISPLOC, BISPL, &
          NSPLOC, NRQSG2, IRQSG2, GSTORE
-    USE W3GDATMD, ONLY: NSEAL, NSPEC
-#endif
-#ifdef W3_MPIT
-    USE W3ODATMD, ONLY: NDST
+    USE W3ODATMD, ONLY: NDST, IAPROC, NAPROC, NOTYPE
 #endif
     !/
     !
 #ifdef W3_MPI
-    use mpi_f08
+    INCLUDE "mpif.h"
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -3182,8 +3094,8 @@ CONTAINS
     INTEGER                 :: ISEA, IXY
 #endif
 #ifdef W3_MPI
-    type(MPI_STATUS)        :: STATUS(NSPEC)
-    INTEGER                 :: IOFF, IERR_MPI, JSEA, ISEA,     &
+    INTEGER                 :: STATUS(MPI_STATUS_SIZE,NSPEC),  &
+         IOFF, IERR_MPI, JSEA, ISEA,     &
          IXY, IS0, IB0, NPST, J
 #endif
 #ifdef W3_S
@@ -3239,7 +3151,7 @@ CONTAINS
 #ifdef W3_MPI
     IF ( BSTAT(IBFLOC) .EQ. 2 ) THEN
       IOFF =  1 + (BISPL(IBFLOC)-1)*NRQSG2
-      IF ( NRQSG2 .GT. 0 ) CALL MPI_WAITALL ( NRQSG2, IRQSG2(IOFF:IOFF+NRQSG2-1,2), STATUS, IERR_MPI )
+      IF ( NRQSG2 .GT. 0 ) CALL MPI_WAITALL ( NRQSG2, IRQSG2(IOFF,2), STATUS, IERR_MPI )
       BSTAT(IBFLOC) = 0
 #endif
 #ifdef W3_MPIT
@@ -3256,7 +3168,7 @@ CONTAINS
       BSTAT(IBFLOC) = 1
       BISPL(IBFLOC) = ISPLOC
       IOFF =  1 + (ISPLOC-1)*NRQSG2
-      IF ( NRQSG2 .GT. 0 ) CALL MPI_STARTALL ( NRQSG2, IRQSG2(IOFF:IOFF+NRQSG2-1,1), IERR_MPI )
+      IF ( NRQSG2 .GT. 0 ) CALL MPI_STARTALL ( NRQSG2, IRQSG2(IOFF,1), IERR_MPI )
 #endif
 #ifdef W3_MPIT
       STRT(10:10) = 'g'
@@ -3278,7 +3190,7 @@ CONTAINS
     !
 #ifdef W3_MPI
     IOFF =  1 + (BISPL(IBFLOC)-1)*NRQSG2
-    IF ( NRQSG2 .GT. 0 ) CALL MPI_WAITALL ( NRQSG2, IRQSG2(IOFF:IOFF+NRQSG2-1,1), STATUS, IERR_MPI )
+    IF ( NRQSG2 .GT. 0 ) CALL MPI_WAITALL ( NRQSG2, IRQSG2(IOFF,1), STATUS, IERR_MPI )
 #endif
     !
 #ifdef W3_MPIT
@@ -3313,7 +3225,7 @@ CONTAINS
         BSTAT(IB0) = 1
         BISPL(IB0) = IS0
         IOFF       = 1 + (IS0-1)*NRQSG2
-        IF ( NRQSG2 .GT. 0 ) CALL MPI_STARTALL ( NRQSG2, IRQSG2(IOFF:IOFF+NRQSG2-1,1), IERR_MPI )
+        IF ( NRQSG2 .GT. 0 ) CALL MPI_STARTALL ( NRQSG2, IRQSG2(IOFF,1), IERR_MPI )
         NPST       = NPST + 1
 #endif
 #ifdef W3_MPIT
@@ -3463,7 +3375,7 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD, ONLY: NSEA, MAPSF, NX, NY
+    USE W3GDATMD, ONLY: NSEA, NSEAL, MAPSF, NSPEC, NX, NY
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
 #endif
@@ -3472,16 +3384,17 @@ CONTAINS
 #ifdef W3_MPI
     USE W3ADATMD, ONLY: MPIBUF, BSTAT, IBFLOC, ISPLOC, BISPL, &
          NSPLOC, NRQSG2, IRQSG2, SSTORE
-    USE W3GDATMD, ONLY: NSEAL, NSPEC
 #endif
-#ifdef W3_MPIT
     USE W3ODATMD, ONLY: NDST
+#ifdef W3_MPI
+    USE W3ODATMD, ONLY: IAPROC, NAPROC
 #endif
+    USE CONSTANTS, ONLY : LPDLIB
     USE W3PARALL, only: INIT_GET_ISEA
     !/
     !
 #ifdef W3_MPI
-    use mpi_f08
+    INCLUDE "mpif.h"
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -3497,8 +3410,9 @@ CONTAINS
     INTEGER                 :: ISEA, IXY
 #endif
 #ifdef W3_MPI
-    INTEGER                 :: ISEA, IXY, IOFF, IERR_MPI, J, JSEA, IB0
-    type(MPI_STATUS)        :: STATUS(NSPEC)
+    INTEGER                 :: ISEA, IXY, IOFF, IERR_MPI, J,   &
+         STATUS(MPI_STATUS_SIZE,NSPEC),  &
+         JSEA, IB0
 #endif
 #ifdef W3_S
     INTEGER, SAVE           :: IENT
@@ -3556,7 +3470,7 @@ CONTAINS
     !
 #ifdef W3_MPI
     IOFF   = 1 + (ISPLOC-1)*NRQSG2
-    IF ( NRQSG2 .GT. 0 ) CALL MPI_STARTALL ( NRQSG2, IRQSG2(IOFF:IOFF+NRQSG2-1,2), IERR_MPI )
+    IF ( NRQSG2 .GT. 0 ) CALL MPI_STARTALL ( NRQSG2, IRQSG2(IOFF,2), IERR_MPI )
     BSTAT(IBFLOC) = 2
 #endif
 #ifdef W3_MPIT
@@ -3587,12 +3501,12 @@ CONTAINS
       IF ( BSTAT(IB0) .EQ. 2 ) THEN
         IOFF   = 1 + (BISPL(IB0)-1)*NRQSG2
         IF ( NRQSG2 .GT. 0 ) THEN
-          CALL MPI_TESTALL ( NRQSG2, IRQSG2(IOFF:IOFF+NRQSG2-1,2), DONE, STATUS, IERR_MPI )
+          CALL MPI_TESTALL ( NRQSG2, IRQSG2(IOFF,2), DONE, STATUS, IERR_MPI )
         ELSE
           DONE   = .TRUE.
         END IF
         IF ( DONE .AND. NRQSG2.GT.0 ) THEN
-          CALL MPI_WAITALL ( NRQSG2, IRQSG2(IOFF:IOFF+NRQSG2-1,2), STATUS, IERR_MPI )
+          CALL MPI_WAITALL ( NRQSG2, IRQSG2(IOFF,2), STATUS, IERR_MPI )
         END IF
         IF ( DONE ) THEN
           BSTAT(IB0) = 0
@@ -3619,7 +3533,7 @@ CONTAINS
       DO IB0=1, MPIBUF
         IF ( BSTAT(IB0) .EQ. 2 ) THEN
           IOFF   = 1 + (BISPL(IB0)-1)*NRQSG2
-          IF ( NRQSG2 .GT. 0 ) CALL MPI_WAITALL ( NRQSG2, IRQSG2(IOFF:IOFF+NRQSG2-1,2), STATUS, IERR_MPI )
+          IF ( NRQSG2 .GT. 0 ) CALL MPI_WAITALL ( NRQSG2, IRQSG2(IOFF,2), STATUS, IERR_MPI )
           BSTAT(IB0) = 0
 #endif
 #ifdef W3_MPIT
@@ -3762,11 +3676,8 @@ CONTAINS
 #endif
     !/
     USE W3GDATMD, ONLY: NSEA, MAPSF, NX, NY
-    USE W3ODATMD, ONLY: NAPROC
+    USE W3ODATMD, ONLY: NDST, NAPROC
     USE W3PARALL, ONLY: INIT_GET_JSEA_ISPROC
-#ifdef W3_T
-    USE W3ODATMD, ONLY: NDST
-#endif
     !/
     !/
     !/ ------------------------------------------------------------------- /

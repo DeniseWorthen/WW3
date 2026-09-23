@@ -817,12 +817,7 @@ CONTAINS
         DO IBI=1, NBI
           IX    = MAPSF(ISBPI(IBI),1)
           IY    = MAPSF(ISBPI(IBI),2)
-#ifdef W3_PDLIB
-          ISEA   = ISBPI(IBI)
-          FLD2D(IY,IX) = CG(IK,ISEA) * ( RD1*BBPI0(ISP,IBI) + RD2*BBPIN(ISP,IBI) )
-#else
-          FLD2D(IY,IX) = RD1*BBPI0(ISP,IBI) + RD2*BBPIN(ISP,IBI) 
-#endif
+          FLD2D(IY,IX) = RD1*BBPI0(ISP,IBI) + RD2*BBPIN(ISP,IBI)
         END DO
       END IF
       !

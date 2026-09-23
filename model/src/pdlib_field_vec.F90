@@ -444,17 +444,18 @@ CONTAINS
 
     use yowDatapool, only: istatus
     USE W3GDATMD, only : NSEA, NSPEC
-    USE W3ODATMD, only : NAPROC, IAPROC
+    USE W3ODATMD, only : NAPROC, NTPROC, IAPROC
     USE W3ADATMD, only : MPI_COMM_WAVE
     USE W3PARALL, only : GET_JSEA_IBELONG
     USE W3WDATMD, ONLY : VA
+    USE W3GDATMD, ONLY: NSEAL
     USE W3ADATMD, ONLY: NSEALM
 #ifdef W3_TIMINGS
     USE W3PARALL, ONLY: PRINT_MY_TIME
 #endif
-    use yowNodepool, only: ListNPA, ListIPLG
-    use mpi_f08
+    use yowNodepool, only: ListNP, ListNPA, ListIPLG
     IMPLICIT NONE
+    INCLUDE "mpif.h"
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -471,8 +472,8 @@ CONTAINS
     !
     INTEGER, intent(in) :: NDREAD
     INTEGER iBlock, iFirst, iEnd, len, i, IB, iProc
-    INTEGER NREC, ISEA, ierr
-    INTEGER nbBlock
+    INTEGER NREC, ISEA, JSEA, ierr
+    INTEGER nbBlock, IBELONG
     INTEGER :: BlockSize
     REAL, allocatable :: ArrSend(:,:)
     REAL, allocatable :: DataRead(:,:)
@@ -480,7 +481,8 @@ CONTAINS
     integer LRECL
     INTEGER, PARAMETER      :: LRB = 4
     INTEGER NBLKRSloc, RSBLKSloc
-    integer istat
+    integer eArr(1)
+    integer IERR_MPI, istat
     integer IPloc, IPglob, pos
     integer NbMatch, idx
     integer ListFirst(NAPROC)
@@ -489,8 +491,7 @@ CONTAINS
 #endif
     !
     LRECL  = MAX ( LRB*NSPEC ,                                      &
-         LRB*(6 + INT(25.0/LRB) + INT(9.0/LRB) + INT(29.0/LRB) +    &
-         INT(3.0/LRB)) )
+         LRB*(6+(25/LRB)+(9/LRB)+(29/LRB)+(3/LRB)) )
     IF (IAPROC .gt. NAPROC) THEN
       RETURN
     END IF
@@ -653,16 +654,16 @@ CONTAINS
 #endif
     !
     use yowDatapool, only: istatus
-    USE yowNodepool, only: ListNPA, ListIPLG
+    USE yowNodepool, only: ListNP, ListNPA, ListIPLG
     USE W3PARALL, ONLY: INIT_GET_ISEA
     USE W3GDATMD, only : NSEA, NSPEC
-    USE W3ODATMD, only : NAPROC, NAPRST, IAPROC
+    USE W3ODATMD, only : NAPROC, NTPROC, NAPRST, IAPROC
     USE W3ADATMD, only : MPI_COMM_WAVE
     USE W3PARALL, only : GET_JSEA_IBELONG
     USE W3WDATMD, ONLY : VA
-    USE W3GDATMD, ONLY: NSEAL
-    use mpi_f08
+    USE W3GDATMD, ONLY: NSEAL, NX, NY
     IMPLICIT NONE
+    INCLUDE "mpif.h"
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -682,8 +683,8 @@ CONTAINS
     REAL :: DATAwrite(NSPEC,BlockSize)
     REAL, allocatable :: DATArecv(:,:)
     integer ListFirst(NAPROC)
-    integer idx
-    integer len
+    integer idx, idxB
+    integer len, i, IS
     integer iBlock, iFirst, iEnd
     integer IPglob, IPloc, pos, ISEA, nbBlock, NPAloc
     integer ierr, istat, JSEA, NREC, iProc
@@ -691,6 +692,7 @@ CONTAINS
     INTEGER, PARAMETER      :: LRB = 4
     INTEGER(KIND=8) RPOS
     INTEGER LRECL
+    INTEGER IERR_MPI
     REAL(KIND=LRB) WRITEBUFF(NSPEC)
     REAL, allocatable :: DATAsend(:,:)
 #ifdef W3_S
@@ -702,8 +704,7 @@ CONTAINS
     END DO
     !
     LRECL  = MAX ( LRB*NSPEC ,                                      &
-         LRB*(6 + INT(25.0/LRB) + INT(9.0/LRB) + INT(29.0/LRB) +    &
-         INT(3.0/LRB)) )
+         LRB*(6+(25/LRB)+(9/LRB)+(29/LRB)+(3/LRB)) )
     nbBlock=NSEA / BlockSize + 1
     DO iBlock=1,nbBlock
       iFirst= 1 + (iBlock - 1)*BlockSize
@@ -808,12 +809,12 @@ CONTAINS
     !
     USE W3ADATMD, ONLY: W3XDMA, W3SETA, W3XETA, WADATS
     USE W3GDATMD, ONLY: NSEA
-    USE W3GDATMD, ONLY: NSPEC, E3DF, P2MSF
-    USE W3WDATMD, ONLY: UST, USTDIR, ASF
-    USE W3ADATMD, ONLY: MPI_COMM_WAVE
+    USE W3GDATMD, ONLY: NX, NSPEC, MAPFS, E3DF, P2MSF, US3DF
+    USE W3WDATMD, ONLY: VA, UST, USTDIR, ASF, FPIS
+    USE W3ADATMD, ONLY: MPI_COMM_WAVE, WW3_FIELD_VEC
     USE W3ADATMD, ONLY: HS, WLM, T02
     USE W3ADATMD, ONLY: T0M1, THM, THS, FP0, THP0,             &
-         DTDYN, FCUT, ABA, ABD, UBA, UBD,       &
+         DTDYN, FCUT, SPPNT, ABA, ABD, UBA, UBD,&
          SXX, SYY, SXY, USERO, PHS, PTP, PLP,   &
          PDIR, PSI, PWS, PWST, PNR, PHIAW,      &
          PHIOC, TAUOCX, TAUOCY, WNMEAN,         &
@@ -825,21 +826,29 @@ CONTAINS
          BEDFORMS, PHIBBL, TAUBBL, T01,         &
          P2SMS, US3D, EF,  TH1M, STH1M, TH2M,   &
          STH2M, HSIG, TAUICE, PHICE, PTHP0, PQP,&
-         PPE, PGW, PSW, PTM1, PT1, PT2, PEP,    &
+         PPE, PGW, PSW, PTM1, PT1, PT2, PEP,   &
          QP, MSSD, MSCD, STMAXE, STMAXD, HMAXE, &
          HCMAXE, HMAXD, HCMAXD, WBT, USSP
     USE W3GDATMD, ONLY: NK, NSEAL
-    USE W3ODATMD, ONLY: NDST, IAPROC, NAPROC, FLOUT,   &
-         NAPFLD, NOGRP, NGRPP
-    USE W3ODATMD, ONLY: NRQGO, NRQGO2, FLOGRD,  &
-         NOSWLL, NOEXTR, NDSE, FLOGR2
+    USE W3ODATMD, ONLY: NDST, IAPROC, NAPROC, NTPROC, FLOUT,   &
+         NAPFLD, NAPPNT, NAPRST, NAPBPT, NAPTRK,&
+         NOGRP, NGRPP
+    USE W3ODATMD, ONLY: OUTPTS, NRQGO, NRQGO2, IRQGO, IRQGO2,  &
+         FLOGRD, NRQPO, NRQPO2, IRQPO1, IRQPO2, &
+         NOPTS, IPTINT, NRQRS, IRQRS, NBLKRS,   &
+         RSBLKS, IRQRSS, VAAUX, NRQBP, NRQBP2,  &
+         IRQBP1, IRQBP2, NFBPO, NBO2, ISBPO,    &
+         ABPOS, NRQTR, IRQTR, IT0PNT, IT0TRK,   &
+         IT0PRT, NOSWLL, NOEXTR, NDSE, IOSTYP,  &
+         FLOGR2
+    USE W3ADATMD, ONLY: MPI_COMM_WCMP
     USE W3PARALL, ONLY: INIT_GET_JSEA_ISPROC
     USE W3PARALL, ONLY: INIT_GET_ISEA
     use yowDatapool, only: istatus
-    use mpi_f08
     !/
     IMPLICIT NONE
     !
+    INCLUDE "mpif.h"
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -849,8 +858,12 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: IK
-    INTEGER                 :: IH, IT0, IROOT, IERR, I, J, JSEA, ISEA, K
+    INTEGER                 :: IK, IFJ
+    INTEGER                 :: IH, IT0, IROOT, IT, IERR, I0,   &
+         IFROM, IX(4), IY(4), IS(4),     &
+         IP(4), I, J, JSEA, ITARG, IB,   &
+         JSEA0, JSEAN, NSEAB, IBOFF,     &
+         ISEA, ISPROC, K, NRQMAX
 #ifdef W3_S
     INTEGER, SAVE           :: IENT
 #endif

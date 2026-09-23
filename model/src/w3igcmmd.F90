@@ -56,9 +56,9 @@ MODULE W3IGCMMD
   !
   !/ ------------------------------------------------------------------- /
   !
-  use mpi_f08
-  !
   IMPLICIT NONE
+  !
+  INCLUDE "mpif.h"
   !
   PRIVATE
   !
@@ -236,7 +236,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
-    type(MPI_COMM), INTENT(IN)       :: ID_LCOMM
+    INTEGER, INTENT(IN)              :: ID_LCOMM
     CHARACTER(LEN=3), INTENT(IN)     :: IDFLD
     REAL, INTENT(INOUT)              :: FXN(:,:), FYN(:,:), FAN(:,:)
     !

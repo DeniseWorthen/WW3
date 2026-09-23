@@ -632,8 +632,7 @@ MODULE W3GRIDMD
   !
   REAL                    :: RXFR, RFR1, SIGMA, SXFR, FACHF,      &
        VSC, VSC0, VOF,                      &
-       ZLIM, X, Y, XP,                      &
-       XO0, YO0, DXO, DYO,                  &
+       ZLIM, X, Y, XP,  XO0, YO0, DXO, DYO, &
        XO, YO, RD(4), RDTOT,                &
        FACTOR, RTH0, FMICHE, RWNDC,         &
        WCOR1, WCOR2
@@ -826,9 +825,6 @@ MODULE W3GRIDMD
   INTEGER                 :: TAILTYPE
   REAL                    :: TAILLEV, TAILT1, TAILT2
 #endif
-#if defined(W3_FLD1) || defined(W3_FLD2)
-  REAL                    :: FALPHA
-#endif
 #ifdef W3_FLX3
   INTEGER                 :: CTYPE
   REAL                    :: CDMAX
@@ -874,8 +870,8 @@ MODULE W3GRIDMD
 #endif
   !
 #ifdef W3_ST6
-  REAL                    :: SINA0, SINWS, SINFC, CHKMIN,        &
-       CHKINF, CHKCAP, CHKSIG, SDSA1, SDSA2, SWLB1
+  REAL                    :: SINA0, SINWS, SINFC,                 &
+       SDSA1, SDSA2, SWLB1
   INTEGER                 :: SDSP1, SDSP2
   LOGICAL                 :: SDSET, CSTB1
 #endif
@@ -946,7 +942,6 @@ MODULE W3GRIDMD
   REAL*8  :: JGS_PMIN
   REAL*8  :: JGS_DIFF_THR
   REAL*8  :: JGS_NORM_THR
-  INTEGER :: JGS_TRUNK_DIGITS
   REAL*8  :: SOLVERTHR_SETUP
   REAL*8  :: CRIT_DEP_SETUP
   !
@@ -962,10 +957,10 @@ MODULE W3GRIDMD
 #endif
   !
 #ifdef W3_FLD1
-  NAMELIST /FLD1/ TAILTYPE, TAILLEV, TAILT1, TAILT2, FALPHA
+  NAMELIST /FLD1/ TAILTYPE, TAILLEV, TAILT1, TAILT2
 #endif
 #ifdef W3_FLD2
-  NAMELIST /FLD2/ TAILTYPE, TAILLEV, TAILT1, TAILT2, FALPHA
+  NAMELIST /FLD2/ TAILTYPE, TAILLEV, TAILT1, TAILT2
 #endif
 #ifdef W3_FLX3
   NAMELIST /FLX3/ CDMAX, CTYPE
@@ -1062,7 +1057,7 @@ MODULE W3GRIDMD
 #endif
 
 #ifdef W3_ST6
-  NAMELIST /SIN6/ SINA0, SINWS, SINFC, CHKMIN, CHKINF, CHKCAP, CHKSIG
+  NAMELIST /SIN6/ SINA0, SINWS, SINFC
   NAMELIST /SDS6/ SDSET, SDSA1, SDSA2, SDSP1, SDSP2
   NAMELIST /SWL6/ SWLB1, CSTB1
 #endif
@@ -1114,7 +1109,6 @@ MODULE W3GRIDMD
        JGS_NORM_THR,                              &
        JGS_NLEVEL,                                &
        JGS_SOURCE_NONLINEAR,                      &
-       JGS_TRUNK_DIGITS,                          &
        SETUP_APPLY_WLV, SOLVERTHR_SETUP,          &
        CRIT_DEP_SETUP
   NAMELIST /MISC/ CICE0, CICEN, LICE, XSEED, FLAGTR, XP, XR, &
@@ -1760,10 +1754,6 @@ CONTAINS
     SINA0  = 0.09
     SINWS  = 32.0
     SINFC  = 6.0
-    CHKMIN  = 0.0095
-    CHKINF  = 1.000E-4
-    CHKCAP  = 0.0000
-    CHKSIG  = 5.0000
 #endif
     !
 #ifdef W3_ST1
@@ -1859,20 +1849,9 @@ CONTAINS
     SIN6A0 = SINA0
     SIN6WS = SINWS
     SIN6FC = SINFC
-    SIN6CHKMIN = CHKMIN
-    SIN6CHKINF = CHKINF
-    SIN6CHKCAP = CHKCAP
-    SIN6CHKSIG = CHKSIG
-    SIN6FLCAP = .TRUE.
     J = 1
-    JJ = 1
-    IF ( SIN6A0.LE.0.0 ) J = 2
-    IF ( SIN6CHKCAP.LT.1.0E-1 ) THEN
-        JJ = 2
-        SIN6FLCAP = .FALSE.
-    END IF
-    WRITE (NDSO,921) YESXNO(J), SIN6A0, SIN6WS, SIN6FC, SIN6CHKMIN, YESXNO(JJ)
-    IF ( JJ.EQ.1 ) WRITE (NDSO,9210) SIN6CHKINF, SIN6CHKCAP, SIN6CHKSIG
+    IF ( SIN6A0.LE.0. ) J = 2
+    WRITE (NDSO,921) YESXNO(J), SIN6A0, SIN6WS, SIN6FC
 #endif
     !
     ! 6.e Define Snl.
@@ -2502,7 +2481,6 @@ CONTAINS
     JGS_NORM_THR = 1.E-20
     JGS_NLEVEL = 0
     JGS_SOURCE_NONLINEAR = .FALSE.
-    JGS_TRUNK_DIGITS = 5
     ! read data from the unstructured devoted namelist
     CALL READNL ( NDSS, 'UNST', STATUS )
 
@@ -2519,7 +2497,6 @@ CONTAINS
     B_JGS_NORM_THR = JGS_NORM_THR
     B_JGS_NLEVEL = JGS_NLEVEL
     B_JGS_SOURCE_NONLINEAR = JGS_SOURCE_NONLINEAR
-    B_JGS_TRUNK_DIGITS = JGS_TRUNK_DIGITS
 
     nbSel=0
 
@@ -3214,20 +3191,12 @@ CONTAINS
     TAILLEV  = 0.006
     TAILT1 = 1.25
     TAILT2 = 3.00
-    FALPHA = 0.0095
 #endif
 #ifdef W3_FLD2
     TAILTYPE = 0
     TAILLEV  = 0.006
     TAILT1 = 1.25
     TAILT2 = 3.00
-    FALPHA = 0.0095
-#endif
-#if defined(W3_FLD1) && defined(W3_ST4)
-    FALPHA = AALPHA
-#endif
-#if defined(W3_FLD2) && defined(W3_ST4)
-    FALPHA = AALPHA
 #endif
     !
 #ifdef W3_FLD1
@@ -3237,7 +3206,6 @@ CONTAINS
     TAIL_ID = TAILTYPE
     TAIL_TRAN1 = TAILT1
     TAIL_TRAN2 = TAILT2
-    FLDALPHA = FALPHA
 #endif
 #ifdef W3_FLD2
     CALL READNL ( NDSS, 'FLD2', STATUS )
@@ -3246,7 +3214,6 @@ CONTAINS
     TAIL_ID = TAILTYPE
     TAIL_TRAN1 = TAILT1
     TAIL_TRAN2 = TAILT2
-    FLDALPHA = FALPHA
 #endif
     !
     ! 6.o End of namelist processing
@@ -3293,7 +3260,7 @@ CONTAINS
            CAPCHA, CHAMIN, CHA0, UCAP, SIGMAUCAP
 #endif
 #ifdef W3_ST6
-      WRITE (NDSO,2920) SINA0, SINWS, SINFC, CHKMIN, CHKINF, CHKCAP, CHKSIG
+      WRITE (NDSO,2920) SINA0, SINWS, SINFC
 #endif
 #ifdef W3_NL1
       WRITE (NDSO,2922) LAMBDA, NLPROP, KDCONV, KDMIN,       &
@@ -3406,9 +3373,6 @@ CONTAINS
            JGS_DIFF_THR,                               &
            JGS_NORM_THR,                               &
            JGS_NLEVEL,                                 &
-#ifdef W3_TRNK
-           JGS_TRUNK_DIGITS,                           &
-#endif
            JGS_SOURCE_NONLINEAR
       !
       WRITE (NDSO,2976)    P2SF, I1P2SF, I2P2SF,                    &
@@ -3498,12 +3462,10 @@ CONTAINS
       END IF
       !
 #ifdef W3_FLD1
-      WRITE(NDSO,2987) TAIL_ID, TAIL_LEV, TAIL_TRAN1, TAIL_TRAN2, &
-           FLDALPHA
+      WRITE(NDSO,2987) TAIL_ID, TAIL_LEV, TAIL_TRAN1, TAIL_TRAN2
 #endif
 #ifdef W3_FLD2
-      WRITE(NDSO,2987) TAIL_ID, TAIL_LEV, TAIL_TRAN1, TAIL_TRAN2, &
-           FLDALPHA
+      WRITE(NDSO,2987) TAIL_ID, TAIL_LEV, TAIL_TRAN1, TAIL_TRAN2
 #endif
 #ifdef W3_RTD
       WRITE(NDSO,4991) PLAT, PLON, UNROT
@@ -3555,7 +3517,6 @@ CONTAINS
     FXPM   = FXPM * GRAV / 28.
     FXFM   = FXFM * TPI
     XFC    = 3.0
-    XFT    = 0.0
 #ifdef W3_ST2
     XFH    = 2.0
     XF1    = 1.75
@@ -6372,18 +6333,8 @@ CONTAINS
 921 FORMAT ( '  negative wind input active       :  ',A/    &
          '  attenuation factor               :  ',F6.2/ &
          '  wind speed scaling factor        :  ',F6.2/ &
-         '  frequency cut-off factor         :  ',F6.2/ &
-         '  Coupling parameters', /                     &
-         '    minimum Charnock coeficient    :  ',F7.5/ &
-         '    Charnock is capped             :  ',A)
-9210 FORMAT ('      asymptote value              :  ',F7.5/ &
-         '      wind speed threshold         :  ',F5.1/ &
-         '      transition window            :  ',F5.1/ )
-
-2920 FORMAT ( '  &SIN6 SINA0 =', F6.3, ', SINWS =', F6.2, &
-         ', SINFC =', F6.2, ', CHKMIN =', F8.5, &
-         ', CHKINF =', F8.5, ', CHKCAP =', F5.1, &
-         ', CHKSIG =', F5.1, ' /')
+         '  frequency cut-off factor         :  ',F6.2/)
+2920 FORMAT ( '  &SIN6 SINA0 =', F6.3, ', SINWS =', F6.2, ', SINFC =', F6.2, ' /')
 #endif
     !
 #ifdef W3_NL0
@@ -6401,7 +6352,7 @@ CONTAINS
 2922 FORMAT ( '  &SNL1 LAMBDA =',F7.3,', NLPROP =',E10.3,       &
          ', KDCONV =',F7.3,', KDMIN =',F7.3,','/           &
          '        SNLCS1 =',F7.3,', SNLCS2 =',F7.3,        &
-         ', SNLCS3 = ',F7.3,','/                           &
+         ', SNLCS3 = ',F7.3','/                            &
          '        IQTYPE =',I2,', TAILNL =',F5.1,','/      &
          '        GQMNF1 =',I2,', GQMNT1 =',I2,',',        &
          ' GQMNQ_OM2 =',I2,', GQMTHRSAT =',E11.4,', GQMTHRCOU =',F4.3,','/ &
@@ -6773,12 +6724,7 @@ CONTAINS
          ',  JGS_DIFF_THR=', F8.3,                              &
          ',  JGS_NORM_THR=', F8.3,                              &
          ',  JGS_NLEVEL=', I3,                                  &
-#ifdef W3_TRNK
-         ',  JGS_TRUNK_DIGITS=', I3,                            &
-#endif
          ',  JGS_SOURCE_NONLINEAR=', L3 / )
-
-
     !
 960 FORMAT (/'  Miscellaneous ',A/                                   &
          ' --------------------------------------------------')
@@ -6946,7 +6892,7 @@ CONTAINS
          ', REFICEBERG =',F5.2,', REFCOSP_STRAIGHT =',F4.1,' /')
     !
 2987 FORMAT ( '  &FLD TAIL_ID =',I1,' TAIL_LEV =',F5.4,' TAILT1 =',F5.3,&
-         ' TAILT2 =',F5.3,' FALPHA =',F8.5,' /')
+         ' TAILT2 =',F5.3,' /')
 #ifdef W3_RTD
 
 4991 FORMAT ( '  &ROTD PLAT =', F6.2,', PLON =', F7.2,', UNROT =',L3,' /')

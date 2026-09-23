@@ -244,11 +244,11 @@ CONTAINS
     USE WMMDATMD
     USE W3PARALL, ONLY : INIT_GET_JSEA_ISPROC
     !
-#ifdef W3_MPI
-    use mpi_f08
-#endif
-    !
     IMPLICIT NONE
+    !
+#ifdef W3_MPI
+    INCLUDE "mpif.h"
+#endif
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -1243,12 +1243,12 @@ CONTAINS
     USE WMSCRPMD
     USE SCRIP_INTERFACE
 #endif
-    !
-#ifdef W3_MPI
-    use mpi_f08
-#endif
     !/
     IMPLICIT NONE
+    !
+#ifdef W3_MPI
+    INCLUDE "mpif.h"
+#endif
     !
     !/
     !/ ------------------------------------------------------------------- /
@@ -1292,9 +1292,7 @@ CONTAINS
          INFLND(:,:)
     INTEGER, ALLOCATABLE    :: NX_BEG(:), NX_END(:)
 #ifdef W3_MPIBDI
-    INTEGER, ALLOCATABLE    :: NX_SIZE(:)
-    type(MPI_REQUEST), ALLOCATABLE :: IRQ(:)
-    type(MPI_STATUS), ALLOCATABLE :: MSTAT(:)
+    INTEGER, ALLOCATABLE    :: NX_SIZE(:), IRQ(:), MSTAT(:,:)
 #endif
 #ifdef W3_MPI
     INTEGER                 :: IM, NX_REM, TAG, NRQ
@@ -1447,7 +1445,7 @@ CONTAINS
     CHECK_ALLOC_STATUS ( ISTAT )
 #ifdef W3_MPIBDI
     ALLOCATE ( NX_SIZE(NMPROC), IRQ(2*NMPROC), &
-         MSTAT(2*NMPROC), STAT=ISTAT )
+         MSTAT(MPI_STATUS_SIZE,2*NMPROC), STAT=ISTAT )
     CHECK_ALLOC_STATUS ( ISTAT )
 #endif
     !
@@ -5366,11 +5364,11 @@ CONTAINS
     USE W3SERVMD, ONLY: STRACE
 #endif
     !
-#ifdef W3_MPI
-    use mpi_f08
-#endif
-    !
     IMPLICIT NONE
+    !
+#ifdef W3_MPI
+    INCLUDE "mpif.h"
+#endif
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -5384,7 +5382,7 @@ CONTAINS
          IP, NP, ICROOT, JCROOT, IEER
 
 #ifdef W3_MPI
-    type(MPI_STATUS) :: MPIState
+    INTEGER, Dimension(MPI_STATUS_SIZE):: MPIState
 #endif
 
 #ifdef W3_S

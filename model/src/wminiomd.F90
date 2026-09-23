@@ -194,11 +194,11 @@ CONTAINS
     USE W3SERVMD, ONLY: STRACE
 #endif
     !
-#ifdef W3_MPI
-    use mpi_f08
-#endif
-    !
     IMPLICIT NONE
+    !
+#ifdef W3_MPI
+    INCLUDE "mpif.h"
+#endif
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -214,8 +214,7 @@ CONTAINS
 #endif
 #ifdef W3_MPI
     INTEGER                 :: IP, IT0, ITAG, IERR_MPI
-    INTEGER, POINTER        :: NRQ
-    type(MPI_REQUEST), POINTER :: IRQ(:)
+    INTEGER, POINTER        :: NRQ, IRQ(:)
 #endif
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
@@ -306,7 +305,7 @@ CONTAINS
       !
 #ifdef W3_MPI
       NRQ    = 0
-      IRQ    = MPI_REQUEST_NULL
+      IRQ    = 0
 #endif
       !
       ! -------------------------------------------------------------------- /
@@ -597,11 +596,11 @@ CONTAINS
     USE W3SERVMD, ONLY: STRACE
 #endif
     !
-#ifdef W3_MPI
-    use mpi_f08
-#endif
-    !
     IMPLICIT NONE
+    !
+#ifdef W3_MPI
+    INCLUDE "mpif.h"
+#endif
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -625,9 +624,8 @@ CONTAINS
 #endif
     INTEGER, POINTER        :: VTIME(:)
 #ifdef W3_MPI
-    INTEGER, POINTER           :: NRQ
-    type(MPI_REQUEST), POINTER :: IRQ(:)
-    type(MPI_STATUS), ALLOCATABLE   :: STATUS(:)
+    INTEGER, POINTER        :: NRQ, IRQ(:)
+    INTEGER, ALLOCATABLE    :: STATUS(:,:)
 #endif
     REAL                    :: DTTST, DT1, DT2, W1, W2
     REAL, POINTER           :: SBPI(:,:)
@@ -740,7 +738,7 @@ CONTAINS
       NRQ    = NRGRD + SUM(NBI2G(IMOD,:))
       ALLOCATE ( MDATAS(IMOD)%IRQBPG(NRQ) )
       IRQ    => MDATAS(IMOD)%IRQBPG
-      IRQ    = MPI_REQUEST_NULL
+      IRQ    = 0
       NRQ    = 0
 #endif
       !
@@ -922,7 +920,7 @@ CONTAINS
 #ifdef W3_MPI
       NRQ    => MDATAS(IMOD)%NRQBPG
       IRQ    => MDATAS(IMOD)%IRQBPG
-      ALLOCATE ( STATUS(NRQ) )
+      ALLOCATE ( STATUS(MPI_STATUS_SIZE,NRQ) )
 #endif
       !
       ! ..... Test communication if DONE is present, wait otherwise
@@ -939,7 +937,7 @@ CONTAINS
 #ifdef W3_MPIT
         ICOUNT = 0
         DO I=1, NRQ
-          CALL MPI_TEST ( IRQ(I), FLAG, STATUS(1),      &
+          CALL MPI_TEST ( IRQ(I), FLAG, STATUS(1,1),      &
                IERR_MPI )
           FLAGOK = FLAGOK .AND. FLAG
           IF ( FLAG ) ICOUNT = ICOUNT + 1
@@ -1285,12 +1283,11 @@ CONTAINS
     USE W3SERVMD, ONLY: STRACE
 #endif
     !
-#ifdef W3_MPI
-    use mpi_f08
-#endif
-    !
     IMPLICIT NONE
     !
+#ifdef W3_MPI
+    INCLUDE "mpif.h"
+#endif
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -1303,9 +1300,8 @@ CONTAINS
     INTEGER                 :: J
 #ifdef W3_MPI
     INTEGER                 :: IERR_MPI
-    INTEGER, POINTER        :: NRQ
-    type(MPI_REQUEST), POINTER       :: IRQ(:)
-    type(MPI_STATUS), ALLOCATABLE    :: STATUS(:)
+    INTEGER, POINTER        :: NRQ, IRQ(:)
+    INTEGER, ALLOCATABLE    :: STATUS(:,:)
 #endif
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
@@ -1341,7 +1337,7 @@ CONTAINS
       ! 1.b Wait for communication to end
       !
 #ifdef W3_MPI
-      ALLOCATE ( STATUS(NRQ) )
+      ALLOCATE ( STATUS(MPI_STATUS_SIZE,NRQ) )
       CALL MPI_WAITALL ( NRQ, IRQ, STATUS, IERR_MPI )
       DEALLOCATE ( STATUS )
 #endif
@@ -1469,11 +1465,11 @@ CONTAINS
     USE W3TIMEMD, ONLY: DSEC21
     USE W3PARALL, ONLY: INIT_GET_ISEA
     !
-#ifdef W3_MPI
-    use mpi_f08
-#endif
-    !
     IMPLICIT NONE
+    !
+#ifdef W3_MPI
+    INCLUDE "mpif.h"
+#endif
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -1492,8 +1488,7 @@ CONTAINS
     INTEGER, SAVE           :: IENT = 0
 #endif
 #ifdef W3_MPI
-    INTEGER, POINTER        :: NRQ, NRQOUT, OUTDAT(:,:)
-    type(MPI_REQUEST), POINTER :: IRQ(:)
+    INTEGER, POINTER        :: NRQ, IRQ(:), NRQOUT, OUTDAT(:,:)
 #endif
     REAL                    :: DTOUTP
 #ifdef W3_SHRD
@@ -1589,7 +1584,7 @@ CONTAINS
       OUTDAT => HGSTGE(J,IMOD)%OUTDAT
       NRQ    = 0
       NRQOUT = 0
-      IRQ    = MPI_REQUEST_NULL
+      IRQ    = 0
 #endif
       !
       ! -------------------------------------------------------------------- /
@@ -1818,11 +1813,11 @@ CONTAINS
     USE W3SERVMD, ONLY: STRACE
 #endif
     !
-#ifdef W3_MPI
-    use mpi_f08
-#endif
-    !
     IMPLICIT NONE
+    !
+#ifdef W3_MPI
+    INCLUDE "mpif.h"
+#endif
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -1844,9 +1839,7 @@ CONTAINS
 #endif
     INTEGER, POINTER        :: VTIME(:)
 #ifdef W3_MPI
-    INTEGER, POINTER        :: NRQ
-    type(MPI_REQUEST), POINTER :: IRQ(:)
-    type(MPI_STATUS),  POINTER ::STATUS(:)
+    INTEGER, POINTER        :: NRQ, IRQ(:), STATUS(:,:)
 #endif
     REAL                    :: DTTST, WGTH
     REAL, POINTER           :: SPEC1(:,:), SPEC2(:,:), SPEC(:,:)
@@ -1976,7 +1969,7 @@ CONTAINS
       END DO
       NRQ    = MAX(1,NRQ)
       ALLOCATE ( IRQ(NRQ) )
-      IRQ    = MPI_REQUEST_NULL
+      IRQ    = 0
       NRQ    = 0
 #endif
       !
@@ -2105,7 +2098,7 @@ CONTAINS
 #ifdef W3_MPI
       NRQ    => MDATAS(IMOD)%NRQHGG
       IRQ    => MDATAS(IMOD)%IRQHGG
-      ALLOCATE ( STATUS(NRQ) )
+      ALLOCATE ( STATUS(MPI_STATUS_SIZE,NRQ) )
 #endif
       !
       ! ..... Test communication if DONE is present, wait otherwise
@@ -2122,7 +2115,7 @@ CONTAINS
 #ifdef W3_MPIT
         ICOUNT = 0
         DO I=1, NRQ
-          CALL MPI_TEST ( IRQ(I), FLAG, STATUS(1),      &
+          CALL MPI_TEST ( IRQ(I), FLAG, STATUS(1,1),      &
                IERR_MPI )
           FLAGOK = FLAGOK .AND. FLAG
           IF ( FLAG ) ICOUNT = ICOUNT + 1
@@ -2398,11 +2391,11 @@ CONTAINS
     USE W3SERVMD, ONLY: STRACE
 #endif
     !
-#ifdef W3_MPI
-    use mpi_f08
-#endif
-    !
     IMPLICIT NONE
+    !
+#ifdef W3_MPI
+    INCLUDE "mpif.h"
+#endif
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -2415,9 +2408,8 @@ CONTAINS
     INTEGER                 :: J
 #ifdef W3_MPI
     INTEGER                 :: IERR_MPI
-    INTEGER, POINTER        :: NRQ
-    type(MPI_REQUEST), POINTER :: IRQ(:)
-    type(MPI_STATUS), ALLOCATABLE    :: STATUS(:)
+    INTEGER, POINTER        :: NRQ, IRQ(:)
+    INTEGER, ALLOCATABLE    :: STATUS(:,:)
 #endif
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
@@ -2453,7 +2445,7 @@ CONTAINS
       ! 1.b Wait for communication to end
       !
 #ifdef W3_MPI
-      ALLOCATE ( STATUS(NRQ) )
+      ALLOCATE ( STATUS(MPI_STATUS_SIZE,NRQ) )
       CALL MPI_WAITALL ( NRQ, IRQ, STATUS, IERR_MPI )
       DEALLOCATE ( STATUS )
 #endif
@@ -2582,11 +2574,11 @@ CONTAINS
 #endif
     USE W3TIMEMD, ONLY: DSEC21
     !
-#ifdef W3_MPI
-    use mpi_f08
-#endif
-    !
     IMPLICIT NONE
+    !
+#ifdef W3_MPI
+    INCLUDE "mpif.h"
+#endif
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -2604,8 +2596,7 @@ CONTAINS
     INTEGER, SAVE           :: IENT = 0
 #endif
 #ifdef W3_MPI
-    INTEGER, POINTER        :: NRQ, NRQOUT, OUTDAT(:,:)
-    type(MPI_REQUEST), POINTER :: IRQ(:)
+    INTEGER, POINTER        :: NRQ, IRQ(:), NRQOUT, OUTDAT(:,:)
 #endif
 #ifdef W3_SHRD
     REAL, POINTER           :: SEQL(:,:,:)
@@ -2676,7 +2667,7 @@ CONTAINS
       OUTDAT => EQSTGE(J,IMOD)%OUTDAT
       NRQ    = 0
       NRQOUT = 0
-      IRQ    = MPI_REQUEST_NULL
+      IRQ    = 0
 #endif
       !
       ! -------------------------------------------------------------------- /
@@ -2918,11 +2909,11 @@ CONTAINS
     USE W3SERVMD, ONLY: STRACE
 #endif
     !
-#ifdef W3_MPI
-    use mpi_f08
-#endif
-    !
     IMPLICIT NONE
+    !
+#ifdef W3_MPI
+    INCLUDE "mpif.h"
+#endif
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -2946,9 +2937,7 @@ CONTAINS
 #endif
     INTEGER, POINTER        :: VTIME(:)
 #ifdef W3_MPI
-    INTEGER, POINTER        :: NRQ
-    type(MPI_REQUEST), POINTER :: IRQ(:)
-    type(MPI_STATUS),  POINTER :: STATUS(:)
+    INTEGER, POINTER        :: NRQ, IRQ(:), STATUS(:,:)
 #endif
     REAL                    :: DTTST, WGHT
     REAL, POINTER           :: SPEC1(:,:), SPEC2(:,:), SPEC(:,:)
@@ -3037,7 +3026,7 @@ CONTAINS
              EQSTGE(IMOD,J)%NAVMAX
       END DO
       ALLOCATE ( IRQ(NRQ) )
-      IRQ    = MPI_REQUEST_NULL
+      IRQ    = 0
       NRQ    = 0
 #endif
       !
@@ -3160,7 +3149,7 @@ CONTAINS
 #ifdef W3_MPI
       NRQ    => MDATAS(IMOD)%NRQEQG
       IRQ    => MDATAS(IMOD)%IRQEQG
-      ALLOCATE ( STATUS(NRQ) )
+      ALLOCATE ( STATUS(MPI_STATUS_SIZE,NRQ) )
 #endif
       !
       ! ..... Test communication if DONE is present, wait otherwise
@@ -3177,7 +3166,7 @@ CONTAINS
 #ifdef W3_MPIT
         ICOUNT = 0
         DO I=1, NRQ
-          CALL MPI_TEST ( IRQ(I), FLAG, STATUS(1),      &
+          CALL MPI_TEST ( IRQ(I), FLAG, STATUS(1,1),      &
                IERR_MPI )
           FLAGOK = FLAGOK .AND. FLAG
           IF ( FLAG ) ICOUNT = ICOUNT + 1
@@ -3476,11 +3465,11 @@ CONTAINS
     USE W3SERVMD, ONLY: STRACE
 #endif
     !
-#ifdef W3_MPI
-    use mpi_f08
-#endif
-    !
     IMPLICIT NONE
+    !
+#ifdef W3_MPI
+    INCLUDE "mpif.h"
+#endif
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -3493,9 +3482,8 @@ CONTAINS
     INTEGER                 :: J
 #ifdef W3_MPI
     INTEGER                 :: IERR_MPI
-    INTEGER, POINTER        :: NRQ
-    type(MPI_REQUEST), POINTER :: IRQ(:)
-    type(MPI_STATUS), ALLOCATABLE :: STATUS(:)
+    INTEGER, POINTER        :: NRQ, IRQ(:)
+    INTEGER, ALLOCATABLE    :: STATUS(:,:)
 #endif
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
@@ -3531,7 +3519,7 @@ CONTAINS
       ! 1.b Wait for communication to end
       !
 #ifdef W3_MPI
-      ALLOCATE ( STATUS(NRQ) )
+      ALLOCATE ( STATUS(MPI_STATUS_SIZE,NRQ) )
       CALL MPI_WAITALL ( NRQ, IRQ, STATUS, IERR_MPI )
       DEALLOCATE ( STATUS )
 #endif

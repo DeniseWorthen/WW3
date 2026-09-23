@@ -310,9 +310,6 @@ MODULE W3ODATMD
   !
   !/ ------------------------------------------------------------------- /
   USE CONSTANTS, ONLY : UNDEF
-#ifdef W3_MPI
-  use mpi_f08, ONLY   : MPI_Request
-#endif
 
   ! module default
   IMPLICIT NONE
@@ -353,7 +350,7 @@ MODULE W3ODATMD
     INTEGER               :: IPASS1
 #ifdef W3_MPI
     INTEGER               :: NRQGO, NRQGO2
-    type(MPI_Request), POINTER :: IRQGO(:), IRQGO2(:)
+    INTEGER, POINTER      :: IRQGO(:), IRQGO2(:)
 #endif
     LOGICAL               :: FLOGRD(NOGRP,NGRPP), FLOGD(NOGRP),   &
          FLOGR2(NOGRP,NGRPP), FLOG2(NOGRP),   &
@@ -368,7 +365,7 @@ MODULE W3ODATMD
 #endif
     INTEGER, POINTER      :: IPTINT(:,:,:), IL(:), IW(:), II(:)
 #ifdef W3_MPI
-    type(MPI_Request), POINTER :: IRQPO1(:), IRQPO2(:)
+    INTEGER, POINTER      :: IRQPO1(:), IRQPO2(:)
 #endif
     REAL, POINTER         :: PTLOC(:,:), PTIFAC(:,:),             &
          DPO(:), WAO(:), WDO(:), ASO(:),      &
@@ -391,7 +388,7 @@ MODULE W3ODATMD
     INTEGER               :: IPASS3
 #ifdef W3_MPI
     INTEGER               :: IT0PNT, IT0TRK, IT0PRT, NRQTR
-    type(MPI_Request), POINTER :: IRQTR(:)
+    INTEGER, POINTER      :: IRQTR(:)
 #endif
     LOGICAL               :: O3INIT, STOP
     LOGICAL, POINTER      :: MASK1(:,:), MASK2(:,:)
@@ -402,7 +399,7 @@ MODULE W3ODATMD
     INTEGER               :: IFILE4
 #ifdef W3_MPI
     INTEGER               :: NRQRS, NBLKRS, RSBLKS
-    type(MPI_Request), POINTER :: IRQRS(:), IRQRSS(:)
+    INTEGER, POINTER      :: IRQRS(:), IRQRSS(:)
     REAL, POINTER         :: VAAUX(:,:,:)
 #endif
   END TYPE OTYPE4
@@ -416,7 +413,7 @@ MODULE W3ODATMD
     INTEGER, POINTER      :: IPBPI(:,:), ISBPI(:),                &
          IPBPO(:,:), ISBPO(:)
 #ifdef W3_MPI
-    type(MPI_Request), POINTER :: IRQBP1(:), IRQBP2(:)
+    INTEGER, POINTER      :: IRQBP1(:), IRQBP2(:)
 #endif
     REAL                  :: XFRI, FR1I, TH1I
     REAL, POINTER         :: XBPI(:), YBPI(:), RDBPI(:,:),        &
@@ -486,7 +483,7 @@ MODULE W3ODATMD
   INTEGER, POINTER        :: IPASS1
 #ifdef W3_MPI
   INTEGER, POINTER        :: NRQGO, NRQGO2
-  type(MPI_Request), POINTER :: IRQGO(:), IRQGO2(:)
+  INTEGER, POINTER        :: IRQGO(:), IRQGO2(:)
 #endif
   LOGICAL, POINTER        :: FLOGRD(:,:), FLOGR2(:,:),            &
        FLOGRR(:,:),FLOGD(:), FLOG2(:),      &
@@ -500,7 +497,7 @@ MODULE W3ODATMD
 #endif
   INTEGER, POINTER        :: IPTINT(:,:,:), IL(:), IW(:), II(:)
 #ifdef W3_MPI
-  type(MPI_Request), POINTER :: IRQPO1(:), IRQPO2(:)
+  INTEGER, POINTER        :: IRQPO1(:), IRQPO2(:)
 #endif
   REAL, POINTER           :: PTLOC(:,:), PTIFAC(:,:),             &
        DPO(:), WAO(:), WDO(:), ASO(:),      &
@@ -523,7 +520,7 @@ MODULE W3ODATMD
   INTEGER, POINTER        :: IPASS3
 #ifdef W3_MPI
   INTEGER, POINTER        :: IT0PNT, IT0TRK, IT0PRT, NRQTR
-  type(MPI_Request), POINTER :: IRQTR(:)
+  INTEGER, POINTER        :: IRQTR(:)
 #endif
   LOGICAL, POINTER        :: O3INIT, STOP
   LOGICAL, POINTER        :: MASK1(:,:), MASK2(:,:)
@@ -534,7 +531,7 @@ MODULE W3ODATMD
   INTEGER, POINTER        :: IFILE4
 #ifdef W3_MPI
   INTEGER, POINTER        :: NRQRS, NBLKRS, RSBLKS
-  type(MPI_Request), POINTER :: IRQRS(:), IRQRSS(:)
+  INTEGER, POINTER        :: IRQRS(:), IRQRSS(:)
   REAL, POINTER           :: VAAUX(:,:,:)
 #endif
   !/
@@ -548,7 +545,7 @@ MODULE W3ODATMD
   INTEGER, POINTER        :: IPBPI(:,:), ISBPI(:),                &
        IPBPO(:,:), ISBPO(:)
 #ifdef W3_MPI
-  type(MPI_Request), POINTER :: IRQBP1(:), IRQBP2(:)
+  INTEGER, POINTER        :: IRQBP1(:), IRQBP2(:)
 #endif
   REAL, POINTER           :: XFRI, FR1I, TH1I
   REAL, POINTER           :: XBPI(:), YBPI(:), RDBPI(:,:),        &
@@ -1433,7 +1430,7 @@ CONTAINS
     ! 10. Source code :
     !
     !/ ------------------------------------------------------------------- /
-    USE W3GDATMD, ONLY: W3SETG, NGRIDS, NSPEC
+    USE W3GDATMD, ONLY: W3SETG, NGRIDS, IGRID, NX, NY, NSPEC
     USE W3SERVMD, ONLY: EXTCDE
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
@@ -1448,6 +1445,7 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
+    INTEGER                 :: JGRID
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
     CALL STRACE (IENT, 'W3DMO5')
@@ -1650,6 +1648,7 @@ CONTAINS
     !/ Local parameters
     !/
     INTEGER                 :: NLOW
+    INTEGER                 :: J
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
     CALL STRACE (IENT, 'W3SETO')

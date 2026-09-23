@@ -520,11 +520,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    integer                 :: allocsizex, allocsizey
-    INTEGER                 :: JGRID
-#ifdef W3_TIDE
-    LOGICAL                 :: FLAGSTIDE(4)=.FALSE.
-#endif
+    INTEGER       :: JGRID
+    LOGICAL       :: FLAGSTIDE(4)=.FALSE.
+    integer       :: allocsizex, allocsizey
 #ifdef W3_S
     INTEGER, SAVE :: IENT = 0
     CALL STRACE (IENT, 'W3DIMI')

@@ -174,9 +174,10 @@ CONTAINS
     USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    USE W3GDATMD, ONLY: NSEAL, MAPSF, MAPSTA, NK, NTH, SIG
+    USE W3GDATMD, ONLY: NSEA, NSEAL, MAPSF, MAPSTA, NK, NTH, SIG
     USE W3ADATMD, ONLY: WN, CG, U10, U10D, DW
-    USE W3ODATMD, ONLY: OUTPTS, O6INIT, ICPRT, DTPRT, DIMP, PTMETH
+    USE W3ODATMD, ONLY: IAPROC, NAPROC, OUTPTS, O6INIT,       &
+         ICPRT, DTPRT, DIMP, PTMETH
     USE W3WDATMD, ONLY: VA, ASF
     USE W3ADATMD, ONLY: NSEALM
     USE W3PARALL, ONLY: INIT_GET_ISEA, INIT_GET_JSEA_ISPROC
@@ -437,10 +438,11 @@ CONTAINS
     USE W3GDATMD, ONLY: NSEAL
 #endif
     USE W3WDATMD, ONLY: TIME, ASF
-    USE W3ODATMD, ONLY: NDSE, IAPROC, NAPROC, NAPPRT, &
-         IPASS => IPASS6, FLFORM, FNMPRE, OUTPTS,     &
+    USE W3ODATMD, ONLY: NDSE, IAPROC, NAPROC, NAPPRT, NAPERR, &
+         IPASS => IPASS6, FLFORM, FNMPRE, OUTPTS,    &
          IX0, IXN, IXS, IY0, IYN, IYS, DIMP
     USE W3ADATMD, ONLY: DW, U10, U10D, CX, CY
+    USE W3ADATMD, ONLY: NSEALM
     USE W3PARALL, ONLY: INIT_GET_JSEA_ISPROC
 #ifdef W3_MPI
     USE W3ADATMD, ONLY: MPI_COMM_WAVE
@@ -449,15 +451,12 @@ CONTAINS
 #ifdef W3_T
     USE W3ODATMD, ONLY: NDST
 #endif
-#if defined(W3_T) || defined(W3_MPI)
-    USE W3ADATMD, ONLY: NSEALM
-#endif
-    !
-#ifdef W3_MPI
-    use mpi_f08
-#endif
     !
     IMPLICIT NONE
+    !
+#ifdef W3_MPI
+    INCLUDE "mpif.h"
+#endif
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -468,10 +467,10 @@ CONTAINS
     !/ Local parameters
     !/
     INTEGER                 :: I, J, IERR, ISEA, JSEA, JAPROC,      &
-         IX, IY, IP, IOFF, DTSIZ
+         IX, IY, IP, IOFF, DTSIZ=0
 #ifdef W3_MPI
-    INTEGER                 :: ICSIZ, IERR_MPI, IT, JSLM
-    type(MPI_STATUS)        :: STATUS
+    INTEGER                 :: ICSIZ, IERR_MPI, IT,            &
+         STATUS(MPI_STATUS_SIZE,1), JSLM
 #endif
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
@@ -502,8 +501,6 @@ CONTAINS
 #ifdef W3_T
     WRITE (NDST,9000) IPASS, FLFORM, NDSPT, IMOD, IAPROC, NAPPRT
 #endif
-
-    DTSIZ=0
     !
     ! -------------------------------------------------------------------- /
     ! 1.  Set up file ( IPASS = 1 and proper processor )

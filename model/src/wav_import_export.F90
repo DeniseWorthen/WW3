@@ -44,7 +44,7 @@ module wav_import_export
   end interface FillGlobalInput
 
   type fld_list_type                               !< @private a structure for the list of fields
-    character(len=80) :: stdname                  !< a standard field name
+    character(len=128) :: stdname                  !< a standard field name
     integer :: ungridded_lbound = 0                !< the ungridded dimension lower bound
     integer :: ungridded_ubound = 0                !< the ugridded dimension upper bound
   end type fld_list_type
@@ -565,7 +565,7 @@ contains
     !---------------------------------------------------------------------------
 
     use wav_kind_mod,   only : R8 => SHR_KIND_R8
-    use w3adatmd      , only : USSP, tauox, tauoy, wnmean, taubbl
+    use w3adatmd      , only : USSX, USSY, USSP, HS, tauox, tauoy, wnmean, taubbl
     use w3adatmd      , only : w3seta
     use w3idatmd      , only : w3seti
     use w3wdatmd      , only : va, w3setw
@@ -575,7 +575,7 @@ contains
 #ifdef W3_CESMCOUPLED
     use w3odatmd      , only : naproc, iaproc
     use w3wdatmd      , only : ASF, UST
-    use w3adatmd      , only : USSX, USSY, USSHX, USSHY, UD, HS
+    use w3adatmd      , only : USSHX, USSHY, UD
     use w3idatmd      , only : HSL
 #endif
 
@@ -595,10 +595,8 @@ contains
 
     real(r8), pointer :: z0rlen(:)
     real(r8), pointer :: charno(:)
-#ifdef W3_CESMCOUPLED
     real(r8), pointer :: sw_lamult(:)
     real(r8), pointer :: sw_lasl(:)
-#endif
     real(r8), pointer :: sw_ustokes(:)
     real(r8), pointer :: sw_vstokes(:)
 

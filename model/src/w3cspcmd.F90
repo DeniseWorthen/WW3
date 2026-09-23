@@ -242,7 +242,8 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: I, NRMAX, J, I1, L1, J1, I2, L2, J2
+    INTEGER                 :: I, NRMAX, J, I1, L1, J1, I2, L2, J2, &
+         ISP
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
 #endif

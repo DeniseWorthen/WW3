@@ -133,12 +133,12 @@ PROGRAM W3BOUND
 #ifdef W3_S
   USE W3SERVMD, ONLY : STRACE
 #endif
-  !
-#ifdef W3_MPI
-  use mpi_f08
-#endif
   !/
   IMPLICIT NONE
+  !
+#ifdef W3_MPI
+  INCLUDE "mpif.h"
+#endif
   !/
   !/ ------------------------------------------------------------------- /
   !/ Local parameters

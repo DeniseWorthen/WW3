@@ -255,7 +255,7 @@ C$OMP& srch_center_lon_find_adj_cell)
 #ifdef W3_SCRIPMPI
       USE WMMDATMD, ONLY: MPI_COMM_GRD
       USE W3ODATMD, ONLY: IAPROC, NTPROC
-      use mpi_f08
+      INCLUDE "mpif.h"
 #endif
       logical(SCRIP_Logical), intent(in) :: l_master   ! Am I the master
                                                    ! processor (do I/O)?
@@ -271,7 +271,7 @@ C$OMP& srch_center_lon_find_adj_cell)
       integer (SCRIP_i4) :: IERR_MPI, IPROC, ratio
       integer (SCRIP_i4) :: j, ij, add1, add2, got_weight
       integer (SCRIP_i4) :: nlink, min_link, max_link
-      type(MPI_STATUS)   :: status
+      integer (SCRIP_i4), dimension(MPI_STATUS_SIZE) :: status
       integer (SCRIP_i4), dimension(:), allocatable :: Numlinks
       integer (SCRIP_i4), dimension(:), allocatable :: Asendi
       integer (SCRIP_i4), dimension(:), allocatable :: Arecv1

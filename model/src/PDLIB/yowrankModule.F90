@@ -73,7 +73,7 @@ contains
 
   !> allocate and exchange
   subroutine initRankModule()
-    use yowDatapool, only: nTasks
+    use yowDatapool, only: nTasks, myrank
     implicit none
     integer :: stat
 
@@ -90,11 +90,11 @@ contains
   subroutine exchangeIPLG()
     use yowNodepool, only: np, npa, iplg, np_global
     use yowDatapool, only: nTasks, myrank, comm, itype
-    use mpi_f08
+    use MPI
     implicit none
     integer :: i, ierr, stat
-    type(MPI_REQUEST) :: sendRqst(nTasks), recvRqst(nTasks)
-    type(MPI_STATUS)  :: recvStat(nTasks), sendStat(nTasks)
+    integer :: sendRqst(nTasks), recvRqst(nTasks)
+    integer :: recvStat(MPI_STATUS_SIZE, nTasks), sendStat(MPI_STATUS_SIZE, nTasks)
     integer IPglob, J, istat
 
     ! step1 exchange np
@@ -235,7 +235,7 @@ contains
 
   !> \internal
   subroutine calcISTART()
-    use yowDatapool, only: nTasks
+    use yowDatapool, only: nTasks, myrank
     implicit none
     integer :: ir
 

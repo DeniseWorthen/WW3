@@ -167,6 +167,7 @@ module WMESMFMD
   !/
   ! --- ESMF Module
   use ESMF
+
   ! --- NUOPC modules
   use NUOPC
   use NUOPC_Model, parent_SetServices => SetServices
@@ -198,14 +199,13 @@ module WMESMFMD
   !/
   !/ Specify default data typing
   !/
+  implicit none
+  !/
   !/ Include MPI definitions
   !/
 #ifdef W3_MPI
-  use mpi_f08
-  use, intrinsic :: iso_c_binding, only: C_INT
+  include "mpif.h"
 #endif
-  !/
-  implicit none
   !/
   !/ Specify default accessibility
   !/
@@ -260,14 +260,14 @@ module WMESMFMD
   logical                       :: noActiveImpFields         !< noActiveImpFields
   integer                       :: numImpFields         !< numImpFields
   character(64), allocatable    :: impFieldName(:)         !< impFieldName
-  character(80), allocatable    :: impFieldStdName(:)         !< impFieldStdName
+  character(128), allocatable   :: impFieldStdName(:)         !< impFieldStdName
   logical, allocatable          :: impFieldInitRqrd(:)         !< impFieldInitRqrd
   logical, allocatable          :: impFieldActive(:)         !< impFieldActive
   type(ESMF_Field), allocatable :: impField(:)         !< impField
   !
   ! --- Background import fields
   character(10), allocatable    :: mbgFieldName(:)     !< mbgFieldName
-  character(80), allocatable    :: mbgFieldStdName(:)  !< mbgFieldStdName
+  character(128), allocatable   :: mbgFieldStdName(:)  !< mbgFieldStdName
   logical, allocatable          :: mbgFieldActive(:)         !< mbgFieldActive
   type(ESMF_Field), allocatable :: mbgField(:)         !< mbgField
   type(ESMF_Field), allocatable :: bmskField(:)         !< bmskField
@@ -293,7 +293,7 @@ module WMESMFMD
   logical                       :: noActiveExpFields         !< noActiveExpFields
   integer                       :: numExpFields         !< numExpFields
   character(64), allocatable    :: expFieldName(:)         !< expFieldName
-  character(80), allocatable    :: expFieldStdName(:)         !< expFieldStdName
+  character(128), allocatable   :: expFieldStdName(:)         !< expFieldStdName
   integer, allocatable          :: expFieldDim(:)         !< expFieldDim
   logical, allocatable          :: expFieldActive(:)         !< expFieldActive
   type(ESMF_Field), allocatable :: expField(:)         !< expField
@@ -757,8 +757,7 @@ contains
     integer, parameter :: iwt=2
     real(8) :: wstime, wftime
     integer :: idsi, idso, idss, idst, idse
-    type(MPI_COMM) :: mpicomm = MPI_COMM_WORLD
-    integer(C_INT) :: c_int_mpicomm
+    integer :: mpiComm = -99
     logical :: configIsPresent
     type(ESMF_Config) :: config
     character(ESMF_MAXSTR) :: wrkdir = '.'
@@ -888,8 +887,7 @@ contains
     call ESMF_GridCompGet(gcomp, vm=vm, rc=rc)
     if (ESMF_LogFoundError(rc, PASSTHRU)) return
     call ESMF_VMGet(vm, petCount=npet, localPet=lpet, &
-          mpiCommunicator=c_int_mpicomm, rc=rc)
-    mpicomm   = MPI_Comm(c_int_mpicomm)
+         mpiCommunicator=mpiComm, rc=rc)
     if (ESMF_LogFoundError(rc, PASSTHRU)) return
     nmproc = npet
     improc = lpet + 1

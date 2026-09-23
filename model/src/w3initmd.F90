@@ -155,13 +155,13 @@ CONTAINS
   !> @param[in] PNAMES        Output point names.
   !> @param[in] IPRT          Partitioning grid info.
   !> @param[inout] PRTFRM     Partitioning format flag.
-  !> @param[in] MPI_COMM_IN   MPI communicator to be used for model.
+  !> @param[in] MPI_COMM      MPI communicator to be used for model.
   !> @param[in] FLAGSTIDEIN
   !>
   !> @author H. L. Tolman  @date 03-Sep-2012
   !>
   SUBROUTINE W3INIT ( IMOD, IsMulti, FEXT, MDS, MTRACE, ODAT, FLGRD,  FLGR2, FLGD, &
-       FLG2, NPT, XPT, YPT, PNAMES, IPRT, PRTFRM, MPI_COMM_IN, FLAGSTIDEIN)
+       FLG2, NPT, XPT, YPT, PNAMES, IPRT, PRTFRM, MPI_COMM, FLAGSTIDEIN)
     !/
     !/                  +-----------------------------------+
     !/                  | WAVEWATCH III           NOAA/NCEP |
@@ -376,7 +376,7 @@ CONTAINS
     USE W3WDATMD, ONLY: W3SETW, W3DIMW
     USE W3ADATMD, ONLY: W3SETA, W3DIMA
     USE W3IDATMD, ONLY: W3SETI, W3DIMI
-    USE W3ODATMD, ONLY: W3SETO, W3DMO5
+    USE W3ODATMD, ONLY: W3SETO, W3DMO5, FNMRST
     USE W3IOGOMD, ONLY: W3FLGRDUPDT
     USE W3IOGRMD, ONLY: W3IOGR
     USE W3IORSMD, ONLY: W3IORS
@@ -388,25 +388,23 @@ CONTAINS
     USE W3TIMEMD, ONLY: DSEC21, TICK21, STME21
     USE W3ARRYMD, ONLY: PRTBLK
     !/
-    USE W3GDATMD, ONLY: NX, NY, NSEA, NSEAL, MAPSTA, MAPST2,  &
-         MAPSF, FLAGLL, ZB, DMIN, DTCFL, DTMAX, &
+    USE W3GDATMD, ONLY: NX, NY, NSEA, NSEAL, MAPSTA, MAPST2, MAPFS, &
+         MAPSF, FLAGLL,   &
+         ICLOSE, ZB, TRNX, TRNY, DMIN, DTCFL, DTMAX, &
          FLCK, NK, NTH, NSPEC, SIG, GNAME
 #ifdef W3_PDLIB
     USE W3GDATMD, ONLY : FLCTH, B_JGS_BLOCK_GAUSS_SEIDEL, B_JGS_USE_JACOBI
 #endif
-    USE W3WDATMD, ONLY: TIME, TLEV, TICE, TRHO, WLV, VA
+    USE W3WDATMD, ONLY: TIME, TLEV, TICE, TRHO, WLV, UST, USTDIR, VA
     USE W3ODATMD, ONLY: NDSO, NDSE, NDST, SCREEN, NDS, NTPROC,      &
-         NAPROC, IAPROC, NAPLOG, NAPERR,             &
+         NAPROC, IAPROC, NAPLOG, NAPOUT, NAPERR,     &
          NAPFLD, NAPPNT, NAPTRK, NAPRST, NAPBPT,     &
          NAPPRT, TOFRST, DTOUT, TONEXT, TOLAST,      &
          FLOUT, FLOGRD, FLBPO, NOPTS, PTNME,         &
-         PTLOC, UNDEF, IDOUT,                        &
+         PTLOC, IPTINT, PTIFAC, UNDEF, IDOUT, FLBPI, &
          OUTPTS, FNMPRE, IX0, IXN, IXS, IY0, IYN,    &
          IYS, FLFORM, IOSTYP, UNIPTS, UPPROC, NOTYPE,&
          FLOGR2, NOGRP, NGRPP, FLOGD, FLOG2
-#ifdef W3_T
-    USE W3ODATMD, ONLY: NAPOUT
-#endif
 #ifdef W3_NL5
     USE W3ODATMD, ONLY: TOSNL5
 #endif
@@ -421,13 +419,15 @@ CONTAINS
     USE W3DISPMD, ONLY: WAVNU1, WAVNU3
     USE W3PARALL, ONLY: SET_UP_NSEAL_NSEALM
 #ifdef W3_PDLIB
-    USE W3PARALL, ONLY: SYNCHRONIZE_IPGL_ETC_ARRAY
+    USE W3PARALL, ONLY: SYNCHRONIZE_IPGL_ETC_ARRAY, ISEA_TO_JSEA
+    use yowNodepool, only: npa
+    use yowRankModule, only : rank
 #endif
     USE W3GDATMD, ONLY: GTYPE, UNGTYPE
 #ifdef W3_PDLIB
     USE PDLIB_W3PROFSMD, ONLY : PDLIB_MAPSTA_INIT, SET_IOBDP_PDLIB, PDLIB_IOBP_INIT, SET_IOBPA_PDLIB
     USE PDLIB_W3PROFSMD, ONLY : BLOCK_SOLVER_INIT, BLOCK_SOLVER_EXPLICIT_INIT, PDLIB_INIT, DEALLOCATE_PDLIB_GLOBAL
-    USE W3GDATMD,        ONLY : FSREFRACTION, FSFREQSHIFT
+    use yowDatapool, only: istatus
 #endif
 #ifdef W3_SETUP
     USE W3WAVSET, ONLY : PREPARATION_FD_SCHEME
@@ -435,7 +435,8 @@ CONTAINS
     USE W3GDATMD, ONLY : DO_CHANGE_WLV
 #endif
     USE W3TRIAMD, ONLY: NVECTRI, AREA_SI, COORDMAX, SPATIAL_GRID
-    USE W3GDATMD, ONLY: FSTOTALIMP, FSTOTALEXP
+    USE W3GDATMD, ONLY: FSN,FSPSI,FSFCT,FSNIMP, FSTOTALIMP, FSTOTALEXP, XGRD, YGRD
+    USE W3GDATMD, ONLY: FSREFRACTION, FSFREQSHIFT
     USE W3PARALL, ONLY: INIT_GET_JSEA_ISPROC, INIT_GET_ISEA
 #ifdef W3_TIMINGS
     USE W3PARALL, ONLY: PRINT_MY_TIME
@@ -450,26 +451,22 @@ CONTAINS
     USE W3UOSTMD, ONLY: UOST_SETGRID
 #endif
     use w3timemd,        only : set_user_timestring
+    use w3odatmd,        only : runtype, restart_from_binary, use_restartnc, user_restfname
     use w3odatmd,        only : logfile_is_assigned
 #ifdef W3_PIO
     use wav_restart_mod, only : read_restart
-    use w3odatmd,        only : runtype, restart_from_binary, use_restartnc, user_restfname
 #endif
     !/
 #ifdef W3_MPI
-    use mpi_f08
+    INCLUDE "mpif.h"
 #endif
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
     !/
     INTEGER, INTENT(IN)           :: IMOD, MDS(15), MTRACE(2),      &
-         ODAT(40),NPT, IPRT(6)
-#ifdef W3_MPI
-    type(MPI_COMM), INTENT(IN)    :: MPI_COMM_IN
-#else
-    INTEGER, INTENT(IN)           :: MPI_COMM_IN
-#endif
+         ODAT(40),NPT, IPRT(6),&
+         MPI_COMM
     LOGICAL, INTENT(IN)           :: IsMulti
     REAL, INTENT(INOUT)           :: XPT(NPT), YPT(NPT)
     LOGICAL, INTENT(INOUT)        :: FLGRD(NOGRP,NGRPP), FLGD(NOGRP),&
@@ -483,22 +480,22 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
+    integer :: IRANK, I, ISTAT
     INTEGER                 :: IE, IFL, IFT, IERR, NTTOT, NTLOC,    &
-         NTTARG, IK, IP, IX, IY, &
+         NTTARG, IK, IP, ITH, IX, IY, &
          J, J0, TOUT(2), TLST(2), ISEA, IS,   &
-         K, JSEA, NTTMAX
+         K, I1, I2, JSEA, NTTMAX
 #ifdef W3_DIST
     INTEGER                 :: ISTEP, ISP, IW
 #endif
 #ifdef W3_MPI
-    INTEGER                 :: IERR_MPI
-    type(MPI_GROUP)         :: BGROUP, LGROUP
+    INTEGER                 :: IERR_MPI, BGROUP, LGROUP
 #endif
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
 #endif
 #ifdef W3_T
-    INTEGER                 :: NX0, NXN, ITH
+    INTEGER                 :: NX0, NXN
     INTEGER, ALLOCATABLE    :: MAPOUT(:,:)
 #endif
 #ifdef W3_MPI
@@ -517,20 +514,19 @@ CONTAINS
     LOGICAL                 :: OPENED
     CHARACTER(LEN=8)        :: STTIME
     CHARACTER(LEN=10)       :: STDATE
+    INTEGER                 :: ISPROC
 #ifdef W3_DIST
     CHARACTER(LEN=12)       :: FORMAT
 #endif
-    REAL                    :: DEPTHbat,WNbat,CGbat,KDCHCK
-    REAL                    :: KDMAX = 4.
-
     CHARACTER(LEN=23)       :: DTME21
     CHARACTER(LEN=30)       :: LFILE, TFILE
-    integer                 :: memunit
-#ifdef W3_PIO
+#ifdef W3_PDLIB
+    INTEGER                 :: IScal(1), IPROC
+#endif
     logical                 :: exists
+    integer                 :: memunit
     character(len=16)       :: user_timestring    !YYYY-MM-DD-SSSSS
     character(len=1024)     :: fname
-#endif
     !/
     !/ ------------------------------------------------------------------- /
     !
@@ -577,7 +573,7 @@ CONTAINS
 #endif
     !
 #ifdef W3_MPI
-    MPI_COMM_WAVE = MPI_COMM_IN
+    MPI_COMM_WAVE = MPI_COMM
     CALL MPI_COMM_SIZE ( MPI_COMM_WAVE, NTPROC, IERR_MPI )
     NAPROC = NTPROC
     CALL MPI_COMM_RANK ( MPI_COMM_WAVE, IAPROC, IERR_MPI )
@@ -1444,27 +1440,7 @@ CONTAINS
       WRITE (NDST,9051) IS, DEPTH
 #endif
       !
-      ! In shallow water, KDCHCK < KDMAX, assign time varying WN and CG as water level changes.
-      ! In deep water, KDCHCK >= KDMAX, assign time constant WN and CG based on bathymetric depth (-ZB).
-      !
-      ! Calculate the wavenumber for lowest frequency based on bathymetric depth
-      IF (IS.GT.0) THEN
-        DEPTHbat = MAX(DMIN,-ZB(IS))
-      ELSE
-        DEPTHbat = DMIN
-      END IF
-#ifdef W3_PDLIB
-      CALL WAVNU3(SIG(1),DEPTHbat,WNbat,CGbat)
-#else
-      CALL WAVNU1(SIG(1),DEPTHbat,WNbat,CGbat)
-#endif
-      KDCHCK = WNbat * DEPTHbat
-      IF ( KDCHCK .GE. KDMAX ) THEN
-        ! Use time constant CG and WN based on bathymetry for this point rather than time varying total depth.
-        DEPTH=DEPTHbat
-      ENDIF
-
-      DO IK=0, NK+1 
+      DO IK=0, NK+1
         !
         !         Calculate wavenumbers and group velocities.
 #ifdef W3_PDLIB
@@ -1831,11 +1807,10 @@ CONTAINS
     USE W3SERVMD, ONLY: STRACE
 #endif
     !
+    USE W3GDATMD, ONLY: NSEA
     USE W3ADATMD, ONLY: NSEALM
-#ifdef W3_DIST
+    USE W3GDATMD, ONLY: GTYPE, UNGTYPE
     USE CONSTANTS, ONLY: LPDLIB
-#endif
-    !/
 #ifdef W3_MPI
     USE W3GDATMD, ONLY: NSPEC
     USE W3WDATMD, ONLY: VA
@@ -1844,15 +1819,11 @@ CONTAINS
          NRQSG1, IRQSG1, NRQSG2, IRQSG2,       &
          GSTORE, SSTORE, MPIBUF, BSTAT,        &
          BISPL, ISPLOC, IBFLOC, NSPLOC
-    USE W3ODATMD, ONLY: IAPROC
 #endif
-    USE W3ODATMD, ONLY: NAPROC
-#ifdef W3_MPIT
-    USE W3ODATMD, ONLY: NDST
-#endif
+    USE W3ODATMD, ONLY: NDST, NAPROC, IAPROC
     !/
 #ifdef W3_MPI
-    use mpi_f08
+    INCLUDE "mpif.h"
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -2180,17 +2151,19 @@ CONTAINS
     USE W3SERVMD, ONLY: STRACE
 #endif
     !/
+    USE W3GDATMD, ONLY: NSEA
+    USE W3ADATMD, ONLY: NSEALM
 #ifdef W3_MPI
-    USE W3GDATMD, ONLY: NSPEC, E3DF, P2MSF
+    USE W3GDATMD, ONLY: NX, NSPEC, MAPFS, E3DF, P2MSF, US3DF, USSPF
     USE W3WDATMD, ONLY: VA, UST, USTDIR, ASF, FPIS, ICEF
-    USE W3ADATMD, ONLY: MPI_COMM_WAVE, WW3_FIELD_VEC, NSEALM
+    USE W3ADATMD, ONLY: MPI_COMM_WAVE, WW3_FIELD_VEC
     USE W3ADATMD, ONLY: HS, WLM, T02
 #endif
 
 
 #ifdef W3_MPI
     USE W3ADATMD, ONLY: T0M1, THM, THS, FP0, THP0, &
-         DTDYN, FCUT, ABA, ABD, UBA, UBD,          &
+         DTDYN, FCUT, SPPNT, ABA, ABD, UBA, UBD,   &
          SXX, SYY, SXY, USERO, PHS, PTP, PLP,      &
          PDIR, PSI, PWS, PWST, PNR, PHIAW, PHIOC,  &
          TUSX, TUSY, TAUWIX, TAUWIY, TAUOX,        &
@@ -2207,25 +2180,29 @@ CONTAINS
          TAUOCX, TAUOCY, WNMEAN, QKK, SKEW, EMBIA1, EMBIA2
 #endif
 
+    USE W3ADATMD, ONLY: USSHX, USSHY
+
 #ifdef W3_MPI
     USE W3GDATMD, ONLY: NK
-    USE W3ODATMD, ONLY: NDST, IAPROC, NAPROC, FLOUT,          &
-         NAPFLD, NAPRST, NAPBPT, NAPTRK,                      &
+    USE W3ODATMD, ONLY: NDST, IAPROC, NAPROC, NTPROC, FLOUT,  &
+         NAPFLD, NAPPNT, NAPRST, NAPBPT, NAPTRK,              &
          NOGRP, NGRPP, NOGE, FLOGRR
     USE W3ODATMD, ONLY: OUTPTS, NRQGO, NRQGO2, IRQGO, IRQGO2, &
-         FLOGRD, NRQRS, IRQRS, NBLKRS,                        &
+         FLOGRD, NRQPO, NRQPO2, IRQPO1, IRQPO2,               &
+         NOPTS, IPTINT, NRQRS, IRQRS, NBLKRS,                 &
          RSBLKS, IRQRSS, VAAUX, NRQBP, NRQBP2,                &
          IRQBP1, IRQBP2, NFBPO, NBO2, ISBPO,                  &
          ABPOS, NRQTR, IRQTR, IT0PNT, IT0TRK,                 &
-         IT0PRT, NOSWLL, NOEXTR, NDSE, IOSTYP, FLOGR2
+         IT0PRT, NOSWLL, NOEXTR, NDSE, IOSTYP,                &
+         FLOGR2
     USE W3PARALL, ONLY : INIT_GET_JSEA_ISPROC
-    USE W3ADATMD, ONLY: USSHX, USSHY
+#endif
+    USE W3GDATMD, ONLY: GTYPE, UNGTYPE
     USE CONSTANTS, ONLY: LPDLIB
     use w3odatmd, only : restart_from_binary, use_restartnc, use_historync
-#endif
     !/
 #ifdef W3_MPI
-    use mpi_f08
+    INCLUDE "mpif.h"
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -2239,8 +2216,9 @@ CONTAINS
 #ifdef W3_MPI
     INTEGER                 :: IK, IFJ
     INTEGER                 :: IH, IT0, IROOT, IT, IERR, I0,   &
-         IFROM, I, J, JSEA, ITARG, IB,          &
-         JSEA0, JSEAN, NSEAB, IBOFF,            &
+         IFROM, IX(4), IY(4), IS(4),     &
+         IP(4), I, J, JSEA, ITARG, IB,   &
+         JSEA0, JSEAN, NSEAB, IBOFF,     &
          ISEA, ISPROC, K, NRQMAX
 #endif
 #ifdef W3_S
@@ -2249,11 +2227,11 @@ CONTAINS
 #ifdef W3_MPI
     LOGICAL                 :: FLGRDALL(NOGRP,NGRPP)
     LOGICAL                 :: FLGRDARST(NOGRP,NGRPP)
-    logical                 :: do_rstsetup
 #endif
 #ifdef W3_MPIT
     CHARACTER(LEN=5)      :: STRING
 #endif
+    logical               :: do_rstsetup
     !/
     !/ ------------------------------------------------------------------- /
     !/
@@ -5552,20 +5530,17 @@ CONTAINS
 #ifdef W3_MPI
     USE W3SERVMD, ONLY: EXTCDE
     !/
-    USE W3GDATMD, ONLY: NSPEC, MAPFS
+    USE W3GDATMD, ONLY: NX, NY, NSPEC, MAPFS
     USE W3WDATMD, ONLY: VA
     USE W3ADATMD, ONLY: MPI_COMM_WAVE, SPPNT
-    USE W3ODATMD, ONLY: NDSE, IAPROC, NAPPNT
+    USE W3ODATMD, ONLY: NDST, NDSE, IAPROC, NAPROC, NAPPNT, FLOUT
     USE W3ODATMD, ONLY: OUTPTS, NRQPO, NRQPO2, IRQPO1, IRQPO2, &
          NOPTS, IPTINT, IT0PNT, IT0TRK, O2IRQI
     USE W3PARALL, ONLY: INIT_GET_JSEA_ISPROC
 #endif
-#ifdef W3_MPIT
-    USE W3ODATMD, ONLY: NDST
-#endif
     !/
 #ifdef W3_MPI
-    use mpi_f08
+    INCLUDE "mpif.h"
 #endif
     !/
     !/ ------------------------------------------------------------------- /
@@ -5581,6 +5556,7 @@ CONTAINS
          IERR, ITARG, IX(4), IY(4),      &
          K, IS(4), IP(4)
 #endif
+    INTEGER                 :: itout
 #ifdef W3_S
     INTEGER, SAVE           :: IENT
 #endif

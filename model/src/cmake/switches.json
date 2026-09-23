@@ -697,7 +697,6 @@
         "valid-options": [
             {
                 "name": "OASACM",
-                "requires": ["OASIS"],
                 "build_files": ["w3agcmmd.F90"]
             }
         ]
@@ -709,7 +708,6 @@
         "valid-options": [
             {
                 "name": "OASOCM",
-                "requires": ["OASIS"],
                 "build_files": ["w3ogcmmd.F90"]
             }
         ]
@@ -721,7 +719,6 @@
         "valid-options": [
             {
                 "name": "OASICM",
-                "requires": ["OASIS"],
                 "build_files": ["w3igcmmd.F90"]
             }
         ]
@@ -732,8 +729,7 @@
         "description": "use of the coupler",
         "valid-options": [
             {
-                "name": "COU",
-                "requires": ["MPI"]
+                "name": "COU"
             }
         ]
     },
@@ -745,8 +741,8 @@
             {
                 "name": "OASIS",
                 "build_files": ["w3oacpmd.F90"],
-                "requires": ["MPI"],
-                "conflicts": ["FLX1", "FLX2", "FLX3"]
+                "conflicts": ["FLX1", "FLX2", "FLX3", "FLX4"]
+
             }
         ]
     },

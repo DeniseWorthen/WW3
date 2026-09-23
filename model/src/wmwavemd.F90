@@ -252,12 +252,12 @@ CONTAINS
 #ifdef W3_MPRF
     USE WMMDATMD, ONLY: MDSP
 #endif
-    !
-#ifdef W3_MPI
-    use mpi_f08
-#endif
     !/
     IMPLICIT NONE
+    !
+#ifdef W3_MPI
+    INCLUDE "mpif.h"
+#endif
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -278,7 +278,7 @@ CONTAINS
 #endif
 #ifdef W3_MPI
     INTEGER                 :: IERR_MPI, NMPSCS
-    type(MPI_STATUS), ALLOCATABLE :: STATUS(:)
+    INTEGER, ALLOCATABLE    :: STATUS(:,:)
 #endif
     REAL                    :: DTTST, DTMAXI
 #ifdef W3_MPRF
@@ -401,7 +401,6 @@ CONTAINS
     !
     ! 0.d Output
     !
-    TPRNT(:) = 0
     IF ( MDSS.NE.MDSO .AND. NMPSCR.EQ.IMPROC ) THEN
       CALL WMPRNT ( MDSO, NRGRD, TSYNC(:,0), GRSTAT )
       CALL STME21 ( TSYNC(:,0), MTIME )
@@ -1369,7 +1368,7 @@ CONTAINS
                   !
 #ifdef W3_MPI
                   IF ( NRQPO .NE. 0 ) THEN
-                    ALLOCATE ( STATUS(NRQPO) )
+                    ALLOCATE ( STATUS(MPI_STATUS_SIZE,NRQPO) )
                     CALL MPI_WAITALL                      &
                          ( NRQPO, IRQPO1, STATUS, IERR_MPI )
                     DEALLOCATE ( STATUS )
@@ -2014,11 +2013,11 @@ CONTAINS
     USE W3SERVMD, ONLY: STRACE
 #endif
     !
-#ifdef W3_MPI
-    use mpi_f08
-#endif
-    !
     IMPLICIT NONE
+    !
+#ifdef W3_MPI
+    INCLUDE "mpif.h"
+#endif
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -2030,8 +2029,8 @@ CONTAINS
     !/ Local parameters
     !/
 #ifdef W3_MPI
-    INTEGER                 :: ITAG, IP, IERR_MPI
-    type(MPI_STATUS)        :: STATUS
+    INTEGER                 :: ITAG, IP, IERR_MPI,             &
+         STATUS(MPI_STATUS_SIZE)
 #endif
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
@@ -2201,11 +2200,11 @@ CONTAINS
     USE W3SERVMD, ONLY: STRACE
 #endif
     !
-#ifdef W3_MPI
-    use mpi_f08
-#endif
-    !
     IMPLICIT NONE
+    !
+#ifdef W3_MPI
+    INCLUDE "mpif.h"
+#endif
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -2216,8 +2215,8 @@ CONTAINS
     !/ Local parameters
     !/
 #ifdef W3_MPI
-    INTEGER                 :: ITAG, IP, IERR_MPI
-    type(MPI_STATUS)        :: STATUS
+    INTEGER                 :: ITAG, IP, IERR_MPI,             &
+         STATUS(MPI_STATUS_SIZE)
 #endif
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0

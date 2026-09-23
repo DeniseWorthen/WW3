@@ -140,7 +140,7 @@ endif()
 
 if(UFS_CAP)
   # Don't search for ESMF if target already exists (when build WW3 as UFS submodule)
-  if (NOT TARGET ESMF::ESMF)
+  if (NOT TARGET esmf)
     find_package(ESMF MODULE REQUIRED)
   endif()
 
@@ -151,10 +151,8 @@ if(UFS_CAP)
   endif()
 
   target_sources(ww3_lib PRIVATE ${cap_src})
-  target_link_libraries(ww3_lib PUBLIC ESMF::ESMF)
-  if(UFS_TRACING)
-    target_link_libraries(ww3_lib PUBLIC ufs_tracing)
-  endif()
+  target_link_libraries(ww3_lib PUBLIC esmf)
+  target_link_libraries(ww3_lib PUBLIC ufs_utils)
   # Don't build executables when building WW3 ESMF library
   set(programs "")
 endif()
@@ -185,7 +183,7 @@ if("PDLIB" IN_LIST switches)
       list(APPEND compile_flags_release -DSCOTCH_707)
       list(APPEND compile_flags_debug -DSCOTCH_707)
     else()
-      message(STATUS "SCOTCH version 7.06 or lower")
+      message(STATUS "SOCTCH version 7.06 or lower")
     endif()
   elseif("METIS"  IN_LIST switches)
     find_package(ParMETIS REQUIRED)
@@ -232,17 +230,9 @@ foreach(program ${programs})
   target_link_libraries(${program} PRIVATE ww3_lib)
 endforeach()
 
-if (UFS_CAP)
-  # Building as part of UFS (submodule)
-  set(WW3_FLAG_SCOPE PRIVATE)
-else()
-  # Standalone WW3 build
-  set(WW3_FLAG_SCOPE PUBLIC)
-endif()
-
-target_compile_options(ww3_lib ${WW3_FLAG_SCOPE} "$<$<COMPILE_LANGUAGE:Fortran>:${compile_flags}>")
-target_compile_options(ww3_lib ${WW3_FLAG_SCOPE} "$<$<AND:$<CONFIG:Debug>,$<COMPILE_LANGUAGE:Fortran>>:${compile_flags_debug}>")
-target_compile_options(ww3_lib ${WW3_FLAG_SCOPE} "$<$<AND:$<CONFIG:Release>,$<COMPILE_LANGUAGE:Fortran>>:${compile_flags_release}>")
+target_compile_options(ww3_lib PUBLIC "$<$<COMPILE_LANGUAGE:Fortran>:${compile_flags}>")
+target_compile_options(ww3_lib PUBLIC "$<$<AND:$<CONFIG:Debug>,$<COMPILE_LANGUAGE:Fortran>>:${compile_flags_debug}>")
+target_compile_options(ww3_lib PUBLIC "$<$<AND:$<CONFIG:Release>,$<COMPILE_LANGUAGE:Fortran>>:${compile_flags_release}>")
 
 install(
   TARGETS ${programs} ww3_lib

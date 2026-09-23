@@ -243,15 +243,16 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
-    INTEGER                 :: ITH, IMI(NSPEC),         &
-         IMO(NSPEC), IND(NSPEC), NP_MAX,                &
-         IP, IT(1), INDEX(DIMXP), NWS,                  &
+    INTEGER                 :: ITH, IMI(NSPEC), IMD(NSPEC),         &
+         IMO(NSPEC), IND(NSPEC), NP_MAX,      &
+         IP, IT(1), INDEX(DIMXP), NWS,        &
          IPW, IPT, ISP
     INTEGER                 :: PMAP(DIMXP)
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
 #endif
-    REAL                    :: ZP(NSPEC), ZMIN, ZMAX, Z(NSPEC), FACT
+    REAL                    :: ZP(NSPEC), ZMIN, ZMAX, Z(NSPEC),     &
+         FACT, WSMAX, HSMAX
     REAL                    :: TP(DIMP,DIMXP)
     INTEGER                 :: IK, WIND_PART    ! ChrisB; added for new
     REAL                    :: C, UPAR, SIGCUT  ! UKMO partioning methods
@@ -1232,7 +1233,7 @@ CONTAINS
     !
     USE W3GDATMD, ONLY: NK, NTH, NSPEC, DTH, SIG, DSII, DSIP,       &
          ECOS, ESIN, XFR, FACHFE, TH, FTE
-    USE W3ODATMD, ONLY: IAPROC, NAPERR, NDSE
+    USE W3ODATMD, ONLY: IAPROC, NAPERR, NDSE, NDST
     !
     IMPLICIT NONE
     !/

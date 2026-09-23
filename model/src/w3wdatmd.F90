@@ -413,15 +413,17 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE W3GDATMD, ONLY: NGRIDS, IGRID, W3SETG, NSPEC, NSEA, NSEAL, GRIDS
-    USE W3ODATMD, ONLY: NAPROC
+    USE W3ODATMD, ONLY: NAPROC, IAPROC
     USE W3SERVMD, ONLY: EXTCDE
-    USE CONSTANTS, ONLY : DAIR
+    USE CONSTANTS, ONLY : LPDLIB, DAIR
     USE W3PARALL, ONLY: SET_UP_NSEAL_NSEALM, LSLOC
 #ifdef W3_NL5
     USE W3GDATMD, ONLY: QI5NNZ
 #endif
 #ifdef W3_PDLIB
-    USE W3GDATMD, ONLY: UNGTYPE
+    use yowNodepool, only: npa, np
+    use yowRankModule, only : rank
+    USE W3GDATMD, ONLY: GTYPE, UNGTYPE
 #endif
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
@@ -441,6 +443,9 @@ CONTAINS
     !/
     INTEGER                 :: JGRID, NSEALM, NSEATM
     INTEGER                 :: NSEAL_DUMMY, ISEA
+#ifdef W3_PDLIB
+    INTEGER IRANK
+#endif
 #ifdef W3_S
     INTEGER, SAVE           :: IENT = 0
 #endif

@@ -216,11 +216,11 @@ PROGRAM W3OUNP
   USE W3NMLOUNPMD
   USE NETCDF
   !
-#ifdef W3_MPI
-  use mpi_f08
-#endif
-  !
   IMPLICIT NONE
+  !
+#ifdef W3_MPI
+  INCLUDE "mpif.h"
+#endif
   !/
   !/ ------------------------------------------------------------------- /
   !/ Local parameters
@@ -2417,7 +2417,7 @@ CONTAINS
 #endif
 #ifdef W3_ST6
               CALL W3SIN6 (A, CG, WN2, UABS, USTAR, UDIRR, CD, DAIR, &
-                   TAUWX, TAUWY, TAUWNX, TAUWNY, CHARN, XIN, DIA )
+                   TAUWX, TAUWY, TAUWNX, TAUWNY, XIN, DIA )
 #endif
             END IF
             IF ( FLSRCE(3) ) THEN

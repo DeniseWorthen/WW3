@@ -881,16 +881,9 @@ CONTAINS
         END IF
         DO IBI=1, NBI
           ISEA     = ISBPI(IBI)
-#ifdef W3_PDLIB
-          CQ(ISEA) = (RD1*BBPI0(ISP,IBI) + RD2*BBPIN(ISP,IBI))
-#else
           CQ(ISEA) = (RD1*BBPI0(ISP,IBI) + RD2*BBPIN(ISP,IBI))   &
                /CG(IK,ISEA)
-#endif
         END DO
-        ! Because ISBPI may return 0 for unmatched boundary points, this b.c 
-        ! update may set CQ(0) values non-zero.  JGLi06May2026
-        CQ(0) = 0.0
       ENDIF
       !
       !!    End of ITLOC DO
@@ -3283,12 +3276,12 @@ CONTAINS
          NSPLOC, NRQSG2, IRQSG2, GSTORE
     USE W3ODATMD, ONLY: NDST, IAPROC, NAPROC
 #endif
-    !
-#ifdef W3_MPI
-    use mpi_f08
-#endif
     !/
     IMPLICIT NONE
+    !
+#ifdef W3_MPI
+    INCLUDE "mpif.h"
+#endif
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -3303,9 +3296,9 @@ CONTAINS
     INTEGER                 :: ISEA, IXY
 #endif
 #ifdef W3_MPI
-    type(MPI_STATUS)        :: STATUS(NSPEC)
-    INTEGER                 :: IOFF, IERR_MPI, JSEA, ISEA,     &
-                               IXY, IS0, IB0, NPST, J
+    INTEGER                 :: STATUS(MPI_STATUS_SIZE,NSPEC),  &
+         IOFF, IERR_MPI, JSEA, ISEA,     &
+         IXY, IS0, IB0, NPST, J
 #endif
 #ifdef W3_S
     INTEGER, SAVE           :: IENT
@@ -3343,7 +3336,7 @@ CONTAINS
     IF ( BSTAT(IBFLOC) .EQ. 2 ) THEN
       IOFF =  1 + (BISPL(IBFLOC)-1)*NRQSG2
       IF ( NRQSG2 .GT. 0 ) CALL                              &
-           MPI_WAITALL ( NRQSG2, IRQSG2(IOFF:IOFF+NRQSG2-1,2),             &
+           MPI_WAITALL ( NRQSG2, IRQSG2(IOFF,2),             &
            STATUS, IERR_MPI )
       BSTAT(IBFLOC) = 0
     END IF
@@ -3355,7 +3348,7 @@ CONTAINS
       BISPL(IBFLOC) = ISPLOC
       IOFF =  1 + (ISPLOC-1)*NRQSG2
       IF ( NRQSG2 .GT. 0 ) CALL                              &
-           MPI_STARTALL ( NRQSG2, IRQSG2(IOFF:IOFF+NRQSG2-1,1), IERR_MPI )
+           MPI_STARTALL ( NRQSG2, IRQSG2(IOFF,1), IERR_MPI )
     END IF
     !
     ! 2.c Put local spectral densities in store
@@ -3368,7 +3361,7 @@ CONTAINS
     !
     IOFF =  1 + (BISPL(IBFLOC)-1)*NRQSG2
     IF ( NRQSG2 .GT. 0 ) CALL                                  &
-         MPI_WAITALL ( NRQSG2, IRQSG2(IOFF:IOFF+NRQSG2-1,1), STATUS, IERR_MPI )
+         MPI_WAITALL ( NRQSG2, IRQSG2(IOFF,1), STATUS, IERR_MPI )
     !
     ! 2.e Convert storage array to field.
     !
@@ -3390,7 +3383,7 @@ CONTAINS
         BISPL(IB0) = IS0
         IOFF       = 1 + (IS0-1)*NRQSG2
         IF ( NRQSG2 .GT. 0 ) CALL                            &
-             MPI_STARTALL ( NRQSG2, IRQSG2(IOFF:IOFF+NRQSG2-1,1), IERR_MPI )
+             MPI_STARTALL ( NRQSG2, IRQSG2(IOFF,1), IERR_MPI )
         NPST       = NPST + 1
       END IF
       IF ( NPST .GE. 2 ) EXIT
@@ -3514,12 +3507,12 @@ CONTAINS
     USE W3ODATMD, ONLY: IAPROC, NAPROC
 #endif
     USE W3ODATMD, ONLY: NDST
-    !
-#ifdef W3_MPI
-    use mpi_f08
-#endif
     !/
     IMPLICIT NONE
+    !
+#ifdef W3_MPI
+    INCLUDE "mpif.h"
+#endif
     !/
     !/ ------------------------------------------------------------------- /
     !/ Parameter list
@@ -3534,8 +3527,9 @@ CONTAINS
     INTEGER                 :: ISEA, IXY
 #endif
 #ifdef W3_MPI
-    INTEGER                 :: ISEA, IXY, IOFF, IERR_MPI, J, JSEA, IB0
-    type(MPI_STATUS)        :: STATUS(NSPEC)
+    INTEGER                 :: ISEA, IXY, IOFF, IERR_MPI, J,   &
+         STATUS(MPI_STATUS_SIZE,NSPEC),  &
+         JSEA, IB0
 #endif
 #ifdef W3_S
     INTEGER, SAVE           :: IENT
@@ -3576,7 +3570,7 @@ CONTAINS
     !
     IOFF   = 1 + (ISPLOC-1)*NRQSG2
     IF ( NRQSG2 .GT. 0 ) CALL                                  &
-         MPI_STARTALL ( NRQSG2, IRQSG2(IOFF:IOFF+NRQSG2-1,2), IERR_MPI )
+         MPI_STARTALL ( NRQSG2, IRQSG2(IOFF,2), IERR_MPI )
     BSTAT(IBFLOC) = 2
     !
     ! 2.d Save locally stored results
@@ -3596,13 +3590,13 @@ CONTAINS
       IF ( BSTAT(IB0) .EQ. 2 ) THEN
         IOFF   = 1 + (BISPL(IB0)-1)*NRQSG2
         IF ( NRQSG2 .GT. 0 ) THEN
-          CALL MPI_TESTALL ( NRQSG2, IRQSG2(IOFF:IOFF+NRQSG2-1,2), DONE,  &
+          CALL MPI_TESTALL ( NRQSG2, IRQSG2(IOFF,2), DONE,  &
                STATUS, IERR_MPI )
         ELSE
           DONE   = .TRUE.
         END IF
         IF ( DONE .AND. NRQSG2.GT.0 ) CALL                   &
-             MPI_WAITALL ( NRQSG2, IRQSG2(IOFF:IOFF+NRQSG2-1,2),       &
+             MPI_WAITALL ( NRQSG2, IRQSG2(IOFF,2),       &
              STATUS, IERR_MPI )
         IF ( DONE ) THEN
           BSTAT(IB0) = 0
@@ -3619,7 +3613,7 @@ CONTAINS
         IF ( BSTAT(IB0) .EQ. 2 ) THEN
           IOFF   = 1 + (BISPL(IB0)-1)*NRQSG2
           IF ( NRQSG2 .GT. 0 ) CALL                        &
-               MPI_WAITALL ( NRQSG2, IRQSG2(IOFF:IOFF+NRQSG2-1,2),       &
+               MPI_WAITALL ( NRQSG2, IRQSG2(IOFF,2),       &
                STATUS, IERR_MPI )
           BSTAT(IB0) = 0
         END IF

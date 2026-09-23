@@ -57,12 +57,6 @@ MODULE W3PROFSMD
   !/ ------------------------------------------------------------------- /
   !/
   PUBLIC
-
-  PRIVATE :: bcgstab, implu, uppdir, givens, stopbis, tidycg, brkdn,     &
-             bisinit, mgsro, amux, amuxms, atmux, atmuxr, amuxe, amuxd,  &
-             amuxj, vbrmv, lsol, ldsol, lsolc, ldsolc, ldsoll, usol,     &
-             udsol, usolc, udsolc, lusol, lutsol, qsplit, runrc, ilut,   &
-             ilu0, pgmres, DNRM2, DLASSQ, ddot, daxpy
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
@@ -136,13 +130,16 @@ CONTAINS
     !
     USE W3TIMEMD, ONLY: DSEC21
     !
-    USE W3GDATMD, ONLY: NX, NY, NSEA, MAPSF, MAPFS, CLATS,            &
-         NTH, ECOS, ESIN, IOBP,                                       & 
-         IOBDP, FSN, FSPSI, FSFCT, FSNIMP, UNGTYPE
+    USE W3GDATMD, ONLY: NX, NY, NSEA, MAPSF, MAPFS, DTCFL, CLATS,   &
+         FLCX, FLCY, NK, NTH, DTH, XFR,              &
+         ECOS, ESIN, SIG,  PFMOVE,IEN,               &
+         NTRI, TRIGP, CCON ,                         &
+         IE_CELL, POS_CELL, IOBP, IOBPD, IOBDP,      &
+         FSN, FSPSI, FSFCT, FSNIMP, GTYPE, UNGTYPE
 
     USE W3WDATMD, ONLY: TIME
     USE W3ODATMD, ONLY: TBPI0, TBPIN, FLBPI
-    USE W3ADATMD, ONLY: CG, CX, CY
+    USE W3ADATMD, ONLY: CG, CX, CY, ATRNX, ATRNY, ITIME, CFLXYMAX, DW
     USE W3IDATMD, ONLY: FLCUR
     !      USE W3ODATMD, ONLY: NDSE, NDST, FLBPI, NBI, TBPI0, TBPIN,       &
     !                          ISBPI, BBPI0, BBPIN
@@ -344,14 +341,17 @@ CONTAINS
     !
     USE W3TIMEMD, ONLY: DSEC21
     !
-    USE W3GDATMD, ONLY: NX, NY, MAPSF, CLATS,                 &
-         NTH, ECOS, ESIN, IEN, INDEX_CELL,                    &
-         TRIGP, IE_CELL, POS_CELL, SI, IOBP
+    USE W3GDATMD, ONLY: NX, NY, NSEA, MAPSF, DTCFL, CLATS,          &
+         FLCX, FLCY, NK, NTH, DTH, XFR,              &
+         ECOS, ESIN, SIG,  PFMOVE,IEN, INDEX_CELL,   &
+         NTRI, TRIGP, CCON ,                         &
+         IE_CELL, POS_CELL, COUNTRI, SI, IOBP
 
-    USE W3ADATMD, ONLY: CG, CX, CY
+    USE W3ADATMD, ONLY: CG, CX, CY, ATRNX, ATRNY, ITIME, DW
     USE W3IDATMD, ONLY: FLCUR
 #ifdef W3_T
-    USE W3ODATMD, ONLY: FLBPI, NBI, ISBPI, BBPI0, BBPIN
+    USE W3ODATMD, ONLY: NDSE, NDST, FLBPI, NBI, TBPI0, TBPIN,       &
+         ISBPI, BBPI0, BBPIN
 #endif
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
@@ -525,17 +525,15 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !/
-    USE W3GDATMD, ONLY : NTH, NTRI, NX, SI,                      &
-         IEN, TRIGP, CLATS, MAPSF, IOBPD, IOBP, IOBDP,           &
+    USE W3GDATMD, ONLY : NK, NTH, NTRI, NX, CCON, IE_CELL,POS_CELL, SI, &
+         IEN, TRIGP, CLATS, MAPSF, IOBPD, IOBP, IOBDP,  &
          IOBPA, FSBCCFL
 #ifdef W3_REF1
-    USE W3GDATMD, ONLY: REFPARS
+    USE W3GDATMD, ONLY : REFPARS
 #endif
-    USE W3ADATMD, ONLY: ITER
-#ifndef W3_PDLIB
-    USE W3ADATMD, ONLY: CG
-#endif
-    USE W3ODATMD, ONLY: FLBPI, NBI, ISBPI, BBPI0, BBPIN
+    USE W3WDATMD, ONLY: TIME
+    USE W3ADATMD, ONLY: CG, ITER, DW
+    USE W3ODATMD, ONLY: NDSE, NDST, FLBPI, NBI, TBPI0, TBPIN, ISBPI, BBPI0, BBPIN
     USE W3TIMEMD, ONLY: DSEC21
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
@@ -578,13 +576,13 @@ CONTAINS
     !
     ! local double
     !
-    REAL*8  :: UTILDE
+    REAL*8  :: UTILDE, BOUNDARY_FORCING
     REAL*8  :: CFLXY
     REAL*8  :: FL11, FL12, FL21, FL22, FL31, FL32
     REAL*8  :: FL111, FL112, FL211, FL212, FL311, FL312
     REAL*8  :: DTSI(NX), U(NX)
     REAL*8  :: DTMAXGL, DTMAXEXP, REST
-    REAL*8  :: LAMBDA(2), KTMP(3)
+    REAL*8  :: LAMBDA(2), KTMP(3), CLOC(2,3)
     REAL*8  :: KELEM(3,NTRI), FLALL(3,NTRI)
     REAL*8  :: KKSUM(NX), ST(NX)
     REAL*8  :: NM(NTRI)
@@ -709,12 +707,8 @@ CONTAINS
         !
         DO IBI=1, NBI
           IP = MAPSF(ISBPI(IBI),1)
-#ifdef W3_PDLIB 
-          AC(IP) = ( RD1*BBPI0(ISP,IBI) + RD2*BBPIN(ISP,IBI) ) * CLATS(ISBPI(IBI))
-#else
           AC(IP) = ( RD1*BBPI0(ISP,IBI) + RD2*BBPIN(ISP,IBI) )   &
                / CG(IK,ISBPI(IBI)) * CLATS(ISBPI(IBI))
-#endif
         END DO
 
       ENDIF
@@ -778,16 +772,14 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !/
-    USE W3GDATMD, ONLY: NTH, NTRI, NX, SI,                         &
-         IEN, TRIGP, CLATS, MAPSF, IOBPA, IOBPD, IOBDP
+    USE W3GDATMD, ONLY : NK, NTH, NTRI, NX, CCON, IE_CELL,POS_CELL, SI, &
+         IEN, TRIGP, CLATS, MAPSF, IOBPA, IOBPD, IOBP, NNZ, IOBDP
 #ifdef W3_REF1
-    USE W3GDATMD, ONLY:  REFPARS
+    USE W3GDATMD, ONLY :  REFPARS
 #endif
-    USE W3ADATMD, ONLY: ITER
-#ifndef W3_PDLIB
-    USE W3ADATMD, ONLY: CG
-#endif
-    USE W3ODATMD, ONLY: FLBPI, NBI, ISBPI, BBPI0, BBPIN
+    USE W3WDATMD, ONLY: TIME
+    USE W3ADATMD, ONLY: CG, ITER
+    USE W3ODATMD, ONLY: NDSE, NDST, FLBPI, NBI, TBPI0, TBPIN, ISBPI, BBPI0, BBPIN
     USE W3TIMEMD, ONLY: DSEC21
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
@@ -830,13 +822,13 @@ CONTAINS
     !:
     ! local double
     !
-    REAL*8  :: UTILDE
+    REAL*8  :: UTILDE, BOUNDARY_FORCING
     REAL*8  :: FT, CFLXY
     REAL*8  :: FL11, FL12, FL21, FL22, FL31, FL32
     REAL*8  :: FL111, FL112, FL211, FL212, FL311, FL312
     REAL*8  :: DTSI(NX), U(NX)
     REAL*8  :: DTMAXGL, DTMAXEXP, REST
-    REAL*8  :: LAMBDA(2), KTMP(3)
+    REAL*8  :: LAMBDA(2), KTMP(3), TMP(3)
     REAL*8  :: THETA_L(3), BET1(3), BETAHAT(3)
     REAL*8  :: KELEM(3,NTRI), FLALL(3,NTRI)
     REAL*8  :: KKSUM(NX), ST(NX)
@@ -967,12 +959,8 @@ CONTAINS
         !
         DO IBI=1, NBI
           IP = MAPSF(ISBPI(IBI),1)
-#ifdef W3_PDLIB
-          AC(IP) = ( RD1*BBPI0(ISP,IBI) + RD2*BBPIN(ISP,IBI) ) * CLATS(ISBPI(IBI))
-#else
           AC(IP) = ( RD1*BBPI0(ISP,IBI) + RD2*BBPIN(ISP,IBI) )   &
                / CG(IK,ISBPI(IBI)) * CLATS(ISBPI(IBI))
-#endif
         END DO
 
       ENDIF
@@ -1038,14 +1026,15 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !/
-    USE W3GDATMD, ONLY : NTH, NTRI, NX, CCON, IE_CELL,POS_CELL,     &
-         IEN, TRIGP, CLATS, MAPSF, IOBPD, IOBPA, IAA, JAA, POSI,    &
+    USE W3GDATMD, ONLY : NK, NTH, NTRI, NX, CCON, IE_CELL,POS_CELL, SI, &
+         IEN, TRIGP, CLATS, MAPSF, IOBPD, IOBPA, IOBP, IAA, JAA, POSI, &
          TRIA, NNZ
 #ifdef W3_REF1
     USE W3GDATMD, ONLY : REFPARS
 #endif
-    USE W3ADATMD, ONLY: CG
-    USE W3ODATMD, ONLY: FLBPI, NBI, ISBPI, BBPI0, BBPIN
+    USE W3WDATMD, ONLY: TIME
+    USE W3ADATMD, ONLY: CG, ITER
+    USE W3ODATMD, ONLY: NDSE, NDST, FLBPI, NBI, TBPI0, TBPIN, ISBPI, BBPI0, BBPIN
     USE W3TIMEMD, ONLY: DSEC21
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
@@ -1089,6 +1078,7 @@ CONTAINS
     !:
     ! local double
     !
+    REAL*8  :: BOUNDARY_FORCING
     REAL*8  :: FL11, FL12, FL21, FL22, FL31, FL32
     REAL*8  :: U(NX)
     REAL*8  :: DTMAXGL
@@ -1114,6 +1104,8 @@ CONTAINS
     REAL*8  :: WKSP( 8 * NX ) ! REAL WORKSPACES
     REAL*8  :: AU(NNZ+1)
     REAL*8  :: INIU(NX)
+
+    external bcgstab
 
     POS_TRICK(1,1) = 2
     POS_TRICK(1,2) = 3
@@ -1275,7 +1267,7 @@ CONTAINS
       DO IBI=1, NBI
         IP    = MAPSF(ISBPI(IBI),1)
         AC(IP) = ( RD1*BBPI0(ISP,IBI) + RD2*BBPIN(ISP,IBI) )   &
-             * IOBPA(IP) * IOBPD(ITH,IP) * CLATS(ISBPI(IBI))
+             *IOBPA(IP)*IOBPD(ITH,IP) / CG(IK,ISBPI(IBI)) * CLATS(ISBPI(IBI))
       END DO
     END IF
 
@@ -1336,16 +1328,14 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     !/
-    USE W3GDATMD, ONLY: NTH, NTRI, NX, SI,                       &
-         IEN, TRIGP, CLATS, MAPSF, IOBPD, IOBDP
+    USE W3GDATMD, ONLY : NK, NTH, NTRI, NX, CCON, IE_CELL,POS_CELL, SI, &
+         IEN, TRIGP, CLATS, MAPSF, IOBPD, IOBPA, TRIA, IOBDP
 #ifdef W3_REF1
-    USE W3GDATMD, ONLY: REFPARS, IOBPA
+    USE W3GDATMD, ONLY : REFPARS
 #endif
-    USE W3ADATMD, ONLY: ITER
-#ifndef W3_PDLIB
-    USE W3ADATMD, ONLY: CG
-#endif
-    USE W3ODATMD, ONLY: FLBPI, NBI, ISBPI, BBPI0, BBPIN
+    USE W3WDATMD, ONLY: TIME
+    USE W3ADATMD, ONLY: CG, ITER
+    USE W3ODATMD, ONLY: NDSE, NDST, FLBPI, NBI, TBPI0, TBPIN, ISBPI, BBPI0, BBPIN
     USE W3TIMEMD, ONLY: DSEC21
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
@@ -1389,7 +1379,7 @@ CONTAINS
     !:
     ! local double
     !
-    REAL*8  :: UTILDE
+    REAL*8  :: UTILDE, BOUNDARY_FORCING
     REAL*8  :: FT, CFLXY
     REAL*8  :: FL11, FL12, FL21, FL22, FL31, FL32
     REAL*8  :: FL111, FL112, FL211, FL212, FL311, FL312
@@ -1581,12 +1571,8 @@ CONTAINS
         !
         DO IBI=1, NBI
           IP = MAPSF(ISBPI(IBI),1)
-#ifdef W3_PDLIB
-          AC(IP) = ( RD1*BBPI0(ISP,IBI) + RD2*BBPIN(ISP,IBI) ) * CLATS(ISBPI(IBI))
-#else
           AC(IP) = ( RD1*BBPI0(ISP,IBI) + RD2*BBPIN(ISP,IBI) )   &
                / CG(IK,ISBPI(IBI)) * CLATS(ISBPI(IBI))
-#endif
         END DO
 
       ENDIF
@@ -1647,7 +1633,8 @@ CONTAINS
     USE W3SERVMD, ONLY: STRACE
 #endif
     !
-    USE W3GDATMD, ONLY: DMIN, IOBDP, NX
+    USE CONSTANTS, ONLY : LPDLIB
+    USE W3GDATMD, ONLY: MAPSF, NSEAL, DMIN, IOBDP, MAPSTA, IOBP, MAPFS, NX
     USE W3ADATMD, ONLY: DW
 
     IMPLICIT NONE
@@ -1664,7 +1651,7 @@ CONTAINS
     !/
     !/ ------------------------------------------------------------------- /
     !
-    INTEGER :: IP
+    INTEGER :: JSEA, ISEA, IX, IP
     REAL*8, PARAMETER :: DTHR = 10E-6
 #ifdef W3_S
     CALL STRACE (IENT, 'SETDEPTH')
@@ -1676,6 +1663,11 @@ CONTAINS
     END DO
 
   END SUBROUTINE SETDEPTH
+
+  !/ ------------------------------------------------------------------- /
+
+END MODULE W3PROFSMD
+
 
 !--------------------------------------------------------------------------
 !--------------------------------------------------------------------------
@@ -2091,6 +2083,12 @@ subroutine bcgstab(n, rhs, sol, ipar, fpar, w)
   !               here, so that the right-preconditioning may be applied
   !               at the end
   !-----------------------------------------------------------------------
+  !     external routines used
+  !
+  real*8 ddot
+  logical stopbis, brkdn
+  external ddot, stopbis, brkdn
+  !
   real*8 one
   parameter(one=1.0D0)
   !
@@ -2370,7 +2368,6 @@ subroutine bcgstab(n, rhs, sol, ipar, fpar, w)
 end subroutine bcgstab
 !-----------------------------------------------------------------------
 subroutine implu(np,umm,beta,ypiv,u,permut,full)
-  implicit none
   real*8 umm,beta,ypiv(*),u(*),x, xpiv
   logical full, perm, permut(*)
   integer np,k,npm1
@@ -2503,7 +2500,8 @@ end subroutine givens
 logical function stopbis(n,ipar,mvpi,fpar,r,delx,sx)
   implicit none
   integer n,mvpi,ipar(16)
-  real*8 fpar(16), r(n), delx(n), sx
+  real*8 fpar(16), r(n), delx(n), sx, ddot
+  external ddot
   !-----------------------------------------------------------------------
   !     function for determining the stopping criteria. return value of
   !     true if the stopbis criteria is satisfied.
@@ -2734,8 +2732,9 @@ subroutine mgsro(full,lda,n,m,ind,ops,vec,hh,ierr)
   !     External routines used: real*8 ddot
   !-----------------------------------------------------------------------
   integer i,k
-  real*8  nrm0, nrm1, fct, thr, zero, one, reorth
+  real*8  nrm0, nrm1, fct, thr, ddot, zero, one, reorth
   parameter (zero=0.0D0, one=1.0D0, reorth=0.98D0)
+  external ddot
   !
   !     compute the norm of the input vector
   !
@@ -2854,7 +2853,6 @@ end subroutine mgsro
 ! 1)     M A T R I X    B Y    V E C T O R     P R O D U C T S         c
 !----------------------------------------------------------------------c
 subroutine amux (n, x, y, a,ja,ia)
-  implicit none
   real*8  x(*), y(*), a(*)
   integer n, ja(*), ia(*)
   !-----------------------------------------------------------------------
@@ -2901,7 +2899,6 @@ subroutine amux (n, x, y, a,ja,ia)
 end subroutine amux
 !-----------------------------------------------------------------------
 subroutine amuxms (n, x, y, a,ja)
-  implicit none
   real*8  x(*), y(*), a(*)
   integer n, ja(*)
   !-----------------------------------------------------------------------
@@ -2944,7 +2941,6 @@ subroutine amuxms (n, x, y, a,ja)
 end subroutine amuxms
 !-----------------------------------------------------------------------
 subroutine atmux (n, x, y, a, ja, ia)
-  implicit none
   real*8 x(*), y(*), a(*)
   integer n, ia(*), ja(*)
   !-----------------------------------------------------------------------
@@ -2994,7 +2990,6 @@ subroutine atmux (n, x, y, a, ja, ia)
 end subroutine atmux
 !-----------------------------------------------------------------------
 subroutine atmuxr (m, n, x, y, a, ja, ia)
-  implicit none
   real*8 x(*), y(*), a(*)
   integer m, n, ia(*), ja(*)
   !-----------------------------------------------------------------------
@@ -3093,7 +3088,6 @@ subroutine amuxe (n,x,y,na,ncol,a,ja)
 end subroutine amuxe
 !-----------------------------------------------------------------------
 subroutine amuxd (n,x,y,diag,ndiag,idiag,ioff)
-  implicit none
   integer n, ndiag, idiag, ioff(idiag)
   real*8 x(n), y(n), diag(ndiag,idiag)
   !-----------------------------------------------------------------------
@@ -3146,7 +3140,6 @@ subroutine amuxd (n,x,y,diag,ndiag,idiag,ioff)
 end subroutine amuxd
 !-----------------------------------------------------------------------
 subroutine amuxj (n, x, y, jdiag, a, ja, ia)
-  implicit none
   integer n, jdiag, ja(*), ia(*)
   real*8 x(n), y(n), a(*)
   !-----------------------------------------------------------------------
@@ -3202,7 +3195,6 @@ end subroutine amuxj
 !-----------------------------------------------------------------------
 subroutine vbrmv(nr, nc, ia, ja, ka, a, kvstr, kvstc, x, b)
   !-----------------------------------------------------------------------
-  implicit none
   integer nr, nc, ia(nr+1), ja(*), ka(*), kvstr(nr+1), kvstc(*)
   real*8  a(*), x(*), b(*)
   !-----------------------------------------------------------------------
@@ -3256,7 +3248,6 @@ end subroutine vbrmv
 ! 2)     T R I A N G U L A R    S Y S T E M    S O L U T I O N S       c
 !----------------------------------------------------------------------c
 subroutine lsol (n,x,y,al,jal,ial)
-  implicit none
   integer n, jal(*),ial(n+1)
   real*8  x(n), y(n), al(*)
   !-----------------------------------------------------------------------
@@ -3300,7 +3291,6 @@ subroutine lsol (n,x,y,al,jal,ial)
 end subroutine lsol
 !-----------------------------------------------------------------------
 subroutine ldsol (n,x,y,al,jal)
-  implicit none
   integer n, jal(*)
   real*8 x(n), y(n), al(*)
   !-----------------------------------------------------------------------
@@ -3344,7 +3334,6 @@ subroutine ldsol (n,x,y,al,jal)
 end subroutine ldsol
 !-----------------------------------------------------------------------
 subroutine lsolc (n,x,y,al,jal,ial)
-  implicit none
   integer n, jal(*),ial(*)
   real*8  x(n), y(n), al(*)
   !-----------------------------------------------------------------------
@@ -3389,7 +3378,6 @@ subroutine lsolc (n,x,y,al,jal,ial)
 end subroutine lsolc
 !-----------------------------------------------------------------------
 subroutine ldsolc (n,x,y,al,jal)
-  implicit none
   integer n, jal(*)
   real*8 x(n), y(n), al(*)
   !-----------------------------------------------------------------------
@@ -3437,7 +3425,6 @@ subroutine ldsolc (n,x,y,al,jal)
 end subroutine ldsolc
 !-----------------------------------------------------------------------
 subroutine ldsoll (n,x,y,al,jal,nlev,lev,ilev)
-  implicit none
   integer n, nlev, jal(*), ilev(nlev+1), lev(n)
   real*8 x(n), y(n), al(*)
   !-----------------------------------------------------------------------
@@ -3490,7 +3477,6 @@ subroutine ldsoll (n,x,y,al,jal,nlev,lev,ilev)
 end subroutine ldsoll
 !-----------------------------------------------------------------------
 subroutine usol (n,x,y,au,jau,iau)
-  implicit none
   integer n, jau(*),iau(n+1)
   real*8  x(n), y(n), au(*)
   !-----------------------------------------------------------------------
@@ -3534,7 +3520,6 @@ subroutine usol (n,x,y,au,jau,iau)
 end subroutine usol
 !-----------------------------------------------------------------------
 subroutine udsol (n,x,y,au,jau)
-  implicit none
   integer n, jau(*)
   real*8  x(n), y(n),au(*)
   !-----------------------------------------------------------------------
@@ -3579,7 +3564,6 @@ subroutine udsol (n,x,y,au,jau)
 end subroutine udsol
 !-----------------------------------------------------------------------
 subroutine usolc (n,x,y,au,jau,iau)
-  implicit none
   real*8  x(*), y(*), au(*)
   integer n, jau(*),iau(*)
   !-----------------------------------------------------------------------
@@ -3624,7 +3608,6 @@ subroutine usolc (n,x,y,au,jau,iau)
 end subroutine usolc
 !-----------------------------------------------------------------------
 subroutine udsolc (n,x,y,au,jau)
-  implicit none
   integer n, jau(*)
   real*8 x(n), y(n), au(*)
   !-----------------------------------------------------------------------
@@ -3801,20 +3784,8 @@ end subroutine qsplit
 subroutine runrc(n,rhs,sol,ipar,fpar,wk,guess,a,ja,ia,au,jau,ju,solver)
   implicit none
   integer n,ipar(16),ia(n+1),ja(*),ju(*),jau(*)
-  real*8 fpar(16),rhs(n),sol(n),guess(n),a(*),au(*)
-  real*8, target :: wk(*)
-  !
-  abstract interface
-    subroutine solver_proto(n,rhs,sol,ipar,fpar,w)
-      implicit none
-      integer n
-      real*8 rhs(n), sol(n), w(n,8)
-      integer ipar(16)
-      real*8 fpar(16)
-    end subroutine solver_proto
-  end interface
-  procedure(solver_proto) :: solver
-  !
+  real*8 fpar(16),rhs(n),sol(n),guess(n),wk(*),a(*),au(*)
+  external solver
   !-----------------------------------------------------------------------
   !     the actual tester. It starts the iterative linear system solvers
   !     with a initial guess suppied by the user.
@@ -3826,7 +3797,6 @@ subroutine runrc(n,rhs,sol,ipar,fpar,wk,guess,a,ja,ia,au,jau,ju,solver)
   !     local variables
   !
   integer       :: i, its
-  real*8, pointer :: w_2d(:,:)
   !      real          :: dtime, dt(2), time
   !     external dtime
   save its
@@ -3846,10 +3816,9 @@ subroutine runrc(n,rhs,sol,ipar,fpar,wk,guess,a,ja,ia,au,jau,ju,solver)
   !
   ipar(1) = 0
   !     time = dtime(dt)
-  w_2d(1:n,1:8) => wk(1:n*8)
-  
+
   do
-    call solver(n,rhs,sol,ipar,fpar,w_2d)
+    call solver(n,rhs,sol,ipar,fpar,wk)
 
     if (ipar(7).ne.its) then
       its = ipar(7)
@@ -4239,7 +4208,7 @@ end subroutine ilut
 !----------------------------------------------------------------------
 !       subroutine ilu0(n, a, ja, ia, alu, jlu, ju, iw, ipoint1, ipoint2, ierr)
 subroutine ilu0(n, a, ja, ia, alu, jlu, ju, iw, ierr)
-  implicit none
+
   !implicit real*8 (a-h,o-z)
   real*8 a(*), alu(*), tl
   integer n, ju0, ii, jj, i, j, jcol, js, jf, jm, jrow, jw, ierr
@@ -4316,7 +4285,7 @@ subroutine pgmres(n, im, rhs, sol, eps, maxits, aspar, nnz, ia, ja, alu, jlu, ju
   real*8  :: rhs(*), sol(*)
 
   real*8  :: eps
-  real*8  :: eps1, epsmac, gam, t, ro, tl
+  real*8  :: eps1, epsmac, gam, t, ddot, dnrm2, ro, tl
 
   integer :: i,i1,j,jj,k,k1,iii,ii,ju0
   integer :: its,jrow,jcol,jf,jm,js,jw
@@ -4566,7 +4535,6 @@ end subroutine pgmres
 !     subroutine from blas1.f90
 !-----------------------------------------------------------------------
 DOUBLE PRECISION FUNCTION DNRM2(N,X)
-  implicit none
   !     .. Scalar Arguments ..
   INTEGER N
   !     ..
@@ -4640,7 +4608,6 @@ SUBROUTINE DLASSQ( N, X, SCALE, SUMSQ )
   ! -- LAPACK auxiliary routine (version 3.1) --
   ! Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd..
   ! November 2006
-  implicit none
   INTEGER N
   DOUBLE PRECISION SCALE, SUMSQ
   DOUBLE PRECISION X( * )
@@ -4687,7 +4654,6 @@ double precision function ddot(n,dx,dy)
   !     uses unrolled loops for increments equal to one.
   !     jack dongarra, linpack, 3/11/78.
   !
-  implicit none
   double precision dx(*),dy(*)
   integer i,m,mp1,n
   !
@@ -4715,7 +4681,6 @@ subroutine daxpy(n,da,dx,incx,dy,incy)
   !     uses unrolled loops for increments equal to one.
   !     jack dongarra, linpack, 3/11/78.
   !
-  implicit none
   double precision dx(1),dy(1),da
   integer i,incx,incy,ix,iy,m,mp1,n
   !
@@ -4759,7 +4724,3 @@ subroutine daxpy(n,da,dx,incx,dy,incy)
   end do
   return
 end subroutine daxpy
-
-  !/ ------------------------------------------------------------------- /
-
-END MODULE W3PROFSMD

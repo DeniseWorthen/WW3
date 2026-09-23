@@ -6,11 +6,10 @@
 ! Define the spectrum parameterization via SPECTRUM_NML namelist
 ! -------------------------------------------------------------------- !
 &SPECTRUM_NML
-  SPECTRUM%XFR       =  1.1
+  SPECTRUM%XFR       =  1.07
   SPECTRUM%FREQ1     =  0.035
-  SPECTRUM%NK        =  33
+  SPECTRUM%NK        =  50
   SPECTRUM%NTH       =  36
-  SPECTRUM%THOFF     =  0.5
 /
 
 ! -------------------------------------------------------------------- !

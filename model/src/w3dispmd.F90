@@ -427,8 +427,9 @@ CONTAINS
     !/ ------------------------------------------------------------------- /
     !/ Local parameters
     !/
+    INTEGER                 :: I1, I2
     !!/S      INTEGER, SAVE           :: IENT = 0
-    REAL                    :: KH0, KH, TMP, TP
+    REAL                    :: KH0, KH, TMP, TP, CP, L
     REAL, PARAMETER         :: BETA1 = 1.55
     REAL, PARAMETER         :: BETA2 = 1.3
     REAL, PARAMETER         :: BETA3 = 0.216
@@ -783,7 +784,7 @@ CONTAINS
     USE CONSTANTS, ONLY: TPI
     USE W3ODATMD,  ONLY: NDSE
     USE W3SERVMD,  ONLY: EXTCDE
-    USE W3GDATMD, ONLY: NK, IICEHDISP, IICEDDISP, IICEFDISP
+    USE W3GDATMD, ONLY: NK, IICEHDISP, IICEDDISP, IICEFDISP, IICEHMIN
     ! USE W3DISPMD,  ONLY: WAVNU1
 #ifdef W3_S
     USE W3SERVMD,  ONLY: STRACE
@@ -1048,6 +1049,7 @@ CONTAINS
     !
     !/ ------------------------------------------------------------------- /
     USE CONSTANTS, ONLY: DWAT, TPI, GRAV
+    USE W3GDATMD, ONLY: NK
 #ifdef W3_S
     USE W3SERVMD,  ONLY: STRACE
 #endif

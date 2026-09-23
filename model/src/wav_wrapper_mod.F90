@@ -11,7 +11,6 @@ module wav_wrapper_mod
 
   use wav_kind_mod  , only : r8 => shr_kind_r8, r4 => shr_kind_r4, i4 => shr_kind_i4
   use wav_kind_mod  , only : CL => shr_kind_cl, CS => shr_kind_cs
-  use mpi_f08       , only : MPI_Wtime
 
   implicit none
 
@@ -50,6 +49,7 @@ contains
     !> @date 01-08-2024
 
     real(r8),    intent(inout) :: timevalue
+    real(r8)                   :: MPI_Wtime
     timevalue = MPI_Wtime()
   end subroutine ufs_settimer
 
@@ -70,7 +70,7 @@ contains
     character(len=*), intent(in)    :: string
     logical,          intent(in)    :: runtimelog
     real(r8),         intent(in)    :: wtime0
-    real(r8)                        :: timevalue
+    real(r8)                        :: MPI_Wtime, timevalue
     if (.not. runtimelog) return
     if (wtime0 > 0.) then
       timevalue = MPI_Wtime()-wtime0
