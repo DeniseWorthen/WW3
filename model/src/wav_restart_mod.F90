@@ -9,7 +9,7 @@ module wav_restart_mod
   use w3parall      , only : init_get_isea
   use w3adatmd      , only : nsealm
   use w3gdatmd      , only : nth, nk, nx, ny, mapsf, nspec, nseal, nsea
-  use w3odatmd      , only : ndso, iaproc, addrstflds, rstfldlist, rstfldcnt
+  use w3odatmd      , only : ndso, iaproc, addrstflds, rstfldlist, rstfldcnt, multifield, setnofillmode, syncfreq
   use w3wdatmd      , only : ice
   use wav_pio_mod   , only : pio_iotype, pio_ioformat, wav_pio_subsystem
   use wav_pio_mod   , only : handle_err, wav_pio_initdecomp
@@ -17,7 +17,7 @@ module wav_restart_mod
     use yowNodepool , only : ng
 #endif
   use pio
-  use netcdf
+  use netcdf, only : nf90_fill_int, nf90_fill_float
 
   implicit none
 
@@ -54,31 +54,32 @@ contains
   !> @date 08-26-2024
   subroutine write_restart (fname, va, mapsta)
 
+    use ESMF
     use w3odatmd , only : time_origin, calendar_name, elapsed_secs
     use w3adatmd , only : ITSTEP
 
-    real            , intent(in) :: va(1:nspec,0:nsealm)
+    real            , intent(in) :: va(1:nspec,1:nsealm)
     integer         , intent(in) :: mapsta(ny,nx)
     character(len=*), intent(in) :: fname
 
     ! local variables
     integer              :: timid, xtid, ytid
     integer              :: nseal_cpl, nmode
-    integer              :: dimid(3)
-    real   , allocatable :: lva(:,:)
     integer, allocatable :: lmap(:)
+    ! debug
+    integer :: old_mode, rc
     !-------------------------------------------------------------------------------
 
+    call ESMF_TraceRegionEnter("write_restart", rc=rc)
 #ifdef W3_PDLIB
     nseal_cpl = nseal - ng
 #else
     nseal_cpl = nseal
 #endif
-    allocate(lva(1:nseal_cpl,1:nspec))
     allocate(lmap(1:nseal_cpl))
-    lva(:,:) = 0.0
     lmap(:) = 0
 
+    call ESMF_TraceRegionEnter("create_file", rc=rc)
     ! create the netcdf file
     frame = 1
     pioid%fh = -1
@@ -91,6 +92,19 @@ contains
     call handle_err(ierr, 'pio_create')
     if (iaproc == 1) write(ndso,'(a)')' Writing restart file '//trim(fname)
 
+    if (iaproc == 1) write(ndso,'(a,i8)')' Syncfreq ',syncfreq
+    if (setnofillmode) then
+      ierr = pio_set_fill(pioid, PIO_NOFILL, old_mode)
+      call handle_err(ierr, 'setting NC_NOFILL')
+      if (iaproc == 1) write(ndso,'(a)')' Setting nofillmode for restart file '//trim(fname)
+    else
+      if (iaproc == 1) write(ndso,'(a)')' Using fillmode for restart file '//trim(fname)
+    end if
+    call ESMF_TraceRegionExit("create_file", rc=rc)
+    call ESMF_TraceRegionEnter("sync_file at create", rc=rc)
+    call pio_syncfile(pioid)
+    call ESMF_TraceRegionExit("sync_file at create", rc=rc)
+    !call ESMF_TraceRegionEnter("define_dims", rc=rc)
     ierr = pio_def_dim(pioid,    'nx',    nx, xtid)
     ierr = pio_def_dim(pioid,    'ny',    ny, ytid)
     ierr = pio_def_dim(pioid,  'time', PIO_UNLIMITED, timid)
@@ -102,7 +116,9 @@ contains
     call handle_err(ierr,'def_time_units')
     ierr = pio_put_att(pioid, varid, 'calendar', trim(calendar_name))
     call handle_err(ierr,'def_time_calendar')
+    !call ESMF_TraceRegionExit("define_dims", rc=rc)
 
+    !call ESMF_TraceRegionEnter("define_nth_nk", rc=rc)
     ! define the nth,nk sizes
     ierr = pio_def_var(pioid, 'nth', PIO_INT, varid)
     call handle_err(ierr,'def_nth')
@@ -110,45 +126,45 @@ contains
     ierr = pio_def_var(pioid, 'nk', PIO_INT, varid)
     call handle_err(ierr,'def_nk')
     ierr = pio_put_att(pioid, varid, 'long_name', 'number of frequencies')
+    !call ESMF_TraceRegionExit("define_nth_nk", rc=rc)
 
+    call ESMF_TraceRegionEnter("define_fields", rc=rc)
+    !call ESMF_TraceRegionEnter("define_va_field", rc=rc)
     ! write each nspec as separate variable
     do kk = 1,nspec
        write(cspec,'(i4.4)')kk
        vname = 'va'//cspec
-       dimid = (/xtid, ytid, timid/)
-       ierr = pio_def_var(pioid, trim(vname), PIO_REAL, dimid, varid)
+      ierr = pio_def_var(pioid, trim(vname), PIO_REAL, (/xtid, ytid, timid/), varid)
        call handle_err(ierr, 'define variable '//trim(vname))
        ierr = pio_put_att(pioid, varid, '_FillValue', nf90_fill_float)
        call handle_err(ierr, 'define _FillValue '//trim(vname))
      end do
+    !call ESMF_TraceRegionExit("define_va_field", rc=rc)
 
+    !call ESMF_TraceRegionEnter("define_mapsta_field", rc=rc)
     vname = 'mapsta'
     ierr = pio_def_var(pioid, trim(vname), PIO_INT, (/xtid, ytid, timid/), varid)
     call handle_err(ierr, 'define variable '//trim(vname))
     ierr = pio_put_att(pioid, varid, '_FillValue', nf90_fill_int)
     call handle_err(ierr, 'define _FillValue '//trim(vname))
+    !call ESMF_TraceRegionExit("define_mapsta_field", rc=rc)
 
     ! define any requested additional fields
     if (addrstflds) then
       do i = 1,rstfldcnt
         vname = trim(rstfldlist(i))
-        if (vname == 'itstep' .or. vname == 'itstep_w') then
-          ierr = pio_def_var(pioid, 'itstep', PIO_INT, (/timid/), varid)
-          call handle_err(ierr,'def_itstep')
-          ierr = pio_put_att(pioid, varid, '_FillValue', nf90_fill_int)
-          call handle_err(ierr,'def_itstep_fillvalue')
-        else
           ierr = pio_def_var(pioid, trim(vname), PIO_REAL, (/xtid, ytid, timid/), varid)
           call handle_err(ierr, 'define variable '//trim(vname))
           ierr = pio_put_att(pioid, varid, '_FillValue', nf90_fill_float)
           call handle_err(ierr, 'define _FillValue '//trim(vname))
-        end if
       end do
     end if
     ! end variable definitions
     ierr = pio_enddef(pioid)
     call handle_err(ierr, 'end variable definition')
+    call ESMF_TraceRegionExit("define_fields", rc=rc)
 
+    !call ESMF_TraceRegionEnter("put_nth_nk", rc=rc)
     ! write the freq and direction sizes
     ierr = pio_inq_varid(pioid, 'nth', varid)
     call handle_err(ierr, 'inquire variable nth ')
@@ -158,17 +174,26 @@ contains
     call handle_err(ierr, 'inquire variable nk ')
     ierr = pio_put_var(pioid, varid, nk)
     call handle_err(ierr, 'put nk')
+    !call ESMF_TraceRegionExit("put_nth_nk", rc=rc)
 
+    call ESMF_TraceRegionEnter("sync_file pre initdecomp", rc=rc)
+    call pio_syncfile(pioid)
+    call ESMF_TraceRegionExit("sync_file pre initdecomp", rc=rc)
     ! initialize the decomp
+    call ESMF_TraceRegionEnter("init_decomp", rc=rc)
     call wav_pio_initdecomp(iodesc2dint, use_int=.true.)
     call wav_pio_initdecomp(iodesc2d)
+    call ESMF_TraceRegionExit("init_decomp", rc=rc)
 
+    !call ESMF_TraceRegionEnter("put_time", rc=rc)
     ! write the time
     ierr = pio_inq_varid(pioid,  'time', varid)
     call handle_err(ierr, 'inquire variable time ')
     ierr = pio_put_var(pioid, varid, (/1/), real(elapsed_secs,8))
     call handle_err(ierr, 'put time')
+    !call ESMF_TraceRegionExit("put_time", rc=rc)
 
+    !call ESMF_TraceRegionEnter("make_lmap", rc=rc)
     ! mapsta is global
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
@@ -176,7 +201,9 @@ contains
       iy = mapsf(isea,2)
       lmap(jsea) = mapsta(iy,ix)
     end do
+    !call ESMF_TraceRegionExit("make_lmap", rc=rc)
 
+    call ESMF_TraceRegionEnter("write_mapsta", rc=rc)
     ! write PE local map
     vname = 'mapsta'
     ierr = pio_inq_varid(pioid,  trim(vname), varid)
@@ -184,27 +211,29 @@ contains
     call pio_setframe(pioid, varid, int(1,kind=Pio_Offset_Kind))
     call pio_write_darray(pioid, varid, iodesc2dint, lmap, ierr)
     call handle_err(ierr, 'put variable '//trim(vname))
+    call ESMF_TraceRegionExit("write_mapsta", rc=rc)
 
-    ! write va
-    do jsea = 1,nseal_cpl
-      kk = 0
-      do ik = 1,nk
-        do ith = 1,nth
-          kk = kk + 1
-          lva(jsea,kk) = va(kk,jsea)
-        end do
-      end do
-    end do
+    call ESMF_TraceRegionEnter("sync_file pre va", rc=rc)
+    call pio_syncfile(pioid)
+    call ESMF_TraceRegionExit("sync_file pre va", rc=rc)
 
+    call ESMF_TraceRegionEnter("write_va", rc=rc)
+    !va(1:nspec,1:nsealm)
     do kk = 1,nspec
       write(cspec,'(i4.4)')kk
       vname = 'va'//cspec
       ierr = pio_inq_varid(pioid,  trim(vname), varid)
       call handle_err(ierr, 'inquire variable '//trim(vname))
       call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
-      call pio_write_darray(pioid, varid, iodesc2d, lva(:,kk), ierr)
+      call pio_write_darray(pioid, varid, iodesc2d, va(kk,1:nseal_cpl), ierr)
       call handle_err(ierr, 'put variable '//trim(vname))
+      if(mod(kk,syncfreq) .eq. 0)then
+        call ESMF_TraceRegionEnter("sync_file"//trim(vname), rc=rc)
+        call pio_syncfile(pioid)
+        call ESMF_TraceRegionExit("sync_file"//trim(vname), rc=rc)
+      end if
     end do
+    call ESMF_TraceRegionExit("write_va", rc=rc)
 
     ! write requested additional global(nsea) fields
     if (addrstflds) then
@@ -222,10 +251,17 @@ contains
       end do
     end if
 
-    call pio_syncfile(pioid)
+    !call ESMF_TraceRegionEnter("sync_file", rc=rc)
+    !call pio_syncfile(pioid)
+    !call ESMF_TraceRegionExit("sync_file", rc=rc)
+    call ESMF_TraceRegionEnter("free_decomp", rc=rc)
     call pio_freedecomp(pioid, iodesc2d)
     call pio_freedecomp(pioid, iodesc2dint)
+    call ESMF_TraceRegionExit("free_decomp", rc=rc)
+    call ESMF_TraceRegionEnter("close_file", rc=rc)
     call pio_closefile(pioid)
+    call ESMF_TraceRegionExit("close_file", rc=rc)
+    call ESMF_TraceRegionExit("write_restart", rc=rc)
 
   end subroutine write_restart
 
@@ -289,6 +325,7 @@ contains
 
     ! read a netcdf restart
     wave_communicator = MPI_COMM_WAVE
+    !wave_communicator%mpi_val = MPI_COMM_WAVE
 #ifdef W3_PDLIB
     nseal_cpl = nseal - ng
 #else

@@ -3367,7 +3367,7 @@ CONTAINS
          PDLIB_CCON, PDLIB_POS_CELL2, PDLIB_IE_CELL2, NPA,            &
          PDLIB_POSI, iplg
 #ifdef W3_DEBUGSRC
-    USE YOWNODEPOOL,    only: PDLIB_I_DIAG 
+    USE YOWNODEPOOL,    only: PDLIB_I_DIAG
 #endif
     USE W3ODATMD, only : IAPROC
     USE W3PARALL, only : ZERO
@@ -6464,6 +6464,7 @@ CONTAINS
 #ifdef W3_REF1
     USE W3GDATMD, only: REFPARS
 #endif
+    use w3adatmd, only : cg
 
     IMPLICIT NONE
 
@@ -6605,8 +6606,11 @@ CONTAINS
         DO IP = 1, npa
           DTSI(IP) = DBLE(DTMAXGL)/DBLE(ITER(IK))/PDLIB_SI(IP) ! Some precalculations for the time integration.
         END DO
-
-      END IF ! LCALC
+     else
+        do ip = 1,npa
+           cgsig(ip) = cg(ik,iplg(IP))
+        end do
+     END IF ! LCALC
 
       ! Exact and convert Wave Action - should be some subroutine function or whatever
       do ip = 1,npa
@@ -7117,7 +7121,7 @@ CONTAINS
     USE CONSTANTS
     !
     !
-    USE W3GDATMD, only: NTH, ECOS, ESIN 
+    USE W3GDATMD, only: NTH, ECOS, ESIN
 #ifdef W3_REF1
     USE W3GDATMD, only: NX, REFPARS, REFLC, REFLD, MAPSTA, MAPFS, IOBP, IOBPD, DTH
 #endif

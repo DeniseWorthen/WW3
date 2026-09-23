@@ -574,7 +574,7 @@ CONTAINS
     USE W3GDATMD,  ONLY : FILEXT
 #endif
     !
-#ifdef W3_MPI 
+#ifdef W3_MPI
     use mpi_f08
 #endif
     !/
@@ -605,7 +605,7 @@ CONTAINS
     !
 #ifdef W3_DEBUGRUN
     INTEGER                 :: IS
-    LOGICAL                 :: FLAG0 = .FALSE. 
+    LOGICAL                 :: FLAG0 = .FALSE.
 #endif
 #ifdef W3_MPI
     LOGICAL                 :: SBSED
@@ -2464,7 +2464,7 @@ CONTAINS
           if (rstwr) then
             call set_user_timestring(tend,user_timestring)
             fname = trim(FNMRST)//trim(user_restfname)//trim(user_timestring)//'.nc'
-            call write_restart(trim(fname), va, mapsta+8*mapst2)
+            call write_restart(trim(fname), va(1:nspec,1:nsealm), mapsta+8*mapst2)
           end if
         end if
 

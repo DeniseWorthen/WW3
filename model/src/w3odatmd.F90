@@ -586,6 +586,8 @@ MODULE W3ODATMD
                                                        ! when use_restartnc is true
   logical            :: logfile_is_assigned = .false.  !< @public logical flag for assignment of nds(1) to specified
                                                        !! log file in mesh cap
+  logical            :: multifield = .true.            !< @public logical flag to control VA format in netcdf restarts
+  logical            :: setnofillmode = .false.
   logical            :: verboselog = .true.            !< @public logical flag to enable verbose WW3 native logging
   logical            :: addrstflds = .false.           !< @public logical flag for additional restart fields
   integer            :: rstfldcnt = 0                  !< @public the actual number of additional restart fields
@@ -598,6 +600,7 @@ MODULE W3ODATMD
   character(len=36)  :: calendar_name = ''             !< @public the calendar used for netCDF output
   integer(kind=8)    :: elapsed_secs = 0               !< @public the time in seconds from the time_origin
   logical            :: use_cmeps = .false.            !< @public a logical flag to indicate cmeps is providing the forcing
+  integer :: syncfreq
   !/
 CONTAINS
   !/ ------------------------------------------------------------------- /
