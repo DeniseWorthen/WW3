@@ -153,10 +153,17 @@ contains
     if (addrstflds) then
       do i = 1,rstfldcnt
         vname = trim(rstfldlist(i))
+        if (vname == 'itstep' .or. vname == 'itstep_w') then
+          ierr = pio_def_var(pioid, 'itstep', PIO_INT, (/timid/), varid)
+          call handle_err(ierr,'def_itstep')
+          ierr = pio_put_att(pioid, varid, '_FillValue', nf90_fill_int)
+          call handle_err(ierr,'def_itstep_fillvalue')
+        else
           ierr = pio_def_var(pioid, trim(vname), PIO_REAL, (/xtid, ytid, timid/), varid)
           call handle_err(ierr, 'define variable '//trim(vname))
           ierr = pio_put_att(pioid, varid, '_FillValue', nf90_fill_float)
           call handle_err(ierr, 'define _FillValue '//trim(vname))
+        end if
       end do
     end if
     ! end variable definitions
