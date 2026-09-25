@@ -57,18 +57,26 @@ contains
     use ESMF
     use w3odatmd , only : time_origin, calendar_name, elapsed_secs
     use w3adatmd , only : ITSTEP
+    use w3adatmd , only : mpi_comm_wave
+    use mpi_f08
 
     real            , intent(in) :: va(1:nspec,1:nsealm)
     integer         , intent(in) :: mapsta(ny,nx)
     character(len=*), intent(in) :: fname
 
     ! local variables
+    type(MPI_Comm)       :: wave_communicator  ! needed for mpi_f08
     integer              :: timid, xtid, ytid
     integer              :: nseal_cpl, nmode
     integer, allocatable :: lmap(:)
     ! debug
     integer :: old_mode, rc
     !-------------------------------------------------------------------------------
+
+    wave_communicator = MPI_COMM_WAVE
+    call ESMF_TraceRegionEnter("restart_wait", rc=rc)
+    call MPI_Barrier(wave_communicator)
+    call ESMF_TraceRegionExit("restart_wait", rc=rc)
 
     call ESMF_TraceRegionEnter("write_restart", rc=rc)
 #ifdef W3_PDLIB
