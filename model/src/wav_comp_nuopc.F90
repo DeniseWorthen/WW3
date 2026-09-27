@@ -288,6 +288,11 @@ contains
     character(ESMF_MAXSTR)      :: msgString
     character(len=CL)           :: cvalue
     character(len=*), parameter :: subname=trim(modName)//':(InitializeAdvertise) '
+    ! debug
+    integer :: itest, itest_n, ithread_level
+    integer :: iu, ios
+    character(len=256) :: statline
+
     !-------------------------------------------------------------------------------
 
 #ifdef UFS_TRACING
@@ -485,6 +490,17 @@ contains
     naperr = 1
     if (iaproc == napout) root_task = .true.
 
+    !call ESMF_VMGet(vm, mpiCommunicator=mpicomm%mpi_val, peCount=petcount, localPet=iam, rc=rc)
+    !if (ChkErr(rc,__LINE__,u_FILE_u)) return
+
+    ! ! TEST ONLY: time the collective before WW3 or PIO does anything
+    ! call ESMF_TraceRegionEnter("test_allreduce_start", rc=rc)
+    ! do itest_n = 1,200
+    !   itest = 0
+    !   call MPI_Allreduce(MPI_IN_PLACE, itest, 1, MPI_INTEGER, MPI_MAX, mpicomm)
+    ! end do
+    ! call ESMF_TraceRegionExit("test_allreduce_start", rc=rc)
+
     !--------------------------------------------------------------------
     ! IO set-up
     !--------------------------------------------------------------------
@@ -680,6 +696,29 @@ contains
       if (ChkErr(rc,__LINE__,u_FILE_u)) return
     end if
 
+    ! ! TEST ONLY: report how many threads this process has
+    ! open(newunit=iu, file='/proc/self/status', action='read', status='old')
+    ! do
+    !   read(iu,'(a)',iostat=ios) statline
+    !   if (ios /= 0) exit
+    !   if (statline(1:8) == 'Threads:') then
+    !     if (root_task) write(stdout,*) 'TEST ONLY: ', trim(statline)
+    !     exit
+    !   end if
+    ! end do
+    ! close(iu)
+
+    ! call MPI_Query_thread(ithread_level)
+    ! if (root_task) write(stdout,*) 'TEST ONLY: MPI thread level = ', ithread_level, &
+    !      ' (MULTIPLE = ', MPI_THREAD_MULTIPLE, ')'
+
+    ! TEST ONLY: time the same collective early, before any heavy communication
+    ! call ESMF_TraceRegionEnter("test_allreduce_init", rc=rc)
+    ! do itest_n = 1,200
+    !   itest = 0
+    !   call MPI_Allreduce(MPI_IN_PLACE, itest, 1, MPI_INTEGER, MPI_MAX, mpicomm)
+    ! end do
+    ! call ESMF_TraceRegionExit("test_allreduce_init", rc=rc)
     !--------------------------------------------------------------------
     ! Wave model initialization
     !--------------------------------------------------------------------

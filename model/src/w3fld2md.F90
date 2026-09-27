@@ -485,7 +485,7 @@ CONTAINS
             !After 20 iterations, >5% from converged
             UST_IT_FLG(1) = .FALSE.
             UST_IT_FLG(2) = .FALSE.
-            print*,'Attn: Stress not converged for windspeed: ',UREF
+            !print*,'Attn: Stress not converged for windspeed: ',UREF
             UST = -999.
             NO_ERR = .false.
           ENDIF
@@ -572,8 +572,8 @@ CONTAINS
     ENDIF
     IF (.not.((CD .LT. 0.01).AND.(CD .GT. 0.0005)).or. .not.(NO_ERR)) THEN
       !Fail safe to bulk
-      print*,'Attn: W3FLD2 failed, using bulk stress'
-      print*,'Calculated Wind/Cd: ',UREF,CD,UST
+      !print*,'Attn: W3FLD2 failed, using bulk stress'
+      !print*,'Calculated Wind/Cd: ',UREF,CD,UST
       call wnd2z0m(UREF,Z0)
       UST = UREF * kappa / log(zwnd/z0)
       CD = UST**2/UREF**2

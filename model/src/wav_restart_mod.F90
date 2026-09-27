@@ -71,6 +71,7 @@ contains
     integer, allocatable :: lmap(:)
     ! debug
     integer :: old_mode, rc
+    integer :: itest
     !-------------------------------------------------------------------------------
 
     wave_communicator = MPI_COMM_WAVE
@@ -233,14 +234,40 @@ contains
     call ESMF_TraceRegionExit("sync_file pre va", rc=rc)
 
     call ESMF_TraceRegionEnter("write_va", rc=rc)
+    ! !va(1:nspec,1:nsealm)
+    ! do kk = 1,nspec
+    !   write(cspec,'(i4.4)')kk
+    !   vname = 'va'//cspec
+    !   ierr = pio_inq_varid(pioid,  trim(vname), varid)
+    !   call handle_err(ierr, 'inquire variable '//trim(vname))
+    !   call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
+    !   call pio_write_darray(pioid, varid, iodesc2d, va(kk,1:nseal_cpl), ierr)
+    !   call handle_err(ierr, 'put variable '//trim(vname))
+    !   if(mod(kk,syncfreq) .eq. 0)then
+    !     call ESMF_TraceRegionEnter("sync_file"//trim(vname), rc=rc)
+    !     call pio_syncfile(pioid)
+    !     call ESMF_TraceRegionExit("sync_file"//trim(vname), rc=rc)
+    !   end if
+    ! end do
     !va(1:nspec,1:nsealm)
+    ! ! TEST ONLY: same collective PIO does once per pio_write_darray call
+    ! call ESMF_TraceRegionEnter("test_allreduce", rc=rc)
+    ! do kk = 1,nspec
+    !   itest = 0
+    !   call MPI_Allreduce(MPI_IN_PLACE, itest, 1, MPI_INTEGER, MPI_MAX, wave_communicator)
+    ! end do
+    ! call ESMF_TraceRegionExit("test_allreduce", rc=rc)
     do kk = 1,nspec
       write(cspec,'(i4.4)')kk
       vname = 'va'//cspec
+      !call ESMF_TraceRegionEnter("va_inq_varid", rc=rc)
       ierr = pio_inq_varid(pioid,  trim(vname), varid)
+      !call ESMF_TraceRegionExit("va_inq_varid", rc=rc)
       call handle_err(ierr, 'inquire variable '//trim(vname))
       call pio_setframe(pioid, varid, int(1,kind=PIO_OFFSET_KIND))
+      !call ESMF_TraceRegionEnter("va_write_darray", rc=rc)
       call pio_write_darray(pioid, varid, iodesc2d, va(kk,1:nseal_cpl), ierr)
+      !call ESMF_TraceRegionExit("va_write_darray", rc=rc)
       call handle_err(ierr, 'put variable '//trim(vname))
       if(mod(kk,syncfreq) .eq. 0)then
         call ESMF_TraceRegionEnter("sync_file"//trim(vname), rc=rc)
