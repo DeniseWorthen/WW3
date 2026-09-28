@@ -74,10 +74,10 @@ contains
     integer :: itest
     !-------------------------------------------------------------------------------
 
-    wave_communicator = MPI_COMM_WAVE
-    call ESMF_TraceRegionEnter("restart_wait", rc=rc)
-    call MPI_Barrier(wave_communicator)
-    call ESMF_TraceRegionExit("restart_wait", rc=rc)
+    ! wave_communicator = MPI_COMM_WAVE
+    ! call ESMF_TraceRegionEnter("restart_wait", rc=rc)
+    ! call MPI_Barrier(wave_communicator)
+    ! call ESMF_TraceRegionExit("restart_wait", rc=rc)
 
     call ESMF_TraceRegionEnter("write_restart", rc=rc)
 #ifdef W3_PDLIB
@@ -110,9 +110,9 @@ contains
       if (iaproc == 1) write(ndso,'(a)')' Using fillmode for restart file '//trim(fname)
     end if
     call ESMF_TraceRegionExit("create_file", rc=rc)
-    call ESMF_TraceRegionEnter("sync_file at create", rc=rc)
-    call pio_syncfile(pioid)
-    call ESMF_TraceRegionExit("sync_file at create", rc=rc)
+    !call ESMF_TraceRegionEnter("sync_file at create", rc=rc)
+    !call pio_syncfile(pioid)
+    !call ESMF_TraceRegionExit("sync_file at create", rc=rc)
     !call ESMF_TraceRegionEnter("define_dims", rc=rc)
     ierr = pio_def_dim(pioid,    'nx',    nx, xtid)
     ierr = pio_def_dim(pioid,    'ny',    ny, ytid)
@@ -192,9 +192,9 @@ contains
     call handle_err(ierr, 'put nk')
     !call ESMF_TraceRegionExit("put_nth_nk", rc=rc)
 
-    call ESMF_TraceRegionEnter("sync_file pre initdecomp", rc=rc)
-    call pio_syncfile(pioid)
-    call ESMF_TraceRegionExit("sync_file pre initdecomp", rc=rc)
+    !call ESMF_TraceRegionEnter("sync_file pre initdecomp", rc=rc)
+    !call pio_syncfile(pioid)
+    !call ESMF_TraceRegionExit("sync_file pre initdecomp", rc=rc)
     ! initialize the decomp
     call ESMF_TraceRegionEnter("init_decomp", rc=rc)
     call wav_pio_initdecomp(iodesc2dint, use_int=.true.)
@@ -229,9 +229,9 @@ contains
     call handle_err(ierr, 'put variable '//trim(vname))
     call ESMF_TraceRegionExit("write_mapsta", rc=rc)
 
-    call ESMF_TraceRegionEnter("sync_file pre va", rc=rc)
-    call pio_syncfile(pioid)
-    call ESMF_TraceRegionExit("sync_file pre va", rc=rc)
+    !call ESMF_TraceRegionEnter("sync_file pre va", rc=rc)
+    !call pio_syncfile(pioid)
+    !call ESMF_TraceRegionExit("sync_file pre va", rc=rc)
 
     call ESMF_TraceRegionEnter("write_va", rc=rc)
     ! !va(1:nspec,1:nsealm)
@@ -269,11 +269,11 @@ contains
       call pio_write_darray(pioid, varid, iodesc2d, va(kk,1:nseal_cpl), ierr)
       !call ESMF_TraceRegionExit("va_write_darray", rc=rc)
       call handle_err(ierr, 'put variable '//trim(vname))
-      if(mod(kk,syncfreq) .eq. 0)then
-        call ESMF_TraceRegionEnter("sync_file"//trim(vname), rc=rc)
-        call pio_syncfile(pioid)
-        call ESMF_TraceRegionExit("sync_file"//trim(vname), rc=rc)
-      end if
+      ! if(mod(kk,syncfreq) .eq. 0)then
+      !   call ESMF_TraceRegionEnter("sync_file"//trim(vname), rc=rc)
+      !   call pio_syncfile(pioid)
+      !   call ESMF_TraceRegionExit("sync_file"//trim(vname), rc=rc)
+      ! end if
     end do
     call ESMF_TraceRegionExit("write_va", rc=rc)
 
