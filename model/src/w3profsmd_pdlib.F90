@@ -6465,6 +6465,7 @@ CONTAINS
     USE W3GDATMD, only: REFPARS
 #endif
     use w3adatmd, only : cg
+    use ESMF, only : ESMF_TraceRegionEnter, ESMF_TraceRegionExit
 
     IMPLICIT NONE
 
@@ -6498,7 +6499,7 @@ CONTAINS
     !
     !   2a. Vectorized for all points looping over each wave number (maybe do a dirty save will be nice!)
     !
-
+    call ESMF_TraceRegionEnter("wav_expblk")
     DO IK = 1, NK
 
       IF (LCALC) THEN
@@ -6588,10 +6589,11 @@ CONTAINS
             DTMAXOUT = MINVAL(DTMAX)
           ENDIF
         END DO
-
+        call ESMF_TraceRegionEnter("wav_expblk_allreduce")
         FIN(1) = DTMAXOUT
         CALL MPI_ALLREDUCE(FIN,FOUT,1,rtype,MPI_MIN,MPI_COMM_WCMP,ierr)
         DTMAXGL = FOUT(1)
+        call ESMF_TraceRegionExit("wav_expblk_allreduce")
 
         CFLXY = DBLE(DTG)/DTMAXGL
         REST  = ABS(MOD(CFLXY,1.0d0))
@@ -6606,10 +6608,10 @@ CONTAINS
         DO IP = 1, npa
           DTSI(IP) = DBLE(DTMAXGL)/DBLE(ITER(IK))/PDLIB_SI(IP) ! Some precalculations for the time integration.
         END DO
-     else
-        do ip = 1,npa
-           cgsig(ip) = cg(ik,iplg(IP))
-        end do
+     !else
+     !   do ip = 1,npa
+     !      cgsig(ip) = cg(ik,iplg(IP))
+     !   end do
      END IF ! LCALC
 
       ! Exact and convert Wave Action - should be some subroutine function or whatever
@@ -6620,7 +6622,9 @@ CONTAINS
           u(ith,ip) = va(isp,ip) / cgsig(ip) * clats(iplg(ip))
         enddo
       enddo
+      call ESMF_TraceRegionEnter("wav_expblk_exch")
       CALL PDLIB_exchange2DREAL(U)
+      call ESMF_TraceRegionExit("wav_expblk_exch")
 
       DO IT = 1, ITER(IK)
         ST = ZERO
@@ -6663,9 +6667,9 @@ CONTAINS
             END DO
           ENDDO
         ENDIF ! FLBPI
-
+        call ESMF_TraceRegionEnter("wav_expblk_exch")
         CALL PDLIB_exchange2DREAL(U)
-
+        call ESMF_TraceRegionExit("wav_expblk_exch")
       ENDDO ! IT
 
       ! Exact and convert Wave Action
@@ -6678,6 +6682,7 @@ CONTAINS
       end do
 
     ENDDO ! IK
+    call ESMF_TraceRegionExit("wav_expblk")
 
   END SUBROUTINE PDLIB_EXPLICIT_BLOCK
   !/ ------------------------------------------------------------------- /
