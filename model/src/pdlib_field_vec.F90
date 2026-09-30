@@ -834,6 +834,7 @@ CONTAINS
     USE W3PARALL, ONLY: INIT_GET_JSEA_ISPROC
     USE W3PARALL, ONLY: INIT_GET_ISEA
     use yowDatapool, only: istatus
+    use yowNodepool, only: np
     use mpi_f08
     !/
     IMPLICIT NONE
@@ -858,6 +859,7 @@ CONTAINS
     INTEGER, allocatable    :: ARRpos(:), ARRpos_loc(:)
     INTEGER                 :: eEnt(1), IPROC
     INTEGER                 :: TheSize, NSEAL_loc
+    INTEGER                 :: NSEAL_OWN   ! owned points only; ghost nodes np+1:npa are not sent
     INTEGER, SAVE           :: indexOutput
     !/
     !/ ------------------------------------------------------------------- /
@@ -873,9 +875,10 @@ CONTAINS
     IROOT  = NAPFLD - 1
     IF ( FLOUT(1) .OR. FLOUT(7) ) THEN
       CALL GET_ARRAY_SIZE(TheSize)
+      NSEAL_OWN = NP
       IF ( IAPROC .LE. NAPROC ) THEN
-        allocate(ARRexch(TheSize, NSEAL), ARRpos(NSEAL))
-        DO JSEA=1,NSEAL
+        allocate(ARRexch(TheSize, NSEAL_OWN), ARRpos(NSEAL_OWN))
+        DO JSEA=1,NSEAL_OWN
           CALL INIT_GET_ISEA(ISEA, JSEA)
           ARRpos(JSEA)=ISEA
           IH     = 0
@@ -1291,16 +1294,16 @@ CONTAINS
       IF (IAPROC .eq. NAPFLD) THEN
         allocate(ARRtotal(TheSize, NSEA))
         IF (IAPROC .le. NAPROC) THEN
-          DO I=1,NSEAL
+          DO I=1,NSEAL_OWN
             ARRtotal(:,ARRpos(I)) = ARRexch(:,I)
           END DO
         END IF
       END IF
       IF ((IAPROC .le. NAPROC).and.(IAPROC.ne.NAPFLD)) THEN
-        eEnt(1)=NSEAL
+        eEnt(1)=NSEAL_OWN
         CALL MPI_SEND(eEnt,1,MPI_INTEGER, NAPFLD-1, 23, MPI_COMM_WAVE, ierr)
-        CALL MPI_SEND(ARRpos,NSEAL,MPI_INTEGER, NAPFLD-1, 29, MPI_COMM_WAVE, ierr)
-        CALL MPI_SEND(ARRexch,NSEAL*TheSize,MPI_REAL, NAPFLD-1, 37, MPI_COMM_WAVE, ierr)
+        CALL MPI_SEND(ARRpos,NSEAL_OWN,MPI_INTEGER, NAPFLD-1, 29, MPI_COMM_WAVE, ierr)
+        CALL MPI_SEND(ARRexch,NSEAL_OWN*TheSize,MPI_REAL, NAPFLD-1, 37, MPI_COMM_WAVE, ierr)
         deallocate(ARRpos, ARRexch)
       END IF
       IF (IAPROC .eq. NAPFLD) THEN
@@ -1310,7 +1313,7 @@ CONTAINS
             NSEAL_loc=eEnt(1)
             allocate(ARRpos_loc(NSEAL_loc), ARRexch_loc(TheSize, NSEAL_loc))
             CALL MPI_RECV(ARRpos_loc,NSEAL_loc,MPI_INTEGER, IPROC-1, 29, MPI_COMM_WAVE, istatus, ierr)
-            CALL MPI_RECV(ARRexch_loc,NSEAL_loc*TheSize,MPI_INTEGER, IPROC-1, 37, MPI_COMM_WAVE, istatus, ierr)
+            CALL MPI_RECV(ARRexch_loc,NSEAL_loc*TheSize,MPI_REAL, IPROC-1, 37, MPI_COMM_WAVE, istatus, ierr)
             DO I=1,NSEAL_loc
               ARRtotal(:,ARRpos_loc(I)) = ARRexch_loc(:,I)
             END DO
