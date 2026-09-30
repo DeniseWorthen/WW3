@@ -170,7 +170,10 @@ contains
       write(*,*) "Thread", myrank, "# local sides" , ns
       write(*,*) "Thread", myrank, "# of ghosts", ng
       write(*,*) "Thread", myrank, "# of neighbor domains", nConnDomains
-    endif
+   endif
+
+   write(*,'(a,6i10)') 'PDLIB_DECOMP rank np ng npa ne nconn: ', &
+     myrank, np, ng, np+ng, ne, nConnDomains
   end subroutine initFromGridDim
 
 

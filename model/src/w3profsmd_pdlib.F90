@@ -6465,7 +6465,10 @@ CONTAINS
     USE W3GDATMD, only: REFPARS
 #endif
     use w3adatmd, only : cg
+    ! debug
     use ESMF, only : ESMF_TraceRegionEnter, ESMF_TraceRegionExit
+    use mpi_f08, only : MPI_barrier
+
 
     IMPLICIT NONE
 
@@ -6499,6 +6502,10 @@ CONTAINS
     !
     !   2a. Vectorized for all points looping over each wave number (maybe do a dirty save will be nice!)
     !
+    call ESMF_TraceRegionEnter("wav_expblk_entrywait")
+    call MPI_Barrier(MPI_COMM_WCMP, ierr)
+    call ESMF_TraceRegionExit("wav_expblk_entrywait")
+
     call ESMF_TraceRegionEnter("wav_expblk")
     DO IK = 1, NK
 
