@@ -567,6 +567,7 @@ CONTAINS
 #endif
     use w3odatmd        , only : use_historync, use_restartnc
     use w3odatmd        , only : logfile_is_assigned, verboselog
+    use ESMF            , only : ESMF_TraceRegionEnter, ESMF_TraceRegionExit
 #if defined(W3_T) || defined(W3_REFRX)
     USE W3GDATMD,  ONLY : NSEA
 #endif
@@ -2531,9 +2532,15 @@ CONTAINS
           WRITE (NDST,9042) LOCAL, FLPART, FLOUTG
 #endif
           !
-          IF ( LOCAL .AND. FLPART ) CALL W3CPRT ( IMOD )
+          IF ( LOCAL .AND. FLPART ) THEN
+            call ESMF_TraceRegionEnter("wav_out_cprt")
+            CALL W3CPRT ( IMOD )
+            call ESMF_TraceRegionExit("wav_out_cprt")
+          END IF
           IF ( LOCAL .AND. (FLOUTG .OR. FLOUTG2) ) then
+            call ESMF_TraceRegionEnter("wav_out_outg")
             CALL W3OUTG ( VA, FLPFLD, FLOUTG, FLOUTG2 )
+            call ESMF_TraceRegionExit("wav_out_outg")
           end if
         end if ! if (.not. use_historync) then
         !
@@ -2581,7 +2588,9 @@ CONTAINS
           ELSE
 #endif
 #ifdef W3_PDLIB
+            call ESMF_TraceRegionEnter("wav_out_gather")
             CALL DO_OUTPUT_EXCHANGES(IMOD)
+            call ESMF_TraceRegionExit("wav_out_gather")
 #endif
 #ifdef W3_MPI
           END IF ! IF (.NOT. LPDLIB) THEN
@@ -2702,11 +2711,13 @@ CONTAINS
 #ifdef W3_SBS
                   IF ( J .EQ. 1 ) THEN
 #endif
+                    call ESMF_TraceRegionEnter("wav_out_gridwrite")
                     CALL W3IOGO( 'WRITE', NDS(7), ITEST, IMOD &
 #ifdef W3_ASCII
                          ,NDS(14)                             &
 #endif
                             )
+                    call ESMF_TraceRegionExit("wav_out_gridwrite")
 #ifdef W3_SBS
                   ENDIF
 #endif
@@ -2736,7 +2747,10 @@ CONTAINS
                   !
                   !   Gets the necessary spectral data
                   !
+                  call ESMF_TraceRegionEnter("wav_out_pntspec")
                   CALL W3IOPE ( VA )
+                  call ESMF_TraceRegionExit("wav_out_pntspec")
+                  call ESMF_TraceRegionEnter("wav_out_pntwrite")
 #ifdef W3_BIN2NC
                   CALL W3IOPON ( 'WRITE', NDS(8), ITEST, IMOD )
 #else
@@ -2746,6 +2760,7 @@ CONTAINS
 #endif
                           )
 #endif
+                  call ESMF_TraceRegionExit("wav_out_pntwrite")
                   END IF
                 !
               ELSE IF ( J .EQ. 3 ) THEN
