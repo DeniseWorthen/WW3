@@ -1710,7 +1710,9 @@ contains
       call init_get_isea(isea, jsea)
       global_input(isea) = real(dataptr(jsea),4)
     end do
+    call ESMF_TraceRegionEnter("wav_import_allreduce")
     call ESMF_VMAllReduce(vm, sendData=global_input, recvData=global_output, count=nsea, reduceflag=ESMF_REDUCE_SUM, rc=rc)
+    call ESMF_TraceRegionExit("wav_import_allreduce")
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
   end subroutine SetGlobalInput
