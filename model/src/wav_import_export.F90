@@ -37,7 +37,6 @@ module wav_import_export
   private :: set_importmask       !< @private set the import mask when merge_import is true
   private :: check_globaldata     !< @private write values in a field to a netCDF file for debugging
   private :: readfromfile         !< @private read values from a file
-  private :: set_gather_map       !< @private build the map used to gather owned import values
 
   interface FillGlobalInput
     module procedure fillglobal_with_import
@@ -66,16 +65,6 @@ module wav_import_export
 #endif
   integer, public    :: nseal_cpl                   !< the number of local sea points on a processor, exclusive
                                                     !! of the ghost points. For non-PDLIB cases, this is nseal
-
-  ! Map used by SetGlobalInput to gather the owned import values from all PETs.
-  ! Built once, on the first call (see set_gather_map).
-  logical               :: gather_map_set = .false. !< true once the gather map has been built
-  integer               :: gather_ntot = 0          !< total number of owned sea points over all PETs
-  integer               :: gather_npets = 0         !< number of PETs in the gather
-  integer , allocatable :: gather_counts(:)         !< number of owned sea points on each PET
-  integer , allocatable :: gather_offsets(:)        !< offset of each PET's values in the gathered array
-  integer , allocatable :: gather_isea(:)           !< global sea index of each gathered value
-  real(r4), allocatable :: gather_buf(:)            !< gathered values, in PET order
   character(*),parameter :: u_FILE_u = &            !< a character string for an ESMF log message
        __FILE__
 
@@ -1680,9 +1669,8 @@ contains
   !====================================================================================
   !> Create a global field across all PEs
   !!
-  !> @details Distributes the global values of the named import state field to all PEs.
-  !! Each PE contributes only its owned values; they are gathered onto all PEs and
-  !! placed at their global sea index using the map from set_gather_map.
+  !> @details Distributes the global values of the named import state field to all PEs
+  !! using a global reduce across all PEs.
   !!
   !! @param[in]    importstate        the import state
   !! @param[in]    fldname            the field name
@@ -1704,8 +1692,8 @@ contains
     integer          , intent(out) :: rc
 
     ! local variables
-    integer           :: jsea, n
-    real(r4)          :: owned(nseal_cpl)
+    integer           :: jsea, isea
+    real(r4)          :: global_input(nsea)
     real(r8), pointer :: dataptr(:)
     character(len=*), parameter :: subname = '(wav_import_export:setGlobalInput)'
 
@@ -1714,124 +1702,18 @@ contains
     rc = ESMF_SUCCESS
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' called', ESMF_LOGMSG_INFO)
 
-    ! Build the gather map on the first call
-    if (.not. gather_map_set) then
-      call set_gather_map(vm, rc)
-      if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    end if
-
     call state_getfldptr(importState, trim(fldname), dataptr, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
-
-    ! Each PET contributes only its owned values; every PET receives all of them, in PET order
-    do jsea = 1, nseal_cpl
-      owned(jsea) = real(dataptr(jsea),4)
-    end do
-    call ESMF_TraceRegionEnter("wav_import_gather")
-    call ESMF_VMAllGatherV(vm, sendData=owned, sendCount=nseal_cpl, recvData=gather_buf, &
-         recvCounts=gather_counts, recvOffsets=gather_offsets, rc=rc)
-    call ESMF_TraceRegionExit("wav_import_gather")
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-
-    ! Place each gathered value at its global sea index. Sea points that no PET owns
-    ! (none expected) are set to zero.
-    ! With more than one PET, a zero is stored as +0.0: the summed allreduce used
-    ! before added +0.0 from the other PETs, which turned an imported -0.0 into +0.0.
-    ! This keeps the result bit-for-bit the same.
-    if (gather_ntot < nsea) global_output(:) = 0._r4
-    do n = 1, gather_ntot
-      if (gather_buf(n) == 0._r4 .and. gather_npets > 1) then
-        global_output(gather_isea(n)) = 0._r4
-      else
-        global_output(gather_isea(n)) = gather_buf(n)
-      end if
-    end do
-
-  end subroutine SetGlobalInput
-
-  !====================================================================================
-  !> Build the map used by SetGlobalInput to gather the owned import values
-  !!
-  !> @details Collects the number of owned sea points on each PET and the global
-  !! sea index of every owned point, in PET order. Called once. Stops with an
-  !! error if a sea index is out of range or owned by more than one PET, since
-  !! each point must be filled by exactly one PET.
-  !!
-  !! @param[in]    vm                 the ESMF VM object
-  !! @param[out]   rc                 a return code
-  !!
-  subroutine set_gather_map(vm, rc)
-
-    use w3gdatmd, only: nsea
-
-    ! input/output variables
-    type(ESMF_VM)    , intent(in)  :: vm
-    integer          , intent(out) :: rc
-
-    ! local variables
-    integer              :: petCount, n, jsea, isea, nbad
-    integer              :: mycount(1)
-    integer              :: my_isea(nseal_cpl)
-    logical, allocatable :: seen(:)
-    character(len=CL)    :: msg
-    character(len=*), parameter :: subname = '(wav_import_export:set_gather_map)'
-
-    !---------------------------------------------------------------------------
-
-    rc = ESMF_SUCCESS
-
-    call ESMF_VMGet(vm, petCount=petCount, rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    gather_npets = petCount
-    allocate(gather_counts(petCount), gather_offsets(petCount))
-
-    ! Number of owned points on each PET, and where each PET's values start
-    mycount(1) = nseal_cpl
-    call ESMF_VMAllGather(vm, sendData=mycount, recvData=gather_counts, count=1, rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    gather_offsets(1) = 0
-    do n = 2, petCount
-      gather_offsets(n) = gather_offsets(n-1) + gather_counts(n-1)
-    end do
-    gather_ntot = sum(gather_counts)
-
-    ! Global sea index of every owned point, in the same order as the gathered values
+    global_output(:) = 0._r4
+    global_input(:) = 0._r4
     do jsea = 1, nseal_cpl
       call init_get_isea(isea, jsea)
-      my_isea(jsea) = isea
+      global_input(isea) = real(dataptr(jsea),4)
     end do
-    allocate(gather_isea(gather_ntot), gather_buf(gather_ntot))
-    call ESMF_VMAllGatherV(vm, sendData=my_isea, sendCount=nseal_cpl, recvData=gather_isea, &
-         recvCounts=gather_counts, recvOffsets=gather_offsets, rc=rc)
+    call ESMF_VMAllReduce(vm, sendData=global_input, recvData=global_output, count=nsea, reduceflag=ESMF_REDUCE_SUM, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
-    ! Check: every index in range and owned by exactly one PET
-    allocate(seen(nsea))
-    seen(:) = .false.
-    nbad = 0
-    do n = 1, gather_ntot
-      isea = gather_isea(n)
-      if (isea < 1 .or. isea > nsea) then
-        nbad = nbad + 1
-      else if (seen(isea)) then
-        nbad = nbad + 1
-      else
-        seen(isea) = .true.
-      end if
-    end do
-    deallocate(seen)
-    if (nbad > 0) then
-      write(msg,'(a,i0,a)') trim(subname)//' ERROR: ', nbad, ' sea indices out of range or owned twice'
-      call ESMF_LogWrite(trim(msg), ESMF_LOGMSG_ERROR)
-      rc = ESMF_FAILURE
-      return
-    end if
-
-    write(msg,'(a,i0,a,i0)') trim(subname)//' gather map set: owned points = ', gather_ntot, ', nsea = ', nsea
-    call ESMF_LogWrite(trim(msg), ESMF_LOGMSG_INFO)
-    gather_map_set = .true.
-
-  end subroutine set_gather_map
+  end subroutine SetGlobalInput
 
   !====================================================================================
   !> Fill a global field with import state values at nsea points
