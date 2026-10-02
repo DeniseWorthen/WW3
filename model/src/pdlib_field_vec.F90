@@ -836,6 +836,7 @@ CONTAINS
     use yowDatapool, only: istatus
     use yowNodepool, only: np
     USE W3SERVMD, ONLY: EXTCDE
+    use ESMF, only: ESMF_TraceRegionEnter, ESMF_TraceRegionExit
     use mpi_f08
     !/
     IMPLICIT NONE
@@ -1388,7 +1389,9 @@ CONTAINS
             CALL MPI_IRECV(RBUF(I1:I2),RCOUNT(IPROC)*TheSize,MPI_REAL, IPROC-1, 37, MPI_COMM_WAVE, RREQ(NREQ), ierr)
           END IF
         END DO
+        call ESMF_TraceRegionEnter("wav_out_gatherwait")
         CALL MPI_WAITALL(NREQ, RREQ, RSTAT, ierr)
+        call ESMF_TraceRegionExit("wav_out_gatherwait")
         NREQ = 0
         DO IPROC=1,NAPROC
           IF (IPROC .ne. IAPROC) THEN
