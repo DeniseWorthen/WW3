@@ -575,7 +575,7 @@ CONTAINS
     USE W3GDATMD,  ONLY : FILEXT
 #endif
     !
-#ifdef W3_MPI 
+#ifdef W3_MPI
     use mpi_f08
 #endif
     !/
@@ -606,7 +606,7 @@ CONTAINS
     !
 #ifdef W3_DEBUGRUN
     INTEGER                 :: IS
-    LOGICAL                 :: FLAG0 = .FALSE. 
+    LOGICAL                 :: FLAG0 = .FALSE.
 #endif
 #ifdef W3_MPI
     LOGICAL                 :: SBSED
@@ -2894,7 +2894,12 @@ CONTAINS
         !
 #ifdef W3_MPI
         IF ( FLGMPI(0) ) CALL MPI_WAITALL ( NRQGO, IRQGO , STATIO, IERR_MPI )
-        IF ( FLGMPI(2) ) CALL MPI_WAITALL ( NRQPO, IRQPO1, STATIO, IERR_MPI )
+
+        IF ( FLGMPI(2) ) then
+           call ESMF_TraceRegionEnter("wav_out_pntwait")
+           CALL MPI_WAITALL ( NRQPO, IRQPO1, STATIO, IERR_MPI )
+           call ESMF_TraceRegionExit("wav_out_pntwait")
+        endif
         IF ( FLGMPI(4) ) CALL MPI_WAITALL ( NRQRS, IRQRS , STATIO, IERR_MPI )
         IF ( FLGMPI(8) ) CALL MPI_WAITALL ( NRQRS, IRQRS , STATIO, IERR_MPI )
         IF ( FLGMPI(5) ) CALL MPI_WAITALL ( NRQBP, IRQBP1, STATIO, IERR_MPI )
