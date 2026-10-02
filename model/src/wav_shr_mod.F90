@@ -234,6 +234,10 @@ contains
     use ESMF          , only : ESMF_FieldBundleWrite, ESMF_FieldBundleDestroy
 
     use w3odatmd      , only : iaproc
+    use w3gdatmd      , only : ntri, trigp
+    use netcdf        , only : nf90_open, nf90_close, nf90_redef, nf90_enddef, nf90_def_dim
+    use netcdf        , only : nf90_def_var, nf90_put_var, nf90_put_att, nf90_strerror
+    use netcdf        , only : nf90_write, nf90_int, nf90_noerr
 
     ! input/output variables
     type(ESMF_Mesh) , intent(in)  :: EMeshIn
@@ -247,6 +251,7 @@ contains
     type(ESMF_Field)               :: doffield
     character(len=6), dimension(4) :: lfieldlist
     integer                        :: i,ndims,nelements
+    integer                        :: ncid, dimid_nvert, dimid_ntri, varid
     real(r8), pointer              :: fldptr1d(:)
     integer(i4), allocatable       :: dof(:)
     integer(i4), pointer           :: dofptr(:)
@@ -319,6 +324,23 @@ contains
     call ESMF_FieldBundleWrite(FBtemp, filename=trim(mesh_name)//'.decomp.nc', overwrite=.true., rc=rc)
     if (chkerr(rc,__LINE__,u_FILE_u)) return
 
+    ! For the unstructured mesh, append the WW3 triangle connectivity to the file.
+    ! trigp(3,ntri) is global (identical on all tasks) and holds 1-based node numbers.
+    ! Because the fields above are written in global node order, these node numbers
+    ! index directly into dof, coordx, coordy and decomp. The file is closed by the
+    ! collective ESMF_FieldBundleWrite above, so a single task can safely reopen it.
+    if (unstr_mesh .and. iaproc == 1) then
+      if (nc_failed(nf90_open(trim(mesh_name)//'.decomp.nc', nf90_write, ncid), __LINE__)) return
+      if (nc_failed(nf90_redef(ncid), __LINE__)) return
+      if (nc_failed(nf90_def_dim(ncid, 'nvert', 3, dimid_nvert), __LINE__)) return
+      if (nc_failed(nf90_def_dim(ncid, 'ntri', ntri, dimid_ntri), __LINE__)) return
+      if (nc_failed(nf90_def_var(ncid, 'trigp', nf90_int, (/dimid_nvert, dimid_ntri/), varid), __LINE__)) return
+      if (nc_failed(nf90_put_att(ncid, varid, 'long_name', 'node numbers of each WW3 triangle'), __LINE__)) return
+      if (nc_failed(nf90_put_att(ncid, varid, 'start_index', 1), __LINE__)) return
+      if (nc_failed(nf90_enddef(ncid), __LINE__)) return
+      if (nc_failed(nf90_put_var(ncid, varid, trigp(1:3,1:ntri)), __LINE__)) return
+      if (nc_failed(nf90_close(ncid), __LINE__)) return
+    end if
     deallocate(ownedElemCoords)
     deallocate(ownedElemCoords_x)
     deallocate(ownedElemCoords_y)
@@ -328,6 +350,19 @@ contains
     if (chkerr(rc,__LINE__,u_FILE_u)) return
 
     if (dbug_flag  > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
+  contains
+    !> Log a netCDF error and set rc; returns .true. if status is an error
+    logical function nc_failed(status, line)
+      integer, intent(in) :: status
+      integer, intent(in) :: line
+      nc_failed = .false.
+      if (status /= nf90_noerr) then
+        call ESMF_LogWrite(trim(subname)//' netCDF error: '//trim(nf90_strerror(status)), &
+             ESMF_LOGMSG_ERROR, line=line, file=u_FILE_u)
+        rc = ESMF_FAILURE
+        nc_failed = .true.
+      end if
+    end function nc_failed
   end subroutine write_meshdecomp
 
   !===============================================================================
