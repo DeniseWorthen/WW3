@@ -6505,6 +6505,7 @@ CONTAINS
     call MPI_Barrier(MPI_COMM_WCMP, ierr)
     call ESMF_TraceRegionExit("wav_expblk_entrywait")
 
+    call ESMF_TraceRegionEnter("wav_expblk")
     DO IK = 1, NK
 
       IF (LCALC) THEN
@@ -6594,10 +6595,11 @@ CONTAINS
             DTMAXOUT = MINVAL(DTMAX)
           ENDIF
         END DO
-
+        call ESMF_TraceRegionEnter("wav_expblk_allreduce")
         FIN(1) = DTMAXOUT
         CALL MPI_ALLREDUCE(FIN,FOUT,1,rtype,MPI_MIN,MPI_COMM_WCMP,ierr)
         DTMAXGL = FOUT(1)
+        call ESMF_TraceRegionExit("wav_expblk_allreduce")
 
         CFLXY = DBLE(DTG)/DTMAXGL
         REST  = ABS(MOD(CFLXY,1.0d0))
@@ -6623,7 +6625,9 @@ CONTAINS
           u(ith,ip) = va(isp,ip) / cgsig(ip) * clats(iplg(ip))
         enddo
       enddo
+      call ESMF_TraceRegionEnter("wav_expblk_exch")
       CALL PDLIB_exchange2DREAL(U)
+      call ESMF_TraceRegionExit("wav_expblk_exch")
 
       DO IT = 1, ITER(IK)
         ST = ZERO
@@ -6666,9 +6670,9 @@ CONTAINS
             END DO
           ENDDO
         ENDIF ! FLBPI
-
+        call ESMF_TraceRegionEnter("wav_expblk_exch")
         CALL PDLIB_exchange2DREAL(U)
-
+        call ESMF_TraceRegionExit("wav_expblk_exch")
       ENDDO ! IT
 
       ! Exact and convert Wave Action
@@ -6681,6 +6685,7 @@ CONTAINS
       end do
 
     ENDDO ! IK
+    call ESMF_TraceRegionExit("wav_expblk")
 
   END SUBROUTINE PDLIB_EXPLICIT_BLOCK
   !/ ------------------------------------------------------------------- /

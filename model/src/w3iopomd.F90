@@ -980,6 +980,7 @@ CONTAINS
 #endif
 #ifdef W3_MPI
     USE W3ODATMD, ONLY: IRQPO2
+    use ESMF, only: ESMF_TraceRegionEnter, ESMF_TraceRegionExit
 #endif
 #ifdef W3_S
     USE W3SERVMD, ONLY: STRACE
@@ -1221,8 +1222,20 @@ CONTAINS
       !
 #ifdef W3_MPI
       IOFF   = 1 + 4*(I-1)
+      ! trace: first location (mostly waiting for senders to arrive)
+      ! separately from the rest (the location-by-location loop)
+      IF ( I .EQ. 1 ) THEN
+        call ESMF_TraceRegionEnter("wav_out_pntfirst")
+      ELSE
+        call ESMF_TraceRegionEnter("wav_out_pntrecv")
+      END IF
       CALL MPI_STARTALL ( 4, IRQPO2(IOFF:IOFF+3), IERR_MPI )
       CALL MPI_WAITALL  ( 4, IRQPO2(IOFF:IOFF+3), STAT(IOFF:IOFF+3), IERR_MPI )
+      IF ( I .EQ. 1 ) THEN
+        call ESMF_TraceRegionExit("wav_out_pntfirst")
+      ELSE
+        call ESMF_TraceRegionExit("wav_out_pntrecv")
+      END IF
 #endif
       !
       ! Interpolate spectrum

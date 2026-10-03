@@ -1169,7 +1169,9 @@ contains
     !------------
     ! Obtain import data from import state
     !------------
+    call ESMF_TraceRegionEnter("wav_import")
     call import_fields(gcomp, time0, timen, rc)
+    call ESMF_TraceRegionExit("wav_import")
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
     !------------
@@ -1213,7 +1215,9 @@ contains
     ! Create export state
     !------------
 
+    call ESMF_TraceRegionEnter("wav_export")
     call export_fields(gcomp, rc)
+    call ESMF_TraceRegionExit("wav_export")
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
 
     if (dbug_flag > 5) call ESMF_LogWrite(trim(subname)//' done', ESMF_LOGMSG_INFO)
