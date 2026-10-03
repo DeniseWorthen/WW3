@@ -1149,11 +1149,13 @@ CONTAINS
 #endif
         ! copy old values
 #ifdef W3_PDLIB
+        call ESMF_TraceRegionEnter("wav_vaold")
         DO IP=1,NSEAL
           DO ISPEC=1,NSPEC
             VAOLD(ISPEC,IP)=VA(ISPEC,IP)
           END DO
         END DO
+        call ESMF_TraceRegionExit("wav_vaold")
 #endif
         !
 #ifdef W3_DEBUGCOH
@@ -1208,6 +1210,9 @@ CONTAINS
 #endif
         call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 3a')
 
+        ! trace: all per-step input updates (currents, winds, stress, ice,
+        ! levels, boundary data, depth and current gradients)
+        call ESMF_TraceRegionEnter("wav_inputs")
         IF ( FLCUR  ) THEN
 #ifdef W3_DEBUGCOH
           CALL ALL_VA_INTEGRAL_PRINT(IMOD, "Before UCUR", 1)
@@ -1537,6 +1542,7 @@ CONTAINS
         !
         FLIWND = .FALSE.
         FLFRST = .FALSE.
+        call ESMF_TraceRegionExit("wav_inputs")
         !
 #ifdef W3_PDLIB
 #ifdef W3_DEBUGSRC
@@ -1813,6 +1819,7 @@ CONTAINS
             CALL PRINT_MY_TIME("Before intraspectral")
 #endif
             IF ( FLCTH .OR. FLCK ) THEN
+              call ESMF_TraceRegionEnter("wav_ktp3")
               DO ITLOC=1, ITLOCH
                 !
 #ifdef W3_OMPG
@@ -1896,6 +1903,7 @@ CONTAINS
 #endif
                 !
               END DO
+              call ESMF_TraceRegionExit("wav_ktp3")
             END IF
 
             call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 16')
@@ -2137,6 +2145,7 @@ CONTAINS
             ! 3.6.4 Intra-spectral part 2
             !
             IF ( FLCTH .OR. FLCK ) THEN
+              call ESMF_TraceRegionEnter("wav_ktp3")
               DO ITLOC=ITLOCH+1, NTLOC
                 !
 #ifdef W3_OMPG
@@ -2219,6 +2228,7 @@ CONTAINS
 #endif
                 !
               END DO
+              call ESMF_TraceRegionExit("wav_ktp3")
             END IF
 #ifdef W3_DEBUGCOH
             CALL ALL_VA_INTEGRAL_PRINT(IMOD, "After intraspectral adv.", 1)
@@ -2238,6 +2248,7 @@ CONTAINS
           !
           IF ( .NOT. FLDRY .AND. IAPROC.LE.NAPROC) THEN
             IF ( FLSOU ) THEN
+              call ESMF_TraceRegionEnter("wav_srce")
               !
               D50=0.0002
               REFLEC(:)=0.
@@ -2387,6 +2398,7 @@ CONTAINS
               END IF
 #endif
 #endif
+              call ESMF_TraceRegionExit("wav_srce")
             END IF
 #ifdef W3_DEBUGCOH
             CALL ALL_VA_INTEGRAL_PRINT(IMOD, "After source terms", 1)
@@ -2476,7 +2488,9 @@ CONTAINS
           if (rstwr) then
             call set_user_timestring(tend,user_timestring)
             fname = trim(FNMRST)//trim(user_restfname)//trim(user_timestring)//'.nc'
+            call ESMF_TraceRegionEnter("wav_restart")
             call write_restart(trim(fname), va, mapsta+8*mapst2)
+            call ESMF_TraceRegionExit("wav_restart")
           end if
         end if
 
