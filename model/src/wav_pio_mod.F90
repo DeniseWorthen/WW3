@@ -544,6 +544,9 @@ contains
       dof2d(n) = (iy-1)*lnx + ix         ! local index : global index
     end do
 
+    ! optional: write the decomposition to a file for the standalone PIO benchmark
+    call dump_decomp(dof2d)
+
     if (luse_int) then
       call pio_initdecomp(wav_pio_subsystem, PIO_INT,  (/nx,ny/), dof2d, iodesc)
     else
@@ -552,6 +555,90 @@ contains
     deallocate(dof2d)
 
   end subroutine wav_pio_initdecomp_2d
+
+  !===============================================================================
+  !> Write the 2d restart decomposition to a file, once per run, if the environment
+  !! variable WW3_PIO_DUMP_DECOMP=1
+  !!
+  !! @details Task 0 gathers each task's global indices (dof2d, in task order) and
+  !! writes one unformatted stream file, ww3_restart_decomp_<ntasks>.bin, with
+  !! ntasks, nx, ny, counts(ntasks), then the indices of each task in turn
+  !! (all default integers). The file is read by the standalone PIO benchmark.
+  !!
+  !! @param[in]  dof2d   this task's global indices, as passed to pio_initdecomp
+  subroutine dump_decomp(dof2d)
+
+    use mpi_f08
+    use w3adatmd , only : mpi_comm_wave
+    use w3odatmd , only : ndso
+
+    integer(kind=PIO_OFFSET_KIND), intent(in) :: dof2d(:)
+
+    ! local variables
+    logical, save        :: checked = .false.     ! the switch is checked once per run
+    type(MPI_Comm)       :: wave_communicator      ! needed for mpi_f08
+    integer              :: ntasks, my_task, ierr
+    integer              :: idump, envstatus, nlocal, n, iunit
+    character(len=16)    :: envvalue
+    character(len=64)    :: fname
+    integer, allocatable :: counts(:), displs(:)
+    integer, allocatable :: ldof(:), gdof(:)
+    !-------------------------------------------------------------------------------
+
+    if (checked) return
+    checked = .true.
+
+    wave_communicator = MPI_COMM_WAVE
+    call MPI_Comm_rank(wave_communicator, my_task, ierr)
+    call MPI_Comm_size(wave_communicator, ntasks, ierr)
+
+    ! task 0 reads the switch and passes it on
+    idump = 0
+    if (my_task == 0) then
+      call get_environment_variable('WW3_PIO_DUMP_DECOMP', envvalue, status=envstatus)
+      if (envstatus == 0 .and. trim(envvalue) == '1') idump = 1
+    end if
+    call MPI_Bcast(idump, 1, MPI_INTEGER, 0, wave_communicator, ierr)
+    if (idump == 0) return
+
+    ! the indices are written as default integers
+    if (int(nx,PIO_OFFSET_KIND)*int(ny,PIO_OFFSET_KIND) > int(huge(1),PIO_OFFSET_KIND)) then
+      if (my_task == 0) write(ndso,'(a)') ' dump_decomp: nx*ny too large for default integers, no file written'
+      return
+    end if
+
+    nlocal = size(dof2d)
+    allocate(ldof(max(1,nlocal)))
+    if (nlocal > 0) ldof(1:nlocal) = int(dof2d(1:nlocal))
+
+    ! counts per task, then the indices in task order
+    allocate(counts(ntasks), displs(ntasks))
+    call MPI_Gather(nlocal, 1, MPI_INTEGER, counts, 1, MPI_INTEGER, 0, wave_communicator, ierr)
+    if (my_task == 0) then
+      displs(1) = 0
+      do n = 2,ntasks
+        displs(n) = displs(n-1) + counts(n-1)
+      end do
+      allocate(gdof(max(1,sum(counts))))
+    else
+      allocate(gdof(1))
+    end if
+    call MPI_Gatherv(ldof, nlocal, MPI_INTEGER, gdof, counts, displs, MPI_INTEGER, 0, wave_communicator, ierr)
+
+    if (my_task == 0) then
+      write(fname,'(a,i0,a)') 'ww3_restart_decomp_', ntasks, '.bin'
+      open(newunit=iunit, file=trim(fname), access='stream', form='unformatted', status='replace')
+      write(iunit) ntasks, nx, ny
+      write(iunit) counts
+      write(iunit) gdof(1:sum(counts))
+      close(iunit)
+      write(ndso,'(a,i0,a,i0,a)') ' dump_decomp: wrote '//trim(fname)//' (', ntasks, ' tasks, ', &
+           sum(counts), ' indices)'
+    end if
+
+    deallocate(counts, displs, ldof, gdof)
+
+  end subroutine dump_decomp
 
   !===============================================================================
   !> Define a decomposition for a 3d variable in WW3
