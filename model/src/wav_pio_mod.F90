@@ -26,20 +26,14 @@ module wav_pio_mod
   integer                        :: pio_iotype
   integer                        :: pio_ioformat
   type(iosystem_desc_t), pointer :: wav_pio_subsystem
-
-  ! Restart write options, set from WAV attributes in wav_pio_init.
-  ! The defaults keep the original behavior.
-  logical :: pio_restart_nofill     = .false. !< set PIO_NOFILL on restart files
-  integer :: pio_restart_syncfreq   = 0       !< pio_syncfile every N va variables (0 = never)
-  logical :: pio_restart_final_sync = .true.  !< pio_syncfile after all restart fields are written
+  logical                        :: pio_restart_multi = .false. !< write all restart va variables with
+                                                                 !! one PIOc_write_darray_multi call
 
   public :: wav_pio_init
   public :: pio_iotype
   public :: pio_ioformat
   public :: wav_pio_subsystem
-  public :: pio_restart_nofill
-  public :: pio_restart_syncfreq
-  public :: pio_restart_final_sync
+  public :: pio_restart_multi
   public :: wav_pio_initdecomp
   public :: handle_err
 
@@ -83,12 +77,6 @@ contains
     integer           :: pio_rearranger
     integer           :: pio_root
     integer           :: pio_debug_level
-    integer           :: pio_buffer_limit                     ! MB
-    integer           :: comm_type, fcd
-    logical           :: enable_hs_c2i, enable_isend_c2i
-    logical           :: enable_hs_i2c, enable_isend_i2c
-    integer           :: max_pend_req_c2i, max_pend_req_i2c
-    integer           :: ierr
     character(len=CS) :: cvalue
     logical           :: isPresent, isSet
     integer           :: my_task, master_task
@@ -289,114 +277,25 @@ contains
     call pio_init(my_task, mpi_comm, pio_numiotasks, master_task, pio_stride, pio_rearranger, &
          wav_pio_subsystem, base=pio_root)
 
-    ! pio_buffer_limit (MB): amount of data PIO collects before rearranging and writing.
-    ! If not set, PIO's default is used.
-    call NUOPC_CompAttributeGet(gcomp, name='pio_buffer_limit', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    if (isPresent .and. isSet) then
-      read(cvalue,*) pio_buffer_limit
-      if (pio_buffer_limit <= 0) then
-        call ESMF_LogWrite(trim(subname)//': pio_buffer_limit must be > 0 (MB)', ESMF_LOGMSG_ERROR)
-        rc = ESMF_FAILURE
-        return
-      end if
-      call pio_set_buffer_size_limit(int(pio_buffer_limit,PIO_OFFSET_KIND)*1024_PIO_OFFSET_KIND*1024_PIO_OFFSET_KIND)
-      if (my_task == 0) write(stdout,*) trim(subname), ' : pio_buffer_limit (MB) = ', pio_buffer_limit
-    else
-      if (my_task == 0) write(stdout,*) trim(subname), ' : pio_buffer_limit not set, using the PIO default'
-    end if
-
-    ! pio_rearr_comm_type (P2P|COLL). If not set, PIO's default rearranger options
-    ! are used and pio_set_rearr_opts is not called. If set, the other options below
-    ! default to PIO's initial values.
-    call NUOPC_CompAttributeGet(gcomp, name='pio_rearr_comm_type', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
+    ! pio_restart_multi: write all restart va variables with one PIOc_write_darray_multi call
+    call NUOPC_CompAttributeGet(gcomp, name='pio_restart_multi', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
     if (ChkErr(rc,__LINE__,u_FILE_u)) return
     if (isPresent .and. isSet) then
       cvalue = ESMF_UtilStringUpperCase(cvalue)
-      if (trim(cvalue) .eq. 'P2P') then
-        comm_type = PIO_REARR_COMM_P2P
-      else if (trim(cvalue) .eq. 'COLL') then
-        comm_type = PIO_REARR_COMM_COLL
+      if (trim(cvalue) .eq. 'TRUE') then
+        pio_restart_multi = .true.
+      else if (trim(cvalue) .eq. 'FALSE') then
+        pio_restart_multi = .false.
       else
-        call ESMF_LogWrite(trim(subname)//': need to provide valid option for pio_rearr_comm_type (P2P|COLL)', ESMF_LOGMSG_ERROR)
-        rc = ESMF_FAILURE
-        return
-      end if
-      if (my_task == 0) write(stdout,*) trim(subname), ' : pio_rearr_comm_type = ', trim(cvalue)
-
-      ! flow control direction
-      call NUOPC_CompAttributeGet(gcomp, name='pio_rearr_comm_fcd', value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
-      if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      if (isPresent .and. isSet) then
-        cvalue = ESMF_UtilStringUpperCase(cvalue)
-      else
-        cvalue = '2DDISABLE'
-      end if
-      if (trim(cvalue) .eq. '2DENABLE') then
-        fcd = PIO_REARR_COMM_FC_2D_ENABLE
-      else if (trim(cvalue) .eq. 'COMP2IO') then
-        fcd = PIO_REARR_COMM_FC_1D_COMP2IO
-      else if (trim(cvalue) .eq. 'IO2COMP') then
-        fcd = PIO_REARR_COMM_FC_1D_IO2COMP
-      else if (trim(cvalue) .eq. '2DDISABLE') then
-        fcd = PIO_REARR_COMM_FC_2D_DISABLE
-      else
-        call ESMF_LogWrite(trim(subname)//': need to provide valid option for pio_rearr_comm_fcd '// &
-             '(2DENABLE|COMP2IO|IO2COMP|2DDISABLE)', ESMF_LOGMSG_ERROR)
-        rc = ESMF_FAILURE
-        return
-      end if
-      if (my_task == 0) write(stdout,*) trim(subname), ' : pio_rearr_comm_fcd = ', trim(cvalue)
-
-      ! flow control details, compute tasks to io tasks and io tasks to compute tasks
-      call get_logical_attribute(gcomp, 'pio_rearr_comm_enable_hs_comp2io', .false., enable_hs_c2i, rc)
-      if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      call get_logical_attribute(gcomp, 'pio_rearr_comm_enable_isend_comp2io', .false., enable_isend_c2i, rc)
-      if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      call get_integer_attribute(gcomp, 'pio_rearr_comm_max_pend_req_comp2io', 0, max_pend_req_c2i, rc)
-      if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      call get_logical_attribute(gcomp, 'pio_rearr_comm_enable_hs_io2comp', .false., enable_hs_i2c, rc)
-      if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      call get_logical_attribute(gcomp, 'pio_rearr_comm_enable_isend_io2comp', .false., enable_isend_i2c, rc)
-      if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      call get_integer_attribute(gcomp, 'pio_rearr_comm_max_pend_req_io2comp', 0, max_pend_req_i2c, rc)
-      if (ChkErr(rc,__LINE__,u_FILE_u)) return
-      if (my_task == 0) then
-        write(stdout,*) trim(subname), ' : pio_rearr_comm comp2io hs, isend, max_pend_req = ', &
-             enable_hs_c2i, enable_isend_c2i, max_pend_req_c2i
-        write(stdout,*) trim(subname), ' : pio_rearr_comm io2comp hs, isend, max_pend_req = ', &
-             enable_hs_i2c, enable_isend_i2c, max_pend_req_i2c
-      end if
-
-      ierr = pio_set_rearr_opts(wav_pio_subsystem, comm_type, fcd, &
-           enable_hs_c2i, enable_isend_c2i, max_pend_req_c2i, &
-           enable_hs_i2c, enable_isend_i2c, max_pend_req_i2c)
-      if (ierr /= PIO_NOERR) then
-        call ESMF_LogWrite(trim(subname)//': pio_set_rearr_opts failed', ESMF_LOGMSG_ERROR)
+        call ESMF_LogWrite(trim(subname)//': need to provide valid option for pio_restart_multi (TRUE|FALSE)', &
+             ESMF_LOGMSG_ERROR)
         rc = ESMF_FAILURE
         return
       end if
     else
-      if (my_task == 0) write(stdout,*) trim(subname), ' : pio_rearr_comm_type not set, using the PIO default rearranger options'
+      pio_restart_multi = .false.
     end if
-
-    ! restart write options
-    call get_logical_attribute(gcomp, 'pio_restart_nofill', .false., pio_restart_nofill, rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    call get_integer_attribute(gcomp, 'pio_restart_syncfreq', 0, pio_restart_syncfreq, rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    if (pio_restart_syncfreq < 0) then
-      call ESMF_LogWrite(trim(subname)//': pio_restart_syncfreq must be >= 0', ESMF_LOGMSG_ERROR)
-      rc = ESMF_FAILURE
-      return
-    end if
-    call get_logical_attribute(gcomp, 'pio_restart_final_sync', .true., pio_restart_final_sync, rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    if (my_task == 0) then
-      write(stdout,*) trim(subname), ' : pio_restart_nofill = ', pio_restart_nofill
-      write(stdout,*) trim(subname), ' : pio_restart_syncfreq = ', pio_restart_syncfreq
-      write(stdout,*) trim(subname), ' : pio_restart_final_sync = ', pio_restart_final_sync
-    end if
+    if (my_task == 0) write(stdout,*) trim(subname), ' : pio_restart_multi = ', pio_restart_multi
 
     ! PIO debug related options
     ! pio_debug_level
@@ -420,89 +319,6 @@ contains
     call pio_seterrorhandling(wav_pio_subsystem, PIO_RETURN_ERROR)
 #endif
   end subroutine wav_pio_init
-
-  !===============================================================================
-  !> Get an optional logical WAV attribute (TRUE|FALSE)
-  !!
-  !! @param[in]   gcomp     an ESMF_GridComp object
-  !! @param[in]   aname     the attribute name
-  !! @param[in]   default   the value used if the attribute is not set
-  !! @param[out]  avalue    the value
-  !! @param[out]  rc        a return code
-  subroutine get_logical_attribute(gcomp, aname, default, avalue, rc)
-
-    use ESMF         , only : ESMF_GridComp, ESMF_UtilStringUpperCase
-    use ESMF         , only : ESMF_SUCCESS, ESMF_FAILURE, ESMF_LogWrite, ESMF_LOGMSG_ERROR
-    use NUOPC        , only : NUOPC_CompAttributeGet
-    use wav_kind_mod , only : CS=>SHR_KIND_CS
-    use wav_shr_mod  , only : chkerr
-
-    type(ESMF_GridComp), intent(in)  :: gcomp
-    character(len=*)   , intent(in)  :: aname
-    logical            , intent(in)  :: default
-    logical            , intent(out) :: avalue
-    integer            , intent(out) :: rc
-
-    character(len=CS) :: cvalue
-    logical           :: isPresent, isSet
-    character(*), parameter :: u_FILE_u = &                  !< a character string for an ESMF log message
-         __FILE__
-    !-------------------------------------------------------------------------------
-
-    rc = ESMF_SUCCESS
-    avalue = default
-    call NUOPC_CompAttributeGet(gcomp, name=trim(aname), value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    if (isPresent .and. isSet) then
-      cvalue = ESMF_UtilStringUpperCase(cvalue)
-      if (trim(cvalue) .eq. 'TRUE') then
-        avalue = .true.
-      else if (trim(cvalue) .eq. 'FALSE') then
-        avalue = .false.
-      else
-        call ESMF_LogWrite('wav_pio_init: need to provide valid option for '//trim(aname)//' (TRUE|FALSE)', &
-             ESMF_LOGMSG_ERROR)
-        rc = ESMF_FAILURE
-        return
-      end if
-    end if
-
-  end subroutine get_logical_attribute
-
-  !===============================================================================
-  !> Get an optional integer WAV attribute
-  !!
-  !! @param[in]   gcomp     an ESMF_GridComp object
-  !! @param[in]   aname     the attribute name
-  !! @param[in]   default   the value used if the attribute is not set
-  !! @param[out]  avalue    the value
-  !! @param[out]  rc        a return code
-  subroutine get_integer_attribute(gcomp, aname, default, avalue, rc)
-
-    use ESMF         , only : ESMF_GridComp, ESMF_SUCCESS
-    use NUOPC        , only : NUOPC_CompAttributeGet
-    use wav_kind_mod , only : CS=>SHR_KIND_CS
-    use wav_shr_mod  , only : chkerr
-
-    type(ESMF_GridComp), intent(in)  :: gcomp
-    character(len=*)   , intent(in)  :: aname
-    integer            , intent(in)  :: default
-    integer            , intent(out) :: avalue
-    integer            , intent(out) :: rc
-
-    character(len=CS) :: cvalue
-    logical           :: isPresent, isSet
-    character(*), parameter :: u_FILE_u = &                  !< a character string for an ESMF log message
-         __FILE__
-    !-------------------------------------------------------------------------------
-
-    rc = ESMF_SUCCESS
-    avalue = default
-    call NUOPC_CompAttributeGet(gcomp, name=trim(aname), value=cvalue, isPresent=isPresent, isSet=isSet, rc=rc)
-    if (ChkErr(rc,__LINE__,u_FILE_u)) return
-    if (isPresent .and. isSet) read(cvalue,*) avalue
-
-  end subroutine get_integer_attribute
 
   !===============================================================================
   !> Define a decomposition for a 2d variable in WW3
