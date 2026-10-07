@@ -56,18 +56,29 @@ contains
 
     use w3odatmd , only : time_origin, calendar_name, elapsed_secs
     use w3adatmd , only : ITSTEP
+    use w3adatmd , only : mpi_comm_wave
+    use mpi_f08
+    use ESMF     , only : ESMF_TraceRegionEnter, ESMF_TraceRegionExit
 
     real            , intent(in) :: va(1:nspec,0:nsealm)
     integer         , intent(in) :: mapsta(ny,nx)
     character(len=*), intent(in) :: fname
 
     ! local variables
+    type(MPI_Comm)       :: wave_communicator  ! needed for mpi_f08
     integer              :: timid, xtid, ytid
     integer              :: nseal_cpl, nmode
     integer              :: dimid(3)
     real   , allocatable :: lva(:,:)
     integer, allocatable :: lmap(:)
     !-------------------------------------------------------------------------------
+
+    ! trace: wait for all tasks, so that arrival skew is not counted in the write
+    wave_communicator = MPI_COMM_WAVE
+    call ESMF_TraceRegionEnter("restart_wait")
+    call MPI_Barrier(wave_communicator)
+    call ESMF_TraceRegionExit("restart_wait")
+    call ESMF_TraceRegionEnter("write_restart")
 
 #ifdef W3_PDLIB
     nseal_cpl = nseal - ng
@@ -216,7 +227,6 @@ contains
       call pio_write_darray(pioid, varid, iodesc2d, lva(:,kk), ierr)
       call handle_err(ierr, 'put variable '//trim(vname))
     end do
-    end if
     call ESMF_TraceRegionExit("write_va")
 
     ! write requested additional global(nsea) fields
