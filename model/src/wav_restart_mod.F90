@@ -80,6 +80,7 @@ contains
     lmap(:) = 0
 
     ! create the netcdf file
+    call ESMF_TraceRegionEnter("create_file")
     frame = 1
     pioid%fh = -1
     nmode = pio_clobber
@@ -90,7 +91,9 @@ contains
     ierr = pio_createfile(wav_pio_subsystem, pioid, pio_iotype, trim(fname), nmode)
     call handle_err(ierr, 'pio_create')
     if (iaproc == 1) write(ndso,'(a)')' Writing restart file '//trim(fname)
+    call ESMF_TraceRegionExit("create_file")
 
+    call ESMF_TraceRegionEnter("define_fields")
     ierr = pio_def_dim(pioid,    'nx',    nx, xtid)
     ierr = pio_def_dim(pioid,    'ny',    ny, ytid)
     ierr = pio_def_dim(pioid,  'time', PIO_UNLIMITED, timid)
@@ -148,6 +151,7 @@ contains
     ! end variable definitions
     ierr = pio_enddef(pioid)
     call handle_err(ierr, 'end variable definition')
+    call ESMF_TraceRegionExit("define_fields")
 
     ! write the freq and direction sizes
     ierr = pio_inq_varid(pioid, 'nth', varid)
@@ -160,8 +164,10 @@ contains
     call handle_err(ierr, 'put nk')
 
     ! initialize the decomp
+    call ESMF_TraceRegionEnter("init_decomp")
     call wav_pio_initdecomp(iodesc2dint, use_int=.true.)
     call wav_pio_initdecomp(iodesc2d)
+    call ESMF_TraceRegionExit("init_decomp")
 
     ! write the time
     ierr = pio_inq_varid(pioid,  'time', varid)
@@ -170,6 +176,7 @@ contains
     call handle_err(ierr, 'put time')
 
     ! mapsta is global
+    call ESMF_TraceRegionEnter("write_mapsta")
     do jsea = 1,nseal_cpl
       call init_get_isea(isea, jsea)
       ix = mapsf(isea,1)
@@ -184,8 +191,10 @@ contains
     call pio_setframe(pioid, varid, int(1,kind=Pio_Offset_Kind))
     call pio_write_darray(pioid, varid, iodesc2dint, lmap, ierr)
     call handle_err(ierr, 'put variable '//trim(vname))
+    call ESMF_TraceRegionExit("write_mapsta")
 
     ! write va
+    call ESMF_TraceRegionEnter("copy_va")
     do jsea = 1,nseal_cpl
       kk = 0
       do ik = 1,nk
@@ -195,7 +204,9 @@ contains
         end do
       end do
     end do
+    call ESMF_TraceRegionExit("copy_va")
 
+    call ESMF_TraceRegionEnter("write_va")
     do kk = 1,nspec
       write(cspec,'(i4.4)')kk
       vname = 'va'//cspec
@@ -205,8 +216,11 @@ contains
       call pio_write_darray(pioid, varid, iodesc2d, lva(:,kk), ierr)
       call handle_err(ierr, 'put variable '//trim(vname))
     end do
+    end if
+    call ESMF_TraceRegionExit("write_va")
 
     ! write requested additional global(nsea) fields
+    call ESMF_TraceRegionEnter("write_extra")
     if (addrstflds) then
       do i = 1,rstfldcnt
         vname = trim(rstfldlist(i))
@@ -222,10 +236,18 @@ contains
       end do
     end if
 
+    call ESMF_TraceRegionExit("write_extra")
+    call ESMF_TraceRegionEnter("sync_file")
     call pio_syncfile(pioid)
+    call ESMF_TraceRegionExit("sync_file")
+    call ESMF_TraceRegionEnter("free_decomp")
     call pio_freedecomp(pioid, iodesc2d)
     call pio_freedecomp(pioid, iodesc2dint)
+    call ESMF_TraceRegionExit("free_decomp")
+    call ESMF_TraceRegionEnter("close_file")
     call pio_closefile(pioid)
+    call ESMF_TraceRegionExit("close_file")
+    call ESMF_TraceRegionExit("write_restart")
 
   end subroutine write_restart
 
