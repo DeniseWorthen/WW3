@@ -1220,7 +1220,9 @@ CONTAINS
 #ifdef W3_TIMINGS
           CALL PRINT_MY_TIME("W3WAVE, step 6.4.1")
 #endif
+          call ESMF_TraceRegionEnter("wav_ucur")
           CALL W3UCUR ( FLFRST )
+          call ESMF_TraceRegionExit("wav_ucur")
 
           call print_memcheck(memunit, 'memcheck_____:'//' WW3_WAVE TIME LOOP 3b')
 
@@ -1234,8 +1236,10 @@ CONTAINS
 #ifdef W3_DEBUGDCXDX
             WRITE(740+IAPROC,*) 'Before call to UG_GRADIENT for assigning DCXDX/DCXDY array'
 #endif
+            call ESMF_TraceRegionEnter("wav_uggrad")
             CALL UG_GRADIENTS(CX, DCXDX, DCXDY)
             CALL UG_GRADIENTS(CY, DCYDX, DCYDY)
+            call ESMF_TraceRegionExit("wav_uggrad")
             UGDTUPDATE=.TRUE.
             CFLXYMAX = 0.
           ELSE
@@ -1259,7 +1263,9 @@ CONTAINS
 
         IF ( FLWIND ) THEN
           IF ( FLFRST ) ASF = 1.
+          call ESMF_TraceRegionEnter("wav_uwnd")
           CALL W3UWND ( FLFRST, VGX, VGY )
+          call ESMF_TraceRegionExit("wav_uwnd")
         ELSE IF ( FLFRST ) THEN
           U10    = 0.01
           U10D   = 0.
